@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmIterationState">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+		
+	<update id="loadTasksToXmIterationState" parameterType="String" statementType="CALLABLE">
+		 {call load_tasks_to_xm_iteration_state(#{productId,mode=IN})} 
+	</update>
+		
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_iteration_state res
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmIterationState" resultType="com.qqkj.xm.core.entity.XmIterationState">
+		select * from XM.xm_iteration_state res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmIterationState" resultType="com.qqkj.xm.core.entity.XmIterationState">
+		select * from XM.xm_iteration_state res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_iteration_state res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmIterationState" resultType="long">
+		select count(1) from XM.xm_iteration_state res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmIterationState" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_iteration_state(
+			<include refid="columns"/>
+		) values (
+		#{id},#{distBudgetCost},#{distBudgetWorkload},#{actCost},#{actWorkload},#{actStaffNum},#{finishRate},#{testCases},#{execCases},#{designCases},#{finishCases},#{projectCnt},#{productCnt},#{menuCnt},#{taskCnt},#{finishTaskCnt},#{calcTime},#{iterationName},#{budgetCost},#{budgetWorkload},#{iterationId},#{bizDate},#{closedBugCnt},#{resolvedBugCnt},#{activeBugCnt},#{confirmedBugCnt},#{bugCnt}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmIterationState">
+		delete from XM.xm_iteration_state res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmIterationState">
+		delete from XM.xm_iteration_state 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmIterationState">
+		update  XM.xm_iteration_state 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmIterationState">
+		update  XM.xm_iteration_state 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_iteration_state 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_iteration_state 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,dist_budget_cost,dist_budget_workload,act_cost,act_workload,act_staff_num,finish_rate,test_cases,exec_cases,design_cases,finish_cases,project_cnt,product_cnt,menu_cnt,task_cnt,finish_task_cnt,calc_time,iteration_name,budget_cost,budget_workload,iteration_id,biz_date,closed_bug_cnt,resolved_bug_cnt,active_bug_cnt,confirmed_bug_cnt,bug_cnt
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="distBudgetCost != null and distBudgetCost != ''">      and res.dist_budget_cost = #{distBudgetCost}     </if>
+		<if test="distBudgetWorkload != null and distBudgetWorkload != ''">      and res.dist_budget_workload = #{distBudgetWorkload}     </if>
+		<if test="actCost != null and actCost != ''">      and res.act_cost = #{actCost}     </if>
+		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
+		<if test="actStaffNum != null and actStaffNum != ''">      and res.act_staff_num = #{actStaffNum}     </if>
+		<if test="finishRate != null and finishRate != ''">      and res.finish_rate = #{finishRate}     </if>
+		<if test="testCases != null and testCases != ''">      and res.test_cases = #{testCases}     </if>
+		<if test="execCases != null and execCases != ''">      and res.exec_cases = #{execCases}     </if>
+		<if test="designCases != null and designCases != ''">      and res.design_cases = #{designCases}     </if>
+		<if test="finishCases != null and finishCases != ''">      and res.finish_cases = #{finishCases}     </if>
+		<if test="projectCnt != null and projectCnt != ''">      and res.project_cnt = #{projectCnt}     </if>
+		<if test="productCnt != null and productCnt != ''">      and res.product_cnt = #{productCnt}     </if>
+		<if test="menuCnt != null and menuCnt != ''">      and res.menu_cnt = #{menuCnt}     </if>
+		<if test="taskCnt != null and taskCnt != ''">      and res.task_cnt = #{taskCnt}     </if>
+		<if test="finishTaskCnt != null and finishTaskCnt != ''">      and res.finish_task_cnt = #{finishTaskCnt}     </if>
+		<if test="calcTime != null">      and TO_CHAR(res.calc_time,'YYYY-MM-DD') = TO_CHAR(#{calcTime},'YYYY-MM-DD')     </if>
+		<if test="iterationName != null and iterationName != ''">      and res.iteration_name = #{iterationName}     </if>
+		<if test="budgetCost != null and budgetCost != ''">      and res.budget_cost = #{budgetCost}     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
+		<if test="iterationId != null and iterationId != ''">      and res.iteration_id = #{iterationId}     </if>
+		<if test="bizDate != null and bizDate != ''">      and res.biz_date = #{bizDate}     </if>
+		<if test="closedBugCnt != null and closedBugCnt != ''">      and res.closed_bug_cnt = #{closedBugCnt}     </if>
+		<if test="resolvedBugCnt != null and resolvedBugCnt != ''">      and res.resolved_bug_cnt = #{resolvedBugCnt}     </if>
+		<if test="activeBugCnt != null and activeBugCnt != ''">      and res.active_bug_cnt = #{activeBugCnt}     </if>
+		<if test="confirmedBugCnt != null and confirmedBugCnt != ''">      and res.confirmed_bug_cnt = #{confirmedBugCnt}     </if>
+		<if test="bugCnt != null and bugCnt != ''">      and res.bug_cnt = #{bugCnt}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		dist_budget_cost = #{distBudgetCost},
+		dist_budget_workload = #{distBudgetWorkload},
+		act_cost = #{actCost},
+		act_workload = #{actWorkload},
+		act_staff_num = #{actStaffNum},
+		finish_rate = #{finishRate},
+		test_cases = #{testCases},
+		exec_cases = #{execCases},
+		design_cases = #{designCases},
+		finish_cases = #{finishCases},
+		project_cnt = #{projectCnt},
+		product_cnt = #{productCnt},
+		menu_cnt = #{menuCnt},
+		task_cnt = #{taskCnt},
+		finish_task_cnt = #{finishTaskCnt},
+		calc_time = #{calcTime},
+		iteration_name = #{iterationName},
+		budget_cost = #{budgetCost},
+		budget_workload = #{budgetWorkload},
+		iteration_id = #{iterationId},
+		biz_date = #{bizDate},
+		closed_bug_cnt = #{closedBugCnt},
+		resolved_bug_cnt = #{resolvedBugCnt},
+		active_bug_cnt = #{activeBugCnt},
+		confirmed_bug_cnt = #{confirmedBugCnt},
+		bug_cnt = #{bugCnt}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="distBudgetCost != null and distBudgetCost != ''"> dist_budget_cost = #{distBudgetCost},     </if>
+		<if test="distBudgetWorkload != null and distBudgetWorkload != ''"> dist_budget_workload = #{distBudgetWorkload},     </if>
+		<if test="actCost != null and actCost != ''"> act_cost = #{actCost},     </if>
+		<if test="actWorkload != null and actWorkload != ''"> act_workload = #{actWorkload},     </if>
+		<if test="actStaffNum != null and actStaffNum != ''"> act_staff_num = #{actStaffNum},     </if>
+		<if test="finishRate != null and finishRate != ''"> finish_rate = #{finishRate},     </if>
+		<if test="testCases != null and testCases != ''"> test_cases = #{testCases},     </if>
+		<if test="execCases != null and execCases != ''"> exec_cases = #{execCases},     </if>
+		<if test="designCases != null and designCases != ''"> design_cases = #{designCases},     </if>
+		<if test="finishCases != null and finishCases != ''"> finish_cases = #{finishCases},     </if>
+		<if test="projectCnt != null and projectCnt != ''"> project_cnt = #{projectCnt},     </if>
+		<if test="productCnt != null and productCnt != ''"> product_cnt = #{productCnt},     </if>
+		<if test="menuCnt != null and menuCnt != ''"> menu_cnt = #{menuCnt},     </if>
+		<if test="taskCnt != null and taskCnt != ''"> task_cnt = #{taskCnt},     </if>
+		<if test="finishTaskCnt != null and finishTaskCnt != ''"> finish_task_cnt = #{finishTaskCnt},     </if>
+		<if test="calcTime != null"> calc_time = #{calcTime},     </if>
+		<if test="iterationName != null and iterationName != ''"> iteration_name = #{iterationName},     </if>
+		<if test="budgetCost != null and budgetCost != ''"> budget_cost = #{budgetCost},     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
+		<if test="iterationId != null and iterationId != ''"> iteration_id = #{iterationId},     </if>
+		<if test="bizDate != null and bizDate != ''"> biz_date = #{bizDate},     </if>
+		<if test="closedBugCnt != null and closedBugCnt != ''"> closed_bug_cnt = #{closedBugCnt},     </if>
+		<if test="resolvedBugCnt != null and resolvedBugCnt != ''"> resolved_bug_cnt = #{resolvedBugCnt},     </if>
+		<if test="activeBugCnt != null and activeBugCnt != ''"> active_bug_cnt = #{activeBugCnt},     </if>
+		<if test="confirmedBugCnt != null and confirmedBugCnt != ''"> confirmed_bug_cnt = #{confirmedBugCnt},     </if>
+		<if test="bugCnt != null and bugCnt != ''"> bug_cnt = #{bugCnt},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			dist_budget_cost = #{item.distBudgetCost},
+			dist_budget_workload = #{item.distBudgetWorkload},
+			act_cost = #{item.actCost},
+			act_workload = #{item.actWorkload},
+			act_staff_num = #{item.actStaffNum},
+			finish_rate = #{item.finishRate},
+			test_cases = #{item.testCases},
+			exec_cases = #{item.execCases},
+			design_cases = #{item.designCases},
+			finish_cases = #{item.finishCases},
+			project_cnt = #{item.projectCnt},
+			product_cnt = #{item.productCnt},
+			menu_cnt = #{item.menuCnt},
+			task_cnt = #{item.taskCnt},
+			finish_task_cnt = #{item.finishTaskCnt},
+			calc_time = #{item.calcTime},
+			iteration_name = #{item.iterationName},
+			budget_cost = #{item.budgetCost},
+			budget_workload = #{item.budgetWorkload},
+			iteration_id = #{item.iterationId},
+			biz_date = #{item.bizDate},
+			closed_bug_cnt = #{item.closedBugCnt},
+			resolved_bug_cnt = #{item.resolvedBugCnt},
+			active_bug_cnt = #{item.activeBugCnt},
+			confirmed_bug_cnt = #{item.confirmedBugCnt},
+			bug_cnt = #{item.bugCnt}
+	</sql>
+</mapper>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmTestCase">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+		
+		
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_test_case res
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmTestCase" resultType="com.qqkj.xm.core.entity.XmTestCase">
+		select * from XM.xm_test_case res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmTestCase" resultType="com.qqkj.xm.core.entity.XmTestCase">
+		select * from XM.xm_test_case res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_test_case res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmTestCase" resultType="long">
+		select count(1) from XM.xm_test_case res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmTestCase" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_test_case(
+			<include refid="columns"/>
+		) values (
+		#{id},#{caseName},#{caseRemark},#{testStep},#{expectResult},#{menuId},#{menuName},#{ctime},#{ltime},#{luserid},#{lusername},#{cbranchId},#{moduleId},#{moduleName},#{caseStatus}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmTestCase">
+		delete from XM.xm_test_case res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmTestCase">
+		delete from XM.xm_test_case 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmTestCase">
+		update  XM.xm_test_case 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmTestCase">
+		update  XM.xm_test_case 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_test_case 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_test_case 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,case_name,case_remark,test_step,expect_result,menu_id,menu_name,ctime,ltime,luserid,lusername,cbranch_id,module_id,module_name,case_status
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="caseName != null and caseName != ''">      and res.case_name = #{caseName}     </if>
+		<if test="caseRemark != null and caseRemark != ''">      and res.case_remark = #{caseRemark}     </if>
+		<if test="testStep != null and testStep != ''">      and res.test_step = #{testStep}     </if>
+		<if test="expectResult != null and expectResult != ''">      and res.expect_result = #{expectResult}     </if>
+		<if test="menuId != null and menuId != ''">      and res.menu_id = #{menuId}     </if>
+		<if test="menuName != null and menuName != ''">      and res.menu_name = #{menuName}     </if>
+		<if test="ctime != null">      and TO_CHAR(res.ctime,'YYYY-MM-DD') = TO_CHAR(#{ctime},'YYYY-MM-DD')     </if>
+		<if test="ltime != null">      and TO_CHAR(res.ltime,'YYYY-MM-DD') = TO_CHAR(#{ltime},'YYYY-MM-DD')     </if>
+		<if test="luserid != null and luserid != ''">      and res.luserid = #{luserid}     </if>
+		<if test="lusername != null and lusername != ''">      and res.lusername = #{lusername}     </if>
+		<if test="cbranchId != null and cbranchId != ''">      and res.cbranch_id = #{cbranchId}     </if>
+		<if test="moduleId != null and moduleId != ''">      and res.module_id = #{moduleId}     </if>
+		<if test="moduleName != null and moduleName != ''">      and res.module_name = #{moduleName}     </if>
+		<if test="caseStatus != null and caseStatus != ''">      and res.case_status = #{caseStatus}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		case_name = #{caseName},
+		case_remark = #{caseRemark},
+		test_step = #{testStep},
+		expect_result = #{expectResult},
+		menu_id = #{menuId},
+		menu_name = #{menuName},
+		ctime = #{ctime},
+		ltime = #{ltime},
+		luserid = #{luserid},
+		lusername = #{lusername},
+		cbranch_id = #{cbranchId},
+		module_id = #{moduleId},
+		module_name = #{moduleName},
+		case_status = #{caseStatus}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="caseName != null and caseName != ''"> case_name = #{caseName},     </if>
+		<if test="caseRemark != null and caseRemark != ''"> case_remark = #{caseRemark},     </if>
+		<if test="testStep != null and testStep != ''"> test_step = #{testStep},     </if>
+		<if test="expectResult != null and expectResult != ''"> expect_result = #{expectResult},     </if>
+		<if test="menuId != null and menuId != ''"> menu_id = #{menuId},     </if>
+		<if test="menuName != null and menuName != ''"> menu_name = #{menuName},     </if>
+		<if test="ctime != null"> ctime = #{ctime},     </if>
+		<if test="ltime != null"> ltime = #{ltime},     </if>
+		<if test="luserid != null and luserid != ''"> luserid = #{luserid},     </if>
+		<if test="lusername != null and lusername != ''"> lusername = #{lusername},     </if>
+		<if test="cbranchId != null and cbranchId != ''"> cbranch_id = #{cbranchId},     </if>
+		<if test="moduleId != null and moduleId != ''"> module_id = #{moduleId},     </if>
+		<if test="moduleName != null and moduleName != ''"> module_name = #{moduleName},     </if>
+		<if test="caseStatus != null and caseStatus != ''"> case_status = #{caseStatus},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			case_name = #{item.caseName},
+			case_remark = #{item.caseRemark},
+			test_step = #{item.testStep},
+			expect_result = #{item.expectResult},
+			menu_id = #{item.menuId},
+			menu_name = #{item.menuName},
+			ctime = #{item.ctime},
+			ltime = #{item.ltime},
+			luserid = #{item.luserid},
+			lusername = #{item.lusername},
+			cbranch_id = #{item.cbranchId},
+			module_id = #{item.moduleId},
+			module_name = #{item.moduleName},
+			case_status = #{item.caseStatus}
+	</sql>
+</mapper>

@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmQuestionTag">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+		
+		
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_question_tag res
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmQuestionTag" resultType="com.qqkj.xm.core.entity.XmQuestionTag">
+		select * from XM.xm_question_tag res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmQuestionTag" resultType="com.qqkj.xm.core.entity.XmQuestionTag">
+		select * from XM.xm_question_tag res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_question_tag res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmQuestionTag" resultType="long">
+		select count(1) from XM.xm_question_tag res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmQuestionTag" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_question_tag(
+			<include refid="columns"/>
+		) values (
+		#{questionId},#{tagId},#{tagName},#{ctime},#{id}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmQuestionTag">
+		delete from XM.xm_question_tag res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmQuestionTag">
+		delete from XM.xm_question_tag 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmQuestionTag">
+		update  XM.xm_question_tag 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmQuestionTag">
+		update  XM.xm_question_tag 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_question_tag 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_question_tag 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		question_id,tag_id,tag_name,ctime,id
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="questionId != null and questionId != ''">      and res.question_id = #{questionId}     </if>
+		<if test="tagId != null and tagId != ''">      and res.tag_id = #{tagId}     </if>
+		<if test="tagName != null and tagName != ''">      and res.tag_name = #{tagName}     </if>
+		<if test="ctime != null">      and TO_CHAR(res.ctime,'YYYY-MM-DD') = TO_CHAR(#{ctime},'YYYY-MM-DD')     </if>
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		question_id = #{questionId},
+		tag_id = #{tagId},
+		tag_name = #{tagName},
+		ctime = #{ctime}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="questionId != null and questionId != ''"> question_id = #{questionId},     </if>
+		<if test="tagId != null and tagId != ''"> tag_id = #{tagId},     </if>
+		<if test="tagName != null and tagName != ''"> tag_name = #{tagName},     </if>
+		<if test="ctime != null"> ctime = #{ctime},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			question_id = #{item.questionId},
+			tag_id = #{item.tagId},
+			tag_name = #{item.tagName},
+			ctime = #{item.ctime}
+	</sql>
+</mapper>

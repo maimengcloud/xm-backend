@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmProject">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->  
+
+		<!-- 插入流程审批表数据 -->
+	<insert id="insertProcessApprova"
+		parameterType="HashMap"
+		useGeneratedKeys="false" keyProperty="id">
+		insert into XM.xm_project_process_approva (
+		 id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
+		) values (
+			#{id},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
+		)
+	</insert>
+	
+		<!-- 同时修改业务表及流程审批表数据状态 -->
+	<update id="updateProcessApprova"
+		parameterType="HashMap">
+		update XM.xm_project  b ,XM.xm_project_process_approva pa 
+			<set>
+				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
+				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
+				<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>  
+				<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if> 
+				<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
+				<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
+				 pa.flow_last_time = now(),
+				<if test=' eventName != null and eventName !="" '> pa.event_name = #{eventName},</if>
+				<if test=' flowState != null and flowState !="" '> pa.flow_state=#{flowState},</if>
+				<if test=' bizFlowState != null and bizFlowState !="" '> b.biz_flow_state=#{bizFlowState},</if>
+				<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
+			</set>
+		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
+		      and b.id=pa.project_id 
+	</update>	
+	
+	<update id="updateFlowStateByProcInstForDeleteSuccess"
+		parameterType="HashMap">
+		update XM.xm_project_process_approva pa set pa.flow_state='2'
+		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
+	</update>	
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByProcInstId" parameterType="HashMap">
+		delete from XM.xm_project 
+		 where biz_proc_inst_id=#{procInstId}
+	</delete>
+
+	<!--结束 自定义sql函数区域--> 
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select res.*,s.total_file_cnt,s.total_bug_cnt,s.total_task_cnt,total_budget_nouser_amount,s.total_staff_cnt,s.total_cost_nouser_amount,s.total_closed_bug_cnt,s.total_resolved_bug_cnt,s.total_complete_task_cnt,s.total_phase_cnt,s.total_complete_phase_cnt,s.total_progress,
+		s.total_need_pay_amount,s.total_finish_pay_amount,s.total_need_col_amount,s.total_finish_col_amount,s.total_cost_user_amount,s.total_budget_inner_user_amount,s.total_plan_workload,s.total_risk_cnt,s.total_complete_risk_cnt,s.total_budget_out_user_amount,s.total_complete_workload,
+		pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from XM.xm_project res  
+		 left join XM.xm_project_state s on s.project_id=res.id 
+		 left join  XM.xm_project_process_approva pa on res.id=pa.project_id and res.biz_proc_inst_id=pa.proc_inst_id 
+		
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+
+ 			<!-- 筛选属于当前年份的项目 -->
+			<if test="startYear != null and startYear != ''" >and (
+				date_format(start_time,'%Y') = #{startYear}
+				or date_format(end_time,'%Y') = #{startYear}
+				or ( date_format(start_time,'%Y') &lt; #{startYear} and date_format(end_time,'%Y') &gt; #{startYear} )
+				)
+			</if>
+			<!-- 筛选掉已结束项目 -->
+			<if test="hideStatus != null and hideStatus != ''">
+				and res.status != #{hideStatus}
+			</if>
+			<!-- 我参与的  包括我创建的，我监控的，我审核的-->
+			<if test=" compete !=null and compete !='' ">
+				and (    exists ( select 1 from XM.xm_project_group g,XM.xm_project_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id ) 
+					 or  res.create_userid=#{userid}
+					 or  exists ( select 1 from XM.xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{userid} )
+					)
+			</if> 
+			<!-- 按参与角色查询等-->
+			<if test="pgTypeIds != null ">
+				and  exists ( select 1 from XM.xm_project_group g,XM.xm_project_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id 
+								and   g.pg_type_id in
+							    <foreach collection="pgTypeIds" item="item" index="index" open="(" separator="," close=")" >  
+							        #{item}
+							    </foreach>  
+				)  
+			</if>
+			
+			<if test=" myExecuserStatus != null and myExecuserStatus != ''">
+				and  exists ( select 1 from XM.xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{userid} 
+					<if test=' myExecuserStatus != "all" '>
+					and exe.status=#{myExecuserStatus}
+					</if>
+				)
+			</if>
+			
+			<if test="myFocus != null and myFocus != ''">
+				and exists ( select 1 from XM.xm_my_focus f where f.userid=#{userid} and f.project_id=res.id  ) 
+			</if>
+			<if test="key != null and key !='' ">    </if>
+			<if test="productId != null and productId !='' ">  and exists ( select 1 from XM.xm_task t left join XM.xm_menu m on t.menu_id=m.menu_id and m.product_id=#{productId}   where m.product_id=#{productId} and t.project_id=res.id)  </if>
+			
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmProject" resultType="com.qqkj.xm.core.entity.XmProject">
+		select * from XM.xm_project res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmProject" resultType="com.qqkj.xm.core.entity.XmProject">
+		select * from XM.xm_project res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmProject" resultType="long">
+		select count(1) from XM.xm_project res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmProject" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_project(
+			<include refid="columns"/>
+		) values (
+		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planInnerUserAt},#{planOutUserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planInnerUserPrice},#{planOutUserPrice},#{planOutUserCnt},#{planInnerUserCnt},#{planWorkingHours},#{taxRate},#{planInnerUserWorkload},#{planOutUserWorkload},#{fromTplId},#{budgetCtrl}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmProject">
+		delete from XM.xm_project res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmProject">
+		delete from XM.xm_project 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmProject">
+		update  XM.xm_project 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmProject">
+		update  XM.xm_project 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_project 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_project 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="code != null and code != ''">      and res.code = #{code}     </if>
+		<if test="name != null and name != ''">      and res.name = #{name}     </if>
+		<if test="xmType != null and xmType != ''">      and res.xm_type = #{xmType}     </if>
+		<if test="startTime != null">      and TO_CHAR(res.start_time,'YYYY-MM-DD') = TO_CHAR(#{startTime},'YYYY-MM-DD')     </if>
+		<if test="endTime != null">      and TO_CHAR(res.end_time,'YYYY-MM-DD') = TO_CHAR(#{endTime},'YYYY-MM-DD')     </if>
+		<if test="urgent != null and urgent != ''">      and res.urgent = #{urgent}     </if>
+		<if test="priority != null and priority != ''">      and res.priority = #{priority}     </if>
+		<if test="description != null and description != ''">      and res.description = #{description}     </if>
+		<if test="createUserid != null and createUserid != ''">      and res.create_userid = #{createUserid}     </if>
+		<if test="createUsername != null and createUsername != ''">      and res.create_username = #{createUsername}     </if>
+		<if test="createTime != null">      and TO_CHAR(res.create_time,'YYYY-MM-DD') = TO_CHAR(#{createTime},'YYYY-MM-DD')     </if>
+		<if test="assess != null and assess != ''">      and res.assess = #{assess}     </if>
+		<if test="assessRemarks != null and assessRemarks != ''">      and res.assess_remarks = #{assessRemarks}     </if>
+		<if test="status != null and status != ''">      and res.status = #{status}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="planTotalCost != null and planTotalCost != ''">      and res.plan_total_cost = #{planTotalCost}     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
+		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
+		<if test="planNouserAt != null and planNouserAt != ''">      and res.plan_nouser_at = #{planNouserAt}     </if>
+		<if test="planInnerUserAt != null and planInnerUserAt != ''">      and res.plan_inner_user_at = #{planInnerUserAt}     </if>
+		<if test="planOutUserAt != null and planOutUserAt != ''">      and res.plan_out_user_at = #{planOutUserAt}     </if>
+		<if test="locked != null and locked != ''">      and res.locked = #{locked}     </if>
+		<if test="baseTime != null">      and TO_CHAR(res.base_time,'YYYY-MM-DD') = TO_CHAR(#{baseTime},'YYYY-MM-DD')     </if>
+		<if test="baseRemark != null and baseRemark != ''">      and res.base_remark = #{baseRemark}     </if>
+		<if test="baselineId != null and baselineId != ''">      and res.baseline_id = #{baselineId}     </if>
+		<if test="planWorkload != null and planWorkload != ''">      and res.plan_workload = #{planWorkload}     </if>
+		<if test="totalReceivables != null and totalReceivables != ''">      and res.total_receivables = #{totalReceivables}     </if>
+		<if test="budgetMarginRate != null and budgetMarginRate != ''">      and res.budget_margin_rate = #{budgetMarginRate}     </if>
+		<if test="contractAmt != null and contractAmt != ''">      and res.contract_amt = #{contractAmt}     </if>
+		<if test="planInnerUserPrice != null and planInnerUserPrice != ''">      and res.plan_inner_user_price = #{planInnerUserPrice}     </if>
+		<if test="planOutUserPrice != null and planOutUserPrice != ''">      and res.plan_out_user_price = #{planOutUserPrice}     </if>
+		<if test="planOutUserCnt != null and planOutUserCnt != ''">      and res.plan_out_user_cnt = #{planOutUserCnt}     </if>
+		<if test="planInnerUserCnt != null and planInnerUserCnt != ''">      and res.plan_inner_user_cnt = #{planInnerUserCnt}     </if>
+		<if test="planWorkingHours != null and planWorkingHours != ''">      and res.plan_working_hours = #{planWorkingHours}     </if>
+		<if test="taxRate != null and taxRate != ''">      and res.tax_rate = #{taxRate}     </if>
+		<if test="planInnerUserWorkload != null and planInnerUserWorkload != ''">      and res.plan_inner_user_workload = #{planInnerUserWorkload}     </if>
+		<if test="planOutUserWorkload != null and planOutUserWorkload != ''">      and res.plan_out_user_workload = #{planOutUserWorkload}     </if>
+		<if test="fromTplId != null and fromTplId != ''">      and res.from_tpl_id = #{fromTplId}     </if>
+		<if test="budgetCtrl != null and budgetCtrl != ''">      and res.budget_ctrl = #{budgetCtrl}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		code = #{code},
+		name = #{name},
+		xm_type = #{xmType},
+		start_time = #{startTime},
+		end_time = #{endTime},
+		urgent = #{urgent},
+		priority = #{priority},
+		description = #{description},
+		create_userid = #{createUserid},
+		create_username = #{createUsername},
+		create_time = #{createTime},
+		assess = #{assess},
+		assess_remarks = #{assessRemarks},
+		status = #{status},
+		branch_id = #{branchId},
+		plan_total_cost = #{planTotalCost},
+		biz_proc_inst_id = #{bizProcInstId},
+		biz_flow_state = #{bizFlowState},
+		plan_nouser_at = #{planNouserAt},
+		plan_inner_user_at = #{planInnerUserAt},
+		plan_out_user_at = #{planOutUserAt},
+		locked = #{locked},
+		base_time = #{baseTime},
+		base_remark = #{baseRemark},
+		baseline_id = #{baselineId},
+		plan_workload = #{planWorkload},
+		total_receivables = #{totalReceivables},
+		budget_margin_rate = #{budgetMarginRate},
+		contract_amt = #{contractAmt},
+		plan_inner_user_price = #{planInnerUserPrice},
+		plan_out_user_price = #{planOutUserPrice},
+		plan_out_user_cnt = #{planOutUserCnt},
+		plan_inner_user_cnt = #{planInnerUserCnt},
+		plan_working_hours = #{planWorkingHours},
+		tax_rate = #{taxRate},
+		plan_inner_user_workload = #{planInnerUserWorkload},
+		plan_out_user_workload = #{planOutUserWorkload},
+		from_tpl_id = #{fromTplId},
+		budget_ctrl = #{budgetCtrl}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="code != null and code != ''"> code = #{code},     </if>
+		<if test="name != null and name != ''"> name = #{name},     </if>
+		<if test="xmType != null and xmType != ''"> xm_type = #{xmType},     </if>
+		<if test="startTime != null"> start_time = #{startTime},     </if>
+		<if test="endTime != null"> end_time = #{endTime},     </if>
+		<if test="urgent != null and urgent != ''"> urgent = #{urgent},     </if>
+		<if test="priority != null and priority != ''"> priority = #{priority},     </if>
+		<if test="description != null and description != ''"> description = #{description},     </if>
+		<if test="createUserid != null and createUserid != ''"> create_userid = #{createUserid},     </if>
+		<if test="createUsername != null and createUsername != ''"> create_username = #{createUsername},     </if>
+		<if test="createTime != null"> create_time = #{createTime},     </if>
+		<if test="assess != null and assess != ''"> assess = #{assess},     </if>
+		<if test="assessRemarks != null and assessRemarks != ''"> assess_remarks = #{assessRemarks},     </if>
+		<if test="status != null and status != ''"> status = #{status},     </if>
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="planTotalCost != null and planTotalCost != ''"> plan_total_cost = #{planTotalCost},     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
+		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
+		<if test="planNouserAt != null and planNouserAt != ''"> plan_nouser_at = #{planNouserAt},     </if>
+		<if test="planInnerUserAt != null and planInnerUserAt != ''"> plan_inner_user_at = #{planInnerUserAt},     </if>
+		<if test="planOutUserAt != null and planOutUserAt != ''"> plan_out_user_at = #{planOutUserAt},     </if>
+		<if test="locked != null and locked != ''"> locked = #{locked},     </if>
+		<if test="baseTime != null"> base_time = #{baseTime},     </if>
+		<if test="baseRemark != null and baseRemark != ''"> base_remark = #{baseRemark},     </if>
+		<if test="baselineId != null and baselineId != ''"> baseline_id = #{baselineId},     </if>
+		<if test="planWorkload != null and planWorkload != ''"> plan_workload = #{planWorkload},     </if>
+		<if test="totalReceivables != null and totalReceivables != ''"> total_receivables = #{totalReceivables},     </if>
+		<if test="budgetMarginRate != null and budgetMarginRate != ''"> budget_margin_rate = #{budgetMarginRate},     </if>
+		<if test="contractAmt != null and contractAmt != ''"> contract_amt = #{contractAmt},     </if>
+		<if test="planInnerUserPrice != null and planInnerUserPrice != ''"> plan_inner_user_price = #{planInnerUserPrice},     </if>
+		<if test="planOutUserPrice != null and planOutUserPrice != ''"> plan_out_user_price = #{planOutUserPrice},     </if>
+		<if test="planOutUserCnt != null and planOutUserCnt != ''"> plan_out_user_cnt = #{planOutUserCnt},     </if>
+		<if test="planInnerUserCnt != null and planInnerUserCnt != ''"> plan_inner_user_cnt = #{planInnerUserCnt},     </if>
+		<if test="planWorkingHours != null and planWorkingHours != ''"> plan_working_hours = #{planWorkingHours},     </if>
+		<if test="taxRate != null and taxRate != ''"> tax_rate = #{taxRate},     </if>
+		<if test="planInnerUserWorkload != null and planInnerUserWorkload != ''"> plan_inner_user_workload = #{planInnerUserWorkload},     </if>
+		<if test="planOutUserWorkload != null and planOutUserWorkload != ''"> plan_out_user_workload = #{planOutUserWorkload},     </if>
+		<if test="fromTplId != null and fromTplId != ''"> from_tpl_id = #{fromTplId},     </if>
+		<if test="budgetCtrl != null and budgetCtrl != ''"> budget_ctrl = #{budgetCtrl},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			code = #{item.code},
+			name = #{item.name},
+			xm_type = #{item.xmType},
+			start_time = #{item.startTime},
+			end_time = #{item.endTime},
+			urgent = #{item.urgent},
+			priority = #{item.priority},
+			description = #{item.description},
+			create_userid = #{item.createUserid},
+			create_username = #{item.createUsername},
+			create_time = #{item.createTime},
+			assess = #{item.assess},
+			assess_remarks = #{item.assessRemarks},
+			status = #{item.status},
+			branch_id = #{item.branchId},
+			plan_total_cost = #{item.planTotalCost},
+			biz_proc_inst_id = #{item.bizProcInstId},
+			biz_flow_state = #{item.bizFlowState},
+			plan_nouser_at = #{item.planNouserAt},
+			plan_inner_user_at = #{item.planInnerUserAt},
+			plan_out_user_at = #{item.planOutUserAt},
+			locked = #{item.locked},
+			base_time = #{item.baseTime},
+			base_remark = #{item.baseRemark},
+			baseline_id = #{item.baselineId},
+			plan_workload = #{item.planWorkload},
+			total_receivables = #{item.totalReceivables},
+			budget_margin_rate = #{item.budgetMarginRate},
+			contract_amt = #{item.contractAmt},
+			plan_inner_user_price = #{item.planInnerUserPrice},
+			plan_out_user_price = #{item.planOutUserPrice},
+			plan_out_user_cnt = #{item.planOutUserCnt},
+			plan_inner_user_cnt = #{item.planInnerUserCnt},
+			plan_working_hours = #{item.planWorkingHours},
+			tax_rate = #{item.taxRate},
+			plan_inner_user_workload = #{item.planInnerUserWorkload},
+			plan_out_user_workload = #{item.planOutUserWorkload},
+			from_tpl_id = #{item.fromTplId},
+			budget_ctrl = #{item.budgetCtrl}
+	</sql>
+</mapper>

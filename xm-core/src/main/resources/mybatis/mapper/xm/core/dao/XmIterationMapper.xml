@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmIteration">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+		
+	<update id="load_tasks_to_xm_iteration_state" parameterType="String" statementType="CALLABLE">
+		 {call load_tasks_to_xm_iteration_state(#{inIterationId,mode=IN})} 
+	</update>
+	<select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
+		select res.*, s.* from XM.xm_iteration res left join XM.xm_iteration_state s on res.id=s.iteration_id
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+			<if test="( productId != null and productId !='')  or ( menuId != null and menuId !='')">   
+			and exists ( select 1 from XM.xm_iteration_menu im where  im.iteration_id=res.id
+					<if test="productId != null and productId !='' ">  and  im.product_id=#{productId}    </if> 
+					<if test="menuId != null and menuId !='' ">  and  im.menu_id=#{menuId}    </if> 
+			 )   
+		    </if> 
+ 			
+		</where>
+	</select>
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_iteration res
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+			<if test="( productId != null and productId !='')  or ( menuId != null and menuId !='')">   
+			and exists ( select 1 from XM.xm_iteration_menu im where  im.iteration_id=res.id
+					<if test="productId != null and productId !='' ">  and  im.product_id=#{productId}    </if> 
+					<if test="menuId != null and menuId !='' ">  and  im.menu_id=#{menuId}    </if> 
+			 )   
+		    </if> 
+ 			
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmIteration" resultType="com.qqkj.xm.core.entity.XmIteration">
+		select * from XM.xm_iteration res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmIteration" resultType="com.qqkj.xm.core.entity.XmIteration">
+		select * from XM.xm_iteration res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_iteration res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmIteration" resultType="long">
+		select count(1) from XM.xm_iteration res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmIteration" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_iteration(
+			<include refid="columns"/>
+		) values (
+		#{id},#{branchId},#{iterationName},#{startTime},#{endTime},#{onlineTime},#{pid},#{adminUserid},#{adminUsername},#{ctime},#{budgetCost},#{budgetWorkload},#{seqNo},#{istatus},#{cuserid},#{cusername},#{remark}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmIteration">
+		delete from XM.xm_iteration res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmIteration">
+		delete from XM.xm_iteration 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmIteration">
+		update  XM.xm_iteration 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmIteration">
+		update  XM.xm_iteration 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_iteration 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_iteration 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,branch_id,iteration_name,start_time,end_time,online_time,pid,admin_userid,admin_username,ctime,budget_cost,budget_workload,seq_no,istatus,cuserid,cusername,remark
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="iterationName != null and iterationName != ''">      and res.iteration_name = #{iterationName}     </if>
+		<if test="startTime != null">      and TO_CHAR(res.start_time,'YYYY-MM-DD') = TO_CHAR(#{startTime},'YYYY-MM-DD')     </if>
+		<if test="endTime != null">      and TO_CHAR(res.end_time,'YYYY-MM-DD') = TO_CHAR(#{endTime},'YYYY-MM-DD')     </if>
+		<if test="onlineTime != null">      and TO_CHAR(res.online_time,'YYYY-MM-DD') = TO_CHAR(#{onlineTime},'YYYY-MM-DD')     </if>
+		<if test="pid != null and pid != ''">      and res.pid = #{pid}     </if>
+		<if test="adminUserid != null and adminUserid != ''">      and res.admin_userid = #{adminUserid}     </if>
+		<if test="adminUsername != null and adminUsername != ''">      and res.admin_username = #{adminUsername}     </if>
+		<if test="ctime != null">      and TO_CHAR(res.ctime,'YYYY-MM-DD') = TO_CHAR(#{ctime},'YYYY-MM-DD')     </if>
+		<if test="budgetCost != null and budgetCost != ''">      and res.budget_cost = #{budgetCost}     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
+		<if test="seqNo != null and seqNo != ''">      and res.seq_no = #{seqNo}     </if>
+		<if test="istatus != null and istatus != ''">      and res.istatus = #{istatus}     </if>
+		<if test="cuserid != null and cuserid != ''">      and res.cuserid = #{cuserid}     </if>
+		<if test="cusername != null and cusername != ''">      and res.cusername = #{cusername}     </if>
+		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		branch_id = #{branchId},
+		iteration_name = #{iterationName},
+		start_time = #{startTime},
+		end_time = #{endTime},
+		online_time = #{onlineTime},
+		pid = #{pid},
+		admin_userid = #{adminUserid},
+		admin_username = #{adminUsername},
+		ctime = #{ctime},
+		budget_cost = #{budgetCost},
+		budget_workload = #{budgetWorkload},
+		seq_no = #{seqNo},
+		istatus = #{istatus},
+		cuserid = #{cuserid},
+		cusername = #{cusername},
+		remark = #{remark}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="iterationName != null and iterationName != ''"> iteration_name = #{iterationName},     </if>
+		<if test="startTime != null"> start_time = #{startTime},     </if>
+		<if test="endTime != null"> end_time = #{endTime},     </if>
+		<if test="onlineTime != null"> online_time = #{onlineTime},     </if>
+		<if test="pid != null and pid != ''"> pid = #{pid},     </if>
+		<if test="adminUserid != null and adminUserid != ''"> admin_userid = #{adminUserid},     </if>
+		<if test="adminUsername != null and adminUsername != ''"> admin_username = #{adminUsername},     </if>
+		<if test="ctime != null"> ctime = #{ctime},     </if>
+		<if test="budgetCost != null and budgetCost != ''"> budget_cost = #{budgetCost},     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
+		<if test="seqNo != null and seqNo != ''"> seq_no = #{seqNo},     </if>
+		<if test="istatus != null and istatus != ''"> istatus = #{istatus},     </if>
+		<if test="cuserid != null and cuserid != ''"> cuserid = #{cuserid},     </if>
+		<if test="cusername != null and cusername != ''"> cusername = #{cusername},     </if>
+		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			branch_id = #{item.branchId},
+			iteration_name = #{item.iterationName},
+			start_time = #{item.startTime},
+			end_time = #{item.endTime},
+			online_time = #{item.onlineTime},
+			pid = #{item.pid},
+			admin_userid = #{item.adminUserid},
+			admin_username = #{item.adminUsername},
+			ctime = #{item.ctime},
+			budget_cost = #{item.budgetCost},
+			budget_workload = #{item.budgetWorkload},
+			seq_no = #{item.seqNo},
+			istatus = #{item.istatus},
+			cuserid = #{item.cuserid},
+			cusername = #{item.cusername},
+			remark = #{item.remark}
+	</sql>
+</mapper>

@@ -1,0 +1,236 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmMenu">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+	<select id="queryTaskUsersByMenuId" parameterType="HashMap" resultType="HashMap">
+		 select distinct te.userid,te.username,t.executor_userid, t.executor_username from xm_task_execuser te inner join xm_task t on t.id=te.task_id 
+		 where t.menu_id=#{menuId} and te.status !='8' and te.status !='7'
+	</select>		
+	<select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
+		select res.*,s.* from XM.xm_menu res left join XM.xm_menu_state s on res.menu_id=s.menu_id  
+		<where> 
+			<if test="ids != null">  and     
+				menu_id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+			<if test=" excludeIterationId !=null and excludeIterationId !='' "> and not exists ( select 1 from XM.xm_iteration_menu im where im.iteration_id=#{excludeIterationId} and im.menu_id=res.menu_id)</if>
+			
+		</where>
+	</select>	
+	<select id="selectListMapByWhereWithPlan" parameterType="HashMap" resultType="HashMap">
+		select res.*,plan.* from XM.xm_menu res left join XM.xm_menu_plan plan on res.menu_id=plan.menu_id and plan.project_id=#{projectId}
+		<where> 
+			<if test="ids != null">  and     
+				menu_id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+			<if test=" projectId !=null and projectId !='' "> and plan.project_id=#{projectId}</if>
+			<if test=" excludeIterationId !=null and excludeIterationId !='' "> and not exists ( select 1 from XM.xm_iteration_menu im where im.iteration_id=#{excludeIterationId} and im.menu_id=res.menu_id)</if>
+			
+		</where>
+	</select>
+		
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_menu res
+		<where> 
+			<if test="ids != null">  and     
+				menu_id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+			<if test=" excludeIterationId !=null and excludeIterationId !='' "> and not exists ( select 1 from XM.xm_iteration_menu im where im.iteration_id=#{excludeIterationId} and im.menu_id=res.menu_id)</if>
+			
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmMenu" resultType="com.qqkj.xm.core.entity.XmMenu">
+		select * from XM.xm_menu res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmMenu" resultType="com.qqkj.xm.core.entity.XmMenu">
+		select * from XM.xm_menu res
+		where 
+			res.menu_id = #{menuId}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_menu res
+		where 
+			 res.menu_id = #{menuId}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmMenu" resultType="long">
+		select count(1) from XM.xm_menu res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键menu_id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmMenu" useGeneratedKeys="false"   keyProperty="menu_id">
+		insert into XM.xm_menu(
+			<include refid="columns"/>
+		) values (
+		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmMenu">
+		delete from XM.xm_menu res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmMenu">
+		delete from XM.xm_menu 
+		where menu_id = #{menuId} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmMenu">
+		update  XM.xm_menu 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where menu_id = #{menuId} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmMenu">
+		update  XM.xm_menu 
+		<set>
+			<include refid="set"/>
+		</set>
+		where menu_id = #{menuId} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_menu 
+		set 
+			<include refid="batchSet"/>
+			where menu_id = #{item.menuId}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_menu 
+			where menu_id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.menuId }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="menuId != null and menuId != ''">      and res.menu_id = #{menuId}     </if>
+		<if test="menuName != null and menuName != ''">      and res.menu_name = #{menuName}     </if>
+		<if test="pmenuId != null and pmenuId != ''">      and res.pmenu_id = #{pmenuId}     </if>
+		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
+		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
+		<if test="status != null and status != ''">      and res.status = #{status}     </if>
+		<if test="online != null and online != ''">      and res.online = #{online}     </if>
+		<if test="demandUrl != null and demandUrl != ''">      and res.demand_url = #{demandUrl}     </if>
+		<if test="codeUrl != null and codeUrl != ''">      and res.code_url = #{codeUrl}     </if>
+		<if test="designUrl != null and designUrl != ''">      and res.design_url = #{designUrl}     </if>
+		<if test="docUrl != null and docUrl != ''">      and res.doc_url = #{docUrl}     </if>
+		<if test="helpUrl != null and helpUrl != ''">      and res.help_url = #{helpUrl}     </if>
+		<if test="operDocUrl != null and operDocUrl != ''">      and res.oper_doc_url = #{operDocUrl}     </if>
+		<if test="seqNo != null and seqNo != ''">      and res.seq_no = #{seqNo}     </if>
+		<if test="mmUserid != null and mmUserid != ''">      and res.mm_userid = #{mmUserid}     </if>
+		<if test="mmUsername != null and mmUsername != ''">      and res.mm_username = #{mmUsername}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		menu_name = #{menuName},
+		pmenu_id = #{pmenuId},
+		product_id = #{productId},
+		remark = #{remark},
+		status = #{status},
+		online = #{online},
+		demand_url = #{demandUrl},
+		code_url = #{codeUrl},
+		design_url = #{designUrl},
+		doc_url = #{docUrl},
+		help_url = #{helpUrl},
+		oper_doc_url = #{operDocUrl},
+		seq_no = #{seqNo},
+		mm_userid = #{mmUserid},
+		mm_username = #{mmUsername}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="menuName != null and menuName != ''"> menu_name = #{menuName},     </if>
+		<if test="pmenuId != null and pmenuId != ''"> pmenu_id = #{pmenuId},     </if>
+		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
+		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
+		<if test="status != null and status != ''"> status = #{status},     </if>
+		<if test="online != null and online != ''"> online = #{online},     </if>
+		<if test="demandUrl != null and demandUrl != ''"> demand_url = #{demandUrl},     </if>
+		<if test="codeUrl != null and codeUrl != ''"> code_url = #{codeUrl},     </if>
+		<if test="designUrl != null and designUrl != ''"> design_url = #{designUrl},     </if>
+		<if test="docUrl != null and docUrl != ''"> doc_url = #{docUrl},     </if>
+		<if test="helpUrl != null and helpUrl != ''"> help_url = #{helpUrl},     </if>
+		<if test="operDocUrl != null and operDocUrl != ''"> oper_doc_url = #{operDocUrl},     </if>
+		<if test="seqNo != null and seqNo != ''"> seq_no = #{seqNo},     </if>
+		<if test="mmUserid != null and mmUserid != ''"> mm_userid = #{mmUserid},     </if>
+		<if test="mmUsername != null and mmUsername != ''"> mm_username = #{mmUsername},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			menu_name = #{item.menuName},
+			pmenu_id = #{item.pmenuId},
+			product_id = #{item.productId},
+			remark = #{item.remark},
+			status = #{item.status},
+			online = #{item.online},
+			demand_url = #{item.demandUrl},
+			code_url = #{item.codeUrl},
+			design_url = #{item.designUrl},
+			doc_url = #{item.docUrl},
+			help_url = #{item.helpUrl},
+			oper_doc_url = #{item.operDocUrl},
+			seq_no = #{item.seqNo},
+			mm_userid = #{item.mmUserid},
+			mm_username = #{item.mmUsername}
+	</sql>
+</mapper>

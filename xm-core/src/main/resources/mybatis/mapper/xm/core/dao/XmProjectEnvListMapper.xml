@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmProjectEnvList">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+		
+
+		<!-- 插入流程审批表数据 -->
+	<insert id="insertProcessApprova"
+		parameterType="HashMap"
+		useGeneratedKeys="false" keyProperty="id">
+		insert into XM.xm_project_env_list_process_approva (
+		 id,env_id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
+		) values (
+			#{id},#{envId},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
+		)
+	</insert>
+	
+		<!-- 同时修改业务表及流程审批表数据状态 -->
+	<update id="updateProcessApprova"
+		parameterType="HashMap">
+		update XM.xm_project_env_list  b ,XM.xm_project_env_list_process_approva pa 
+			<set>
+				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
+				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
+				<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>  
+				<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if> 
+				<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
+				<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
+				 pa.flow_last_time = now(),
+				<if test=' eventName != null and eventName !="" '> pa.event_name = #{eventName},</if>
+				<if test=' flowState != null and flowState !="" '> pa.flow_state=#{flowState},</if>
+				<if test=' bizFlowState != null and bizFlowState !="" '> b.biz_flow_state=#{bizFlowState},</if>
+				<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
+			</set>
+		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
+		      and b.id=pa.env_id 
+	</update>	
+	
+	<update id="updateFlowStateByProcInstForDeleteSuccess"
+		parameterType="HashMap">
+		update XM.xm_project_env_list_process_approva pa set pa.flow_state='2'
+		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
+	</update>	
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByProcInstId" parameterType="HashMap">
+		delete from XM.xm_project_env_list 
+		 where biz_proc_inst_id=#{procInstId}
+	</delete>
+
+	<!--结束 自定义sql函数区域--> 
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from XM.xm_project_env_list res   left join  XM.xm_project_env_list_process_approva pa on res.id=pa.env_id and res.biz_proc_inst_id=pa.proc_inst_id 
+		
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if>
+			<if test="fuzzy != null and key != ''"> and
+				(ip_address like #{fuzzy} or
+				port like #{fuzzy} or
+				access_url like #{fuzzy} or
+				web_ip_address like #{fuzzy} or
+				web_port like #{fuzzy}) 
+				 </if>
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectEnvList" resultType="com.qqkj.xm.core.entity.XmProjectEnvList">
+		select * from XM.xm_project_env_list res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmProjectEnvList" resultType="com.qqkj.xm.core.entity.XmProjectEnvList">
+		select * from XM.xm_project_env_list res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project_env_list res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectEnvList" resultType="long">
+		select count(1) from XM.xm_project_env_list res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmProjectEnvList" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_project_env_list(
+			<include refid="columns"/>
+		) values (
+		#{id},#{remark},#{ipAddress},#{port},#{projectId},#{projectName},#{accessUserid},#{accessPassword},#{effect},#{accessUrl},#{webIpAddress},#{webPort},#{otherRemark},#{createUserid},#{createUsername},#{createTime},#{bizProcInstId},#{bizFlowState}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectEnvList">
+		delete from XM.xm_project_env_list res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmProjectEnvList">
+		delete from XM.xm_project_env_list 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmProjectEnvList">
+		update  XM.xm_project_env_list 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmProjectEnvList">
+		update  XM.xm_project_env_list 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_project_env_list 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_project_env_list 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,remark,ip_address,port,project_id,project_name,access_userid,access_password,effect,access_url,web_ip_address,web_port,other_remark,create_userid,create_username,create_time,biz_proc_inst_id,biz_flow_state
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
+		<if test="ipAddress != null and ipAddress != ''">      and res.ip_address = #{ipAddress}     </if>
+		<if test="port != null and port != ''">      and res.port = #{port}     </if>
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
+		<if test="projectName != null and projectName != ''">      and res.project_name = #{projectName}     </if>
+		<if test="accessUserid != null and accessUserid != ''">      and res.access_userid = #{accessUserid}     </if>
+		<if test="accessPassword != null and accessPassword != ''">      and res.access_password = #{accessPassword}     </if>
+		<if test="effect != null and effect != ''">      and res.effect = #{effect}     </if>
+		<if test="accessUrl != null and accessUrl != ''">      and res.access_url = #{accessUrl}     </if>
+		<if test="webIpAddress != null and webIpAddress != ''">      and res.web_ip_address = #{webIpAddress}     </if>
+		<if test="webPort != null and webPort != ''">      and res.web_port = #{webPort}     </if>
+		<if test="otherRemark != null and otherRemark != ''">      and res.other_remark = #{otherRemark}     </if>
+		<if test="createUserid != null and createUserid != ''">      and res.create_userid = #{createUserid}     </if>
+		<if test="createUsername != null and createUsername != ''">      and res.create_username = #{createUsername}     </if>
+		<if test="createTime != null">      and TO_CHAR(res.create_time,'YYYY-MM-DD') = TO_CHAR(#{createTime},'YYYY-MM-DD')     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
+		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		remark = #{remark},
+		ip_address = #{ipAddress},
+		port = #{port},
+		project_id = #{projectId},
+		project_name = #{projectName},
+		access_userid = #{accessUserid},
+		access_password = #{accessPassword},
+		effect = #{effect},
+		access_url = #{accessUrl},
+		web_ip_address = #{webIpAddress},
+		web_port = #{webPort},
+		other_remark = #{otherRemark},
+		create_userid = #{createUserid},
+		create_username = #{createUsername},
+		create_time = #{createTime},
+		biz_proc_inst_id = #{bizProcInstId},
+		biz_flow_state = #{bizFlowState}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
+		<if test="ipAddress != null and ipAddress != ''"> ip_address = #{ipAddress},     </if>
+		<if test="port != null and port != ''"> port = #{port},     </if>
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
+		<if test="projectName != null and projectName != ''"> project_name = #{projectName},     </if>
+		<if test="accessUserid != null and accessUserid != ''"> access_userid = #{accessUserid},     </if>
+		<if test="accessPassword != null and accessPassword != ''"> access_password = #{accessPassword},     </if>
+		<if test="effect != null and effect != ''"> effect = #{effect},     </if>
+		<if test="accessUrl != null and accessUrl != ''"> access_url = #{accessUrl},     </if>
+		<if test="webIpAddress != null and webIpAddress != ''"> web_ip_address = #{webIpAddress},     </if>
+		<if test="webPort != null and webPort != ''"> web_port = #{webPort},     </if>
+		<if test="otherRemark != null and otherRemark != ''"> other_remark = #{otherRemark},     </if>
+		<if test="createUserid != null and createUserid != ''"> create_userid = #{createUserid},     </if>
+		<if test="createUsername != null and createUsername != ''"> create_username = #{createUsername},     </if>
+		<if test="createTime != null"> create_time = #{createTime},     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
+		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			remark = #{item.remark},
+			ip_address = #{item.ipAddress},
+			port = #{item.port},
+			project_id = #{item.projectId},
+			project_name = #{item.projectName},
+			access_userid = #{item.accessUserid},
+			access_password = #{item.accessPassword},
+			effect = #{item.effect},
+			access_url = #{item.accessUrl},
+			web_ip_address = #{item.webIpAddress},
+			web_port = #{item.webPort},
+			other_remark = #{item.otherRemark},
+			create_userid = #{item.createUserid},
+			create_username = #{item.createUsername},
+			create_time = #{item.createTime},
+			biz_proc_inst_id = #{item.bizProcInstId},
+			biz_flow_state = #{item.bizFlowState}
+	</sql>
+</mapper>

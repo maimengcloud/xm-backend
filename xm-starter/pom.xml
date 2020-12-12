@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>xm-starter</artifactId> 
+  <packaging>jar</packaging>
+  <name>xm-starter</name>
+  <parent>
+    <groupId>com.qingqinkj.mdp</groupId>
+    <artifactId>mdp-boot-starter-parent</artifactId>
+    <version>M.1.0.0-RELEASE</version>
+  </parent> 
+  <dependencies>   
+		    <dependency>
+		      <groupId>com.qingqinkj.xm</groupId>
+		      <artifactId>xm</artifactId>
+		      <version>${mdp.version}</version>
+		    </dependency> 
+  </dependencies> 
+  <build>
+  	<plugins>
+  	  		<!-- -->
+  		<plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId> 
+          <executions>
+            <execution>
+              <goals>
+                <goal>repackage</goal>
+              </goals>
+              <configuration>
+                <mainClass>${start-class}</mainClass>
+              </configuration>
+            </execution>
+          </executions>
+          <configuration>
+            <mainClass>${start-class}</mainClass>
+          </configuration>
+    	</plugin> 
+  	</plugins>
+  </build>
+  <description>项目管理系统微服务启动器</description>
+</project>

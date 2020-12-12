@@ -1,0 +1,372 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmTaskExecuser">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+		
+
+		<!-- 插入流程审批表数据 -->
+	<insert id="insertProcessApprova"
+		parameterType="HashMap"
+		useGeneratedKeys="false" keyProperty="id">
+		insert into XM.xm_task_execuser_process_approva (
+		 id,execuser_id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
+		) values (
+			#{id},#{execuserId},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
+		)
+	</insert>
+	
+		<!-- 同时修改业务表及流程审批表数据状态 -->
+	<update id="updateProcessApprova"
+		parameterType="HashMap">
+		update XM.xm_task_execuser  b ,XM.xm_task_execuser_process_approva pa 
+			<set>
+				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
+				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
+				<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>  
+				<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if> 
+				<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
+				<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
+				 pa.flow_last_time = now(),
+				<if test=' eventName != null and eventName !="" '> pa.event_name = #{eventName},</if>
+				<if test=' flowState != null and flowState !="" '> pa.flow_state=#{flowState},</if>
+				<if test=' bizFlowState != null and bizFlowState !="" '> b.biz_flow_state=#{bizFlowState},</if>
+				<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
+				<if test=' settleStatus != null and settleStatus !="" '> b.settle_status=#{settleStatus},</if>
+				
+			</set>
+		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
+		      and b.id=pa.execuser_id 
+	</update>	
+	
+	<update id="updateFlowStateByProcInstForDeleteSuccess"
+		parameterType="HashMap">
+		update XM.xm_task_execuser_process_approva pa set pa.flow_state='2'
+		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
+	</update>	
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByProcInstId" parameterType="HashMap">
+		delete from XM.xm_task_execuser 
+		 where biz_proc_inst_id=#{procInstId}
+	</delete>
+	<update id="updateXmTaskExeUseridsAndUsernamesByTaskId"
+		parameterType="String">
+		UPDATE XM.xm_task t 
+			left join 
+			(
+				SELECT
+					task_id,
+					max(
+					CASE
+							
+							WHEN e.STATUS != '7' 
+							AND e.STATUS != '0' 
+							AND e.STATUS != '8' THEN
+								e.userid ELSE NULL 
+							END 
+							) AS executor_userid,
+							max(
+							CASE
+									
+									WHEN e.STATUS != '7' 
+									AND e.STATUS != '0' 
+									AND e.STATUS != '8' THEN
+										e.username ELSE NULL 
+									END 
+									) AS executor_username,
+									sum( case when e.status='3' or e.status='6' then e.settle_amount else 0 end ) as act_cost,
+									sum( case when e.status='3' or e.status='6' then e.settle_workload else 0 end ) as act_workload,
+									group_concat( concat( e.userid, '(', e.STATUS, ')' ) SEPARATOR ',' ) AS exe_userids,
+									group_concat(
+										concat(
+											e.username,
+										CASE
+												
+												WHEN e.STATUS = '0' THEN
+												'(候选)' 
+												WHEN e.STATUS = '1' THEN
+												'(执行中)' 
+												WHEN e.STATUS = '2' THEN
+												'(已提交)' 
+												WHEN e.STATUS = '3' THEN
+												'(已验收)' 
+												WHEN e.STATUS = '4' THEN
+												'(验收不过)' 
+												WHEN e.STATUS = '6' THEN
+												'(已付款)' 
+												WHEN e.STATUS = '7' THEN
+												'(放弃任务)' 
+												WHEN e.STATUS = '8' THEN
+												'(黑名单)' ELSE '(其它)' 
+											END 
+											) SEPARATOR ',' 
+										) AS exe_usernames 
+									FROM
+										XM.xm_task_execuser e 
+									WHERE
+										e.task_id = #{taskId} ) e1
+										on t.id=e1.task_id
+										SET t.exe_userids = e1.exe_userids,
+										t.exe_usernames = e1.exe_usernames,
+										t.executor_userid = e1.executor_userid,
+										t.executor_username = e1.executor_username,
+										t.act_cost=e1.act_cost,
+										t.act_workload=e1.act_workload
+								WHERE t.id = #{taskId} 
+	</update>	
+	<!--结束 自定义sql函数区域--> 
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from XM.xm_task_execuser res   left join  XM.xm_task_execuser_process_approva pa on res.id=pa.execuser_id and res.biz_proc_inst_id=pa.proc_inst_id 
+		
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">    </if>
+			<if test="fuzzy != null and fuzzy != ''"> and username like #{fuzzy} </if>
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser" resultType="com.qqkj.xm.core.entity.XmTaskExecuser">
+		select * from XM.xm_task_execuser res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser" resultType="com.qqkj.xm.core.entity.XmTaskExecuser">
+		select * from XM.xm_task_execuser res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_task_execuser res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser" resultType="long">
+		select count(1) from XM.xm_task_execuser res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_task_execuser(
+			<include refid="columns"/>
+		) values (
+		#{createTime},#{id},#{taskId},#{userid},#{startTime},#{endTime},#{status},#{remarks},#{settleAmount},#{settleWorkload},#{settleStatus},#{settleTime},#{createUserid},#{createUsername},#{username},#{matchScore},#{quoteWeekday},#{quoteAmount},#{quoteTime},#{bizProcInstId},#{bizFlowState},#{projectId},#{projectPhaseId},#{skillRemark},#{quoteWorkload},#{quoteStartTime},#{quoteEndTime},#{branchId},#{projectPhaseName},#{taskName},#{isLeader}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser">
+		delete from XM.xm_task_execuser res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser">
+		delete from XM.xm_task_execuser 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser">
+		update  XM.xm_task_execuser 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser">
+		update  XM.xm_task_execuser 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_task_execuser 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_task_execuser 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		create_time,id,task_id,userid,start_time,end_time,status,remarks,settle_amount,settle_workload,settle_status,settle_time,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,biz_proc_inst_id,biz_flow_state,project_id,project_phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,project_phase_name,task_name,is_leader
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="createTime != null">      and TO_CHAR(res.create_time,'YYYY-MM-DD') = TO_CHAR(#{createTime},'YYYY-MM-DD')     </if>
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="taskId != null and taskId != ''">      and res.task_id = #{taskId}     </if>
+		<if test="userid != null and userid != ''">      and res.userid = #{userid}     </if>
+		<if test="startTime != null">      and TO_CHAR(res.start_time,'YYYY-MM-DD') = TO_CHAR(#{startTime},'YYYY-MM-DD')     </if>
+		<if test="endTime != null">      and TO_CHAR(res.end_time,'YYYY-MM-DD') = TO_CHAR(#{endTime},'YYYY-MM-DD')     </if>
+		<if test="status != null and status != ''">      and res.status = #{status}     </if>
+		<if test="remarks != null and remarks != ''">      and res.remarks = #{remarks}     </if>
+		<if test="settleAmount != null and settleAmount != ''">      and res.settle_amount = #{settleAmount}     </if>
+		<if test="settleWorkload != null and settleWorkload != ''">      and res.settle_workload = #{settleWorkload}     </if>
+		<if test="settleStatus != null and settleStatus != ''">      and res.settle_status = #{settleStatus}     </if>
+		<if test="settleTime != null">      and TO_CHAR(res.settle_time,'YYYY-MM-DD') = TO_CHAR(#{settleTime},'YYYY-MM-DD')     </if>
+		<if test="createUserid != null and createUserid != ''">      and res.create_userid = #{createUserid}     </if>
+		<if test="createUsername != null and createUsername != ''">      and res.create_username = #{createUsername}     </if>
+		<if test="username != null and username != ''">      and res.username = #{username}     </if>
+		<if test="matchScore != null and matchScore != ''">      and res.match_score = #{matchScore}     </if>
+		<if test="quoteWeekday != null and quoteWeekday != ''">      and res.quote_weekday = #{quoteWeekday}     </if>
+		<if test="quoteAmount != null and quoteAmount != ''">      and res.quote_amount = #{quoteAmount}     </if>
+		<if test="quoteTime != null">      and TO_CHAR(res.quote_time,'YYYY-MM-DD') = TO_CHAR(#{quoteTime},'YYYY-MM-DD')     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
+		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
+		<if test="projectPhaseId != null and projectPhaseId != ''">      and res.project_phase_id = #{projectPhaseId}     </if>
+		<if test="skillRemark != null and skillRemark != ''">      and res.skill_remark = #{skillRemark}     </if>
+		<if test="quoteWorkload != null and quoteWorkload != ''">      and res.quote_workload = #{quoteWorkload}     </if>
+		<if test="quoteStartTime != null">      and TO_CHAR(res.quote_start_time,'YYYY-MM-DD') = TO_CHAR(#{quoteStartTime},'YYYY-MM-DD')     </if>
+		<if test="quoteEndTime != null">      and TO_CHAR(res.quote_end_time,'YYYY-MM-DD') = TO_CHAR(#{quoteEndTime},'YYYY-MM-DD')     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="projectPhaseName != null and projectPhaseName != ''">      and res.project_phase_name = #{projectPhaseName}     </if>
+		<if test="taskName != null and taskName != ''">      and res.task_name = #{taskName}     </if>
+		<if test="isLeader != null and isLeader != ''">      and res.is_leader = #{isLeader}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		create_time = #{createTime},
+		task_id = #{taskId},
+		userid = #{userid},
+		start_time = #{startTime},
+		end_time = #{endTime},
+		status = #{status},
+		remarks = #{remarks},
+		settle_amount = #{settleAmount},
+		settle_workload = #{settleWorkload},
+		settle_status = #{settleStatus},
+		settle_time = #{settleTime},
+		create_userid = #{createUserid},
+		create_username = #{createUsername},
+		username = #{username},
+		match_score = #{matchScore},
+		quote_weekday = #{quoteWeekday},
+		quote_amount = #{quoteAmount},
+		quote_time = #{quoteTime},
+		biz_proc_inst_id = #{bizProcInstId},
+		biz_flow_state = #{bizFlowState},
+		project_id = #{projectId},
+		project_phase_id = #{projectPhaseId},
+		skill_remark = #{skillRemark},
+		quote_workload = #{quoteWorkload},
+		quote_start_time = #{quoteStartTime},
+		quote_end_time = #{quoteEndTime},
+		branch_id = #{branchId},
+		project_phase_name = #{projectPhaseName},
+		task_name = #{taskName},
+		is_leader = #{isLeader}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="createTime != null"> create_time = #{createTime},     </if>
+		<if test="taskId != null and taskId != ''"> task_id = #{taskId},     </if>
+		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
+		<if test="startTime != null"> start_time = #{startTime},     </if>
+		<if test="endTime != null"> end_time = #{endTime},     </if>
+		<if test="status != null and status != ''"> status = #{status},     </if>
+		<if test="remarks != null and remarks != ''"> remarks = #{remarks},     </if>
+		<if test="settleAmount != null and settleAmount != ''"> settle_amount = #{settleAmount},     </if>
+		<if test="settleWorkload != null and settleWorkload != ''"> settle_workload = #{settleWorkload},     </if>
+		<if test="settleStatus != null and settleStatus != ''"> settle_status = #{settleStatus},     </if>
+		<if test="settleTime != null"> settle_time = #{settleTime},     </if>
+		<if test="createUserid != null and createUserid != ''"> create_userid = #{createUserid},     </if>
+		<if test="createUsername != null and createUsername != ''"> create_username = #{createUsername},     </if>
+		<if test="username != null and username != ''"> username = #{username},     </if>
+		<if test="matchScore != null and matchScore != ''"> match_score = #{matchScore},     </if>
+		<if test="quoteWeekday != null and quoteWeekday != ''"> quote_weekday = #{quoteWeekday},     </if>
+		<if test="quoteAmount != null and quoteAmount != ''"> quote_amount = #{quoteAmount},     </if>
+		<if test="quoteTime != null"> quote_time = #{quoteTime},     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
+		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
+		<if test="projectPhaseId != null and projectPhaseId != ''"> project_phase_id = #{projectPhaseId},     </if>
+		<if test="skillRemark != null and skillRemark != ''"> skill_remark = #{skillRemark},     </if>
+		<if test="quoteWorkload != null and quoteWorkload != ''"> quote_workload = #{quoteWorkload},     </if>
+		<if test="quoteStartTime != null"> quote_start_time = #{quoteStartTime},     </if>
+		<if test="quoteEndTime != null"> quote_end_time = #{quoteEndTime},     </if>
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="projectPhaseName != null and projectPhaseName != ''"> project_phase_name = #{projectPhaseName},     </if>
+		<if test="taskName != null and taskName != ''"> task_name = #{taskName},     </if>
+		<if test="isLeader != null and isLeader != ''"> is_leader = #{isLeader},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			create_time = #{item.createTime},
+			task_id = #{item.taskId},
+			userid = #{item.userid},
+			start_time = #{item.startTime},
+			end_time = #{item.endTime},
+			status = #{item.status},
+			remarks = #{item.remarks},
+			settle_amount = #{item.settleAmount},
+			settle_workload = #{item.settleWorkload},
+			settle_status = #{item.settleStatus},
+			settle_time = #{item.settleTime},
+			create_userid = #{item.createUserid},
+			create_username = #{item.createUsername},
+			username = #{item.username},
+			match_score = #{item.matchScore},
+			quote_weekday = #{item.quoteWeekday},
+			quote_amount = #{item.quoteAmount},
+			quote_time = #{item.quoteTime},
+			biz_proc_inst_id = #{item.bizProcInstId},
+			biz_flow_state = #{item.bizFlowState},
+			project_id = #{item.projectId},
+			project_phase_id = #{item.projectPhaseId},
+			skill_remark = #{item.skillRemark},
+			quote_workload = #{item.quoteWorkload},
+			quote_start_time = #{item.quoteStartTime},
+			quote_end_time = #{item.quoteEndTime},
+			branch_id = #{item.branchId},
+			project_phase_name = #{item.projectPhaseName},
+			task_name = #{item.taskName},
+			is_leader = #{item.isLeader}
+	</sql>
+</mapper>

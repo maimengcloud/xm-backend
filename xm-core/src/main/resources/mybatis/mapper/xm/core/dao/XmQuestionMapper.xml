@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmQuestion">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+		
+
+		<!-- 插入流程审批表数据 -->
+	<insert id="insertProcessApprova"
+		parameterType="HashMap"
+		useGeneratedKeys="false" keyProperty="id">
+		insert into XM.xm_question_process_approva (
+		 id,question_id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
+		) values (
+			#{id},#{questionId},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
+		)
+	</insert>
+	
+		<!-- 同时修改业务表及流程审批表数据状态 -->
+	<update id="updateProcessApprova"
+		parameterType="HashMap">
+		update XM.xm_question  b ,XM.xm_question_process_approva pa 
+			<set>
+				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
+				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
+				<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>  
+				<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if> 
+				<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
+				<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
+				 pa.flow_last_time = now(),
+				<if test=' eventName != null and eventName !="" '> pa.event_name = #{eventName},</if>
+				<if test=' flowState != null and flowState !="" '> pa.flow_state=#{flowState},</if>
+				<if test=' bizFlowState != null and bizFlowState !="" '> b.biz_flow_state=#{bizFlowState},</if>
+				<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
+			</set>
+		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
+		      and b.id=pa.question_id 
+	</update>	
+	
+	<update id="updateFlowStateByProcInstForDeleteSuccess"
+		parameterType="HashMap">
+		update XM.xm_question_process_approva pa set pa.flow_state='2'
+		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
+	</update>	
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByProcInstId" parameterType="HashMap">
+		delete from XM.xm_question 
+		 where biz_proc_inst_id=#{procInstId}
+	</delete>
+
+	<!--结束 自定义sql函数区域--> 
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from XM.xm_question res   left join  XM.xm_question_process_approva pa on res.id=pa.question_id and res.biz_proc_inst_id=pa.proc_inst_id 
+		
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if>
+			<if test="work != null and work != ''"> and res.status != '已解决' </if>
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmQuestion" resultType="com.qqkj.xm.core.entity.XmQuestion">
+		select * from XM.xm_question res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmQuestion" resultType="com.qqkj.xm.core.entity.XmQuestion">
+		select * from XM.xm_question res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_question res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmQuestion" resultType="long">
+		select count(1) from XM.xm_question res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmQuestion" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_question(
+			<include refid="columns"/>
+		) values (
+		#{id},#{name},#{projectId},#{projectName},#{caseId},#{caseName},#{endTime},#{askUserid},#{askUsername},#{handlerUserid},#{handlerUsername},#{priority},#{solution},#{description},#{createUserid},#{createUsername},#{createTime},#{bugStatus},#{bizProcInstId},#{bizFlowState},#{menuId},#{menuName},#{planWorkload},#{planCostAmount},#{totalActWorkload},#{totalActCostAmount},#{expectResult},#{opStep},#{currResult},#{refRequire},#{bugSeverity},#{bugType},#{tagIds},#{tagNames},#{urls},#{ltime},#{qtype},#{taskId},#{taskName},#{iterationId},#{iterationName},#{caseExecId}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmQuestion">
+		delete from XM.xm_question res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmQuestion">
+		delete from XM.xm_question 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmQuestion">
+		update  XM.xm_question 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmQuestion">
+		update  XM.xm_question 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_question 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_question 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,plan_workload,plan_cost_amount,total_act_workload,total_act_cost_amount,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,task_id,task_name,iteration_id,iteration_name,case_exec_id
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="name != null and name != ''">      and res.name = #{name}     </if>
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
+		<if test="projectName != null and projectName != ''">      and res.project_name = #{projectName}     </if>
+		<if test="caseId != null and caseId != ''">      and res.case_id = #{caseId}     </if>
+		<if test="caseName != null and caseName != ''">      and res.case_name = #{caseName}     </if>
+		<if test="endTime != null">      and TO_CHAR(res.end_time,'YYYY-MM-DD') = TO_CHAR(#{endTime},'YYYY-MM-DD')     </if>
+		<if test="askUserid != null and askUserid != ''">      and res.ask_userid = #{askUserid}     </if>
+		<if test="askUsername != null and askUsername != ''">      and res.ask_username = #{askUsername}     </if>
+		<if test="handlerUserid != null and handlerUserid != ''">      and res.handler_userid = #{handlerUserid}     </if>
+		<if test="handlerUsername != null and handlerUsername != ''">      and res.handler_username = #{handlerUsername}     </if>
+		<if test="priority != null and priority != ''">      and res.priority = #{priority}     </if>
+		<if test="solution != null and solution != ''">      and res.solution = #{solution}     </if>
+		<if test="description != null and description != ''">      and res.description = #{description}     </if>
+		<if test="createUserid != null and createUserid != ''">      and res.create_userid = #{createUserid}     </if>
+		<if test="createUsername != null and createUsername != ''">      and res.create_username = #{createUsername}     </if>
+		<if test="createTime != null">      and TO_CHAR(res.create_time,'YYYY-MM-DD') = TO_CHAR(#{createTime},'YYYY-MM-DD')     </if>
+		<if test="bugStatus != null and bugStatus != ''">      and res.bug_status = #{bugStatus}     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
+		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
+		<if test="menuId != null and menuId != ''">      and res.menu_id = #{menuId}     </if>
+		<if test="menuName != null and menuName != ''">      and res.menu_name = #{menuName}     </if>
+		<if test="planWorkload != null and planWorkload != ''">      and res.plan_workload = #{planWorkload}     </if>
+		<if test="planCostAmount != null and planCostAmount != ''">      and res.plan_cost_amount = #{planCostAmount}     </if>
+		<if test="totalActWorkload != null and totalActWorkload != ''">      and res.total_act_workload = #{totalActWorkload}     </if>
+		<if test="totalActCostAmount != null and totalActCostAmount != ''">      and res.total_act_cost_amount = #{totalActCostAmount}     </if>
+		<if test="expectResult != null and expectResult != ''">      and res.expect_result = #{expectResult}     </if>
+		<if test="opStep != null and opStep != ''">      and res.op_step = #{opStep}     </if>
+		<if test="currResult != null and currResult != ''">      and res.curr_result = #{currResult}     </if>
+		<if test="refRequire != null and refRequire != ''">      and res.ref_require = #{refRequire}     </if>
+		<if test="bugSeverity != null and bugSeverity != ''">      and res.bug_severity = #{bugSeverity}     </if>
+		<if test="bugType != null and bugType != ''">      and res.bug_type = #{bugType}     </if>
+		<if test="tagIds != null and tagIds != ''">      and res.tag_ids = #{tagIds}     </if>
+		<if test="tagNames != null and tagNames != ''">      and res.tag_names = #{tagNames}     </if>
+		<if test="urls != null and urls != ''">      and res.urls = #{urls}     </if>
+		<if test="ltime != null">      and TO_CHAR(res.ltime,'YYYY-MM-DD') = TO_CHAR(#{ltime},'YYYY-MM-DD')     </if>
+		<if test="qtype != null and qtype != ''">      and res.qtype = #{qtype}     </if>
+		<if test="taskId != null and taskId != ''">      and res.task_id = #{taskId}     </if>
+		<if test="taskName != null and taskName != ''">      and res.task_name = #{taskName}     </if>
+		<if test="iterationId != null and iterationId != ''">      and res.iteration_id = #{iterationId}     </if>
+		<if test="iterationName != null and iterationName != ''">      and res.iteration_name = #{iterationName}     </if>
+		<if test="caseExecId != null and caseExecId != ''">      and res.case_exec_id = #{caseExecId}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		name = #{name},
+		project_id = #{projectId},
+		project_name = #{projectName},
+		case_id = #{caseId},
+		case_name = #{caseName},
+		end_time = #{endTime},
+		ask_userid = #{askUserid},
+		ask_username = #{askUsername},
+		handler_userid = #{handlerUserid},
+		handler_username = #{handlerUsername},
+		priority = #{priority},
+		solution = #{solution},
+		description = #{description},
+		create_userid = #{createUserid},
+		create_username = #{createUsername},
+		create_time = #{createTime},
+		bug_status = #{bugStatus},
+		biz_proc_inst_id = #{bizProcInstId},
+		biz_flow_state = #{bizFlowState},
+		menu_id = #{menuId},
+		menu_name = #{menuName},
+		plan_workload = #{planWorkload},
+		plan_cost_amount = #{planCostAmount},
+		total_act_workload = #{totalActWorkload},
+		total_act_cost_amount = #{totalActCostAmount},
+		expect_result = #{expectResult},
+		op_step = #{opStep},
+		curr_result = #{currResult},
+		ref_require = #{refRequire},
+		bug_severity = #{bugSeverity},
+		bug_type = #{bugType},
+		tag_ids = #{tagIds},
+		tag_names = #{tagNames},
+		urls = #{urls},
+		ltime = #{ltime},
+		qtype = #{qtype},
+		task_id = #{taskId},
+		task_name = #{taskName},
+		iteration_id = #{iterationId},
+		iteration_name = #{iterationName},
+		case_exec_id = #{caseExecId}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="name != null and name != ''"> name = #{name},     </if>
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
+		<if test="projectName != null and projectName != ''"> project_name = #{projectName},     </if>
+		<if test="caseId != null and caseId != ''"> case_id = #{caseId},     </if>
+		<if test="caseName != null and caseName != ''"> case_name = #{caseName},     </if>
+		<if test="endTime != null"> end_time = #{endTime},     </if>
+		<if test="askUserid != null and askUserid != ''"> ask_userid = #{askUserid},     </if>
+		<if test="askUsername != null and askUsername != ''"> ask_username = #{askUsername},     </if>
+		<if test="handlerUserid != null and handlerUserid != ''"> handler_userid = #{handlerUserid},     </if>
+		<if test="handlerUsername != null and handlerUsername != ''"> handler_username = #{handlerUsername},     </if>
+		<if test="priority != null and priority != ''"> priority = #{priority},     </if>
+		<if test="solution != null and solution != ''"> solution = #{solution},     </if>
+		<if test="description != null and description != ''"> description = #{description},     </if>
+		<if test="createUserid != null and createUserid != ''"> create_userid = #{createUserid},     </if>
+		<if test="createUsername != null and createUsername != ''"> create_username = #{createUsername},     </if>
+		<if test="createTime != null"> create_time = #{createTime},     </if>
+		<if test="bugStatus != null and bugStatus != ''"> bug_status = #{bugStatus},     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
+		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
+		<if test="menuId != null and menuId != ''"> menu_id = #{menuId},     </if>
+		<if test="menuName != null and menuName != ''"> menu_name = #{menuName},     </if>
+		<if test="planWorkload != null and planWorkload != ''"> plan_workload = #{planWorkload},     </if>
+		<if test="planCostAmount != null and planCostAmount != ''"> plan_cost_amount = #{planCostAmount},     </if>
+		<if test="totalActWorkload != null and totalActWorkload != ''"> total_act_workload = #{totalActWorkload},     </if>
+		<if test="totalActCostAmount != null and totalActCostAmount != ''"> total_act_cost_amount = #{totalActCostAmount},     </if>
+		<if test="expectResult != null and expectResult != ''"> expect_result = #{expectResult},     </if>
+		<if test="opStep != null and opStep != ''"> op_step = #{opStep},     </if>
+		<if test="currResult != null and currResult != ''"> curr_result = #{currResult},     </if>
+		<if test="refRequire != null and refRequire != ''"> ref_require = #{refRequire},     </if>
+		<if test="bugSeverity != null and bugSeverity != ''"> bug_severity = #{bugSeverity},     </if>
+		<if test="bugType != null and bugType != ''"> bug_type = #{bugType},     </if>
+		<if test="tagIds != null and tagIds != ''"> tag_ids = #{tagIds},     </if>
+		<if test="tagNames != null and tagNames != ''"> tag_names = #{tagNames},     </if>
+		<if test="urls != null and urls != ''"> urls = #{urls},     </if>
+		<if test="ltime != null"> ltime = #{ltime},     </if>
+		<if test="qtype != null and qtype != ''"> qtype = #{qtype},     </if>
+		<if test="taskId != null and taskId != ''"> task_id = #{taskId},     </if>
+		<if test="taskName != null and taskName != ''"> task_name = #{taskName},     </if>
+		<if test="iterationId != null and iterationId != ''"> iteration_id = #{iterationId},     </if>
+		<if test="iterationName != null and iterationName != ''"> iteration_name = #{iterationName},     </if>
+		<if test="caseExecId != null and caseExecId != ''"> case_exec_id = #{caseExecId},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			name = #{item.name},
+			project_id = #{item.projectId},
+			project_name = #{item.projectName},
+			case_id = #{item.caseId},
+			case_name = #{item.caseName},
+			end_time = #{item.endTime},
+			ask_userid = #{item.askUserid},
+			ask_username = #{item.askUsername},
+			handler_userid = #{item.handlerUserid},
+			handler_username = #{item.handlerUsername},
+			priority = #{item.priority},
+			solution = #{item.solution},
+			description = #{item.description},
+			create_userid = #{item.createUserid},
+			create_username = #{item.createUsername},
+			create_time = #{item.createTime},
+			bug_status = #{item.bugStatus},
+			biz_proc_inst_id = #{item.bizProcInstId},
+			biz_flow_state = #{item.bizFlowState},
+			menu_id = #{item.menuId},
+			menu_name = #{item.menuName},
+			plan_workload = #{item.planWorkload},
+			plan_cost_amount = #{item.planCostAmount},
+			total_act_workload = #{item.totalActWorkload},
+			total_act_cost_amount = #{item.totalActCostAmount},
+			expect_result = #{item.expectResult},
+			op_step = #{item.opStep},
+			curr_result = #{item.currResult},
+			ref_require = #{item.refRequire},
+			bug_severity = #{item.bugSeverity},
+			bug_type = #{item.bugType},
+			tag_ids = #{item.tagIds},
+			tag_names = #{item.tagNames},
+			urls = #{item.urls},
+			ltime = #{item.ltime},
+			qtype = #{item.qtype},
+			task_id = #{item.taskId},
+			task_name = #{item.taskName},
+			iteration_id = #{item.iterationId},
+			iteration_name = #{item.iterationName},
+			case_exec_id = #{item.caseExecId}
+	</sql>
+</mapper>

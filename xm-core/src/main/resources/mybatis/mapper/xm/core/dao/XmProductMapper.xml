@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmProduct">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+	<select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
+		select res.*,s.* from XM.xm_product res left join XM.xm_product_state s on res.id=s.product_id
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+			<if test="projectId != null and projectId !='' ">  and exists (select 1 from XM.xm_task t left join XM.xm_menu m on t.menu_id=m.menu_id and t.project_id=#{projectId} where t.project_id=#{projectId} and m.product_id=res.id)     </if> 
+			
+		</where>
+	</select>
+		
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_product res
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+			<if test="projectId != null and projectId !='' ">  and exists (select 1 from XM.xm_task t left join XM.xm_menu m on t.menu_id=m.menu_id and t.project_id=#{projectId} where t.project_id=#{projectId} and m.product_id=res.id)     </if> 
+			
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmProduct" resultType="com.qqkj.xm.core.entity.XmProduct">
+		select * from XM.xm_product res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmProduct" resultType="com.qqkj.xm.core.entity.XmProduct">
+		select * from XM.xm_product res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_product res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmProduct" resultType="long">
+		select count(1) from XM.xm_product res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmProduct" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_product(
+			<include refid="columns"/>
+		) values (
+		#{id},#{productName},#{branchId},#{remark},#{version},#{pmUserid},#{pmUsername},#{ctime}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmProduct">
+		delete from XM.xm_product res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmProduct">
+		delete from XM.xm_product 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmProduct">
+		update  XM.xm_product 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmProduct">
+		update  XM.xm_product 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_product 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_product 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="productName != null and productName != ''">      and res.product_name = #{productName}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
+		<if test="version != null and version != ''">      and res.version = #{version}     </if>
+		<if test="pmUserid != null and pmUserid != ''">      and res.pm_userid = #{pmUserid}     </if>
+		<if test="pmUsername != null and pmUsername != ''">      and res.pm_username = #{pmUsername}     </if>
+		<if test="ctime != null">      and TO_CHAR(res.ctime,'YYYY-MM-DD') = TO_CHAR(#{ctime},'YYYY-MM-DD')     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		product_name = #{productName},
+		branch_id = #{branchId},
+		remark = #{remark},
+		version = #{version},
+		pm_userid = #{pmUserid},
+		pm_username = #{pmUsername},
+		ctime = #{ctime}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
+		<if test="version != null and version != ''"> version = #{version},     </if>
+		<if test="pmUserid != null and pmUserid != ''"> pm_userid = #{pmUserid},     </if>
+		<if test="pmUsername != null and pmUsername != ''"> pm_username = #{pmUsername},     </if>
+		<if test="ctime != null"> ctime = #{ctime},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			product_name = #{item.productName},
+			branch_id = #{item.branchId},
+			remark = #{item.remark},
+			version = #{item.version},
+			pm_userid = #{item.pmUserid},
+			pm_username = #{item.pmUsername},
+			ctime = #{item.ctime}
+	</sql>
+</mapper>

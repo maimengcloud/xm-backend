@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmBranchTaskTypeState">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+	<update id="loadProjectTaskTypeStateToXmBranchTaskTypeState" parameterType="String" statementType="CALLABLE">
+		 {call load_project_task_type_state_to_xm_branch_task_type_state(#{branchId,mode=IN})} 
+	</update>
+		
+		
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_branch_task_type_state res
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmBranchTaskTypeState" resultType="com.qqkj.xm.core.entity.XmBranchTaskTypeState">
+		select * from XM.xm_branch_task_type_state res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmBranchTaskTypeState" resultType="com.qqkj.xm.core.entity.XmBranchTaskTypeState">
+		select * from XM.xm_branch_task_type_state res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_branch_task_type_state res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmBranchTaskTypeState" resultType="long">
+		select count(1) from XM.xm_branch_task_type_state res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmBranchTaskTypeState" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_branch_task_type_state(
+			<include refid="columns"/>
+		) values (
+		#{taskType},#{planWorkload},#{planAmount},#{actWorkload},#{actAmount},#{branchId},#{bizDate},#{calcTime},#{planOutUserAt},#{planInnerUserAt},#{actOutUserAt},#{actInnerUserAt},#{planOutUserWorkload},#{planInnerUserWorkload},#{actOutUserWorkload},#{actInnerUserWorkload},#{planNouserAt},#{actNouserAt},#{id},#{branchName}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmBranchTaskTypeState">
+		delete from XM.xm_branch_task_type_state res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmBranchTaskTypeState">
+		delete from XM.xm_branch_task_type_state 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmBranchTaskTypeState">
+		update  XM.xm_branch_task_type_state 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmBranchTaskTypeState">
+		update  XM.xm_branch_task_type_state 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_branch_task_type_state 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_branch_task_type_state 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		task_type,plan_workload,plan_amount,act_workload,act_amount,branch_id,biz_date,calc_time,plan_out_user_at,plan_inner_user_at,act_out_user_at,act_inner_user_at,plan_out_user_workload,plan_inner_user_workload,act_out_user_workload,act_inner_user_workload,plan_nouser_at,act_nouser_at,id,branch_name
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="taskType != null and taskType != ''">      and res.task_type = #{taskType}     </if>
+		<if test="planWorkload != null and planWorkload != ''">      and res.plan_workload = #{planWorkload}     </if>
+		<if test="planAmount != null and planAmount != ''">      and res.plan_amount = #{planAmount}     </if>
+		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
+		<if test="actAmount != null and actAmount != ''">      and res.act_amount = #{actAmount}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="bizDate != null and bizDate != ''">      and res.biz_date = #{bizDate}     </if>
+		<if test="calcTime != null">      and TO_CHAR(res.calc_time,'YYYY-MM-DD') = TO_CHAR(#{calcTime},'YYYY-MM-DD')     </if>
+		<if test="planOutUserAt != null and planOutUserAt != ''">      and res.plan_out_user_at = #{planOutUserAt}     </if>
+		<if test="planInnerUserAt != null and planInnerUserAt != ''">      and res.plan_inner_user_at = #{planInnerUserAt}     </if>
+		<if test="actOutUserAt != null and actOutUserAt != ''">      and res.act_out_user_at = #{actOutUserAt}     </if>
+		<if test="actInnerUserAt != null and actInnerUserAt != ''">      and res.act_inner_user_at = #{actInnerUserAt}     </if>
+		<if test="planOutUserWorkload != null and planOutUserWorkload != ''">      and res.plan_out_user_workload = #{planOutUserWorkload}     </if>
+		<if test="planInnerUserWorkload != null and planInnerUserWorkload != ''">      and res.plan_inner_user_workload = #{planInnerUserWorkload}     </if>
+		<if test="actOutUserWorkload != null and actOutUserWorkload != ''">      and res.act_out_user_workload = #{actOutUserWorkload}     </if>
+		<if test="actInnerUserWorkload != null and actInnerUserWorkload != ''">      and res.act_inner_user_workload = #{actInnerUserWorkload}     </if>
+		<if test="planNouserAt != null and planNouserAt != ''">      and res.plan_nouser_at = #{planNouserAt}     </if>
+		<if test="actNouserAt != null and actNouserAt != ''">      and res.act_nouser_at = #{actNouserAt}     </if>
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="branchName != null and branchName != ''">      and res.branch_name = #{branchName}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		task_type = #{taskType},
+		plan_workload = #{planWorkload},
+		plan_amount = #{planAmount},
+		act_workload = #{actWorkload},
+		act_amount = #{actAmount},
+		branch_id = #{branchId},
+		biz_date = #{bizDate},
+		calc_time = #{calcTime},
+		plan_out_user_at = #{planOutUserAt},
+		plan_inner_user_at = #{planInnerUserAt},
+		act_out_user_at = #{actOutUserAt},
+		act_inner_user_at = #{actInnerUserAt},
+		plan_out_user_workload = #{planOutUserWorkload},
+		plan_inner_user_workload = #{planInnerUserWorkload},
+		act_out_user_workload = #{actOutUserWorkload},
+		act_inner_user_workload = #{actInnerUserWorkload},
+		plan_nouser_at = #{planNouserAt},
+		act_nouser_at = #{actNouserAt},
+		branch_name = #{branchName}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="taskType != null and taskType != ''"> task_type = #{taskType},     </if>
+		<if test="planWorkload != null and planWorkload != ''"> plan_workload = #{planWorkload},     </if>
+		<if test="planAmount != null and planAmount != ''"> plan_amount = #{planAmount},     </if>
+		<if test="actWorkload != null and actWorkload != ''"> act_workload = #{actWorkload},     </if>
+		<if test="actAmount != null and actAmount != ''"> act_amount = #{actAmount},     </if>
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="bizDate != null and bizDate != ''"> biz_date = #{bizDate},     </if>
+		<if test="calcTime != null"> calc_time = #{calcTime},     </if>
+		<if test="planOutUserAt != null and planOutUserAt != ''"> plan_out_user_at = #{planOutUserAt},     </if>
+		<if test="planInnerUserAt != null and planInnerUserAt != ''"> plan_inner_user_at = #{planInnerUserAt},     </if>
+		<if test="actOutUserAt != null and actOutUserAt != ''"> act_out_user_at = #{actOutUserAt},     </if>
+		<if test="actInnerUserAt != null and actInnerUserAt != ''"> act_inner_user_at = #{actInnerUserAt},     </if>
+		<if test="planOutUserWorkload != null and planOutUserWorkload != ''"> plan_out_user_workload = #{planOutUserWorkload},     </if>
+		<if test="planInnerUserWorkload != null and planInnerUserWorkload != ''"> plan_inner_user_workload = #{planInnerUserWorkload},     </if>
+		<if test="actOutUserWorkload != null and actOutUserWorkload != ''"> act_out_user_workload = #{actOutUserWorkload},     </if>
+		<if test="actInnerUserWorkload != null and actInnerUserWorkload != ''"> act_inner_user_workload = #{actInnerUserWorkload},     </if>
+		<if test="planNouserAt != null and planNouserAt != ''"> plan_nouser_at = #{planNouserAt},     </if>
+		<if test="actNouserAt != null and actNouserAt != ''"> act_nouser_at = #{actNouserAt},     </if>
+		<if test="branchName != null and branchName != ''"> branch_name = #{branchName},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			task_type = #{item.taskType},
+			plan_workload = #{item.planWorkload},
+			plan_amount = #{item.planAmount},
+			act_workload = #{item.actWorkload},
+			act_amount = #{item.actAmount},
+			branch_id = #{item.branchId},
+			biz_date = #{item.bizDate},
+			calc_time = #{item.calcTime},
+			plan_out_user_at = #{item.planOutUserAt},
+			plan_inner_user_at = #{item.planInnerUserAt},
+			act_out_user_at = #{item.actOutUserAt},
+			act_inner_user_at = #{item.actInnerUserAt},
+			plan_out_user_workload = #{item.planOutUserWorkload},
+			plan_inner_user_workload = #{item.planInnerUserWorkload},
+			act_out_user_workload = #{item.actOutUserWorkload},
+			act_inner_user_workload = #{item.actInnerUserWorkload},
+			plan_nouser_at = #{item.planNouserAt},
+			act_nouser_at = #{item.actNouserAt},
+			branch_name = #{item.branchName}
+	</sql>
+</mapper>

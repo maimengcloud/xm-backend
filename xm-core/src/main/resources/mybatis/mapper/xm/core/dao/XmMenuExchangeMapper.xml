@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmMenuExchange">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+		
+		
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_menu_exchange res
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmMenuExchange" resultType="com.qqkj.xm.core.entity.XmMenuExchange">
+		select * from XM.xm_menu_exchange res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmMenuExchange" resultType="com.qqkj.xm.core.entity.XmMenuExchange">
+		select * from XM.xm_menu_exchange res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_menu_exchange res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmMenuExchange" resultType="long">
+		select count(1) from XM.xm_menu_exchange res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmMenuExchange" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_menu_exchange(
+			<include refid="columns"/>
+		) values (
+		#{menuId},#{menuName},#{productId},#{remark},#{id},#{pid},#{cuserid},#{cusername},#{ctime},#{cbranchId},#{adopt},#{adoptUserid},#{adoptUsername},#{adoptTime},#{closed},#{puserid},#{pusername},#{premark},#{notifyUserids},#{notifyChannels},#{notifyUsernames},#{cuserHeadImg},#{replyType}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmMenuExchange">
+		delete from XM.xm_menu_exchange res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmMenuExchange">
+		delete from XM.xm_menu_exchange 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmMenuExchange">
+		update  XM.xm_menu_exchange 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmMenuExchange">
+		update  XM.xm_menu_exchange 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_menu_exchange 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_menu_exchange 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		menu_id,menu_name,product_id,remark,id,pid,cuserid,cusername,ctime,cbranch_id,adopt,adopt_userid,adopt_username,adopt_time,closed,puserid,pusername,premark,notify_userids,notify_channels,notify_usernames,cuser_head_img,reply_type
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="menuId != null and menuId != ''">      and res.menu_id = #{menuId}     </if>
+		<if test="menuName != null and menuName != ''">      and res.menu_name = #{menuName}     </if>
+		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
+		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="pid != null and pid != ''">      and res.pid = #{pid}     </if>
+		<if test="cuserid != null and cuserid != ''">      and res.cuserid = #{cuserid}     </if>
+		<if test="cusername != null and cusername != ''">      and res.cusername = #{cusername}     </if>
+		<if test="ctime != null">      and TO_CHAR(res.ctime,'YYYY-MM-DD') = TO_CHAR(#{ctime},'YYYY-MM-DD')     </if>
+		<if test="cbranchId != null and cbranchId != ''">      and res.cbranch_id = #{cbranchId}     </if>
+		<if test="adopt != null and adopt != ''">      and res.adopt = #{adopt}     </if>
+		<if test="adoptUserid != null and adoptUserid != ''">      and res.adopt_userid = #{adoptUserid}     </if>
+		<if test="adoptUsername != null and adoptUsername != ''">      and res.adopt_username = #{adoptUsername}     </if>
+		<if test="adoptTime != null">      and TO_CHAR(res.adopt_time,'YYYY-MM-DD') = TO_CHAR(#{adoptTime},'YYYY-MM-DD')     </if>
+		<if test="closed != null and closed != ''">      and res.closed = #{closed}     </if>
+		<if test="puserid != null and puserid != ''">      and res.puserid = #{puserid}     </if>
+		<if test="pusername != null and pusername != ''">      and res.pusername = #{pusername}     </if>
+		<if test="premark != null and premark != ''">      and res.premark = #{premark}     </if>
+		<if test="notifyUserids != null and notifyUserids != ''">      and res.notify_userids = #{notifyUserids}     </if>
+		<if test="notifyChannels != null and notifyChannels != ''">      and res.notify_channels = #{notifyChannels}     </if>
+		<if test="notifyUsernames != null and notifyUsernames != ''">      and res.notify_usernames = #{notifyUsernames}     </if>
+		<if test="cuserHeadImg != null and cuserHeadImg != ''">      and res.cuser_head_img = #{cuserHeadImg}     </if>
+		<if test="replyType != null and replyType != ''">      and res.reply_type = #{replyType}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		menu_id = #{menuId},
+		menu_name = #{menuName},
+		product_id = #{productId},
+		remark = #{remark},
+		pid = #{pid},
+		cuserid = #{cuserid},
+		cusername = #{cusername},
+		ctime = #{ctime},
+		cbranch_id = #{cbranchId},
+		adopt = #{adopt},
+		adopt_userid = #{adoptUserid},
+		adopt_username = #{adoptUsername},
+		adopt_time = #{adoptTime},
+		closed = #{closed},
+		puserid = #{puserid},
+		pusername = #{pusername},
+		premark = #{premark},
+		notify_userids = #{notifyUserids},
+		notify_channels = #{notifyChannels},
+		notify_usernames = #{notifyUsernames},
+		cuser_head_img = #{cuserHeadImg},
+		reply_type = #{replyType}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="menuId != null and menuId != ''"> menu_id = #{menuId},     </if>
+		<if test="menuName != null and menuName != ''"> menu_name = #{menuName},     </if>
+		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
+		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
+		<if test="pid != null and pid != ''"> pid = #{pid},     </if>
+		<if test="cuserid != null and cuserid != ''"> cuserid = #{cuserid},     </if>
+		<if test="cusername != null and cusername != ''"> cusername = #{cusername},     </if>
+		<if test="ctime != null"> ctime = #{ctime},     </if>
+		<if test="cbranchId != null and cbranchId != ''"> cbranch_id = #{cbranchId},     </if>
+		<if test="adopt != null and adopt != ''"> adopt = #{adopt},     </if>
+		<if test="adoptUserid != null and adoptUserid != ''"> adopt_userid = #{adoptUserid},     </if>
+		<if test="adoptUsername != null and adoptUsername != ''"> adopt_username = #{adoptUsername},     </if>
+		<if test="adoptTime != null"> adopt_time = #{adoptTime},     </if>
+		<if test="closed != null and closed != ''"> closed = #{closed},     </if>
+		<if test="puserid != null and puserid != ''"> puserid = #{puserid},     </if>
+		<if test="pusername != null and pusername != ''"> pusername = #{pusername},     </if>
+		<if test="premark != null and premark != ''"> premark = #{premark},     </if>
+		<if test="notifyUserids != null and notifyUserids != ''"> notify_userids = #{notifyUserids},     </if>
+		<if test="notifyChannels != null and notifyChannels != ''"> notify_channels = #{notifyChannels},     </if>
+		<if test="notifyUsernames != null and notifyUsernames != ''"> notify_usernames = #{notifyUsernames},     </if>
+		<if test="cuserHeadImg != null and cuserHeadImg != ''"> cuser_head_img = #{cuserHeadImg},     </if>
+		<if test="replyType != null and replyType != ''"> reply_type = #{replyType},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			menu_id = #{item.menuId},
+			menu_name = #{item.menuName},
+			product_id = #{item.productId},
+			remark = #{item.remark},
+			pid = #{item.pid},
+			cuserid = #{item.cuserid},
+			cusername = #{item.cusername},
+			ctime = #{item.ctime},
+			cbranch_id = #{item.cbranchId},
+			adopt = #{item.adopt},
+			adopt_userid = #{item.adoptUserid},
+			adopt_username = #{item.adoptUsername},
+			adopt_time = #{item.adoptTime},
+			closed = #{item.closed},
+			puserid = #{item.puserid},
+			pusername = #{item.pusername},
+			premark = #{item.premark},
+			notify_userids = #{item.notifyUserids},
+			notify_channels = #{item.notifyChannels},
+			notify_usernames = #{item.notifyUsernames},
+			cuser_head_img = #{item.cuserHeadImg},
+			reply_type = #{item.replyType}
+	</sql>
+</mapper>

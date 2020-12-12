@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmQuestionHandle">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+		
+		
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_question_handle res
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmQuestionHandle" resultType="com.qqkj.xm.core.entity.XmQuestionHandle">
+		select * from XM.xm_question_handle res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmQuestionHandle" resultType="com.qqkj.xm.core.entity.XmQuestionHandle">
+		select * from XM.xm_question_handle res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_question_handle res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmQuestionHandle" resultType="long">
+		select count(1) from XM.xm_question_handle res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmQuestionHandle" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_question_handle(
+			<include refid="columns"/>
+		) values (
+		#{id},#{handlerUserid},#{handlerUsername},#{handleSolution},#{receiptMessage},#{receiptTime},#{handleStatus},#{bizProcInstId},#{bizFlowState},#{questionId},#{lastUpdateTime},#{createTime},#{actWorkload},#{actCostAmount},#{urls},#{targetUserid},#{targetUsername}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmQuestionHandle">
+		delete from XM.xm_question_handle res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmQuestionHandle">
+		delete from XM.xm_question_handle 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmQuestionHandle">
+		update  XM.xm_question_handle 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmQuestionHandle">
+		update  XM.xm_question_handle 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_question_handle 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_question_handle 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,handler_userid,handler_username,handle_solution,receipt_message,receipt_time,handle_status,biz_proc_inst_id,biz_flow_state,question_id,last_update_time,create_time,act_workload,act_cost_amount,urls,target_userid,target_username
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="handlerUserid != null and handlerUserid != ''">      and res.handler_userid = #{handlerUserid}     </if>
+		<if test="handlerUsername != null and handlerUsername != ''">      and res.handler_username = #{handlerUsername}     </if>
+		<if test="handleSolution != null and handleSolution != ''">      and res.handle_solution = #{handleSolution}     </if>
+		<if test="receiptMessage != null and receiptMessage != ''">      and res.receipt_message = #{receiptMessage}     </if>
+		<if test="receiptTime != null">      and TO_CHAR(res.receipt_time,'YYYY-MM-DD') = TO_CHAR(#{receiptTime},'YYYY-MM-DD')     </if>
+		<if test="handleStatus != null and handleStatus != ''">      and res.handle_status = #{handleStatus}     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
+		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
+		<if test="questionId != null and questionId != ''">      and res.question_id = #{questionId}     </if>
+		<if test="lastUpdateTime != null">      and TO_CHAR(res.last_update_time,'YYYY-MM-DD') = TO_CHAR(#{lastUpdateTime},'YYYY-MM-DD')     </if>
+		<if test="createTime != null">      and TO_CHAR(res.create_time,'YYYY-MM-DD') = TO_CHAR(#{createTime},'YYYY-MM-DD')     </if>
+		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
+		<if test="actCostAmount != null and actCostAmount != ''">      and res.act_cost_amount = #{actCostAmount}     </if>
+		<if test="urls != null and urls != ''">      and res.urls = #{urls}     </if>
+		<if test="targetUserid != null and targetUserid != ''">      and res.target_userid = #{targetUserid}     </if>
+		<if test="targetUsername != null and targetUsername != ''">      and res.target_username = #{targetUsername}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		handler_userid = #{handlerUserid},
+		handler_username = #{handlerUsername},
+		handle_solution = #{handleSolution},
+		receipt_message = #{receiptMessage},
+		receipt_time = #{receiptTime},
+		handle_status = #{handleStatus},
+		biz_proc_inst_id = #{bizProcInstId},
+		biz_flow_state = #{bizFlowState},
+		question_id = #{questionId},
+		last_update_time = #{lastUpdateTime},
+		create_time = #{createTime},
+		act_workload = #{actWorkload},
+		act_cost_amount = #{actCostAmount},
+		urls = #{urls},
+		target_userid = #{targetUserid},
+		target_username = #{targetUsername}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="handlerUserid != null and handlerUserid != ''"> handler_userid = #{handlerUserid},     </if>
+		<if test="handlerUsername != null and handlerUsername != ''"> handler_username = #{handlerUsername},     </if>
+		<if test="handleSolution != null and handleSolution != ''"> handle_solution = #{handleSolution},     </if>
+		<if test="receiptMessage != null and receiptMessage != ''"> receipt_message = #{receiptMessage},     </if>
+		<if test="receiptTime != null"> receipt_time = #{receiptTime},     </if>
+		<if test="handleStatus != null and handleStatus != ''"> handle_status = #{handleStatus},     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
+		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
+		<if test="questionId != null and questionId != ''"> question_id = #{questionId},     </if>
+		<if test="lastUpdateTime != null"> last_update_time = #{lastUpdateTime},     </if>
+		<if test="createTime != null"> create_time = #{createTime},     </if>
+		<if test="actWorkload != null and actWorkload != ''"> act_workload = #{actWorkload},     </if>
+		<if test="actCostAmount != null and actCostAmount != ''"> act_cost_amount = #{actCostAmount},     </if>
+		<if test="urls != null and urls != ''"> urls = #{urls},     </if>
+		<if test="targetUserid != null and targetUserid != ''"> target_userid = #{targetUserid},     </if>
+		<if test="targetUsername != null and targetUsername != ''"> target_username = #{targetUsername},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			handler_userid = #{item.handlerUserid},
+			handler_username = #{item.handlerUsername},
+			handle_solution = #{item.handleSolution},
+			receipt_message = #{item.receiptMessage},
+			receipt_time = #{item.receiptTime},
+			handle_status = #{item.handleStatus},
+			biz_proc_inst_id = #{item.bizProcInstId},
+			biz_flow_state = #{item.bizFlowState},
+			question_id = #{item.questionId},
+			last_update_time = #{item.lastUpdateTime},
+			create_time = #{item.createTime},
+			act_workload = #{item.actWorkload},
+			act_cost_amount = #{item.actCostAmount},
+			urls = #{item.urls},
+			target_userid = #{item.targetUserid},
+			target_username = #{item.targetUsername}
+	</sql>
+</mapper>

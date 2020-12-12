@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmProjectGroupFormwork">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+	<select id="selectAllGroupFormWork" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project_group_formwork res
+		<where>
+			<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+			 or res.is_pub = "1"
+		</where>
+	</select>
+		
+		
+		
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project_group_formwork res
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectGroupFormwork" resultType="com.qqkj.xm.core.entity.XmProjectGroupFormwork">
+		select * from XM.xm_project_group_formwork res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmProjectGroupFormwork" resultType="com.qqkj.xm.core.entity.XmProjectGroupFormwork">
+		select * from XM.xm_project_group_formwork res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project_group_formwork res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectGroupFormwork" resultType="long">
+		select count(1) from XM.xm_project_group_formwork res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmProjectGroupFormwork" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_project_group_formwork(
+			<include refid="columns"/>
+		) values (
+		#{id},#{branchId},#{groupName},#{isPub},#{pgTypeId},#{pgTypeName}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectGroupFormwork">
+		delete from XM.xm_project_group_formwork res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmProjectGroupFormwork">
+		delete from XM.xm_project_group_formwork 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmProjectGroupFormwork">
+		update  XM.xm_project_group_formwork 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmProjectGroupFormwork">
+		update  XM.xm_project_group_formwork 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_project_group_formwork 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_project_group_formwork 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,branch_id,group_name,is_pub,pg_type_id,pg_type_name
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="groupName != null and groupName != ''">      and res.group_name = #{groupName}     </if>
+		<if test="isPub != null and isPub != ''">      and res.is_pub = #{isPub}     </if>
+		<if test="pgTypeId != null and pgTypeId != ''">      and res.pg_type_id = #{pgTypeId}     </if>
+		<if test="pgTypeName != null and pgTypeName != ''">      and res.pg_type_name = #{pgTypeName}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		branch_id = #{branchId},
+		group_name = #{groupName},
+		is_pub = #{isPub},
+		pg_type_id = #{pgTypeId},
+		pg_type_name = #{pgTypeName}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="groupName != null and groupName != ''"> group_name = #{groupName},     </if>
+		<if test="isPub != null and isPub != ''"> is_pub = #{isPub},     </if>
+		<if test="pgTypeId != null and pgTypeId != ''"> pg_type_id = #{pgTypeId},     </if>
+		<if test="pgTypeName != null and pgTypeName != ''"> pg_type_name = #{pgTypeName},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			branch_id = #{item.branchId},
+			group_name = #{item.groupName},
+			is_pub = #{item.isPub},
+			pg_type_id = #{item.pgTypeId},
+			pg_type_name = #{item.pgTypeName}
+	</sql>
+</mapper>

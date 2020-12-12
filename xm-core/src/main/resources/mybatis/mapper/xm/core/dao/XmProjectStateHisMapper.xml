@@ -1,0 +1,352 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmProjectStateHis">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+		
+		
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project_state_his res
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectStateHis" resultType="com.qqkj.xm.core.entity.XmProjectStateHis">
+		select * from XM.xm_project_state_his res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmProjectStateHis" resultType="com.qqkj.xm.core.entity.XmProjectStateHis">
+		select * from XM.xm_project_state_his res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project_state_his res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectStateHis" resultType="long">
+		select count(1) from XM.xm_project_state_his res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmProjectStateHis" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_project_state_his(
+			<include refid="columns"/>
+		) values (
+		#{projectId},#{bizDate},#{totalFileCnt},#{totalBugCnt},#{totalTaskCnt},#{totalBudgetNouserAmount},#{projectName},#{id},#{totalStaffCnt},#{calcTime},#{calcStatus},#{totalCostNouserAmount},#{totalClosedBugCnt},#{totalResolvedBugCnt},#{totalCompleteTaskCnt},#{totalPhaseCnt},#{totalCompletePhaseCnt},#{totalNeedPayAmount},#{totalFinishPayAmount},#{totalNeedColAmount},#{totalFinishColAmount},#{totalCostUserAmount},#{totalBudgetInnerUserAmount},#{totalPlanWorkload},#{totalRiskCnt},#{totalCompleteRiskCnt},#{branchId},#{branchName},#{totalBudgetOutUserAmount},#{totalCompleteWorkload},#{totalCostInnerUserAmount},#{totalCostOutUserAmount},#{totalProgress},#{totalActiveBugCnt},#{totalConfirmedBugCnt},#{projectStatus},#{totalActWorkload},#{totalActOutWorkload},#{totalActInnerWorkload},#{totalTaskBudgetCostAt},#{totalTaskOutCnt},#{totalNeedPayCnt},#{totalFinishPayCnt},#{totalFinishPayUserCnt},#{totalNeedPayUserCnt},#{totalPlanInnerUserWorkload},#{totalPlanOutUserWorkload},#{testCases},#{execCases},#{designCases},#{finishCases},#{iterationCnt},#{productCnt},#{menuCnt}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectStateHis">
+		delete from XM.xm_project_state_his res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmProjectStateHis">
+		delete from XM.xm_project_state_his 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmProjectStateHis">
+		update  XM.xm_project_state_his 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmProjectStateHis">
+		update  XM.xm_project_state_his 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_project_state_his 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_project_state_his 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		project_id,biz_date,total_file_cnt,total_bug_cnt,total_task_cnt,total_budget_nouser_amount,project_name,id,total_staff_cnt,calc_time,calc_status,total_cost_nouser_amount,total_closed_bug_cnt,total_resolved_bug_cnt,total_complete_task_cnt,total_phase_cnt,total_complete_phase_cnt,total_need_pay_amount,total_finish_pay_amount,total_need_col_amount,total_finish_col_amount,total_cost_user_amount,total_budget_inner_user_amount,total_plan_workload,total_risk_cnt,total_complete_risk_cnt,branch_id,branch_name,total_budget_out_user_amount,total_complete_workload,total_cost_inner_user_amount,total_cost_out_user_amount,total_progress,total_active_bug_cnt,total_confirmed_bug_cnt,project_status,total_act_workload,total_act_out_workload,total_act_inner_workload,total_task_budget_cost_at,total_task_out_cnt,total_need_pay_cnt,total_finish_pay_cnt,total_finish_pay_user_cnt,total_need_pay_user_cnt,total_plan_inner_user_workload,total_plan_out_user_workload,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,product_cnt,menu_cnt
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
+		<if test="bizDate != null and bizDate != ''">      and res.biz_date = #{bizDate}     </if>
+		<if test="totalFileCnt != null and totalFileCnt != ''">      and res.total_file_cnt = #{totalFileCnt}     </if>
+		<if test="totalBugCnt != null and totalBugCnt != ''">      and res.total_bug_cnt = #{totalBugCnt}     </if>
+		<if test="totalTaskCnt != null and totalTaskCnt != ''">      and res.total_task_cnt = #{totalTaskCnt}     </if>
+		<if test="totalBudgetNouserAmount != null and totalBudgetNouserAmount != ''">      and res.total_budget_nouser_amount = #{totalBudgetNouserAmount}     </if>
+		<if test="projectName != null and projectName != ''">      and res.project_name = #{projectName}     </if>
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="totalStaffCnt != null and totalStaffCnt != ''">      and res.total_staff_cnt = #{totalStaffCnt}     </if>
+		<if test="calcTime != null">      and TO_CHAR(res.calc_time,'YYYY-MM-DD') = TO_CHAR(#{calcTime},'YYYY-MM-DD')     </if>
+		<if test="calcStatus != null and calcStatus != ''">      and res.calc_status = #{calcStatus}     </if>
+		<if test="totalCostNouserAmount != null and totalCostNouserAmount != ''">      and res.total_cost_nouser_amount = #{totalCostNouserAmount}     </if>
+		<if test="totalClosedBugCnt != null and totalClosedBugCnt != ''">      and res.total_closed_bug_cnt = #{totalClosedBugCnt}     </if>
+		<if test="totalResolvedBugCnt != null and totalResolvedBugCnt != ''">      and res.total_resolved_bug_cnt = #{totalResolvedBugCnt}     </if>
+		<if test="totalCompleteTaskCnt != null and totalCompleteTaskCnt != ''">      and res.total_complete_task_cnt = #{totalCompleteTaskCnt}     </if>
+		<if test="totalPhaseCnt != null and totalPhaseCnt != ''">      and res.total_phase_cnt = #{totalPhaseCnt}     </if>
+		<if test="totalCompletePhaseCnt != null and totalCompletePhaseCnt != ''">      and res.total_complete_phase_cnt = #{totalCompletePhaseCnt}     </if>
+		<if test="totalNeedPayAmount != null and totalNeedPayAmount != ''">      and res.total_need_pay_amount = #{totalNeedPayAmount}     </if>
+		<if test="totalFinishPayAmount != null and totalFinishPayAmount != ''">      and res.total_finish_pay_amount = #{totalFinishPayAmount}     </if>
+		<if test="totalNeedColAmount != null and totalNeedColAmount != ''">      and res.total_need_col_amount = #{totalNeedColAmount}     </if>
+		<if test="totalFinishColAmount != null and totalFinishColAmount != ''">      and res.total_finish_col_amount = #{totalFinishColAmount}     </if>
+		<if test="totalCostUserAmount != null and totalCostUserAmount != ''">      and res.total_cost_user_amount = #{totalCostUserAmount}     </if>
+		<if test="totalBudgetInnerUserAmount != null and totalBudgetInnerUserAmount != ''">      and res.total_budget_inner_user_amount = #{totalBudgetInnerUserAmount}     </if>
+		<if test="totalPlanWorkload != null and totalPlanWorkload != ''">      and res.total_plan_workload = #{totalPlanWorkload}     </if>
+		<if test="totalRiskCnt != null and totalRiskCnt != ''">      and res.total_risk_cnt = #{totalRiskCnt}     </if>
+		<if test="totalCompleteRiskCnt != null and totalCompleteRiskCnt != ''">      and res.total_complete_risk_cnt = #{totalCompleteRiskCnt}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="branchName != null and branchName != ''">      and res.branch_name = #{branchName}     </if>
+		<if test="totalBudgetOutUserAmount != null and totalBudgetOutUserAmount != ''">      and res.total_budget_out_user_amount = #{totalBudgetOutUserAmount}     </if>
+		<if test="totalCompleteWorkload != null and totalCompleteWorkload != ''">      and res.total_complete_workload = #{totalCompleteWorkload}     </if>
+		<if test="totalCostInnerUserAmount != null and totalCostInnerUserAmount != ''">      and res.total_cost_inner_user_amount = #{totalCostInnerUserAmount}     </if>
+		<if test="totalCostOutUserAmount != null and totalCostOutUserAmount != ''">      and res.total_cost_out_user_amount = #{totalCostOutUserAmount}     </if>
+		<if test="totalProgress != null and totalProgress != ''">      and res.total_progress = #{totalProgress}     </if>
+		<if test="totalActiveBugCnt != null and totalActiveBugCnt != ''">      and res.total_active_bug_cnt = #{totalActiveBugCnt}     </if>
+		<if test="totalConfirmedBugCnt != null and totalConfirmedBugCnt != ''">      and res.total_confirmed_bug_cnt = #{totalConfirmedBugCnt}     </if>
+		<if test="projectStatus != null and projectStatus != ''">      and res.project_status = #{projectStatus}     </if>
+		<if test="totalActWorkload != null and totalActWorkload != ''">      and res.total_act_workload = #{totalActWorkload}     </if>
+		<if test="totalActOutWorkload != null and totalActOutWorkload != ''">      and res.total_act_out_workload = #{totalActOutWorkload}     </if>
+		<if test="totalActInnerWorkload != null and totalActInnerWorkload != ''">      and res.total_act_inner_workload = #{totalActInnerWorkload}     </if>
+		<if test="totalTaskBudgetCostAt != null and totalTaskBudgetCostAt != ''">      and res.total_task_budget_cost_at = #{totalTaskBudgetCostAt}     </if>
+		<if test="totalTaskOutCnt != null and totalTaskOutCnt != ''">      and res.total_task_out_cnt = #{totalTaskOutCnt}     </if>
+		<if test="totalNeedPayCnt != null and totalNeedPayCnt != ''">      and res.total_need_pay_cnt = #{totalNeedPayCnt}     </if>
+		<if test="totalFinishPayCnt != null and totalFinishPayCnt != ''">      and res.total_finish_pay_cnt = #{totalFinishPayCnt}     </if>
+		<if test="totalFinishPayUserCnt != null and totalFinishPayUserCnt != ''">      and res.total_finish_pay_user_cnt = #{totalFinishPayUserCnt}     </if>
+		<if test="totalNeedPayUserCnt != null and totalNeedPayUserCnt != ''">      and res.total_need_pay_user_cnt = #{totalNeedPayUserCnt}     </if>
+		<if test="totalPlanInnerUserWorkload != null and totalPlanInnerUserWorkload != ''">      and res.total_plan_inner_user_workload = #{totalPlanInnerUserWorkload}     </if>
+		<if test="totalPlanOutUserWorkload != null and totalPlanOutUserWorkload != ''">      and res.total_plan_out_user_workload = #{totalPlanOutUserWorkload}     </if>
+		<if test="testCases != null and testCases != ''">      and res.test_cases = #{testCases}     </if>
+		<if test="execCases != null and execCases != ''">      and res.exec_cases = #{execCases}     </if>
+		<if test="designCases != null and designCases != ''">      and res.design_cases = #{designCases}     </if>
+		<if test="finishCases != null and finishCases != ''">      and res.finish_cases = #{finishCases}     </if>
+		<if test="iterationCnt != null and iterationCnt != ''">      and res.iteration_cnt = #{iterationCnt}     </if>
+		<if test="productCnt != null and productCnt != ''">      and res.product_cnt = #{productCnt}     </if>
+		<if test="menuCnt != null and menuCnt != ''">      and res.menu_cnt = #{menuCnt}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		project_id = #{projectId},
+		biz_date = #{bizDate},
+		total_file_cnt = #{totalFileCnt},
+		total_bug_cnt = #{totalBugCnt},
+		total_task_cnt = #{totalTaskCnt},
+		total_budget_nouser_amount = #{totalBudgetNouserAmount},
+		project_name = #{projectName},
+		total_staff_cnt = #{totalStaffCnt},
+		calc_time = #{calcTime},
+		calc_status = #{calcStatus},
+		total_cost_nouser_amount = #{totalCostNouserAmount},
+		total_closed_bug_cnt = #{totalClosedBugCnt},
+		total_resolved_bug_cnt = #{totalResolvedBugCnt},
+		total_complete_task_cnt = #{totalCompleteTaskCnt},
+		total_phase_cnt = #{totalPhaseCnt},
+		total_complete_phase_cnt = #{totalCompletePhaseCnt},
+		total_need_pay_amount = #{totalNeedPayAmount},
+		total_finish_pay_amount = #{totalFinishPayAmount},
+		total_need_col_amount = #{totalNeedColAmount},
+		total_finish_col_amount = #{totalFinishColAmount},
+		total_cost_user_amount = #{totalCostUserAmount},
+		total_budget_inner_user_amount = #{totalBudgetInnerUserAmount},
+		total_plan_workload = #{totalPlanWorkload},
+		total_risk_cnt = #{totalRiskCnt},
+		total_complete_risk_cnt = #{totalCompleteRiskCnt},
+		branch_id = #{branchId},
+		branch_name = #{branchName},
+		total_budget_out_user_amount = #{totalBudgetOutUserAmount},
+		total_complete_workload = #{totalCompleteWorkload},
+		total_cost_inner_user_amount = #{totalCostInnerUserAmount},
+		total_cost_out_user_amount = #{totalCostOutUserAmount},
+		total_progress = #{totalProgress},
+		total_active_bug_cnt = #{totalActiveBugCnt},
+		total_confirmed_bug_cnt = #{totalConfirmedBugCnt},
+		project_status = #{projectStatus},
+		total_act_workload = #{totalActWorkload},
+		total_act_out_workload = #{totalActOutWorkload},
+		total_act_inner_workload = #{totalActInnerWorkload},
+		total_task_budget_cost_at = #{totalTaskBudgetCostAt},
+		total_task_out_cnt = #{totalTaskOutCnt},
+		total_need_pay_cnt = #{totalNeedPayCnt},
+		total_finish_pay_cnt = #{totalFinishPayCnt},
+		total_finish_pay_user_cnt = #{totalFinishPayUserCnt},
+		total_need_pay_user_cnt = #{totalNeedPayUserCnt},
+		total_plan_inner_user_workload = #{totalPlanInnerUserWorkload},
+		total_plan_out_user_workload = #{totalPlanOutUserWorkload},
+		test_cases = #{testCases},
+		exec_cases = #{execCases},
+		design_cases = #{designCases},
+		finish_cases = #{finishCases},
+		iteration_cnt = #{iterationCnt},
+		product_cnt = #{productCnt},
+		menu_cnt = #{menuCnt}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
+		<if test="bizDate != null and bizDate != ''"> biz_date = #{bizDate},     </if>
+		<if test="totalFileCnt != null and totalFileCnt != ''"> total_file_cnt = #{totalFileCnt},     </if>
+		<if test="totalBugCnt != null and totalBugCnt != ''"> total_bug_cnt = #{totalBugCnt},     </if>
+		<if test="totalTaskCnt != null and totalTaskCnt != ''"> total_task_cnt = #{totalTaskCnt},     </if>
+		<if test="totalBudgetNouserAmount != null and totalBudgetNouserAmount != ''"> total_budget_nouser_amount = #{totalBudgetNouserAmount},     </if>
+		<if test="projectName != null and projectName != ''"> project_name = #{projectName},     </if>
+		<if test="totalStaffCnt != null and totalStaffCnt != ''"> total_staff_cnt = #{totalStaffCnt},     </if>
+		<if test="calcTime != null"> calc_time = #{calcTime},     </if>
+		<if test="calcStatus != null and calcStatus != ''"> calc_status = #{calcStatus},     </if>
+		<if test="totalCostNouserAmount != null and totalCostNouserAmount != ''"> total_cost_nouser_amount = #{totalCostNouserAmount},     </if>
+		<if test="totalClosedBugCnt != null and totalClosedBugCnt != ''"> total_closed_bug_cnt = #{totalClosedBugCnt},     </if>
+		<if test="totalResolvedBugCnt != null and totalResolvedBugCnt != ''"> total_resolved_bug_cnt = #{totalResolvedBugCnt},     </if>
+		<if test="totalCompleteTaskCnt != null and totalCompleteTaskCnt != ''"> total_complete_task_cnt = #{totalCompleteTaskCnt},     </if>
+		<if test="totalPhaseCnt != null and totalPhaseCnt != ''"> total_phase_cnt = #{totalPhaseCnt},     </if>
+		<if test="totalCompletePhaseCnt != null and totalCompletePhaseCnt != ''"> total_complete_phase_cnt = #{totalCompletePhaseCnt},     </if>
+		<if test="totalNeedPayAmount != null and totalNeedPayAmount != ''"> total_need_pay_amount = #{totalNeedPayAmount},     </if>
+		<if test="totalFinishPayAmount != null and totalFinishPayAmount != ''"> total_finish_pay_amount = #{totalFinishPayAmount},     </if>
+		<if test="totalNeedColAmount != null and totalNeedColAmount != ''"> total_need_col_amount = #{totalNeedColAmount},     </if>
+		<if test="totalFinishColAmount != null and totalFinishColAmount != ''"> total_finish_col_amount = #{totalFinishColAmount},     </if>
+		<if test="totalCostUserAmount != null and totalCostUserAmount != ''"> total_cost_user_amount = #{totalCostUserAmount},     </if>
+		<if test="totalBudgetInnerUserAmount != null and totalBudgetInnerUserAmount != ''"> total_budget_inner_user_amount = #{totalBudgetInnerUserAmount},     </if>
+		<if test="totalPlanWorkload != null and totalPlanWorkload != ''"> total_plan_workload = #{totalPlanWorkload},     </if>
+		<if test="totalRiskCnt != null and totalRiskCnt != ''"> total_risk_cnt = #{totalRiskCnt},     </if>
+		<if test="totalCompleteRiskCnt != null and totalCompleteRiskCnt != ''"> total_complete_risk_cnt = #{totalCompleteRiskCnt},     </if>
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="branchName != null and branchName != ''"> branch_name = #{branchName},     </if>
+		<if test="totalBudgetOutUserAmount != null and totalBudgetOutUserAmount != ''"> total_budget_out_user_amount = #{totalBudgetOutUserAmount},     </if>
+		<if test="totalCompleteWorkload != null and totalCompleteWorkload != ''"> total_complete_workload = #{totalCompleteWorkload},     </if>
+		<if test="totalCostInnerUserAmount != null and totalCostInnerUserAmount != ''"> total_cost_inner_user_amount = #{totalCostInnerUserAmount},     </if>
+		<if test="totalCostOutUserAmount != null and totalCostOutUserAmount != ''"> total_cost_out_user_amount = #{totalCostOutUserAmount},     </if>
+		<if test="totalProgress != null and totalProgress != ''"> total_progress = #{totalProgress},     </if>
+		<if test="totalActiveBugCnt != null and totalActiveBugCnt != ''"> total_active_bug_cnt = #{totalActiveBugCnt},     </if>
+		<if test="totalConfirmedBugCnt != null and totalConfirmedBugCnt != ''"> total_confirmed_bug_cnt = #{totalConfirmedBugCnt},     </if>
+		<if test="projectStatus != null and projectStatus != ''"> project_status = #{projectStatus},     </if>
+		<if test="totalActWorkload != null and totalActWorkload != ''"> total_act_workload = #{totalActWorkload},     </if>
+		<if test="totalActOutWorkload != null and totalActOutWorkload != ''"> total_act_out_workload = #{totalActOutWorkload},     </if>
+		<if test="totalActInnerWorkload != null and totalActInnerWorkload != ''"> total_act_inner_workload = #{totalActInnerWorkload},     </if>
+		<if test="totalTaskBudgetCostAt != null and totalTaskBudgetCostAt != ''"> total_task_budget_cost_at = #{totalTaskBudgetCostAt},     </if>
+		<if test="totalTaskOutCnt != null and totalTaskOutCnt != ''"> total_task_out_cnt = #{totalTaskOutCnt},     </if>
+		<if test="totalNeedPayCnt != null and totalNeedPayCnt != ''"> total_need_pay_cnt = #{totalNeedPayCnt},     </if>
+		<if test="totalFinishPayCnt != null and totalFinishPayCnt != ''"> total_finish_pay_cnt = #{totalFinishPayCnt},     </if>
+		<if test="totalFinishPayUserCnt != null and totalFinishPayUserCnt != ''"> total_finish_pay_user_cnt = #{totalFinishPayUserCnt},     </if>
+		<if test="totalNeedPayUserCnt != null and totalNeedPayUserCnt != ''"> total_need_pay_user_cnt = #{totalNeedPayUserCnt},     </if>
+		<if test="totalPlanInnerUserWorkload != null and totalPlanInnerUserWorkload != ''"> total_plan_inner_user_workload = #{totalPlanInnerUserWorkload},     </if>
+		<if test="totalPlanOutUserWorkload != null and totalPlanOutUserWorkload != ''"> total_plan_out_user_workload = #{totalPlanOutUserWorkload},     </if>
+		<if test="testCases != null and testCases != ''"> test_cases = #{testCases},     </if>
+		<if test="execCases != null and execCases != ''"> exec_cases = #{execCases},     </if>
+		<if test="designCases != null and designCases != ''"> design_cases = #{designCases},     </if>
+		<if test="finishCases != null and finishCases != ''"> finish_cases = #{finishCases},     </if>
+		<if test="iterationCnt != null and iterationCnt != ''"> iteration_cnt = #{iterationCnt},     </if>
+		<if test="productCnt != null and productCnt != ''"> product_cnt = #{productCnt},     </if>
+		<if test="menuCnt != null and menuCnt != ''"> menu_cnt = #{menuCnt},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			project_id = #{item.projectId},
+			biz_date = #{item.bizDate},
+			total_file_cnt = #{item.totalFileCnt},
+			total_bug_cnt = #{item.totalBugCnt},
+			total_task_cnt = #{item.totalTaskCnt},
+			total_budget_nouser_amount = #{item.totalBudgetNouserAmount},
+			project_name = #{item.projectName},
+			total_staff_cnt = #{item.totalStaffCnt},
+			calc_time = #{item.calcTime},
+			calc_status = #{item.calcStatus},
+			total_cost_nouser_amount = #{item.totalCostNouserAmount},
+			total_closed_bug_cnt = #{item.totalClosedBugCnt},
+			total_resolved_bug_cnt = #{item.totalResolvedBugCnt},
+			total_complete_task_cnt = #{item.totalCompleteTaskCnt},
+			total_phase_cnt = #{item.totalPhaseCnt},
+			total_complete_phase_cnt = #{item.totalCompletePhaseCnt},
+			total_need_pay_amount = #{item.totalNeedPayAmount},
+			total_finish_pay_amount = #{item.totalFinishPayAmount},
+			total_need_col_amount = #{item.totalNeedColAmount},
+			total_finish_col_amount = #{item.totalFinishColAmount},
+			total_cost_user_amount = #{item.totalCostUserAmount},
+			total_budget_inner_user_amount = #{item.totalBudgetInnerUserAmount},
+			total_plan_workload = #{item.totalPlanWorkload},
+			total_risk_cnt = #{item.totalRiskCnt},
+			total_complete_risk_cnt = #{item.totalCompleteRiskCnt},
+			branch_id = #{item.branchId},
+			branch_name = #{item.branchName},
+			total_budget_out_user_amount = #{item.totalBudgetOutUserAmount},
+			total_complete_workload = #{item.totalCompleteWorkload},
+			total_cost_inner_user_amount = #{item.totalCostInnerUserAmount},
+			total_cost_out_user_amount = #{item.totalCostOutUserAmount},
+			total_progress = #{item.totalProgress},
+			total_active_bug_cnt = #{item.totalActiveBugCnt},
+			total_confirmed_bug_cnt = #{item.totalConfirmedBugCnt},
+			project_status = #{item.projectStatus},
+			total_act_workload = #{item.totalActWorkload},
+			total_act_out_workload = #{item.totalActOutWorkload},
+			total_act_inner_workload = #{item.totalActInnerWorkload},
+			total_task_budget_cost_at = #{item.totalTaskBudgetCostAt},
+			total_task_out_cnt = #{item.totalTaskOutCnt},
+			total_need_pay_cnt = #{item.totalNeedPayCnt},
+			total_finish_pay_cnt = #{item.totalFinishPayCnt},
+			total_finish_pay_user_cnt = #{item.totalFinishPayUserCnt},
+			total_need_pay_user_cnt = #{item.totalNeedPayUserCnt},
+			total_plan_inner_user_workload = #{item.totalPlanInnerUserWorkload},
+			total_plan_out_user_workload = #{item.totalPlanOutUserWorkload},
+			test_cases = #{item.testCases},
+			exec_cases = #{item.execCases},
+			design_cases = #{item.designCases},
+			finish_cases = #{item.finishCases},
+			iteration_cnt = #{item.iterationCnt},
+			product_cnt = #{item.productCnt},
+			menu_cnt = #{item.menuCnt}
+	</sql>
+</mapper>

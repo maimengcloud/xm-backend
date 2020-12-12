@@ -1,0 +1,342 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmProjectPhase">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+		
+	<!-- 查询项目总预算，计划总预算 id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,total_budget_cost,biz_proc_inst_id,biz_flow_state,total_budget_nouser,total_budget_inner_user,total_budget_out_user,locked,base_time,base_remark,baseline_id,total_budget_workload,total_receivables,budget_margin_rate,contract_amt,budget_inner_user_price,budget_out_user_price,budget_out_user_cnt,budget_inner_user_cnt,plan_working_hours,tax_rate
+	-->
+	<select id="selectTotalProjectAndPhaseBudgetCost" parameterType="HashMap" resultType="HashMap">
+		SELECT
+			sum( res.phase_budget_workload ) AS phase_budget_workload,
+			sum( res.phase_budget_nouser_at ) AS phase_budget_nouser_at,
+			sum( res.phase_budget_inner_user_at ) AS phase_budget_inner_user_at,
+			sum( res.phase_budget_out_user_at ) AS phase_budget_out_user_at,
+			p.plan_nouser_at,
+			p.plan_inner_user_at,
+			p.plan_out_user_at,
+			p.locked,
+			p.plan_workload,
+			p.total_receivables,
+			p.budget_margin_rate,
+			p.contract_amt,
+			p.plan_inner_user_price,
+			p.plan_out_user_price,
+			p.plan_out_user_cnt,
+			p.plan_inner_user_cnt,
+			p.plan_working_hours,
+			p.plan_total_cost 
+		FROM
+			XM.xm_project p 
+			LEFT JOIN 	XM.xm_project_phase res ON p.id = res.project_id 
+		where p.id=#{projectId}
+		  <if test=" excludePhaseIds !=null "> and res.id not  in
+				    <foreach collection="excludePhaseIds" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+		  </if>
+	</select> 
+	 
+	<update id="loadTasksToXmProjectPhase" parameterType="String" statementType="CALLABLE">
+		 {call load_tasks_to_xm_project_phase(#{projectId,mode=IN})} 
+	</update>
+	<select id="checkExistsTask" parameterType="String" resultType="Long">
+		select count(1) from XM.xm_task t where t.project_phase_id=#{phaseId}
+	</select>
+	
+	<select id="checkExistsChildren" parameterType="String" resultType="Long" >
+		select count(1) from XM.xm_project_phase res where res.parent_phase_id = #{id}
+	</select>
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project_phase res
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+		</where>
+		order by res.seq_no asc
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectPhase" resultType="com.qqkj.xm.core.entity.XmProjectPhase">
+		select * from XM.xm_project_phase res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmProjectPhase" resultType="com.qqkj.xm.core.entity.XmProjectPhase">
+		select * from XM.xm_project_phase res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project_phase res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectPhase" resultType="long">
+		select count(1) from XM.xm_project_phase res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmProjectPhase" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_project_phase(
+			<include refid="columns"/>
+		) values (
+		#{id},#{phaseName},#{remark},#{parentPhaseId},#{branchId},#{projectId},#{beginDate},#{endDate},#{phaseBudgetHours},#{phaseBudgetStaffNu},#{ctime},#{phaseBudgetNouserAt},#{phaseBudgetInnerUserAt},#{phaseBudgetOutUserAt},#{projectBaselineId},#{bizProcInstId},#{bizFlowState},#{phaseBudgetWorkload},#{phaseActWorkload},#{phaseActInnerUserWorkload},#{phaseActOutUserWorkload},#{taskType},#{planType},#{seqNo},#{phaseBudgetInnerUserWorkload},#{phaseBudgetOutUserWorkload},#{actNouserAt},#{actInnerUserAt},#{phaseBudgetInnerUserPrice},#{phaseBudgetOutUserPrice},#{phaseBudgetOutUserCnt},#{phaseBudgetInnerUserCnt},#{actRate},#{phaseStatus},#{actOutUserAt},#{taskCnt},#{finishTaskCnt},#{iterationCnt},#{calcTime},#{taskBudgetWorkload},#{taskBudgetAt}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectPhase">
+		delete from XM.xm_project_phase res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmProjectPhase">
+		delete from XM.xm_project_phase 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmProjectPhase">
+		update  XM.xm_project_phase 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmProjectPhase">
+		update  XM.xm_project_phase 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_project_phase 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_project_phase 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="phaseName != null and phaseName != ''">      and res.phase_name = #{phaseName}     </if>
+		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
+		<if test="parentPhaseId != null and parentPhaseId != ''">      and res.parent_phase_id = #{parentPhaseId}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
+		<if test="beginDate != null">      and TO_CHAR(res.begin_date,'YYYY-MM-DD') = TO_CHAR(#{beginDate},'YYYY-MM-DD')     </if>
+		<if test="endDate != null">      and TO_CHAR(res.end_date,'YYYY-MM-DD') = TO_CHAR(#{endDate},'YYYY-MM-DD')     </if>
+		<if test="phaseBudgetHours != null and phaseBudgetHours != ''">      and res.phase_budget_hours = #{phaseBudgetHours}     </if>
+		<if test="phaseBudgetStaffNu != null and phaseBudgetStaffNu != ''">      and res.phase_budget_staff_nu = #{phaseBudgetStaffNu}     </if>
+		<if test="ctime != null">      and TO_CHAR(res.ctime,'YYYY-MM-DD') = TO_CHAR(#{ctime},'YYYY-MM-DD')     </if>
+		<if test="phaseBudgetNouserAt != null and phaseBudgetNouserAt != ''">      and res.phase_budget_nouser_at = #{phaseBudgetNouserAt}     </if>
+		<if test="phaseBudgetInnerUserAt != null and phaseBudgetInnerUserAt != ''">      and res.phase_budget_inner_user_at = #{phaseBudgetInnerUserAt}     </if>
+		<if test="phaseBudgetOutUserAt != null and phaseBudgetOutUserAt != ''">      and res.phase_budget_out_user_at = #{phaseBudgetOutUserAt}     </if>
+		<if test="projectBaselineId != null and projectBaselineId != ''">      and res.project_baseline_id = #{projectBaselineId}     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
+		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
+		<if test="phaseBudgetWorkload != null and phaseBudgetWorkload != ''">      and res.phase_budget_workload = #{phaseBudgetWorkload}     </if>
+		<if test="phaseActWorkload != null and phaseActWorkload != ''">      and res.phase_act_workload = #{phaseActWorkload}     </if>
+		<if test="phaseActInnerUserWorkload != null and phaseActInnerUserWorkload != ''">      and res.phase_act_inner_user_workload = #{phaseActInnerUserWorkload}     </if>
+		<if test="phaseActOutUserWorkload != null and phaseActOutUserWorkload != ''">      and res.phase_act_out_user_workload = #{phaseActOutUserWorkload}     </if>
+		<if test="taskType != null and taskType != ''">      and res.task_type = #{taskType}     </if>
+		<if test="planType != null and planType != ''">      and res.plan_type = #{planType}     </if>
+		<if test="seqNo != null and seqNo != ''">      and res.seq_no = #{seqNo}     </if>
+		<if test="phaseBudgetInnerUserWorkload != null and phaseBudgetInnerUserWorkload != ''">      and res.phase_budget_inner_user_workload = #{phaseBudgetInnerUserWorkload}     </if>
+		<if test="phaseBudgetOutUserWorkload != null and phaseBudgetOutUserWorkload != ''">      and res.phase_budget_out_user_workload = #{phaseBudgetOutUserWorkload}     </if>
+		<if test="actNouserAt != null and actNouserAt != ''">      and res.act_nouser_at = #{actNouserAt}     </if>
+		<if test="actInnerUserAt != null and actInnerUserAt != ''">      and res.act_inner_user_at = #{actInnerUserAt}     </if>
+		<if test="phaseBudgetInnerUserPrice != null and phaseBudgetInnerUserPrice != ''">      and res.phase_budget_inner_user_price = #{phaseBudgetInnerUserPrice}     </if>
+		<if test="phaseBudgetOutUserPrice != null and phaseBudgetOutUserPrice != ''">      and res.phase_budget_out_user_price = #{phaseBudgetOutUserPrice}     </if>
+		<if test="phaseBudgetOutUserCnt != null and phaseBudgetOutUserCnt != ''">      and res.phase_budget_out_user_cnt = #{phaseBudgetOutUserCnt}     </if>
+		<if test="phaseBudgetInnerUserCnt != null and phaseBudgetInnerUserCnt != ''">      and res.phase_budget_inner_user_cnt = #{phaseBudgetInnerUserCnt}     </if>
+		<if test="actRate != null and actRate != ''">      and res.act_rate = #{actRate}     </if>
+		<if test="phaseStatus != null and phaseStatus != ''">      and res.phase_status = #{phaseStatus}     </if>
+		<if test="actOutUserAt != null and actOutUserAt != ''">      and res.act_out_user_at = #{actOutUserAt}     </if>
+		<if test="taskCnt != null and taskCnt != ''">      and res.task_cnt = #{taskCnt}     </if>
+		<if test="finishTaskCnt != null and finishTaskCnt != ''">      and res.finish_task_cnt = #{finishTaskCnt}     </if>
+		<if test="iterationCnt != null and iterationCnt != ''">      and res.iteration_cnt = #{iterationCnt}     </if>
+		<if test="calcTime != null">      and TO_CHAR(res.calc_time,'YYYY-MM-DD') = TO_CHAR(#{calcTime},'YYYY-MM-DD')     </if>
+		<if test="taskBudgetWorkload != null and taskBudgetWorkload != ''">      and res.task_budget_workload = #{taskBudgetWorkload}     </if>
+		<if test="taskBudgetAt != null and taskBudgetAt != ''">      and res.task_budget_at = #{taskBudgetAt}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		phase_name = #{phaseName},
+		remark = #{remark},
+		parent_phase_id = #{parentPhaseId},
+		branch_id = #{branchId},
+		project_id = #{projectId},
+		begin_date = #{beginDate},
+		end_date = #{endDate},
+		phase_budget_hours = #{phaseBudgetHours},
+		phase_budget_staff_nu = #{phaseBudgetStaffNu},
+		ctime = #{ctime},
+		phase_budget_nouser_at = #{phaseBudgetNouserAt},
+		phase_budget_inner_user_at = #{phaseBudgetInnerUserAt},
+		phase_budget_out_user_at = #{phaseBudgetOutUserAt},
+		project_baseline_id = #{projectBaselineId},
+		biz_proc_inst_id = #{bizProcInstId},
+		biz_flow_state = #{bizFlowState},
+		phase_budget_workload = #{phaseBudgetWorkload},
+		phase_act_workload = #{phaseActWorkload},
+		phase_act_inner_user_workload = #{phaseActInnerUserWorkload},
+		phase_act_out_user_workload = #{phaseActOutUserWorkload},
+		task_type = #{taskType},
+		plan_type = #{planType},
+		seq_no = #{seqNo},
+		phase_budget_inner_user_workload = #{phaseBudgetInnerUserWorkload},
+		phase_budget_out_user_workload = #{phaseBudgetOutUserWorkload},
+		act_nouser_at = #{actNouserAt},
+		act_inner_user_at = #{actInnerUserAt},
+		phase_budget_inner_user_price = #{phaseBudgetInnerUserPrice},
+		phase_budget_out_user_price = #{phaseBudgetOutUserPrice},
+		phase_budget_out_user_cnt = #{phaseBudgetOutUserCnt},
+		phase_budget_inner_user_cnt = #{phaseBudgetInnerUserCnt},
+		act_rate = #{actRate},
+		phase_status = #{phaseStatus},
+		act_out_user_at = #{actOutUserAt},
+		task_cnt = #{taskCnt},
+		finish_task_cnt = #{finishTaskCnt},
+		iteration_cnt = #{iterationCnt},
+		calc_time = #{calcTime},
+		task_budget_workload = #{taskBudgetWorkload},
+		task_budget_at = #{taskBudgetAt}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="phaseName != null and phaseName != ''"> phase_name = #{phaseName},     </if>
+		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
+		<if test="parentPhaseId != null and parentPhaseId != ''"> parent_phase_id = #{parentPhaseId},     </if>
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
+		<if test="beginDate != null"> begin_date = #{beginDate},     </if>
+		<if test="endDate != null"> end_date = #{endDate},     </if>
+		<if test="phaseBudgetHours != null and phaseBudgetHours != ''"> phase_budget_hours = #{phaseBudgetHours},     </if>
+		<if test="phaseBudgetStaffNu != null and phaseBudgetStaffNu != ''"> phase_budget_staff_nu = #{phaseBudgetStaffNu},     </if>
+		<if test="ctime != null"> ctime = #{ctime},     </if>
+		<if test="phaseBudgetNouserAt != null and phaseBudgetNouserAt != ''"> phase_budget_nouser_at = #{phaseBudgetNouserAt},     </if>
+		<if test="phaseBudgetInnerUserAt != null and phaseBudgetInnerUserAt != ''"> phase_budget_inner_user_at = #{phaseBudgetInnerUserAt},     </if>
+		<if test="phaseBudgetOutUserAt != null and phaseBudgetOutUserAt != ''"> phase_budget_out_user_at = #{phaseBudgetOutUserAt},     </if>
+		<if test="projectBaselineId != null and projectBaselineId != ''"> project_baseline_id = #{projectBaselineId},     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
+		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
+		<if test="phaseBudgetWorkload != null and phaseBudgetWorkload != ''"> phase_budget_workload = #{phaseBudgetWorkload},     </if>
+		<if test="phaseActWorkload != null and phaseActWorkload != ''"> phase_act_workload = #{phaseActWorkload},     </if>
+		<if test="phaseActInnerUserWorkload != null and phaseActInnerUserWorkload != ''"> phase_act_inner_user_workload = #{phaseActInnerUserWorkload},     </if>
+		<if test="phaseActOutUserWorkload != null and phaseActOutUserWorkload != ''"> phase_act_out_user_workload = #{phaseActOutUserWorkload},     </if>
+		<if test="taskType != null and taskType != ''"> task_type = #{taskType},     </if>
+		<if test="planType != null and planType != ''"> plan_type = #{planType},     </if>
+		<if test="seqNo != null and seqNo != ''"> seq_no = #{seqNo},     </if>
+		<if test="phaseBudgetInnerUserWorkload != null and phaseBudgetInnerUserWorkload != ''"> phase_budget_inner_user_workload = #{phaseBudgetInnerUserWorkload},     </if>
+		<if test="phaseBudgetOutUserWorkload != null and phaseBudgetOutUserWorkload != ''"> phase_budget_out_user_workload = #{phaseBudgetOutUserWorkload},     </if>
+		<if test="actNouserAt != null and actNouserAt != ''"> act_nouser_at = #{actNouserAt},     </if>
+		<if test="actInnerUserAt != null and actInnerUserAt != ''"> act_inner_user_at = #{actInnerUserAt},     </if>
+		<if test="phaseBudgetInnerUserPrice != null and phaseBudgetInnerUserPrice != ''"> phase_budget_inner_user_price = #{phaseBudgetInnerUserPrice},     </if>
+		<if test="phaseBudgetOutUserPrice != null and phaseBudgetOutUserPrice != ''"> phase_budget_out_user_price = #{phaseBudgetOutUserPrice},     </if>
+		<if test="phaseBudgetOutUserCnt != null and phaseBudgetOutUserCnt != ''"> phase_budget_out_user_cnt = #{phaseBudgetOutUserCnt},     </if>
+		<if test="phaseBudgetInnerUserCnt != null and phaseBudgetInnerUserCnt != ''"> phase_budget_inner_user_cnt = #{phaseBudgetInnerUserCnt},     </if>
+		<if test="actRate != null and actRate != ''"> act_rate = #{actRate},     </if>
+		<if test="phaseStatus != null and phaseStatus != ''"> phase_status = #{phaseStatus},     </if>
+		<if test="actOutUserAt != null and actOutUserAt != ''"> act_out_user_at = #{actOutUserAt},     </if>
+		<if test="taskCnt != null and taskCnt != ''"> task_cnt = #{taskCnt},     </if>
+		<if test="finishTaskCnt != null and finishTaskCnt != ''"> finish_task_cnt = #{finishTaskCnt},     </if>
+		<if test="iterationCnt != null and iterationCnt != ''"> iteration_cnt = #{iterationCnt},     </if>
+		<if test="calcTime != null"> calc_time = #{calcTime},     </if>
+		<if test="taskBudgetWorkload != null and taskBudgetWorkload != ''"> task_budget_workload = #{taskBudgetWorkload},     </if>
+		<if test="taskBudgetAt != null and taskBudgetAt != ''"> task_budget_at = #{taskBudgetAt},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			phase_name = #{item.phaseName},
+			remark = #{item.remark},
+			parent_phase_id = #{item.parentPhaseId},
+			branch_id = #{item.branchId},
+			project_id = #{item.projectId},
+			begin_date = #{item.beginDate},
+			end_date = #{item.endDate},
+			phase_budget_hours = #{item.phaseBudgetHours},
+			phase_budget_staff_nu = #{item.phaseBudgetStaffNu},
+			ctime = #{item.ctime},
+			phase_budget_nouser_at = #{item.phaseBudgetNouserAt},
+			phase_budget_inner_user_at = #{item.phaseBudgetInnerUserAt},
+			phase_budget_out_user_at = #{item.phaseBudgetOutUserAt},
+			project_baseline_id = #{item.projectBaselineId},
+			biz_proc_inst_id = #{item.bizProcInstId},
+			biz_flow_state = #{item.bizFlowState},
+			phase_budget_workload = #{item.phaseBudgetWorkload},
+			phase_act_workload = #{item.phaseActWorkload},
+			phase_act_inner_user_workload = #{item.phaseActInnerUserWorkload},
+			phase_act_out_user_workload = #{item.phaseActOutUserWorkload},
+			task_type = #{item.taskType},
+			plan_type = #{item.planType},
+			seq_no = #{item.seqNo},
+			phase_budget_inner_user_workload = #{item.phaseBudgetInnerUserWorkload},
+			phase_budget_out_user_workload = #{item.phaseBudgetOutUserWorkload},
+			act_nouser_at = #{item.actNouserAt},
+			act_inner_user_at = #{item.actInnerUserAt},
+			phase_budget_inner_user_price = #{item.phaseBudgetInnerUserPrice},
+			phase_budget_out_user_price = #{item.phaseBudgetOutUserPrice},
+			phase_budget_out_user_cnt = #{item.phaseBudgetOutUserCnt},
+			phase_budget_inner_user_cnt = #{item.phaseBudgetInnerUserCnt},
+			act_rate = #{item.actRate},
+			phase_status = #{item.phaseStatus},
+			act_out_user_at = #{item.actOutUserAt},
+			task_cnt = #{item.taskCnt},
+			finish_task_cnt = #{item.finishTaskCnt},
+			iteration_cnt = #{item.iterationCnt},
+			calc_time = #{item.calcTime},
+			task_budget_workload = #{item.taskBudgetWorkload},
+			task_budget_at = #{item.taskBudgetAt}
+	</sql>
+</mapper>

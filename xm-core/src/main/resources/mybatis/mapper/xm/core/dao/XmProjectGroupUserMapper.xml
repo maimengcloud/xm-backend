@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qqkj.xm.core.entity.XmProjectGroupUser">
+	
+	
+	<!--开始 自定sql函数区域 -->
+		<!--请在此区域添加自定义函数-->
+	<delete id="deleteByGroupId" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+		delete from XM.xm_project_group_user where group_id = #{groupId}
+	</delete>
+
+	<select id="selectListByWhereHead" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser" resultType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+		select * from XM.xm_project_group_user res
+		<where>
+			<include refid="where"/>
+		</where>
+		order by is_head desc
+	</select>
+		
+		<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectGroupUserListByProjectId" parameterType="String" resultType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+		select * from XM.xm_project_group_user res
+		<where>
+			 exists( select 1 from XM.xm_project_group g where g.id=res.group_id and g.project_id=#{projectId})
+		</where>
+	</select>	
+		
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project_group_user res
+		<where> 
+			<if test="ids != null">  and     
+				id in
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				        #{item}  
+				    </foreach>  
+			 </if>
+			<include refid="where"/>
+			<if test="key != null and key !='' ">       </if> 
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser" resultType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+		select * from XM.xm_project_group_user res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser" resultType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+		select * from XM.xm_project_group_user res
+		where 
+			res.id = #{id}
+	</select>
+	
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project_group_user res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser" resultType="long">
+		select count(1) from XM.xm_project_group_user res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser" useGeneratedKeys="false"   keyProperty="id">
+		insert into XM.xm_project_group_user(
+			<include refid="columns"/>
+		) values (
+		#{joinTime},#{id},#{groupId},#{userid},#{username},#{isHead},#{outTime},#{status},#{bizProcInstId},#{bizFlowState},#{projectId}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+		delete from XM.xm_project_group_user res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+		delete from XM.xm_project_group_user 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+		update  XM.xm_project_group_user 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+		update  XM.xm_project_group_user 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  XM.xm_project_group_user 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from XM.xm_project_group_user 
+			where id in
+			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
+			        #{item.id }  
+			    </foreach>  
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		join_time,id,group_id,userid,username,is_head,out_time,status,biz_proc_inst_id,biz_flow_state,project_id
+	</sql>
+	
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="joinTime != null">      and TO_CHAR(res.join_time,'YYYY-MM-DD') = TO_CHAR(#{joinTime},'YYYY-MM-DD')     </if>
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="groupId != null and groupId != ''">      and res.group_id = #{groupId}     </if>
+		<if test="userid != null and userid != ''">      and res.userid = #{userid}     </if>
+		<if test="username != null and username != ''">      and res.username = #{username}     </if>
+		<if test="isHead != null and isHead != ''">      and res.is_head = #{isHead}     </if>
+		<if test="outTime != null">      and TO_CHAR(res.out_time,'YYYY-MM-DD') = TO_CHAR(#{outTime},'YYYY-MM-DD')     </if>
+		<if test="status != null and status != ''">      and res.status = #{status}     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
+		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		join_time = #{joinTime},
+		group_id = #{groupId},
+		userid = #{userid},
+		username = #{username},
+		is_head = #{isHead},
+		out_time = #{outTime},
+		status = #{status},
+		biz_proc_inst_id = #{bizProcInstId},
+		biz_flow_state = #{bizFlowState},
+		project_id = #{projectId}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="joinTime != null"> join_time = #{joinTime},     </if>
+		<if test="groupId != null and groupId != ''"> group_id = #{groupId},     </if>
+		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
+		<if test="username != null and username != ''"> username = #{username},     </if>
+		<if test="isHead != null and isHead != ''"> is_head = #{isHead},     </if>
+		<if test="outTime != null"> out_time = #{outTime},     </if>
+		<if test="status != null and status != ''"> status = #{status},     </if>
+		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
+		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			join_time = #{item.joinTime},
+			group_id = #{item.groupId},
+			userid = #{item.userid},
+			username = #{item.username},
+			is_head = #{item.isHead},
+			out_time = #{item.outTime},
+			status = #{item.status},
+			biz_proc_inst_id = #{item.bizProcInstId},
+			biz_flow_state = #{item.bizFlowState},
+			project_id = #{item.projectId}
+	</sql>
+</mapper>
