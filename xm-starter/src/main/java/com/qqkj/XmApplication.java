@@ -20,6 +20,7 @@ public class XmApplication  {
 	
  
 	public static void main(String[] args) {
+		XmPrject xmPrject=new XmProject();
 		SpringApplication.run(XmApplication.class,args);
 
 	}
