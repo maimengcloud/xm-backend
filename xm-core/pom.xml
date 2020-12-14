@@ -7,7 +7,7 @@
   <name>唛盟云-项目管理系统服务端核心</name>
   <description>唛盟云-项目管理系统服务端核心</description>
   <parent>
-    <groupId>com.qingqinkj.mmcloud</groupId>
+    <groupId>com.qingqinkj.xm</groupId>
     <artifactId>xm-server</artifactId>
     <version>M.1.0.0-RELEASE</version>
   </parent>

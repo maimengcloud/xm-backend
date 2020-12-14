@@ -6,7 +6,7 @@
   <packaging>jar</packaging>
   <name>唛盟云-项目管理系统服务端启动器</name>
     <parent>
-        <groupId>com.qingqinkj.mmcloud</groupId>
+        <groupId>com.qingqinkj.xm</groupId>
         <artifactId>xm-server</artifactId>
         <version>M.1.0.0-RELEASE</version>
     </parent>
