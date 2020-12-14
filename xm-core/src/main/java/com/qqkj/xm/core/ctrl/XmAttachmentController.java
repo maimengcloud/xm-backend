@@ -1,37 +1,23 @@
 package com.qqkj.xm.core.ctrl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import com.qqkj.mdp.core.context.ContextHolder;
+import com.qqkj.mdp.core.entity.Tips;
+import com.qqkj.mdp.core.utils.RequestUtils;
+import com.qqkj.mdp.mybatis.PageUtils;
+import com.qqkj.xm.core.entity.XmAttachment;
+import com.qqkj.xm.core.service.XmAttachmentService;
+import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.stereotype.Controller;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import com.qqkj.mdp.mybatis.PageUtils; 
-import com.qqkj.mdp.core.utils.RequestUtils;
-import com.qqkj.mdp.core.entity.Tips;
-import com.qqkj.mdp.core.err.BizException;
-import com.qqkj.mdp.core.service.SequenceService;
-import com.qqkj.xm.core.service.XmAttachmentService;
-import com.qqkj.xm.core.entity.XmAttachment;
 /**
  * url编制采用rest风格,如对XM.xm_attachment xm_attachment的操作有增删改查,对应的url分别为:<br>
  *  新增: xm/xmAttachment/add <br>

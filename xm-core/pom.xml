@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  <modelVersion>4.0.0</modelVersion> 
-  <groupId>com.qingqinkj.mmcloud</groupId>
+  <modelVersion>4.0.0</modelVersion>
   <artifactId>xm-core</artifactId>
   <packaging>jar</packaging>
-  <name>项目管理系统</name> 
-  <description>项目管理系统</description>  
+  <name>唛盟云-项目管理系统服务端核心</name>
+  <description>唛盟云-项目管理系统服务端核心</description>
   <parent>
     <groupId>com.qingqinkj.mmcloud</groupId>
-    <artifactId>xm</artifactId>
+    <artifactId>xm-server</artifactId>
     <version>M.1.0.0-RELEASE</version>
   </parent>
 
@@ -33,12 +32,12 @@
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-common</artifactId>
 			<version>${mdp.version}</version>
-		</dependency> 
+		</dependency>
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-audit-base</artifactId>
 			<version>${mdp.version}</version>
-		</dependency> 
+		</dependency>
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-tomcat-conf</artifactId>
@@ -75,23 +74,10 @@
 			<artifactId>easyexcel</artifactId>
 			<version>2.1.1</version>
 		</dependency>
-
-
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
 			<version>1.11.3</version>
-		</dependency>
-
-		<dependency>
-			<groupId>com.deepoove</groupId>
-			<artifactId>poi-tl</artifactId>
-			<version>1.5.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
 
 	</dependencies>

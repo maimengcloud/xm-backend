@@ -3,10 +3,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.qingqinkj.mmcloud</groupId>
-  <artifactId>xm</artifactId>
+  <artifactId>xm-server</artifactId>
   <packaging>pom</packaging>
-  <name>项目管理系统</name>
-  <description>项目管理系统</description>
+  <name>唛盟云-项目管理系统</name>
+  <description>唛盟云-项目管理系统</description>
   <parent>
     <groupId>com.qingqinkj.mdp</groupId>
     <artifactId>mdp-products</artifactId>
@@ -21,9 +21,15 @@
 	</properties>
 	<modules>
 		<module>xm-core</module>
-		<module>xm-push</module>
+		<module>xm-starter</module>
 	</modules>
 	<dependencies>
+		<dependency>
+			<groupId>com.qingqinkj.mdp</groupId>
+			<artifactId>mdp-utils</artifactId>
+			<version>${mdp.version}</version>
+		</dependency>
+
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-utils</artifactId>
@@ -93,17 +99,6 @@
 			<version>1.11.3</version>
 		</dependency>
 
-		<dependency>
-			<groupId>com.deepoove</groupId>
-			<artifactId>poi-tl</artifactId>
-			<version>1.5.1</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-mail</artifactId>
-		</dependency>
-
 	</dependencies>
 	<build>
 		<pluginManagement>
@@ -111,6 +106,13 @@
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
+					<executions>
+						<execution>
+							<goals>
+								<goal>repackage</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 				<plugin>
 					<groupId>com.spotify</groupId>
