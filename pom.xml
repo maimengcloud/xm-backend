@@ -23,19 +23,16 @@
 		<module>xm-core</module>
 		<module>xm-starter</module>
 	</modules>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>com.qingqinkj.xm</groupId>
+				<artifactId>xm-core</artifactId>
+				<version>${mdp.version}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
-
-		<dependency>
-			<groupId>com.qingqinkj.mmcloud</groupId>
-			<artifactId>mdp-utils</artifactId>
-			<version>${mdp.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.qingqinkj.mdp</groupId>
-			<artifactId>mdp-utils</artifactId>
-			<version>${mdp.version}</version>
-		</dependency>
-
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-utils</artifactId>

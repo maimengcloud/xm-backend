@@ -31,6 +31,10 @@
           <groupId>org.springframework.cloud</groupId>
           <artifactId>spring-cloud-starter-consul-discovery</artifactId>
       </dependency>
+      <dependency>
+          <groupId>com.qingqinkj.xm</groupId>
+          <artifactId>xm-core</artifactId>
+      </dependency>
   </dependencies>
     <dependencyManagement>
         <dependencies>
