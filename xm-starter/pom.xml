@@ -75,7 +75,28 @@
                 <skip>true</skip>
             </configuration>
         </plugin>
-  	</plugins>
+        <plugin>
+            <groupId>com.spotify</groupId>
+            <artifactId>docker-maven-plugin</artifactId>
+            <version>1.0.0</version>
+            <configuration>
+                <dockerDirectory>docker</dockerDirectory>
+                <dockerHost>${docker.host}</dockerHost>
+                <imageName>${docker.image.prefix}/${project.artifactId}:${project.version}</imageName>
+                <buildArgs>
+                    <JAR_FILE>${project.build.finalName}.jar</JAR_FILE>
+                </buildArgs>
+                <resources>
+                    <resource>
+                        <targetPath>/</targetPath>
+                        <directory>${project.build.directory}</directory>
+                        <include>${project.artifactId}-${project.version}.jar</include>
+                    </resource>
+                </resources>
+                <pushImage>false</pushImage>
+            </configuration>
+        </plugin>
+    </plugins>
   </build>
   <description>唛盟云-项目管理系统微服务启动器</description>
 </project>
