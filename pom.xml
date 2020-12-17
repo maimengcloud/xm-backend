@@ -36,37 +36,26 @@
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-utils</artifactId>
-			<version>${mdp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-core</artifactId>
-			<version>${mdp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-safe-common</artifactId>
-			<version>${mdp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-common</artifactId>
-			<version>${mdp.version}</version>
 		</dependency> 
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-audit-base</artifactId>
-			<version>${mdp.version}</version>
 		</dependency> 
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-tomcat-conf</artifactId>
-			<version>${mdp.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>com.qingqinkj.mdp</groupId>
-			<artifactId>mdp-form</artifactId>
-			<version>${mdp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.coobird</groupId>
