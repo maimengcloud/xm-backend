@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/xm-core/xm-core.iml" filepath="$PROJECT_DIR$/xm-core/xm-core.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/xm-server.iml" filepath="$PROJECT_DIR$/.idea/xm-server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/xm-starter/xm-starter.iml" filepath="$PROJECT_DIR$/xm-starter/xm-starter.iml" />
     </modules>
   </component>
 </project>
