@@ -39,6 +39,14 @@
 		</dependency>
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
+			<artifactId>mdp-micro-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.qingqinkj.mdp</groupId>
+			<artifactId>mdp-msg-client</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-core</artifactId>
 		</dependency>
 		<dependency>

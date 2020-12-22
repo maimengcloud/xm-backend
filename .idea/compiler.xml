@@ -11,9 +11,9 @@
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="8">
-      <module name="xm-core" target="8" />
-      <module name="xm-server" target="8" />
-      <module name="xm-starter" target="8" />
+      <module name="xm-core" target="1.8" />
+      <module name="xm-server" target="1.8" />
+      <module name="xm-starter" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">

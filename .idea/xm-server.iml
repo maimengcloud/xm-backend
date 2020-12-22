@@ -9,6 +9,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="Maven: com.qingqinkj.mdp:mdp-utils:M.1.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.qingqinkj.mdp:mdp-micro-client:M.1.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.qingqinkj.mdp:mdp-msg-client:M.1.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.qingqinkj.mdp:mdp-core:M.1.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.qingqinkj.mdp:mdp-safe-common-jwt-utils:M.1.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: io.jsonwebtoken:jjwt:0.9.0" level="project" />
@@ -65,8 +67,6 @@
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.1.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-autoconfigure:2.1.0.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-logging:2.1.0.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-to-slf4j:2.11.1" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.logging.log4j:log4j-api:2.11.1" level="project" />
     <orderEntry type="library" name="Maven: org.slf4j:jul-to-slf4j:1.7.25" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-core:5.1.2.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-jcl:5.1.2.RELEASE" level="project" />

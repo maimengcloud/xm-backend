@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qqkj.mdp.msg.client.PushMsgService;
 import org.springframework.util.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 
 import com.qqkj.xm.core.service.XmMenuExchangeService;
 import com.qqkj.xm.core.service.XmMenuService;
-import com.qqkj.xm.push.service.PushMsgService;
 
 @Service
 public class XmMenuPushMsgService extends PushMsgService {
