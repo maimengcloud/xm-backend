@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qqkj.mdp.qx.HasQx;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +101,7 @@ public class XmProjectController {
 		@ApiResponse(code = 200,response=XmProject.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
+	@HasQx(value = "xm_core_xmProject_add",name = "创建项目",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	public Map<String,Object> addXmProject(@RequestBody XmProjectVo xmProjectVo) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
@@ -130,6 +132,7 @@ public class XmProjectController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
+	@HasQx(value = "xm_core_xmProject_del",name = "删除项目",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	public Map<String,Object> delXmProject(@RequestBody XmProject xmProject){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
@@ -151,6 +154,7 @@ public class XmProjectController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmProject_editAssess",name = "项目估算",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/editAssess",method=RequestMethod.POST)
 	public Map<String,Object> editXmProjectAssess(@RequestBody XmProject xmProject) {
 		Map<String,Object> m = new HashMap<>();
@@ -175,6 +179,7 @@ public class XmProjectController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmProject_editStatus",name = "修改项目状态",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/editStatus",method=RequestMethod.POST)
 	public Map<String,Object> editXmProjectStatus(@RequestBody XmProject xmProject) {
 		Map<String,Object> m = new HashMap<>();
@@ -199,6 +204,7 @@ public class XmProjectController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmProject_editBudget",name = "修改项目预算",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/editBudget",method=RequestMethod.POST)
 	public Map<String,Object> editBudget(@RequestBody XmProject xmProject) {
 		Map<String,Object> m = new HashMap<>();
@@ -222,7 +228,8 @@ public class XmProjectController {
 	@ApiOperation( value = "根据主键修改一条xm_project信息",notes="editXmProject")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProject_edit",name = "修改项目基础信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmProject(@RequestBody XmProject xmProject) {
 		Map<String,Object> m = new HashMap<>();
