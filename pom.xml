@@ -56,14 +56,15 @@
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-common</artifactId>
-		</dependency> 
-		<dependency>
-			<groupId>com.qingqinkj.mdp</groupId>
-			<artifactId>mdp-audit-base</artifactId>
-		</dependency> 
+		</dependency>
 		<dependency>
 			<groupId>com.qingqinkj.mdp</groupId>
 			<artifactId>mdp-tomcat-conf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.qingqinkj.mdp</groupId>
+			<artifactId>mdp-audit-log-client</artifactId>
+			<version>${mdp.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>net.coobird</groupId>

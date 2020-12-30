@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import com.qqkj.audit.base.annotation.AuditLog;
-import com.qqkj.audit.base.annotation.OperType;
+import com.qqkj.audit.log.client.annotation.AuditLog;
+import com.qqkj.audit.log.client.annotation.OperType;
 import com.qqkj.mdp.core.context.ContextHolder;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

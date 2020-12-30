@@ -23,8 +23,8 @@ import io.swagger.annotations.ApiResponses;
 
 import com.qqkj.mdp.mybatis.PageUtils; 
 import com.qqkj.mdp.core.utils.RequestUtils;
-import com.qqkj.audit.base.annotation.AuditLog;
-import com.qqkj.audit.base.annotation.OperType;
+import com.qqkj.audit.log.client.annotation.AuditLog;
+import com.qqkj.audit.log.client.annotation.OperType;
 import com.qqkj.mdp.core.entity.Tips;
 import com.qqkj.mdp.core.err.BizException;
 import com.qqkj.xm.core.service.XmFileService;

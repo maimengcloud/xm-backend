@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.alibaba.fastjson.JSON;
-import com.qqkj.audit.base.annotation.AuditLog;
-import com.qqkj.audit.base.annotation.OperType;
+import com.qqkj.audit.log.client.annotation.AuditLog;
+import com.qqkj.audit.log.client.annotation.OperType;
 import com.qqkj.mdp.core.entity.Tips;
 import com.qqkj.mdp.core.err.BizException;
 import com.qqkj.mdp.core.utils.NumberUtil;
