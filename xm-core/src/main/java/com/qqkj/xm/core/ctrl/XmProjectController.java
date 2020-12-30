@@ -154,7 +154,7 @@ public class XmProjectController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProject_editAssess",name = "项目估算",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProject_editAssess",name = "修改项目估算",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/editAssess",method=RequestMethod.POST)
 	public Map<String,Object> editXmProjectAssess(@RequestBody XmProject xmProject) {
 		Map<String,Object> m = new HashMap<>();

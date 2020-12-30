@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.qqkj.mdp.core.context.ContextHolder;
+import com.qqkj.mdp.qx.HasQx;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +90,7 @@ public class XmTaskSkillController {
 	@ApiResponses({
 	@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
+	@HasQx(value = "xm_core_xmTaskSkill_batchAdd",name = "批量新增任务的技能要求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
 	public Map<String,Object> batchAddSkill(@RequestBody List<XmTaskSkill> xmTaskSkills) {
 		Map<String,Object> m = new HashMap<>();
@@ -145,7 +147,8 @@ public class XmTaskSkillController {
 	@ApiOperation( value = "删除一条xm_task_skill信息",notes="delXmTaskSkill,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTaskSkill_del",name = "删除任务的技能要求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmTaskSkill(@RequestBody XmTaskSkill xmTaskSkill){
 		Map<String,Object> m = new HashMap<>();

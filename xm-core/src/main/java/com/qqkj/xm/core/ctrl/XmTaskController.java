@@ -5,6 +5,7 @@ import java.util.*;
 
 import com.alibaba.fastjson.JSON;
 import com.github.pagehelper.Page;
+import com.qqkj.mdp.qx.HasQx;
 import com.qqkj.xm.core.vo.XmProjectGroupVo;
 import com.qqkj.xm.core.vo.XmTaskVo;
 import org.apache.commons.logging.Log;
@@ -129,6 +130,7 @@ public class XmTaskController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmTask_addTask",name = "新增任务",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/addTask",method=RequestMethod.POST)
 	public Map<String,Object> addTask(@RequestBody XmTaskVo xmTaskVo) {
 		Map<String,Object> m = new HashMap<>();
@@ -232,7 +234,8 @@ public class XmTaskController {
 	@ApiOperation( value = "新增一条xm_task信息",notes="addXmTask,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTask_add",name = "新增任务",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmTask(@RequestBody XmTask xmTask) {
 		Map<String,Object> m = new HashMap<>();
@@ -289,7 +292,8 @@ public class XmTaskController {
 	@ApiOperation( value = "删除一条xm_task信息",notes="delXmTask,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTask_del",name = "删除任务",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmTask(@RequestBody XmTask xmTask){
 		Map<String,Object> m = new HashMap<>();
@@ -310,7 +314,8 @@ public class XmTaskController {
 	@ApiOperation( value = "根据主键修改一条xm_task信息",notes="editXmTask")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTask_editXmTask",name = "修改任务",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmTask(@RequestBody XmTaskVo xmTaskVo) {
 		Map<String,Object> m = new HashMap<>();
@@ -363,6 +368,7 @@ public class XmTaskController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmTask_editProgress",name = "修改任务进度百分比",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/editProgress",method=RequestMethod.POST)
 	public Map<String,Object> editProgress(@RequestBody XmTask xmTask) {
 		Map<String,Object> m = new HashMap<>();
@@ -394,7 +400,8 @@ public class XmTaskController {
 	@ApiOperation( value = "批量导入任务-从模板导入",notes="batchDelXmTask,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTask_batchImportFromTemplate",name = "从模板导入任务",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchImportFromTemplate",method=RequestMethod.POST)
 	public Map<String,Object> batchImportFromTemplate(@RequestBody List<XmTask> xmTasks) {
 		Map<String,Object> m = new HashMap<>();
@@ -444,7 +451,8 @@ public class XmTaskController {
 	@ApiOperation( value = "批量将多个任务与一个用户故事关联",notes="")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTask_batchRelTasksWithMenu",name = "从故事导入任务",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchRelTasksWithMenu",method=RequestMethod.POST)
 	public Map<String,Object> batchRelTasksWithMenu(@RequestBody List<XmTask> xmTasks) {
 		Map<String,Object> m = new HashMap<>();
@@ -472,7 +480,8 @@ public class XmTaskController {
 	@ApiOperation( value = "根据主键列表批量删除xm_task信息",notes="batchDelXmTask,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTask_batchDel",name = "批量删除任务",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmTask(@RequestBody List<XmTask> xmTasks) {
 		Map<String,Object> m = new HashMap<>();
@@ -509,7 +518,8 @@ public class XmTaskController {
 	@ApiOperation( value = "批量修改预算",notes="batchSaveBudget,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTask_batchSaveBudget",name = "批量修改任务预算",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchSaveBudget",method=RequestMethod.POST)
 	public Map<String,Object> batchSaveBudget(@RequestBody  List<XmTaskVo> xmTasks) {
 		Map<String,Object> m = new HashMap<>();

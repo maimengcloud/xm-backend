@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qqkj.mdp.qx.HasQx;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -107,7 +108,8 @@ public class XmMenuExchangeController {
 	@ApiOperation( value = "新增一条功能表信息",notes="addXmMenuExchange,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmMenuExchange.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmMenuExchange_add",name = "发布故事评论",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmMenuExchange(@RequestBody XmMenuExchange xmMenuExchange) {
 		Map<String,Object> m = new HashMap<>();
@@ -137,7 +139,8 @@ public class XmMenuExchangeController {
 	@ApiOperation( value = "删除一条功能表信息",notes="delXmMenuExchange,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmMenuExchange_del",name = "删除故事评论",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmMenuExchange(@RequestBody XmMenuExchange xmMenuExchange){
 		Map<String,Object> m = new HashMap<>();
@@ -160,7 +163,8 @@ public class XmMenuExchangeController {
 	@ApiOperation( value = "根据主键修改一条功能表信息",notes="editXmMenuExchange")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmMenuExchange.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmMenuExchange_edit",name = "修改故事评论",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmMenuExchange(@RequestBody XmMenuExchange xmMenuExchange) {
 		Map<String,Object> m = new HashMap<>();
@@ -186,7 +190,8 @@ public class XmMenuExchangeController {
 	@ApiOperation( value = "根据主键列表批量删除功能表信息",notes="batchDelXmMenuExchange,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmMenuExchange_batchDel",name = "批量删除故事评论",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmMenuExchange(@RequestBody List<XmMenuExchange> xmMenuExchanges) {
 		Map<String,Object> m = new HashMap<>();

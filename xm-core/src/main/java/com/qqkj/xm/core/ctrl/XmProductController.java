@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.qqkj.mdp.core.context.ContextHolder;
+import com.qqkj.mdp.qx.HasQx;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,7 +109,8 @@ public class XmProductController {
 	@ApiOperation( value = "新增一条产品表信息",notes="addXmProduct,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProduct.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProduct_add",name = "创建产品/战略规划等",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmProduct(@RequestBody XmProduct xmProduct) {
 		Map<String,Object> m = new HashMap<>();
@@ -148,7 +150,8 @@ public class XmProductController {
 	@ApiOperation( value = "删除一条产品表信息",notes="delXmProduct,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProduct_del",name = "删除产品/战略规划等",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmProduct(@RequestBody XmProduct xmProduct){
 		Map<String,Object> m = new HashMap<>();
@@ -183,7 +186,8 @@ public class XmProductController {
 	@ApiOperation( value = "根据主键修改一条产品表信息",notes="editXmProduct")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProduct.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProduct_edit",name = "修改产品/战略规划等基本信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmProduct(@RequestBody XmProduct xmProduct) {
 		Map<String,Object> m = new HashMap<>();
@@ -209,7 +213,8 @@ public class XmProductController {
 	@ApiOperation( value = "根据主键列表批量删除产品表信息",notes="batchDelXmProduct,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProduct_batchDel",name = "批量删除产品/战略规划等基本信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmProduct(@RequestBody List<XmProduct> xmProducts) {
 		Map<String,Object> m = new HashMap<>();

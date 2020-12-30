@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.qqkj.mdp.core.context.ContextHolder;
+import com.qqkj.mdp.qx.HasQx;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +102,8 @@ public class XmTestCaseController {
 	@ApiOperation( value = "新增一条测试用例信息",notes="addXmTestCase,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTestCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTestCase_batchAdd",name = "新增测试用例",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmTestCase(@RequestBody XmTestCase xmTestCase) {
 		Map<String,Object> m = new HashMap<>();
@@ -135,7 +137,8 @@ public class XmTestCaseController {
 	@ApiOperation( value = "删除一条测试用例信息",notes="delXmTestCase,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTestCase_del",name = "删除测试用例",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmTestCase(@RequestBody XmTestCase xmTestCase){
 		Map<String,Object> m = new HashMap<>();
@@ -158,7 +161,8 @@ public class XmTestCaseController {
 	@ApiOperation( value = "根据主键修改一条测试用例信息",notes="editXmTestCase")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTestCase.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTestCase_edit",name = "修改测试用例",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmTestCase(@RequestBody XmTestCase xmTestCase) {
 		Map<String,Object> m = new HashMap<>();
@@ -184,7 +188,8 @@ public class XmTestCaseController {
 	@ApiOperation( value = "根据主键列表批量删除测试用例信息",notes="batchDelXmTestCase,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTestCase_batchDel",name = "批量删除测试用例",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmTestCase(@RequestBody List<XmTestCase> xmTestCases) {
 		Map<String,Object> m = new HashMap<>();

@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qqkj.mdp.qx.HasQx;
 import com.qqkj.xm.core.vo.XmProjectGroupVo;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -69,6 +70,7 @@ public class XmProjectGroupController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProjectGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmProjectGroup_updateGroup",name = "批量更新修改项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/updateGroup",method=RequestMethod.POST)
 	public Map<String,Object> updateGroup(@RequestBody List<XmProjectGroupVo> xmProjectGroupVo) {
 		Map<String,Object> m = new HashMap<>();
@@ -94,6 +96,7 @@ public class XmProjectGroupController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProjectGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmProjectGroup_getGroup",name = "查找项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/getGroup",method=RequestMethod.GET)
 	public Map<String,Object> getGroup(@RequestParam Map<String,Object> params) {
 		Map<String,Object> m = new HashMap<>();
@@ -141,7 +144,8 @@ public class XmProjectGroupController {
 	@ApiOperation( value = "新增一条xm_project_group信息",notes="addXmProjectGroup,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProjectGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProjectGroup_add",name = "新增项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmProjectGroup(@RequestBody XmProjectGroup xmProjectGroup) {
 		Map<String,Object> m = new HashMap<>();

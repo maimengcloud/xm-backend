@@ -8,6 +8,7 @@ import java.util.Map;
 import com.qqkj.audit.log.client.annotation.AuditLog;
 import com.qqkj.audit.log.client.annotation.OperType;
 import com.qqkj.mdp.core.context.ContextHolder;
+import com.qqkj.mdp.qx.HasQx;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -109,7 +110,8 @@ public class XmEnvListController {
 	@ApiOperation( value = "新增一条xm_env_list信息",notes="addXmEnvList,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmEnvList.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmEnvList_add",name = "新建环境清单",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmEnvList(@RequestBody XmEnvList xmEnvList) {
 		Map<String,Object> m = new HashMap<>();
@@ -131,7 +133,8 @@ public class XmEnvListController {
 	@ApiOperation( value = "删除一条xm_env_list信息",notes="delXmEnvList,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmEnvList_del",name = "删除环境清单",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmEnvList(@RequestBody XmEnvList xmEnvList){
 		Map<String,Object> m = new HashMap<>();
@@ -152,7 +155,8 @@ public class XmEnvListController {
 	@ApiOperation( value = "根据主键修改一条xm_env_list信息",notes="editXmEnvList")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmEnvList.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmEnvList_edit",name = "修改环境清单",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmEnvList(@RequestBody XmEnvList xmEnvList) {
 		Map<String,Object> m = new HashMap<>();
@@ -176,7 +180,8 @@ public class XmEnvListController {
 	@ApiOperation( value = "根据主键列表批量删除xm_env_list信息",notes="batchDelXmEnvList,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmEnvList_batchDel",name = "批量删除环境清单",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmEnvList(@RequestBody List<XmEnvList> xmEnvLists) {
 		Map<String,Object> m = new HashMap<>();

@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qqkj.mdp.qx.HasQx;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -130,7 +131,8 @@ public class XmProjectPhaseController {
 	@ApiOperation( value = "新增一条xm_project_phase信息",notes="addXmProjectPhase,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProjectPhase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProjectPhase_add",name = "创建项目阶段计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmProjectPhase(@RequestBody XmProjectPhase xmProjectPhase) {
 		Map<String,Object> m = new HashMap<>();
@@ -178,7 +180,8 @@ public class XmProjectPhaseController {
 	@ApiOperation( value = "删除一条xm_project_phase信息",notes="delXmProjectPhase,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProjectPhase_del",name = "删除项目阶段计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmProjectPhase(@RequestBody XmProjectPhase xmProjectPhase){
 		Map<String,Object> m = new HashMap<>();
@@ -218,7 +221,8 @@ public class XmProjectPhaseController {
 	@ApiOperation( value = "根据主键修改一条xm_project_phase信息",notes="editXmProjectPhase")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProjectPhase.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProjectPhase_edit",name = "修改项目阶段计划基础信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmProjectPhase(@RequestBody XmProjectPhase xmProjectPhase) {
 		Map<String,Object> m = new HashMap<>();
@@ -261,7 +265,8 @@ public class XmProjectPhaseController {
 	@ApiOperation( value = "根据主键列表批量删除xm_project_phase信息",notes="batchDelXmProjectPhase,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProjectPhase_batchDel",name = "批量删除项目阶段计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmProjectPhase(@RequestBody List<XmProjectPhase> xmProjectPhases) {
 		Map<String,Object> m = new HashMap<>();
@@ -313,7 +318,8 @@ public class XmProjectPhaseController {
 	@ApiOperation( value = "根据主键列表批量删除xm_project_phase信息",notes="batchDelXmProjectPhase,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProjectPhase_batchImportFromTemplate",name = "从模板批量创建项目阶段计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchImportFromTemplate",method=RequestMethod.POST)
 	public Map<String,Object> batchImportFromTemplate(@RequestBody List<XmProjectPhase> xmProjectPhases) {
 		Map<String,Object> m = new HashMap<>();
@@ -361,7 +367,8 @@ public class XmProjectPhaseController {
 	@ApiOperation( value = "批量修改预算",notes="batchSaveBudget,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProjectPhase_batchSaveBudget",name = "批量修改项目阶段计划的预算",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchSaveBudget",method=RequestMethod.POST)
 	public Map<String,Object> batchSaveBudget(@RequestBody List<XmProjectPhaseVo> xmProjectPhases) {
 		Map<String,Object> m = new HashMap<>();
@@ -409,7 +416,8 @@ public class XmProjectPhaseController {
 	@ApiOperation( value = "计算bug、task、测试案例、等数据",notes="loadTasksToXmProjectPhase")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmProjectPhase_loadTasksToXmProjectPhase",name = "计算各个阶段计划对应的bug、task、测试案例等数据",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/loadTasksToXmProjectPhase",method=RequestMethod.POST)
 	public Map<String,Object> loadTasksToXmProjectPhase(@RequestBody Map<String,Object> params) {
 		Map<String,Object> m = new HashMap<>();

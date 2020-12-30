@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.qqkj.mdp.qx.HasQx;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,7 +114,8 @@ public class XmIterationController {
 	@ApiOperation( value = "新增一条迭代定义信息",notes="addXmIteration,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmIteration.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmIteration_add",name = "新增迭代计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmIteration(@RequestBody XmIteration xmIteration) {
 		Map<String,Object> m = new HashMap<>();
@@ -147,7 +149,8 @@ public class XmIterationController {
 	@ApiOperation( value = "删除一条迭代定义信息",notes="delXmIteration,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmIteration_del",name = "删除迭代计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmIteration(@RequestBody XmIteration xmIteration){
 		Map<String,Object> m = new HashMap<>();
@@ -170,7 +173,8 @@ public class XmIterationController {
 	@ApiOperation( value = "根据主键修改一条迭代定义信息",notes="editXmIteration")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmIteration.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmIteration_edit",name = "修改迭代计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmIteration(@RequestBody XmIteration xmIteration) {
 		Map<String,Object> m = new HashMap<>();
@@ -188,9 +192,10 @@ public class XmIterationController {
 		m.put("tips", tips);
 		return m;
 	}
-	
-	
 
+
+
+	@HasQx(value = "xm_core_xmIteration_loadTasksToXmIterationState",name = "计算迭代的bug、工作量、人员投入、进度等",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/loadTasksToXmIterationState",method=RequestMethod.POST)
 	public Map<String,Object> loadTasksToXmIterationState(@RequestBody XmIteration xmIteration) {
 		Map<String,Object> m = new HashMap<>();

@@ -8,6 +8,7 @@ import java.util.Map;
 import com.qqkj.audit.log.client.annotation.AuditLog;
 import com.qqkj.audit.log.client.annotation.OperType;
 import com.qqkj.mdp.core.context.ContextHolder;
+import com.qqkj.mdp.qx.HasQx;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -113,7 +114,8 @@ public class XmTaskExecuserController {
 	@ApiOperation( value = "新增一条xm_task_execuser信息",notes="addXmTaskExecuser,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTaskExecuser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTaskExecuser_add",name = "新增任务执行者",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmTaskExecuser(@RequestBody XmTaskExecuser xmTaskExecuser) {
 		Map<String,Object> m = new HashMap<>();
@@ -149,6 +151,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmTaskExecuser_leave",name = "执行人离开任务",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/leave",method=RequestMethod.POST)
 	public Map<String,Object> leave(@RequestBody List<XmTaskExecuser> xmTaskExecusers) {
 		Map<String,Object> m = new HashMap<>();
@@ -195,6 +198,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmTaskExecuser_execute",name = "修改任务执行人基础信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/execute",method=RequestMethod.POST)
 	public Map<String,Object> execute(@RequestBody  XmTaskExecuser xmTaskExecuser) {
 		Map<String,Object> m = new HashMap<>();
@@ -243,6 +247,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmTaskExecuser_toTest",name = "提交任务到测试",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/toTest",method=RequestMethod.POST)
 	public Map<String,Object> toTest(@RequestBody  XmTaskExecuser xmTaskExecuser) {
 		Map<String,Object> m = new HashMap<>();
@@ -279,6 +284,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmTaskExecuser_testSuccess",name = "变更任务为测试通过",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/testSuccess",method=RequestMethod.POST)
 	public Map<String,Object> testSuccess(@RequestBody  XmTaskExecuser xmTaskExecuser) {
 		Map<String,Object> m = new HashMap<>();
@@ -316,6 +322,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmTaskExecuser_testFail",name = "变更任务状态为测试失败",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/testFail",method=RequestMethod.POST)
 	public Map<String,Object> testFalse(@RequestBody  XmTaskExecuser xmTaskExecuser) {
 		Map<String,Object> m = new HashMap<>();
@@ -376,6 +383,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmTaskExecuser_quotePrice",name = "项目中的任务报价",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/quotePrice",method=RequestMethod.POST)
 	public Map<String,Object> quotePrice(@RequestBody XmTaskExecuser xmTaskExecuser) {
 		Map<String,Object> m = new HashMap<>();
@@ -416,6 +424,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
+	@HasQx(value = "xm_core_xmTaskExecuser_candidate",name = "变更成为任务候选人",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/candidate",method=RequestMethod.POST)
 	public Map<String,Object> becomeCandidate(@RequestBody XmTaskExecuser xmTaskExecuser) {
 		Map<String,Object> m = new HashMap<>();
@@ -452,7 +461,8 @@ public class XmTaskExecuserController {
 	@ApiOperation( value = "删除一条xm_task_execuser信息",notes="delXmTaskExecuser,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmTaskExecuser_del",name = "删除项目中任务的执行人",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmTaskExecuser(@RequestBody XmTaskExecuser xmTaskExecuser){
 		Map<String,Object> m = new HashMap<>();

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import com.qqkj.mdp.core.context.ContextHolder;
+import com.qqkj.mdp.qx.HasQx;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,10 +53,10 @@ public class XmExchangeController {
 	
 	@Autowired
 	private XmExchangeService xmExchangeService;
-	 
-		
- 
-	
+
+
+
+	/**
 	@ApiOperation( value = "查询功能表信息列表",notes="listXmExchange,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
 		@ApiImplicitParam(name="id",value="评论编号,主键",required=false),
@@ -102,10 +103,10 @@ public class XmExchangeController {
 		m.put("tips", tips);
 		return m;
 	}
-	
+	**/
  
 	
-	/***/
+	/**
 	@ApiOperation( value = "新增一条功能表信息",notes="addXmExchange,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmExchange.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -137,13 +138,14 @@ public class XmExchangeController {
 		m.put("tips", tips);
 		return m;
 	}
+	 */
 	
-	
-	/** */
+	/**
 	@ApiOperation( value = "删除一条功能表信息",notes="delXmExchange,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
+	})
+	@HasQx(value = "xm_core_xmExchange_del",name = "删除评论",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmExchange(@RequestBody XmExchange xmExchange){
 		Map<String,Object> m = new HashMap<>();
@@ -160,8 +162,8 @@ public class XmExchangeController {
 		m.put("tips", tips);
 		return m;
 	}
-	
-	
+
+	 */
 	/**
 	@ApiOperation( value = "根据主键修改一条功能表信息",notes="editXmExchange")
 	@ApiResponses({
