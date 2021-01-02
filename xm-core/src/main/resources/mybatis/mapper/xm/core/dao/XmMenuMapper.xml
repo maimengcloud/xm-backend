@@ -24,6 +24,7 @@
 			<if test=" excludeIterationId !=null and excludeIterationId !='' "> and not exists ( select 1 from XM.xm_iteration_menu im where im.iteration_id=#{excludeIterationId} and im.menu_id=res.menu_id)</if>
 			
 		</where>
+		order by res.seq_no asc
 	</select>	
 	<select id="selectListMapByWhereWithPlan" parameterType="HashMap" resultType="HashMap">
 		select res.*,plan.* from XM.xm_menu res left join XM.xm_menu_plan plan on res.menu_id=plan.menu_id and plan.project_id=#{projectId}
@@ -40,6 +41,8 @@
 			<if test=" excludeIterationId !=null and excludeIterationId !='' "> and not exists ( select 1 from XM.xm_iteration_menu im where im.iteration_id=#{excludeIterationId} and im.menu_id=res.menu_id)</if>
 			
 		</where>
+
+		order by res.seq_no asc
 	</select>
 		
 	<!--结束 自定义sql函数区域-->
@@ -61,6 +64,7 @@
 			<if test=" excludeIterationId !=null and excludeIterationId !='' "> and not exists ( select 1 from XM.xm_iteration_menu im where im.iteration_id=#{excludeIterationId} and im.menu_id=res.menu_id)</if>
 			
 		</where>
+		order by res.seq_no asc
 	</select>
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
