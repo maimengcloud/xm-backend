@@ -1,20 +1,15 @@
 package com.xm.core.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.util.StringUtils;
-import org.springframework.stereotype.Service;
-
 import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
-import com.mdp.safe.common.entity.User;
-import com.mdp.safe.common.utils.LoginUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmMenuPlan;
+import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+
+import java.util.*;
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
  * 组织 com.qqkj  顶级模块 oa 大模块 xm 小模块 <br>

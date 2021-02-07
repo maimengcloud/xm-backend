@@ -2,12 +2,12 @@ package com.xm.core.service;
 
 import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
-import com.mdp.safe.common.entity.User;
-import com.mdp.safe.common.utils.LoginUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmMenuState;
-import org.springframework.util.StringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.util.*;
 

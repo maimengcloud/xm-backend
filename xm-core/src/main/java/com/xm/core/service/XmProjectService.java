@@ -1,17 +1,5 @@
 package com.xm.core.service;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
-
 import com.alibaba.fastjson.JSONObject;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
@@ -19,11 +7,22 @@ import com.mdp.core.service.BaseService;
 import com.mdp.core.service.SequenceService;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
-import com.mdp.safe.common.entity.User;
-import com.mdp.safe.common.utils.LoginUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProject;
 import com.xm.core.service.cache.XmProjectCacheService;
 import com.xm.core.vo.XmProjectVo;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -82,7 +81,7 @@ public class XmProjectService extends BaseService {
     public List<Map<String,Object>> getProject(Map<String,Object>  params) {
         List<Map<String,Object>> xmProjectList = null;
         if(params.containsKey("compete")){
-            params.put("userid",LoginUtils.getCurrentUserInfo().getUserid());
+            params.put("userid", LoginUtils.getCurrentUserInfo().getUserid());
             xmProjectList = this.selectListMapByWhere(params);
         }else{
             xmProjectList = this.selectListMapByWhere(params);	//列出XmProject列表

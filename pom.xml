@@ -5,7 +5,7 @@
   <groupId>com.xm</groupId>
   <artifactId>xm-backend</artifactId>
   <packaging>pom</packaging>
-  <name>唛盟云-项目管理系统</name>
+  <name>xm-backend 唛盟云-项目管理系统</name>
   <description>唛盟云-项目管理系统</description>
   <parent>
     <groupId>com.mdp</groupId>

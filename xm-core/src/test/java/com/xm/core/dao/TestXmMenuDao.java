@@ -1,21 +1,15 @@
 package com.xm.core.dao;
 
-import java.util.*;
-
+import com.mdp.core.dao.BaseDao;
+import com.mdp.core.utils.BaseUtils;
 import com.xm.core.entity.XmMenu;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import com.mdp.core.utils.BaseUtils;
-import org.springframework.beans.factory.annotation.Autowired; 
-import com.mdp.core.dao.BaseDao;
-
-import com.mdp.mybatis.PageUtils;
-import com.github.pagehelper.Page;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.Map;
 /**
  * XmMenuDao的测试案例
  * 组织 com.qqkj<br>

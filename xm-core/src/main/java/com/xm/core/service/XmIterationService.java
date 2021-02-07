@@ -1,9 +1,10 @@
 package com.xm.core.service;
 
+import com.mdp.core.service.BaseService;
+import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Map;
-import org.springframework.stereotype.Service;
-import com.mdp.core.service.BaseService;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 

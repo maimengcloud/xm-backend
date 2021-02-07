@@ -1,3 +1,5 @@
 /xm-starter/target/
 /target/
 /xm-core/target/
+/.idea/
+/xm-bootstrap/target/

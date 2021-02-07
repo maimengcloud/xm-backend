@@ -1,17 +1,12 @@
 package com.xm.core.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.function.Predicate;
-
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
-import com.google.common.util.concurrent.Monitor.Guard;
-import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.service.BaseService;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmProject;
+import com.xm.core.entity.XmProjectGroup;
 import com.xm.core.entity.XmProjectGroupUser;
 import com.xm.core.service.cache.XmProjectGroupCacheService;
 import com.xm.core.service.push.XmPushMsgService;
@@ -19,12 +14,10 @@ import com.xm.core.vo.XmProjectGroupVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.mdp.core.service.BaseService;
-import com.mdp.safe.common.entity.User;
-import com.mdp.safe.common.utils.LoginUtils;
-import com.xm.core.entity.XmProject;
-import com.xm.core.entity.XmProjectGroup;
 import org.springframework.util.StringUtils;
+
+import java.util.*;
+import java.util.function.Predicate;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 

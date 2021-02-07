@@ -5,8 +5,8 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
-import com.mdp.safe.common.entity.User;
-import com.mdp.safe.common.utils.LoginUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmMenuService;
@@ -128,7 +128,7 @@ public class XmMenuController {
 					return m;
 				}
 			}
-			User user=LoginUtils.getCurrentUserInfo();
+			User user= LoginUtils.getCurrentUserInfo();
 			if(StringUtils.isEmpty(xmMenu.getMmUserid())) {
 				xmMenu.setMmUserid(user.getUserid());
 				xmMenu.setMmUsername(user.getUsername());

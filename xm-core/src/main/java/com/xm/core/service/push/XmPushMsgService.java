@@ -1,13 +1,12 @@
 package com.xm.core.service.push;
 
+import com.mdp.msg.client.PushMsgService;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.mdp.msg.client.PushMsgService;
-import org.springframework.util.StringUtils;
-import org.springframework.stereotype.Service;
 
 
 @Service

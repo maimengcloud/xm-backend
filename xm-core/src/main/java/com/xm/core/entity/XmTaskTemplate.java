@@ -2,8 +2,9 @@ package com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Date;
+
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 

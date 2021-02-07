@@ -1,19 +1,22 @@
 package com.xm.core.service;
 
-import java.util.*;
-
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
-import com.mdp.safe.common.entity.User;
-import com.mdp.safe.common.utils.LoginUtils;
-import com.qqkj.xm.core.entity.*;
+import com.mdp.core.service.BaseService;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.*;
 import com.xm.core.entity.XmFile;
 import com.xm.core.vo.XmFileVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.mdp.core.service.BaseService;
 import org.springframework.util.StringUtils;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 

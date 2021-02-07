@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xm-bootstrap</artifactId>
   <packaging>jar</packaging>
-  <name>唛盟云-项目管理系统服务端启动器</name>
+  <name>xm-bootstrap 唛盟云-项目管理系统服务端启动器</name>
     <parent>
         <groupId>com.xm</groupId>
         <artifactId>xm-backend</artifactId>
@@ -14,6 +14,7 @@
       <dependency>
           <groupId>com.mdp</groupId>
           <artifactId>mdp-cloud-starter</artifactId>
+          <version>${mdp.version}</version>
       </dependency>
       <dependency>
           <groupId>com.xm</groupId>

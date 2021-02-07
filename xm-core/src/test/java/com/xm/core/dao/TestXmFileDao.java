@@ -1,22 +1,22 @@
 package com.xm.core.dao;
 
-import java.util.*;
-import java.text.SimpleDateFormat;
-
+import com.github.pagehelper.Page;
+import com.mdp.core.dao.BaseDao;
+import com.mdp.core.utils.BaseUtils;
+import com.mdp.mybatis.PageUtils;
 import com.xm.core.entity.XmFile;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import com.mdp.core.utils.BaseUtils;
-import org.springframework.beans.factory.annotation.Autowired; 
-import com.mdp.core.dao.BaseDao;
-
-import com.mdp.mybatis.PageUtils;
-import com.github.pagehelper.Page;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 /**
  * XmFileDao的测试案例
  * 组织 com.qqkj<br>

@@ -1,16 +1,15 @@
 package com.xm.core.service.push;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import com.mdp.msg.client.PushMsgService;
-import org.springframework.util.StringUtils;
+import com.xm.core.service.XmMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
-import com.xm.core.service.XmMenuService;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class XmMenuPushMsgService extends PushMsgService {

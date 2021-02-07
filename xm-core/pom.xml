@@ -4,7 +4,7 @@
   <modelVersion>4.0.0</modelVersion>
   <artifactId>xm-core</artifactId>
   <packaging>jar</packaging>
-  <name>唛盟云-项目管理系统服务端核心</name>
+  <name>xm-core 唛盟云-项目管理系统服务端核心</name>
   <description>唛盟云-项目管理系统服务端核心</description>
   <parent>
     <groupId>com.xm</groupId>
