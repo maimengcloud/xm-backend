@@ -1,2 +1,2 @@
-# xm-server
+# xm-backend
 

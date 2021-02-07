@@ -7,8 +7,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.web.client.RestTemplate;
 
-import com.qqkj.mdp.core.entity.AppAuth;
-import com.qqkj.mdp.safe.common.rest.MdpRestTemplate;
+import com.mdp.core.entity.AppAuth;
+import com.mdp.safe.common.rest.MdpRestTemplate;
 @SpringBootApplication
 //@SpringCloudApplication
 public class XmApplication  {

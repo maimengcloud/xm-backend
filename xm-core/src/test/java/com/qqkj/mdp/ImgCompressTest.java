@@ -1,4 +1,4 @@
-package com.qqkj.mdp;
+package com.mdp;
 
 import java.io.IOException;
 

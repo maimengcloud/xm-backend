@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.qqkj.xm.core.entity.XmTaskExecuser">
+<mapper namespace="com.xm.core.entity.XmTaskExecuser">
 	
 	
 	<!--开始 自定sql函数区域 -->
@@ -140,7 +140,7 @@
 	</select>
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
-	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser" resultType="com.qqkj.xm.core.entity.XmTaskExecuser">
+	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmTaskExecuser" resultType="com.xm.core.entity.XmTaskExecuser">
 		select * from XM.xm_task_execuser res
 		<where>
 			<include refid="where"/>
@@ -148,7 +148,7 @@
 	</select>
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
-	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser" resultType="com.qqkj.xm.core.entity.XmTaskExecuser">
+	<select id="selectOneObject" parameterType="com.xm.core.entity.XmTaskExecuser" resultType="com.xm.core.entity.XmTaskExecuser">
 		select * from XM.xm_task_execuser res
 		where 
 			res.id = #{id}
@@ -161,14 +161,14 @@
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
-	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser" resultType="long">
+	<select id="countByWhere" parameterType="com.xm.core.entity.XmTaskExecuser" resultType="long">
 		select count(1) from XM.xm_task_execuser res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser" useGeneratedKeys="false"   keyProperty="id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmTaskExecuser" useGeneratedKeys="false" keyProperty="id">
 		insert into XM.xm_task_execuser(
 			<include refid="columns"/>
 		) values (
@@ -177,7 +177,7 @@
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
-	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser">
+	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmTaskExecuser">
 		delete from XM.xm_task_execuser res
 		<where>  
 			<include refid="where"/>
@@ -185,13 +185,13 @@
 	</delete>
 	
 	<!-- 按主键删除一条记录-->
-	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser">
+	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmTaskExecuser">
 		delete from XM.xm_task_execuser 
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
-	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser">
+	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmTaskExecuser">
 		update  XM.xm_task_execuser 
 		<set>
 			<include refid="someFieldSet"/>
@@ -200,7 +200,7 @@
 	</update>
 	
 		<!-- 根据主键修改一条记录 -->
-	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmTaskExecuser">
+	<update id="updateByPk" parameterType="com.xm.core.entity.XmTaskExecuser">
 		update  XM.xm_task_execuser 
 		<set>
 			<include refid="set"/>

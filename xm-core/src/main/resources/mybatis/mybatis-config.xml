@@ -15,7 +15,7 @@
 		<!--<typeHandler javaType="oracle.sql.CLOB" jdbcType="CLOB" handler="org.apache.ibatis.type.ClobTypeHandler"/>-->  
 		<!--<typeHandler javaType="oracle.sql.TIMESTAMP" jdbcType="TIMESTAMP" handler="org.apache.ibatis.type.DateTypeHandler"/>-->  
 	</typeHandlers>
-	<objectWrapperFactory type="com.qqkj.mdp.mybatis.MapWrapperFactory"></objectWrapperFactory>
+	<objectWrapperFactory type="com.mdp.mybatis.MapWrapperFactory"></objectWrapperFactory>
 	<plugins> 
 		<!-- com.github.pagehelper为PageHelper类所在包名 -->
         <plugin interceptor="com.github.pagehelper.PageInterceptor">

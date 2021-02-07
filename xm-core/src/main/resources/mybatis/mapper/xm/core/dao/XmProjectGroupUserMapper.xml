@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.qqkj.xm.core.entity.XmProjectGroupUser">
+<mapper namespace="com.xm.core.entity.XmProjectGroupUser">
 	
 	
 	<!--开始 自定sql函数区域 -->
 		<!--请在此区域添加自定义函数-->
-	<delete id="deleteByGroupId" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+	<delete id="deleteByGroupId" parameterType="com.xm.core.entity.XmProjectGroupUser">
 		delete from XM.xm_project_group_user where group_id = #{groupId}
 	</delete>
 
-	<select id="selectListByWhereHead" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser" resultType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+	<select id="selectListByWhereHead" parameterType="com.xm.core.entity.XmProjectGroupUser" resultType="com.xm.core.entity.XmProjectGroupUser">
 		select * from XM.xm_project_group_user res
 		<where>
 			<include refid="where"/>
@@ -18,7 +18,7 @@
 	</select>
 		
 		<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
-	<select id="selectGroupUserListByProjectId" parameterType="String" resultType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+	<select id="selectGroupUserListByProjectId" parameterType="String" resultType="com.xm.core.entity.XmProjectGroupUser">
 		select * from XM.xm_project_group_user res
 		<where>
 			 exists( select 1 from XM.xm_project_group g where g.id=res.group_id and g.project_id=#{projectId})
@@ -45,7 +45,7 @@
 	</select>
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
-	<select id="selectListByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser" resultType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProjectGroupUser" resultType="com.xm.core.entity.XmProjectGroupUser">
 		select * from XM.xm_project_group_user res
 		<where>
 			<include refid="where"/>
@@ -53,7 +53,7 @@
 	</select>
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
-	<select id="selectOneObject" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser" resultType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProjectGroupUser" resultType="com.xm.core.entity.XmProjectGroupUser">
 		select * from XM.xm_project_group_user res
 		where 
 			res.id = #{id}
@@ -66,14 +66,14 @@
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
-	<select id="countByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser" resultType="long">
+	<select id="countByWhere" parameterType="com.xm.core.entity.XmProjectGroupUser" resultType="long">
 		select count(1) from XM.xm_project_group_user res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser" useGeneratedKeys="false"   keyProperty="id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmProjectGroupUser" useGeneratedKeys="false" keyProperty="id">
 		insert into XM.xm_project_group_user(
 			<include refid="columns"/>
 		) values (
@@ -82,7 +82,7 @@
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
-	<delete id="deleteByWhere" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProjectGroupUser">
 		delete from XM.xm_project_group_user res
 		<where>  
 			<include refid="where"/>
@@ -90,13 +90,13 @@
 	</delete>
 	
 	<!-- 按主键删除一条记录-->
-	<delete id="deleteByPk" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProjectGroupUser">
 		delete from XM.xm_project_group_user 
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
-	<update id="updateSomeFieldByPk" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProjectGroupUser">
 		update  XM.xm_project_group_user 
 		<set>
 			<include refid="someFieldSet"/>
@@ -105,7 +105,7 @@
 	</update>
 	
 		<!-- 根据主键修改一条记录 -->
-	<update id="updateByPk" parameterType="com.qqkj.xm.core.entity.XmProjectGroupUser">
+	<update id="updateByPk" parameterType="com.xm.core.entity.XmProjectGroupUser">
 		update  XM.xm_project_group_user 
 		<set>
 			<include refid="set"/>

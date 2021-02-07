@@ -30,17 +30,17 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.authentication.logout.HttpStatusReturningLogoutSuccessHandler;
 import org.springframework.web.cors.CorsUtils;
 
-import com.qqkj.mdp.core.log.MdpLogFilter;
-import com.qqkj.mdp.safe.common.entrypoint.SafeAuthenticationEntryPoint;
-import com.qqkj.mdp.safe.common.expression.DbPermissionEvaluator;
-import com.qqkj.mdp.safe.common.filter.MdpApiAuthorizationFilter;
-import com.qqkj.mdp.safe.common.filter.MdpUserAuthenticationFilter;
-import com.qqkj.mdp.safe.common.filter.MdpUserAuthorizationFilter;
-import com.qqkj.mdp.safe.common.handle.SafeAccessDeniedHandler;
-import com.qqkj.mdp.safe.common.handle.SafeAuthenticationFailureHandler;
-import com.qqkj.mdp.safe.common.handle.SafeAuthenticationSuccessHandler;
-import com.qqkj.mdp.safe.common.pwd.SafePasswordEncoder;
-import com.qqkj.mdp.safe.common.service.SafeUserService;
+import com.mdp.core.log.MdpLogFilter;
+import com.mdp.safe.common.entrypoint.SafeAuthenticationEntryPoint;
+import com.mdp.safe.common.expression.DbPermissionEvaluator;
+import com.mdp.safe.common.filter.MdpApiAuthorizationFilter;
+import com.mdp.safe.common.filter.MdpUserAuthenticationFilter;
+import com.mdp.safe.common.filter.MdpUserAuthorizationFilter;
+import com.mdp.safe.common.handle.SafeAccessDeniedHandler;
+import com.mdp.safe.common.handle.SafeAuthenticationFailureHandler;
+import com.mdp.safe.common.handle.SafeAuthenticationSuccessHandler;
+import com.mdp.safe.common.pwd.SafePasswordEncoder;
+import com.mdp.safe.common.service.SafeUserService;
 
 @Configuration
 @EnableWebSecurity

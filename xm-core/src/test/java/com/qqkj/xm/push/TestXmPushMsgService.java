@@ -1,20 +1,18 @@
 package  com.qqkj.xm.push;
 
 import java.util.*;
-import java.text.SimpleDateFormat;
+
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import com.qqkj.mdp.core.utils.BaseUtils;
-import org.springframework.beans.factory.annotation.Autowired; 
-import  com.qqkj.xm.core.service.XmProjectStateService;
-import com.qqkj.xm.core.service.push.XmPushMsgService;
-import com.qqkj.mdp.mybatis.PageUtils;
+import com.mdp.core.utils.BaseUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import com.xm.core.service.push.XmPushMsgService;
+import com.mdp.mybatis.PageUtils;
 import com.github.pagehelper.Page;
-import  com.qqkj.xm.core.entity.XmProjectState;
 import org.springframework.boot.test.context.SpringBootTest;
 /**
  * XmProjectStateService的测试案例

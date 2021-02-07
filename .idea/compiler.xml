@@ -6,20 +6,20 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="xm-bootstrap" />
         <module name="xm-core" />
-        <module name="xm-starter" />
       </profile>
     </annotationProcessing>
     <bytecodeTargetLevel target="8">
+      <module name="xm-backend" target="1.8" />
+      <module name="xm-bootstrap" target="1.8" />
       <module name="xm-core" target="1.8" />
-      <module name="xm-server" target="1.8" />
-      <module name="xm-starter" target="1.8" />
     </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="xm-bootstrap" options="-parameters" />
       <module name="xm-core" options="-parameters" />
-      <module name="xm-starter" options="-parameters" />
     </option>
   </component>
 </project>
