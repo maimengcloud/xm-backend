@@ -82,8 +82,8 @@ public class XmMenuController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmMenu, "menuIds");
 		PageUtils.startPage(xmMenu);
-		Tips tips=new Tips("查询成功"); 
-			List<Map<String,Object>>	xmMenuList = xmMenuService.selectListMapByWhereWithState(xmMenu);	//列出XmMenu列表
+		Tips tips=new Tips("查询成功");
+		List<Map<String,Object>>	xmMenuList = xmMenuService.selectListMapByWhereWithState(xmMenu);	//列出XmMenu列表
 			PageUtils.responePage(m, xmMenuList);
 			m.put("data",xmMenuList);  
 		m.put("tips", tips);

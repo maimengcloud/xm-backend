@@ -8,7 +8,6 @@ import org.springframework.stereotype.Component;
 
 @SpringCloudApplication
 @EnableRedisHttpSession
-@ComponentScan(basePackages={"com.mdp","com.xm"})
 public class XmApplication  {
 	
  
