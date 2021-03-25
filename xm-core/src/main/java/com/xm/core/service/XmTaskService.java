@@ -63,8 +63,15 @@ public class XmTaskService extends BaseService {
 	 */
 	public Tips judgetBudget(String projectPhaseId,BigDecimal addTaskBudgetCost,BigDecimal addTaskBudgetInnerUserAt,BigDecimal addTaskBudgetOutUserAt,BigDecimal addTaskBudgetNouserAt,List<String> excludeTaskIds){
 		Tips tips=new Tips("检查预算成功");
+		if(!StringUtils.hasText(projectPhaseId)){
+			tips.setFailureMsg("projectPhaseId参数不能为空");
+			return tips;
+		}
 		Map<String,Object> g=this.selectTotalPhaseAndTaskBudgetCost(projectPhaseId,excludeTaskIds);
-		BigDecimal phaseBudgetCost=BigDecimal.ZERO; 
+		if(g==null || g.isEmpty()){
+			return tips;
+		}
+		BigDecimal phaseBudgetCost=BigDecimal.ZERO;
 		BigDecimal zero=BigDecimal.ZERO;
 		
 		if(addTaskBudgetCost==null) {
