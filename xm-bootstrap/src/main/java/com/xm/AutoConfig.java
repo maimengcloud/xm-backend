@@ -10,7 +10,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
  * 一些默认公共配置
  */
 @ComponentScan(basePackages={"com.mdp"})
-@EnableAsync
 @Configuration
 public class AutoConfig {
 }

@@ -268,7 +268,7 @@ public class XmTaskExecuserService extends BaseService {
 			if("6".equals(xmTaskExecuserDB.getSettleStatus())) {
 				throw  new BizException(xmTaskExecuser.getUsername()+"已经结算完毕，不能再申请");
 			}
-			if(!"0".equals(xmTaskExecuserDB.getSettleStatus()) && !"1".equals(xmTaskExecuserDB.getSettleStatus()) && !"5".equals(xmTaskExecuserDB.getSettleStatus())) {
+			if( !StringUtils.hasText(xmTaskExecuserDB.getSettleStatus()) && !"0".equals(xmTaskExecuserDB.getSettleStatus()) && !"1".equals(xmTaskExecuserDB.getSettleStatus()) && !"5".equals(xmTaskExecuserDB.getSettleStatus())) {
 				throw  new BizException(xmTaskExecuser.getUsername()+"暂时还不能申请结算");
 			}
 			BigDecimal settleAmount=NumberUtil.getBigDecimal(xmTaskExecuser.getSettleAmount(), BigDecimal.ZERO); 

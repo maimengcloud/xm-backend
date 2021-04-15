@@ -105,16 +105,28 @@
  		group by res.project_id,res.userid,res.username,subject_id,subject_name,biz_month
 	</select>
 	<select id="listSumForSettleGroupByTaskIdAndUserid" parameterType="HashMap" resultType="HashMap">
-		select res.project_id,res.task_id,res.userid,res.username,sum(res.act_cost_amount) as act_cost_amount,max(t.budget_cost) as task_budget_cost,max(t.project_name) as project_name
-		 from   XM.xm_task t left join XM.xm_project_m_cost_user res on res.task_id=t.id and res.project_id=res.project_id
+		SELECT
+			res.project_id,
+			res.task_id,
+			res.userid,
+			max( res.username ) as username,
+			sum( res.act_cost_amount ) AS act_cost_amount,
+			max( t.budget_cost ) AS task_budget_cost,
+			max( t.project_name ) AS project_name
+		FROM XM.xm_task t
+		LEFT JOIN
+			XM.xm_project_m_cost_user res ON res.task_id = t.id AND res.project_id = t.project_id
 		<where> 
-			 and t.project_id=#{projectId} 
+			 t.project_id=#{projectId}
 			 <if test="subjectId != null and subjectId !='' ">     and res.subject_id =#{subjectId} </if> 
 			 <if test="costType != null and costType !='' ">     and res.cost_type =#{costType} </if>   
 			 <if test="taskId != null and taskId !='' ">     and res.task_id =#{taskId} </if>   
 			 <if test="userid != null and userid !='' ">     and res.userid =#{userid} </if>  
 		</where>
- 		group by res.project_id,res.task_id,res.userid,res.username
+		GROUP BY
+			res.project_id,
+			res.task_id,
+			res.userid
 	</select>
 	<!--结束 自定义sql函数区域-->  
 	
