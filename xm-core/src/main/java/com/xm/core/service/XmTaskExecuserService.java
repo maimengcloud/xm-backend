@@ -253,7 +253,6 @@ public class XmTaskExecuserService extends BaseService {
 				throw  new BizException(xmTaskExecuser.getUsername()+"不在执行人列表中，不允许结算");
 			}
 			
-			
 			if("0".equals(xmTaskExecuserDB.getStatus())) {
 				throw  new BizException(xmTaskExecuser.getUsername()+"候选排队中人员不能申请结算");
 			}
@@ -263,13 +262,13 @@ public class XmTaskExecuserService extends BaseService {
 				throw  new BizException(xmTaskExecuser.getUsername()+"无需结算");
 			}
 			if("4".equals(xmTaskExecuserDB.getSettleStatus())) {
-				throw  new BizException(xmTaskExecuser.getUsername()+"已有申请在审核中，不能再申请");
+				throw  new BizException(xmTaskExecuserDB.getUsername()+"已有申请在审核中，不能再申请");
 			}
 			if("6".equals(xmTaskExecuserDB.getSettleStatus())) {
-				throw  new BizException(xmTaskExecuser.getUsername()+"已经结算完毕，不能再申请");
+				throw  new BizException(xmTaskExecuserDB.getUsername()+"已经结算完毕，不能再申请");
 			}
-			if( !StringUtils.hasText(xmTaskExecuserDB.getSettleStatus()) && !"0".equals(xmTaskExecuserDB.getSettleStatus()) && !"1".equals(xmTaskExecuserDB.getSettleStatus()) && !"5".equals(xmTaskExecuserDB.getSettleStatus())) {
-				throw  new BizException(xmTaskExecuser.getUsername()+"暂时还不能申请结算");
+			if( StringUtils.hasText(xmTaskExecuserDB.getSettleStatus()) && !"0".equals(xmTaskExecuserDB.getSettleStatus()) && !"1".equals(xmTaskExecuserDB.getSettleStatus()) && !"5".equals(xmTaskExecuserDB.getSettleStatus())) {
+				throw  new BizException(xmTaskExecuserDB.getUsername()+"暂时还不能申请结算");
 			}
 			BigDecimal settleAmount=NumberUtil.getBigDecimal(xmTaskExecuser.getSettleAmount(), BigDecimal.ZERO); 
 			BigDecimal quoteAmount=NumberUtil.getBigDecimal(xmTaskExecuserDB.getQuoteAmount(), BigDecimal.ZERO); 
@@ -281,15 +280,15 @@ public class XmTaskExecuserService extends BaseService {
 				userActCostAmount=NumberUtil.getBigDecimal(userActCostAmountRow.get("actCostAmount"),BigDecimal.ZERO);  
 			}
 			if(settleAmount.add(userActCostAmount).compareTo(quoteAmount)>0) {
-				throw new BizException(xmTaskExecuser.getUsername()+"的结算金额不能大于报价金额,剩余"+quoteAmount.subtract(userActCostAmount)+"元可结算");
+				throw new BizException(xmTaskExecuserDB.getUsername()+"的结算金额不能大于报价金额,剩余"+quoteAmount.subtract(userActCostAmount)+"元可结算");
 			} 
 			if(settleAmount.add(userActCostAmount).compareTo(taskBudgetCost)>0) {
-				throw new BizException(xmTaskExecuser.getUsername()+"的总结算金额不能大于任务总预算金额");
+				throw new BizException(xmTaskExecuserDB.getUsername()+"的总结算金额不能大于任务总预算金额");
 			}
 		}
 
 		if(allActCostAmount.add(addSettleAmount).compareTo(taskBudgetCost)>0) {
-			throw new BizException("结算总金额已经超出任务预算");
+			throw new BizException(task.getName()+"结算总金额已经超出任务预算");
 		} 
 		for (XmTaskExecuser xmTaskExecuser : xmTaskExecuserList) {
 			
@@ -298,6 +297,7 @@ public class XmTaskExecuserService extends BaseService {
 			if(userActCostAmountRow!=null) {
 				userActCostAmount=NumberUtil.getBigDecimal(userActCostAmountRow.get("actCostAmount"),BigDecimal.ZERO);  
 			}
+			XmTaskExecuser xmTaskExecuserDB =xmTaskExecuserDBMap.get(xmTaskExecuser.getUserid());
 			XmTaskExecuser xmTaskExecuser2=new XmTaskExecuser();
 			xmTaskExecuser2.setId(xmTaskExecuser.getId()); 
 			xmTaskExecuser2.setSettleStatus("4");
@@ -307,11 +307,11 @@ public class XmTaskExecuserService extends BaseService {
 			this.updateSomeFieldByPk(xmTaskExecuser2);   
 			projectId=xmTaskExecuser.getProjectId();
 			taskId=xmTaskExecuser.getTaskId(); 
-			usernames.add(xmTaskExecuser.getUsername());
+			usernames.add(xmTaskExecuserDB.getUsername());
 			
 			XmProjectMCostUser costUser=new XmProjectMCostUser();
 			costUser.setUserid(xmTaskExecuser.getUserid());
-			costUser.setUsername(xmTaskExecuser.getUsername());
+			costUser.setUsername(xmTaskExecuserDB.getUsername());
 			costUser.setActCostAmount(xmTaskExecuser.getSettleAmount());
 			costUser.setActWorkload(xmTaskExecuser.getSettleWorkload());
 			costUser.setBizDate(DateUtils.getDate());
@@ -456,7 +456,8 @@ public class XmTaskExecuserService extends BaseService {
 					flowVars.put("settleStatus", "4");
 					this.updateFlowStateByProcInst("1", flowVars);
 			}else if("PROCESS_COMPLETED".equals(eventName)) {
-				if("1".equals(agree)) { 
+				if("1".equals(agree)) { //结算通过，需要调用财务系统进行记账结算到用户的结算账户中。//用户可以通过该账户提现取现金
+					// todo 需要调用财务系统进行记账结算到用户的结算账户中。用户可以通过该账户提现取现金
 					//flowVars.put("settleStatus", "4");
 					this.updateFlowStateByProcInst("2", flowVars); 
 					//结算通过,更新费用表状态未1，申请通过

@@ -168,25 +168,31 @@ public class XmProjectService extends BaseService {
 		String eventName=(String) flowVars.get("eventName"); 
 		String agree=(String) flowVars.get("agree"); 
 		String bizKey=(String) flowVars.get("bizKey");
+		XmProject bizProject=new XmProject();
+		if(!flowVars.containsKey("data")){
+			throw new BizException("缺乏项目信息，请将项目的待审批信息放在flowVars.data中");
+		}else{
 
+			bizProject= BaseUtils.fromMap((Map)flowVars.get("data"), XmProject.class);
+			if(!StringUtils.hasText(bizProject.getId())){
+				throw new BizException("缺乏项目编号，请将项目编号放在flowVars.data.id中上传");
+			}
+			if(StringUtils.isEmpty(bizProject.getBranchId())) {
+				throw new BizException("请上送机构编号flowVars.data.branchId");
+			}
+		}
 		if("xm_project_baseinfo_change_approva".equals(bizKey) ) { //项目基本信息修改
-			if(!flowVars.containsKey("data")) {
-				throw new BizException("缺乏项目信息，请将项目的基础信息及预算信息放在flowVars.data中");
-			}
+
 		}else if("xm_project_start_approva".equals(bizKey) ) { //项目立项
-			if(!flowVars.containsKey("data")) {
-				throw new BizException("缺乏项目信息，请将项目的基础信息及预算信息放在flowVars.data中");
-			}
+
 		}else if("xm_project_delay_approva".equals(bizKey) ) { //项目逾期
-			if(!flowVars.containsKey("data")) {
+			if(bizProject.getEndTime()==null) {
 				throw new BizException("缺乏日期信息，请将变更的日期信息放在flowVars.data.endTime中");
 			}
 		}else if("xm_project_over_approva".equals(bizKey) ) { //结项
-			if(!flowVars.containsKey("data")) {
-				throw new BizException("缺乏项目编号，请将项目编号放在flowVars.data.id中");
-			}
+
 		}else if("xm_project_budget_change_approva".equals(bizKey) ) { //总预算调整
-			if(!flowVars.containsKey("data")) {
+			if( bizProject.getPlanTotalCost() ==null ) {
 				throw new BizException("缺乏预算信息，请将变更的预算信息放在flowVars.data中");
 			}
 		}else if("xm_project_restart_approva".equals(bizKey) ) { //总预算调整
@@ -211,7 +217,6 @@ public class XmProjectService extends BaseService {
 			}
 		}else {
 
-			XmProject bizProject=new XmProject();
 			bizProject= BaseUtils.fromMap((Map)flowVars.get("data"), XmProject.class); 
 			flowVars.put("projectId", bizProject.getId());
 			if("PROCESS_STARTED".equals(eventName)) {   
@@ -233,6 +238,7 @@ public class XmProjectService extends BaseService {
 						throw new BizException("该项目正在审批中，不能再发起审批");
 					}
 				}
+
 				flowVars.put("id", this.createKey("id"));
 					this.insert("insertProcessApprova", flowVars);   
 					this.updateFlowStateByProcInst("1", flowVars);
@@ -248,16 +254,21 @@ public class XmProjectService extends BaseService {
 						project.setUrgent(bizProject.getUrgent());
 						project.setBaseRemark(bizProject.getBaseRemark());
 						project.setAssess(bizProject.getAssess());
+						project.setName(bizProject.getName());
+						project.setBudgetCtrl(bizProject.getBudgetCtrl());
+						project.setDescription(bizProject.getDescription());
 						project.setAssessRemarks(bizProject.getAssessRemarks());
 						//project.setCode(project.getCode());
 						this.updateSomeFieldByPk(project);
 				        xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-基本信息", "修改基本信息" );  
 				        this.createBaseline(bizProject.getId(),"项目修改基本信息");
 				        
-					}else if("xm_project_start_approva".equals(bizKey)) {//立项
+					}else if("xm_project_start_approva".equals(bizKey)) {//立项 立项通过需要把预算数据同步到财务系统，把项目数据同步到财务系统
 						XmProject project=new XmProject();
 						project.setId(bizProject.getId());
 						project.setStatus("2");
+						//todo 立项通过需要把预算数据同步到财务系统，把项目数据同步到财务系统
+
 						this.updateSomeFieldByPk(project);
 				        xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-立项", "项目立项通过审批" );  
 				        this.createBaseline(bizProject.getId(),"项目立项通过审批");
@@ -275,7 +286,7 @@ public class XmProjectService extends BaseService {
 						this.updateSomeFieldByPk(project);
 						this.createBaseline(bizProject.getId(),"项目结项申请通过审批");
 						 xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-结项", "项目结项申请通过审批" );   
-					}else if("xm_project_budget_change_approva".equals(bizKey) ) { //总预算调整
+					}else if("xm_project_budget_change_approva".equals(bizKey) ) { //总预算调整，需要同步预算到财务系统
 						
  
 						this.editBudget(bizProject); 
@@ -332,6 +343,9 @@ public class XmProjectService extends BaseService {
 		}
 	}
 	public XmProject editBudget(XmProject xmProject) {
+
+		//todo 同步预算数据到财务系统
+
 		BigDecimal planTotalCost=xmProject.getPlanTotalCost();
 		BigDecimal planInnerUserAt=xmProject.getPlanInnerUserAt();
 		BigDecimal planOutUserAt=xmProject.getPlanOutUserAt();
