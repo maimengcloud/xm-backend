@@ -40,7 +40,10 @@ public class XmProjectPhaseService extends BaseService {
 	 * 判断新增预算是否超出项目总预算
 	 * @param projectId
 	 * @param addPhaseBudgetCost
-	 * @param excludePhaseId
+	 * @param addPhaseBudgetInnerUserAt
+	 * @param addPhaseBudgetOutUserAt
+	 * @param addPhaseBudgetNouserAt
+	 * @param excludePhaseIds
 	 * @return
 	 */
 	public Tips judgetBudget(String projectId,BigDecimal addPhaseBudgetCost,BigDecimal addPhaseBudgetInnerUserAt,BigDecimal addPhaseBudgetOutUserAt,BigDecimal addPhaseBudgetNouserAt,List<String> excludePhaseIds){
@@ -71,26 +74,25 @@ public class XmProjectPhaseService extends BaseService {
 		BigDecimal planInnerUserAt=NumberUtil.getBigDecimal(g.get("planInnerUserAt"),zero);
 		BigDecimal planOutUserAt=NumberUtil.getBigDecimal(g.get("planOutUserAt"),zero); 
 		BigDecimal planNouserAt=NumberUtil.getBigDecimal(g.get("planNouserAt"),zero); 
-		BigDecimal planTotalCost=NumberUtil.getBigDecimal(g.get("planTotalCost"),zero);  
-		
-		
+		BigDecimal planTotalCost=NumberUtil.getBigDecimal(g.get("planTotalCost"),zero);
+
 		if(addPhaseBudgetInnerUserAt.add(phaseBudgetInnerUserAt).compareTo(planInnerUserAt)>0) {
-			tips.setFailureMsg("内部人力预算超出项目内部人力预算");
+			tips.setFailureMsg("内部人力预算超出项目内部人力预算"+addPhaseBudgetInnerUserAt.add(phaseBudgetInnerUserAt).subtract(planInnerUserAt)+"元");
 			return tips;
 		}
 		if(addPhaseBudgetOutUserAt.add(phaseBudgetOutUserAt).compareTo(planOutUserAt)>0) {
-			tips.setFailureMsg("外部人力预算超出项目外部人力预算");
+			tips.setFailureMsg("外部人力预算超出项目外部人力预算"+addPhaseBudgetOutUserAt.add(phaseBudgetOutUserAt).subtract(planOutUserAt)+"元");
 			return tips;
 		}		
 		if(addPhaseBudgetNouserAt.add(phaseBudgetNouserAt).compareTo(planNouserAt)>0) {
-			tips.setFailureMsg("非人力预算超出项目非人力预算");
+			tips.setFailureMsg("非人力预算超出项目非人力预算"+addPhaseBudgetNouserAt.add(phaseBudgetNouserAt).subtract(planNouserAt)+"元");
 			return tips;
 		}
 		
 		BigDecimal phaseBudgetCostAt=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);  
 		phaseBudgetCostAt=phaseBudgetCostAt.add(addPhaseBudgetCost);
 		if(phaseBudgetCostAt.compareTo(planTotalCost)>0) {
-			tips.setFailureMsg("阶段计划总体预算超出项目总预算");
+			tips.setFailureMsg("阶段计划总体预算超出项目总预算"+phaseBudgetCostAt.subtract(planTotalCost)+"元");
 			return tips;
 		}else {
 			return tips;
@@ -110,7 +112,7 @@ public class XmProjectPhaseService extends BaseService {
 	} 
 	/**
 	 * 计算bug、task、测试案例、等数据
-	 * @param productId
+	 * @param projectId
 	 * @return
 	 */
 	public int loadTasksToXmProjectPhase(String projectId) {
