@@ -62,7 +62,7 @@ public class XmProjectBaseline  implements java.io.Serializable {
 	@ApiModelProperty(notes="考核备注",allowEmptyValue=true,example="",allowableValues="")
 	String assessRemarks;
 	
-	@ApiModelProperty(notes="项目状态，0-初始，1-立项中，2-执行中，3-已结项，4-暂停，5-售前，6-售后",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目状态，cs-初始，lxz-立项中，ssz-执行中，jxz-结项中，yjx-已结项，ztz-暂停，sq-售前，sh-售后",allowEmptyValue=true,example="",allowableValues="")
 	String status;
 	
 	@ApiModelProperty(notes="机构编号",allowEmptyValue=true,example="",allowableValues="")
@@ -240,7 +240,7 @@ public class XmProjectBaseline  implements java.io.Serializable {
 		this.assessRemarks = assessRemarks;
 	}
 	/**
-	 * 项目状态，0-初始，1-立项中，2-执行中，3-已结项，4-暂停，5-售前，6-售后
+	 * 项目状态，cs-初始，lxz-立项中，ssz-执行中，jxz-结项中，yjx-已结项，ztz-暂停，sq-售前，sh-售后
 	 **/
 	public void setStatus(String status) {
 		this.status = status;
@@ -493,7 +493,7 @@ public class XmProjectBaseline  implements java.io.Serializable {
 		return this.assessRemarks;
 	}
 	/**
-	 * 项目状态，0-初始，1-立项中，2-执行中，3-已结项，4-暂停，5-售前，6-售后
+	 * 项目状态，cs-初始，lxz-立项中，ssz-执行中，jxz-结项中，yjx-已结项，ztz-暂停，sq-售前，sh-售后
 	 **/
 	public String getStatus() {
 		return this.status;

@@ -30,7 +30,8 @@ public class XmProjectBaselineService extends BaseService {
 		XmProjectBaseline projectBase=new XmProjectBaseline();
 		BeanUtils.copyProperties(project, projectBase);
 		projectBase.setId(this.createKey("id"));
-		projectBase.setCtime(new Date());
+		projectBase.setProjectId(project.getId());
+		projectBase.setBaseTime(new Date());
 		projectBase.setBaseRemark(remark);
 		projectBase.setBaselineId(sequenceService.getCommonNo("{date:yyyyMMddHHmmssS}-{rand:4}"));
 		this.insert(projectBase);
