@@ -30,13 +30,14 @@
 			p.plan_total_cost 
 		FROM
 			XM.xm_project p 
-			LEFT JOIN 	XM.xm_project_phase res ON p.id = res.project_id 
+			LEFT JOIN 	XM.xm_project_phase res
+				ON p.id = res.project_id
+				<if test=" excludePhaseIds !=null "> and res.id not  in
+					<foreach collection="excludePhaseIds" item="item" index="index" open="(" separator="," close=")" >
+						#{item}
+					</foreach>
+				</if>
 		where p.id=#{projectId}
-		  <if test=" excludePhaseIds !=null "> and res.id not  in
-				    <foreach collection="excludePhaseIds" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
-		  </if>
 	</select> 
 	 
 	<update id="loadTasksToXmProjectPhase" parameterType="String" statementType="CALLABLE">

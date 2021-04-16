@@ -385,7 +385,7 @@ public class XmTaskExecuserController {
 			} 
 			if(tips.isOk()) {
 				XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getId()));
-				if(xmTaskExecuserDb!=null && !"0".equals(xmTaskExecuserDb.getStatus())) {
+				if("0".equals(xmTaskExecuserDb.getStatus())) {
 					xmTaskExecuserService.quotePrice(xmTaskExecuser);
 					m.put("data",xmTaskExecuser);
 				}else {

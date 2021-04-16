@@ -60,7 +60,10 @@ public class XmProjectPhaseService extends BaseService {
 		}
 		if(addPhaseBudgetNouserAt==null) {
 			addPhaseBudgetNouserAt=BigDecimal.ZERO;
-		} 
+		}
+		if(g==null || g.isEmpty()){
+
+		}
 		BigDecimal phaseBudgetInnerUserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetInnerUserAt"),zero);
 		BigDecimal phaseBudgetOutUserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetOutUserAt"),zero); 
 		BigDecimal phaseBudgetNouserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetNouserAt"),zero); 
