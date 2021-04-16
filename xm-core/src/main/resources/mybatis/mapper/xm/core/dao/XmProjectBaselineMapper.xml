@@ -56,19 +56,19 @@
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmProjectBaseline" useGeneratedKeys="false" keyProperty="id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmProjectBaseline" useGeneratedKeys="false"   keyProperty="id">
 		insert into XM.xm_project_baseline(
 			<include refid="columns"/>
 		) values (
-		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planInnerUserAt},#{planOutUserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planInnerUserPrice},#{planOutUserPrice},#{planOutUserCnt},#{planInnerUserCnt},#{planWorkingHours},#{taxRate},#{planInnerUserWorkload},#{planOutUserWorkload},#{projectId},#{ctime}
+		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planInnerUserAt},#{planOutUserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planInnerUserPrice},#{planOutUserPrice},#{planOutUserCnt},#{planInnerUserCnt},#{planWorkingHours},#{taxRate},#{planInnerUserWorkload},#{planOutUserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{projectId}
 		)
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProjectBaseline">
-		delete from XM.xm_project_baseline res
+		delete from XM.xm_project_baseline
 		<where>  
-			<include refid="where"/>
+			1=2
 		</where>
 	</delete>
 	
@@ -113,32 +113,35 @@
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from XM.xm_project_baseline 
-			where id in
-			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
-			        #{item.id }  
-			    </foreach>  
+			where
+			(id)
+			    in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    ( #{item.id}
+                    )
+                </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,project_id,ctime
+		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,project_id
 	</sql>
-	
+
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
 	<sql id="where">
 		<if test="id != null and id != ''">      and res.id = #{id}     </if>
 		<if test="code != null and code != ''">      and res.code = #{code}     </if>
 		<if test="name != null and name != ''">      and res.name = #{name}     </if>
 		<if test="xmType != null and xmType != ''">      and res.xm_type = #{xmType}     </if>
-		<if test="startTime != null">      and TO_CHAR(res.start_time,'YYYY-MM-DD') = TO_CHAR(#{startTime},'YYYY-MM-DD')     </if>
-		<if test="endTime != null">      and TO_CHAR(res.end_time,'YYYY-MM-DD') = TO_CHAR(#{endTime},'YYYY-MM-DD')     </if>
+		<if test="startTime != null">      and date_format(res.start_time,'%Y-%m-%d') = date_format(#{startTime},'%Y-%m-%d')     </if>
+		<if test="endTime != null">      and date_format(res.end_time,'%Y-%m-%d') = date_format(#{endTime},'%Y-%m-%d')     </if>
 		<if test="urgent != null and urgent != ''">      and res.urgent = #{urgent}     </if>
 		<if test="priority != null and priority != ''">      and res.priority = #{priority}     </if>
 		<if test="description != null and description != ''">      and res.description = #{description}     </if>
 		<if test="createUserid != null and createUserid != ''">      and res.create_userid = #{createUserid}     </if>
 		<if test="createUsername != null and createUsername != ''">      and res.create_username = #{createUsername}     </if>
-		<if test="createTime != null">      and TO_CHAR(res.create_time,'YYYY-MM-DD') = TO_CHAR(#{createTime},'YYYY-MM-DD')     </if>
+		<if test="createTime != null">      and date_format(res.create_time,'%Y-%m-%d') = date_format(#{createTime},'%Y-%m-%d')     </if>
 		<if test="assess != null and assess != ''">      and res.assess = #{assess}     </if>
 		<if test="assessRemarks != null and assessRemarks != ''">      and res.assess_remarks = #{assessRemarks}     </if>
 		<if test="status != null and status != ''">      and res.status = #{status}     </if>
@@ -150,7 +153,7 @@
 		<if test="planInnerUserAt != null and planInnerUserAt != ''">      and res.plan_inner_user_at = #{planInnerUserAt}     </if>
 		<if test="planOutUserAt != null and planOutUserAt != ''">      and res.plan_out_user_at = #{planOutUserAt}     </if>
 		<if test="locked != null and locked != ''">      and res.locked = #{locked}     </if>
-		<if test="baseTime != null">      and TO_CHAR(res.base_time,'YYYY-MM-DD') = TO_CHAR(#{baseTime},'YYYY-MM-DD')     </if>
+		<if test="baseTime != null">      and date_format(res.base_time,'%Y-%m-%d') = date_format(#{baseTime},'%Y-%m-%d')     </if>
 		<if test="baseRemark != null and baseRemark != ''">      and res.base_remark = #{baseRemark}     </if>
 		<if test="baselineId != null and baselineId != ''">      and res.baseline_id = #{baselineId}     </if>
 		<if test="planWorkload != null and planWorkload != ''">      and res.plan_workload = #{planWorkload}     </if>
@@ -165,8 +168,10 @@
 		<if test="taxRate != null and taxRate != ''">      and res.tax_rate = #{taxRate}     </if>
 		<if test="planInnerUserWorkload != null and planInnerUserWorkload != ''">      and res.plan_inner_user_workload = #{planInnerUserWorkload}     </if>
 		<if test="planOutUserWorkload != null and planOutUserWorkload != ''">      and res.plan_out_user_workload = #{planOutUserWorkload}     </if>
+		<if test="fromTplId != null and fromTplId != ''">      and res.from_tpl_id = #{fromTplId}     </if>
+		<if test="budgetCtrl != null and budgetCtrl != ''">      and res.budget_ctrl = #{budgetCtrl}     </if>
+		<if test="deptid != null and deptid != ''">      and res.deptid = #{deptid}     </if>
 		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
-		<if test="ctime != null">      and TO_CHAR(res.ctime,'YYYY-MM-DD') = TO_CHAR(#{ctime},'YYYY-MM-DD')     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -207,8 +212,10 @@
 		tax_rate = #{taxRate},
 		plan_inner_user_workload = #{planInnerUserWorkload},
 		plan_out_user_workload = #{planOutUserWorkload},
-		project_id = #{projectId},
-		ctime = #{ctime}
+		from_tpl_id = #{fromTplId},
+		budget_ctrl = #{budgetCtrl},
+		deptid = #{deptid},
+		project_id = #{projectId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="code != null and code != ''"> code = #{code},     </if>
@@ -248,8 +255,10 @@
 		<if test="taxRate != null and taxRate != ''"> tax_rate = #{taxRate},     </if>
 		<if test="planInnerUserWorkload != null and planInnerUserWorkload != ''"> plan_inner_user_workload = #{planInnerUserWorkload},     </if>
 		<if test="planOutUserWorkload != null and planOutUserWorkload != ''"> plan_out_user_workload = #{planOutUserWorkload},     </if>
+		<if test="fromTplId != null and fromTplId != ''"> from_tpl_id = #{fromTplId},     </if>
+		<if test="budgetCtrl != null and budgetCtrl != ''"> budget_ctrl = #{budgetCtrl},     </if>
+		<if test="deptid != null and deptid != ''"> deptid = #{deptid},     </if>
 		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
-		<if test="ctime != null"> ctime = #{ctime},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -290,7 +299,9 @@
 			tax_rate = #{item.taxRate},
 			plan_inner_user_workload = #{item.planInnerUserWorkload},
 			plan_out_user_workload = #{item.planOutUserWorkload},
-			project_id = #{item.projectId},
-			ctime = #{item.ctime}
+			from_tpl_id = #{item.fromTplId},
+			budget_ctrl = #{item.budgetCtrl},
+			deptid = #{item.deptid},
+			project_id = #{item.projectId}
 	</sql>
 </mapper>

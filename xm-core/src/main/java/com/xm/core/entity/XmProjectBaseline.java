@@ -1,17 +1,16 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
- * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectBaseline所有属性名: <br>
- *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planInnerUserAt,planOutUserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planInnerUserPrice,planOutUserPrice,planOutUserCnt,planInnerUserCnt,planWorkingHours,taxRate,planInnerUserWorkload,planOutUserWorkload,projectId,ctime;<br>
+ *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planInnerUserAt,planOutUserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planInnerUserPrice,planOutUserPrice,planOutUserCnt,planInnerUserCnt,planWorkingHours,taxRate,planInnerUserWorkload,planOutUserWorkload,fromTplId,budgetCtrl,deptid,projectId;<br>
  * 表 XM.xm_project_baseline xm_project_baseline的所有字段名: <br>
- *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,project_id,ctime;<br>
+ *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,project_id;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -20,7 +19,7 @@ public class XmProjectBaseline  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@ApiModelProperty(notes="基线表主键,主键",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目基线编号,主键",allowEmptyValue=true,example="",allowableValues="")
 	String id;
   	
 	
@@ -63,7 +62,7 @@ public class XmProjectBaseline  implements java.io.Serializable {
 	@ApiModelProperty(notes="考核备注",allowEmptyValue=true,example="",allowableValues="")
 	String assessRemarks;
 	
-	@ApiModelProperty(notes="项目状态，0-初始，1-立项中，2-执行中，3-已结项，4-暂停",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目状态，0-初始，1-立项中，2-执行中，3-已结项，4-暂停，5-售前，6-售后",allowEmptyValue=true,example="",allowableValues="")
 	String status;
 	
 	@ApiModelProperty(notes="机构编号",allowEmptyValue=true,example="",allowableValues="")
@@ -135,13 +134,19 @@ public class XmProjectBaseline  implements java.io.Serializable {
 	@ApiModelProperty(notes="外购人力总工作量-应该大于或等于阶段计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planOutUserWorkload;
 	
+	@ApiModelProperty(notes="关联模板编号",allowEmptyValue=true,example="",allowableValues="")
+	String fromTplId;
+	
+	@ApiModelProperty(notes="是否进行预算控制",allowEmptyValue=true,example="",allowableValues="")
+	String budgetCtrl;
+	
+	@ApiModelProperty(notes="部门编号",allowEmptyValue=true,example="",allowableValues="")
+	String deptid;
+	
 	@ApiModelProperty(notes="项目编号",allowEmptyValue=true,example="",allowableValues="")
 	String projectId;
-	
-	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
-	Date ctime;
 
-	/**基线表主键**/
+	/**项目基线编号**/
 	public XmProjectBaseline(String id) {
 		this.id = id;
 	}
@@ -151,7 +156,7 @@ public class XmProjectBaseline  implements java.io.Serializable {
 	}
 	
 	/**
-	 * 基线表主键
+	 * 项目基线编号
 	 **/
 	public void setId(String id) {
 		this.id = id;
@@ -235,7 +240,7 @@ public class XmProjectBaseline  implements java.io.Serializable {
 		this.assessRemarks = assessRemarks;
 	}
 	/**
-	 * 项目状态，0-初始，1-立项中，2-执行中，3-已结项，4-暂停
+	 * 项目状态，0-初始，1-立项中，2-执行中，3-已结项，4-暂停，5-售前，6-售后
 	 **/
 	public void setStatus(String status) {
 		this.status = status;
@@ -379,20 +384,32 @@ public class XmProjectBaseline  implements java.io.Serializable {
 		this.planOutUserWorkload = planOutUserWorkload;
 	}
 	/**
+	 * 关联模板编号
+	 **/
+	public void setFromTplId(String fromTplId) {
+		this.fromTplId = fromTplId;
+	}
+	/**
+	 * 是否进行预算控制
+	 **/
+	public void setBudgetCtrl(String budgetCtrl) {
+		this.budgetCtrl = budgetCtrl;
+	}
+	/**
+	 * 部门编号
+	 **/
+	public void setDeptid(String deptid) {
+		this.deptid = deptid;
+	}
+	/**
 	 * 项目编号
 	 **/
 	public void setProjectId(String projectId) {
 		this.projectId = projectId;
 	}
-	/**
-	 * 创建时间
-	 **/
-	public void setCtime(Date ctime) {
-		this.ctime = ctime;
-	}
 	
 	/**
-	 * 基线表主键
+	 * 项目基线编号
 	 **/
 	public String getId() {
 		return this.id;
@@ -476,7 +493,7 @@ public class XmProjectBaseline  implements java.io.Serializable {
 		return this.assessRemarks;
 	}
 	/**
-	 * 项目状态，0-初始，1-立项中，2-执行中，3-已结项，4-暂停
+	 * 项目状态，0-初始，1-立项中，2-执行中，3-已结项，4-暂停，5-售前，6-售后
 	 **/
 	public String getStatus() {
 		return this.status;
@@ -620,16 +637,28 @@ public class XmProjectBaseline  implements java.io.Serializable {
 		return this.planOutUserWorkload;
 	}
 	/**
+	 * 关联模板编号
+	 **/
+	public String getFromTplId() {
+		return this.fromTplId;
+	}
+	/**
+	 * 是否进行预算控制
+	 **/
+	public String getBudgetCtrl() {
+		return this.budgetCtrl;
+	}
+	/**
+	 * 部门编号
+	 **/
+	public String getDeptid() {
+		return this.deptid;
+	}
+	/**
 	 * 项目编号
 	 **/
 	public String getProjectId() {
 		return this.projectId;
-	}
-	/**
-	 * 创建时间
-	 **/
-	public Date getCtime() {
-		return this.ctime;
 	}
 
 }
