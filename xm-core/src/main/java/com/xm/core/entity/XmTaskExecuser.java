@@ -39,7 +39,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	@ApiModelProperty(notes="离开时间",allowEmptyValue=true,example="",allowableValues="")
 	Date endTime;
 	
-	@ApiModelProperty(notes="执行人状态0候选排队中1执行任务中2提交任务3验收成功4验收不通过5付款中6付款成功7放弃任务",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="执行人状态0候选排队中1执行任务中2提交任务3验收成功4验收不通过5结算中6结算成功7放弃任务8黑名单",allowEmptyValue=true,example="",allowableValues="")
 	String status;
 	
 	@ApiModelProperty(notes="备注",allowEmptyValue=true,example="",allowableValues="")
@@ -160,7 +160,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		this.endTime = endTime;
 	}
 	/**
-	 * 执行人状态0候选排队中1执行任务中2提交任务3验收成功4验收不通过5付款中6付款成功7放弃任务
+	 * 执行人状态0候选排队中1执行任务中2提交任务3验收成功4验收不通过5结算中6结算成功7放弃任务8黑名单
 	 **/
 	public void setStatus(String status) {
 		this.status = status;
@@ -347,7 +347,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		return this.endTime;
 	}
 	/**
-	 * 执行人状态0候选排队中1执行任务中2提交任务3验收成功4验收不通过5付款中6付款成功7放弃任务
+	 * 执行人状态0候选排队中1执行任务中2提交任务3验收成功4验收不通过5结算中6结算成功7放弃任务8黑名单
 	 **/
 	public String getStatus() {
 		return this.status;

@@ -102,7 +102,7 @@
 			 <if test="subjectId != null and subjectId !='' ">     and res.subject_id =#{subjectId} </if> 
 			 <if test="costType != null and costType !='' ">     and res.cost_type =#{costType} </if>  
 		</where>
- 		group by res.project_id,res.userid,res.username,subject_id,subject_name,biz_month
+ 		group by res.project_id,res.userid,subject_id,biz_month
 	</select>
 	<select id="listSumForSettleGroupByTaskIdAndUserid" parameterType="HashMap" resultType="HashMap">
 		SELECT

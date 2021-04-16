@@ -454,23 +454,27 @@ public class XmTaskExecuserService extends BaseService {
 				flowVars.put("id", this.createKey("id"));
 					this.insert("insertProcessApprova", flowVars);   
 					flowVars.put("settleStatus", "4");
+					flowVars.put("status","5");
 					this.updateFlowStateByProcInst("1", flowVars);
 			}else if("PROCESS_COMPLETED".equals(eventName)) {
 				if("1".equals(agree)) { //结算通过，需要调用财务系统进行记账结算到用户的结算账户中。//用户可以通过该账户提现取现金
 					// todo 需要调用财务系统进行记账结算到用户的结算账户中。用户可以通过该账户提现取现金
-					//flowVars.put("settleStatus", "4");
+					flowVars.put("settleStatus","6");
+					flowVars.put("status","6");
 					this.updateFlowStateByProcInst("2", flowVars); 
 					//结算通过,更新费用表状态未1，申请通过
 					this.xmProjectMCostUserService.updateExecuserStatusByExecuserProcInstId(procInstId,"1");
 					
 				}else { 
 					//结算申请不通过，需要删除成本表中相关数据，还原执行表中相关数据
-					flowVars.put("settleStatus", "0");
+					flowVars.put("settleStatus", "5");
+					flowVars.put("status","3");
 					this.updateFlowStateByProcInst("3", flowVars);
 					this.xmProjectMCostUserService.deleteByExecuserProcInstId(procInstId);
 				} 
 			}else if("PROCESS_CANCELLED".equals(eventName)) { 
 				flowVars.put("settleStatus", "0");
+				flowVars.put("status", "3");
 				this.updateFlowStateByProcInst("4", flowVars);
 				this.xmProjectMCostUserService.deleteByExecuserProcInstId(procInstId);
 				//结算申请不通过，需要删除成本表中相关数据，还原执行表中相关数据
