@@ -63,11 +63,17 @@ public class XmProjectGroupController {
 	@HasQx(value = "xm_core_xmProjectGroup_updateGroup",name = "批量更新修改项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/updateGroup",method=RequestMethod.POST)
 	public Map<String,Object> updateGroup(@RequestBody List<XmProjectGroupVo> xmProjectGroupVo) {
+
+		Tips tips=new Tips("团队更新成功");
 		Map<String,Object> m = new HashMap<>();
+		if(xmProjectGroupVo==null || xmProjectGroupVo.size()==0){
+			tips.setFailureMsg("团队列表不能为空");
+			m.put("tips", tips);
+			return m;
+		}
 		String projectId = xmProjectGroupVo.get(0).getProjectId();
 		xmProjectGroupVo = xmProjectGroupService.updateGroup(projectId,xmProjectGroupVo);	//列出XmProjectGroup列表
 		m.put("data",xmProjectGroupVo);
-		Tips tips=new Tips("团队更新成功");
 		m.put("tips", tips);
 		return m;
 	}

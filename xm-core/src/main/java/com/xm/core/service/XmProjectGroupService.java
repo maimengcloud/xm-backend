@@ -14,6 +14,7 @@ import com.xm.core.vo.XmProjectGroupVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
@@ -89,6 +90,7 @@ public class XmProjectGroupService extends BaseService {
 	 * @param projectId
 	 * @param xmProjectGroupVoList
 	 */
+	@Transactional
 	public void addGroups(String projectId,List<XmProjectGroupVo> xmProjectGroupVoList) {
 		List<XmProjectGroup> groups=new ArrayList<>();
 		List<XmProjectGroupUser> groupUsers=new ArrayList<>();
@@ -142,7 +144,8 @@ public class XmProjectGroupService extends BaseService {
 		groupCacheService.putGroups(projectId, null);
 	}
     //更新项目团队
-    public List<XmProjectGroupVo> updateGroup(String projectId,List<XmProjectGroupVo> xmProjectGroupVoList) { 
+	@Transactional
+	public List<XmProjectGroupVo> updateGroup(String projectId,List<XmProjectGroupVo> xmProjectGroupVoList) {
 	    XmProjectGroup group = new XmProjectGroup();
 	    group.setProjectId(projectId);
 	    List<XmProjectGroup> groupListDb = this.selectListByWhere(group);

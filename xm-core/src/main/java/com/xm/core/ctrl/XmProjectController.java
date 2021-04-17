@@ -7,8 +7,13 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProject;
+import com.xm.core.entity.XmProjectGroup;
+import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.XmProjectService;
+import com.xm.core.vo.XmProjectGroupVo;
 import com.xm.core.vo.XmProjectVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
@@ -41,6 +46,8 @@ public class XmProjectController {
 	
 	@Autowired
 	private XmProjectService xmProjectService;
+	@Autowired
+	private XmProjectGroupService groupService;
 
 	@ApiOperation( value = "查询xm_project信息列表",notes="listXmProject,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
@@ -126,8 +133,18 @@ public class XmProjectController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
-			xmProjectService.deleteByPk(xmProject);
-			xmProjectService.clearProject(xmProject.getId());
+			User user= LoginUtils.getCurrentUserInfo();
+			XmProject xmProjectDb=this.xmProjectService.selectOneObject(xmProject);
+			if(xmProjectDb==null){
+				tips.setFailureMsg("项目不存在");
+			}
+			if(user.getUserid().equals(xmProjectDb.getCreateUserid())){
+				xmProjectService.deleteByPk(xmProject);
+				xmProjectService.clearProject(xmProject.getId());
+			}else {
+				tips.setFailureMsg("您不是该项目创建人，无权删除");
+			}
+
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -149,9 +166,29 @@ public class XmProjectController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
+
+			User user= LoginUtils.getCurrentUserInfo();
+			if( !StringUtils.hasText(xmProject.getId())){
+				tips.setFailureMsg("项目不存在");
+				m.put("tips", tips);
+				return m;
+			}
+			XmProject xmProjectDb=this.xmProjectService.selectOneObject(xmProject);
+			if(xmProjectDb==null){
+				tips.setFailureMsg("项目不存在");
+				m.put("tips", tips);
+				return m;
+			}
+			List<XmProjectGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
+			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
+			boolean isPm=groupService.checkUserIsProjectManager(groups,user.getUserid());
+			if( !isCreate && !isPm ) {
+				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目基础数据");
+				m.put("tips", tips);
+				return m;
+			}
 			xmProjectService.updateByPk(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
-
 			m.put("data",xmProject);
 		}catch (BizException e) {
 			tips=e.getTips();
@@ -174,6 +211,27 @@ public class XmProjectController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("状态更新成功");
 		try{
+
+			User user= LoginUtils.getCurrentUserInfo();
+			if( !StringUtils.hasText(xmProject.getId())){
+				tips.setFailureMsg("项目不存在");
+				m.put("tips", tips);
+				return m;
+			}
+			XmProject xmProjectDb=this.xmProjectService.selectOneObject(xmProject);
+			if(xmProjectDb==null){
+				tips.setFailureMsg("项目不存在");
+				m.put("tips", tips);
+				return m;
+			}
+			List<XmProjectGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
+			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
+			boolean isPm=groupService.checkUserIsProjectManager(groups,user.getUserid());
+			if( !isCreate && !isPm ) {
+				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目状态");
+				m.put("tips", tips);
+				return m;
+			}
 			xmProjectService.updateStatus(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
 
@@ -199,6 +257,26 @@ public class XmProjectController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("预算更新成功");
 		try{
+			User user= LoginUtils.getCurrentUserInfo();
+			if( !StringUtils.hasText(xmProject.getId())){
+				tips.setFailureMsg("项目编号不能为空");
+				m.put("tips", tips);
+				return m;
+			}
+			XmProject xmProjectDb=this.xmProjectService.selectOneObject(xmProject);
+			if(xmProjectDb==null){
+				tips.setFailureMsg("项目不存在");
+				m.put("tips", tips);
+				return m;
+			}
+			List<XmProjectGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
+			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
+			boolean isPm=groupService.checkUserIsProjectManager(groups,user.getUserid());
+			if( !isCreate && !isPm ) {
+				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目预算");
+				m.put("tips", tips);
+				return m;
+			}
 			xmProjectService.editBudget(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
 
@@ -224,6 +302,26 @@ public class XmProjectController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
+			User user= LoginUtils.getCurrentUserInfo();
+			if( !StringUtils.hasText(xmProject.getId())){
+				tips.setFailureMsg("项目不存在");
+				m.put("tips", tips);
+				return m;
+			}
+			XmProject xmProjectDb=this.xmProjectService.selectOneObject(xmProject);
+			if(xmProjectDb==null){
+				tips.setFailureMsg("项目不存在");
+				m.put("tips", tips);
+				return m;
+			}
+			List<XmProjectGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
+			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
+			boolean isPm=groupService.checkUserIsProjectManager(groups,user.getUserid());
+			if( !isCreate && !isPm ) {
+				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目基础信息");
+				m.put("tips", tips);
+				return m;
+			}
 			xmProjectService.updateProject(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
 
