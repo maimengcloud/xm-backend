@@ -123,7 +123,7 @@ public class XmTaskService extends BaseService {
 		List<Map<String,Object>> mapList = this.selectListMapByWhere(xmTask);//所有数据 
 		return mapList;
 	}
-
+	@Transactional
 	public XmTaskVo addTask(XmTaskVo xmTaskVo){
 		Tips tips = new Tips();
 		if(StringUtils.isEmpty(xmTaskVo.getId())) {
@@ -177,6 +177,7 @@ public class XmTaskService extends BaseService {
 	 * 有执行人，有子任务都不允许删除
 	 * @param xmTask
 	 */
+	@Transactional
 	public void deleteTask(XmTask xmTask) {
 		if(checkExistsChildren(xmTask.getId())) {
 			throw new BizException("有子任务，不允许删除");
@@ -193,6 +194,7 @@ public class XmTaskService extends BaseService {
 		Long i= this.selectOne("checkExistsExecuser", taskId);
 		return i;
 	}
+	@Transactional
 	public void updateTask(XmTaskVo xmTaskVo) { 
 		XmTask xmTask = new XmTask();
 		BeanUtils.copyProperties(xmTaskVo,xmTask);
@@ -203,7 +205,7 @@ public class XmTaskService extends BaseService {
 		this.updateSomeFieldByPk(xmTask);  
 		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-更新任务基础信息", "更新任务"+xmTask.getName(),JSONObject.toJSONString(xmTask),null);  
 	}
-	
+	@Transactional
 	public void updateProgress(XmTask xmTask) {
 		//XmTask oldValue = this.selectOneObject(new XmTask(xmTask.getId()));
 		XmTask xmTask2=new XmTask();
@@ -215,7 +217,28 @@ public class XmTaskService extends BaseService {
 		//updateParentProgress(xmTask.getParentTaskid());
 		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-进度", "更新任务进度为"+xmTask2.getRate());   
 	}
-	
+	public Map<String,XmTask> selectTasksMapByTasks(List<XmTask> xmTasks){
+		List<String> ids=new ArrayList<>();
+		for (XmTask xmTask : xmTasks) {
+			ids.add(xmTask.getId());
+		}
+		List<XmTask> tasks= this.selectTaskListByIds(ids);
+		Map<String,XmTask> map=new HashMap<>();
+		for (XmTask task : tasks) {
+			map.put(task.getId(),task);
+		}
+		return map;
+	}
+	public List<XmTask> selectTaskListByTasks(List<XmTask> xmTasks){
+		List<String> ids=new ArrayList<>();
+		for (XmTask xmTask : xmTasks) {
+			ids.add(xmTask.getId());
+		}
+		return this.selectTaskListByIds(ids);
+	}
+	public List<XmTask> selectTaskListByIds(List<String> ids){
+		return super.selectList("selectTaskListByIds",map("ids",ids));
+	}
 	
 
 	/**
@@ -236,6 +259,7 @@ public class XmTaskService extends BaseService {
 	 * @param flowVars {flowBranchId,agree,procInstId,startUserid,assignee,actId,taskName,mainTitle,branchId,bizKey,commentMsg,eventName,modelKey} 等 
 	 * @return 如果tips.isOk==false，将影响流程提交
 	 **/
+	@Transactional
 	public void processApprova(Map<String, Object> flowVars) { 
 		String eventName=(String) flowVars.get("eventName"); 
 		String agree=(String) flowVars.get("agree");  
@@ -287,12 +311,12 @@ public class XmTaskService extends BaseService {
 			}
 		} 
 	}
-	
+	@Transactional
 	private void updateFlowStateByProcInstForDeleteSuccess(Map<String, Object> flowVars) {
 		this.update("updateFlowStateByProcInstForDeleteSuccess", flowVars);
 		
 	}
-
+	@Transactional
 	public void updateFlowStateByProcInst(String flowState,Map<String, Object> flowVars) {
 		flowVars.put("flowState", flowState);
 		flowVars.put("bizFlowState", flowState);
@@ -301,8 +325,9 @@ public class XmTaskService extends BaseService {
 		}
 		this.update("updateProcessApprova", flowVars);
 	}
-
+	@Transactional
 	public void batchImportFromTemplate(List<XmTask> xmTasks) {
+
 		this.batchInsert(xmTasks);
 		List<XmTaskSkill> xmTaskSkillList=new ArrayList<>();
 		xmTasks.forEach(new Consumer<XmTask>() {
@@ -329,7 +354,10 @@ public class XmTaskService extends BaseService {
 				}
 			}
 		});
-		xmTaskSkillService.batchInsert(xmTaskSkillList);
+		if(xmTaskSkillList.size()>0){
+
+			xmTaskSkillService.batchInsert(xmTaskSkillList);
+		}
 		
 	}
 	
@@ -337,6 +365,7 @@ public class XmTaskService extends BaseService {
 	 * 批量更新任务的故事为新的故事或者更新为空
 	 * @param xmTasks
 	 */
+	@Transactional
 	public void batchRelTasksWithMenu(List<XmTask> xmTasks) {
 		for (XmTask xmTask : xmTasks) {
 			this.update("relTaskWithMenu", xmTask);
@@ -344,21 +373,12 @@ public class XmTaskService extends BaseService {
 	}
 
 	@Transactional
-	public void batchInsertOrUpdate(List<XmTaskVo> xmTasks) {
-		List<XmTaskVo> addList=new ArrayList<>();
-		List<XmTaskVo> editList=new ArrayList<>();
-		for (XmTaskVo vo : xmTasks) {
-			if("addSub".equals(vo.getOpType())||"add".equals(vo.getOpType())) {
-				addList.add(vo);
-			}else {
-				editList.add(vo);
-			}
+	public void batchInsertOrUpdate(List<XmTask> insertXmTasks,List<XmTask> editXmTasks) {
+		if(insertXmTasks!=null && insertXmTasks.size()>0) {
+			this.batchInsert(insertXmTasks);
 		}
-		if(addList.size()>0) {
-			this.batchInsert(addList);
-		}
-		if(editList.size()>0) {
-			this.batchUpdate(editList);
+		if(editXmTasks!=null && editXmTasks.size()>0) {
+			this.batchUpdate(editXmTasks);
 		}
 	}
 	
