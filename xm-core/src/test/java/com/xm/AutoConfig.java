@@ -10,6 +10,5 @@ import org.springframework.scheduling.annotation.EnableAsync;
  */
 @ComponentScan(basePackages={"com.mdp"})
 @Configuration
-@EnableAsync
 public class AutoConfig {
 }

@@ -72,8 +72,8 @@ public class XmProjectGroupController {
 			return m;
 		}
 		String projectId = xmProjectGroupVo.get(0).getProjectId();
-		xmProjectGroupVo = xmProjectGroupService.updateGroup(projectId,xmProjectGroupVo);	//列出XmProjectGroup列表
-		m.put("data",xmProjectGroupVo);
+		tips= xmProjectGroupService.updateGroup(projectId,xmProjectGroupVo);	//列出XmProjectGroup列表
+		//m.put("data",xmProjectGroupVo);
 		m.put("tips", tips);
 		return m;
 	}
