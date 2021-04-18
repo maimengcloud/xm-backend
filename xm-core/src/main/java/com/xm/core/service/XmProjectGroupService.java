@@ -143,8 +143,14 @@ public class XmProjectGroupService extends BaseService {
 		}
 		groupCacheService.putGroups(projectId, null);
 	}
-    //更新项目团队
-	@Transactional
+    /*
+     * 更新项目团队
+     * 1.项目经理、项目创建人可以添加项目小组
+     * 2.小组长可以添加本小组成员、清空本小组所有成员
+     * 3.项目经理、创建人可以任意添加删除成员
+     * 4.项目经理、创建人可以调整小组组长
+     */
+	//@Transactional 无须事务
 	public List<XmProjectGroupVo> updateGroup(String projectId,List<XmProjectGroupVo> xmProjectGroupVoList) {
 	    XmProjectGroup group = new XmProjectGroup();
 	    group.setProjectId(projectId);
@@ -156,7 +162,8 @@ public class XmProjectGroupService extends BaseService {
 		 List<XmProjectGroupVo>  myGroupVos=this.getUserGroups(projectGroupVos, user.getUserid());
 
  		boolean isProjectCreate=user.getUserid().equals(project.getCreateUserid()); 
-		boolean isPm = this.checkUserIsProjectManager(projectGroupVos, user.getUserid()); 
+		boolean isPm = this.checkUserIsProjectManager(projectGroupVos, user.getUserid());
+		boolean isHeadPm=this.checkUserIsHeadProjectManager(projectGroupVos,user.getUserid());
 		 
 	    //查出需要删除的组进行删除组及关联组成员
 	    groupListDb.forEach(g->{  
@@ -167,8 +174,11 @@ public class XmProjectGroupService extends BaseService {
 				public boolean test(XmProjectGroupVo t) {
 					 if(t.getGroupName().equals(g.getGroupName())) {
 						 t.setId(g.getId());
+						 t.setPgTypeId(g.getPgTypeId());
+						 t.setPgTypeName(g.getPgTypeName());
 						 return true;
 					 }else {
+
 						 return false;
 					 } 
 				}
@@ -184,7 +194,13 @@ public class XmProjectGroupService extends BaseService {
 	    			throw new BizException("无权操作！只有项目创建人、项目经理可以删除小组");
 	    		}
 	    	}
+			for (XmProjectGroup delGroup : delGroups) {
+				if("nbxmjl".equals(delGroup.getPgTypeId()) && !isProjectCreate ){
+					throw new BizException("无权操作！只有项目创建人可以删除内部管理组");
+				}
+			}
 	    	delGroups.forEach(g->{
+
 	    		XmProjectGroupUser UserDel = new XmProjectGroupUser();
 	            UserDel.setGroupId(g.getId());
 		    	xmProjectGroupUserService.delete("deleteByGroupId",UserDel); 
@@ -254,6 +270,8 @@ public class XmProjectGroupService extends BaseService {
 
 	        });
 	    }
+
+	    List<XmProjectGroupVo> canDelUserByGroupIds=new ArrayList<>();
         if(xmProjectGroupVoEdit.size()>0) { 
         	xmProjectGroupVoEdit.forEach(gvo -> {
  
@@ -272,24 +290,43 @@ public class XmProjectGroupService extends BaseService {
 	            }
 	            
 	            if(guser==null || guser.size()==0) {
+					boolean isTeamHead=false;
 	            	if(!isProjectCreate) {
 	    	    		if(!isPm) {
-	    	    			
-	    	    			throw new BizException("无权操作！只有项目创建人、项目经理可以清空小组成员");
+
+							for (XmProjectGroupVo myGroupVo : myGroupVos) {
+								if(myGroupVo.getId().equals(gvo.getId())){
+									List<XmProjectGroupUser> groupUsers=myGroupVo.getGroupUsers();
+									for (XmProjectGroupUser groupUser : groupUsers) {
+										if("1".equals(groupUser.getIsHead())){
+											isTeamHead=true;
+											break;
+										}
+									}
+								}
+
+							}
+
 	    	    		}
 	    	    	}
-	    	    	 
-	            	XmProjectGroupUser userDel = new XmProjectGroupUser();
-	                userDel.setGroupId(gvo.getId());
-	            	int i=xmProjectGroupUserService.delete("deleteByGroupId",userDel);
-	            	if(i>0) { 
-		            	xmRecordService.addXmGroupRecord(projectId,gvo.getId(), "项目-团队-删除小组成员", "删除小组["+gvo.getGroupName()+"]中所有组员["+i+"]个",JSON.toJSONString(gvo),null); 
-	            	}
+	            	if(isProjectCreate || isPm || isTeamHead){
+						canDelUserByGroupIds.add(gvo);
+					}
 	            }
-	        }); 
+	        });
+        	if(canDelUserByGroupIds.size()>0){
+				for (XmProjectGroupVo gvo : canDelUserByGroupIds) {
+					XmProjectGroupUser userDel=new XmProjectGroupUser();
+					userDel.setGroupId(gvo.getId());
+					int i=xmProjectGroupUserService.delete("deleteByGroupId",userDel);
+					if(i>0) {
+						xmRecordService.addXmGroupRecord(projectId,gvo.getId(), "项目-团队-删除小组成员", "删除小组["+gvo.getGroupName()+"]中所有组员["+i+"]个",JSON.toJSONString(gvo),null);
+					}
+				}
+			}
         	
         	if(allUsersFromUi.size()>0) {
-        		List<XmProjectGroupUser> groupUserList=this.xmProjectGroupUserService.selectGroupUserListByProjectId(projectId); 
+        		List<XmProjectGroupUser> groupUserDbList=this.xmProjectGroupUserService.selectGroupUserListByProjectId(projectId);
         		List<XmProjectGroupUser> allUsersAdd=new ArrayList<>();
         		List<XmProjectGroupUser> allUsersDel=new ArrayList<>(); 
         		List<XmProjectGroupUser> allUsersEdit=new ArrayList<>();
@@ -299,7 +336,7 @@ public class XmProjectGroupService extends BaseService {
         		allUsersFromUi.forEach(gu->{
         			boolean existsInDb=false;
         			XmProjectGroupUser currDbUser=null;
-        			for (XmProjectGroupUser t : groupUserList) {
+        			for (XmProjectGroupUser t : groupUserDbList) {
 						if(t.getGroupId().equals(gu.getGroupId()) && t.getUserid().equals(gu.getUserid())) {
 							existsInDb=true;
 							currDbUser=t;
@@ -329,7 +366,7 @@ public class XmProjectGroupService extends BaseService {
         				
         			} 
         		}); 
-        		groupUserList.forEach(gu->{
+        		groupUserDbList.forEach(gu->{
         			if(allUsersFromUi.stream().noneMatch(new Predicate<XmProjectGroupUser>() {
 
 						@Override
@@ -482,7 +519,7 @@ public class XmProjectGroupService extends BaseService {
     }
     public boolean  checkUserExistsGroup(String projectId,String userid){
     	List<XmProjectGroupVo> userGroups=getUserGroups(projectId,userid);
-    	return userGroups.size()>0;
+    	return userGroups!=null && userGroups.size()>0;
     }
     
     /**
@@ -492,7 +529,7 @@ public class XmProjectGroupService extends BaseService {
      * @param headUserid
      * @return
      */
-    public boolean  checkUserIsHead( List<XmProjectGroupVo> xmProjectGroupVoList,String memUserid,String headUserid){
+    public boolean checkUserIsOtherUserTeamHead(List<XmProjectGroupVo> xmProjectGroupVoList, String memUserid, String headUserid){
     	if(xmProjectGroupVoList==null || xmProjectGroupVoList.size()==0) {
     		return false;
     	}
@@ -530,8 +567,13 @@ public class XmProjectGroupService extends BaseService {
 		return null;
     	
     }
-    
-  public XmProjectGroupUser getHeadProjectManager( List<XmProjectGroupVo> xmProjectGroupVoList){
+
+	/**
+	 * 找到项目经理
+	 * @param xmProjectGroupVoList
+	 * @return
+	 */
+	public XmProjectGroupUser getHeadProjectManager( List<XmProjectGroupVo> xmProjectGroupVoList){
     	List<XmProjectGroupUser> getProjectManagers=this.getProjectManagers(xmProjectGroupVoList);
     	if(getProjectManagers==null || getProjectManagers.size()==0) {
     		return null;
@@ -544,8 +586,30 @@ public class XmProjectGroupService extends BaseService {
 		}
 		return null;
     }
-  
-  public boolean checkUserIsProjectManager( List<XmProjectGroupVo> xmProjectGroupVoList ,String headUserid) {
+
+	/**
+	 * 检测某个用户是否项目经理
+	 * @param xmProjectGroupVoList
+	 * @param headPmUserid
+	 * @return
+	 */
+	public boolean checkUserIsHeadProjectManager( List<XmProjectGroupVo> xmProjectGroupVoList,String headPmUserid){
+		 XmProjectGroupUser groupUser=this.getHeadProjectManager(xmProjectGroupVoList);
+		 if(groupUser!=null){
+		 	if(groupUser.getUserid().equals(headPmUserid)){
+		 		return true;
+			}
+		 }
+		 return false;
+	}
+
+	/**
+	 * 检测某个用户是否属于项目组的内部管理团队成员，内部管理组成员
+	 * @param xmProjectGroupVoList
+	 * @param pmUserid
+	 * @return
+	 */
+  public boolean checkUserIsProjectManager( List<XmProjectGroupVo> xmProjectGroupVoList ,String pmUserid) {
 	  if(xmProjectGroupVoList==null || xmProjectGroupVoList.size()==0) {
 		  return false;
 	  }
@@ -554,7 +618,7 @@ public class XmProjectGroupService extends BaseService {
 		  return false;
 	  }
   	for (XmProjectGroupUser user : getProjectManagers) {
-		if( user.getUserid().equals(headUserid)) {
+		if( user.getUserid().equals(pmUserid)) {
 			return true;
 		}
     	

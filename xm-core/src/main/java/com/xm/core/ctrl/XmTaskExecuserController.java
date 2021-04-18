@@ -112,7 +112,7 @@ public class XmTaskExecuserController {
 			String projectId=xmTaskExecuser.getProjectId();
 			 User user=LoginUtils.getCurrentUserInfo();
 			 List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-			boolean isHead= groupService.checkUserIsHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
+			boolean isHead= groupService.checkUserIsOtherUserTeamHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
 			if(!isHead ) {
 				if(user.getUserid().equals(xmTaskExecuser.getUserid())){
 					tips.setFailureMsg(user.getUsername()+"不是组长，无权进行新增任务执行人、候选人等操作");
@@ -155,7 +155,7 @@ public class XmTaskExecuserController {
 			List<String> allowUserNames=new ArrayList<>();
 			for (XmTaskExecuser xmTaskExecuser : xmTaskExecusers) {
  				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
-					boolean isHead= groupService.checkUserIsHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
+					boolean isHead= groupService.checkUserIsOtherUserTeamHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
 					if(!isHead ) {
 						//throw new BizException(user.getUsername()+"不是"+xmTaskExecuser.getUsername()+"的组长，无权修改");
 						noAllowUsers.add(xmTaskExecuser.getUsername());
@@ -210,7 +210,7 @@ public class XmTaskExecuserController {
 			String projectId=xmTaskExecuser.getProjectId();
 			 List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
 			 User user=LoginUtils.getCurrentUserInfo(); 
-			boolean isHead= groupService.checkUserIsHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
+			boolean isHead= groupService.checkUserIsOtherUserTeamHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
 			if(!isHead ) {
 				if(user.getUserid().equals(xmTaskExecuser.getUserid())){
 					tips.setFailureMsg("组长可以把候选人变更为任务执行人，"+user.getUsername()+"不是组长，无权变更");
@@ -265,7 +265,7 @@ public class XmTaskExecuserController {
 			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
 				String projectId=xmTaskExecuser.getProjectId();
 				 List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-				boolean isHead= groupService.checkUserIsHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
+				boolean isHead= groupService.checkUserIsOtherUserTeamHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
 				if(!isHead ) {
 					tips.setFailureMsg("自己或者组长可以提交任务到测试，"+user.getUsername()+"不是"+xmTaskExecuser.getUsername()+"的组长，无权提交");
 				} 
@@ -298,7 +298,7 @@ public class XmTaskExecuserController {
 			 User user=LoginUtils.getCurrentUserInfo(); 
 				String projectId=xmTaskExecuser.getProjectId();
 				 List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-				boolean isHead= groupService.checkUserIsHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
+				boolean isHead= groupService.checkUserIsOtherUserTeamHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
 				if(!isHead ) {
 					if(user.getUserid().equals(xmTaskExecuser.getUserid())) {
 						tips.setFailureMsg("组长可以提交该任务的测试结果，"+user.getUsername()+"不是组长，无权提交");
@@ -336,7 +336,7 @@ public class XmTaskExecuserController {
 			 User user=LoginUtils.getCurrentUserInfo(); 
 				String projectId=xmTaskExecuser.getProjectId();
 				 List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-				boolean isHead= groupService.checkUserIsHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
+				boolean isHead= groupService.checkUserIsOtherUserTeamHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
 				if(!isHead ) {
 					if(user.getUserid().equals(xmTaskExecuser.getUserid())) {
 						tips.setFailureMsg("组长可以提交该任务的测试结果，"+user.getUsername()+"不是组长，无权修改");
@@ -398,7 +398,7 @@ public class XmTaskExecuserController {
 			 User user=LoginUtils.getCurrentUserInfo(); 
  			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
  				 List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-				boolean isHead= groupService.checkUserIsHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
+				boolean isHead= groupService.checkUserIsOtherUserTeamHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
 				if(!isHead ) {
 					tips.setFailureMsg("自己或者组长可以修改任务的报价信息，"+user.getUsername()+"不是"+xmTaskExecuser.getUsername()+"的组长，无权修改");
 				}
@@ -439,7 +439,7 @@ public class XmTaskExecuserController {
  			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
  				 List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
 
-				boolean isHead= groupService.checkUserIsHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
+				boolean isHead= groupService.checkUserIsOtherUserTeamHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
 				if(!isHead ) {
 					tips.setFailureMsg("自己申请成为该任务候选人或者组长邀请您成为任务候选人，"+user.getUsername()+"不是"+xmTaskExecuser.getUsername()+"的组长，无权操作");
 				}
@@ -476,7 +476,7 @@ public class XmTaskExecuserController {
 			 User user=LoginUtils.getCurrentUserInfo(); 
 			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
 				 List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId); 
-				boolean isHead= groupService.checkUserIsHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
+				boolean isHead= groupService.checkUserIsOtherUserTeamHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
 				if(!isHead ) {
 					tips.setFailureMsg("只有自己或者组长可以删除任务执行人，"+user.getUsername()+"不是"+xmTaskExecuser.getUsername()+"的组长，无权删除");
 				}
