@@ -134,7 +134,7 @@ public class XmProjectController {
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			User user= LoginUtils.getCurrentUserInfo();
-			XmProject xmProjectDb=this.xmProjectService.selectOneObject(xmProject);
+			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
 				tips.setFailureMsg("项目不存在");
 			}
@@ -173,7 +173,7 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			XmProject xmProjectDb=this.xmProjectService.selectOneObject(xmProject);
+			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
 				tips.setFailureMsg("项目不存在");
 				m.put("tips", tips);
@@ -218,7 +218,7 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			XmProject xmProjectDb=this.xmProjectService.selectOneObject(xmProject);
+			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
 				tips.setFailureMsg("项目不存在");
 				m.put("tips", tips);
@@ -263,7 +263,7 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			XmProject xmProjectDb=this.xmProjectService.selectOneObject(xmProject);
+			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
 				tips.setFailureMsg("项目不存在");
 				m.put("tips", tips);
@@ -308,7 +308,7 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			XmProject xmProjectDb=this.xmProjectService.selectOneObject(xmProject);
+			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
 				tips.setFailureMsg("项目不存在");
 				m.put("tips", tips);

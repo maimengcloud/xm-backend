@@ -181,7 +181,7 @@ public class XmProjectGroupService extends BaseService {
 
 	    	if(!isProjectCreate) {
 	    		if(!isPm) {
-	    			throw new BizException("你既不是项目创建人，也不是项目经理，不允许删除项目小组，项目创建人为【"+project.getCreateUsername()+"】");
+	    			throw new BizException("无权操作！只有项目创建人、项目经理可以删除小组");
 	    		}
 	    	}
 	    	delGroups.forEach(g->{
@@ -219,7 +219,7 @@ public class XmProjectGroupService extends BaseService {
 	    if(xmProjectGroupVoAdd.size()>0) {
 	    	if(!isProjectCreate) {
 	    		if(!isPm) {
-	    			throw new BizException("你不是项目创建人,也不是项目经理，不允许新增该项目的小组,项目创建人为【"+project.getCreateUsername()+"】");
+	    			throw new BizException("您无权操作！只有项目创建人、项目经理可创建小组");
 	    		}
 	    	}
 	    	 
@@ -275,7 +275,7 @@ public class XmProjectGroupService extends BaseService {
 	            	if(!isProjectCreate) {
 	    	    		if(!isPm) {
 	    	    			
-	    	    			throw new BizException("你不是项目创建人,也不是项目经理，不允许清空【"+gvo.getGroupName()+"】整个小组所有成员");
+	    	    			throw new BizException("无权操作！只有项目创建人、项目经理可以清空小组成员");
 	    	    		}
 	    	    	}
 	    	    	 
@@ -366,7 +366,7 @@ public class XmProjectGroupService extends BaseService {
 									}
 								}
         		    			if(!isHead) {
-        		    				throw new BizException("你既不是项目创建人，也不是项目经理，也不是组长，不允许增加小组成员");
+        		    				throw new BizException("无权操作！只有项目创建人、项目经理、小组长可增加小组成员");
         		    			}
         		    			
         		    		}
@@ -409,7 +409,7 @@ public class XmProjectGroupService extends BaseService {
 									}
 								}
         		    			if(!isHead) {
-        		    				throw new BizException("你既不是项目创建人，也不是项目经理，也不是组长，不允许删除小组成员");
+        		    				throw new BizException("无权操作！只有小组长、项目经理、项目创建人可以删除小组成员");
         		    			}
         		    			
         		    		}
@@ -431,7 +431,7 @@ public class XmProjectGroupService extends BaseService {
         		if(allUsersEdit.size()>0) {
 	            	if(!isProjectCreate) {
 	    	    		if(!isPm) { 
-	    	    			throw new BizException("你不是项目创建人,也不是项目经理，不能调整组长");
+	    	    			throw new BizException("无权操作！只有项目经理、项目创建人可以调整各小组组长");
 	    	    		}
 	    	    	}
             		List<XmProjectGroupUser> allUsersEdit2=new ArrayList<>();
