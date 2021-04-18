@@ -293,12 +293,24 @@ public class XmProjectGroupService extends BaseService {
 						}
 						if(!currDbUser.getIsHead().equals(gu.getIsHead())){
 							//需要判断我是不是项目创建者、管理者，如果不是则无权利去指定小组组长
-							if(isPm || isProjectCreate){
-								currDbUser.setIsHead(gu.getIsHead());
-								allUsersEdit.add(currDbUser);
-							}else{
-								tipsList.add(currDbUser.getUsername()+"组长身份变更被忽略，只有项目创建者、管理者可以变更组长身份");
-							}
+							XmProjectGroupVo xmProjectGroupVo = groupVoMap.get(gu.getGroupId());
+								if("nbxmjl".equals(xmProjectGroupVo.getPgTypeId())){
+									if(isProjectCreate || isHeadPm ){
+										currDbUser.setIsHead(gu.getIsHead());
+										allUsersEdit.add(currDbUser);
+									}else{
+										tipsList.add(currDbUser.getUsername()+"组长身份变更被忽略，只有项目创建者、项目经理可以变更项目经理身份");
+									}
+
+								}else{
+									if(isPm || isProjectCreate){
+										currDbUser.setIsHead(gu.getIsHead());
+										allUsersEdit.add(currDbUser);
+									}else{
+										tipsList.add(currDbUser.getUsername()+"组长身份变更被忽略，只有项目创建者、管理者可以变更组长身份");
+									}
+								}
+
 
 						}
         			} 
@@ -316,11 +328,13 @@ public class XmProjectGroupService extends BaseService {
 							 XmProjectGroupVo xmProjectGroupVo = groupVoMap.get(gu.getGroupId());
 							if(!gu.getUserid().equals(user.getUserid())){
 								if("nbxmjl".equals(xmProjectGroupVo.getPgTypeId())){
-									if(isHeadPm){
+									if(isHeadPm || isProjectCreate ){
 										allUsersDel.add(gu);
 									}else{
-										tipsList.add(gu.getUsername()+"移出小组"+xmProjectGroupVo.getGroupName()+"不成功，只有项目经理可以把其他管理者请出内部管理组");
+										tipsList.add(gu.getUsername()+"移出小组"+xmProjectGroupVo.getGroupName()+"不成功，只有项目经理、项目创建者可以把其他管理者请出内部管理组");
 									}
+								}else{
+									allUsersDel.add(gu);
 								}
 							}else{
 
