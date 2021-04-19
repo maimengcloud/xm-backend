@@ -1,17 +1,16 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
- * 组织 com.qqkj  顶级模块 xm 大模块 core  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskExecuser所有属性名: <br>
- *	createTime,id,taskId,userid,startTime,endTime,status,remarks,settleAmount,settleWorkload,settleStatus,settleTime,createUserid,createUsername,username,matchScore,quoteWeekday,quoteAmount,quoteTime,bizProcInstId,bizFlowState,projectId,projectPhaseId,skillRemark,quoteWorkload,quoteStartTime,quoteEndTime,branchId,projectPhaseName,taskName,isLeader;<br>
+ *	createTime,id,taskId,userid,startTime,endTime,status,remarks,settleAmount,settleWorkload,settleStatus,settleTime,createUserid,createUsername,username,matchScore,quoteWeekday,quoteAmount,quoteTime,bizProcInstId,bizFlowState,projectId,projectPhaseId,skillRemark,quoteWorkload,quoteStartTime,quoteEndTime,branchId,projectPhaseName,taskName,isLeader,distUserid,distUsername;<br>
  * 表 XM.xm_task_execuser xm_task_execuser的所有字段名: <br>
- *	create_time,id,task_id,userid,start_time,end_time,status,remarks,settle_amount,settle_workload,settle_status,settle_time,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,biz_proc_inst_id,biz_flow_state,project_id,project_phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,project_phase_name,task_name,is_leader;<br>
+ *	create_time,id,task_id,userid,start_time,end_time,status,remarks,settle_amount,settle_workload,settle_status,settle_time,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,biz_proc_inst_id,biz_flow_state,project_id,project_phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,project_phase_name,task_name,is_leader,dist_userid,dist_username;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -113,6 +112,12 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="是否主负责人0否1是",allowEmptyValue=true,example="",allowableValues="")
 	String isLeader;
+	
+	@ApiModelProperty(notes="推荐人编号",allowEmptyValue=true,example="",allowableValues="")
+	String distUserid;
+	
+	@ApiModelProperty(notes="推荐人姓名",allowEmptyValue=true,example="",allowableValues="")
+	String distUsername;
 
 	/**编号**/
 	public XmTaskExecuser(String id) {
@@ -309,6 +314,18 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	public void setIsLeader(String isLeader) {
 		this.isLeader = isLeader;
 	}
+	/**
+	 * 推荐人编号
+	 **/
+	public void setDistUserid(String distUserid) {
+		this.distUserid = distUserid;
+	}
+	/**
+	 * 推荐人姓名
+	 **/
+	public void setDistUsername(String distUsername) {
+		this.distUsername = distUsername;
+	}
 	
 	/**
 	 * 创建时间
@@ -495,6 +512,18 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	 **/
 	public String getIsLeader() {
 		return this.isLeader;
+	}
+	/**
+	 * 推荐人编号
+	 **/
+	public String getDistUserid() {
+		return this.distUserid;
+	}
+	/**
+	 * 推荐人姓名
+	 **/
+	public String getDistUsername() {
+		return this.distUsername;
 	}
 
 }

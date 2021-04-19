@@ -8,7 +8,7 @@
 	<select id="getAvgRate" parameterType="String" resultType="long" >
 		select avg(res.rate) from XM.xm_task res where res.parent_taskid = #{parentTaskid}
 	</select>
-	
+
 	<select id="checkExistsExecuser" parameterType="String" resultType="Long" >
 		select count(1) from XM.xm_task_execuser res where res.task_id = #{taskId} and ( res.settle_status not in('2','6'))
 	</select>
@@ -18,10 +18,10 @@
 	<update id="updatePreTask" parameterType="String">
 		update  XM.xm_task set pre_taskid = NULL,pre_taskname = NULL where pre_taskid = #{id}
 	</update>
-		
+
 	<update id="relTaskWithMenu" parameterType="com.xm.core.entity.XmTask">
 		update  XM.xm_task set menu_id = #{menuId}, menu_name = #{menuName},product_id=#{productId},product_name=#{productName} where id = #{id}
-	</update>	
+	</update>
 
 		<!-- 插入流程审批表数据 -->
 	<insert id="insertProcessApprova"
@@ -33,16 +33,16 @@
 			#{id},#{xmTaskId},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
 		)
 	</insert>
-	
+
 		<!-- 同时修改业务表及流程审批表数据状态 -->
 	<update id="updateProcessApprova"
 		parameterType="HashMap">
-		update XM.xm_task  b ,XM.xm_task_process_approva pa 
+		update XM.xm_task  b ,XM.xm_task_process_approva pa
 			<set>
 				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
 				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
-				<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>  
-				<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if> 
+				<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>
+				<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if>
 				<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
 				<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
 				 pa.flow_last_time = now(),
@@ -52,44 +52,44 @@
 				<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
 			</set>
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
-		      and b.id=pa.xm_task_id 
-	</update>	
-	
+		      and b.id=pa.xm_task_id
+	</update>
+
 	<update id="updateFlowStateByProcInstForDeleteSuccess"
 		parameterType="HashMap">
 		update XM.xm_task_process_approva pa set pa.flow_state='2'
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
-	</update>	
-	
+	</update>
+
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByProcInstId" parameterType="HashMap">
-		delete from XM.xm_task 
+		delete from XM.xm_task
 		 where biz_proc_inst_id=#{procInstId}
 	</delete>
 	<!-- 查询任务总的预算及对应的阶段的预算，任务总预算不能大于阶段总预算 -->
 	<select id="selectTotalPhaseAndTaskBudgetCost" parameterType="HashMap" resultType="HashMap">
 		SELECT
 			sum( ifnull(res.budget_cost,0) ) AS budget_cost,
-			sum( case when res.task_out='1' then ifnull(res.budget_cost,0) else 0 end ) AS task_budget_out_user_at, 
+			sum( case when res.task_out='1' then ifnull(res.budget_cost,0) else 0 end ) AS task_budget_out_user_at,
 			sum( case when res.task_out='1' then 0 else ifnull(res.budget_cost,0)  end ) AS task_budget_inner_user_at,
-			sum(0) AS task_budget_nouser_at, 
-			sum( res.budget_workload ) AS budget_workload, 
+			sum(0) AS task_budget_nouser_at,
+			sum( res.budget_workload ) AS budget_workload,
 			p.phase_budget_nouser_at,
 			p.phase_budget_inner_user_at,
-			p.phase_budget_out_user_at, 
-			p.phase_budget_workload,       
+			p.phase_budget_out_user_at,
+			p.phase_budget_workload,
 			p.phase_budget_hours,
 			p.phase_budget_staff_nu
-		FROM XM.xm_project_phase p	LEFT JOIN   XM.xm_task res 
+		FROM XM.xm_project_phase p	LEFT JOIN   XM.xm_task res
 		ON p.id = res.project_phase_id
 		WHERE
 			p.id = #{projectPhaseId}
 			<if test=" excludeTaskIds !=null "> and res.id not in
-				    <foreach collection="excludeTaskIds" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
+				    <foreach collection="excludeTaskIds" item="item" index="index" open="(" separator="," close=")" >
+				        #{item}
+				    </foreach>
 			</if>
-		  
+
 	</select>
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectTaskListByIds" parameterType="HashMap" resultType="com.xm.core.entity.XmTask">
@@ -100,13 +100,13 @@
 			</foreach>
 	</select>
 
-	<!--结束 自定义sql函数区域--> 
+	<!--结束 自定义sql函数区域-->
 	
 
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from XM.xm_task res   left join  XM.xm_task_process_approva pa on res.id=pa.xm_task_id and res.biz_proc_inst_id=pa.proc_inst_id 
+		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from XM.xm_task res   left join  XM.xm_task_process_approva pa on res.id=pa.xm_task_id and res.biz_proc_inst_id=pa.proc_inst_id
 		left join XM.xm_project p on p.id=res.project_id
 		<where> 
 			<if test="ids != null">  and     
@@ -119,10 +119,10 @@
 			<if test="key != null and key !='' ">       </if>
 			<if test="work != null and work != ''"> and res.rate != '100' </if>
 			<if test="parent != null and parent != ''"> and (res.parent_taskid = '' or res.parent_taskid IS NULL)</if>
-			
+
 			<!-- 我参与的-->
 			<if test=" (myExecuserStatus != null and myExecuserStatus) != '' or ( isMy !=null and isMy !='' )">
-				and  exists ( select 1 from XM.xm_task_execuser exe where exe.task_id=res.id and exe.userid=#{userid} 
+				and  exists ( select 1 from XM.xm_task_execuser exe where exe.task_id=res.id and exe.userid=#{userid}
 					<if test=' myExecuserStatus != "all" and  myExecuserStatus!=null and myExecuserStatus !="" '>
 						and exe.status=#{myExecuserStatus}
 					</if>
@@ -130,7 +130,7 @@
 			</if>
 			<!-- 我关注的 -->
 			<if test="myFocus != null and myFocus != ''">
-				and exists ( select 1 from XM.xm_my_focus f where f.userid=#{userid} and f.project_id=res.project_id and f.task_id=res.id  ) 
+				and exists ( select 1 from XM.xm_my_focus f where f.userid=#{userid} and f.project_id=res.project_id and f.task_id=res.id  )
 			</if>
 		</where>
 		order by res.sort_level asc
@@ -165,7 +165,7 @@
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmTask" useGeneratedKeys="false" keyProperty="id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmTask" useGeneratedKeys="false"   keyProperty="id">
 		insert into XM.xm_task(
 			<include refid="columns"/>
 		) values (
@@ -175,9 +175,9 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmTask">
-		delete from XM.xm_task res
+		delete from XM.xm_task
 		<where>  
-			<include refid="where"/>
+			1=2
 		</where>
 	</delete>
 	
@@ -222,10 +222,13 @@
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from XM.xm_task 
-			where id in
-			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
-			        #{item.id }  
-			    </foreach>  
+			where
+			(id)
+			    in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    ( #{item.id}
+                    )
+                </foreach>
 	</delete>
 	
 	
@@ -233,7 +236,7 @@
 	<sql id="columns">
 		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,iteration_id,iteration_name,product_id,product_name
 	</sql>
-	
+
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
 	<sql id="where">
 		<if test="id != null and id != ''">      and res.id = #{id}     </if>
@@ -248,14 +251,14 @@
 		<if test="executorUsername != null and executorUsername != ''">      and res.executor_username = #{executorUsername}     </if>
 		<if test="preTaskid != null and preTaskid != ''">      and res.pre_taskid = #{preTaskid}     </if>
 		<if test="preTaskname != null and preTaskname != ''">      and res.pre_taskname = #{preTaskname}     </if>
-		<if test="startTime != null">      and TO_CHAR(res.start_time,'YYYY-MM-DD') = TO_CHAR(#{startTime},'YYYY-MM-DD')     </if>
-		<if test="endTime != null">      and TO_CHAR(res.end_time,'YYYY-MM-DD') = TO_CHAR(#{endTime},'YYYY-MM-DD')     </if>
+		<if test="startTime != null">      and date_format(res.start_time,'%Y-%m-%d') = date_format(#{startTime},'%Y-%m-%d')     </if>
+		<if test="endTime != null">      and date_format(res.end_time,'%Y-%m-%d') = date_format(#{endTime},'%Y-%m-%d')     </if>
 		<if test="milestone != null and milestone != ''">      and res.milestone = #{milestone}     </if>
 		<if test="description != null and description != ''">      and res.description = #{description}     </if>
 		<if test="remarks != null and remarks != ''">      and res.remarks = #{remarks}     </if>
 		<if test="createUserid != null and createUserid != ''">      and res.create_userid = #{createUserid}     </if>
 		<if test="createUsername != null and createUsername != ''">      and res.create_username = #{createUsername}     </if>
-		<if test="createTime != null">      and TO_CHAR(res.create_time,'YYYY-MM-DD') = TO_CHAR(#{createTime},'YYYY-MM-DD')     </if>
+		<if test="createTime != null">      and date_format(res.create_time,'%Y-%m-%d') = date_format(#{createTime},'%Y-%m-%d')     </if>
 		<if test="rate != null and rate != ''">      and res.rate = #{rate}     </if>
 		<if test="budgetCost != null and budgetCost != ''">      and res.budget_cost = #{budgetCost}     </if>
 		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
@@ -265,8 +268,8 @@
 		<if test="taskType != null and taskType != ''">      and res.task_type = #{taskType}     </if>
 		<if test="taskClass != null and taskClass != ''">      and res.task_class = #{taskClass}     </if>
 		<if test="toTaskCenter != null and toTaskCenter != ''">      and res.to_task_center = #{toTaskCenter}     </if>
-		<if test="actStartTime != null">      and TO_CHAR(res.act_start_time,'YYYY-MM-DD') = TO_CHAR(#{actStartTime},'YYYY-MM-DD')     </if>
-		<if test="actEndTime != null">      and TO_CHAR(res.act_end_time,'YYYY-MM-DD') = TO_CHAR(#{actEndTime},'YYYY-MM-DD')     </if>
+		<if test="actStartTime != null">      and date_format(res.act_start_time,'%Y-%m-%d') = date_format(#{actStartTime},'%Y-%m-%d')     </if>
+		<if test="actEndTime != null">      and date_format(res.act_end_time,'%Y-%m-%d') = date_format(#{actEndTime},'%Y-%m-%d')     </if>
 		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
 		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
 		<if test="projectPhaseId != null and projectPhaseId != ''">      and res.project_phase_id = #{projectPhaseId}     </if>

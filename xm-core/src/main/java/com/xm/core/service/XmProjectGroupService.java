@@ -461,11 +461,75 @@ public class XmProjectGroupService extends BaseService {
         	return tips;
 		}
     }
-    
+
+	/**
+	 * 获取用户在某个项目中的组
+	 * @param projectId
+	 * @param userid
+	 * @return
+	 */
     public List<XmProjectGroupVo>  getUserGroups(String projectId,String userid){
     	List<XmProjectGroupVo> xmProjectGroupVoList=this.getProjectGroupVoList(projectId);
     	return this.getUserGroups(xmProjectGroupVoList, userid);
     }
+
+	/**
+	 * 检查用户是否在一些组中任意个组当组长
+	 * @param xmProjectGroupVoList
+	 * @param teamHeadUserid
+	 * @return
+	 */
+	public boolean  checkUserIsHeadInGroups( List<XmProjectGroupVo> xmProjectGroupVoList,String teamHeadUserid){
+		if(xmProjectGroupVoList==null || xmProjectGroupVoList.size()==0)return false;
+		if(!StringUtils.hasText(teamHeadUserid)){
+			return false;
+		}
+		for (XmProjectGroupVo xmProjectGroupVo : xmProjectGroupVoList) {
+			List<XmProjectGroupUser> gus=xmProjectGroupVo.getGroupUsers();
+			if(gus==null) {
+				continue;
+			}
+			for (XmProjectGroupUser gu : gus) {
+				if(teamHeadUserid.equals(gu.getUserid()) && "1".equals(gu.getIsHead())) {
+					 return true;
+				}
+			}
+
+		}
+		return false;
+	}
+
+	/**
+	 * 检查用户是否在指定的小组中做组长
+	 * @param xmProjectGroupVoList
+	 * @param groupId
+	 * @param teamHeadUserid
+	 * @return
+	 */
+	public boolean  checkUserIsHeadInGroup( List<XmProjectGroupVo> xmProjectGroupVoList,String groupId,String teamHeadUserid){
+		if(xmProjectGroupVoList==null || xmProjectGroupVoList.size()==0)return false;
+		if(!StringUtils.hasText(teamHeadUserid)){
+			return false;
+		}
+		if(!StringUtils.hasText(groupId)){
+			return false;
+		}
+
+		for (XmProjectGroupVo xmProjectGroupVo : xmProjectGroupVoList) {
+			if(groupId.equals(xmProjectGroupVo.getId())){
+				List<XmProjectGroupUser> gus=xmProjectGroupVo.getGroupUsers();
+				if(gus==null) {
+					continue;
+				}
+				for (XmProjectGroupUser gu : gus) {
+					if(teamHeadUserid.equals(gu.getUserid()) && "1".equals(gu.getIsHead())) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
     public List<XmProjectGroupVo>  getUserGroups( List<XmProjectGroupVo> xmProjectGroupVoList,String userid){
      	List<XmProjectGroupVo> userGroups=new ArrayList<>();
      	if(xmProjectGroupVoList==null) {

@@ -111,21 +111,22 @@ public class XmTaskExecuserController {
 		try{
 			String projectId=xmTaskExecuser.getProjectId();
 			 User user=LoginUtils.getCurrentUserInfo();
-			 List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-			boolean isHead= groupService.checkUserIsOtherUserTeamHead(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
-			if(!isHead ) {
-				if(user.getUserid().equals(xmTaskExecuser.getUserid())){
-					tips.setFailureMsg(user.getUsername()+"不是组长，无权进行新增任务执行人、候选人等操作");
-				}else {
-					tips.setFailureMsg(user.getUsername()+"不是"+xmTaskExecuser.getUsername()+"的组长，无权进行新增任务执行人、候选人等操作");
-				}
-			}
-			if(tips.isOk()) {
+			 if(user.getUserid().equals(xmTaskExecuser.getUserid())){
+				 xmTaskExecuserService.addExecuser(xmTaskExecuser);
+				 m.put("data",xmTaskExecuser);
+			 }else {
+				 List<XmProjectGroupVo> myGgroups=groupService.getProjectGroupVoList(projectId);
+				 boolean isTeamHeader= groupService.checkUserIsHeadInGroups(myGgroups,user.getUserid());
+				 boolean isPm=groupService.checkUserIsProjectManager(myGgroups,user.getUserid());
+				 if( !isTeamHeader &&  !isPm ) {
+						 tips.setFailureMsg(user.getUsername()+"不是组长、项目管理者，无权进行新增任务执行人、候选人等操作");
+				 }
+				 if(tips.isOk()) {
+					 xmTaskExecuserService.addExecuser(xmTaskExecuser);
+					 m.put("data",xmTaskExecuser);
+				 }
+			 }
 
-				xmTaskExecuserService.addExecuser(xmTaskExecuser);
-				m.put("data",xmTaskExecuser);
-
-			} 
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);

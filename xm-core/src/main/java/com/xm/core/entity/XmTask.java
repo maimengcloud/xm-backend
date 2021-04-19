@@ -1,13 +1,12 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
- * 组织 com.qqkj  顶级模块 xm 大模块 core  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTask所有属性名: <br>
  *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,projectPhaseId,projectPhaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,iterationId,iterationName,productId,productName;<br>
  * 表 XM.xm_task xm_task的所有字段名: <br>
@@ -72,10 +71,10 @@ public class XmTask  implements java.io.Serializable {
 	@ApiModelProperty(notes="备注",allowEmptyValue=true,example="",allowableValues="")
 	String remarks;
 	
-	@ApiModelProperty(notes="任务创建人编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="任务创建人编号（谁创建谁负责）",allowEmptyValue=true,example="",allowableValues="")
 	String createUserid;
 	
-	@ApiModelProperty(notes="任务创建人",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="任务创建人（谁创建谁负责）",allowEmptyValue=true,example="",allowableValues="")
 	String createUsername;
 	
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
@@ -277,13 +276,13 @@ public class XmTask  implements java.io.Serializable {
 		this.remarks = remarks;
 	}
 	/**
-	 * 任务创建人编号
+	 * 任务创建人编号（谁创建谁负责）
 	 **/
 	public void setCreateUserid(String createUserid) {
 		this.createUserid = createUserid;
 	}
 	/**
-	 * 任务创建人
+	 * 任务创建人（谁创建谁负责）
 	 **/
 	public void setCreateUsername(String createUsername) {
 		this.createUsername = createUsername;
@@ -566,13 +565,13 @@ public class XmTask  implements java.io.Serializable {
 		return this.remarks;
 	}
 	/**
-	 * 任务创建人编号
+	 * 任务创建人编号（谁创建谁负责）
 	 **/
 	public String getCreateUserid() {
 		return this.createUserid;
 	}
 	/**
-	 * 任务创建人
+	 * 任务创建人（谁创建谁负责）
 	 **/
 	public String getCreateUsername() {
 		return this.createUsername;
