@@ -285,7 +285,70 @@ public class XmTaskController {
 		m.put("tips", tips);
 		return m;
 	}
-	
+
+	@ApiOperation( value = "根据主键修改一条xm_task信息",notes="editXmTask")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	//@HasQx(value = "xm_core_xmTask_setTaskCreateUser",name = "修改任务责任人",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/setTaskCreateUser",method=RequestMethod.POST)
+	public Map<String,Object> setTaskCreateUser(@RequestBody XmTaskVo xmTaskVo) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新一条数据");
+		try{
+			User user=LoginUtils.getCurrentUserInfo();
+			if(!StringUtils.hasText(xmTaskVo.getProjectId())){
+				tips.setFailureMsg("项目编号不能为空");
+				m.put("tips", tips);
+				return m;
+			}
+			if(!StringUtils.hasText(xmTaskVo.getId())){
+				tips.setFailureMsg("任务编号不能为空");
+				m.put("tips", tips);
+				return m;
+			}
+			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskVo.getProjectId());
+			if(pgroups==null || pgroups.size()==0){
+				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
+				m.put("tips", tips);
+				return m;
+			}
+			XmTask xmTaskDb=this.xmTaskService.selectOneObject(xmTaskVo);
+			if(xmTaskDb==null){
+				tips.setFailureMsg("该任务不存在");
+				m.put("tips", tips);
+				return m;
+			}
+			boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
+			if(!isHead){
+				boolean isPm=groupService.checkUserIsProjectManager(pgroups,user.getUserid());
+				if(!isPm){
+					tips.setFailureMsg("您无权修改该该任务的责任人！项目管理者、组长可以修改任务的责任人。");
+					m.put("tips", tips);
+					return m;
+				}
+			}
+			boolean existsGrouop=groupService.checkUserExistsGroup(xmTaskVo.getProjectId(),xmTaskVo.getCreateUserid());
+			if(!existsGrouop){
+				tips.setFailureMsg(xmTaskVo.getCreateUsername()+"不是项目组成员，不能作为任务责任人");
+				m.put("tips", tips);
+				return m;
+			}
+			XmTask xmTask=new XmTask(xmTaskVo.getId());
+			xmTask.setCreateUserid(xmTaskVo.getCreateUserid());
+			xmTask.setCreateUsername(xmTaskVo.getCreateUsername());
+			 this.xmTaskService.updateSomeFieldByPk(xmTask);
+			m.put("data",xmTaskVo);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 	@ApiOperation( value = "根据主键修改一条xm_task信息",notes="editXmTask")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
