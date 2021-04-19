@@ -96,7 +96,7 @@
 	
 			<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="listSum" parameterType="HashMap" resultType="HashMap">
-		select res.project_id,res.userid,res.username,subject_id,subject_name,biz_month,sum(res.act_cost_amount) as act_cost_amount from  XM.xm_project_m_cost_user res
+		select res.project_id,res.userid,max(res.username) as username,subject_id,max(subject_name) as subject_name,biz_month,sum(res.act_cost_amount) as act_cost_amount from  XM.xm_project_m_cost_user res
 		<where> 
 			 and res.project_id=#{projectId} 
 			 <if test="subjectId != null and subjectId !='' ">     and res.subject_id =#{subjectId} </if> 
