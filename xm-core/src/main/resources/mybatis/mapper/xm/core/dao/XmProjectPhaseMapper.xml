@@ -27,9 +27,9 @@
 			p.plan_out_user_cnt,
 			p.plan_inner_user_cnt,
 			p.plan_working_hours,
-			p.plan_total_cost 
+			p.plan_total_cost
 		FROM
-			XM.xm_project p 
+			XM.xm_project p
 			LEFT JOIN 	XM.xm_project_phase res
 				ON p.id = res.project_id
 				<if test=" excludePhaseIds !=null "> and res.id not  in
@@ -38,15 +38,15 @@
 					</foreach>
 				</if>
 		where p.id=#{projectId}
-	</select> 
-	 
+	</select>
+
 	<update id="loadTasksToXmProjectPhase" parameterType="String" statementType="CALLABLE">
-		 {call load_tasks_to_xm_project_phase(#{projectId,mode=IN})} 
+		 {call load_tasks_to_xm_project_phase(#{projectId,mode=IN})}
 	</update>
 	<select id="checkExistsTask" parameterType="String" resultType="Long">
 		select count(1) from XM.xm_task t where t.project_phase_id=#{phaseId}
 	</select>
-	
+
 	<select id="checkExistsChildren" parameterType="String" resultType="Long" >
 		select count(1) from XM.xm_project_phase res where res.parent_phase_id = #{id}
 	</select>
@@ -99,19 +99,19 @@
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmProjectPhase" useGeneratedKeys="false" keyProperty="id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmProjectPhase" useGeneratedKeys="false"   keyProperty="id">
 		insert into XM.xm_project_phase(
 			<include refid="columns"/>
 		) values (
-		#{id},#{phaseName},#{remark},#{parentPhaseId},#{branchId},#{projectId},#{beginDate},#{endDate},#{phaseBudgetHours},#{phaseBudgetStaffNu},#{ctime},#{phaseBudgetNouserAt},#{phaseBudgetInnerUserAt},#{phaseBudgetOutUserAt},#{projectBaselineId},#{bizProcInstId},#{bizFlowState},#{phaseBudgetWorkload},#{phaseActWorkload},#{phaseActInnerUserWorkload},#{phaseActOutUserWorkload},#{taskType},#{planType},#{seqNo},#{phaseBudgetInnerUserWorkload},#{phaseBudgetOutUserWorkload},#{actNouserAt},#{actInnerUserAt},#{phaseBudgetInnerUserPrice},#{phaseBudgetOutUserPrice},#{phaseBudgetOutUserCnt},#{phaseBudgetInnerUserCnt},#{actRate},#{phaseStatus},#{actOutUserAt},#{taskCnt},#{finishTaskCnt},#{iterationCnt},#{calcTime},#{taskBudgetWorkload},#{taskBudgetAt}
+		#{id},#{phaseName},#{remark},#{parentPhaseId},#{branchId},#{projectId},#{beginDate},#{endDate},#{phaseBudgetHours},#{phaseBudgetStaffNu},#{ctime},#{phaseBudgetNouserAt},#{phaseBudgetInnerUserAt},#{phaseBudgetOutUserAt},#{projectBaselineId},#{bizProcInstId},#{bizFlowState},#{phaseBudgetWorkload},#{phaseActWorkload},#{phaseActInnerUserWorkload},#{phaseActOutUserWorkload},#{taskType},#{planType},#{seqNo},#{phaseBudgetInnerUserWorkload},#{phaseBudgetOutUserWorkload},#{actNouserAt},#{actInnerUserAt},#{phaseBudgetInnerUserPrice},#{phaseBudgetOutUserPrice},#{phaseBudgetOutUserCnt},#{phaseBudgetInnerUserCnt},#{actRate},#{phaseStatus},#{actOutUserAt},#{taskCnt},#{finishTaskCnt},#{iterationCnt},#{calcTime},#{taskBudgetWorkload},#{taskBudgetAt},#{mngUserid},#{mngUsername}
 		)
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProjectPhase">
-		delete from XM.xm_project_phase res
+		delete from XM.xm_project_phase
 		<where>  
-			<include refid="where"/>
+			1=2
 		</where>
 	</delete>
 	
@@ -156,18 +156,21 @@
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from XM.xm_project_phase 
-			where id in
-			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
-			        #{item.id }  
-			    </foreach>  
+			where
+			(id)
+			    in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    ( #{item.id}
+                    )
+                </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at
+		id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username
 	</sql>
-	
+
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
 	<sql id="where">
 		<if test="id != null and id != ''">      and res.id = #{id}     </if>
@@ -176,11 +179,11 @@
 		<if test="parentPhaseId != null and parentPhaseId != ''">      and res.parent_phase_id = #{parentPhaseId}     </if>
 		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
 		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
-		<if test="beginDate != null">      and TO_CHAR(res.begin_date,'YYYY-MM-DD') = TO_CHAR(#{beginDate},'YYYY-MM-DD')     </if>
-		<if test="endDate != null">      and TO_CHAR(res.end_date,'YYYY-MM-DD') = TO_CHAR(#{endDate},'YYYY-MM-DD')     </if>
+		<if test="beginDate != null">      and date_format(res.begin_date,'%Y-%m-%d') = date_format(#{beginDate},'%Y-%m-%d')     </if>
+		<if test="endDate != null">      and date_format(res.end_date,'%Y-%m-%d') = date_format(#{endDate},'%Y-%m-%d')     </if>
 		<if test="phaseBudgetHours != null and phaseBudgetHours != ''">      and res.phase_budget_hours = #{phaseBudgetHours}     </if>
 		<if test="phaseBudgetStaffNu != null and phaseBudgetStaffNu != ''">      and res.phase_budget_staff_nu = #{phaseBudgetStaffNu}     </if>
-		<if test="ctime != null">      and TO_CHAR(res.ctime,'YYYY-MM-DD') = TO_CHAR(#{ctime},'YYYY-MM-DD')     </if>
+		<if test="ctime != null">      and date_format(res.ctime,'%Y-%m-%d') = date_format(#{ctime},'%Y-%m-%d')     </if>
 		<if test="phaseBudgetNouserAt != null and phaseBudgetNouserAt != ''">      and res.phase_budget_nouser_at = #{phaseBudgetNouserAt}     </if>
 		<if test="phaseBudgetInnerUserAt != null and phaseBudgetInnerUserAt != ''">      and res.phase_budget_inner_user_at = #{phaseBudgetInnerUserAt}     </if>
 		<if test="phaseBudgetOutUserAt != null and phaseBudgetOutUserAt != ''">      and res.phase_budget_out_user_at = #{phaseBudgetOutUserAt}     </if>
@@ -208,9 +211,11 @@
 		<if test="taskCnt != null and taskCnt != ''">      and res.task_cnt = #{taskCnt}     </if>
 		<if test="finishTaskCnt != null and finishTaskCnt != ''">      and res.finish_task_cnt = #{finishTaskCnt}     </if>
 		<if test="iterationCnt != null and iterationCnt != ''">      and res.iteration_cnt = #{iterationCnt}     </if>
-		<if test="calcTime != null">      and TO_CHAR(res.calc_time,'YYYY-MM-DD') = TO_CHAR(#{calcTime},'YYYY-MM-DD')     </if>
+		<if test="calcTime != null">      and date_format(res.calc_time,'%Y-%m-%d') = date_format(#{calcTime},'%Y-%m-%d')     </if>
 		<if test="taskBudgetWorkload != null and taskBudgetWorkload != ''">      and res.task_budget_workload = #{taskBudgetWorkload}     </if>
 		<if test="taskBudgetAt != null and taskBudgetAt != ''">      and res.task_budget_at = #{taskBudgetAt}     </if>
+		<if test="mngUserid != null and mngUserid != ''">      and res.mng_userid = #{mngUserid}     </if>
+		<if test="mngUsername != null and mngUsername != ''">      and res.mng_username = #{mngUsername}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -253,7 +258,9 @@
 		iteration_cnt = #{iterationCnt},
 		calc_time = #{calcTime},
 		task_budget_workload = #{taskBudgetWorkload},
-		task_budget_at = #{taskBudgetAt}
+		task_budget_at = #{taskBudgetAt},
+		mng_userid = #{mngUserid},
+		mng_username = #{mngUsername}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="phaseName != null and phaseName != ''"> phase_name = #{phaseName},     </if>
@@ -296,6 +303,8 @@
 		<if test="calcTime != null"> calc_time = #{calcTime},     </if>
 		<if test="taskBudgetWorkload != null and taskBudgetWorkload != ''"> task_budget_workload = #{taskBudgetWorkload},     </if>
 		<if test="taskBudgetAt != null and taskBudgetAt != ''"> task_budget_at = #{taskBudgetAt},     </if>
+		<if test="mngUserid != null and mngUserid != ''"> mng_userid = #{mngUserid},     </if>
+		<if test="mngUsername != null and mngUsername != ''"> mng_username = #{mngUsername},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -338,6 +347,8 @@
 			iteration_cnt = #{item.iterationCnt},
 			calc_time = #{item.calcTime},
 			task_budget_workload = #{item.taskBudgetWorkload},
-			task_budget_at = #{item.taskBudgetAt}
+			task_budget_at = #{item.taskBudgetAt},
+			mng_userid = #{item.mngUserid},
+			mng_username = #{item.mngUsername}
 	</sql>
 </mapper>

@@ -1,17 +1,16 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
- * 组织 com.qqkj  顶级模块 xm 大模块 core  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectPhase所有属性名: <br>
- *	id,phaseName,remark,parentPhaseId,branchId,projectId,beginDate,endDate,phaseBudgetHours,phaseBudgetStaffNu,ctime,phaseBudgetNouserAt,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,projectBaselineId,bizProcInstId,bizFlowState,phaseBudgetWorkload,phaseActWorkload,phaseActInnerUserWorkload,phaseActOutUserWorkload,taskType,planType,seqNo,phaseBudgetInnerUserWorkload,phaseBudgetOutUserWorkload,actNouserAt,actInnerUserAt,phaseBudgetInnerUserPrice,phaseBudgetOutUserPrice,phaseBudgetOutUserCnt,phaseBudgetInnerUserCnt,actRate,phaseStatus,actOutUserAt,taskCnt,finishTaskCnt,iterationCnt,calcTime,taskBudgetWorkload,taskBudgetAt;<br>
+ *	id,phaseName,remark,parentPhaseId,branchId,projectId,beginDate,endDate,phaseBudgetHours,phaseBudgetStaffNu,ctime,phaseBudgetNouserAt,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,projectBaselineId,bizProcInstId,bizFlowState,phaseBudgetWorkload,phaseActWorkload,phaseActInnerUserWorkload,phaseActOutUserWorkload,taskType,planType,seqNo,phaseBudgetInnerUserWorkload,phaseBudgetOutUserWorkload,actNouserAt,actInnerUserAt,phaseBudgetInnerUserPrice,phaseBudgetOutUserPrice,phaseBudgetOutUserCnt,phaseBudgetInnerUserCnt,actRate,phaseStatus,actOutUserAt,taskCnt,finishTaskCnt,iterationCnt,calcTime,taskBudgetWorkload,taskBudgetAt,mngUserid,mngUsername;<br>
  * 表 XM.xm_project_phase 项目阶段模板的所有字段名: <br>
- *	id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at;<br>
+ *	id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -143,6 +142,12 @@ public class XmProjectPhase  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="从任务汇总的预算金额",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal taskBudgetAt;
+	
+	@ApiModelProperty(notes="管理者编号",allowEmptyValue=true,example="",allowableValues="")
+	String mngUserid;
+	
+	@ApiModelProperty(notes="管理者姓名",allowEmptyValue=true,example="",allowableValues="")
+	String mngUsername;
 
 	/**阶段主键**/
 	public XmProjectPhase(String id) {
@@ -399,6 +404,18 @@ public class XmProjectPhase  implements java.io.Serializable {
 	public void setTaskBudgetAt(BigDecimal taskBudgetAt) {
 		this.taskBudgetAt = taskBudgetAt;
 	}
+	/**
+	 * 管理者编号
+	 **/
+	public void setMngUserid(String mngUserid) {
+		this.mngUserid = mngUserid;
+	}
+	/**
+	 * 管理者姓名
+	 **/
+	public void setMngUsername(String mngUsername) {
+		this.mngUsername = mngUsername;
+	}
 	
 	/**
 	 * 阶段主键
@@ -645,6 +662,18 @@ public class XmProjectPhase  implements java.io.Serializable {
 	 **/
 	public BigDecimal getTaskBudgetAt() {
 		return this.taskBudgetAt;
+	}
+	/**
+	 * 管理者编号
+	 **/
+	public String getMngUserid() {
+		return this.mngUserid;
+	}
+	/**
+	 * 管理者姓名
+	 **/
+	public String getMngUsername() {
+		return this.mngUsername;
 	}
 
 }

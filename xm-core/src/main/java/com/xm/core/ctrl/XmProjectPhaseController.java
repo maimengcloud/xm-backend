@@ -112,10 +112,59 @@ public class XmProjectPhaseController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
-	
-	
+
+
+	@HasQx(value = "xm_core_xmProjectPhase_setPhaseMngUser",name = "设置阶段计划负责人",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/setPhaseMngUser",method=RequestMethod.POST)
+	public Map<String,Object> setPhaseMngUser(@RequestBody XmProjectPhase xmProjectPhase) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功设置");
+		try{
+			if(StringUtils.isEmpty(xmProjectPhase.getId())) {
+				tips.setFailureMsg("阶段计划编号不能为空");
+				m.put("tips", tips);
+				return m;
+			}else if(StringUtils.isEmpty(xmProjectPhase.getId())) {
+				tips.setFailureMsg("阶段计划编号不能为空");
+				m.put("tips", tips);
+				return m;
+			}else{
+				XmProjectPhase xmProjectPhaseQuery = new  XmProjectPhase(xmProjectPhase.getId());
+				if(xmProjectPhaseService.countByWhere(xmProjectPhaseQuery)>0){
+					tips.setFailureMsg("编号重复，请修改编号再提交");
+					m.put("tips", tips);
+					return m;
+				}
+			}
+			BigDecimal phaseBudgetCost=BigDecimal.ZERO;
+			String projectId=null;
+			BigDecimal zero=BigDecimal.ZERO;
+			projectId=xmProjectPhase.getProjectId();
+			BigDecimal phaseBudgetInnerUserAt=NumberUtil.getBigDecimal(xmProjectPhase.getPhaseBudgetInnerUserAt(),zero);
+			BigDecimal phaseBudgetOutUserAt=NumberUtil.getBigDecimal(xmProjectPhase.getPhaseBudgetOutUserAt(),zero);
+			BigDecimal phaseBudgetNouserAt=NumberUtil.getBigDecimal(xmProjectPhase.getPhaseBudgetNouserAt(),zero);
+			phaseBudgetCost=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);
+			List<String> excludePhaseIds=new ArrayList<>();
+			excludePhaseIds.add(xmProjectPhase.getId());
+			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
+			if(judgetTips.isOk()) {
+				xmProjectPhaseService.insert(xmProjectPhase);
+				xmRecordService.addXmPhaseRecord(projectId, xmProjectPhase.getId(), "项目-阶段计划-新增计划", "新增阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
+				m.put("data",xmProjectPhase);
+			}else {
+				tips=judgetTips;
+			}
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
+
 	@ApiOperation( value = "新增一条xm_project_phase信息",notes="addXmProjectPhase,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProjectPhase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
