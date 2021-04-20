@@ -7,10 +7,14 @@ import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProjectPhase;
+import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.XmProjectPhaseService;
 import com.xm.core.service.XmProjectService;
 import com.xm.core.service.XmRecordService;
+import com.xm.core.vo.XmProjectGroupVo;
 import com.xm.core.vo.XmProjectPhaseVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
@@ -44,7 +48,9 @@ public class XmProjectPhaseController {
 	
 	@Autowired
 	private XmProjectPhaseService xmProjectPhaseService;
-	 
+
+	@Autowired
+	private XmProjectGroupService groupService;
 		
 	@Autowired
 	private XmProjectService xmProjectService;
@@ -130,30 +136,36 @@ public class XmProjectPhaseController {
 				return m;
 			}else{
 				XmProjectPhase xmProjectPhaseQuery = new  XmProjectPhase(xmProjectPhase.getId());
-				if(xmProjectPhaseService.countByWhere(xmProjectPhaseQuery)>0){
-					tips.setFailureMsg("编号重复，请修改编号再提交");
+				XmProjectPhase xmProjectPhaseDb=this.xmProjectPhaseService.selectOneObject(xmProjectPhaseQuery);
+				if(xmProjectPhaseDb==null){
+					tips.setFailureMsg("阶段计划不存在");
 					m.put("tips", tips);
 					return m;
 				}
+				List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhaseDb.getProjectId());
+				User user = LoginUtils.getCurrentUserInfo();
+				boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
+				boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
+				if( !meIsPm  && !meIsTeamHead ){
+					tips.setFailureMsg("您不是组长、也不是项目管理者，不允许设置阶段计划负责人");
+					m.put("tips", tips);
+					return m;
+				}
+				boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,xmProjectPhase.getMngUserid(),user.getUserid());
+				if(  !meIsPm && !meIsHisTeamHead ){
+					tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许设置其为阶段计划负责人");
+					m.put("tips", tips);
+					return m;
+				}
+				if(tips.isOk()){
+					XmProjectPhase xmProjectPhaseToUpdate=new XmProjectPhase();
+					xmProjectPhaseToUpdate.setId(xmProjectPhase.getId());
+					xmProjectPhaseToUpdate.setMngUserid(xmProjectPhase.getMngUserid());
+					xmProjectPhaseToUpdate.setMngUsername(xmProjectPhase.getMngUsername());
+					this.xmProjectPhaseService.updateSomeFieldByPk(xmProjectPhaseToUpdate);
+				}
 			}
-			BigDecimal phaseBudgetCost=BigDecimal.ZERO;
-			String projectId=null;
-			BigDecimal zero=BigDecimal.ZERO;
-			projectId=xmProjectPhase.getProjectId();
-			BigDecimal phaseBudgetInnerUserAt=NumberUtil.getBigDecimal(xmProjectPhase.getPhaseBudgetInnerUserAt(),zero);
-			BigDecimal phaseBudgetOutUserAt=NumberUtil.getBigDecimal(xmProjectPhase.getPhaseBudgetOutUserAt(),zero);
-			BigDecimal phaseBudgetNouserAt=NumberUtil.getBigDecimal(xmProjectPhase.getPhaseBudgetNouserAt(),zero);
-			phaseBudgetCost=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);
-			List<String> excludePhaseIds=new ArrayList<>();
-			excludePhaseIds.add(xmProjectPhase.getId());
-			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
-			if(judgetTips.isOk()) {
-				xmProjectPhaseService.insert(xmProjectPhase);
-				xmRecordService.addXmPhaseRecord(projectId, xmProjectPhase.getId(), "项目-阶段计划-新增计划", "新增阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
-				m.put("data",xmProjectPhase);
-			}else {
-				tips=judgetTips;
-			}
+
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -184,6 +196,26 @@ public class XmProjectPhaseController {
 					m.put("tips", tips);
 					return m;
 				}
+			}
+			User user = LoginUtils.getCurrentUserInfo();
+			if(StringUtils.hasText(xmProjectPhase.getMngUserid())){
+				xmProjectPhase.setMngUserid(user.getUserid());
+				xmProjectPhase.setMngUsername(user.getUsername());
+			}
+			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
+
+			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
+			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
+			if( !meIsPm  && !meIsTeamHead ){
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许设置阶段计划负责人");
+				m.put("tips", tips);
+				return m;
+			}
+			boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,xmProjectPhase.getMngUserid(),user.getUserid());
+			if(  !meIsPm && !meIsHisTeamHead ){
+				tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许设置其为阶段计划负责人");
+				m.put("tips", tips);
+				return m;
 			}
 			BigDecimal phaseBudgetCost=BigDecimal.ZERO;
 			String projectId=null;
@@ -224,13 +256,26 @@ public class XmProjectPhaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
+			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
+			User user = LoginUtils.getCurrentUserInfo();
+			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
+			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
+			if( !meIsPm  && !meIsTeamHead ){
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许删除阶段计划");
+				m.put("tips", tips);
+				return m;
+			}
+			boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,xmProjectPhase.getMngUserid(),user.getUserid());
+			if(  !meIsPm && !meIsHisTeamHead ){
+				tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许删除其负责的阶段计划");
+				m.put("tips", tips);
+				return m;
+			}
 			//检查是否由关联的任务，有则不允许删除
 			Long exists=this.xmProjectPhaseService.checkExistsTask(xmProjectPhase.getId());
 			if(exists>0) {
 				tips.setFailureMsg("存在"+exists+"条任务,不允许删除");
-			}
-			
-			else {
+			}else {
 				Long checkExistsChildren =xmProjectPhaseService.checkExistsChildren(xmProjectPhase.getId());
 				if(checkExistsChildren>0) {
 					tips.setFailureMsg("存在"+checkExistsChildren+"条子阶段计划,不允许删除");
@@ -265,6 +310,25 @@ public class XmProjectPhaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
+			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
+			User user = LoginUtils.getCurrentUserInfo();
+			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
+			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
+			if( !meIsPm  && !meIsTeamHead ){
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许修改阶段计划");
+				m.put("tips", tips);
+				return m;
+			}
+			if(StringUtils.hasText(xmProjectPhase.getMngUserid())){
+				xmProjectPhase.setMngUserid(user.getUserid());
+				xmProjectPhase.setMngUsername(user.getUsername());
+			}
+			boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,xmProjectPhase.getMngUserid(),user.getUserid());
+			if(  !meIsPm && !meIsHisTeamHead ){
+				tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许修改其负责的阶段计划");
+				m.put("tips", tips);
+				return m;
+			}
 			BigDecimal phaseBudgetCost=BigDecimal.ZERO;
 			String projectId=null;
 			BigDecimal zero=BigDecimal.ZERO; 
@@ -307,36 +371,63 @@ public class XmProjectPhaseController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmProjectPhase(@RequestBody List<XmProjectPhase> xmProjectPhases) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功删除"+xmProjectPhases.size()+"条数据"); 
-		try{ 
+		Tips tips=new Tips("成功删除"+(xmProjectPhases==null?0:xmProjectPhases.size())+"条数据");
+		try{
+			if(xmProjectPhases==null || xmProjectPhases.size()==0){
+				tips.setFailureMsg("阶段计划不能为空");
+				m.put("tips", tips);
+				return m;
+			}
+			XmProjectPhase xmProjectPhase=xmProjectPhases.get(0);
 			List<String> noDelList=new ArrayList<>();
 			List<String> hasChildList=new ArrayList<>();
 			int delCount=0;
-			for (XmProjectPhase xmProjectPhase : xmProjectPhases) {
+			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
+			User user = LoginUtils.getCurrentUserInfo();
+			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
+			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
+			if( !meIsPm  && !meIsTeamHead ){
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许删除阶段计划");
+				m.put("tips", tips);
+				return m;
+			}
+			List<String> noQxUsernames=new ArrayList<>();
+			for (XmProjectPhase phase : xmProjectPhases) {
+				boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,phase.getMngUserid(),user.getUserid());
+				if(  !meIsPm && !meIsHisTeamHead ){
+					noQxUsernames.add(phase.getMngUsername());
+					continue;
+				}
 				//检查是否由关联的任务，有则不允许删除
-				Long exists=this.xmProjectPhaseService.checkExistsTask(xmProjectPhase.getId()); 
+				Long exists=this.xmProjectPhaseService.checkExistsTask(phase.getId());
 				if(exists>0) {
-					noDelList.add(xmProjectPhase.getPhaseName());
+					noDelList.add(phase.getPhaseName());
 				}else {
-					Long checkExistsChildren =xmProjectPhaseService.checkExistsChildren(xmProjectPhase.getId());
+					Long checkExistsChildren =xmProjectPhaseService.checkExistsChildren(phase.getId());
 					if(checkExistsChildren>0) {
-						hasChildList.add(xmProjectPhase.getPhaseName());
+						hasChildList.add(phase.getPhaseName());
  					}else { 
-						xmProjectPhaseService.deleteByPk(xmProjectPhase);
+						xmProjectPhaseService.deleteByPk(phase);
 						delCount=delCount+1;
-						xmRecordService.addXmPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-阶段计划-删除计划", "删除阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
+						xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-阶段计划-删除计划", "删除阶段计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
 					}
 					 
 				}
 			}
+			String noQxTips="";
+			if(noQxUsernames.size()>0){
+				noQxTips="您无权删除以下人员所负责的阶段计划【"+StringUtils.arrayToCommaDelimitedString(noQxUsernames.toArray())+"】";
+			}
+
 			if(noDelList.size()>0 && hasChildList.size()>0 ) {
-				tips.setOkMsg("成功删除"+(delCount)+"条数据，其中以下数据数据存在任务，不允许删除"+StringUtils.arrayToCommaDelimitedString(noDelList.toArray())+",以下计划存在子计划，不允许删除"+StringUtils.arrayToCommaDelimitedString(hasChildList.toArray()));
+				tips.setOkMsg("成功删除"+(delCount)+"条数据，其中以下数据数据存在任务，不允许删除"+StringUtils.arrayToCommaDelimitedString(noDelList.toArray())+",以下计划存在子计划，不允许删除"
+						+StringUtils.arrayToCommaDelimitedString(hasChildList.toArray())+"。"+noQxTips);
 			}else if(noDelList.size()>0  ) {
-				tips.setOkMsg("成功删除"+(delCount)+"条数据，其中以下数据数据存在任务，不允许删除"+StringUtils.arrayToCommaDelimitedString(noDelList.toArray()));
+				tips.setOkMsg("成功删除"+(delCount)+"条数据，其中以下数据数据存在任务，不允许删除"+StringUtils.arrayToCommaDelimitedString(noDelList.toArray())+"。"+noQxTips);
 			}else if(noDelList.size()>0 && hasChildList.size()>0 ) {
-				tips.setOkMsg("成功删除"+(delCount)+"条数据，其中以下计划存在子计划，不允许删除"+StringUtils.arrayToCommaDelimitedString(hasChildList.toArray()));
+				tips.setOkMsg("成功删除"+(delCount)+"条数据，其中以下计划存在子计划，不允许删除"+StringUtils.arrayToCommaDelimitedString(hasChildList.toArray())+"。"+noQxTips);
 			}else {
-				tips.setOkMsg("成功删除"+(xmProjectPhases.size())+"条数据");
+				tips.setOkMsg("成功删除"+(xmProjectPhases.size())+"条数据"+"。"+noQxTips);
 			}
 			
 			
@@ -361,7 +452,22 @@ public class XmProjectPhaseController {
 	public Map<String,Object> batchImportFromTemplate(@RequestBody List<XmProjectPhase> xmProjectPhases) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功导入"+xmProjectPhases.size()+"条数据"); 
-		try{ 
+		try{
+			if(xmProjectPhases==null || xmProjectPhases.size()==0){
+				tips.setFailureMsg("阶段计划不能为空");
+				m.put("tips", tips);
+				return m;
+			}
+			XmProjectPhase xmProjectPhase=xmProjectPhases.get(0);
+			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
+			User user = LoginUtils.getCurrentUserInfo();
+			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
+			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
+			if( !meIsPm  && !meIsTeamHead ){
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许批量导入阶段计划");
+				m.put("tips", tips);
+				return m;
+			}
 			BigDecimal phaseBudgetCost=BigDecimal.ZERO;
 			BigDecimal phaseBudgetInnerUserAt=BigDecimal.ZERO;
 			BigDecimal phaseBudgetOutUserAt=BigDecimal.ZERO;
@@ -370,6 +476,8 @@ public class XmProjectPhaseController {
 			BigDecimal zero=BigDecimal.ZERO;
 			for (XmProjectPhase g : xmProjectPhases) {
 				projectId=g.getProjectId();
+				g.setMngUserid(user.getUserid());
+				g.setMngUsername(user.getUsername());
 				phaseBudgetInnerUserAt=phaseBudgetInnerUserAt.add(NumberUtil.getBigDecimal(g.getPhaseBudgetInnerUserAt(),zero));
 				phaseBudgetOutUserAt=phaseBudgetOutUserAt.add(NumberUtil.getBigDecimal(g.getPhaseBudgetOutUserAt(),zero)); 
 				phaseBudgetNouserAt=phaseBudgetNouserAt.add(NumberUtil.getBigDecimal(g.getPhaseBudgetNouserAt(),zero)); 
@@ -382,8 +490,8 @@ public class XmProjectPhaseController {
 			if(judgetTips.isOk()) {
 				xmProjectPhaseService.batchInsert(xmProjectPhases);
 
-				for (XmProjectPhase xmProjectPhase : xmProjectPhases) {
-					xmRecordService.addXmPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-阶段计划-新增计划", "新增阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
+				for (XmProjectPhase phase : xmProjectPhases) {
+					xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-阶段计划-新增计划", "新增阶段计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
 					
 				}
 			}else {
@@ -410,7 +518,22 @@ public class XmProjectPhaseController {
 	public Map<String,Object> batchSaveBudget(@RequestBody List<XmProjectPhaseVo> xmProjectPhases) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功修改"+xmProjectPhases.size()+"条数据"); 
-		try{ 
+		try{
+			if(xmProjectPhases==null || xmProjectPhases.size()==0){
+				tips.setFailureMsg("阶段计划不能为空");
+				m.put("tips", tips);
+				return m;
+			}
+			XmProjectPhase xmProjectPhase=xmProjectPhases.get(0);
+			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
+			User user = LoginUtils.getCurrentUserInfo();
+			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
+			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
+			if( !meIsPm  && !meIsTeamHead ){
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许修改阶段计划预算");
+				m.put("tips", tips);
+				return m;
+			}
 			BigDecimal phaseBudgetCost=BigDecimal.ZERO;
 			BigDecimal phaseBudgetInnerUserAt=BigDecimal.ZERO;
 			BigDecimal phaseBudgetOutUserAt=BigDecimal.ZERO;
@@ -432,8 +555,8 @@ public class XmProjectPhaseController {
 			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
 			if(judgetTips.isOk()) {
 				xmProjectPhaseService.batchInsertOrUpdate(xmProjectPhases);
-				for (XmProjectPhase xmProjectPhase : xmProjectPhases) {
-					xmRecordService.addXmPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-阶段计划-修改计划预算", "修改阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
+				for (XmProjectPhase phase : xmProjectPhases) {
+					xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-阶段计划-修改计划预算", "修改阶段计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
 					
 				}
 			}else {
@@ -459,7 +582,17 @@ public class XmProjectPhaseController {
 	public Map<String,Object> loadTasksToXmProjectPhase(@RequestBody Map<String,Object> params) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功修改数据"); 
-		try{ 
+		try{
+			String projectId=(String) params.get("projectId");
+			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
+			User user = LoginUtils.getCurrentUserInfo();
+			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
+			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
+			if( !meIsPm  && !meIsTeamHead ){
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许发起阶段计划统计任务");
+				m.put("tips", tips);
+				return m;
+			}
 			int i= xmProjectPhaseService.loadTasksToXmProjectPhase((String) params.get("projectId"));
 		}catch (BizException e) { 
 			tips=e.getTips();

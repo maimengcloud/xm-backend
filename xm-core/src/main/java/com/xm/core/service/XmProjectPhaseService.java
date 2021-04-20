@@ -3,7 +3,10 @@ package com.xm.core.service;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.NumberUtil;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProjectPhase;
+import com.xm.core.vo.XmProjectGroupVo;
 import com.xm.core.vo.XmProjectPhaseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,9 @@ public class XmProjectPhaseService extends BaseService {
 
 	@Autowired
 	XmRecordService xmRecordService;
+
+	@Autowired
+	XmProjectGroupService groupService;
 	/**
 	 * 查询项目及阶段计划总预算，用于判断是否超出预算 
 	 */
@@ -35,7 +41,23 @@ public class XmProjectPhaseService extends BaseService {
 		p.put("excludePhaseIds", excludePhaseIds);
 		return this.selectOne("selectTotalProjectAndPhaseBudgetCost", p); 
 	}
-	
+	public Tips checkUserHasQxToOperProjectPhase(String projectId,String mngUserid,String mngUsername,String myUserid){
+		Tips tips = new Tips("成功");
+		List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
+		User user = LoginUtils.getCurrentUserInfo();
+		boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
+		boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
+		if( !meIsPm  && !meIsTeamHead ){
+			tips.setFailureMsg("您不是组长、也不是项目管理者，不允许设置阶段计划负责人");
+			return tips;
+		}
+		boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,mngUserid,myUserid);
+		if(  !meIsPm && !meIsHisTeamHead ){
+			tips.setFailureMsg("您不是"+mngUsername+"的组长，不允许设置其为阶段计划负责人");
+ 			return tips;
+		}
+		return tips;
+	}
 	/**
 	 * 判断新增预算是否超出项目总预算
 	 * @param projectId
