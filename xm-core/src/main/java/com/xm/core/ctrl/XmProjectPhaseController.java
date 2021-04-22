@@ -198,7 +198,7 @@ public class XmProjectPhaseController {
 				}
 			}
 			User user = LoginUtils.getCurrentUserInfo();
-			if(StringUtils.hasText(xmProjectPhase.getMngUserid())){
+			if(!StringUtils.hasText(xmProjectPhase.getMngUserid())){
 				xmProjectPhase.setMngUserid(user.getUserid());
 				xmProjectPhase.setMngUsername(user.getUsername());
 			}
@@ -319,7 +319,7 @@ public class XmProjectPhaseController {
 				m.put("tips", tips);
 				return m;
 			}
-			if(StringUtils.hasText(xmProjectPhase.getMngUserid())){
+			if(!StringUtils.hasText(xmProjectPhase.getMngUserid())){
 				xmProjectPhase.setMngUserid(user.getUserid());
 				xmProjectPhase.setMngUsername(user.getUsername());
 			}
