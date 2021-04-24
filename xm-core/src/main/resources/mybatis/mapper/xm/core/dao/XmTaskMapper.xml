@@ -106,7 +106,8 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from XM.xm_task res   left join  XM.xm_task_process_approva pa on res.id=pa.xm_task_id and res.biz_proc_inst_id=pa.proc_inst_id
+		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state
+		from XM.xm_task res   left join  XM.xm_task_process_approva pa on res.id=pa.xm_task_id and res.biz_proc_inst_id=pa.proc_inst_id
 		left join XM.xm_project p on p.id=res.project_id
 		<where> 
 			<if test="ids != null">  and     
@@ -116,7 +117,7 @@
 				    </foreach>  
 			 </if>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">       </if>
+			<if test="key != null and key !='' ">    and res.name like #{key}   </if>
 			<if test="work != null and work != ''"> and res.rate != '100' </if>
 			<if test="parent != null and parent != ''"> and (res.parent_taskid = '' or res.parent_taskid IS NULL)</if>
 
