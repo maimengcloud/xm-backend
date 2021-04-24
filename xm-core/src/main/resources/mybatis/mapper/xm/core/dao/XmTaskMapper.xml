@@ -132,6 +132,13 @@
 			<if test="myFocus != null and myFocus != ''">
 				and exists ( select 1 from XM.xm_my_focus f where f.userid=#{userid} and f.project_id=res.project_id and f.task_id=res.id  )
 			</if>
+			<if test="skillIds != null and skillIds != ''">
+				and exists ( select 1 from XM.xm_task_skill f where f.task_id=res.id and f.task_skill_id in
+					<foreach collection="skillIds" item="item" index="index" open="(" separator="," close=")" >
+						#{item}
+					</foreach>
+				)
+			</if>
 		</where>
 		order by res.sort_level asc
 	</select>
