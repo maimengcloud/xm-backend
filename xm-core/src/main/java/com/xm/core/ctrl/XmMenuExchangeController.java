@@ -5,6 +5,7 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenuExchange;
 import com.xm.core.service.XmMenuExchangeService;
 import com.xm.core.service.push.XmMenuPushMsgService;
@@ -81,6 +82,9 @@ public class XmMenuExchangeController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmMenuExchange, "ids");
 		PageUtils.startPage(xmMenuExchange);
+		if(  !StringUtils.hasText((String) xmMenuExchange.get("branchId"))){
+			xmMenuExchange.put("branchId",LoginUtils.getCurrentUserInfo().getBranchId());
+		}
 		List<Map<String,Object>>	xmMenuExchangeList = xmMenuExchangeService.selectListMapByWhere(xmMenuExchange);	//列出XmMenuExchange列表
 		PageUtils.responePage(m, xmMenuExchangeList);
 		m.put("data",xmMenuExchangeList);

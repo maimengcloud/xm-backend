@@ -105,6 +105,7 @@ public class XmTaskController {
 	public Map<String,Object> getTask( @RequestParam Map<String,Object> xmTask){
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(xmTask, "ids");
+		RequestUtils.transformArray(xmTask, "skillIds");
 		PageUtils.startPage(xmTask);
 		List<Map<String,Object>> xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
 		PageUtils.responePage(m,xmTaskVoList);
