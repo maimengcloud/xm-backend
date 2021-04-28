@@ -5,6 +5,8 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.service.XmIterationService;
 import io.swagger.annotations.*;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -120,6 +123,11 @@ public class XmIterationController {
 					return m;
 				}
 			}
+			User user= LoginUtils.getCurrentUserInfo();
+			xmIteration.setCtime(new Date());
+			xmIteration.setCuserid(user.getUserid());
+			xmIteration.setCusername(user.getUsername());
+			xmIteration.setBranchId(user.getBranchId());
 			xmIterationService.insert(xmIteration);
 			m.put("data",xmIteration);
 		}catch (BizException e) { 
