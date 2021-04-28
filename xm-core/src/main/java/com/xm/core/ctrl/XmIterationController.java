@@ -128,6 +128,7 @@ public class XmIterationController {
 			xmIteration.setCuserid(user.getUserid());
 			xmIteration.setCusername(user.getUsername());
 			xmIteration.setBranchId(user.getBranchId());
+			xmIteration.setIstatus("0");
 			xmIterationService.insert(xmIteration);
 			m.put("data",xmIteration);
 		}catch (BizException e) { 
