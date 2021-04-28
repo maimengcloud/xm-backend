@@ -8,11 +8,11 @@
 
 	<select id="selectExistIterationMenus" parameterType="HashMap" resultType="HashMap">
 		select  * from xm.xm_menu res
-		where exist (select 1 from xm.iteration_menu im where im.menu_id  in
+		where exists (select 1 from xm.xm_iteration_menu im where im.menu_id  in
 			<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
 				#{item}
 			</foreach>
-		    and im.menu_id = res.menu_id)
+		    and im.menu_id = res.menu_id )
 	</select>
 	<select id="queryTaskUsersByMenuId" parameterType="HashMap" resultType="HashMap">
 		 select distinct te.userid,te.username,t.executor_userid, t.executor_username from xm_task_execuser te inner join xm_task t on t.id=te.task_id 

@@ -61,7 +61,8 @@ public class XmMenuService extends BaseService {
 	}
 
     public List<XmMenu> selectExistIterationMenus(List<String> menuIds) {
-		return this.selectList("selectExistIterationMenus",menuIds);
+
+		return this.selectList("selectExistIterationMenus",map("menuIds",menuIds));
     }
 }
 
