@@ -7,18 +7,19 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmIterationMenu;
+import com.xm.core.entity.XmMenu;
 import com.xm.core.service.XmIterationMenuService;
+import com.xm.core.service.XmMenuService;
 import com.xm.core.service.push.XmMenuPushMsgService;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * url编制采用rest风格,如对XM.xm_iteration_menu 迭代定义的操作有增删改查,对应的url分别为:<br>
@@ -46,7 +47,8 @@ public class XmIterationMenuController {
 	@Autowired
     XmMenuPushMsgService xmMenuPushMsgService;
 
- 
+	@Autowired
+	XmMenuService xmMenuService;
 	
 	@ApiOperation( value = "查询迭代定义信息列表",notes="listXmIterationMenu,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
@@ -201,21 +203,31 @@ public class XmIterationMenuController {
 			if(xmIterationMenus==null || xmIterationMenus.size()==0) {
 				
 			}else {
-
+				List<String> menuIds=new ArrayList<>();
 				for (XmIterationMenu xmIterationMenu : xmIterationMenus) {
 					xmIterationMenu.setCtime(new Date());
 					xmIterationMenu.setRelStatus("1");
 					xmIterationMenu.setId(xmIterationMenuService.createKey("id"));
+					menuIds.add(xmIterationMenu.getMenuId());
 				}
-				xmIterationMenuService.batchInsert(xmIterationMenus);
-				
-				User user = LoginUtils.getCurrentUserInfo(); 
+				List<XmMenu> menus=xmMenuService.selectExistIterationMenus(menuIds);
+				if(menus!=null && menus.size()>0){
+					List<String> menuNames = menus.stream().map(XmMenu::getMenuName).collect(Collectors.toList());
+					String menusNameStr=StringUtils.arrayToDelimitedString(menuNames.toArray(),",");
+					tips.setFailureMsg("以下故事已加入本迭代计划，不能重复加入。"+menusNameStr);
+				}else{
+					xmIterationMenuService.batchInsert(xmIterationMenus);
 
-				for (XmIterationMenu xmIterationMenu : xmIterationMenus) {
+					User user = LoginUtils.getCurrentUserInfo();
 
-					this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将故事【"+xmIterationMenu.getMenuId()+"】加入迭代");
+					for (XmIterationMenu xmIterationMenu : xmIterationMenus) {
 
- 				}
+						this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将故事【"+xmIterationMenu.getMenuId()+"】加入迭代");
+
+					}
+				}
+
+
 			}
 		}catch (BizException e) { 
 			tips=e.getTips();

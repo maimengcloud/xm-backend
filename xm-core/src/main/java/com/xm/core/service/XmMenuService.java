@@ -1,6 +1,7 @@
 package com.xm.core.service;
 
 import com.mdp.core.service.BaseService;
+import com.xm.core.entity.XmMenu;
 import com.xm.core.vo.XmMenuVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,5 +60,8 @@ public class XmMenuService extends BaseService {
 		return this.selectList("queryTaskUsersByMenuId", menuId);
 	}
 
+    public List<XmMenu> selectExistIterationMenus(List<String> menuIds) {
+		return this.selectList("selectExistIterationMenus",menuIds);
+    }
 }
 
