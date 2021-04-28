@@ -6,7 +6,7 @@
 	<!--开始 自定sql函数区域 -->
 		<!--请在此区域添加自定义函数-->
 
-	<select id="selectExistIterationMenus" parameterType="HashMap" resultType="HashMap">
+	<select id="selectExistIterationMenus" parameterType="HashMap" resultType="com.xm.core.entity.XmMenu">
 		select  * from xm.xm_menu res
 		where exists (select 1 from xm.xm_iteration_menu im where im.menu_id  in
 			<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
