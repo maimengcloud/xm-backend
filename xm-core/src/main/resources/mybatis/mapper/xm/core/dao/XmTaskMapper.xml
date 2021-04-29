@@ -9,6 +9,10 @@
 		select avg(res.rate) from XM.xm_task res where res.parent_taskid = #{parentTaskid}
 	</select>
 
+	<select id="shareTaskDetail" parameterType="HashMap" resultType="HashMap">
+		SELECT res.*,m.remark from XM.xm_task res left join XM.xm_menu m on res.menu_id = m.menu_id
+		WHERE res.id=#{id}
+	</select>
 	<select id="checkExistsExecuser" parameterType="String" resultType="Long" >
 		select count(1) from XM.xm_task_execuser res where res.task_id = #{taskId} and ( res.settle_status not in('2','6'))
 	</select>

@@ -381,7 +381,11 @@ public class XmTaskService extends BaseService {
 			this.batchUpdate(editXmTasks);
 		}
 	}
-	
+
+	public Map<String,Object> shareTaskDetail(Map<String, Object> xmTask) {
+		return this.selectOne("shareTaskDetail",xmTask);
+	}
+
 	/** 请在此类添加自定义函数 */
 }
 

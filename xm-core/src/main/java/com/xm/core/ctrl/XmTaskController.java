@@ -115,6 +115,33 @@ public class XmTaskController {
 		return m;
 	}
 
+
+	@ApiOperation( value = "查询任务的信息详情，免登录",notes="taskDetail,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+
+	@ApiResponses({
+			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/shareTaskDetail",method=RequestMethod.GET)
+	public Map<String,Object> taskDetail( @RequestParam Map<String,Object> xmTask){
+		Tips tips=new Tips("查询成功");
+		Map<String,Object> m = new HashMap<>();
+		String id=(String) xmTask.get("id");
+		String shareKey= (String) xmTask.get("shareKey");
+		if(!StringUtils.hasText(id)){
+			tips.setFailureMsg("任务编号id必传");
+		}
+		if(!StringUtils.hasText(shareKey)){
+			tips.setFailureMsg("分享码shareKey必传");
+		}
+		//todo 检测分析妈的正确性
+		if(tips.isOk()){
+			Map<String,Object> taskDb= xmTaskService.shareTaskDetail(xmTask);
+			m.put("data",taskDb);
+			m.put("tips", tips);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 	@ApiOperation( value = "新增一条xm_task信息",notes="addXmTask,主键如果为空，后台自动生成")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
