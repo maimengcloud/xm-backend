@@ -1,13 +1,23 @@
 package com.xm.core.ctrl;
 
 
+import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
+import com.mdp.core.utils.RequestUtils;
+import com.mdp.mybatis.PageUtils;
+import com.mdp.qx.HasQx;
+import com.xm.core.entity.XmExchange;
 import com.xm.core.service.XmExchangeService;
-import io.swagger.annotations.Api;
+import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * url编制采用rest风格,如对XM.xm_exchange 功能表的操作有增删改查,对应的url分别为:<br>
@@ -32,7 +42,6 @@ public class XmExchangeController {
 
 
 
-	/**
 	@ApiOperation( value = "查询功能表信息列表",notes="listXmExchange,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
 		@ApiImplicitParam(name="id",value="评论编号,主键",required=false),
@@ -72,22 +81,21 @@ public class XmExchangeController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmExchange, "ids");
 		PageUtils.startPage(xmExchange);
-		List<Map<String,Object>>	xmExchangeList = xmExchangeService.selectListMapByWhere(xmExchange);	//列出XmExchange列表
+		List<Map<String,Object>> xmExchangeList = xmExchangeService.selectListMapByWhere(xmExchange);	//列出XmExchange列表
 		PageUtils.responePage(m, xmExchangeList);
 		m.put("data",xmExchangeList);
 		Tips tips=new Tips("查询成功");
 		m.put("tips", tips);
 		return m;
 	}
-	**/
  
 	
-	/**
+
 	@ApiOperation( value = "新增一条功能表信息",notes="addXmExchange,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmExchange.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
-	@RequestMapping(value="/add",method=RequestMethod.POST)
+	@RequestMapping(value="/add",method= RequestMethod.POST)
 	public Map<String,Object> addXmExchange(@RequestBody XmExchange xmExchange) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
@@ -114,9 +122,9 @@ public class XmExchangeController {
 		m.put("tips", tips);
 		return m;
 	}
-	 */
+
 	
-	/**
+
 	@ApiOperation( value = "删除一条功能表信息",notes="delXmExchange,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -128,7 +136,7 @@ public class XmExchangeController {
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			xmExchangeService.deleteByPk(xmExchange);
-		}catch (BizException e) { 
+		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
@@ -139,8 +147,6 @@ public class XmExchangeController {
 		return m;
 	}
 
-	 */
-	/**
 	@ApiOperation( value = "根据主键修改一条功能表信息",notes="editXmExchange")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmExchange.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -162,7 +168,6 @@ public class XmExchangeController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 	
 
 	
