@@ -21,6 +21,11 @@
 		</dependency>
 		<dependency>
 			<groupId>com.mdp</groupId>
+			<artifactId>mdp-tpa-client</artifactId>
+			<version>${mdp.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mdp</groupId>
 			<artifactId>mdp-oauth2-client</artifactId>
 			<version>${mdp.version}</version>
 		</dependency>
