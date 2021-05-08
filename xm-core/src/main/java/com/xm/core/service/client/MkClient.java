@@ -37,7 +37,7 @@ public class MkClient {
         params.put("custId",custId);
         params.put("entityId",entityId);
         params.put("actNum",actNum);
-        params.put("actSinglePrice",orderId);
+        params.put("actSinglePrice",actSinglePrice);
         params.put("totalPrice",totalPrice);
         Map<String,Object> resultMap=callBizService.postForMap(restUrl,params);
         tips= BaseUtils.mapToTips(resultMap);
