@@ -169,6 +169,8 @@ public class XmTaskController {
 			xmTaskVo.setExecutorUserid(user.getUserid());
 			xmTaskVo.setExecutorUsername(user.getUsername());
 			xmTaskVo.setCreateTime(new Date());
+			xmTaskVo.setCbranchId(user.getBranchId());
+			xmTaskVo.setCdeptid(user.getDeptid());
 			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskVo.getProjectId());
 			if(pgroups==null || pgroups.size()==0){
 				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
