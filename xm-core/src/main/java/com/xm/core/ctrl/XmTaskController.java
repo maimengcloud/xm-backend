@@ -604,6 +604,8 @@ public class XmTaskController {
 				g.setCreateUsername(user.getUsername());
 				g.setExecutorUserid(user.getUserid());
 				g.setExecutorUsername(user.getUsername());
+				g.setCbranchId(user.getBranchId());
+				g.setCdeptid(user.getDeptid());
 				if("1".equals(g.getTaskOut())) {
 					taskBudgetOutUserAt=taskBudgetOutUserAt.add(NumberUtil.getBigDecimal(g.getBudgetCost(),zero)); 
 				}else { 
