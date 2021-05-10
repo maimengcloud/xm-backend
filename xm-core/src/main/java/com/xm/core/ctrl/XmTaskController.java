@@ -254,6 +254,11 @@ public class XmTaskController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmTask, "ids");
 		PageUtils.startPage(xmTask);
+		String taskOut= (String) xmTask.get("taskOut");
+		if(!"1".equals(taskOut)){
+			User user = LoginUtils.getCurrentUserInfo();
+			xmTask.put("branchId",user.getBranchId());
+		}
 		List<Map<String,Object>>	xmTaskList = xmTaskService.selectListMapByWhere(xmTask);	//列出XmTask列表
 		PageUtils.responePage(m, xmTaskList);
 		m.put("data",xmTaskList);
