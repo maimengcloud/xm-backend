@@ -181,7 +181,7 @@
 		insert into XM.xm_task(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{projectPhaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{iterationId},#{iterationName},#{productId},#{productName}
+		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{projectPhaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{iterationId},#{iterationName},#{productId},#{productName},#{cbranchId},#{cdeptid}
 		)
 	</insert>
 	
@@ -246,7 +246,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,iteration_id,iteration_name,product_id,product_name
+		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,iteration_id,iteration_name,product_id,product_name,cbranch_id,cdeptid
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -299,6 +299,8 @@
 		<if test="iterationName != null and iterationName != ''">      and res.iteration_name = #{iterationName}     </if>
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
 		<if test="productName != null and productName != ''">      and res.product_name = #{productName}     </if>
+		<if test="cbranchId != null and cbranchId != ''">      and res.cbranch_id = #{cbranchId}     </if>
+		<if test="cdeptid != null and cdeptid != ''">      and res.cdeptid = #{cdeptid}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -348,7 +350,9 @@
 		iteration_id = #{iterationId},
 		iteration_name = #{iterationName},
 		product_id = #{productId},
-		product_name = #{productName}
+		product_name = #{productName},
+		cbranch_id = #{cbranchId},
+		cdeptid = #{cdeptid}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -398,6 +402,8 @@
 		<if test="iterationName != null and iterationName != ''"> iteration_name = #{iterationName},     </if>
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
 		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
+		<if test="cbranchId != null and cbranchId != ''"> cbranch_id = #{cbranchId},     </if>
+		<if test="cdeptid != null and cdeptid != ''"> cdeptid = #{cdeptid},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -447,6 +453,8 @@
 			iteration_id = #{item.iterationId},
 			iteration_name = #{item.iterationName},
 			product_id = #{item.productId},
-			product_name = #{item.productName}
+			product_name = #{item.productName},
+			cbranch_id = #{item.cbranchId},
+			cdeptid = #{item.cdeptid}
 	</sql>
 </mapper>

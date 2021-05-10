@@ -107,6 +107,16 @@ public class XmTaskController {
 		RequestUtils.transformArray(xmTask, "ids");
 		RequestUtils.transformArray(xmTask, "skillIds");
 		PageUtils.startPage(xmTask);
+		String taskOut= (String) xmTask.get("taskOut");
+		if(!"1".equals(taskOut)){
+			String projectId= (String) xmTask.get("projectId");
+			String projectPhaseId= (String) xmTask.get("projectPhaseId");
+			String userid= (String) xmTask.get("userid");
+			if( !(StringUtils.hasText(projectId) || StringUtils.hasText(projectPhaseId)|| StringUtils.hasText(userid) ) ){
+				User user = LoginUtils.getCurrentUserInfo();
+				xmTask.put("cbranchId",user.getBranchId());
+			}
+		}
 		List<Map<String,Object>> xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
 		PageUtils.responePage(m,xmTaskVoList);
 		m.put("data",xmTaskVoList);
@@ -254,10 +264,16 @@ public class XmTaskController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmTask, "ids");
 		PageUtils.startPage(xmTask);
+
 		String taskOut= (String) xmTask.get("taskOut");
 		if(!"1".equals(taskOut)){
-			User user = LoginUtils.getCurrentUserInfo();
-			xmTask.put("branchId",user.getBranchId());
+			String projectId= (String) xmTask.get("projectId");
+			String projectPhaseId= (String) xmTask.get("projectPhaseId");
+			String userid= (String) xmTask.get("userid");
+			if( !(StringUtils.hasText(projectId) || StringUtils.hasText(projectPhaseId)|| StringUtils.hasText(userid) ) ){
+				User user = LoginUtils.getCurrentUserInfo();
+				xmTask.put("cbranchId",user.getBranchId());
+			}
 		}
 		List<Map<String,Object>>	xmTaskList = xmTaskService.selectListMapByWhere(xmTask);	//列出XmTask列表
 		PageUtils.responePage(m, xmTaskList);
