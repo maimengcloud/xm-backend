@@ -15,6 +15,7 @@ import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.XmRecordService;
 import com.xm.core.service.XmTaskService;
+import com.xm.core.service.cache.XmTaskCacheService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmProjectGroupVo;
 import com.xm.core.vo.XmTaskVo;
@@ -45,6 +46,9 @@ import java.util.*;
 public class XmTaskController {
 	
 	static Log logger=LogFactory.getLog(XmTaskController.class);
+
+	@Autowired
+	XmTaskCacheService xmTaskCacheService;
 	
 	@Autowired
 	private XmTaskService xmTaskService;
@@ -125,6 +129,77 @@ public class XmTaskController {
 		return m;
 	}
 
+
+	@ApiOperation( value = "查询xm_task信息列表-互联网大厅首页专用、免登录",notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="id",value="任务编号,主键",required=false),
+			@ApiImplicitParam(name="name",value="任务名称",required=false),
+			@ApiImplicitParam(name="parentTaskid",value="父任务编号",required=false),
+			@ApiImplicitParam(name="parentTaskname",value="父任务名称",required=false),
+			@ApiImplicitParam(name="projectId",value="项目编号",required=false),
+			@ApiImplicitParam(name="projectName",value="项目名称",required=false),
+			@ApiImplicitParam(name="level",value="任务级别",required=false),
+			@ApiImplicitParam(name="sortLevel",value="排序级别",required=false),
+			@ApiImplicitParam(name="executorUserid",value="任务执行人编号",required=false),
+			@ApiImplicitParam(name="executorUsername",value="任务执行人",required=false),
+			@ApiImplicitParam(name="preTaskid",value="前置任务编号",required=false),
+			@ApiImplicitParam(name="preTaskname",value="前置任务名称",required=false),
+			@ApiImplicitParam(name="startTime",value="任务开始时间",required=false),
+			@ApiImplicitParam(name="endTime",value="任务结束时间",required=false),
+			@ApiImplicitParam(name="milestone",value="里程碑",required=false),
+			@ApiImplicitParam(name="description",value="任务描述",required=false),
+			@ApiImplicitParam(name="remarks",value="备注",required=false),
+			@ApiImplicitParam(name="createUserid",value="任务创建人编号",required=false),
+			@ApiImplicitParam(name="createUsername",value="任务创建人",required=false),
+			@ApiImplicitParam(name="createTime",value="创建时间",required=false),
+			@ApiImplicitParam(name="rate",value="任务进度",required=false),
+			@ApiImplicitParam(name="budgetCost",value="当前任务预算金额（包括所有成本，包括直接下一级）",required=false),
+			@ApiImplicitParam(name="budgetWorkload",value="预算工时（包括直接下级）",required=false),
+			@ApiImplicitParam(name="actCost",value="当前任务实际费用金额（包括所有成本，包括直接下一级）",required=false),
+			@ApiImplicitParam(name="actWorkload",value="实际工时（包括直接下级）",required=false),
+			@ApiImplicitParam(name="taskState",value="任务状态0待领取1已领取执行中2已完工3已结算",required=false),
+			@ApiImplicitParam(name="taskType",value="1可外包0不可外包",required=false),
+			@ApiImplicitParam(name="taskClass",value="1需结算0不需结算",required=false),
+			@ApiImplicitParam(name="toTaskCenter",value="是否发布到任务大厅0否1是",required=false),
+			@ApiImplicitParam(name="actStartTime",value="实际开始时间",required=false),
+			@ApiImplicitParam(name="actEndTime",value="实际结束时间",required=false),
+			@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
+			@ApiImplicitParam(name="currentPage",value="当前页码,从1开始",required=false),
+			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
+			@ApiImplicitParam(name="orderFields",value="排序列 如性别、学生编号排序 ['sex','studentId']",required=false),
+			@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false)
+	})
+	@ApiResponses({
+			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/getOutTask",method=RequestMethod.GET)
+	public Map<String,Object> getOutTask( @RequestParam Map<String,Object> xmTask){
+		Map<String,Object> m = new HashMap<>();
+
+		Tips tips=new Tips("查询成功");
+		RequestUtils.transformArray(xmTask, "skillIds");
+		PageUtils.startPage(xmTask);
+		xmTask.put("taskOut","1");
+		String isDefault= (String) xmTask.get("isDefault");
+		String pageNum= (String) xmTask.get("pageNum");
+		String queryKeys="xm-out-tasks-default-"+pageNum;
+		List<Map<String,Object>> xmTaskVoList=new ArrayList<>();
+		if(!StringUtils.hasText(isDefault)){
+			tips.setFailureMsg("isDefault-not-set","isDefault","isDefault参数必传，默认查询isDefault=1,非默认查询isDefault=0");
+		}else if("1".equals(isDefault)){
+			xmTaskVoList=xmTaskCacheService.getTasks(queryKeys);
+			if(xmTaskVoList==null){
+				xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
+				xmTaskCacheService.putTasks(queryKeys,xmTaskVoList);
+			}
+		}else {
+			xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
+		}
+		PageUtils.responePage(m,xmTaskVoList);
+		m.put("data",xmTaskVoList);
+		m.put("tips", tips);
+		return m;
+	}
 
 	@ApiOperation( value = "查询任务的信息详情，免登录",notes="taskDetail,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 

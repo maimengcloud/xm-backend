@@ -121,6 +121,9 @@ public class XmQuestionController {
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
+			if(StringUtils.hasText(xmQuestionVo.getQtype())){
+				xmQuestionVo.setQtype("bug");
+			}
 			xmQuestionService.addQuestion(xmQuestionVo);
 			if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {
 				xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(), user.getUsername()+"创建bug【"+xmQuestionVo.getName()+"】并指派给"+xmQuestionVo.getHandlerUsername());
