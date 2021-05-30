@@ -37,7 +37,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/**/xm/core/xmTask/shareTaskDetail","/**/xm/core/xmTask/getOutTask").permitAll().
+        http.authorizeRequests().antMatchers(
+                "/**/xm/core/xmTask/shareTaskDetail",
+                "/**/xm/core/xmTask/getOutTask",
+                "/**/xm/core/xmBranchState/list/portal/allBranchSum",
+                "/**/xm/core/xmProjectState/list/portal"
+                ).permitAll().
 
                 anyRequest().authenticated();
         http.oauth2Client().and().logout().disable();

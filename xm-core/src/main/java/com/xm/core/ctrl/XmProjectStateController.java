@@ -4,8 +4,10 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.xm.core.entity.XmProductState;
 import com.xm.core.entity.XmProjectState;
 import com.xm.core.service.XmProjectStateService;
+import com.xm.core.service.cache.XmProjectCacheService;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -37,8 +39,9 @@ public class XmProjectStateController {
 	
 	@Autowired
 	private XmProjectStateService xmProjectStateService;
-	 
-		
+
+	@Autowired
+	XmProjectCacheService projectCacheService;
  
 	
 	@ApiOperation( value = "查询项目指标日统计表信息列表",notes="listXmProjectState,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
@@ -120,7 +123,27 @@ public class XmProjectStateController {
 		m.put("tips", tips);
 		return m;
 	}
-	
+	@ApiOperation( value = "查询功能状态表,无需前端维护，所有数据由汇总统计得出信息列表",notes="listXmProductState,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+
+	@ApiResponses({
+			@ApiResponse(code = 200,response= XmProductState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/list/portal",method=RequestMethod.GET)
+	public Map<String,Object> listXmProductStateForPortal( @RequestParam Map<String,Object> xmProductState){
+		Map<String,Object> m = new HashMap<>();
+		RequestUtils.transformArray(xmProductState, "ids");
+		PageUtils.startPage(xmProductState);
+		List<Map<String,Object>>	xmProjectStateList = projectCacheService.getPortalProjectStates();	//列出XmProductState列表
+		if(xmProjectStateList==null){
+			xmProjectStateList=xmProjectStateService.selectPortalProjectStates(xmProductState);
+			projectCacheService.putPortalProjectStates(xmProjectStateList);
+		}
+		PageUtils.responePage(m, xmProjectStateList);
+		m.put("data",xmProjectStateList);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
 	 
 	 
 	@ApiOperation( value = "从任务单抽取实际工作量等统计数据更新到状态报告中",notes="")

@@ -5,8 +5,13 @@
 	
 	<!--开始 自定sql函数区域 -->
 		<!--请在此区域添加自定义函数-->
-		
-		
+
+	<select id="selectPortalProjectStates" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project_state res
+		<where>
+			res.calc_time > DATE_SUB(now(),INTERVAL 7 DAY)
+		</where>
+	</select>
 			
 	<!-- 根据条件修改若干条记录 --> 
 	<update id="loadTasksToXmProjectState" parameterType="String" statementType="CALLABLE">

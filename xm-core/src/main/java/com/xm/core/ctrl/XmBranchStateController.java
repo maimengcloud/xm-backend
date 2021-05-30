@@ -116,7 +116,23 @@ public class XmBranchStateController {
 		m.put("tips", tips);
 		return m;
 	}
+	@ApiOperation( value = "查询机构内所有项目指标汇总信息列表",notes="listXmBranchState,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 
+	@ApiResponses({
+			@ApiResponse(code = 200,response= XmBranchState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/list/portal/allBranchSum",method=RequestMethod.GET)
+	public Map<String,Object> listPortalAllXmBranchSumState( @RequestParam Map<String,Object> xmBranchState){
+		Map<String,Object> m = new HashMap<>();
+		RequestUtils.transformArray(xmBranchState, "ids");
+		PageUtils.startPage(xmBranchState);
+		List<Map<String,Object>>	xmBranchStateList = xmBranchStateService.listPortalAllXmBranchSumState(xmBranchState);	//列出XmBranchState列表
+		PageUtils.responePage(m, xmBranchStateList);
+		m.put("data",xmBranchStateList);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
 	 
 	@ApiOperation( value = "从项目汇总表汇总数据到机构汇总表",notes="")
 	@ApiResponses({

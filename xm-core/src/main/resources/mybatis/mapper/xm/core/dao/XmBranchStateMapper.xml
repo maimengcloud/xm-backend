@@ -5,8 +5,60 @@
 	
 	<!--开始 自定sql函数区域 -->
 		<!--请在此区域添加自定义函数-->
-		
-		
+
+	<select id="listPortalAllXmBranchSumState" parameterType="HashMap" resultType="HashMap">
+		SELECT
+		sum( ifnull( total_file_cnt, 0 ) ) total_file_cnt,
+		sum( ifnull( total_bug_cnt, 0 ) ) total_bug_cnt,
+		sum( ifnull( total_task_cnt, 0 ) ) total_task_cnt,
+		sum( ifnull( total_budget_nouser_amount, 0 ) ) total_budget_nouser_amount,
+		sum( ifnull( total_staff_cnt, 0 ) ) total_staff_cnt,
+		sum( ifnull( total_cost_nouser_amount, 0 ) ) total_cost_nouser_amount,
+		sum( ifnull( total_closed_bug_cnt, 0 ) ) total_closed_bug_cnt,
+		sum( ifnull( total_resolved_bug_cnt, 0 ) ) total_resolved_bug_cnt,
+		sum( ifnull( total_complete_task_cnt, 0 ) ) total_complete_task_cnt,
+		sum( ifnull( total_phase_cnt, 0 ) ) total_phase_cnt,
+		sum( ifnull( total_complete_phase_cnt, 0 ) ) total_complete_phase_cnt,
+		sum( ifnull( total_need_pay_amount, 0 ) ) total_need_pay_amount,
+		sum( ifnull( total_finish_pay_amount, 0 ) ) total_finish_pay_amount,
+		sum( ifnull( total_need_col_amount, 0 ) ) total_need_col_amount,
+		sum( ifnull( total_finish_col_amount, 0 ) ) total_finish_col_amount,
+		sum( ifnull( total_cost_user_amount, 0 ) ) total_cost_user_amount,
+		sum( ifnull( total_budget_inner_user_amount, 0 ) ) total_budget_inner_user_amount,
+		sum( ifnull( total_plan_workload, 0 ) ) total_plan_workload,
+		sum( ifnull( total_risk_cnt, 0 ) ) total_risk_cnt,
+		sum( ifnull( total_complete_risk_cnt, 0 ) ) total_complete_risk_cnt,
+		sum( ifnull( total_budget_out_user_amount, 0 ) ) total_budget_out_user_amount,
+		sum( ifnull( total_complete_workload, 0 ) ) total_complete_workload,
+		sum( ifnull( total_cost_inner_user_amount, 0 ) ) total_cost_inner_user_amount,
+		sum( ifnull( total_cost_out_user_amount, 0 ) ),
+		sum( ifnull( total_progress, 0 ) ),
+		sum( ifnull( total_active_bug_cnt, 0 ) ),
+		sum( ifnull( total_confirmed_bug_cnt, 0 ) ),
+		sum( ifnull( project_status, 0 ) ) project_status,
+		sum( ifnull( total_act_workload, 0 ) ) total_act_workload,
+		sum( ifnull( total_act_out_workload, 0 ) ) total_act_out_workload,
+		sum( ifnull( total_act_inner_workload, 0 ) ) total_act_inner_workload,
+		sum( ifnull( total_task_budget_cost_at, 0 ) ) total_task_budget_cost_at,
+		sum( ifnull( total_task_out_cnt, 0 ) ),
+		sum( ifnull( total_need_pay_cnt, 0 ) ) total_need_pay_cnt,
+		sum( ifnull( total_finish_pay_cnt, 0 ) ) total_finish_pay_cnt,
+		sum( ifnull( total_finish_pay_user_cnt, 0 ) ) total_finish_pay_user_cnt,
+		sum( ifnull( total_need_pay_user_cnt, 0 ) ) total_need_pay_user_cnt,
+		sum( ifnull( total_plan_inner_user_workload, 0 ) ) total_plan_inner_user_workload,
+		sum( ifnull( total_plan_out_user_workload, 0 ) ) total_plan_out_user_workload,
+		sum( ifnull( test_cases, 0 ) ) test_cases,
+		sum( ifnull( exec_cases, 0 ) ) exec_cases,
+		sum( ifnull( design_cases, 0 ) ) design_cases,
+		sum( ifnull( finish_cases, 0 ) ) finish_cases,
+		sum( ifnull( iteration_cnt, 0 ) ) iteration_cnt,
+		sum( ifnull( product_cnt, 0 ) ) product_cnt,
+		sum( ifnull( menu_cnt, 0 ) ) menu_cnt
+		FROM
+		XM.xm_branch_state res
+		where res.biz_date = DATE_FORMAT(date_sub(now(),INTERVAL 1 DAY), '%Y-%m-%d')
+
+	</select>
 	<!-- 根据条件修改若干条记录 --> 
 	<update id="loadProjectStateToXmBranchState" parameterType="String" statementType="CALLABLE">
 		 {call load_project_state_to_xm_branch_state(#{branchId,mode=IN})} 
