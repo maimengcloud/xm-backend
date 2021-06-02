@@ -1,5 +1,6 @@
 package com.xm.core.service.cache;
 
+import com.github.pagehelper.PageSerializable;
 import com.xm.core.entity.XmProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -18,17 +19,17 @@ public class XmTaskCacheService {
 	String getCacheKey() {
  		return "xm_task";
 	} 
-	public void putTasks(String queryKeys, List<Map<String,Object>> tasks){
+	public void putTasks(String queryKeys, PageSerializable<Map<String,Object>> tasks){
 		String key=this.getCacheKey()+"_"+queryKeys;
 		String hashKey=key;
 		redisTemplate.opsForHash().put(key, hashKey, tasks);
 		redisTemplate.expire(hashKey, 24, TimeUnit.HOURS);
 	}
 	
-	public  List<Map<String,Object>>  getTasks(String queryKeys){
+	public PageSerializable<Map<String,Object>> getTasks(String queryKeys){
 		String key=this.getCacheKey()+"_"+queryKeys;
 		String hashKey=key;
-		return (List<Map<String,Object>>) redisTemplate.opsForHash().get(key, hashKey);
+		return (PageSerializable<Map<String,Object>>) redisTemplate.opsForHash().get(key, hashKey);
 		
 	}
 	

@@ -80,7 +80,26 @@ public class TestXmTaskController {
 			.andExpect(status().isOk())
 		   	.andExpect(jsonPath("tips.isOk").value(true));
 	}
-
+	@Test
+	public void getOutTask() throws Exception  {
+		mockMvc.perform( get("/**/xm/core/xmTask/getOutTask")
+				.param("pageNum", "1").param("pageSize", "10").param("isDefault","1"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("tips.isOk").value(true))
+				.andExpect(jsonPath("data").isArray())
+				.andExpect(jsonPath("total").exists());
+	}
+	@Test
+	public void getOutTask2() throws Exception  {
+		mockMvc.perform( get("/**/xm/core/xmTask/getOutTask")
+				.param("pageNum", "2").param("pageSize", "10").param("isDefault","1"))
+				.andDo(print())
+				.andExpect(status().isOk())
+				.andExpect(jsonPath("tips.isOk").value(true))
+				.andExpect(jsonPath("data").isArray())
+				.andExpect(jsonPath("total").exists());
+	}
 	@Test
 	public void list() throws Exception  {
 		mockMvc.perform( get("/**/core/xmTask/list")

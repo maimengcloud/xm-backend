@@ -1,6 +1,8 @@
 package com.xm.core.ctrl;
 
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageSerializable;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Tips;
@@ -187,16 +189,22 @@ public class XmTaskController {
 		if(!StringUtils.hasText(isDefault)){
 			tips.setFailureMsg("isDefault-not-set","isDefault","isDefault参数必传，默认查询isDefault=1,非默认查询isDefault=0");
 		}else if("1".equals(isDefault)){
-			xmTaskVoList=xmTaskCacheService.getTasks(queryKeys);
-			if(xmTaskVoList==null){
+			PageSerializable<Map<String,Object>> tasks =xmTaskCacheService.getTasks(queryKeys);
+			if(tasks==null){
 				xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
+				tasks=new PageSerializable<>(xmTaskVoList);
+				xmTaskCacheService.putTasks(queryKeys,tasks);
 				PageUtils.responePage(m,xmTaskVoList);
-				xmTaskCacheService.putTasks(queryKeys,xmTaskVoList);
+			}else{
+				xmTaskVoList=tasks.getList();
+				m.put("total",tasks.getTotal());
 			}
 		}else {
 			xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
 			PageUtils.responePage(m,xmTaskVoList);
 		}
+
+
 
 		m.put("data",xmTaskVoList);
 		m.put("tips", tips);
