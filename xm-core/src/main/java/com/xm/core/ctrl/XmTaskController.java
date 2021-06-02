@@ -190,12 +190,14 @@ public class XmTaskController {
 			xmTaskVoList=xmTaskCacheService.getTasks(queryKeys);
 			if(xmTaskVoList==null){
 				xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
+				PageUtils.responePage(m,xmTaskVoList);
 				xmTaskCacheService.putTasks(queryKeys,xmTaskVoList);
 			}
 		}else {
 			xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
+			PageUtils.responePage(m,xmTaskVoList);
 		}
-		PageUtils.responePage(m,xmTaskVoList);
+
 		m.put("data",xmTaskVoList);
 		m.put("tips", tips);
 		return m;

@@ -56,10 +56,10 @@
 		sum( ifnull( menu_cnt, 0 ) ) menu_cnt
 		FROM
 		XM.xm_branch_state res
-		where res.biz_date = DATE_FORMAT(date_sub(now(),INTERVAL 1 DAY), '%Y-%m-%d')
+	<!-- where res.biz_date = DATE_FORMAT(date_sub(now(),INTERVAL 1 DAY), '%Y-%m-%d')-->
 
-	</select>
-	<!-- 根据条件修改若干条记录 --> 
+</select>
+<!-- 根据条件修改若干条记录 -->
 	<update id="loadProjectStateToXmBranchState" parameterType="String" statementType="CALLABLE">
 		 {call load_project_state_to_xm_branch_state(#{branchId,mode=IN})} 
 	</update>
