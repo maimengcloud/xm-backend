@@ -121,7 +121,7 @@ public class XmQuestionController {
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
-			if(StringUtils.hasText(xmQuestionVo.getQtype())){
+			if(!StringUtils.hasText(xmQuestionVo.getQtype())){
 				xmQuestionVo.setQtype("bug");
 			}
 			xmQuestionService.addQuestion(xmQuestionVo);

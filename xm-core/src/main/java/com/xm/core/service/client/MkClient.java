@@ -1,9 +1,11 @@
 package com.xm.core.service.client;
 
+import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.micro.client.CallBizService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -17,7 +19,7 @@ import java.util.Map;
 public class MkClient {
 
     @Autowired
-    CallBizService callBizService;
+    StringRedisTemplate strRedisTemplate;
 
     /**
      * 		execOrder.setOrderId(sequence.getReqFlowNo());
@@ -29,9 +31,8 @@ public class MkClient {
      * 		execOrder.setCustBranchId("platform-branch-001");
      * @return
      */
-    public Tips pushActiExecOrder(String orderId,String custId,String custBranchId, String entityId,BigDecimal actNum,BigDecimal actSinglePrice,BigDecimal totalPrice){
+    public Tips pushActiExecOrder(String orderId,String custId,String custBranchId, String entityId,BigDecimal actNum,BigDecimal actSinglePrice,BigDecimal totalPrice,BigDecimal workload){
         Tips tips = new Tips("推送订单成功");
-        String restUrl="/mk/mk/acti/execOrder/add";
         Map<String,Object> params=new HashMap<>();
         params.put("orderId",orderId);
         params.put("custId",custId);
@@ -39,8 +40,8 @@ public class MkClient {
         params.put("actNum",actNum);
         params.put("actSinglePrice",actSinglePrice);
         params.put("totalPrice",totalPrice);
-        Map<String,Object> resultMap=callBizService.postForMap(restUrl,params);
-        tips= BaseUtils.mapToTips(resultMap);
+        params.put("workload",workload);
+        strRedisTemplate.convertAndSend("xm_task_settle", JSON.toJSONString(params));
         return tips;
     }
 }

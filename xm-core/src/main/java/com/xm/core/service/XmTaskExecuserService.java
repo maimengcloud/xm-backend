@@ -469,7 +469,7 @@ public class XmTaskExecuserService extends BaseService {
 					// 需要调用财务系统进行记账结算到用户的结算账户中。用户可以通过该账户提现取现金
 					cashOperateServie.shopBalancePayToClient(bizExecuser.getBranchId(),"platform",bizExecuser.getId(),bizExecuser.getSettleAmount(),bizExecuser.getTaskName()+"结算费用给执行人",bizExecuser.getUserid(),bizExecuser.getBranchId());
 					// 需要调用营销系统，计算佣金
-					mkClient.pushActiExecOrder(bizExecuser.getTaskId(), bizExecuser.getUserid(), bizExecuser.getBranchId(),bizExecuser.getTaskId(),new BigDecimal(1),bizExecuser.getSettleAmount(),bizExecuser.getSettleAmount());
+					mkClient.pushActiExecOrder(bizExecuser.getTaskId(), bizExecuser.getUserid(), bizExecuser.getBranchId(),bizExecuser.getTaskId(),new BigDecimal(1),bizExecuser.getSettleAmount(),bizExecuser.getSettleAmount(),bizExecuser.getSettleWorkload());
 					flowVars.put("settleStatus","6");
 					flowVars.put("status","6");
 					this.updateFlowStateByProcInst("2", flowVars); 
