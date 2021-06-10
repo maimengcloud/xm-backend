@@ -31,16 +31,21 @@ public class MkClient {
      * 		execOrder.setCustBranchId("platform-branch-001");
      * @return
      */
-    public Tips pushActiExecOrder(String orderId,String custId,String custBranchId, String entityId,BigDecimal actNum,BigDecimal actSinglePrice,BigDecimal totalPrice,BigDecimal workload){
+    public Tips pushActiExecOrder(String orderId,String custId,String custName,String custBranchId, String entityId,BigDecimal actNum,BigDecimal actSinglePrice,BigDecimal totalPrice,BigDecimal workload,String entityDesc){
         Tips tips = new Tips("推送订单成功");
         Map<String,Object> params=new HashMap<>();
         params.put("orderId",orderId);
+        params.put("entityType","2");
         params.put("custId",custId);
+        params.put("custName",custName);
+        params.put("custBranchId",custBranchId);
+        params.put("orderBranchId",custBranchId);
         params.put("entityId",entityId);
         params.put("actNum",actNum);
         params.put("actSinglePrice",actSinglePrice);
         params.put("totalPrice",totalPrice);
         params.put("workload",workload);
+        params.put("entityDesc",entityDesc);
         strRedisTemplate.convertAndSend("xm_task_settle", JSON.toJSONString(params));
         return tips;
     }
