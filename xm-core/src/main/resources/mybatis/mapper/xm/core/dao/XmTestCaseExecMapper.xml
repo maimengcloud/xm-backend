@@ -34,7 +34,7 @@
 				    </foreach>  
 			 </if>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">       </if> 
+			<if test="key != null and key !='' ">    and res.case_name like #{key}   </if>
 		</where>
 	</select>
 	
