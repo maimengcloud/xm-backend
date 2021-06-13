@@ -73,6 +73,7 @@ public class XmTestCaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTestCase, "ids");
+		RequestUtils.transformArray(xmTestCase, "menuIds");
 		PageUtils.startPage(xmTestCase);
 		String id= (String) xmTestCase.get("id");
 		String menuId= (String) xmTestCase.get("menuId");

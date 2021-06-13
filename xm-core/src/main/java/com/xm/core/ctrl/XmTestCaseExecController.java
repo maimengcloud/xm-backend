@@ -5,6 +5,7 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmTestCaseExec;
 import com.xm.core.service.XmTestCaseExecService;
 import io.swagger.annotations.*;
@@ -77,6 +78,7 @@ public class XmTestCaseExecController {
 	public Map<String,Object> listXmTestCaseExec( @RequestParam Map<String,Object> xmTestCaseExec){
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmTestCaseExec, "ids");
+		RequestUtils.transformArray(xmTestCaseExec, "menuIds");
 		PageUtils.startPage(xmTestCaseExec);
 		Tips tips=new Tips("查询成功");
 		String id= (String) xmTestCaseExec.get("id");
@@ -87,9 +89,7 @@ public class XmTestCaseExecController {
 		String productId= (String) xmTestCaseExec.get("productId");
 		String caseId= (String) xmTestCaseExec.get("caseId");
 		if(   !( StringUtils.hasText(caseId)||StringUtils.hasText(id) || StringUtils.hasText(menuId) || StringUtils.hasText(projectId)|| StringUtils.hasText(productId)||menuIds!=null||ids!=null  ) ){
-			tips.setFailureMsg("产品编号productId、故事编号列表menuIds、故事编号menuId、项目编号projectId、测试用例编号caseId必传任意一个");
-			m.put("tips", tips);
-			return m;
+			xmTestCaseExec.put("compete", LoginUtils.getCurrentUserInfo().getUserid());
 		}
 		List<Map<String,Object>>	xmTestCaseExecList = xmTestCaseExecService.selectListMapByWhere(xmTestCaseExec);	//列出XmTestCaseExec列表
 		PageUtils.responePage(m, xmTestCaseExecList);
