@@ -68,8 +68,18 @@
 				    </foreach>  
 			 </if>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">       </if>
-			<if test="work != null and work != ''"> and res.status != '已解决' </if>
+			<if test="myUserid != null and myUserid != ''"> and ( res.create_userid=#{myUserid} or res.handler_userid=#{myUserid}) </if>
+			<if test="menuIds != null">  and
+				res.menu_id in
+				<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+					#{item}
+				</foreach>
+			</if>
+			<if test="compete !=null and compete!=''">
+				and exists ( select 1 from xm_project_group_user gu where gu.userid=#{compete} and gu.project_id=res.project_id )
+			</if>
+			<if test="key != null and key !='' ">  and res.name like #{key}     </if>
+			<if test="work != null and work != ''"> and res.status != 'resolved' </if>
 		</where>
 	</select>
 	

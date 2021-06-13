@@ -79,13 +79,7 @@ public class XmProjectService extends BaseService {
     /** 请在此类添加自定义函数 */
 
     public List<Map<String,Object>> getProject(Map<String,Object>  params) {
-        List<Map<String,Object>> xmProjectList = null;
-        if(params.containsKey("compete")){
-            params.put("userid", LoginUtils.getCurrentUserInfo().getUserid());
-            xmProjectList = this.selectListMapByWhere(params);
-        }else{
-            xmProjectList = this.selectListMapByWhere(params);	//列出XmProject列表
-        }
+        List<Map<String,Object>>  xmProjectList = this.selectListMapByWhere(params);	//列出XmProject列表
         return xmProjectList;
     }
     

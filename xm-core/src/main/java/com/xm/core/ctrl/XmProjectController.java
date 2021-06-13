@@ -82,6 +82,20 @@ public class XmProjectController {
 		RequestUtils.transformArray(xmProject, "ids"); 
 		RequestUtils.transformArray(xmProject, "pgTypeIds");
 		PageUtils.startPage(xmProject);
+		String id= (String) xmProject.get("id");
+		Object ids=  xmProject.get("ids");
+		String productId= (String) xmProject.get("productId");
+		String myFocus= (String) xmProject.get("myFocus");
+		String myExecuserStatus= (String) xmProject.get("myExecuserStatus");
+		Object pgTypeIds=   xmProject.get("pgTypeIds");
+		String createUserid= (String) xmProject.get("createUserid");
+		User user = LoginUtils.getCurrentUserInfo();
+		xmProject.put("userid",user.getUserid());
+		if( !(StringUtils.hasText(id) || StringUtils.hasText(myFocus)|| StringUtils.hasText(productId)||ids!=null
+				|| StringUtils.hasText(myExecuserStatus)||pgTypeIds!=null|| StringUtils.hasText(createUserid)) ){
+
+			xmProject.put("compete",user.getUserid());
+		}
 		List<Map<String,Object>> xmProjectList = xmProjectService.getProject(xmProject);	//列出XmProject列表
 		PageUtils.responePage(m, xmProjectList);
 		m.put("data",xmProjectList);

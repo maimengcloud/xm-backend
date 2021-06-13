@@ -99,7 +99,11 @@ public class XmQuestionController {
 	public Map<String,Object> listXmQuestion( @RequestParam Map<String,Object> xmQuestion){
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmQuestion, "ids");
+		RequestUtils.transformArray(xmQuestion, "menuIds");
 		PageUtils.startPage(xmQuestion);
+		User user = LoginUtils.getCurrentUserInfo();
+		xmQuestion.put("compete",user.getUserid());
+
 		List<Map<String,Object>>	xmQuestionList = xmQuestionService.getQuestion(xmQuestion);	//列出XmQuestion列表
 		PageUtils.responePage(m, xmQuestionList);
 		m.put("data",xmQuestionList);
@@ -120,6 +124,11 @@ public class XmQuestionController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
+			if(StringUtils.hasText(xmQuestionVo.getProjectId())){
+				tips.setFailureMsg("项目编号projectId必传");
+				m.put("tips", tips);
+				return m;
+			}
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmQuestionVo.getQtype())){
 				xmQuestionVo.setQtype("bug");

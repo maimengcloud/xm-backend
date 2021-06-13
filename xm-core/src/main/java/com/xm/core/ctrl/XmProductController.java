@@ -59,13 +59,39 @@ public class XmProductController {
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Map<String,Object> listXmProduct( @RequestParam Map<String,Object> xmProduct){
-		Map<String,Object> m = new HashMap<>(); 
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmProduct, "ids");
 		PageUtils.startPage(xmProduct);
+		String id= (String) xmProduct.get("id");
+		Object ids=  xmProduct.get("ids");
+		String projectId= (String) xmProduct.get("projectId");
+		String pmUserid= (String) xmProduct.get("pmUserid");
+		String queryScope= (String) xmProduct.get("queryScope");
+		User user = LoginUtils.getCurrentUserInfo();
+		if("branchId".equals(queryScope)){
+			xmProduct.put("branchId",user.getBranchId());
+		}else if("compete".equals(queryScope)){
+			xmProduct.put("branchId",null);
+			xmProduct.put("compete",user.getUserid());
+		}else if("productId".equals(queryScope)){
+			if(!StringUtils.hasText(id)){
+				tips.setFailureMsg("产品编号id必输");
+				m.put("tips", tips);
+				return m;
+			}
+		}
+
+		xmProduct.put("userid",user.getUserid());
+		if( !StringUtils.hasText(queryScope) && !(StringUtils.hasText(id) || StringUtils.hasText(projectId)|| StringUtils.hasText(pmUserid)||ids!=null
+				 ||ids!=null ) ){
+			xmProduct.put("compete",user.getUserid());
+		}
+
 		List<Map<String,Object>>	xmProductList = xmProductService.selectListMapByWhere(xmProduct);	//列出XmProduct列表
 		PageUtils.responePage(m, xmProductList);
 		m.put("data",xmProductList);
-		Tips tips=new Tips("查询成功");
+
 		m.put("tips", tips);
 		return m;
 	}
@@ -75,13 +101,38 @@ public class XmProductController {
 	})
 	@RequestMapping(value="/listWithState",method=RequestMethod.GET)
 	public Map<String,Object> listWithState( @RequestParam Map<String,Object> xmProduct){
-		Map<String,Object> m = new HashMap<>(); 
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmProduct, "ids");
 		PageUtils.startPage(xmProduct);
+		String id= (String) xmProduct.get("id");
+		Object ids=  xmProduct.get("ids");
+		String projectId= (String) xmProduct.get("projectId");
+		String pmUserid= (String) xmProduct.get("pmUserid");
+		String queryScope= (String) xmProduct.get("queryScope");
+		User user = LoginUtils.getCurrentUserInfo();
+		if("branchId".equals(queryScope)){
+			xmProduct.put("branchId",user.getBranchId());
+		}else if("compete".equals(queryScope)){
+			xmProduct.put("branchId",null);
+			xmProduct.put("compete",user.getUserid());
+		}else if("productId".equals(queryScope)){
+			if(!StringUtils.hasText(id)){
+				tips.setFailureMsg("产品编号id必输");
+				m.put("tips", tips);
+				return m;
+			}
+		}
+
+		xmProduct.put("userid",user.getUserid());
+		if( !StringUtils.hasText(queryScope) && !(StringUtils.hasText(id) || StringUtils.hasText(projectId)|| StringUtils.hasText(pmUserid)||ids!=null
+				||ids!=null ) ){
+			xmProduct.put("compete",user.getUserid());
+		}
 		List<Map<String,Object>>	xmProductList = xmProductService.selectListMapByWhereWithState(xmProduct);	//列出XmProduct列表
 		PageUtils.responePage(m, xmProductList);
 		m.put("data",xmProductList);
-		Tips tips=new Tips("查询成功");
+
 		m.put("tips", tips);
 		return m;
 	}

@@ -74,13 +74,25 @@ public class XmIterationController {
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Map<String,Object> listXmIteration( @RequestParam Map<String,Object> xmIteration){
-		Map<String,Object> m = new HashMap<>(); 
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmIteration, "ids");
 		PageUtils.startPage(xmIteration);
+		String id= (String) xmIteration.get("id");
+		Object ids=  xmIteration.get("ids");
+		String productId= (String) xmIteration.get("productId");
+		String adminUserid= (String) xmIteration.get("adminUserid");
+		String menuId= (String) xmIteration.get("menuId");
+		User user = LoginUtils.getCurrentUserInfo();
+		xmIteration.put("userid",user.getUserid());
+		if(  !(StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
+				|| StringUtils.hasText(adminUserid) ) ){
+			xmIteration.put("compete",user.getUserid());
+		}
 		List<Map<String,Object>>	xmIterationList = xmIterationService.selectListMapByWhere(xmIteration);	//列出XmIteration列表
 		PageUtils.responePage(m, xmIterationList);
 		m.put("data",xmIterationList);
-		Tips tips=new Tips("查询成功");
+
 		m.put("tips", tips);
 		return m;
 	}
@@ -94,6 +106,18 @@ public class XmIterationController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmIteration, "ids");
 		PageUtils.startPage(xmIteration);
+
+		String id= (String) xmIteration.get("id");
+		Object ids=  xmIteration.get("ids");
+		String productId= (String) xmIteration.get("productId");
+		String adminUserid= (String) xmIteration.get("adminUserid");
+		String menuId= (String) xmIteration.get("menuId");
+		User user = LoginUtils.getCurrentUserInfo();
+		xmIteration.put("userid",user.getUserid());
+		if(  !(StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
+				|| StringUtils.hasText(adminUserid) ) ){
+			xmIteration.put("compete",user.getUserid());
+		}
 		List<Map<String,Object>>	xmIterationList = xmIterationService.selectListMapByWhereWithState(xmIteration);	//列出XmIteration列表
 		PageUtils.responePage(m, xmIterationList);
 		m.put("data",xmIterationList);

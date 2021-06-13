@@ -117,10 +117,21 @@ public class XmTaskController {
 		if(!"1".equals(taskOut)){
 			String projectId= (String) xmTask.get("projectId");
 			String projectPhaseId= (String) xmTask.get("projectPhaseId");
-			String userid= (String) xmTask.get("userid");
-			if( !(StringUtils.hasText(projectId) || StringUtils.hasText(projectPhaseId)|| StringUtils.hasText(userid) ) ){
-				User user = LoginUtils.getCurrentUserInfo();
-				xmTask.put("cbranchId",user.getBranchId());
+			String myExecuserStatus= (String) xmTask.get("myExecuserStatus");
+			String isMy= (String) xmTask.get("isMy");
+			String myFocus= (String) xmTask.get("myFocus");
+			String createUserid= (String) xmTask.get("createUserid");
+			String executorUserid= (String) xmTask.get("executorUserid");
+			String menuId= (String) xmTask.get("menuId");
+			String productId= (String) xmTask.get("productId");
+			String iterationId= (String) xmTask.get("iterationId");
+			User user = LoginUtils.getCurrentUserInfo();
+			xmTask.put("userid",user.getUserid());
+			if( !(StringUtils.hasText(projectId) || StringUtils.hasText(projectPhaseId)
+					|| StringUtils.hasText(myExecuserStatus)|| StringUtils.hasText(isMy)|| StringUtils.hasText(myFocus)|| StringUtils.hasText(createUserid)
+					|| StringUtils.hasText(executorUserid) || StringUtils.hasText(menuId) || StringUtils.hasText(productId)|| StringUtils.hasText(iterationId)) ){
+
+				xmTask.put("compete",user.getUserid());
 			}
 		}
 		List<Map<String,Object>> xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表

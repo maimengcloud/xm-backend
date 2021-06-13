@@ -121,8 +121,6 @@
 				    </foreach>  
 			 </if>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">    and res.name like #{key}   </if>
-			<if test="work != null and work != ''"> and res.rate != '100' </if>
 			<if test="parent != null and parent != ''"> and (res.parent_taskid = '' or res.parent_taskid IS NULL)</if>
 
 			<!-- 我参与的-->
@@ -144,6 +142,14 @@
 					</foreach>
 				)
 			</if>
+			<if test="compete !=null and compete!=''">
+				and ( exists ( select 1 from xm_project_group_user gu where gu.userid=#{compete} and gu.project_id=res.project_id )
+						or  exists ( select 1 from XM.xm_task_execuser exe where exe.project_id=res.project_id and exe.userid=#{compete})
+				  )
+
+			</if>
+			<if test="key != null and key !='' ">    and res.name like #{key}   </if>
+			<if test="work != null and work != ''"> and res.rate != '100' </if>
 		</where>
 		order by res.sort_level asc
 	</select>
