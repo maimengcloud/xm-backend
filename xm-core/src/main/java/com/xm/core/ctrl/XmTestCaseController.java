@@ -5,6 +5,7 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmTestCase;
 import com.xm.core.service.XmTestCaseService;
 import io.swagger.annotations.*;
@@ -80,10 +81,9 @@ public class XmTestCaseController {
 		Object ids=  xmTestCase.get("ids");
 		Object menuIds=  xmTestCase.get("menuIds");
 		String productId= (String) xmTestCase.get("productId");
-		if(   !( StringUtils.hasText(id) || StringUtils.hasText(menuId) || StringUtils.hasText(productId)||menuIds!=null||ids!=null  ) ){
-			tips.setFailureMsg("产品编号productId或者故事编号列表menuIds或者故事编号menuId必传");
-			m.put("tips", tips);
-			return m;
+		String projectId= (String) xmTestCase.get("projectId");
+		if(   !( StringUtils.hasText(id) || StringUtils.hasText(menuId) || StringUtils.hasText(productId)|| StringUtils.hasText(projectId)||menuIds!=null||ids!=null  ) ){
+			xmTestCase.put("compete", LoginUtils.getCurrentUserInfo().getUserid());
 		}
 		List<Map<String,Object>>	xmTestCaseList = xmTestCaseService.selectListMapByWhere(xmTestCase);	//列出XmTestCase列表
 		PageUtils.responePage(m, xmTestCaseList);

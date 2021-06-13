@@ -33,6 +33,9 @@
 				        #{item}  
 				    </foreach>  
 			 </if>
+			<if test="projectId!=null and projectId!=''"> and res.project_id = #{projectId}</if>
+			<if test=" createTimeStart !=null "> and res.create_time &gt; #{createTimeStart} </if>
+			<if test=" createTimeEnd !=null "> and res.create_time &lt; #{createTimeEnd} </if>
 			<include refid="where"/>
 			<if test="menuIds != null">  and
 				res.menu_id in
