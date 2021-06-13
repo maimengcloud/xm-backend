@@ -78,10 +78,23 @@ public class XmTestCaseExecController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmTestCaseExec, "ids");
 		PageUtils.startPage(xmTestCaseExec);
+		Tips tips=new Tips("查询成功");
+		String id= (String) xmTestCaseExec.get("id");
+		String menuId= (String) xmTestCaseExec.get("menuId");
+		Object ids=  xmTestCaseExec.get("ids");
+		Object menuIds=  xmTestCaseExec.get("menuIds");
+		String projectId= (String) xmTestCaseExec.get("projectId");
+		String productId= (String) xmTestCaseExec.get("productId");
+		String caseId= (String) xmTestCaseExec.get("caseId");
+		if(   !( StringUtils.hasText(caseId)||StringUtils.hasText(id) || StringUtils.hasText(menuId) || StringUtils.hasText(projectId)|| StringUtils.hasText(productId)||menuIds!=null||ids!=null  ) ){
+			tips.setFailureMsg("产品编号productId、故事编号列表menuIds、故事编号menuId、项目编号projectId、测试用例编号caseId必传任意一个");
+			m.put("tips", tips);
+			return m;
+		}
 		List<Map<String,Object>>	xmTestCaseExecList = xmTestCaseExecService.selectListMapByWhere(xmTestCaseExec);	//列出XmTestCaseExec列表
 		PageUtils.responePage(m, xmTestCaseExecList);
 		m.put("data",xmTestCaseExecList);
-		Tips tips=new Tips("查询成功");
+
 		m.put("tips", tips);
 		return m;
 	}

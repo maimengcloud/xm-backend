@@ -70,13 +70,24 @@ public class XmTestCaseController {
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Map<String,Object> listXmTestCase( @RequestParam Map<String,Object> xmTestCase){
-		Map<String,Object> m = new HashMap<>(); 
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTestCase, "ids");
 		PageUtils.startPage(xmTestCase);
+		String id= (String) xmTestCase.get("id");
+		String menuId= (String) xmTestCase.get("menuId");
+		Object ids=  xmTestCase.get("ids");
+		Object menuIds=  xmTestCase.get("menuIds");
+		String productId= (String) xmTestCase.get("productId");
+		if(   !( StringUtils.hasText(id) || StringUtils.hasText(menuId) || StringUtils.hasText(productId)||menuIds!=null||ids!=null  ) ){
+			tips.setFailureMsg("产品编号productId或者故事编号列表menuIds或者故事编号menuId必传");
+			m.put("tips", tips);
+			return m;
+		}
 		List<Map<String,Object>>	xmTestCaseList = xmTestCaseService.selectListMapByWhere(xmTestCase);	//列出XmTestCase列表
 		PageUtils.responePage(m, xmTestCaseList);
 		m.put("data",xmTestCaseList);
-		Tips tips=new Tips("查询成功");
+
 		m.put("tips", tips);
 		return m;
 	}

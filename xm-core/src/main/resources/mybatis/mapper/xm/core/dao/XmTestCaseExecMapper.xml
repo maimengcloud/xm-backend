@@ -34,7 +34,15 @@
 				    </foreach>  
 			 </if>
 			<include refid="where"/>
+			<if test="menuIds != null">  and
+				res.menu_id in
+				<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+					#{item}
+				</foreach>
+			</if>
+			<if test="productId != null and productId !='' ">    and exists( select 1 from xm.xm_menu m where m.menu_id =res.menu_id and m.product_id=#{productId})  </if>
 			<if test="key != null and key !='' ">    and res.case_name like #{key}   </if>
+
 		</where>
 	</select>
 	
