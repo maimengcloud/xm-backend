@@ -67,7 +67,10 @@
 				        #{item}  
 				    </foreach>  
 			 </if>
+			<if test=" createTimeStart !=null "> and res.create_time &gt; #{createTimeStart} </if>
+			<if test=" createTimeEnd !=null "> and res.create_time &lt; #{createTimeEnd} </if>
 			<include refid="where"/>
+			<if test=" productId !=null and productId!='' "> and exists( select 1 from xm.xm_menu m where m.menu_id=res.menu_id and m.product_id=#{productId}) </if>
 			<if test="myUserid != null and myUserid != ''"> and ( res.create_userid=#{myUserid} or res.handler_userid=#{myUserid}) </if>
 			<if test="menuIds != null">  and
 				res.menu_id in

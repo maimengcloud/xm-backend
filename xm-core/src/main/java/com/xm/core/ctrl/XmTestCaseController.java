@@ -81,8 +81,9 @@ public class XmTestCaseController {
 		Object ids=  xmTestCase.get("ids");
 		Object menuIds=  xmTestCase.get("menuIds");
 		String productId= (String) xmTestCase.get("productId");
+		String myUserid= (String) xmTestCase.get("myUserid");
 		String projectId= (String) xmTestCase.get("projectId");
-		if(   !( StringUtils.hasText(id) || StringUtils.hasText(menuId) || StringUtils.hasText(productId)|| StringUtils.hasText(projectId)||menuIds!=null||ids!=null  ) ){
+		if(   !( StringUtils.hasText(myUserid) ||StringUtils.hasText(id) || StringUtils.hasText(menuId) || StringUtils.hasText(productId)|| StringUtils.hasText(projectId)||menuIds!=null||ids!=null  ) ){
 			xmTestCase.put("compete", LoginUtils.getCurrentUserInfo().getUserid());
 		}
 		List<Map<String,Object>>	xmTestCaseList = xmTestCaseService.selectListMapByWhere(xmTestCase);	//列出XmTestCase列表

@@ -26,6 +26,7 @@
 			<if test=" ctimeStart !=null "> and res.ctime &gt; #{ctimeStart} </if>
 			<if test=" ctimeTimeEnd !=null "> and res.ctime &lt; #{ctimeTimeEnd} </if>
 			<include refid="where"/>
+			<if test=" myUserid!=null and myUserid!='' "> and (res.luserid=#{myUserid} or res.cuserid=#{myUserid})</if>
 			<if test=" compete!=null and compete!='' "> and (res.luserid=#{compete} or res.cuserid=#{compete})</if>
 			<if test="menuIds != null">  and
 				res.menu_id in
