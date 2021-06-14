@@ -23,7 +23,7 @@
 				    </foreach>  
 			 </if>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">  m.menu_name like #{key}     </if>
+			<if test="key != null and key !='' "> and m.menu_name like #{key}     </if>
 		</where>
 	</select>
 	

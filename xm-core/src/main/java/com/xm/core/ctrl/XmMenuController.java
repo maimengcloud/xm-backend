@@ -68,6 +68,21 @@ public class XmMenuController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmMenu, "menuIds");
 		PageUtils.startPage(xmMenu);
+		String menuId= (String) xmMenu.get("menuId");
+		Object menuIds=  xmMenu.get("menuIds");
+		String projectId= (String) xmMenu.get("projectId");
+		String mmUserid= (String) xmMenu.get("mmUserid");
+		String pmenuId= (String) xmMenu.get("pmenuId");
+		String productId= (String) xmMenu.get("productId");
+		String excludeIterationId= (String) xmMenu.get("excludeIterationId");
+
+		User user = LoginUtils.getCurrentUserInfo();
+
+		xmMenu.put("userid",user.getUserid());
+		if( !StringUtils.hasText(menuId) && !(StringUtils.hasText(projectId) || StringUtils.hasText(mmUserid)|| StringUtils.hasText(pmenuId)||menuIds!=null
+				|| StringUtils.hasText(productId) || StringUtils.hasText(excludeIterationId)  ) ){
+			xmMenu.put("compete",user.getUserid());
+		}
 		List<Map<String,Object>>	xmMenuList = xmMenuService.selectListMapByWhere(xmMenu);	//列出XmMenu列表
 		PageUtils.responePage(m, xmMenuList);
 		m.put("data",xmMenuList);

@@ -78,9 +78,11 @@
 				    </foreach>  
 			 </if>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">       </if> 
-			<if test=" excludeIterationId !=null and excludeIterationId !='' "> and not exists ( select 1 from XM.xm_iteration_menu im where im.iteration_id=#{excludeIterationId} and im.menu_id=res.menu_id)</if>
-			
+			<if test="key != null and key !='' ">  and res.menu_name like #{key}     </if>
+			<if test=" excludeIterationId !=null and excludeIterationId !='' and (includeIterationAll==null or includeIterationAll=='') "> and not exists ( select 1 from XM.xm_iteration_menu im where im.iteration_id=#{excludeIterationId} and im.menu_id=res.menu_id)</if>
+			<if test=" includeIterationAll !=null and includeIterationAll !=''  and (excludeIterationId !=null and excludeIterationId !='' ) "> and  exists ( select 1 from XM.xm_iteration_menu im where  im.iteration_id !=#{excludeIterationId} and  im.menu_id=res.menu_id)</if>
+			<if test=" includeIterationAll !=null and includeIterationAll !=''  and (excludeIterationId ==null or excludeIterationId =='' ) "> and  exists ( select 1 from XM.xm_iteration_menu im where  im.menu_id=res.menu_id)</if>
+
 		</where>
 		order by res.seq_no asc
 	</select>
