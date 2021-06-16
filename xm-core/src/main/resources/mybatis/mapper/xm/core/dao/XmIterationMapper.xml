@@ -15,10 +15,14 @@
 		<where> 
 			<if test="ids != null">  and     
 				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
 				        #{item}  
 				    </foreach>  
 			 </if>
+			<if test=" createTimeStart !=null "> and res.ctime &gt; #{createTimeStart} </if>
+			<if test=" createTimeEnd !=null "> and res.ctime &lt; #{createTimeEnd} </if>
+			<if test=" onlineTimeStart !=null "> and res.online_time &gt; #{onlineTimeStart} </if>
+			<if test=" onlineTimeEnd !=null "> and res.online_time &lt; #{onlineTimeEnd} </if>
 			<include refid="where"/>
 			<if test="( productId != null and productId !='')  or ( menuId != null and menuId !='')">   
 			and exists ( select 1 from XM.xm_iteration_menu im where  im.iteration_id=res.id
