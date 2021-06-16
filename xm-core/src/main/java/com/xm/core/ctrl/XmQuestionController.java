@@ -124,7 +124,7 @@ public class XmQuestionController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-			if(StringUtils.hasText(xmQuestionVo.getProjectId())){
+			if(!StringUtils.hasText(xmQuestionVo.getProjectId())){
 				tips.setFailureMsg("项目编号projectId必传");
 				m.put("tips", tips);
 				return m;
