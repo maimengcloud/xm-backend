@@ -83,11 +83,16 @@ public class XmIterationController {
 		String productId= (String) xmIteration.get("productId");
 		String adminUserid= (String) xmIteration.get("adminUserid");
 		String menuId= (String) xmIteration.get("menuId");
+		String queryScope=(String) xmIteration.get("queryScope");
+		String branchId=(String) xmIteration.get("branchId");
 		User user = LoginUtils.getCurrentUserInfo();
 		xmIteration.put("userid",user.getUserid());
-		if(  !(StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
+		if(  !( StringUtils.hasText(branchId)|| StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
 				|| StringUtils.hasText(adminUserid) ) ){
 			xmIteration.put("compete",user.getUserid());
+		}
+		if("branchId".equals(queryScope)){
+			xmIteration.put("branchId",user.getBranchId());
 		}
 		List<Map<String,Object>>	xmIterationList = xmIterationService.selectListMapByWhere(xmIteration);	//列出XmIteration列表
 		PageUtils.responePage(m, xmIterationList);
@@ -112,11 +117,16 @@ public class XmIterationController {
 		String productId= (String) xmIteration.get("productId");
 		String adminUserid= (String) xmIteration.get("adminUserid");
 		String menuId= (String) xmIteration.get("menuId");
+		String queryScope=(String) xmIteration.get("queryScope");
+		String branchId=(String) xmIteration.get("branchId");
 		User user = LoginUtils.getCurrentUserInfo();
 		xmIteration.put("userid",user.getUserid());
-		if(  !(StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
+		if(  !(StringUtils.hasText(branchId)|| StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
 				|| StringUtils.hasText(adminUserid) ) ){
 			xmIteration.put("compete",user.getUserid());
+		}
+		if("branchId".equals(queryScope)){
+			xmIteration.put("branchId",user.getBranchId());
 		}
 		List<Map<String,Object>>	xmIterationList = xmIterationService.selectListMapByWhereWithState(xmIteration);	//列出XmIteration列表
 		PageUtils.responePage(m, xmIterationList);
