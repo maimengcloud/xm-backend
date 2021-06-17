@@ -14,7 +14,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.*,m.menu_name,m.seq_no,m.pmenu_id from XM.xm_iteration_menu res left join XM.xm_menu m on m.menu_id=res.menu_id
+		select res.*,m.menu_name,m.seq_no,m.pmenu_id,m.mm_userid,m.mm_username from XM.xm_iteration_menu res left join XM.xm_menu m on m.menu_id=res.menu_id
 		<where> 
 			<if test="ids != null">  and     
 				id in

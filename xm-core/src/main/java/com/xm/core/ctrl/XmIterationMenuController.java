@@ -69,13 +69,21 @@ public class XmIterationMenuController {
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Map<String,Object> listXmIterationMenu( @RequestParam Map<String,Object> xmIterationMenu){
-		Map<String,Object> m = new HashMap<>(); 
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmIterationMenu, "ids");
 		PageUtils.startPage(xmIterationMenu);
+		String iterationId=(String)xmIterationMenu.get("iterationId");
+		String menuId=(String)xmIterationMenu.get("menuId");
+		if(!(StringUtils.hasText(iterationId)||StringUtils.hasText(menuId))){
+			tips.setFailureMsg("迭代编号iterationId、故事编号menuId最少一个不能为空");
+			m.put("tips", tips);
+			return m;
+		}
 		List<Map<String,Object>>	xmIterationMenuList = xmIterationMenuService.selectListMapByWhere(xmIterationMenu);	//列出XmIterationMenu列表
 		PageUtils.responePage(m, xmIterationMenuList);
 		m.put("data",xmIterationMenuList);
-		Tips tips=new Tips("查询成功");
+
 		m.put("tips", tips);
 		return m;
 	}
