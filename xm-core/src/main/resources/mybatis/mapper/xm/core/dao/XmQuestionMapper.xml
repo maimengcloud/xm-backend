@@ -67,6 +67,7 @@
 				        #{item}  
 				    </foreach>  
 			 </if>
+			<if test="hisHandlerUserid !=null "> and exists (select 1 from xm.xm_question_handle h where h.question_id = res.id and h.handler_userid=#{hisHandlerUserid} and handle_status=#{hisHandleStatus})</if>
 			<if test=" createTimeStart !=null "> and res.create_time &gt; #{createTimeStart} </if>
 			<if test=" createTimeEnd !=null "> and res.create_time &lt; #{createTimeEnd} </if>
 			<include refid="where"/>
