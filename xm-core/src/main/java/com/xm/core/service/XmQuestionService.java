@@ -72,6 +72,7 @@ public class XmQuestionService extends BaseService {
         xmQuestion.setHandlerUserid(xmQuestionVo.getHandlerUserid());
         xmQuestion.setHandlerUsername(xmQuestionVo.getHandlerUsername());
         xmQuestion.setBugStatus(xmQuestionVo.getTardgetBugStatus());
+        xmQuestion.setLtime(new Date());
         this.updateSomeFieldByPk(xmQuestion);
         
         XmQuestionHandle handle=new XmQuestionHandle();
