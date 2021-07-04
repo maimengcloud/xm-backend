@@ -18,16 +18,16 @@
 			#{id},#{questionId},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
 		)
 	</insert>
-	
+
 		<!-- 同时修改业务表及流程审批表数据状态 -->
 	<update id="updateProcessApprova"
 		parameterType="HashMap">
-		update XM.xm_question  b ,XM.xm_question_process_approva pa 
+		update XM.xm_question  b ,XM.xm_question_process_approva pa
 			<set>
 				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
 				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
-				<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>  
-				<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if> 
+				<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>
+				<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if>
 				<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
 				<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
 				 pa.flow_last_time = now(),
@@ -37,29 +37,29 @@
 				<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
 			</set>
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
-		      and b.id=pa.question_id 
-	</update>	
-	
+		      and b.id=pa.question_id
+	</update>
+
 	<update id="updateFlowStateByProcInstForDeleteSuccess"
 		parameterType="HashMap">
 		update XM.xm_question_process_approva pa set pa.flow_state='2'
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
-	</update>	
-	
+	</update>
+
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByProcInstId" parameterType="HashMap">
-		delete from XM.xm_question 
+		delete from XM.xm_question
 		 where biz_proc_inst_id=#{procInstId}
 	</delete>
 
-	<!--结束 自定义sql函数区域--> 
+	<!--结束 自定义sql函数区域-->
 	
 
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from XM.xm_question res   left join  XM.xm_question_process_approva pa on res.id=pa.question_id and res.biz_proc_inst_id=pa.proc_inst_id 
-		
+		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from XM.xm_question res   left join  XM.xm_question_process_approva pa on res.id=pa.question_id and res.biz_proc_inst_id=pa.proc_inst_id
+
 		<where> 
 			<if test="ids != null">  and     
 				id in
@@ -68,8 +68,8 @@
 				    </foreach>  
 			 </if>
 			<if test="hisHandlerUserid !=null "> and exists (select 1 from xm.xm_question_handle h where h.question_id = res.id and h.handler_userid=#{hisHandlerUserid} and handle_status=#{hisHandleStatus})</if>
-			<if test=" createTimeStart !=null "> and res.create_time &gt; #{createTimeStart} </if>
-			<if test=" createTimeEnd !=null "> and res.create_time &lt; #{createTimeEnd} </if>
+			<if test=" createTimeStart !=null "> and res.create_time between #{createTimeStart} and #{createTimeEnd} </if>
+			<if test=" ltimeStart !=null "> and res.ltime between #{limeStart} and #{limeEnd} </if>
 			<include refid="where"/>
 			<if test=" productId !=null and productId!='' "> and exists( select 1 from xm.xm_menu m where m.menu_id=res.menu_id and m.product_id=#{productId}) </if>
 			<if test="myUserid != null and myUserid != ''"> and ( res.create_userid=#{myUserid} or res.handler_userid=#{myUserid}) </if>
@@ -116,19 +116,19 @@
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmQuestion" useGeneratedKeys="false" keyProperty="id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmQuestion" useGeneratedKeys="false"   keyProperty="id">
 		insert into XM.xm_question(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{projectId},#{projectName},#{caseId},#{caseName},#{endTime},#{askUserid},#{askUsername},#{handlerUserid},#{handlerUsername},#{priority},#{solution},#{description},#{createUserid},#{createUsername},#{createTime},#{bugStatus},#{bizProcInstId},#{bizFlowState},#{menuId},#{menuName},#{planWorkload},#{planCostAmount},#{totalActWorkload},#{totalActCostAmount},#{expectResult},#{opStep},#{currResult},#{refRequire},#{bugSeverity},#{bugType},#{tagIds},#{tagNames},#{urls},#{ltime},#{qtype},#{taskId},#{taskName},#{iterationId},#{iterationName},#{caseExecId}
+		#{id},#{name},#{projectId},#{projectName},#{caseId},#{caseName},#{endTime},#{askUserid},#{askUsername},#{handlerUserid},#{handlerUsername},#{priority},#{solution},#{description},#{createUserid},#{createUsername},#{createTime},#{bugStatus},#{bizProcInstId},#{bizFlowState},#{menuId},#{menuName},#{planWorkload},#{planCostAmount},#{totalActWorkload},#{totalActCostAmount},#{expectResult},#{opStep},#{currResult},#{refRequire},#{bugSeverity},#{bugType},#{tagIds},#{tagNames},#{urls},#{ltime},#{qtype},#{taskId},#{taskName},#{iterationId},#{iterationName},#{caseExecId},#{lremark}
 		)
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmQuestion">
-		delete from XM.xm_question res
+		delete from XM.xm_question
 		<where>  
-			<include refid="where"/>
+			1=2
 		</where>
 	</delete>
 	
@@ -173,18 +173,21 @@
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from XM.xm_question 
-			where id in
-			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
-			        #{item.id }  
-			    </foreach>  
+			where
+			(id)
+			    in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    ( #{item.id}
+                    )
+                </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,plan_workload,plan_cost_amount,total_act_workload,total_act_cost_amount,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,task_id,task_name,iteration_id,iteration_name,case_exec_id
+		id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,plan_workload,plan_cost_amount,total_act_workload,total_act_cost_amount,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,task_id,task_name,iteration_id,iteration_name,case_exec_id,lremark
 	</sql>
-	
+
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
 	<sql id="where">
 		<if test="id != null and id != ''">      and res.id = #{id}     </if>
@@ -193,7 +196,7 @@
 		<if test="projectName != null and projectName != ''">      and res.project_name = #{projectName}     </if>
 		<if test="caseId != null and caseId != ''">      and res.case_id = #{caseId}     </if>
 		<if test="caseName != null and caseName != ''">      and res.case_name = #{caseName}     </if>
-		<if test="endTime != null">      and TO_CHAR(res.end_time,'YYYY-MM-DD') = TO_CHAR(#{endTime},'YYYY-MM-DD')     </if>
+		<if test="endTime != null">      and date_format(res.end_time,'%Y-%m-%d') = date_format(#{endTime},'%Y-%m-%d')     </if>
 		<if test="askUserid != null and askUserid != ''">      and res.ask_userid = #{askUserid}     </if>
 		<if test="askUsername != null and askUsername != ''">      and res.ask_username = #{askUsername}     </if>
 		<if test="handlerUserid != null and handlerUserid != ''">      and res.handler_userid = #{handlerUserid}     </if>
@@ -203,7 +206,7 @@
 		<if test="description != null and description != ''">      and res.description = #{description}     </if>
 		<if test="createUserid != null and createUserid != ''">      and res.create_userid = #{createUserid}     </if>
 		<if test="createUsername != null and createUsername != ''">      and res.create_username = #{createUsername}     </if>
-		<if test="createTime != null">      and TO_CHAR(res.create_time,'YYYY-MM-DD') = TO_CHAR(#{createTime},'YYYY-MM-DD')     </if>
+		<if test="createTime != null">      and date_format(res.create_time,'%Y-%m-%d') = date_format(#{createTime},'%Y-%m-%d')     </if>
 		<if test="bugStatus != null and bugStatus != ''">      and res.bug_status = #{bugStatus}     </if>
 		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
 		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
@@ -222,13 +225,14 @@
 		<if test="tagIds != null and tagIds != ''">      and res.tag_ids = #{tagIds}     </if>
 		<if test="tagNames != null and tagNames != ''">      and res.tag_names = #{tagNames}     </if>
 		<if test="urls != null and urls != ''">      and res.urls = #{urls}     </if>
-		<if test="ltime != null">      and TO_CHAR(res.ltime,'YYYY-MM-DD') = TO_CHAR(#{ltime},'YYYY-MM-DD')     </if>
+		<if test="ltime != null">      and date_format(res.ltime,'%Y-%m-%d') = date_format(#{ltime},'%Y-%m-%d')     </if>
 		<if test="qtype != null and qtype != ''">      and res.qtype = #{qtype}     </if>
 		<if test="taskId != null and taskId != ''">      and res.task_id = #{taskId}     </if>
 		<if test="taskName != null and taskName != ''">      and res.task_name = #{taskName}     </if>
 		<if test="iterationId != null and iterationId != ''">      and res.iteration_id = #{iterationId}     </if>
 		<if test="iterationName != null and iterationName != ''">      and res.iteration_name = #{iterationName}     </if>
 		<if test="caseExecId != null and caseExecId != ''">      and res.case_exec_id = #{caseExecId}     </if>
+		<if test="lremark != null and lremark != ''">      and res.lremark = #{lremark}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -272,7 +276,8 @@
 		task_name = #{taskName},
 		iteration_id = #{iterationId},
 		iteration_name = #{iterationName},
-		case_exec_id = #{caseExecId}
+		case_exec_id = #{caseExecId},
+		lremark = #{lremark}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -316,6 +321,7 @@
 		<if test="iterationId != null and iterationId != ''"> iteration_id = #{iterationId},     </if>
 		<if test="iterationName != null and iterationName != ''"> iteration_name = #{iterationName},     </if>
 		<if test="caseExecId != null and caseExecId != ''"> case_exec_id = #{caseExecId},     </if>
+		<if test="lremark != null and lremark != ''"> lremark = #{lremark},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -359,6 +365,7 @@
 			task_name = #{item.taskName},
 			iteration_id = #{item.iterationId},
 			iteration_name = #{item.iterationName},
-			case_exec_id = #{item.caseExecId}
+			case_exec_id = #{item.caseExecId},
+			lremark = #{item.lremark}
 	</sql>
 </mapper>
