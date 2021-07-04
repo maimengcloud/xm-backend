@@ -69,7 +69,7 @@
 			 </if>
 			<if test="hisHandlerUserid !=null "> and exists (select 1 from xm.xm_question_handle h where h.question_id = res.id and h.handler_userid=#{hisHandlerUserid} and handle_status=#{hisHandleStatus})</if>
 			<if test=" createTimeStart !=null "> and res.create_time between #{createTimeStart} and #{createTimeEnd} </if>
-			<if test=" ltimeStart !=null "> and res.ltime between #{limeStart} and #{limeEnd} </if>
+			<if test=" ltimeStart !=null "> and res.ltime between #{ltimeStart} and #{ltimeEnd} </if>
 			<include refid="where"/>
 			<if test=" productId !=null and productId!='' "> and exists( select 1 from xm.xm_menu m where m.menu_id=res.menu_id and m.product_id=#{productId}) </if>
 			<if test="myUserid != null and myUserid != ''"> and ( res.create_userid=#{myUserid} or res.handler_userid=#{myUserid}) </if>
