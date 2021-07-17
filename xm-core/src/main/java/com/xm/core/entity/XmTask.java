@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTask所有属性名: <br>
- *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,projectPhaseId,projectPhaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,iterationId,iterationName,productId,productName,cbranchId,cdeptid;<br>
+ *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,projectPhaseId,projectPhaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,productName,cbranchId,cdeptid;<br>
  * 表 XM.xm_task xm_task的所有字段名: <br>
- *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,iteration_id,iteration_name,product_id,product_name,cbranch_id,cdeptid;<br>
+ *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -151,12 +151,6 @@ public class XmTask  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="归属功能名称",allowEmptyValue=true,example="",allowableValues="")
 	String menuName;
-	
-	@ApiModelProperty(notes="迭代编号",allowEmptyValue=true,example="",allowableValues="")
-	String iterationId;
-	
-	@ApiModelProperty(notes="迭代名称",allowEmptyValue=true,example="",allowableValues="")
-	String iterationName;
 	
 	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
 	String productId;
@@ -442,18 +436,6 @@ public class XmTask  implements java.io.Serializable {
 	 **/
 	public void setMenuName(String menuName) {
 		this.menuName = menuName;
-	}
-	/**
-	 * 迭代编号
-	 **/
-	public void setIterationId(String iterationId) {
-		this.iterationId = iterationId;
-	}
-	/**
-	 * 迭代名称
-	 **/
-	public void setIterationName(String iterationName) {
-		this.iterationName = iterationName;
 	}
 	/**
 	 * 产品编号
@@ -743,18 +725,6 @@ public class XmTask  implements java.io.Serializable {
 	 **/
 	public String getMenuName() {
 		return this.menuName;
-	}
-	/**
-	 * 迭代编号
-	 **/
-	public String getIterationId() {
-		return this.iterationId;
-	}
-	/**
-	 * 迭代名称
-	 **/
-	public String getIterationName() {
-		return this.iterationName;
 	}
 	/**
 	 * 产品编号
