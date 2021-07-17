@@ -502,13 +502,22 @@ public class XmTaskExecuserService extends BaseService {
 		super.deleteByPk(xmTaskExecuser);
 		this.updateXmTaskExeUseridsAndUsernamesByTaskId(xmTaskExecuser.getTaskId());
 	}
-	
 	/**
 	 * 将执行人编号，姓名同步到task中的exe_userids,exe_usernames两个字段
 	 * @param taskId
 	 */
 	public void updateXmTaskExeUseridsAndUsernamesByTaskId(String taskId) {
 		this.update("updateXmTaskExeUseridsAndUsernamesByTaskId", taskId);
+	}
+	/**
+	 * 将执行人编号，姓名同步到task中的exe_userids,exe_usernames两个字段
+	 * @param taskId
+	 */
+	public void updateXmTaskExeUseridsAndUsernamesAndTaskStateByTaskId(String taskId,String targetTaskState) {
+		Map<String,Object> task=new HashMap<>();
+		task.put("targetTaskState",targetTaskState);
+		task.put("taskId",taskId);
+		this.update("updateXmTaskExeUseridsAndUsernamesAndTaskStateByTaskId", task);
 	}
 	
 	public void updateFlowStateByProcInst(String flowState,Map<String, Object> flowVars) {

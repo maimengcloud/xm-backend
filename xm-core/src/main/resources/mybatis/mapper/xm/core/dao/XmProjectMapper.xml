@@ -118,8 +118,17 @@
 			<if test="myFocus != null and myFocus != ''">
 				and exists ( select 1 from XM.xm_my_focus f where f.userid=#{userid} and f.project_id=res.id  ) 
 			</if>
-			<if test="productId != null and productId !='' ">  and exists ( select 1 from XM.xm_task t left join XM.xm_menu m on t.menu_id=m.menu_id and m.product_id=#{productId}   where m.product_id=#{productId} and t.project_id=res.id)  </if>
+			<if test="productId != null and productId !='' ">
+				and exists ( select 1 from XM.xm_task t left join XM.xm_menu m on t.menu_id=m.menu_id and m.product_id=#{productId}
+					where m.product_id=#{productId} and t.project_id=res.id
+				)
+			</if>
 
+			<if test="(iterationId!=null and iterationId!='' )">
+				and exists( select 1 from XM.xm_task t inner join xm_iteration_menu im on t.menu_id=im.menu_id
+					where t.project_id=res.id and im.iteration_id =#{iterationId}
+				)
+			</if>
 			<if test="key != null and key !='' ">  and res.name like #{key}  </if>
 		</where>
 	</select>

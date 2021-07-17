@@ -151,6 +151,9 @@
 				  )
 
 			</if>
+			<if test="iterationId!=null and iterationId!=''">
+				and exists ( select 1 from xm_iteration_menu im where im.menu_id=res.menu_id and  im.iteration_id=#{iterationId})
+			</if>
 			<if test="key != null and key !='' ">    and res.name like #{key}   </if>
 			<if test="work != null and work != ''"> and res.rate != '100' </if>
 		</where>
