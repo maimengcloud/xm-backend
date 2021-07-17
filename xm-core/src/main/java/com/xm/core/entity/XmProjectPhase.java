@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectPhase所有属性名: <br>
- *	id,phaseName,remark,parentPhaseId,branchId,projectId,beginDate,endDate,phaseBudgetHours,phaseBudgetStaffNu,ctime,phaseBudgetNouserAt,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,projectBaselineId,bizProcInstId,bizFlowState,phaseBudgetWorkload,phaseActWorkload,phaseActInnerUserWorkload,phaseActOutUserWorkload,taskType,planType,seqNo,phaseBudgetInnerUserWorkload,phaseBudgetOutUserWorkload,actNouserAt,actInnerUserAt,phaseBudgetInnerUserPrice,phaseBudgetOutUserPrice,phaseBudgetOutUserCnt,phaseBudgetInnerUserCnt,actRate,phaseStatus,actOutUserAt,taskCnt,finishTaskCnt,iterationCnt,calcTime,taskBudgetWorkload,taskBudgetAt,mngUserid,mngUsername;<br>
+ *	id,phaseName,remark,parentPhaseId,branchId,projectId,beginDate,endDate,phaseBudgetHours,phaseBudgetStaffNu,ctime,phaseBudgetNouserAt,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,projectBaselineId,bizProcInstId,bizFlowState,phaseBudgetWorkload,phaseActWorkload,phaseActInnerUserWorkload,phaseActOutUserWorkload,taskType,planType,seqNo,phaseBudgetInnerUserWorkload,phaseBudgetOutUserWorkload,actNouserAt,actInnerUserAt,phaseBudgetInnerUserPrice,phaseBudgetOutUserPrice,phaseBudgetOutUserCnt,phaseBudgetInnerUserCnt,actRate,phaseStatus,actOutUserAt,taskCnt,finishTaskCnt,iterationCnt,calcTime,taskBudgetWorkload,taskBudgetAt,mngUserid,mngUsername,milestone,pleaf;<br>
  * 表 XM.xm_project_phase 项目阶段模板的所有字段名: <br>
- *	id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username;<br>
+ *	id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -148,6 +148,12 @@ public class XmProjectPhase  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="管理者姓名",allowEmptyValue=true,example="",allowableValues="")
 	String mngUsername;
+	
+	@ApiModelProperty(notes="是否里程碑0否1是",allowEmptyValue=true,example="",allowableValues="")
+	String milestone;
+	
+	@ApiModelProperty(notes="节点是否为叶子节点",allowEmptyValue=true,example="",allowableValues="")
+	String pleaf;
 
 	/**阶段主键**/
 	public XmProjectPhase(String id) {
@@ -416,6 +422,18 @@ public class XmProjectPhase  implements java.io.Serializable {
 	public void setMngUsername(String mngUsername) {
 		this.mngUsername = mngUsername;
 	}
+	/**
+	 * 是否里程碑0否1是
+	 **/
+	public void setMilestone(String milestone) {
+		this.milestone = milestone;
+	}
+	/**
+	 * 节点是否为叶子节点
+	 **/
+	public void setPleaf(String pleaf) {
+		this.pleaf = pleaf;
+	}
 	
 	/**
 	 * 阶段主键
@@ -674,6 +692,18 @@ public class XmProjectPhase  implements java.io.Serializable {
 	 **/
 	public String getMngUsername() {
 		return this.mngUsername;
+	}
+	/**
+	 * 是否里程碑0否1是
+	 **/
+	public String getMilestone() {
+		return this.milestone;
+	}
+	/**
+	 * 节点是否为叶子节点
+	 **/
+	public String getPleaf() {
+		return this.pleaf;
 	}
 
 }

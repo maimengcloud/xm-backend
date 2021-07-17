@@ -1,17 +1,16 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
- * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmIteration所有属性名: <br>
- *	id,branchId,iterationName,startTime,endTime,onlineTime,pid,adminUserid,adminUsername,ctime,budgetCost,budgetWorkload,seqNo,istatus,cuserid,cusername,remark;<br>
+ *	id,branchId,iterationName,startTime,endTime,onlineTime,pid,adminUserid,adminUsername,ctime,budgetCost,budgetWorkload,seqNo,istatus,cuserid,cusername,remark,iphase;<br>
  * 表 XM.xm_iteration 迭代定义的所有字段名: <br>
- *	id,branch_id,iteration_name,start_time,end_time,online_time,pid,admin_userid,admin_username,ctime,budget_cost,budget_workload,seq_no,istatus,cuserid,cusername,remark;<br>
+ *	id,branch_id,iteration_name,start_time,end_time,online_time,pid,admin_userid,admin_username,ctime,budget_cost,budget_workload,seq_no,istatus,cuserid,cusername,remark,iphase;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -71,6 +70,9 @@ public class XmIteration  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="备注",allowEmptyValue=true,example="",allowableValues="")
 	String remark;
+	
+	@ApiModelProperty(notes="迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成",allowEmptyValue=true,example="",allowableValues="")
+	String iphase;
 
 	/**迭代编码**/
 	public XmIteration(String id) {
@@ -183,6 +185,12 @@ public class XmIteration  implements java.io.Serializable {
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+	/**
+	 * 迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成
+	 **/
+	public void setIphase(String iphase) {
+		this.iphase = iphase;
+	}
 	
 	/**
 	 * 迭代编码
@@ -285,6 +293,12 @@ public class XmIteration  implements java.io.Serializable {
 	 **/
 	public String getRemark() {
 		return this.remark;
+	}
+	/**
+	 * 迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成
+	 **/
+	public String getIphase() {
+		return this.iphase;
 	}
 
 }

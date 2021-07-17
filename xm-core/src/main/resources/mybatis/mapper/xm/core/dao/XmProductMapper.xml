@@ -8,12 +8,12 @@
 		
 	<select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
 		select res.*,s.* from XM.xm_product res left join XM.xm_product_state s on res.id=s.product_id
-		<where> 
-			<if test="ids != null">  and     
+		<where>
+			<if test="ids != null">  and
 				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+				        #{item}
+				    </foreach>
 			 </if>
 			<include refid="where"/>
 			<if test="projectId != null and projectId !='' ">  and exists (select 1 from XM.xm_task t left join XM.xm_menu m on t.menu_id=m.menu_id and t.project_id=#{projectId} where t.project_id=#{projectId} and m.product_id=res.id)     </if>
@@ -85,19 +85,19 @@
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmProduct" useGeneratedKeys="false" keyProperty="id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmProduct" useGeneratedKeys="false"   keyProperty="id">
 		insert into XM.xm_product(
 			<include refid="columns"/>
 		) values (
-		#{id},#{productName},#{branchId},#{remark},#{version},#{pmUserid},#{pmUsername},#{ctime}
+		#{id},#{productName},#{branchId},#{remark},#{version},#{pmUserid},#{pmUsername},#{ctime},#{deptid}
 		)
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProduct">
-		delete from XM.xm_product res
+		delete from XM.xm_product
 		<where>  
-			<include refid="where"/>
+			1=2
 		</where>
 	</delete>
 	
@@ -142,18 +142,21 @@
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from XM.xm_product 
-			where id in
-			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
-			        #{item.id }  
-			    </foreach>  
+			where
+			(id)
+			    in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    ( #{item.id}
+                    )
+                </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime
+		id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid
 	</sql>
-	
+
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
 	<sql id="where">
 		<if test="id != null and id != ''">      and res.id = #{id}     </if>
@@ -163,7 +166,8 @@
 		<if test="version != null and version != ''">      and res.version = #{version}     </if>
 		<if test="pmUserid != null and pmUserid != ''">      and res.pm_userid = #{pmUserid}     </if>
 		<if test="pmUsername != null and pmUsername != ''">      and res.pm_username = #{pmUsername}     </if>
-		<if test="ctime != null">      and TO_CHAR(res.ctime,'YYYY-MM-DD') = TO_CHAR(#{ctime},'YYYY-MM-DD')     </if>
+		<if test="ctime != null">      and date_format(res.ctime,'%Y-%m-%d') = date_format(#{ctime},'%Y-%m-%d')     </if>
+		<if test="deptid != null and deptid != ''">      and res.deptid = #{deptid}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -173,7 +177,8 @@
 		version = #{version},
 		pm_userid = #{pmUserid},
 		pm_username = #{pmUsername},
-		ctime = #{ctime}
+		ctime = #{ctime},
+		deptid = #{deptid}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
@@ -183,6 +188,7 @@
 		<if test="pmUserid != null and pmUserid != ''"> pm_userid = #{pmUserid},     </if>
 		<if test="pmUsername != null and pmUsername != ''"> pm_username = #{pmUsername},     </if>
 		<if test="ctime != null"> ctime = #{ctime},     </if>
+		<if test="deptid != null and deptid != ''"> deptid = #{deptid},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -192,6 +198,7 @@
 			version = #{item.version},
 			pm_userid = #{item.pmUserid},
 			pm_username = #{item.pmUsername},
-			ctime = #{item.ctime}
+			ctime = #{item.ctime},
+			deptid = #{item.deptid}
 	</sql>
 </mapper>

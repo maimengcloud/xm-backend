@@ -15,17 +15,17 @@
 		    and im.menu_id = res.menu_id )
 	</select>
 	<select id="queryTaskUsersByMenuId" parameterType="HashMap" resultType="HashMap">
-		 select distinct te.userid,te.username,t.executor_userid, t.executor_username from xm_task_execuser te inner join xm_task t on t.id=te.task_id 
+		 select distinct te.userid,te.username,t.executor_userid, t.executor_username from xm_task_execuser te inner join xm_task t on t.id=te.task_id
 		 where t.menu_id=#{menuId} and te.status !='8' and te.status !='7'
-	</select>		
+	</select>
 	<select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
-		select res.*,s.* from XM.xm_menu res left join XM.xm_menu_state s on res.menu_id=s.menu_id  
-		<where> 
-			<if test="ids != null">  and     
+		select res.*,s.* from XM.xm_menu res left join XM.xm_menu_state s on res.menu_id=s.menu_id
+		<where>
+			<if test="ids != null">  and
 				menu_id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+				        #{item}
+				    </foreach>
 			 </if>
 			<include refid="where"/>
 			<if test=' iterationFilterType=="join" '>
@@ -52,15 +52,15 @@
 			<if test="key != null and key !='' ">  and res.menu_name like #{key}     </if>
 		</where>
 		order by res.seq_no asc
-	</select>	
+	</select>
 	<select id="selectListMapByWhereWithPlan" parameterType="HashMap" resultType="HashMap">
 		select res.*,plan.* from XM.xm_menu res left join XM.xm_menu_plan plan on res.menu_id=plan.menu_id and plan.project_id=#{projectId}
-		<where> 
-			<if test="ids != null">  and     
+		<where>
+			<if test="ids != null">  and
 				menu_id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+				        #{item}
+				    </foreach>
 			 </if>
 			<include refid="where"/>
 			<if test=" projectId !=null and projectId !='' "> and plan.project_id=#{projectId}</if>
@@ -113,7 +113,6 @@
 			</if>
 			<if test="key != null and key !='' ">  and res.menu_name like #{key}     </if>
 		</where>
-		order by res.seq_no asc
 	</select>
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
@@ -149,15 +148,15 @@
 		insert into XM.xm_menu(
 			<include refid="columns"/>
 		) values (
-		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername}
+		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime}
 		)
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmMenu">
-		delete from XM.xm_menu res
+		delete from XM.xm_menu
 		<where>  
-			<include refid="where"/>
+			1=2
 		</where>
 	</delete>
 	
@@ -202,18 +201,21 @@
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from XM.xm_menu 
-			where menu_id in
-			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
-			        #{item.menuId }  
-			    </foreach>  
+			where
+			(menu_id)
+			    in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    ( #{item.menuId}
+                    )
+                </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username
+		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime
 	</sql>
-	
+
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
 	<sql id="where">
 		<if test="menuId != null and menuId != ''">      and res.menu_id = #{menuId}     </if>
@@ -232,6 +234,7 @@
 		<if test="seqNo != null and seqNo != ''">      and res.seq_no = #{seqNo}     </if>
 		<if test="mmUserid != null and mmUserid != ''">      and res.mm_userid = #{mmUserid}     </if>
 		<if test="mmUsername != null and mmUsername != ''">      and res.mm_username = #{mmUsername}     </if>
+		<if test="ctime != null">      and date_format(res.ctime,'%Y-%m-%d') = date_format(#{ctime},'%Y-%m-%d')     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -249,7 +252,8 @@
 		oper_doc_url = #{operDocUrl},
 		seq_no = #{seqNo},
 		mm_userid = #{mmUserid},
-		mm_username = #{mmUsername}
+		mm_username = #{mmUsername},
+		ctime = #{ctime}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="menuName != null and menuName != ''"> menu_name = #{menuName},     </if>
@@ -267,6 +271,7 @@
 		<if test="seqNo != null and seqNo != ''"> seq_no = #{seqNo},     </if>
 		<if test="mmUserid != null and mmUserid != ''"> mm_userid = #{mmUserid},     </if>
 		<if test="mmUsername != null and mmUsername != ''"> mm_username = #{mmUsername},     </if>
+		<if test="ctime != null"> ctime = #{ctime},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -284,6 +289,7 @@
 			oper_doc_url = #{item.operDocUrl},
 			seq_no = #{item.seqNo},
 			mm_userid = #{item.mmUserid},
-			mm_username = #{item.mmUsername}
+			mm_username = #{item.mmUsername},
+			ctime = #{item.ctime}
 	</sql>
 </mapper>

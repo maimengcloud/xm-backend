@@ -1,17 +1,16 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
- * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProject所有属性名: <br>
- *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planInnerUserAt,planOutUserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planInnerUserPrice,planOutUserPrice,planOutUserCnt,planInnerUserCnt,planWorkingHours,taxRate,planInnerUserWorkload,planOutUserWorkload,fromTplId,budgetCtrl;<br>
+ *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planInnerUserAt,planOutUserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planInnerUserPrice,planOutUserPrice,planOutUserCnt,planInnerUserCnt,planWorkingHours,taxRate,planInnerUserWorkload,planOutUserWorkload,fromTplId,budgetCtrl,deptid,showOut;<br>
  * 表 XM.xm_project xm_project的所有字段名: <br>
- *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl;<br>
+ *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -140,6 +139,12 @@ public class XmProject  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="是否进行预算控制",allowEmptyValue=true,example="",allowableValues="")
 	String budgetCtrl;
+	
+	@ApiModelProperty(notes="部门编号",allowEmptyValue=true,example="",allowableValues="")
+	String deptid;
+	
+	@ApiModelProperty(notes="是否对外公开0否1是",allowEmptyValue=true,example="",allowableValues="")
+	String showOut;
 
 	/**项目编号**/
 	public XmProject(String id) {
@@ -390,6 +395,18 @@ public class XmProject  implements java.io.Serializable {
 	public void setBudgetCtrl(String budgetCtrl) {
 		this.budgetCtrl = budgetCtrl;
 	}
+	/**
+	 * 部门编号
+	 **/
+	public void setDeptid(String deptid) {
+		this.deptid = deptid;
+	}
+	/**
+	 * 是否对外公开0否1是
+	 **/
+	public void setShowOut(String showOut) {
+		this.showOut = showOut;
+	}
 	
 	/**
 	 * 项目编号
@@ -630,6 +647,18 @@ public class XmProject  implements java.io.Serializable {
 	 **/
 	public String getBudgetCtrl() {
 		return this.budgetCtrl;
+	}
+	/**
+	 * 部门编号
+	 **/
+	public String getDeptid() {
+		return this.deptid;
+	}
+	/**
+	 * 是否对外公开0否1是
+	 **/
+	public String getShowOut() {
+		return this.showOut;
 	}
 
 }

@@ -1,16 +1,15 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.util.Date;
 
 /**
- * 组织 com.qqkj  顶级模块 xm 大模块 core  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProduct所有属性名: <br>
- *	id,productName,branchId,remark,version,pmUserid,pmUsername,ctime;<br>
+ *	id,productName,branchId,remark,version,pmUserid,pmUsername,ctime,deptid;<br>
  * 表 XM.xm_product 产品表的所有字段名: <br>
- *	id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime;<br>
+ *	id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -43,6 +42,9 @@ public class XmProduct  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="创建日期",allowEmptyValue=true,example="",allowableValues="")
 	Date ctime;
+	
+	@ApiModelProperty(notes="归属部门",allowEmptyValue=true,example="",allowableValues="")
+	String deptid;
 
 	/**产品编号**/
 	public XmProduct(String id) {
@@ -101,6 +103,12 @@ public class XmProduct  implements java.io.Serializable {
 	public void setCtime(Date ctime) {
 		this.ctime = ctime;
 	}
+	/**
+	 * 归属部门
+	 **/
+	public void setDeptid(String deptid) {
+		this.deptid = deptid;
+	}
 	
 	/**
 	 * 产品编号
@@ -149,6 +157,12 @@ public class XmProduct  implements java.io.Serializable {
 	 **/
 	public Date getCtime() {
 		return this.ctime;
+	}
+	/**
+	 * 归属部门
+	 **/
+	public String getDeptid() {
+		return this.deptid;
 	}
 
 }

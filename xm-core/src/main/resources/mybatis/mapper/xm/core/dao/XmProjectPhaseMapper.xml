@@ -103,7 +103,7 @@
 		insert into XM.xm_project_phase(
 			<include refid="columns"/>
 		) values (
-		#{id},#{phaseName},#{remark},#{parentPhaseId},#{branchId},#{projectId},#{beginDate},#{endDate},#{phaseBudgetHours},#{phaseBudgetStaffNu},#{ctime},#{phaseBudgetNouserAt},#{phaseBudgetInnerUserAt},#{phaseBudgetOutUserAt},#{projectBaselineId},#{bizProcInstId},#{bizFlowState},#{phaseBudgetWorkload},#{phaseActWorkload},#{phaseActInnerUserWorkload},#{phaseActOutUserWorkload},#{taskType},#{planType},#{seqNo},#{phaseBudgetInnerUserWorkload},#{phaseBudgetOutUserWorkload},#{actNouserAt},#{actInnerUserAt},#{phaseBudgetInnerUserPrice},#{phaseBudgetOutUserPrice},#{phaseBudgetOutUserCnt},#{phaseBudgetInnerUserCnt},#{actRate},#{phaseStatus},#{actOutUserAt},#{taskCnt},#{finishTaskCnt},#{iterationCnt},#{calcTime},#{taskBudgetWorkload},#{taskBudgetAt},#{mngUserid},#{mngUsername}
+		#{id},#{phaseName},#{remark},#{parentPhaseId},#{branchId},#{projectId},#{beginDate},#{endDate},#{phaseBudgetHours},#{phaseBudgetStaffNu},#{ctime},#{phaseBudgetNouserAt},#{phaseBudgetInnerUserAt},#{phaseBudgetOutUserAt},#{projectBaselineId},#{bizProcInstId},#{bizFlowState},#{phaseBudgetWorkload},#{phaseActWorkload},#{phaseActInnerUserWorkload},#{phaseActOutUserWorkload},#{taskType},#{planType},#{seqNo},#{phaseBudgetInnerUserWorkload},#{phaseBudgetOutUserWorkload},#{actNouserAt},#{actInnerUserAt},#{phaseBudgetInnerUserPrice},#{phaseBudgetOutUserPrice},#{phaseBudgetOutUserCnt},#{phaseBudgetInnerUserCnt},#{actRate},#{phaseStatus},#{actOutUserAt},#{taskCnt},#{finishTaskCnt},#{iterationCnt},#{calcTime},#{taskBudgetWorkload},#{taskBudgetAt},#{mngUserid},#{mngUsername},#{milestone},#{pleaf}
 		)
 	</insert>
 	
@@ -168,7 +168,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username
+		id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -216,6 +216,8 @@
 		<if test="taskBudgetAt != null and taskBudgetAt != ''">      and res.task_budget_at = #{taskBudgetAt}     </if>
 		<if test="mngUserid != null and mngUserid != ''">      and res.mng_userid = #{mngUserid}     </if>
 		<if test="mngUsername != null and mngUsername != ''">      and res.mng_username = #{mngUsername}     </if>
+		<if test="milestone != null and milestone != ''">      and res.milestone = #{milestone}     </if>
+		<if test="pleaf != null and pleaf != ''">      and res.pleaf = #{pleaf}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -260,7 +262,9 @@
 		task_budget_workload = #{taskBudgetWorkload},
 		task_budget_at = #{taskBudgetAt},
 		mng_userid = #{mngUserid},
-		mng_username = #{mngUsername}
+		mng_username = #{mngUsername},
+		milestone = #{milestone},
+		pleaf = #{pleaf}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="phaseName != null and phaseName != ''"> phase_name = #{phaseName},     </if>
@@ -305,6 +309,8 @@
 		<if test="taskBudgetAt != null and taskBudgetAt != ''"> task_budget_at = #{taskBudgetAt},     </if>
 		<if test="mngUserid != null and mngUserid != ''"> mng_userid = #{mngUserid},     </if>
 		<if test="mngUsername != null and mngUsername != ''"> mng_username = #{mngUsername},     </if>
+		<if test="milestone != null and milestone != ''"> milestone = #{milestone},     </if>
+		<if test="pleaf != null and pleaf != ''"> pleaf = #{pleaf},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -349,6 +355,8 @@
 			task_budget_workload = #{item.taskBudgetWorkload},
 			task_budget_at = #{item.taskBudgetAt},
 			mng_userid = #{item.mngUserid},
-			mng_username = #{item.mngUsername}
+			mng_username = #{item.mngUsername},
+			milestone = #{item.milestone},
+			pleaf = #{item.pleaf}
 	</sql>
 </mapper>

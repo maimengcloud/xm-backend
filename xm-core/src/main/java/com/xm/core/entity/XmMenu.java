@@ -1,14 +1,15 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import java.util.Date;
 
 /**
- * 组织 com.qqkj  顶级模块 xm 大模块 core  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername;<br>
+ *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime;<br>
  * 表 XM.xm_menu 功能表的所有字段名: <br>
- *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username;<br>
+ *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -65,6 +66,9 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="故事管理员姓名",allowEmptyValue=true,example="",allowableValues="")
 	String mmUsername;
+	
+	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
+	Date ctime;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -171,6 +175,12 @@ public class XmMenu  implements java.io.Serializable {
 	public void setMmUsername(String mmUsername) {
 		this.mmUsername = mmUsername;
 	}
+	/**
+	 * 创建时间
+	 **/
+	public void setCtime(Date ctime) {
+		this.ctime = ctime;
+	}
 	
 	/**
 	 * 功能编号
@@ -267,6 +277,12 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public String getMmUsername() {
 		return this.mmUsername;
+	}
+	/**
+	 * 创建时间
+	 **/
+	public Date getCtime() {
+		return this.ctime;
 	}
 
 }
