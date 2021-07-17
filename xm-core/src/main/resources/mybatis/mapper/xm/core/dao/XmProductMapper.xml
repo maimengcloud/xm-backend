@@ -24,7 +24,7 @@
 				)
 			</if>
 			<if test="iterationId!=null and iterationId!=''">
-				and exists( select 1 from xm_iteration_menu im where im.product_id =res.id )
+				and exists( select 1 from xm_iteration_menu im where im.product_id =res.id and im.iteration_id=#{iterationId} )
 			</if>
 			<if test="key != null and key !='' ">   and res.product_name like #{key}    </if>
 		</where>
