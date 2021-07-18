@@ -40,6 +40,7 @@
 		select * from XM.xm_product_project_link res
 		where 
 			res.project_id = #{projectId}
+			and res.product_id = #{productId}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
@@ -47,6 +48,7 @@
 		select * from XM.xm_product_project_link res
 		where 
 			 res.project_id = #{projectId}
+			and  res.product_id = #{productId}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProductProjectLink" resultType="long">
@@ -55,8 +57,8 @@
 			<include refid="where"/>
 		</where>
 	</select>
-	<!-- 新增一条记录  主键project_id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmProductProjectLink" useGeneratedKeys="false"   keyProperty="project_id">
+	<!-- 新增一条记录  主键project_id,product_id,-->
+	<insert id="insert" parameterType="com.xm.core.entity.XmProductProjectLink" useGeneratedKeys="false"  >
 		insert into XM.xm_product_project_link(
 			<include refid="columns"/>
 		) values (
@@ -75,7 +77,7 @@
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProductProjectLink">
 		delete from XM.xm_product_project_link 
-		where project_id = #{projectId} 
+		where project_id = #{projectId} and product_id = #{productId} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
@@ -84,7 +86,7 @@
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
-		where project_id = #{projectId} 
+		where project_id = #{projectId} and product_id = #{productId} 
 	</update>
 	
 		<!-- 根据主键修改一条记录 -->
@@ -93,7 +95,7 @@
 		<set>
 			<include refid="set"/>
 		</set>
-		where project_id = #{projectId} 
+		where project_id = #{projectId} and product_id = #{productId} 
 	</update>
 
 	<!-- 批量新增  批量插入 借用insert 循环插入实现
@@ -107,17 +109,17 @@
    		update  XM.xm_product_project_link 
 		set 
 			<include refid="batchSet"/>
-			where project_id = #{item.projectId}  
+			where project_id = #{item.projectId} and product_id = #{item.productId}  
 		</foreach> 
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from XM.xm_product_project_link 
 			where
-			(project_id)
+			(project_id, product_id)
 			    in
                 <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
-                    ( #{item.projectId}
+                    ( #{item.projectId},  #{item.productId}
                     )
                 </foreach>
 	</delete>
@@ -139,14 +141,12 @@
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
-		product_id = #{productId},
 		ctime = #{ctime},
 		cuserid = #{cuserid},
 		cusername = #{cusername},
 		link_status = #{linkStatus}
 	</sql>
 	<sql id="someFieldSet">
-		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
 		<if test="ctime != null"> ctime = #{ctime},     </if>
 		<if test="cuserid != null and cuserid != ''"> cuserid = #{cuserid},     </if>
 		<if test="cusername != null and cusername != ''"> cusername = #{cusername},     </if>
@@ -154,7 +154,6 @@
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
-			product_id = #{item.productId},
 			ctime = #{item.ctime},
 			cuserid = #{item.cuserid},
 			cusername = #{item.cusername},

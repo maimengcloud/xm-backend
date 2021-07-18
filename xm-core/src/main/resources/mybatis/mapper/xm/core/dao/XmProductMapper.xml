@@ -16,15 +16,19 @@
 				    </foreach>
 			 </if>
 			<include refid="where"/>
-			<if test="projectId != null and projectId !='' ">  and exists (select 1 from XM.xm_task t left join XM.xm_menu m on t.menu_id=m.menu_id and t.project_id=#{projectId} where t.project_id=#{projectId} and m.product_id=res.id)     </if>
-			<if test="compete !=null and compete!=''">
+			<if test=" projectId !=null and projectId!=''">
+				and exists( select 1 from  XM.xm_product_project_link ppl
+					where ppl.project_id=#{projectId}  and ppl.product_id=res.id
+				)
+			</if>
+			<if test="iterationId!=null and iterationId!=''">
+				and exists( select 1 from xm_iteration_product_link ipl where ipl.product_id =res.id and ipl.iteration_id=#{iterationId} )
+			</if>
+			 <if test="compete !=null and compete!=''">
 				and ( exists ( select 1 from xm_project_group_user gu inner join XM.xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
 				or res.pm_userid=#{compete}
 				or exists ( select 1 from xm_menu m where m.mm_userid=#{compete} and m.product_id=res.id)
 				)
-			</if>
-			<if test="iterationId!=null and iterationId!=''">
-				and exists( select 1 from xm_iteration_menu im where im.product_id =res.id and im.iteration_id=#{iterationId} )
 			</if>
 			<if test="key != null and key !='' ">   and res.product_name like #{key}    </if>
 		</where>
@@ -46,8 +50,12 @@
 			 </if>
 			<include refid="where"/>
 			<if test="key != null and key !='' ">   and res.product_name like #{key}    </if>
-			<if test="projectId != null and projectId !='' ">  and exists (select 1 from XM.xm_task t left join XM.xm_menu m on t.menu_id=m.menu_id and t.project_id=#{projectId} where t.project_id=#{projectId} and m.product_id=res.id)     </if>
- 			<if test="compete !=null and compete!=''">
+			<if test=" projectId !=null and projectId!=''">
+				and exists( select 1 from  XM.xm_product_project_link ppl
+				where ppl.project_id=#{projectId}  and ppl.product_id=res.id
+				)
+			</if>
+			<if test="compete !=null and compete!=''">
 				and ( exists ( select 1 from xm_project_group_user gu inner join XM.xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
 				    	or res.pm_userid=#{compete}
 						or exists ( select 1 from xm_menu m where m.mm_userid=#{compete} and m.product_id=res.id)
