@@ -74,7 +74,7 @@ public class XmIterationProductLinkController {
 	
  
 	
-	/**
+
 	@ApiOperation( value = "新增一条迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmIterationProductLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -95,7 +95,7 @@ public class XmIterationProductLinkController {
 			}
 			if(createPk==false){
                  if(xmIterationProductLinkService.selectOneObject(xmIterationProductLink) !=null ){
-                    tips.setFailureMsg("编号重复，请修改编号再提交");
+                    tips.setFailureMsg("该产品已经在迭代中，无需再添加");
                     m.put("tips", tips);
                     return m;
                 }
@@ -112,9 +112,7 @@ public class XmIterationProductLinkController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
-	
-	/**
+
 	@ApiOperation( value = "删除一条迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -135,7 +133,6 @@ public class XmIterationProductLinkController {
 		m.put("tips", tips);
 		return m;
 	}
-	 */
 	
 	/**
 	@ApiOperation( value = "根据主键修改一条迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息",notes=" ")

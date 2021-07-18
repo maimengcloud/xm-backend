@@ -73,8 +73,7 @@ public class XmProductProjectLinkController {
 	}
 	
  
-	
-	/**
+
 	@ApiOperation( value = "新增一条产品与项目的关联关系表，一般由产品经理挂接项目到产品上信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProductProjectLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -108,9 +107,7 @@ public class XmProductProjectLinkController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
-	
-	/**
+
 	@ApiOperation( value = "删除一条产品与项目的关联关系表，一般由产品经理挂接项目到产品上信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -131,7 +128,6 @@ public class XmProductProjectLinkController {
 		m.put("tips", tips);
 		return m;
 	}
-	 */
 	
 	/**
 	@ApiOperation( value = "根据主键修改一条产品与项目的关联关系表，一般由产品经理挂接项目到产品上信息",notes=" ")
