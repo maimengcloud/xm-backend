@@ -14,7 +14,8 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_product_project_link res
+		select res.*,prd.product_name,prj.name from XM.xm_product_project_link res
+		inner join xm_product prd on prd.id=res.product_id inner join xm_project prj on prj.id=res.project_id
 		<where> 
 			<if test="ids != null">  and     
 				project_id in
