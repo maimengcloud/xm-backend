@@ -14,7 +14,14 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_iteration_product_link res
+		SELECT
+			res.*,
+			i.iteration_name,
+			pro.product_name
+		FROM
+		XM.xm_iteration_product_link res
+		INNER JOIN xm_iteration i ON res.iteration_id = i.id
+		INNER JOIN xm_product pro ON res.product_id = pro.id
 		<where> 
 			<if test="ids != null">  and     
 				iteration_id in
