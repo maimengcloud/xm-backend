@@ -6,9 +6,7 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.XmProject;
-import com.xm.core.entity.XmProjectGroup;
-import com.xm.core.entity.XmProjectGroupUser;
+import com.xm.core.entity.*;
 import com.xm.core.service.cache.XmProjectGroupCacheService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmProjectGroupVo;
@@ -42,7 +40,12 @@ public class XmProjectGroupService extends BaseService {
     
     @Autowired
     XmProjectGroupCacheService groupCacheService;
-    
+
+	@Autowired
+    XmIterationProductLinkService xmIterationProductLinkService;
+
+	@Autowired
+	XmProductProjectLinkService xmProductProjectLinkService;
 
 	@Autowired
 	private XmProjectService xmProjectService;
@@ -685,6 +688,42 @@ public class XmProjectGroupService extends BaseService {
 	}
   	return false;
   }
-	
+
+
+	public List<XmProjectGroupVo> getProjectGroupVoListByIterationId(String iterationId) {
+
+		List<XmProductProjectLink> list=this.xmProductProjectLinkService.selectListByIterationId(iterationId);
+		List<XmProjectGroupVo> datas=new ArrayList<>();
+		if(list!=null && list.size()>0){
+			for (XmProductProjectLink productProjectLink : list) {
+				List<XmProjectGroupVo> data0=this.getProjectGroupVoList(productProjectLink.getProjectId());
+				if(data0!=null && data0.size()>0){
+					datas.addAll(data0);
+				}
+			}
+		}
+		return datas;
+	}
+
+	/**
+	 * 根据产品编号查询团队
+	 * @param productId
+	 * @return
+	 */
+	public List<XmProjectGroupVo> getProjectGroupVoListByProductId(String productId) {
+		XmProductProjectLink xmProductProjectLink=new XmProductProjectLink();
+		xmProductProjectLink.setProductId(productId);
+		List<XmProductProjectLink> list=this.xmProductProjectLinkService.selectListByWhere(xmProductProjectLink);
+		List<XmProjectGroupVo> datas=new ArrayList<>();
+		if(list!=null && list.size()>0){
+			for (XmProductProjectLink productProjectLink : list) {
+				List<XmProjectGroupVo> data0=this.getProjectGroupVoList(productProjectLink.getProjectId());
+				if(data0!=null && data0.size()>0){
+					datas.addAll(data0);
+				}
+			}
+		}
+		return datas;
+	}
 }
 

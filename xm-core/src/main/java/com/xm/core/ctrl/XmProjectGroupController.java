@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -98,7 +99,18 @@ public class XmProjectGroupController {
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(params, "ids");
 		PageUtils.startPage(params);
-		List<XmProjectGroupVo>	xmProjectGroupList = xmProjectGroupService.getProjectGroupVoList((String) params.get("projectId"));	//列出XmProjectGroup列表
+		List<XmProjectGroupVo>	xmProjectGroupList=new ArrayList<>();
+		String iterationId= (String) params.get("iterationId");
+		String projectId= (String) params.get("projectId");
+		String productId= (String) params.get("productId");
+		if(StringUtils.hasText(projectId)){
+			xmProjectGroupList = xmProjectGroupService.getProjectGroupVoList(projectId);	//列出XmProjectGroup列表
+		}else if(StringUtils.hasText(iterationId)){
+			xmProjectGroupList = xmProjectGroupService.getProjectGroupVoListByIterationId(iterationId );	//列出XmProjectGroup列表
+		} if(StringUtils.hasText(productId)){
+			xmProjectGroupList = xmProjectGroupService.getProjectGroupVoListByProductId( productId);	//列出XmProjectGroup列表
+		}
+
 		PageUtils.responePage(m, xmProjectGroupList);
 		m.put("data",xmProjectGroupList);
 		Tips tips=new Tips("查询成功");

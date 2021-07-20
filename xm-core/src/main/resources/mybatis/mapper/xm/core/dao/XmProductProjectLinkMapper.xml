@@ -5,8 +5,11 @@
 	
 	<!--开始 自定sql函数区域 -->
 		<!--请在此区域添加自定义函数-->
-		
-		
+
+	<select id="selectListByIterationId" parameterType="String" resultType="com.xm.core.entity.XmProductProjectLink">
+		select * from XM.xm_product_project_link res
+		where exists (select 1 from XM.xm_iteration_product_link ipl where ipl.iteration_id=#{iterationId} and ipl.product_id=res.product_id)
+	</select>
 		
 	<!--结束 自定义sql函数区域-->
 	

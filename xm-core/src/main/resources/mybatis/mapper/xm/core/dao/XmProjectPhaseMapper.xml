@@ -65,11 +65,15 @@
 				    </foreach>  
 			 </if>
 			<include refid="where"/>
+			<if test='iterationId!=null and iterationId!="" '>
+				and exists( select 1 from xm_task t inner join xm_iteration_menu im on t.menu_id=im.menu_id where t.project_phase_id=res.id and im.iteration_id=#{iterationId})
+			</if>
+			<if test='productId!=null and productId!="" '>
+				and exists( select 1 from xm_task t where t.product_id=#{productId})
+			</if>
 			<if test="key != null and key !='' ">       </if> 
 		</where>
-		<if test='iterationId!=null and iterationId!="" '>
-			and exists( select 1 from xm_task t inner join xm_iteration_menu im on t.menu_id=im.menu_id where t.project_phase_id=res.id and im.iteration_id=#{iterationId})
-		</if>
+
 		order by res.seq_no asc
 	</select>
 	

@@ -15,7 +15,10 @@ import com.xm.core.entity.XmProductProjectLink;
 @Service("xm.core.xmProductProjectLinkService")
 public class XmProductProjectLinkService extends BaseService {
 	static Logger logger =LoggerFactory.getLogger(XmProductProjectLinkService.class);
-	/** 请在此类添加自定义函数 */
 
+	List<XmProductProjectLink> selectListByIterationId(String iterationId){
+		List<XmProductProjectLink> data=super.selectList("selectListByIterationId",iterationId);
+		return data;
+	}
 }
 
