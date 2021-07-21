@@ -107,7 +107,7 @@ public class XmProjectGroupController {
 			xmProjectGroupList = xmProjectGroupService.getProjectGroupVoList(projectId);	//列出XmProjectGroup列表
 		}else if(StringUtils.hasText(iterationId)){
 			xmProjectGroupList = xmProjectGroupService.getProjectGroupVoListByIterationId(iterationId );	//列出XmProjectGroup列表
-		} if(StringUtils.hasText(productId)){
+		}else  if(StringUtils.hasText(productId)){
 			xmProjectGroupList = xmProjectGroupService.getProjectGroupVoListByProductId( productId);	//列出XmProjectGroup列表
 		}
 
