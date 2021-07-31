@@ -42,7 +42,7 @@
 			</if>
 
 			<if test=' projectId !=null and projectId!="" and ( taskFilterType==null or taskFilterType=="" )'>
-				and  exists ( select 1 from XM.xm_task t where t.menu_id =res.id and t.project_id=#{projectId})
+				and  exists ( select 1 from XM.xm_task t where t.menu_id =res.menu_id and t.project_id=#{projectId})
 			</if>
 			 <if test="compete !=null and compete!=''">
 				and (   exists ( select 1 from XM.xm_menu m1 where m.mm_userid=#{compete} and m.product_id=res.product_id)
@@ -63,7 +63,6 @@
 				    </foreach>
 			 </if>
 			<include refid="where"/>
-			<if test=" projectId !=null and projectId !='' "> and plan.project_id=#{projectId}</if>
 			<if test=' iterationFilterType=="join" '>
 				and exists ( select 1 from XM.xm_iteration_menu im where im.menu_id=res.menu_id
 				<if test="iterationId!=null"> and im.iteration_id=#{iterationId}</if>
@@ -77,6 +76,9 @@
 				exists ( select 1 from XM.xm_task t where  t.menu_id=res.menu_id)
 			</if>
 
+			<if test=' projectId !=null and projectId!="" and ( taskFilterType==null or taskFilterType=="" )'>
+				and  exists ( select 1 from XM.xm_task t where t.menu_id =res.menu_id and t.project_id=#{projectId})
+			</if>
 			<if test="compete !=null and compete!=''">
 				and (   exists ( select 1 from XM.xm_menu m1 where m.mm_userid=#{compete} and m.product_id=res.product_id)
 				or exists ( select 1 from xm_product p where p.pm_userid=#{compete} and res.product_id=p.id)

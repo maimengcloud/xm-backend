@@ -364,53 +364,7 @@ public class XmProjectGroupService extends BaseService {
         		});
 
 
-				if(delGroups.size()>0) {
-					delGroups.forEach(g->{
 
-						XmProjectGroupUser UserDel = new XmProjectGroupUser();
-						UserDel.setGroupId(g.getId());
-						xmProjectGroupUserService.delete("deleteByGroupId",UserDel);
-						XmProjectGroup delGroup=new XmProjectGroup();
-						delGroup.setId(g.getId());
-						this.deleteByPk(delGroup);
-						pushMsgService.pushChannelGroupRemoveMsg(user.getBranchId(), g.getId());
-						xmRecordService.addXmGroupRecord(projectId, g.getId(),"项目-团队-删除小组", "删除小组["+g.getGroupName()+"]",g.getId(),null);
-					});
-
-				}
-
-				if(xmProjectGroupVoAdd.size()>0) {
-					xmProjectGroupVoAdd.forEach(gvo -> {
-						gvo.setId(xmProjectGroupService.createKey("id"));
-						gvo.setProjectId(projectId);
-						XmProjectGroup g = new XmProjectGroup();
-						BeanUtils.copyProperties(gvo,g);
-						xmProjectGroupService.insert(g);
-						List<XmProjectGroupUser> guser = gvo.getGroupUsers();
-						List<String> addGroupUsernames=new ArrayList<>();
-						List<Map<String,Object>> users=new ArrayList<>();
-						if(guser != null && guser.size() > 0) {
-							guser.forEach(u -> {
-								Map<String,Object> userMap=new HashMap<>();
-								userMap.put("userid", u.getUserid());
-								userMap.put("username", u.getUsername());
-								users.add(userMap);
-								u.setId(xmProjectGroupUserService.createKey("id"));
-								u.setGroupId(gvo.getId());
-								u.setProjectId(projectId);
-								u.setJoinTime(new Date());
-								u.setStatus("0");
-								addGroupUsernames.add(u.getUsername());
-								xmProjectGroupUserService.insert(u);
-								allUsersFromUi.add(u);
-							});
-						}
-						pushMsgService.pushChannelGroupCreateMsg(user.getBranchId(),g.getProjectId(),g.getId(), g.getId(), g.getGroupName(), user.getUserid(), user.getUsername(), users,"新增小组["+gvo.getGroupName()+"]及以下组员："+StringUtils.arrayToDelimitedString(addGroupUsernames.toArray(), ","));
-
-						xmRecordService.addXmGroupRecord(projectId, gvo.getId(),"项目-团队-新增小组", "新增小组["+gvo.getGroupName()+"]及以下组员："+StringUtils.arrayToDelimitedString(addGroupUsernames.toArray(), ","),JSON.toJSONString(gvo),null);
-
-					});
-				}
 
         		if(allUsersAdd.size()>0) {
         			xmProjectGroupUserService.batchInsert(allUsersAdd); 
@@ -452,7 +406,54 @@ public class XmProjectGroupService extends BaseService {
         		} 
         		
         	}
-        } 
+        }
+
+		if(delGroups.size()>0) {
+			delGroups.forEach(g->{
+
+				XmProjectGroupUser UserDel = new XmProjectGroupUser();
+				UserDel.setGroupId(g.getId());
+				xmProjectGroupUserService.delete("deleteByGroupId",UserDel);
+				XmProjectGroup delGroup=new XmProjectGroup();
+				delGroup.setId(g.getId());
+				this.deleteByPk(delGroup);
+				pushMsgService.pushChannelGroupRemoveMsg(user.getBranchId(), g.getId());
+				xmRecordService.addXmGroupRecord(projectId, g.getId(),"项目-团队-删除小组", "删除小组["+g.getGroupName()+"]",g.getId(),null);
+			});
+
+		}
+		if(xmProjectGroupVoAdd.size()>0) {
+			xmProjectGroupVoAdd.forEach(gvo -> {
+				gvo.setId(xmProjectGroupService.createKey("id"));
+				gvo.setProjectId(projectId);
+				XmProjectGroup g = new XmProjectGroup();
+				BeanUtils.copyProperties(gvo,g);
+				xmProjectGroupService.insert(g);
+				List<XmProjectGroupUser> guser = gvo.getGroupUsers();
+				List<String> addGroupUsernames=new ArrayList<>();
+				List<Map<String,Object>> users=new ArrayList<>();
+				if(guser != null && guser.size() > 0) {
+					guser.forEach(u -> {
+						Map<String,Object> userMap=new HashMap<>();
+						userMap.put("userid", u.getUserid());
+						userMap.put("username", u.getUsername());
+						users.add(userMap);
+						u.setId(xmProjectGroupUserService.createKey("id"));
+						u.setGroupId(gvo.getId());
+						u.setProjectId(projectId);
+						u.setJoinTime(new Date());
+						u.setStatus("0");
+						addGroupUsernames.add(u.getUsername());
+						xmProjectGroupUserService.insert(u);
+						allUsersFromUi.add(u);
+					});
+				}
+				pushMsgService.pushChannelGroupCreateMsg(user.getBranchId(),g.getProjectId(),g.getId(), g.getId(), g.getGroupName(), user.getUserid(), user.getUsername(), users,"新增小组["+gvo.getGroupName()+"]及以下组员："+StringUtils.arrayToDelimitedString(addGroupUsernames.toArray(), ","));
+
+				xmRecordService.addXmGroupRecord(projectId, gvo.getId(),"项目-团队-新增小组", "新增小组["+gvo.getGroupName()+"]及以下组员："+StringUtils.arrayToDelimitedString(addGroupUsernames.toArray(), ","),JSON.toJSONString(gvo),null);
+
+			});
+		}
 		groupCacheService.putGroups(projectId, null);
 
         Tips tips=new Tips("全部更新成功");

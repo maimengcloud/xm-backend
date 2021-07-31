@@ -73,6 +73,11 @@ public class XmProjectGroupController {
 			return m;
 		}
 		String projectId = xmProjectGroupVo.get(0).getProjectId();
+		if(!StringUtils.hasText(projectId)){
+			tips.setFailureMsg("项目编号projectId不能为空");
+			m.put("tips", tips);
+			return m;
+		}
 		tips= xmProjectGroupService.updateGroup(projectId,xmProjectGroupVo);	//列出XmProjectGroup列表
 		//m.put("data",xmProjectGroupVo);
 		m.put("tips", tips);
