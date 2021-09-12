@@ -11,7 +11,7 @@
 	<insert id="insertProcessApprova"
 		parameterType="HashMap"
 		useGeneratedKeys="false" keyProperty="id">
-		insert into XM.xm_project_m_cost_user_process_approva (
+		insert into xm_project_m_cost_user_process_approva (
 		 id,cost_id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
 		) values (
 			#{id},#{costId},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
@@ -21,7 +21,7 @@
 		<!-- 同时修改业务表及流程审批表数据状态 -->
 	<update id="updateProcessApprova"
 		parameterType="HashMap">
-		update XM.xm_project_m_cost_user  b ,XM.xm_project_m_cost_user_process_approva pa 
+		update xm_project_m_cost_user  b ,XM.xm_project_m_cost_user_process_approva pa
 			<set>
 				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
 				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
@@ -41,25 +41,25 @@
 	
 	<update id="updateFlowStateByProcInstForDeleteSuccess"
 		parameterType="HashMap">
-		update XM.xm_project_m_cost_user_process_approva pa set pa.flow_state='2'
+		update xm_project_m_cost_user_process_approva pa set pa.flow_state='2'
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
 	</update>	
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByProcInstId" parameterType="HashMap">
-		delete from XM.xm_project_m_cost_user 
+		delete from xm_project_m_cost_user
 		 where biz_proc_inst_id=#{procInstId}
 	</delete>
 	
 	<update id="updateExecuserStatusByExecuserProcInstId"
 		parameterType="HashMap">
-		update XM.xm_project_m_cost_user pa set pa.execuser_status=#{execuserStatus}
+		update xm_project_m_cost_user pa set pa.execuser_status=#{execuserStatus}
 		where pa.execuser_proc_inst_id = #{execuserProcInstId} 
 	</update>	
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByExecuserProcInstId" parameterType="HashMap">
-		delete from XM.xm_project_m_cost_user 
+		delete from xm_project_m_cost_user
 		 where execuser_proc_inst_id=#{execuserProcInstId}
 	</delete>
 		<!-- 查询人力的总支出及对应的项目的总预算，人力总支出不能大于项目人力总预算 -->
@@ -83,7 +83,7 @@
 			p.plan_working_hours 
 		FROM
 			XM.xm_project p 
-			LEFT JOIN XM.xm_project_m_cost_user res ON p.id = res.project_id 
+			LEFT JOIN xm_project_m_cost_user res ON p.id = res.project_id
 		<where>
 			p.id = #{projectId}
 			  <if test=" excludeIds !=null "> and res.id not in
@@ -96,7 +96,7 @@
 	
 			<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="listSum" parameterType="HashMap" resultType="HashMap">
-		select res.project_id,res.userid,max(res.username) as username,subject_id,max(subject_name) as subject_name,biz_month,sum(res.act_cost_amount) as act_cost_amount from  XM.xm_project_m_cost_user res
+		select res.project_id,res.userid,max(res.username) as username,subject_id,max(subject_name) as subject_name,biz_month,sum(res.act_cost_amount) as act_cost_amount from  xm_project_m_cost_user res
 		<where> 
 			 and res.project_id=#{projectId} 
 			 <if test="subjectId != null and subjectId !='' ">     and res.subject_id =#{subjectId} </if> 
@@ -113,7 +113,7 @@
 			sum( res.act_cost_amount ) AS act_cost_amount,
 			max( t.budget_cost ) AS task_budget_cost,
 			max( t.project_name ) AS project_name
-		FROM XM.xm_task t
+		FROM xm_task t
 		LEFT JOIN
 			XM.xm_project_m_cost_user res ON res.task_id = t.id AND res.project_id = t.project_id
 		<where> 
@@ -134,7 +134,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from XM.xm_project_m_cost_user res   left join  XM.xm_project_m_cost_user_process_approva pa on res.id=pa.cost_id and res.biz_proc_inst_id=pa.proc_inst_id 
+		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from xm_project_m_cost_user res   left join  xm_project_m_cost_user_process_approva pa on res.id=pa.cost_id and res.biz_proc_inst_id=pa.proc_inst_id
 		
 		<where> 
 			<if test="ids != null">  and     
@@ -150,7 +150,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProjectMCostUser" resultType="com.xm.core.entity.XmProjectMCostUser">
-		select * from XM.xm_project_m_cost_user res
+		select * from xm_project_m_cost_user res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -158,27 +158,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProjectMCostUser" resultType="com.xm.core.entity.XmProjectMCostUser">
-		select * from XM.xm_project_m_cost_user res
+		select * from xm_project_m_cost_user res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_project_m_cost_user res
+		select * from xm_project_m_cost_user res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProjectMCostUser" resultType="long">
-		select count(1) from XM.xm_project_m_cost_user res
+		select count(1) from xm_project_m_cost_user res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmProjectMCostUser" useGeneratedKeys="false" keyProperty="id">
-		insert into XM.xm_project_m_cost_user(
+		insert into xm_project_m_cost_user(
 			<include refid="columns"/>
 		) values (
 		#{subjectId},#{projectId},#{userid},#{createTime},#{sendCostTime},#{username},#{projectName},#{remark},#{id},#{taskId},#{taskName},#{actWorkload},#{bizzStartDate},#{bizzEndDate},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{actCostAmount},#{costType},#{bizMonth},#{bizDate},#{subjectName},#{projectPhaseName},#{execuserProcInstId},#{execuserStatus},#{payStatus},#{payOpUserid},#{payOpUsername}
@@ -187,7 +187,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProjectMCostUser">
-		delete from XM.xm_project_m_cost_user res
+		delete from xm_project_m_cost_user res
 		<where>  
 			<include refid="where"/>
 		</where>
@@ -195,13 +195,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProjectMCostUser">
-		delete from XM.xm_project_m_cost_user 
+		delete from xm_project_m_cost_user
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProjectMCostUser">
-		update  XM.xm_project_m_cost_user 
+		update  xm_project_m_cost_user
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -210,7 +210,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProjectMCostUser">
-		update  XM.xm_project_m_cost_user 
+		update  xm_project_m_cost_user
 		<set>
 			<include refid="set"/>
 		</set>
@@ -225,7 +225,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_project_m_cost_user 
+   		update  xm_project_m_cost_user
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -233,7 +233,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_project_m_cost_user 
+		delete from xm_project_m_cost_user
 			where id in
 			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
 			        #{item.id }  

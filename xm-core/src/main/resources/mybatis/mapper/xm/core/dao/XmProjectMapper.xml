@@ -10,7 +10,7 @@
 	<insert id="insertProcessApprova"
 		parameterType="HashMap"
 		useGeneratedKeys="false" keyProperty="id">
-		insert into XM.xm_project_process_approva (
+		insert into xm_project_process_approva (
 		 id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
 		) values (
 			#{id},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
@@ -20,7 +20,7 @@
 		<!-- 同时修改业务表及流程审批表数据状态 -->
 	<update id="updateProcessApprova"
 		parameterType="HashMap">
-		update XM.xm_project  b ,XM.xm_project_process_approva pa
+		update xm_project  b ,XM.xm_project_process_approva pa
 			<set>
 				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
 				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
@@ -40,13 +40,13 @@
 
 	<update id="updateFlowStateByProcInstForDeleteSuccess"
 		parameterType="HashMap">
-		update XM.xm_project_process_approva pa set pa.flow_state='2'
+		update xm_project_process_approva pa set pa.flow_state='2'
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
 	</update>
 
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByProcInstId" parameterType="HashMap">
-		delete from XM.xm_project
+		delete from xm_project
 		 where biz_proc_inst_id=#{procInstId}
 	</delete>
 
@@ -63,9 +63,9 @@
 		       s.total_progress,s.total_active_bug_cnt,s.total_confirmed_bug_cnt,s.project_status,s.total_act_workload,s.total_act_out_workload,s.total_act_inner_workload,
 		       s.total_task_budget_cost_at,s.total_task_out_cnt,s.total_need_pay_cnt,s.total_finish_pay_cnt,s.total_finish_pay_user_cnt,s.total_need_pay_user_cnt,s.total_plan_inner_user_workload,
 		       s.total_plan_out_user_workload,s.test_cases,s.exec_cases,s.design_cases,s.finish_cases,s.iteration_cnt,s.product_cnt,s.menu_cnt,
-		pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from XM.xm_project res
-		 left join XM.xm_project_state s on s.project_id=res.id
-		 left join  XM.xm_project_process_approva pa on res.id=pa.project_id and res.biz_proc_inst_id=pa.proc_inst_id
+		pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from xm_project res
+		 left join xm_project_state s on s.project_id=res.id
+		 left join  xm_project_process_approva pa on res.id=pa.project_id and res.biz_proc_inst_id=pa.proc_inst_id
 
 		<where> 
 			<if test="ids != null">  and     
@@ -89,14 +89,14 @@
 			</if>
 			<!-- 我参与的  包括我创建的，我监控的，我审核的-->
 			<if test=" compete !=null and compete !='' ">
-				and (    exists ( select 1 from XM.xm_project_group g,XM.xm_project_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id )
+				and (    exists ( select 1 from xm_project_group g,XM.xm_project_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id )
 					 or  res.create_userid=#{compete}
-					 or  exists ( select 1 from XM.xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{compete} )
+					 or  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{compete} )
 					)
 			</if>
 			<!-- 按参与角色查询等-->
 			<if test="pgTypeIds != null ">
-				and  exists ( select 1 from XM.xm_project_group g,XM.xm_project_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id
+				and  exists ( select 1 from xm_project_group g,XM.xm_project_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id
 								and   g.pg_type_id in
 							    <foreach collection="pgTypeIds" item="item" index="index" open="(" separator="," close=")" >
 							        #{item}
@@ -105,7 +105,7 @@
 			</if>
 
 			<if test=" myExecuserStatus != null and myExecuserStatus != ''">
-				and  exists ( select 1 from XM.xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{userid}
+				and  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{userid}
 					<if test=' myExecuserStatus != "all" '>
 					and exe.status=#{myExecuserStatus}
 					</if>
@@ -113,10 +113,10 @@
 			</if>
 
 			<if test="myFocus != null and myFocus != ''">
-				and exists ( select 1 from XM.xm_my_focus f where f.userid=#{userid} and f.project_id=res.id  )
+				and exists ( select 1 from xm_my_focus f where f.userid=#{userid} and f.project_id=res.id  )
 			</if>
 			<if test=" productId !=null and productId!='' ">
-				and exists( select 1 from  XM.xm_product_project_link ppl
+				and exists( select 1 from  xm_product_project_link ppl
 				where ppl.product_id=#{productId}  and ppl.project_id=res.id
 				)
 			</if>
@@ -132,7 +132,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProject" resultType="com.xm.core.entity.XmProject">
-		select * from XM.xm_project res
+		select * from xm_project res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -140,27 +140,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProject" resultType="com.xm.core.entity.XmProject">
-		select * from XM.xm_project res
+		select * from xm_project res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_project res
+		select * from xm_project res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProject" resultType="long">
-		select count(1) from XM.xm_project res
+		select count(1) from xm_project res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmProject" useGeneratedKeys="false"   keyProperty="id">
-		insert into XM.xm_project(
+		insert into xm_project(
 			<include refid="columns"/>
 		) values (
 		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planInnerUserAt},#{planOutUserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planInnerUserPrice},#{planOutUserPrice},#{planOutUserCnt},#{planInnerUserCnt},#{planWorkingHours},#{taxRate},#{planInnerUserWorkload},#{planOutUserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut}
@@ -169,7 +169,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProject">
-		delete from XM.xm_project
+		delete from xm_project
 		<where>  
 			1=2
 		</where>
@@ -177,13 +177,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProject">
-		delete from XM.xm_project 
+		delete from xm_project
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProject">
-		update  XM.xm_project 
+		update  xm_project
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -192,7 +192,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProject">
-		update  XM.xm_project 
+		update  xm_project
 		<set>
 			<include refid="set"/>
 		</set>
@@ -207,7 +207,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_project 
+   		update  xm_project
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -215,7 +215,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_project 
+		delete from xm_project
 			where
 			(id)
 			    in

@@ -14,7 +14,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_project_state_his res
+		select * from xm_project_state_his res
 		<where> 
 			<if test="ids != null">  and     
 				id in
@@ -29,7 +29,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProjectStateHis" resultType="com.xm.core.entity.XmProjectStateHis">
-		select * from XM.xm_project_state_his res
+		select * from xm_project_state_his res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -37,27 +37,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProjectStateHis" resultType="com.xm.core.entity.XmProjectStateHis">
-		select * from XM.xm_project_state_his res
+		select * from xm_project_state_his res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_project_state_his res
+		select * from xm_project_state_his res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProjectStateHis" resultType="long">
-		select count(1) from XM.xm_project_state_his res
+		select count(1) from xm_project_state_his res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmProjectStateHis" useGeneratedKeys="false" keyProperty="id">
-		insert into XM.xm_project_state_his(
+		insert into xm_project_state_his(
 			<include refid="columns"/>
 		) values (
 		#{projectId},#{bizDate},#{totalFileCnt},#{totalBugCnt},#{totalTaskCnt},#{totalBudgetNouserAmount},#{projectName},#{id},#{totalStaffCnt},#{calcTime},#{calcStatus},#{totalCostNouserAmount},#{totalClosedBugCnt},#{totalResolvedBugCnt},#{totalCompleteTaskCnt},#{totalPhaseCnt},#{totalCompletePhaseCnt},#{totalNeedPayAmount},#{totalFinishPayAmount},#{totalNeedColAmount},#{totalFinishColAmount},#{totalCostUserAmount},#{totalBudgetInnerUserAmount},#{totalPlanWorkload},#{totalRiskCnt},#{totalCompleteRiskCnt},#{branchId},#{branchName},#{totalBudgetOutUserAmount},#{totalCompleteWorkload},#{totalCostInnerUserAmount},#{totalCostOutUserAmount},#{totalProgress},#{totalActiveBugCnt},#{totalConfirmedBugCnt},#{projectStatus},#{totalActWorkload},#{totalActOutWorkload},#{totalActInnerWorkload},#{totalTaskBudgetCostAt},#{totalTaskOutCnt},#{totalNeedPayCnt},#{totalFinishPayCnt},#{totalFinishPayUserCnt},#{totalNeedPayUserCnt},#{totalPlanInnerUserWorkload},#{totalPlanOutUserWorkload},#{testCases},#{execCases},#{designCases},#{finishCases},#{iterationCnt},#{productCnt},#{menuCnt}
@@ -66,7 +66,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProjectStateHis">
-		delete from XM.xm_project_state_his res
+		delete from xm_project_state_his res
 		<where>  
 			<include refid="where"/>
 		</where>
@@ -74,13 +74,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProjectStateHis">
-		delete from XM.xm_project_state_his 
+		delete from xm_project_state_his
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProjectStateHis">
-		update  XM.xm_project_state_his 
+		update  xm_project_state_his
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -89,7 +89,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProjectStateHis">
-		update  XM.xm_project_state_his 
+		update  xm_project_state_his
 		<set>
 			<include refid="set"/>
 		</set>
@@ -104,7 +104,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_project_state_his 
+   		update  xm_project_state_his
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -112,7 +112,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_project_state_his 
+		delete from xm_project_state_his
 			where id in
 			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
 			        #{item.id }  

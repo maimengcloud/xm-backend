@@ -7,7 +7,7 @@
 		<!--请在此区域添加自定义函数-->
 		
 	<select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
-		select res.*,s.* from XM.xm_product res left join XM.xm_product_state s on res.id=s.product_id
+		select res.*,s.* from xm_product res left join xm_product_state s on res.id=s.product_id
 		<where>
 			<if test="ids != null">  and
 				id in
@@ -17,7 +17,7 @@
 			 </if>
 			<include refid="where"/>
 			<if test=" projectId !=null and projectId!=''">
-				and exists( select 1 from  XM.xm_product_project_link ppl
+				and exists( select 1 from  xm_product_project_link ppl
 					where ppl.project_id=#{projectId}  and ppl.product_id=res.id
 				)
 			</if>
@@ -25,7 +25,7 @@
 				and exists( select 1 from xm_iteration_product_link ipl where ipl.product_id =res.id and ipl.iteration_id=#{iterationId} )
 			</if>
 			 <if test="compete !=null and compete!=''">
-				and ( exists ( select 1 from xm_project_group_user gu inner join XM.xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
+				and ( exists ( select 1 from xm_project_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
 				or res.pm_userid=#{compete}
 				or exists ( select 1 from xm_menu m where m.mm_userid=#{compete} and m.product_id=res.id)
 				)
@@ -40,7 +40,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_product res
+		select * from xm_product res
 		<where> 
 			<if test="ids != null">  and     
 				id in
@@ -51,12 +51,12 @@
 			<include refid="where"/>
 			<if test="key != null and key !='' ">   and res.product_name like #{key}    </if>
 			<if test=" projectId !=null and projectId!=''">
-				and exists( select 1 from  XM.xm_product_project_link ppl
+				and exists( select 1 from  xm_product_project_link ppl
 				where ppl.project_id=#{projectId}  and ppl.product_id=res.id
 				)
 			</if>
 			<if test="compete !=null and compete!=''">
-				and ( exists ( select 1 from xm_project_group_user gu inner join XM.xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
+				and ( exists ( select 1 from xm_project_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
 				    	or res.pm_userid=#{compete}
 						or exists ( select 1 from xm_menu m where m.mm_userid=#{compete} and m.product_id=res.id)
 					)
@@ -66,7 +66,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProduct" resultType="com.xm.core.entity.XmProduct">
-		select * from XM.xm_product res
+		select * from xm_product res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -74,27 +74,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProduct" resultType="com.xm.core.entity.XmProduct">
-		select * from XM.xm_product res
+		select * from xm_product res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_product res
+		select * from xm_product res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProduct" resultType="long">
-		select count(1) from XM.xm_product res
+		select count(1) from xm_product res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmProduct" useGeneratedKeys="false"   keyProperty="id">
-		insert into XM.xm_product(
+		insert into xm_product(
 			<include refid="columns"/>
 		) values (
 		#{id},#{productName},#{branchId},#{remark},#{version},#{pmUserid},#{pmUsername},#{ctime},#{deptid}
@@ -103,7 +103,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProduct">
-		delete from XM.xm_product
+		delete from xm_product
 		<where>  
 			1=2
 		</where>
@@ -111,13 +111,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProduct">
-		delete from XM.xm_product 
+		delete from xm_product
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProduct">
-		update  XM.xm_product 
+		update  xm_product
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -126,7 +126,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProduct">
-		update  XM.xm_product 
+		update  xm_product
 		<set>
 			<include refid="set"/>
 		</set>
@@ -141,7 +141,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_product 
+   		update  xm_product
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -149,7 +149,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_product 
+		delete from xm_product
 			where
 			(id)
 			    in

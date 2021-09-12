@@ -14,7 +14,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_my_focus res
+		select * from xm_my_focus res
 		<where> 
 			<if test="ids != null">  and     
 				id in
@@ -29,7 +29,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmMyFocus" resultType="com.xm.core.entity.XmMyFocus">
-		select * from XM.xm_my_focus res
+		select * from xm_my_focus res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -37,27 +37,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmMyFocus" resultType="com.xm.core.entity.XmMyFocus">
-		select * from XM.xm_my_focus res
+		select * from xm_my_focus res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_my_focus res
+		select * from xm_my_focus res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmMyFocus" resultType="long">
-		select count(1) from XM.xm_my_focus res
+		select count(1) from xm_my_focus res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmMyFocus" useGeneratedKeys="false" keyProperty="id">
-		insert into XM.xm_my_focus(
+		insert into xm_my_focus(
 			<include refid="columns"/>
 		) values (
 		#{userid},#{username},#{taskId},#{focusType},#{projectId},#{id},#{projectName},#{taskName}
@@ -66,7 +66,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmMyFocus">
-		delete from XM.xm_my_focus 
+		delete from xm_my_focus
 		<where>  
 		<if test="userid != null and userid != ''">      and userid = #{userid}     </if>
  		<if test="taskId != null and taskId != ''">      and task_id = #{taskId}     </if>
@@ -78,13 +78,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmMyFocus">
-		delete from XM.xm_my_focus 
+		delete from xm_my_focus
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmMyFocus">
-		update  XM.xm_my_focus 
+		update  xm_my_focus
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -93,7 +93,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmMyFocus">
-		update  XM.xm_my_focus 
+		update  xm_my_focus
 		<set>
 			<include refid="set"/>
 		</set>
@@ -108,7 +108,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_my_focus 
+   		update  xm_my_focus
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -116,7 +116,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_my_focus 
+		delete from xm_my_focus
 			where id in
 			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
 			        #{item.id }  

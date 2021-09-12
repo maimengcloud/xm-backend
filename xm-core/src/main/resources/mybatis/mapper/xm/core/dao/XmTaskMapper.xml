@@ -6,32 +6,32 @@
 	<!--开始 自定sql函数区域 -->
 		<!--请在此区域添加自定义函数-->
 	<select id="getAvgRate" parameterType="String" resultType="long" >
-		select avg(res.rate) from XM.xm_task res where res.parent_taskid = #{parentTaskid}
+		select avg(res.rate) from xm_task res where res.parent_taskid = #{parentTaskid}
 	</select>
 
 	<select id="shareTaskDetail" parameterType="HashMap" resultType="HashMap">
-		SELECT res.*,m.remark from XM.xm_task res left join XM.xm_menu m on res.menu_id = m.menu_id
+		SELECT res.*,m.remark from xm_task res left join xm_menu m on res.menu_id = m.menu_id
 		WHERE res.id=#{id}
 	</select>
 	<select id="checkExistsExecuser" parameterType="String" resultType="Long" >
-		select count(1) from XM.xm_task_execuser res where res.task_id = #{taskId} and ( res.settle_status not in('2','6'))
+		select count(1) from xm_task_execuser res where res.task_id = #{taskId} and ( res.settle_status not in('2','6'))
 	</select>
 	<select id="checkExistsChildren" parameterType="String" resultType="Long" >
-		select count(1) from XM.xm_task res where res.parent_taskid = #{id}
+		select count(1) from xm_task res where res.parent_taskid = #{id}
 	</select>
 	<update id="updatePreTask" parameterType="String">
-		update  XM.xm_task set pre_taskid = NULL,pre_taskname = NULL where pre_taskid = #{id}
+		update  xm_task set pre_taskid = NULL,pre_taskname = NULL where pre_taskid = #{id}
 	</update>
 
 	<update id="relTaskWithMenu" parameterType="com.xm.core.entity.XmTask">
-		update  XM.xm_task set menu_id = #{menuId}, menu_name = #{menuName},product_id=#{productId},product_name=#{productName} where id = #{id}
+		update  xm_task set menu_id = #{menuId}, menu_name = #{menuName},product_id=#{productId},product_name=#{productName} where id = #{id}
 	</update>
 
 		<!-- 插入流程审批表数据 -->
 	<insert id="insertProcessApprova"
 		parameterType="HashMap"
 		useGeneratedKeys="false" keyProperty="id">
-		insert into XM.xm_task_process_approva (
+		insert into xm_task_process_approva (
 		 id,xm_task_id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
 		) values (
 			#{id},#{xmTaskId},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
@@ -41,7 +41,7 @@
 		<!-- 同时修改业务表及流程审批表数据状态 -->
 	<update id="updateProcessApprova"
 		parameterType="HashMap">
-		update XM.xm_task  b ,XM.xm_task_process_approva pa
+		update xm_task  b ,XM.xm_task_process_approva pa
 			<set>
 				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
 				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
@@ -61,13 +61,13 @@
 
 	<update id="updateFlowStateByProcInstForDeleteSuccess"
 		parameterType="HashMap">
-		update XM.xm_task_process_approva pa set pa.flow_state='2'
+		update xm_task_process_approva pa set pa.flow_state='2'
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
 	</update>
 
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByProcInstId" parameterType="HashMap">
-		delete from XM.xm_task
+		delete from xm_task
 		 where biz_proc_inst_id=#{procInstId}
 	</delete>
 	<!-- 查询任务总的预算及对应的阶段的预算，任务总预算不能大于阶段总预算 -->
@@ -84,7 +84,7 @@
 			p.phase_budget_workload,
 			p.phase_budget_hours,
 			p.phase_budget_staff_nu
-		FROM XM.xm_project_phase p	LEFT JOIN   XM.xm_task res
+		FROM xm_project_phase p	LEFT JOIN   xm_task res
 		ON p.id = res.project_phase_id
 		WHERE
 			p.id = #{projectPhaseId}
@@ -97,7 +97,7 @@
 	</select>
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectTaskListByIds" parameterType="HashMap" resultType="com.xm.core.entity.XmTask">
-		select * from XM.xm_task res
+		select * from xm_task res
 		where   res.id in
 			<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
 				#{item}
@@ -111,8 +111,8 @@
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
 		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state
-		from XM.xm_task res   left join  XM.xm_task_process_approva pa on res.id=pa.xm_task_id and res.biz_proc_inst_id=pa.proc_inst_id
-		left join XM.xm_project p on p.id=res.project_id
+		from xm_task res   left join  xm_task_process_approva pa on res.id=pa.xm_task_id and res.biz_proc_inst_id=pa.proc_inst_id
+		left join xm_project p on p.id=res.project_id
 		<where> 
 			<if test="ids != null">  and     
 				id in
@@ -128,7 +128,7 @@
 
 			<!-- 我参与的-->
 			<if test=" (myExecuserStatus != null and myExecuserStatus) != '' or ( isMy !=null and isMy !='' )">
-				and  exists ( select 1 from XM.xm_task_execuser exe where exe.task_id=res.id and exe.userid=#{userid}
+				and  exists ( select 1 from xm_task_execuser exe where exe.task_id=res.id and exe.userid=#{userid}
 					<if test=' myExecuserStatus != "all" and  myExecuserStatus!=null and myExecuserStatus !="" '>
 						and exe.status=#{myExecuserStatus}
 					</if>
@@ -136,10 +136,10 @@
 			</if>
 			<!-- 我关注的 -->
 			<if test="myFocus != null and myFocus != ''">
-				and exists ( select 1 from XM.xm_my_focus f where f.userid=#{userid} and f.project_id=res.project_id and f.task_id=res.id  )
+				and exists ( select 1 from xm_my_focus f where f.userid=#{userid} and f.project_id=res.project_id and f.task_id=res.id  )
 			</if>
 			<if test="skillIds != null and skillIds != ''">
-				and exists ( select 1 from XM.xm_task_skill f where f.task_id=res.id and f.task_skill_id in
+				and exists ( select 1 from xm_task_skill f where f.task_id=res.id and f.task_skill_id in
 					<foreach collection="skillIds" item="item" index="index" open="(" separator="," close=")" >
 						#{item}
 					</foreach>
@@ -147,7 +147,7 @@
 			</if>
 			<if test="compete !=null and compete!=''">
 				and ( exists ( select 1 from xm_project_group_user gu where gu.userid=#{compete} and gu.project_id=res.project_id )
-						or  exists ( select 1 from XM.xm_task_execuser exe where exe.project_id=res.project_id and exe.userid=#{compete})
+						or  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.project_id and exe.userid=#{compete})
 				  )
 
 			</if>
@@ -162,7 +162,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmTask" resultType="com.xm.core.entity.XmTask">
-		select * from XM.xm_task res
+		select * from xm_task res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -170,27 +170,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmTask" resultType="com.xm.core.entity.XmTask">
-		select * from XM.xm_task res
+		select * from xm_task res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_task res
+		select * from xm_task res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmTask" resultType="long">
-		select count(1) from XM.xm_task res
+		select count(1) from xm_task res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmTask" useGeneratedKeys="false"   keyProperty="id">
-		insert into XM.xm_task(
+		insert into xm_task(
 			<include refid="columns"/>
 		) values (
 		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{projectPhaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{productName},#{cbranchId},#{cdeptid}
@@ -199,7 +199,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmTask">
-		delete from XM.xm_task
+		delete from xm_task
 		<where>  
 			1=2
 		</where>
@@ -207,13 +207,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmTask">
-		delete from XM.xm_task 
+		delete from xm_task
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmTask">
-		update  XM.xm_task 
+		update  xm_task
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -222,7 +222,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmTask">
-		update  XM.xm_task 
+		update  xm_task
 		<set>
 			<include refid="set"/>
 		</set>
@@ -237,7 +237,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_task 
+   		update  xm_task
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -245,7 +245,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_task 
+		delete from xm_task
 			where
 			(id)
 			    in

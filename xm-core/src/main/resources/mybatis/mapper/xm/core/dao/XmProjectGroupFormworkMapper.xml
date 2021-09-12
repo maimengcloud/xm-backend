@@ -6,7 +6,7 @@
 	<!--开始 自定sql函数区域 -->
 		<!--请在此区域添加自定义函数-->
 	<select id="selectAllGroupFormWork" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_project_group_formwork res
+		select * from xm_project_group_formwork res
 		<where>
 			<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
 			 or res.is_pub = "1"
@@ -21,7 +21,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_project_group_formwork res
+		select * from xm_project_group_formwork res
 		<where> 
 			<if test="ids != null">  and     
 				id in
@@ -36,7 +36,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProjectGroupFormwork" resultType="com.xm.core.entity.XmProjectGroupFormwork">
-		select * from XM.xm_project_group_formwork res
+		select * from xm_project_group_formwork res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -44,27 +44,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProjectGroupFormwork" resultType="com.xm.core.entity.XmProjectGroupFormwork">
-		select * from XM.xm_project_group_formwork res
+		select * from xm_project_group_formwork res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_project_group_formwork res
+		select * from xm_project_group_formwork res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProjectGroupFormwork" resultType="long">
-		select count(1) from XM.xm_project_group_formwork res
+		select count(1) from xm_project_group_formwork res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmProjectGroupFormwork" useGeneratedKeys="false" keyProperty="id">
-		insert into XM.xm_project_group_formwork(
+		insert into xm_project_group_formwork(
 			<include refid="columns"/>
 		) values (
 		#{id},#{branchId},#{groupName},#{isPub},#{pgTypeId},#{pgTypeName}
@@ -73,7 +73,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProjectGroupFormwork">
-		delete from XM.xm_project_group_formwork res
+		delete from xm_project_group_formwork res
 		<where>  
 			<include refid="where"/>
 		</where>
@@ -81,13 +81,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProjectGroupFormwork">
-		delete from XM.xm_project_group_formwork 
+		delete from xm_project_group_formwork
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProjectGroupFormwork">
-		update  XM.xm_project_group_formwork 
+		update  xm_project_group_formwork
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -96,7 +96,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProjectGroupFormwork">
-		update  XM.xm_project_group_formwork 
+		update  xm_project_group_formwork
 		<set>
 			<include refid="set"/>
 		</set>
@@ -111,7 +111,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_project_group_formwork 
+   		update  xm_project_group_formwork
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -119,7 +119,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_project_group_formwork 
+		delete from xm_project_group_formwork
 			where id in
 			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
 			        #{item.id }  

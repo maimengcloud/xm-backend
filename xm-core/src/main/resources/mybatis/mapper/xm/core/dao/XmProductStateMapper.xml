@@ -17,7 +17,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_product_state res
+		select * from xm_product_state res
 		<where> 
 			<if test="ids != null">  and     
 				id in
@@ -32,7 +32,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProductState" resultType="com.xm.core.entity.XmProductState">
-		select * from XM.xm_product_state res
+		select * from xm_product_state res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -40,27 +40,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProductState" resultType="com.xm.core.entity.XmProductState">
-		select * from XM.xm_product_state res
+		select * from xm_product_state res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_product_state res
+		select * from xm_product_state res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProductState" resultType="long">
-		select count(1) from XM.xm_product_state res
+		select count(1) from xm_product_state res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmProductState" useGeneratedKeys="false" keyProperty="id">
-		insert into XM.xm_product_state(
+		insert into xm_product_state(
 			<include refid="columns"/>
 		) values (
 		#{id},#{planStartTime},#{planEndTime},#{actStartTime},#{actEndTime},#{planWorkload},#{actWorkload},#{planCostAmount},#{actCostAmount},#{finishRate},#{demandRate},#{designRate},#{devRate},#{uatRate},#{sitRate},#{ctime},#{ltime},#{cuserid},#{cusername},#{calcTime},#{planWorkhours},#{planWorkerCnt},#{closedBugs},#{activeBugs},#{confirmedBugs},#{resolvedBugs},#{productId},#{productName},#{testCases},#{execCases},#{designCases},#{finishCases},#{projectCnt},#{iterationCnt},#{taskCnt},#{finishTaskCnt},#{bizDate},#{branchId},#{bugCnt}
@@ -69,7 +69,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProductState">
-		delete from XM.xm_product_state res
+		delete from xm_product_state res
 		<where>  
 			<include refid="where"/>
 		</where>
@@ -77,13 +77,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProductState">
-		delete from XM.xm_product_state 
+		delete from xm_product_state
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProductState">
-		update  XM.xm_product_state 
+		update  xm_product_state
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -92,7 +92,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProductState">
-		update  XM.xm_product_state 
+		update  xm_product_state
 		<set>
 			<include refid="set"/>
 		</set>
@@ -107,7 +107,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_product_state 
+   		update  xm_product_state
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -115,7 +115,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_product_state 
+		delete from xm_product_state
 			where id in
 			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
 			        #{item.id }  

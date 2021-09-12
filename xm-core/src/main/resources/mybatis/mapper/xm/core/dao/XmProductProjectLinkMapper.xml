@@ -7,8 +7,8 @@
 		<!--请在此区域添加自定义函数-->
 
 	<select id="selectListByIterationId" parameterType="String" resultType="com.xm.core.entity.XmProductProjectLink">
-		select * from XM.xm_product_project_link res
-		where exists (select 1 from XM.xm_iteration_product_link ipl where ipl.iteration_id=#{iterationId} and ipl.product_id=res.product_id)
+		select * from xm_product_project_link res
+		where exists (select 1 from xm_iteration_product_link ipl where ipl.iteration_id=#{iterationId} and ipl.product_id=res.product_id)
 	</select>
 		
 	<!--结束 自定义sql函数区域-->
@@ -17,7 +17,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.*,prd.product_name,prj.name from XM.xm_product_project_link res
+		select res.*,prd.product_name,prj.name from xm_product_project_link res
 		inner join xm_product prd on prd.id=res.product_id inner join xm_project prj on prj.id=res.project_id
 		<where> 
 			<if test="ids != null">  and     
@@ -33,7 +33,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProductProjectLink" resultType="com.xm.core.entity.XmProductProjectLink">
-		select * from XM.xm_product_project_link res
+		select * from xm_product_project_link res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -41,7 +41,7 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProductProjectLink" resultType="com.xm.core.entity.XmProductProjectLink">
-		select * from XM.xm_product_project_link res
+		select * from xm_product_project_link res
 		where 
 			res.project_id = #{projectId}
 			and res.product_id = #{productId}
@@ -49,21 +49,21 @@
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_product_project_link res
+		select * from xm_product_project_link res
 		where 
 			 res.project_id = #{projectId}
 			and  res.product_id = #{productId}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProductProjectLink" resultType="long">
-		select count(1) from XM.xm_product_project_link res
+		select count(1) from xm_product_project_link res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键project_id,product_id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmProductProjectLink" useGeneratedKeys="false"  >
-		insert into XM.xm_product_project_link(
+		insert into xm_product_project_link(
 			<include refid="columns"/>
 		) values (
 		#{projectId},#{productId},#{ctime},#{cuserid},#{cusername},#{linkStatus}
@@ -72,7 +72,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProductProjectLink">
-		delete from XM.xm_product_project_link
+		delete from xm_product_project_link
 		<where>  
 			1=2
 		</where>
@@ -80,13 +80,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProductProjectLink">
-		delete from XM.xm_product_project_link 
+		delete from xm_product_project_link
 		where project_id = #{projectId} and product_id = #{productId} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProductProjectLink">
-		update  XM.xm_product_project_link 
+		update  xm_product_project_link
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -95,7 +95,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProductProjectLink">
-		update  XM.xm_product_project_link 
+		update  xm_product_project_link
 		<set>
 			<include refid="set"/>
 		</set>
@@ -110,7 +110,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_product_project_link 
+   		update  xm_product_project_link
 		set 
 			<include refid="batchSet"/>
 			where project_id = #{item.projectId} and product_id = #{item.productId}  
@@ -118,7 +118,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_product_project_link 
+		delete from xm_product_project_link
 			where
 			(project_id, product_id)
 			    in

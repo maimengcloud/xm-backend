@@ -36,7 +36,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmIterationProductLink" resultType="com.xm.core.entity.XmIterationProductLink">
-		select * from XM.xm_iteration_product_link res
+		select * from xm_iteration_product_link res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -44,7 +44,7 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmIterationProductLink" resultType="com.xm.core.entity.XmIterationProductLink">
-		select * from XM.xm_iteration_product_link res
+		select * from xm_iteration_product_link res
 		where 
 			res.iteration_id = #{iterationId}
 			and res.product_id = #{productId}
@@ -52,21 +52,21 @@
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_iteration_product_link res
+		select * from xm_iteration_product_link res
 		where 
 			 res.iteration_id = #{iterationId}
 			and  res.product_id = #{productId}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmIterationProductLink" resultType="long">
-		select count(1) from XM.xm_iteration_product_link res
+		select count(1) from xm_iteration_product_link res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键iteration_id,product_id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmIterationProductLink" useGeneratedKeys="false"  >
-		insert into XM.xm_iteration_product_link(
+		insert into xm_iteration_product_link(
 			<include refid="columns"/>
 		) values (
 		#{iterationId},#{productId},#{ctime},#{cuserid},#{cusername},#{linkStatus}
@@ -75,7 +75,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmIterationProductLink">
-		delete from XM.xm_iteration_product_link
+		delete from xm_iteration_product_link
 		<where>  
 			1=2
 		</where>
@@ -83,13 +83,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmIterationProductLink">
-		delete from XM.xm_iteration_product_link 
+		delete from xm_iteration_product_link
 		where iteration_id = #{iterationId} and product_id = #{productId} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmIterationProductLink">
-		update  XM.xm_iteration_product_link 
+		update  xm_iteration_product_link
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -98,7 +98,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmIterationProductLink">
-		update  XM.xm_iteration_product_link 
+		update  xm_iteration_product_link
 		<set>
 			<include refid="set"/>
 		</set>
@@ -113,7 +113,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_iteration_product_link 
+   		update  xm_iteration_product_link
 		set 
 			<include refid="batchSet"/>
 			where iteration_id = #{item.iterationId} and product_id = #{item.productId}  
@@ -121,7 +121,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_iteration_product_link 
+		delete from xm_iteration_product_link
 			where
 			(iteration_id, product_id)
 			    in

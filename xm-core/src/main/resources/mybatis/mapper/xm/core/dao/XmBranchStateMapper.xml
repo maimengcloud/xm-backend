@@ -70,7 +70,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_branch_state res
+		select * from xm_branch_state res
 		<where> 
 			<if test="ids != null">  and     
 				id in
@@ -85,7 +85,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmBranchState" resultType="com.xm.core.entity.XmBranchState">
-		select * from XM.xm_branch_state res
+		select * from xm_branch_state res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -93,27 +93,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmBranchState" resultType="com.xm.core.entity.XmBranchState">
-		select * from XM.xm_branch_state res
+		select * from xm_branch_state res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_branch_state res
+		select * from xm_branch_state res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmBranchState" resultType="long">
-		select count(1) from XM.xm_branch_state res
+		select count(1) from xm_branch_state res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmBranchState" useGeneratedKeys="false" keyProperty="id">
-		insert into XM.xm_branch_state(
+		insert into xm_branch_state(
 			<include refid="columns"/>
 		) values (
 		#{bizDate},#{totalFileCnt},#{totalBugCnt},#{totalTaskCnt},#{totalBudgetNouserAmount},#{id},#{totalStaffCnt},#{calcTime},#{calcStatus},#{totalCostNouserAmount},#{totalClosedBugCnt},#{totalResolvedBugCnt},#{totalCompleteTaskCnt},#{totalPhaseCnt},#{totalCompletePhaseCnt},#{totalNeedPayAmount},#{totalFinishPayAmount},#{totalNeedColAmount},#{totalFinishColAmount},#{totalCostUserAmount},#{totalBudgetInnerUserAmount},#{totalPlanWorkload},#{totalRiskCnt},#{totalCompleteRiskCnt},#{branchId},#{branchName},#{totalBudgetOutUserAmount},#{totalCompleteWorkload},#{totalCostInnerUserAmount},#{totalCostOutUserAmount},#{totalProgress},#{totalActiveBugCnt},#{totalConfirmedBugCnt},#{projectStatus},#{totalActWorkload},#{totalActOutWorkload},#{totalActInnerWorkload},#{totalTaskBudgetCostAt},#{totalTaskOutCnt},#{totalNeedPayCnt},#{totalFinishPayCnt},#{totalFinishPayUserCnt},#{totalNeedPayUserCnt},#{totalPlanInnerUserWorkload},#{totalPlanOutUserWorkload},#{testCases},#{execCases},#{designCases},#{finishCases},#{iterationCnt},#{productCnt},#{menuCnt}
@@ -122,7 +122,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmBranchState">
-		delete from XM.xm_branch_state res
+		delete from xm_branch_state res
 		<where>  
 			<include refid="where"/>
 		</where>
@@ -130,13 +130,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmBranchState">
-		delete from XM.xm_branch_state 
+		delete from xm_branch_state
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmBranchState">
-		update  XM.xm_branch_state 
+		update  xm_branch_state
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -145,7 +145,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmBranchState">
-		update  XM.xm_branch_state 
+		update  xm_branch_state
 		<set>
 			<include refid="set"/>
 		</set>
@@ -160,7 +160,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_branch_state 
+   		update  xm_branch_state
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -168,7 +168,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_branch_state 
+		delete from xm_branch_state
 			where id in
 			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
 			        #{item.id }  

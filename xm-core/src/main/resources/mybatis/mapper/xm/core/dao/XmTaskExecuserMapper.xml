@@ -12,7 +12,7 @@
 	<insert id="insertProcessApprova"
 		parameterType="HashMap"
 		useGeneratedKeys="false" keyProperty="id">
-		insert into XM.xm_task_execuser_process_approva (
+		insert into xm_task_execuser_process_approva (
 		 id,execuser_id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
 		) values (
 			#{id},#{execuserId},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
@@ -22,7 +22,7 @@
 		<!-- 同时修改业务表及流程审批表数据状态 -->
 	<update id="updateProcessApprova"
 		parameterType="HashMap">
-		update XM.xm_task_execuser  b ,XM.xm_task_execuser_process_approva pa
+		update xm_task_execuser  b ,XM.xm_task_execuser_process_approva pa
 			<set>
 				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
 				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
@@ -44,18 +44,18 @@
 
 	<update id="updateFlowStateByProcInstForDeleteSuccess"
 		parameterType="HashMap">
-		update XM.xm_task_execuser_process_approva pa set pa.flow_state='2'
+		update xm_task_execuser_process_approva pa set pa.flow_state='2'
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
 	</update>
 
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByProcInstId" parameterType="HashMap">
-		delete from XM.xm_task_execuser
+		delete from xm_task_execuser
 		 where biz_proc_inst_id=#{procInstId}
 	</delete>
 	<update id="updateXmTaskExeUseridsAndUsernamesByTaskId"
 		parameterType="String">
-		UPDATE XM.xm_task t
+		UPDATE xm_task t
 			left join
 			(
 				SELECT
@@ -124,7 +124,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from XM.xm_task_execuser res   left join  XM.xm_task_execuser_process_approva pa on res.id=pa.execuser_id and res.biz_proc_inst_id=pa.proc_inst_id
+		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from xm_task_execuser res   left join  xm_task_execuser_process_approva pa on res.id=pa.execuser_id and res.biz_proc_inst_id=pa.proc_inst_id
 
 		<where> 
 			<if test="ids != null">  and     
@@ -141,7 +141,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmTaskExecuser" resultType="com.xm.core.entity.XmTaskExecuser">
-		select * from XM.xm_task_execuser res
+		select * from xm_task_execuser res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -149,27 +149,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmTaskExecuser" resultType="com.xm.core.entity.XmTaskExecuser">
-		select * from XM.xm_task_execuser res
+		select * from xm_task_execuser res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_task_execuser res
+		select * from xm_task_execuser res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmTaskExecuser" resultType="long">
-		select count(1) from XM.xm_task_execuser res
+		select count(1) from xm_task_execuser res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmTaskExecuser" useGeneratedKeys="false"   keyProperty="id">
-		insert into XM.xm_task_execuser(
+		insert into xm_task_execuser(
 			<include refid="columns"/>
 		) values (
 		#{createTime},#{id},#{taskId},#{userid},#{startTime},#{endTime},#{status},#{remarks},#{settleAmount},#{settleWorkload},#{settleStatus},#{settleTime},#{createUserid},#{createUsername},#{username},#{matchScore},#{quoteWeekday},#{quoteAmount},#{quoteTime},#{bizProcInstId},#{bizFlowState},#{projectId},#{projectPhaseId},#{skillRemark},#{quoteWorkload},#{quoteStartTime},#{quoteEndTime},#{branchId},#{projectPhaseName},#{taskName},#{isLeader},#{distUserid},#{distUsername}
@@ -178,7 +178,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmTaskExecuser">
-		delete from XM.xm_task_execuser
+		delete from xm_task_execuser
 		<where>  
 			1=2
 		</where>
@@ -186,13 +186,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmTaskExecuser">
-		delete from XM.xm_task_execuser 
+		delete from xm_task_execuser
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmTaskExecuser">
-		update  XM.xm_task_execuser 
+		update  xm_task_execuser
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -201,7 +201,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmTaskExecuser">
-		update  XM.xm_task_execuser 
+		update  xm_task_execuser
 		<set>
 			<include refid="set"/>
 		</set>
@@ -216,7 +216,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_task_execuser 
+   		update  xm_task_execuser
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -224,7 +224,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_task_execuser 
+		delete from xm_task_execuser
 			where
 			(id)
 			    in

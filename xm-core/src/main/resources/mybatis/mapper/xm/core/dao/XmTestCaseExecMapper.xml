@@ -7,7 +7,7 @@
 		<!--请在此区域添加自定义函数-->
 		
 	<select id="listByProjectAndCaseIds" parameterType="HashMap" resultType="com.xm.core.entity.XmTestCaseExec">
-		select * from XM.xm_test_case_exec res
+		select * from xm_test_case_exec res
 		<where>
 			and res.project_id=#{projectId} 
 		 	<if test="caseIds != null">  and     
@@ -25,7 +25,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.*,c.* from XM.xm_test_case_exec res left join XM.xm_test_case c on res.case_id=c.id
+		select res.*,c.* from xm_test_case_exec res left join xm_test_case c on res.case_id=c.id
 		<where> 
 			<if test="ids != null">  and     
 				id in
@@ -46,7 +46,7 @@
 			<if test="compete !=null and compete!=''">
 				and exists ( select 1 from xm_project_group_user gu where gu.userid=#{compete} and gu.project_id=res.project_id )
 			</if>
-			<if test="productId != null and productId !='' ">    and exists( select 1 from xm.xm_menu m where m.menu_id =res.menu_id and m.product_id=#{productId})  </if>
+			<if test="productId != null and productId !='' ">    and exists( select 1 from xm_menu m where m.menu_id =res.menu_id and m.product_id=#{productId})  </if>
 			<if test="key != null and key !='' ">    and res.case_name like #{key}   </if>
 
 		</where>
@@ -54,7 +54,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmTestCaseExec" resultType="com.xm.core.entity.XmTestCaseExec">
-		select * from XM.xm_test_case_exec res
+		select * from xm_test_case_exec res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -62,27 +62,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmTestCaseExec" resultType="com.xm.core.entity.XmTestCaseExec">
-		select * from XM.xm_test_case_exec res
+		select * from xm_test_case_exec res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_test_case_exec res
+		select * from xm_test_case_exec res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmTestCaseExec" resultType="long">
-		select count(1) from XM.xm_test_case_exec res
+		select count(1) from xm_test_case_exec res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmTestCaseExec" useGeneratedKeys="false" keyProperty="id">
-		insert into XM.xm_test_case_exec(
+		insert into xm_test_case_exec(
 			<include refid="columns"/>
 		) values (
 		#{execUserid},#{startTime},#{id},#{projectId},#{projectName},#{caseId},#{caseName},#{endTime},#{remark},#{createUserid},#{createUsername},#{createTime},#{execStatus},#{iterationId},#{iterationName},#{execUsername},#{taskId},#{taskName},#{menuId},#{menuName}
@@ -91,7 +91,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmTestCaseExec">
-		delete from XM.xm_test_case_exec res
+		delete from xm_test_case_exec res
 		<where>  
 			<include refid="where"/>
 		</where>
@@ -99,13 +99,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmTestCaseExec">
-		delete from XM.xm_test_case_exec 
+		delete from xm_test_case_exec
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmTestCaseExec">
-		update  XM.xm_test_case_exec 
+		update  xm_test_case_exec
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -114,7 +114,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmTestCaseExec">
-		update  XM.xm_test_case_exec 
+		update  xm_test_case_exec
 		<set>
 			<include refid="set"/>
 		</set>
@@ -129,7 +129,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_test_case_exec 
+   		update  xm_test_case_exec
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -137,7 +137,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_test_case_exec 
+		delete from xm_test_case_exec
 			where id in
 			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
 			        #{item.id }  

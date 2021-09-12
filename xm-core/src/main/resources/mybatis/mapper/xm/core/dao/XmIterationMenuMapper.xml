@@ -14,7 +14,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.*,m.menu_name,m.seq_no,m.pmenu_id,m.mm_userid,m.mm_username from XM.xm_iteration_menu res left join XM.xm_menu m on m.menu_id=res.menu_id
+		select res.*,m.menu_name,m.seq_no,m.pmenu_id,m.mm_userid,m.mm_username from xm_iteration_menu res left join xm_menu m on m.menu_id=res.menu_id
 		<where> 
 			<if test="ids != null">  and     
 				id in
@@ -29,7 +29,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmIterationMenu" resultType="com.xm.core.entity.XmIterationMenu">
-		select * from XM.xm_iteration_menu res
+		select * from xm_iteration_menu res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -37,27 +37,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmIterationMenu" resultType="com.xm.core.entity.XmIterationMenu">
-		select * from XM.xm_iteration_menu res
+		select * from xm_iteration_menu res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from XM.xm_iteration_menu res
+		select * from xm_iteration_menu res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmIterationMenu" resultType="long">
-		select count(1) from XM.xm_iteration_menu res
+		select count(1) from xm_iteration_menu res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmIterationMenu" useGeneratedKeys="false" keyProperty="id">
-		insert into XM.xm_iteration_menu(
+		insert into xm_iteration_menu(
 			<include refid="columns"/>
 		) values (
 		#{id},#{iterationId},#{menuId},#{productId},#{ctime},#{relStatus},#{hasTask},#{cuserid},#{cusername}
@@ -66,7 +66,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmIterationMenu">
-		delete from XM.xm_iteration_menu res
+		delete from xm_iteration_menu res
 		<where>  
 			<include refid="where"/>
 		</where>
@@ -74,13 +74,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmIterationMenu">
-		delete from XM.xm_iteration_menu 
+		delete from xm_iteration_menu
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmIterationMenu">
-		update  XM.xm_iteration_menu 
+		update  xm_iteration_menu
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -89,7 +89,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmIterationMenu">
-		update  XM.xm_iteration_menu 
+		update  xm_iteration_menu
 		<set>
 			<include refid="set"/>
 		</set>
@@ -104,7 +104,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  XM.xm_iteration_menu 
+   		update  xm_iteration_menu
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -112,7 +112,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from XM.xm_iteration_menu 
+		delete from xm_iteration_menu
 			where id in
 			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
 			        #{item.id }  
