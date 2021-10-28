@@ -5,6 +5,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.BaseUtils;
+import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
@@ -204,6 +205,24 @@ public class XmTaskService extends BaseService {
 		}
 		this.updateSomeFieldByPk(xmTask);  
 		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-更新任务基础信息", "更新任务"+xmTask.getName(),JSONObject.toJSONString(xmTask),null);  
+	}
+
+	@Transactional
+	public void updateTime(XmTask xmTask) {
+		//XmTask oldValue = this.selectOneObject(new XmTask(xmTask.getId()));
+		XmTask xmTask2=new XmTask();
+		xmTask2.setId(xmTask.getId());
+		xmTask2.setStartTime(xmTask.getStartTime());
+		xmTask2.setEndTime(xmTask.getEndTime());
+		xmTask2.setActStartTime(xmTask.getActStartTime());
+		xmTask2.setActEndTime(xmTask.getActEndTime());
+		this.updateSomeFieldByPk(xmTask);
+
+		//更新父任务的进度
+		//updateParentProgress(xmTask.getParentTaskid());
+		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-计划", "更新任务计划开始时间为"+
+				DateUtils.format(xmTask.getStartTime(),"yyyy-MM-dd")+",计划结束时间为"+DateUtils.format(xmTask.getEndTime(),"yyyy-MM-dd")+
+				"实际开始时间:"+DateUtils.format(xmTask.getActStartTime(),"yyyy-MM-dd")+",实际结束时间为"+DateUtils.format(xmTask.getActEndTime(),"yyyy-MM-dd"));
 	}
 	@Transactional
 	public void updateProgress(XmTask xmTask) {
