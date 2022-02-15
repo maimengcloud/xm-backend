@@ -31,6 +31,7 @@
 				)
 			</if>
 			<if test="key != null and key !='' ">   and res.product_name like #{key}    </if>
+			<if test="ctimeStart!=null and ctimeEnd!=null ">and ctime between #{ctimeStart} and #{ctimeEnd}</if>
 		</where>
 	</select>
 		
@@ -61,6 +62,7 @@
 						or exists ( select 1 from xm_menu m where m.mm_userid=#{compete} and m.product_id=res.id)
 					)
 			</if>
+			<if test="ctimeStart!=null and ctimeEnd!=null ">and ctime between #{ctimeStart} and #{ctimeEnd}</if>
 		</where>
 	</select>
 	
