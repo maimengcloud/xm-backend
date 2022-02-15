@@ -7,9 +7,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime;<br>
- * 表 XM.xm_menu 功能表的所有字段名: <br>
- *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime;<br>
+ *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime;<br>
+ * 表 xm_menu 功能表的所有字段名: <br>
+ *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -69,6 +69,18 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
 	Date ctime;
+	
+	@ApiModelProperty(notes="节点类型0-功能点，1-目录。目录下建功能点，功能点下不允许建立任何子节点",allowEmptyValue=true,example="",allowableValues="")
+	String ntype;
+	
+	@ApiModelProperty(notes="开始版本",allowEmptyValue=true,example="",allowableValues="")
+	String sinceVersion;
+	
+	@ApiModelProperty(notes="儿子节点个数",allowEmptyValue=true,example="",allowableValues="")
+	Integer childrenCnt;
+	
+	@ApiModelProperty(notes="更新时间",allowEmptyValue=true,example="",allowableValues="")
+	Date ltime;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -181,6 +193,30 @@ public class XmMenu  implements java.io.Serializable {
 	public void setCtime(Date ctime) {
 		this.ctime = ctime;
 	}
+	/**
+	 * 节点类型0-功能点，1-目录。目录下建功能点，功能点下不允许建立任何子节点
+	 **/
+	public void setNtype(String ntype) {
+		this.ntype = ntype;
+	}
+	/**
+	 * 开始版本
+	 **/
+	public void setSinceVersion(String sinceVersion) {
+		this.sinceVersion = sinceVersion;
+	}
+	/**
+	 * 儿子节点个数
+	 **/
+	public void setChildrenCnt(Integer childrenCnt) {
+		this.childrenCnt = childrenCnt;
+	}
+	/**
+	 * 更新时间
+	 **/
+	public void setLtime(Date ltime) {
+		this.ltime = ltime;
+	}
 	
 	/**
 	 * 功能编号
@@ -283,6 +319,30 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public Date getCtime() {
 		return this.ctime;
+	}
+	/**
+	 * 节点类型0-功能点，1-目录。目录下建功能点，功能点下不允许建立任何子节点
+	 **/
+	public String getNtype() {
+		return this.ntype;
+	}
+	/**
+	 * 开始版本
+	 **/
+	public String getSinceVersion() {
+		return this.sinceVersion;
+	}
+	/**
+	 * 儿子节点个数
+	 **/
+	public Integer getChildrenCnt() {
+		return this.childrenCnt;
+	}
+	/**
+	 * 更新时间
+	 **/
+	public Date getLtime() {
+		return this.ltime;
 	}
 
 }
