@@ -20,6 +20,7 @@
 			exists ( select 1 from xm_task t where  t.menu_id=res.menu_id)
 		</if>
 		<if test="key != null and key !='' ">  and res.menu_name like #{key}     </if>
+		<if test="isTop != null and isTop !='' ">  and res.pmenu_id is null</if>
     </sql>
 
 	<select id="selectExistIterationMenus" parameterType="HashMap" resultType="com.xm.core.entity.XmMenu">
@@ -37,70 +38,16 @@
 	<select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
 		select res.*,s.* from xm_menu res left join xm_menu_state s on res.menu_id=s.menu_id
 		<where>
-			<if test="ids != null">  and
-				menu_id in
-				<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-					#{item}
-				</foreach>
-			</if>
+			<include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test=' iterationFilterType=="join" '>
-				and exists ( select 1 from xm_iteration_menu im where im.menu_id=res.menu_id
-				<if test="iterationId!=null"> and im.iteration_id=#{iterationId}</if>
-				)
-			</if>
-			<if test='iterationFilterType=="not-join"'>
-				and   not    exists ( select 1 from xm_iteration_menu im where im.menu_id=res.menu_id)
-			</if>
-			<if test=' taskFilterType!=null and taskFilterType!="" '>
-				and <if test='taskFilterType=="not-join"'> not  </if>
-				exists ( select 1 from xm_task t where  t.menu_id=res.menu_id)
-			</if>
-
-			<if test=' projectId !=null and projectId!="" and ( taskFilterType==null or taskFilterType=="" )'>
-				and  exists ( select 1 from xm_task t where t.menu_id =res.menu_id and t.project_id=#{projectId})
-			</if>
-			<if test="compete !=null and compete!=''">
-				and (   exists ( select 1 from xm_menu m1 where m.mm_userid=#{compete} and m.product_id=res.product_id)
-				or exists ( select 1 from xm_product p where p.pm_userid=#{compete} and res.product_id=p.id)
-				)
-			</if>
-			<if test="key != null and key !='' ">  and res.menu_name like #{key}     </if>
 		</where>
 		order by res.seq_no asc
 	</select>
 	<select id="selectListMapByWhereWithPlan" parameterType="HashMap" resultType="HashMap">
 		select res.*,plan.* from xm_menu res left join xm_menu_plan plan on res.menu_id=plan.menu_id and plan.project_id=#{projectId}
 		<where>
-			<if test="ids != null">  and
-				menu_id in
-				<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-					#{item}
-				</foreach>
-			</if>
+			<include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test=' iterationFilterType=="join" '>
-				and exists ( select 1 from xm_iteration_menu im where im.menu_id=res.menu_id
-				<if test="iterationId!=null"> and im.iteration_id=#{iterationId}</if>
-				)
-			</if>
-			<if test='iterationFilterType=="not-join"'>
-				and   not    exists ( select 1 from xm_iteration_menu im where im.menu_id=res.menu_id)
-			</if>
-			<if test=' taskFilterType!=null and taskFilterType!="" '>
-				and <if test='taskFilterType=="not-join"'> not  </if>
-				exists ( select 1 from xm_task t where  t.menu_id=res.menu_id)
-			</if>
-
-			<if test=' projectId !=null and projectId!="" and ( taskFilterType==null or taskFilterType=="" )'>
-				and  exists ( select 1 from xm_task t where t.menu_id =res.menu_id and t.project_id=#{projectId})
-			</if>
-			<if test="compete !=null and compete!=''">
-				and (   exists ( select 1 from xm_menu m1 where m.mm_userid=#{compete} and m.product_id=res.product_id)
-				or exists ( select 1 from xm_product p where p.pm_userid=#{compete} and res.product_id=p.id)
-				)
-			</if>
-			<if test="key != null and key !='' ">  and res.menu_name like #{key}     </if>
 		</where>
 
 		order by res.seq_no asc
