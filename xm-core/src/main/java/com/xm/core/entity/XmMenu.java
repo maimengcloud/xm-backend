@@ -7,9 +7,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime;<br>
+ *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames;<br>
  * 表 xm_menu 功能表的所有字段名: <br>
- *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime;<br>
+ *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -81,6 +81,12 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="更新时间",allowEmptyValue=true,example="",allowableValues="")
 	Date ltime;
+	
+	@ApiModelProperty(notes="标签编号,逗号分割",allowEmptyValue=true,example="",allowableValues="")
+	String tagIds;
+	
+	@ApiModelProperty(notes="标签名称,逗号分割",allowEmptyValue=true,example="",allowableValues="")
+	String tagNames;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -217,6 +223,18 @@ public class XmMenu  implements java.io.Serializable {
 	public void setLtime(Date ltime) {
 		this.ltime = ltime;
 	}
+	/**
+	 * 标签编号,逗号分割
+	 **/
+	public void setTagIds(String tagIds) {
+		this.tagIds = tagIds;
+	}
+	/**
+	 * 标签名称,逗号分割
+	 **/
+	public void setTagNames(String tagNames) {
+		this.tagNames = tagNames;
+	}
 	
 	/**
 	 * 功能编号
@@ -343,6 +361,18 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public Date getLtime() {
 		return this.ltime;
+	}
+	/**
+	 * 标签编号,逗号分割
+	 **/
+	public String getTagIds() {
+		return this.tagIds;
+	}
+	/**
+	 * 标签名称,逗号分割
+	 **/
+	public String getTagNames() {
+		return this.tagNames;
 	}
 
 }

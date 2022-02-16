@@ -5,12 +5,12 @@
 	
 	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
 
-    <sql id="whereForMap">
-         <if test=" menuIds != null">  and (res.menu_id) in
-             <foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
-                 ( #{item})
-             </foreach>
-         </if>
+	<sql id="whereForMap">
+		<if test=" menuIds != null">  and (res.menu_id) in
+			<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+				( #{item})
+			</foreach>
+		</if>
 		<if test=' iterationFilterType!=null and iterationFilterType!=""'>
 			and <if test='iterationFilterType=="not-join"'> not  </if>
 			exists ( select 1 from xm_iteration_menu im where im.menu_id=res.menu_id)
@@ -21,7 +21,7 @@
 		</if>
 		<if test="key != null and key !='' ">  and res.menu_name like #{key}     </if>
 		<if test="isTop != null and isTop !='' ">  and res.pmenu_id is null</if>
-    </sql>
+	</sql>
 
 	<select id="selectExistIterationMenus" parameterType="HashMap" resultType="com.xm.core.entity.XmMenu">
 		select  * from xm_menu res
@@ -100,7 +100,7 @@
 		insert into xm_menu(
 			<include refid="columns"/>
 		) values (
-		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime}
+		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames}
 		)
 	</insert>
 	
@@ -163,7 +163,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime
+		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -189,6 +189,8 @@
 		<if test="sinceVersion != null and sinceVersion != ''">      and res.since_version = #{sinceVersion}     </if>
 		<if test="childrenCnt != null and childrenCnt != ''">      and res.children_cnt = #{childrenCnt}     </if>
 		<if test="ltime != null">      and date_format(res.ltime,'%Y-%m-%d') = date_format(#{ltime},'%Y-%m-%d')     </if>
+		<if test="tagIds != null and tagIds != ''">      and res.tag_ids = #{tagIds}     </if>
+		<if test="tagNames != null and tagNames != ''">      and res.tag_names = #{tagNames}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -211,7 +213,9 @@
 		ntype = #{ntype},
 		since_version = #{sinceVersion},
 		children_cnt = #{childrenCnt},
-		ltime = #{ltime}
+		ltime = #{ltime},
+		tag_ids = #{tagIds},
+		tag_names = #{tagNames}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="menuName != null and menuName != ''"> menu_name = #{menuName},     </if>
@@ -234,6 +238,8 @@
 		<if test="sinceVersion != null and sinceVersion != ''"> since_version = #{sinceVersion},     </if>
 		<if test="childrenCnt != null and childrenCnt != ''"> children_cnt = #{childrenCnt},     </if>
 		<if test="ltime != null"> ltime = #{ltime},     </if>
+		<if test="tagIds != null and tagIds != ''"> tag_ids = #{tagIds},     </if>
+		<if test="tagNames != null and tagNames != ''"> tag_names = #{tagNames},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -256,6 +262,8 @@
 			ntype = #{item.ntype},
 			since_version = #{item.sinceVersion},
 			children_cnt = #{item.childrenCnt},
-			ltime = #{item.ltime}
+			ltime = #{item.ltime},
+			tag_ids = #{item.tagIds},
+			tag_names = #{item.tagNames}
 	</sql>
 </mapper>

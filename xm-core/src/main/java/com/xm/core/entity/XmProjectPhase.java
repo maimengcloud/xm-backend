@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectPhase所有属性名: <br>
- *	id,phaseName,remark,parentPhaseId,branchId,projectId,beginDate,endDate,phaseBudgetHours,phaseBudgetStaffNu,ctime,phaseBudgetNouserAt,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,projectBaselineId,bizProcInstId,bizFlowState,phaseBudgetWorkload,phaseActWorkload,phaseActInnerUserWorkload,phaseActOutUserWorkload,taskType,planType,seqNo,phaseBudgetInnerUserWorkload,phaseBudgetOutUserWorkload,actNouserAt,actInnerUserAt,phaseBudgetInnerUserPrice,phaseBudgetOutUserPrice,phaseBudgetOutUserCnt,phaseBudgetInnerUserCnt,actRate,phaseStatus,actOutUserAt,taskCnt,finishTaskCnt,iterationCnt,calcTime,taskBudgetWorkload,taskBudgetAt,mngUserid,mngUsername,milestone,pleaf;<br>
- * 表 XM.xm_project_phase 项目阶段模板的所有字段名: <br>
- *	id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf;<br>
+ *	id,phaseName,remark,parentPhaseId,branchId,projectId,beginDate,endDate,phaseBudgetHours,phaseBudgetStaffNu,ctime,phaseBudgetNouserAt,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,projectBaselineId,bizProcInstId,bizFlowState,phaseBudgetWorkload,phaseActWorkload,phaseActInnerUserWorkload,phaseActOutUserWorkload,taskType,planType,seqNo,phaseBudgetInnerUserWorkload,phaseBudgetOutUserWorkload,actNouserAt,actInnerUserAt,phaseBudgetInnerUserPrice,phaseBudgetOutUserPrice,phaseBudgetOutUserCnt,phaseBudgetInnerUserCnt,actRate,phaseStatus,actOutUserAt,taskCnt,finishTaskCnt,iterationCnt,calcTime,taskBudgetWorkload,taskBudgetAt,mngUserid,mngUsername,milestone,pleaf,tagIds,tagNames,ntype,childrenCnt,ltime;<br>
+ * 表 xm_project_phase 项目阶段模板的所有字段名: <br>
+ *	id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf,tag_ids,tag_names,ntype,children_cnt,ltime;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -154,6 +154,21 @@ public class XmProjectPhase  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="节点是否为叶子节点",allowEmptyValue=true,example="",allowableValues="")
 	String pleaf;
+	
+	@ApiModelProperty(notes="标签编号，逗号分割",allowEmptyValue=true,example="",allowableValues="")
+	String tagIds;
+	
+	@ApiModelProperty(notes="标签名称，逗号分割",allowEmptyValue=true,example="",allowableValues="")
+	String tagNames;
+	
+	@ApiModelProperty(notes="节点类型0-任务，1-任务集。任务集下建任务，任务下不允许建立任何子节点",allowEmptyValue=true,example="",allowableValues="")
+	String ntype;
+	
+	@ApiModelProperty(notes="儿子节点个数",allowEmptyValue=true,example="",allowableValues="")
+	Integer childrenCnt;
+	
+	@ApiModelProperty(notes="更新时间",allowEmptyValue=true,example="",allowableValues="")
+	Date ltime;
 
 	/**阶段主键**/
 	public XmProjectPhase(String id) {
@@ -434,6 +449,36 @@ public class XmProjectPhase  implements java.io.Serializable {
 	public void setPleaf(String pleaf) {
 		this.pleaf = pleaf;
 	}
+	/**
+	 * 标签编号，逗号分割
+	 **/
+	public void setTagIds(String tagIds) {
+		this.tagIds = tagIds;
+	}
+	/**
+	 * 标签名称，逗号分割
+	 **/
+	public void setTagNames(String tagNames) {
+		this.tagNames = tagNames;
+	}
+	/**
+	 * 节点类型0-任务，1-任务集。任务集下建任务，任务下不允许建立任何子节点
+	 **/
+	public void setNtype(String ntype) {
+		this.ntype = ntype;
+	}
+	/**
+	 * 儿子节点个数
+	 **/
+	public void setChildrenCnt(Integer childrenCnt) {
+		this.childrenCnt = childrenCnt;
+	}
+	/**
+	 * 更新时间
+	 **/
+	public void setLtime(Date ltime) {
+		this.ltime = ltime;
+	}
 	
 	/**
 	 * 阶段主键
@@ -704,6 +749,36 @@ public class XmProjectPhase  implements java.io.Serializable {
 	 **/
 	public String getPleaf() {
 		return this.pleaf;
+	}
+	/**
+	 * 标签编号，逗号分割
+	 **/
+	public String getTagIds() {
+		return this.tagIds;
+	}
+	/**
+	 * 标签名称，逗号分割
+	 **/
+	public String getTagNames() {
+		return this.tagNames;
+	}
+	/**
+	 * 节点类型0-任务，1-任务集。任务集下建任务，任务下不允许建立任何子节点
+	 **/
+	public String getNtype() {
+		return this.ntype;
+	}
+	/**
+	 * 儿子节点个数
+	 **/
+	public Integer getChildrenCnt() {
+		return this.childrenCnt;
+	}
+	/**
+	 * 更新时间
+	 **/
+	public Date getLtime() {
+		return this.ltime;
 	}
 
 }

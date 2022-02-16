@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTask所有属性名: <br>
- *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,projectPhaseId,projectPhaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,productName,cbranchId,cdeptid;<br>
- * 表 XM.xm_task xm_task的所有字段名: <br>
- *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid;<br>
+ *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,projectPhaseId,projectPhaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,productName,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime;<br>
+ * 表 xm_task xm_task的所有字段名: <br>
+ *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -163,6 +163,21 @@ public class XmTask  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="创建部门",allowEmptyValue=true,example="",allowableValues="")
 	String cdeptid;
+	
+	@ApiModelProperty(notes="标签编号，逗号分割",allowEmptyValue=true,example="",allowableValues="")
+	String tagIds;
+	
+	@ApiModelProperty(notes="标签名称，逗号分割",allowEmptyValue=true,example="",allowableValues="")
+	String tagNames;
+	
+	@ApiModelProperty(notes="节点类型0-任务，1-任务集。任务集下建任务，任务下不允许建立任何子节点",allowEmptyValue=true,example="",allowableValues="")
+	String ntype;
+	
+	@ApiModelProperty(notes="儿子节点个数",allowEmptyValue=true,example="",allowableValues="")
+	Integer childrenCnt;
+	
+	@ApiModelProperty(notes="更新时间",allowEmptyValue=true,example="",allowableValues="")
+	Date ltime;
 
 	/**任务编号**/
 	public XmTask(String id) {
@@ -461,6 +476,36 @@ public class XmTask  implements java.io.Serializable {
 	public void setCdeptid(String cdeptid) {
 		this.cdeptid = cdeptid;
 	}
+	/**
+	 * 标签编号，逗号分割
+	 **/
+	public void setTagIds(String tagIds) {
+		this.tagIds = tagIds;
+	}
+	/**
+	 * 标签名称，逗号分割
+	 **/
+	public void setTagNames(String tagNames) {
+		this.tagNames = tagNames;
+	}
+	/**
+	 * 节点类型0-任务，1-任务集。任务集下建任务，任务下不允许建立任何子节点
+	 **/
+	public void setNtype(String ntype) {
+		this.ntype = ntype;
+	}
+	/**
+	 * 儿子节点个数
+	 **/
+	public void setChildrenCnt(Integer childrenCnt) {
+		this.childrenCnt = childrenCnt;
+	}
+	/**
+	 * 更新时间
+	 **/
+	public void setLtime(Date ltime) {
+		this.ltime = ltime;
+	}
 	
 	/**
 	 * 任务编号
@@ -749,6 +794,36 @@ public class XmTask  implements java.io.Serializable {
 	 **/
 	public String getCdeptid() {
 		return this.cdeptid;
+	}
+	/**
+	 * 标签编号，逗号分割
+	 **/
+	public String getTagIds() {
+		return this.tagIds;
+	}
+	/**
+	 * 标签名称，逗号分割
+	 **/
+	public String getTagNames() {
+		return this.tagNames;
+	}
+	/**
+	 * 节点类型0-任务，1-任务集。任务集下建任务，任务下不允许建立任何子节点
+	 **/
+	public String getNtype() {
+		return this.ntype;
+	}
+	/**
+	 * 儿子节点个数
+	 **/
+	public Integer getChildrenCnt() {
+		return this.childrenCnt;
+	}
+	/**
+	 * 更新时间
+	 **/
+	public Date getLtime() {
+		return this.ltime;
 	}
 
 }
