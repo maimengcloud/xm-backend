@@ -100,6 +100,7 @@ public class XmQuestionController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmQuestion, "ids");
 		RequestUtils.transformArray(xmQuestion, "menuIds");
+		RequestUtils.transformArray(xmQuestion, "tagIdList");
 		PageUtils.startPage(xmQuestion);
 		User user = LoginUtils.getCurrentUserInfo();
 		xmQuestion.put("compete",user.getUserid());

@@ -11,6 +11,11 @@
 				( #{item})
 			</foreach>
 		</if>
+		<if test=" tagIdList != null"> and
+			<foreach collection="tagIdList" item="item" index="index" open="(" separator=" or " close=")" >
+				find_in_set(item,res.tag_ids)
+			</foreach>
+		</if>
 		<if test=' iterationFilterType!=null and iterationFilterType!=""'>
 			and <if test='iterationFilterType=="not-join"'> not  </if>
 			exists ( select 1 from xm_iteration_menu im where im.menu_id=res.menu_id)

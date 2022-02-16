@@ -104,6 +104,7 @@ public class XmMenuPlanController {
 	public Map<String,Object> listXmMenuPlan( @RequestParam Map<String,Object> xmMenuPlan){
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmMenuPlan, "ids");
+		RequestUtils.transformArray(xmMenuPlan, "tagIdList");
 		PageUtils.startPage(xmMenuPlan);
 		List<Map<String,Object>>	xmMenuPlanList = xmMenuPlanService.selectListMapByWhere(xmMenuPlan);	//列出XmMenuPlan列表
 		PageUtils.responePage(m, xmMenuPlanList);

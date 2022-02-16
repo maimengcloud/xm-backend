@@ -361,6 +361,7 @@ public class XmTaskController {
 	public Map<String,Object> listXmTask( @RequestParam Map<String,Object> xmTask){
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmTask, "ids");
+		RequestUtils.transformArray(xmTask, "tagIdList");
 		PageUtils.startPage(xmTask);
 
 		String taskOut= (String) xmTask.get("taskOut");

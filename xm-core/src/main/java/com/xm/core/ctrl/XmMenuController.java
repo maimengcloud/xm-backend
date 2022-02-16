@@ -67,6 +67,7 @@ public class XmMenuController {
 	public Map<String,Object> listXmMenu( @RequestParam Map<String,Object> xmMenu){
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmMenu, "menuIds");
+		RequestUtils.transformArray(xmMenu, "tagIdList");
 		PageUtils.startPage(xmMenu);
 		String menuId= (String) xmMenu.get("menuId");
 		Object menuIds=  xmMenu.get("menuIds");
@@ -96,6 +97,7 @@ public class XmMenuController {
 	public Map<String,Object> listWithState( @RequestParam Map<String,Object> xmMenu){
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmMenu, "menuIds");
+		RequestUtils.transformArray(xmMenu, "tagIdList");
 		PageUtils.startPage(xmMenu);
 		Tips tips=new Tips("查询成功");
 		String menuId= (String) xmMenu.get("menuId");
@@ -123,6 +125,7 @@ public class XmMenuController {
 	public Map<String,Object> listWithPlan( @RequestParam Map<String,Object> xmMenu){
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmMenu, "menuIds");
+		RequestUtils.transformArray(xmMenu, "tagIdList");
 		PageUtils.startPage(xmMenu);
 		Tips tips=new Tips("查询成功");
 		if(StringUtils.isEmpty(xmMenu.get("projectId"))) {
