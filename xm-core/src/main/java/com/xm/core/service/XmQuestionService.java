@@ -53,6 +53,22 @@ public class XmQuestionService extends BaseService {
         BeanUtils.copyProperties(xmQuestionVo,xmQuestion);
         xmQuestion.setBugStatus("active");
         this.insert(xmQuestion);
+
+		XmQuestionHandle handle=new XmQuestionHandle();
+		handle.setReceiptMessage(xmQuestionVo.getReceiptMessage());
+		handle.setHandleStatus(xmQuestionVo.getTardgetBugStatus());
+		handle.setCreateTime(new Date());
+		handle.setReceiptTime(new Date());
+		handle.setHandlerUserid(xmQuestion.getCreateUserid());
+		handle.setHandlerUsername(xmQuestion.getCreateUsername());
+		handle.setLastUpdateTime(new Date());
+		handle.setHandleSolution(xmQuestionVo.getSolution());
+		handle.setQuestionId(xmQuestionVo.getId());
+		handle.setTargetUserid(xmQuestionVo.getHandlerUserid());
+		handle.setTargetUsername(xmQuestionVo.getHandlerUsername());
+		handle.setId(this.xmQuestionHandleService.createKey("id"));
+		xmQuestionHandleService.insert(handle);
+
         if(xmQuestionVo.getAttachment()!=null && xmQuestionVo.getAttachment().size()>0) {
         	xmAttachmentService.insertOrUpdate(xmQuestionVo.getId(),"问题",xmQuestionVo.getAttachment());
         } 
