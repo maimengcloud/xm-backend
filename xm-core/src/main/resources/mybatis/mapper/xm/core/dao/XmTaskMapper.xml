@@ -14,7 +14,7 @@
 
 		<if test=" tagIdList != null"> and
 			<foreach collection="tagIdList" item="item" index="index" open="(" separator=" or " close=")" >
-				find_in_set(item,res.tag_ids)
+				find_in_set(#{item},res.tag_ids)
 			</foreach>
 		</if>
 		<if test=" createTimeStart !=null "> and res.create_time &gt; #{createTimeStart} </if>

@@ -13,7 +13,7 @@
 		</if>
 		<if test=" tagIdList != null"> and
 			<foreach collection="tagIdList" item="item" index="index" open="(" separator=" or " close=")" >
-				find_in_set(item,res.tag_ids)
+				find_in_set(#{item},res.tag_ids)
 			</foreach>
 		</if>
 		<if test=' iterationFilterType!=null and iterationFilterType!=""'>

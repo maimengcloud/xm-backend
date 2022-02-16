@@ -69,7 +69,7 @@
 			 </if>
 			<if test=" tagIdList != null"> and
 				<foreach collection="tagIdList" item="item" index="index" open="(" separator=" or " close=")" >
-					find_in_set(item,res.tag_ids)
+					find_in_set(#{item},res.tag_ids)
 				</foreach>
 			</if>
 			<if test="hisHandlerUserid !=null "> and exists (select 1 from xm_question_handle h where h.question_id = res.id and h.handler_userid=#{hisHandlerUserid} and handle_status=#{hisHandleStatus})</if>
