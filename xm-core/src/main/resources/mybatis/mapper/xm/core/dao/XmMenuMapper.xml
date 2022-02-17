@@ -25,7 +25,7 @@
 			exists ( select 1 from xm_task t where  t.menu_id=res.menu_id)
 		</if>
 		<if test="key != null and key !='' ">  and res.menu_name like #{key}     </if>
-		<if test="isTop != null and isTop !='' ">  and res.pmenu_id is null</if>
+		<if test="isTop != null and isTop =='1' ">  and (res.pmenu_id is null or res.pmenu_id = '')</if>
 	</sql>
 
 	<select id="selectExistIterationMenus" parameterType="HashMap" resultType="com.xm.core.entity.XmMenu">
