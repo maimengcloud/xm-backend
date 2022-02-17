@@ -240,10 +240,10 @@ public class XmMenuController {
 			if(StringUtils.hasText(xmMenu.getNtype())&&StringUtils.hasText(xmMenu.getNtype())&&StringUtils.hasText(xmMenuDb.getPmenuId())){
 				if(!xmMenuDb.getNtype().equals(xmMenu.getNtype())){
 					if(xmMenu.getNtype().equals("1")){
-						XmTask xmMenuParentDb=this.xmTaskService.selectOneObject(new XmTask(xmMenuDb.getPmenuId()));
+						XmMenu xmMenuParentDb=this.xmTaskService.selectOneObject(new XmMenu(xmMenuDb.getPmenuId()));
 						if(xmMenuParentDb!=null){
 							if(!"1".equals(xmMenuParentDb.getNtype())){
-								ResponseHelper.failed("pmenu-ntype-0","上级任务"+xmMenuParentDb.getName()+"属于不是需求集,不能下挂需求集");
+								ResponseHelper.failed("pmenu-ntype-0","上级任务"+xmMenuParentDb.getMenuName()+"属于不是需求集,不能下挂需求集");
 							}
 						}
 					}
