@@ -96,7 +96,7 @@ public class XmMenuService extends BaseService {
 			}
 		}
 		for (XmMenu node : nodes) {
-			if(StringUtils.hasText(node.getPmenuId())){
+			if(!StringUtils.hasText(node.getPmenuId())){
 				node.setPidPaths("0,");
 				continue;
 			}
