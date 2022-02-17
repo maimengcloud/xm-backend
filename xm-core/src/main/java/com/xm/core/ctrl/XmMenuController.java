@@ -9,6 +9,7 @@ import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
+import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmMenuService;
 import com.xm.core.service.XmTaskService;
@@ -24,6 +25,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * url编制采用rest风格,如对XM.xm_menu 项目菜单表的操作有增删改查,对应的url分别为:<br>
  *  新增: xm/xmMenu/add <br>
@@ -168,9 +171,7 @@ public class XmMenuController {
 				xmMenu.setMmUsername(user.getUsername());
 			}
 			xmMenuService.insert(xmMenu);
-			if(StringUtils.hasText(xmMenu.getPmenuId())){
-				this.xmMenuService.updateMenuChildrenCntByMenuId(xmMenu.getPmenuId());
-			}
+
 			m.put("data",xmMenu);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -208,9 +209,6 @@ public class XmMenuController {
 					tips.setFailureMsg("存在"+childCount+"个子故事关联该故事，不允许删除");
 				}else {
 					xmMenuService.deleteByPk(xmMenu);
-					if(StringUtils.hasText(xmMenu.getPmenuId())){
-						this.xmMenuService.updateMenuChildrenCntByMenuId(xmMenu.getPmenuId());
-					}
 				}
 			} 
 		}catch (BizException e) { 
@@ -305,7 +303,7 @@ public class XmMenuController {
 				}
 			}
 			if(canDelList.size()>0) {
-				xmMenuService.batchDelete(canDelList);
+				xmMenuService.doBatchDelete(canDelList);
 			}
 			String msg="成功删除"+canDelList.size()+"个故事信息";
 			if(hasTasksMenus.size()>0 ) {
@@ -336,8 +334,7 @@ public class XmMenuController {
 		try{ 
 			 
 			if(xmMenus.size()>0) {
-				this.xmMenuService.batchInsert(xmMenus);
-				
+				this.xmMenuService.doBatchInsert(xmMenus);
  			}else {
  				tips.setFailureMsg("没有数据可以新增，请上送数据");
  			} 

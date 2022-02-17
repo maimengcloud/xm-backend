@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -46,9 +47,18 @@ public class XmTaskService extends BaseService {
 	
 	@Autowired
     XmTaskSkillService xmTaskSkillService;
-	
-	
-	
+
+	@Transactional
+	public   int[] doBatchDelete(List<XmTask> batchValues) {
+		int[] i2= super.batchDelete(batchValues);
+		List<XmTask> list= batchValues.stream().filter(i->!batchValues.stream().filter(k->k.getId().equals(i.getParentTaskid())).findAny().isPresent()).collect(Collectors.toList());
+		list=list.stream().filter(i->StringUtils.hasText(i.getParentTaskid())).collect(Collectors.toList());
+		if(list.size()>0){
+			this.updateChildrenCntByIds(list.stream().map(i->i.getParentTaskid()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+		}
+		return i2;
+	}
+
 	public Map<String,Object> selectTotalPhaseAndTaskBudgetCost(String projectPhaseId, List<String> excludeTaskIds){
 		Map<String,Object> p=new HashMap<>();
 		p.put("projectPhaseId", projectPhaseId); 
@@ -57,9 +67,7 @@ public class XmTaskService extends BaseService {
 	} 
 	/**
 	 * 判断新增预算是否超出项目总预算
-	 * @param projectId
 	 * @param addTaskBudgetCost
-	 * @param excludePhaseId
 	 * @return
 	 */
 	public Tips judgetBudget(String projectPhaseId,BigDecimal addTaskBudgetCost,BigDecimal addTaskBudgetInnerUserAt,BigDecimal addTaskBudgetOutUserAt,BigDecimal addTaskBudgetNouserAt,List<String> excludeTaskIds){
@@ -154,7 +162,10 @@ public class XmTaskService extends BaseService {
 		XmTask xmTask = new XmTask();
 		BeanUtils.copyProperties(xmTaskVo,xmTask);
 		this.insert(xmTask);
-		
+
+		if(StringUtils.hasText(xmTask.getParentTaskid())){
+			this.updateTaskChildrenCntByTaskId(xmTask.getParentTaskid());
+		}
 		//新增/更新附件
 		//xmAttachmentService.insertOrUpdate(xmTaskVo.getId(),TYPE,xmTaskVo.getAttachment());
 		
@@ -192,7 +203,9 @@ public class XmTaskService extends BaseService {
 			throw new BizException("有未结算的执行人，不允许删除该任务");
 		}
 		this.deleteByPk(xmTask);
-
+		if(StringUtils.hasText(xmTask.getParentTaskid())){
+			this.updateTaskChildrenCntByTaskId(xmTask.getParentTaskid());
+		}
 		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-删除任务", "删除任务"+xmTask.getName()); 
 	}
 	
@@ -382,6 +395,12 @@ public class XmTaskService extends BaseService {
 
 			xmTaskSkillService.batchInsert(xmTaskSkillList);
 		}
+
+		List<XmTask> list= xmTasks.stream().filter(i->!xmTasks.stream().filter(k->k.getId().equals(i.getParentTaskid())).findAny().isPresent()).collect(Collectors.toList());
+		list=list.stream().filter(i->StringUtils.hasText(i.getParentTaskid())).collect(Collectors.toList());
+		if(list.size()>0){
+			this.updateChildrenCntByIds(list.stream().map(i->i.getParentTaskid()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+		}
 		
 	}
 	
@@ -400,6 +419,12 @@ public class XmTaskService extends BaseService {
 	public void batchInsertOrUpdate(List<XmTask> insertXmTasks,List<XmTask> editXmTasks) {
 		if(insertXmTasks!=null && insertXmTasks.size()>0) {
 			this.batchInsert(insertXmTasks);
+			List<XmTask> list= insertXmTasks.stream().filter(i->!insertXmTasks.stream().filter(k->k.getId().equals(i.getParentTaskid())).findAny().isPresent()).collect(Collectors.toList());
+			list=list.stream().filter(i->StringUtils.hasText(i.getParentTaskid())).collect(Collectors.toList());
+			if(list.size()>0){
+				this.updateChildrenCntByIds(list.stream().map(i->i.getParentTaskid()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+			}
+
 		}
 		if(editXmTasks!=null && editXmTasks.size()>0) {
 			this.batchUpdate(editXmTasks);
@@ -408,6 +433,10 @@ public class XmTaskService extends BaseService {
 
 	public Map<String,Object> shareTaskDetail(Map<String, Object> xmTask) {
 		return this.selectOne("shareTaskDetail",xmTask);
+	}
+
+	public void updateChildrenCntByIds(List<String> ids) {
+		super.update("updateChildrenCntByIds",ids);
 	}
 
 	/** 请在此类添加自定义函数 */

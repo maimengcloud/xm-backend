@@ -10,6 +10,7 @@ import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProjectPhase;
+import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.XmProjectPhaseService;
 import com.xm.core.service.XmProjectService;
@@ -28,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * url编制采用rest风格,如对XM.xm_project_phase 项目阶段模板的操作有增删改查,对应的url分别为:<br>
  *  新增: xm/xmProjectPhase/add <br>
@@ -230,9 +233,6 @@ public class XmProjectPhaseController {
 			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
 			if(judgetTips.isOk()) { 
 				xmProjectPhaseService.insert(xmProjectPhase);
-				if(StringUtils.hasText(xmProjectPhase.getParentPhaseId())){
-					this.xmProjectPhaseService.updatePhaseChildrenCntByPhaseId(xmProjectPhase.getParentPhaseId());
-				}
 				xmRecordService.addXmPhaseRecord(projectId, xmProjectPhase.getId(), "项目-阶段计划-新增计划", "新增阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
 				m.put("data",xmProjectPhase);
 			}else {
@@ -285,9 +285,7 @@ public class XmProjectPhaseController {
 				}else {
 
 					xmProjectPhaseService.deleteByPk(xmProjectPhase);
-					if(StringUtils.hasText(xmProjectPhase.getParentPhaseId())){
-						this.xmProjectPhaseService.updatePhaseChildrenCntByPhaseId(xmProjectPhase.getParentPhaseId());
-					}
+
 					xmRecordService.addXmPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-阶段计划-删除计划", "删除阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
 				}
 			}
@@ -398,6 +396,7 @@ public class XmProjectPhaseController {
 				return m;
 			}
 			List<String> noQxUsernames=new ArrayList<>();
+			List<XmProjectPhase> delPhases=new ArrayList<>();
 			for (XmProjectPhase phase : xmProjectPhases) {
 				boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,phase.getMngUserid(),user.getUserid());
 				if(  !meIsPm && !meIsHisTeamHead ){
@@ -412,13 +411,16 @@ public class XmProjectPhaseController {
 					Long checkExistsChildren =xmProjectPhaseService.checkExistsChildren(phase.getId());
 					if(checkExistsChildren>0) {
 						hasChildList.add(phase.getPhaseName());
- 					}else { 
-						xmProjectPhaseService.deleteByPk(phase);
+ 					}else {
+						delPhases.add(phase);
 						delCount=delCount+1;
 						xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-阶段计划-删除计划", "删除阶段计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
 					}
 					 
 				}
+			}
+			if(delPhases.size()>0){
+				this.xmProjectPhaseService.doBatchDelete(delPhases);
 			}
 			String noQxTips="";
 			if(noQxUsernames.size()>0){
@@ -494,7 +496,7 @@ public class XmProjectPhaseController {
 			
 			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,null);
 			if(judgetTips.isOk()) {
-				xmProjectPhaseService.batchInsert(xmProjectPhases);
+				xmProjectPhaseService.doBatchInsert(xmProjectPhases);
 
 				for (XmProjectPhase phase : xmProjectPhases) {
 					xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-阶段计划-新增计划", "新增阶段计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);

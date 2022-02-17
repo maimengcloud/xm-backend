@@ -11,12 +11,15 @@ import com.xm.core.vo.XmProjectPhaseVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
  * 组织 com.qqkj  顶级模块 oa 大模块 xm 小模块 <br>
@@ -58,6 +61,25 @@ public class XmProjectPhaseService extends BaseService {
 		}
 		return tips;
 	}
+	@Transactional
+	public int insert(XmProjectPhase parameter) {
+		int i= super.insert(parameter);
+		if(StringUtils.hasText(parameter.getParentPhaseId())){
+			this.updatePhaseChildrenCntByPhaseId(parameter.getParentPhaseId());
+		}
+		return i;
+	}
+
+
+	@Transactional
+	public  int deleteByPk(XmProjectPhase parameter) {
+		int i= super.deleteByPk(parameter);
+		if(StringUtils.hasText(parameter.getParentPhaseId())){
+			this.updatePhaseChildrenCntByPhaseId(parameter.getParentPhaseId());
+		}
+		return i;
+	}
+
 	/**
 	 * 判断新增预算是否超出项目总预算
 	 * @param projectId
@@ -121,7 +143,18 @@ public class XmProjectPhaseService extends BaseService {
 		} 
 		
 	}
-	
+	@Transactional
+	public  int[] doBatchDelete(List<XmProjectPhase> batchValues) {
+		int[] result= super.batchDelete(batchValues);
+
+		List<XmProjectPhase> list= batchValues.stream().filter(i->!batchValues.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
+		list=list.stream().filter(i-> StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());
+		if(list.size()>0){
+			this.updateChildrenCntByIds(list.stream().map(i->i.getParentPhaseId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+		}
+		return result;
+	}
+
 	public XmProjectPhase autoCalcWorkload(XmProjectPhase phase) {
 		BigDecimal phaseBudgetHours=NumberUtil.getBigDecimal(phase.getPhaseBudgetHours(),BigDecimal.ZERO);
 		BigDecimal phaseBudgetInnerUserCnt=NumberUtil.getBigDecimal(phase.getPhaseBudgetInnerUserCnt(),BigDecimal.ZERO);
@@ -145,7 +178,9 @@ public class XmProjectPhaseService extends BaseService {
 		Long i= this.selectOne("checkExistsTask", phaseId);
 		return i;
 	}
-
+	public void updateChildrenCntByIds(List<String> ids) {
+		super.update("updateChildrenCntByIds",ids);
+	}
 
 	public void updatePhaseChildrenCntByPhaseId(String phaseId){
 		super.update("updatePhaseChildrenCntByPhaseId",phaseId);
@@ -169,6 +204,11 @@ public class XmProjectPhaseService extends BaseService {
 		}
 		if(addList.size()>0) {
 			this.batchInsert(addList);
+			List<XmProjectPhase> list= xmProjectPhases.stream().filter(i->!xmProjectPhases.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
+			list=list.stream().filter(i->StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());
+			if(list.size()>0){
+				this.updateChildrenCntByIds(list.stream().map(i->i.getParentPhaseId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+			}
 		}
 		if(editList.size()>0) {
 			this.batchUpdate(editList);
@@ -178,5 +218,15 @@ public class XmProjectPhaseService extends BaseService {
     public void calcKeyPaths(String projectId) {
 
     }
+
+    @Transactional
+	public void doBatchInsert(List<XmProjectPhase> xmProjectPhases) {
+		super.batchInsert(xmProjectPhases);
+		List<XmProjectPhase> list= xmProjectPhases.stream().filter(i->!xmProjectPhases.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
+		list=list.stream().filter(i->StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());
+		if(list.size()>0){
+			this.updateChildrenCntByIds(list.stream().map(i->i.getParentPhaseId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+		}
+	}
 }
 

@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * url编制采用rest风格,如对XM.xm_task xm_task的操作有增删改查,对应的url分别为:<br>
@@ -306,9 +307,6 @@ public class XmTaskController {
 			Tips judgetTips=xmTaskService.judgetBudget(projectPhaseId, taskBudgetCost,taskBudgetInnerUserAt,taskBudgetOutUserAt,taskBudgetNouserAt,null);
 			if(judgetTips.isOk()) {
 				xmTaskVo = xmTaskService.addTask(xmTaskVo);
-				if(StringUtils.hasText(xmTaskVo.getParentTaskid())){
-					xmTaskService.updateTaskChildrenCntByTaskId(xmTaskVo.getParentTaskid());
-				}
 			}else {
 				tips=judgetTips;
 			}
@@ -433,13 +431,8 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
-			if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
-				xmTaskService.updateTaskChildrenCntByTaskId(xmTaskDb.getParentTaskid());
-			}
 			xmTaskService.deleteTask(xmTask);
-			if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
-				xmTaskService.updateTaskChildrenCntByTaskId(xmTaskDb.getParentTaskid());
-			}
+
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -792,11 +785,17 @@ public class XmTaskController {
 
 			Tips judgetTips=xmTaskService.judgetBudget(projectPhaseId, taskBudgetCost,taskBudgetInnerUserAt,taskBudgetOutUserAt,taskBudgetNouserAt,excludeTaskIds);
 			if(judgetTips.isOk()) {
+				for (XmTask task : xmTasks) {
+					task.setChildrenCnt( Integer.valueOf(xmTasks.stream().filter(i->task.getId().equals(i.getParentTaskid())).count()+""));
+				}
+
 				xmTaskService.batchImportFromTemplate(xmTasks);
+
 				for (XmTask t : xmTasks) {
 					xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量新增任务", "新增任务"+t.getName(),JSON.toJSONString(t),null);
 					
 				}
+
 			}else {
 				tips=judgetTips;
 			}
@@ -943,13 +942,18 @@ public class XmTaskController {
 
 			}
 			List<String> noDelList=new ArrayList<>();
+			List<XmTask> delTasks=new ArrayList<>();
 			allowTasks.forEach(t->{
 				try {
-					xmTaskService.deleteTask(t);
+					delTasks.add(t);
 				} catch (BizException e) {
 					noDelList.add(t.getName());
 				}
  			});
+			if(delTasks.size()>0){
+				this.xmTaskService.doBatchDelete(delTasks);
+			}
+
 			if(noDelList.size()>0 && allowTasks.size()>noDelList.size()) {
 				tips.setOkMsg("成功删除"+(allowTasks.size()-noDelList.size())+"条任务，其中以下任务可能存在未结算的执行人或者存在子任务，不允许删除"+StringUtils.arrayToCommaDelimitedString(noDelList.toArray()));
 			}if(noDelList.size()>0 && allowTasks.size()==noDelList.size()) {

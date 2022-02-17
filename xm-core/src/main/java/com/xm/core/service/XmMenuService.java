@@ -5,10 +5,13 @@ import com.xm.core.entity.XmMenu;
 import com.xm.core.vo.XmMenuVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
  * 组织 com.qqkj  顶级模块 oa 大模块 xm 小模块 <br>
@@ -40,7 +43,9 @@ public class XmMenuService extends BaseService {
 	public void updateMenuChildrenCntByMenuId(String menuId){
 		super.update("updateMenuChildrenCntByMenuId",menuId);
 	}
-
+	public void updateChildrenCntByIds(List<String> ids) {
+		super.update("updateChildrenCntByIds",ids);
+	}
 	@Transactional
 	public void batchInsertOrUpdate(List<XmMenuVo> xmMenus) {
 		List<XmMenuVo> addList=new ArrayList<>();
@@ -54,6 +59,12 @@ public class XmMenuService extends BaseService {
 		}
 		if(addList.size()>0) {
 			this.batchInsert(addList);
+
+			List<XmMenu> list= addList.stream().filter(i->!addList.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
+			list=list.stream().filter(i-> StringUtils.hasText(i.getPmenuId())).collect(Collectors.toList());
+			if(list.size()>0){
+				this.updateChildrenCntByIds(list.stream().map(i->i.getPmenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+			}
 		}
 		if(editList.size()>0) {
 			this.batchUpdate(editList);
@@ -68,5 +79,45 @@ public class XmMenuService extends BaseService {
 
 		return this.selectList("selectExistIterationMenus",map("menuIds",menuIds));
     }
+
+    @Transactional
+	public   int insert(XmMenu xmMenu) {
+		int i= super.insert(xmMenu);
+		if(StringUtils.hasText(xmMenu.getPmenuId())){
+			this.updateMenuChildrenCntByMenuId(xmMenu.getPmenuId());
+		}
+		return i;
+	}
+
+	@Transactional
+	public   int updateByPk(XmMenu xmMenu) {
+		int i= super.updateByPk(xmMenu);
+
+		if(StringUtils.hasText(xmMenu.getPmenuId())){
+			this.updateMenuChildrenCntByMenuId(xmMenu.getPmenuId());
+		}
+		return i;
+	}
+
+	@Transactional
+	public void doBatchInsert(List<XmMenu> xmMenus) {
+		super.batchInsert(xmMenus);
+		List<XmMenu> list= xmMenus.stream().filter(i->!xmMenus.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
+		list=list.stream().filter(i->StringUtils.hasText(i.getPmenuId())).collect(Collectors.toList());
+		if(list.size()>0){
+			this.updateChildrenCntByIds(list.stream().map(i->i.getPmenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+		}
+	}
+
+	@Transactional
+	public void doBatchDelete(List<XmMenu> canDelList) {
+		super.batchDelete(canDelList);
+
+		List<XmMenu> list= canDelList.stream().filter(i->!canDelList.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
+		list=list.stream().filter(i->StringUtils.hasText(i.getPmenuId())).collect(Collectors.toList());
+		if(list.size()>0){
+			this.updateChildrenCntByIds(list.stream().map(i->i.getPmenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+		}
+	}
 }
 

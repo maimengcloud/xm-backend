@@ -72,6 +72,21 @@
 		WHERE
 		t.id = #{id}
 	</update>
+
+	<update id="updateChildrenCntByIds" parameterType="List">
+		UPDATE xm_project_phase t
+		LEFT JOIN ( SELECT count( 1 ) AS children_cnt, tt.parent_phase_id AS id FROM xm_project_phase tt  WHERE
+		(tt.parent_phase_id) in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			( #{item})
+		</foreach>
+		group by tt.parent_phase_id ) t2 ON t2.id = t.id
+		SET t.children_cnt = ifnull( t2.children_cnt, 0 )
+		WHERE  (t.id) in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			( #{item})
+		</foreach>
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 
