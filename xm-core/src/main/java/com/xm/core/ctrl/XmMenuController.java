@@ -170,6 +170,7 @@ public class XmMenuController {
 				xmMenu.setMmUserid(user.getUserid());
 				xmMenu.setMmUsername(user.getUsername());
 			}
+			xmMenuService.parentIdPathsCalcBeforeSave(xmMenu);
 			xmMenuService.insert(xmMenu);
 
 			m.put("data",xmMenu);
@@ -334,6 +335,7 @@ public class XmMenuController {
 		try{ 
 			 
 			if(xmMenus.size()>0) {
+				this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenus);
 				this.xmMenuService.doBatchInsert(xmMenus);
  			}else {
  				tips.setFailureMsg("没有数据可以新增，请上送数据");

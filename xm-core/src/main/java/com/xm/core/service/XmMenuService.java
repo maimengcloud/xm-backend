@@ -1,5 +1,6 @@
 package com.xm.core.service;
 
+import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.vo.XmMenuVo;
@@ -7,9 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -58,9 +57,10 @@ public class XmMenuService extends BaseService {
 			}
 		}
 		if(addList.size()>0) {
-			this.batchInsert(addList);
+			List<XmMenu> adds=this.parentIdPathsCalcBeforeSave(addList.stream().map(i->(XmMenu)i).collect(Collectors.toList()));
+			this.batchInsert(adds);
 
-			List<XmMenu> list= addList.stream().filter(i->!addList.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
+			List<XmMenu> list= adds.stream().filter(i->!adds.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
 			list=list.stream().filter(i-> StringUtils.hasText(i.getPmenuId())).collect(Collectors.toList());
 			if(list.size()>0){
 				this.updateChildrenCntByIds(list.stream().map(i->i.getPmenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
@@ -79,6 +79,95 @@ public class XmMenuService extends BaseService {
 
 		return this.selectList("selectExistIterationMenus",map("menuIds",menuIds));
     }
+
+	public List<XmMenu> parentIdPathsCalcBeforeSave(List<XmMenu> nodes) {
+ 		List<XmMenu> noExistsList=nodes.stream().filter(i->!nodes.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
+		noExistsList=noExistsList.stream().filter(i->StringUtils.hasText(i.getPmenuId())).collect(Collectors.toList());
+ 		Map<String,String> hadCalcMap=new HashMap<>();
+		for (XmMenu node : noExistsList) {
+			if(hadCalcMap.containsKey(node.getPmenuId())){
+				String idPaths=hadCalcMap.get(node.getPmenuId());
+				node.setPidPaths(idPaths+node.getMenuId()+",");
+			}else{
+				this.parentIdPathsCalcBeforeSave(node);
+				String idPaths=node.getPidPaths();
+				idPaths=idPaths.substring(0,idPaths.length()-node.getMenuId().length()-1);
+				hadCalcMap.put(node.getPmenuId(),idPaths);
+			}
+		}
+		for (XmMenu node : nodes) {
+			if(StringUtils.hasText(node.getPmenuId())){
+				node.setPidPaths("0,");
+				continue;
+			}
+			if(hadCalcMap.containsKey(node.getPmenuId())){
+				String idPaths=hadCalcMap.get(node.getPmenuId());
+				node.setPidPaths(idPaths+node.getMenuId()+",");
+			}else{
+				List<XmMenu> pnodeList=this.getParentList(node,nodes);
+				XmMenu topParent=pnodeList.get(pnodeList.size()-1);
+				String idPath="0,";
+				if(hadCalcMap.containsKey(topParent.getPmenuId())){
+					idPath=hadCalcMap.get(topParent.getPmenuId());
+				}
+				for (int i = pnodeList.size() - 1; i >= 0; i--) {
+					idPath=idPath+pnodeList.get(i).getMenuId()+",";
+				}
+				node.setPidPaths(idPath+node.getMenuId()+",");
+			}
+		}
+		return nodes;
+	}
+
+	public Tips parentIdPathsCalcBeforeSave(XmMenu currNode) {
+		Tips tips = new Tips("成功");
+		if (!StringUtils.hasText(currNode.getPmenuId()) || "0".equals(currNode.getPmenuId())) {
+			currNode.setPidPaths("0," + currNode.getMenuId() + ",");
+			return tips;
+		} else {
+			List<XmMenu> parentList=this.getParentList(currNode);
+			String idPath="0,";
+			for (int i = parentList.size() - 1; i >= 0; i--) {
+				idPath=idPath+parentList.get(i).getMenuId()+",";
+			}
+			currNode.setPidPaths(idPath+currNode.getMenuId()+",");
+		}
+		return tips;
+	}
+
+	private List<XmMenu> getParentList(XmMenu currNode){
+		List<XmMenu> parentList=new ArrayList<>();
+		XmMenu current=currNode;
+		while (true){
+			if(!StringUtils.hasText(currNode.getPmenuId()) || "0".equals(currNode.getPmenuId())){
+				return parentList;
+			}
+			XmMenu query=new XmMenu();
+			query.setMenuId(current.getPmenuId());
+			current=this.selectOneObject(query);
+			if(current==null){
+				return parentList;
+			}
+			parentList.add(current);
+		}
+	}
+
+	private List<XmMenu> getParentList(XmMenu currNode,List<XmMenu> nodes){
+		List<XmMenu> parentList=new ArrayList<>();
+		XmMenu current=currNode;
+		while (true){
+			if(!StringUtils.hasText(currNode.getPmenuId()) || "0".equals(currNode.getPmenuId())){
+				return parentList;
+			}
+			XmMenu query=new XmMenu();
+			query.setMenuId(current.getPmenuId());
+			current=nodes.stream().filter(i->i.getMenuId().equals(query.getMenuId())).findFirst().get();
+			if(current==null){
+				return parentList;
+			}
+			parentList.add(current);
+		}
+	}
 
     @Transactional
 	public   int insert(XmMenu xmMenu) {
