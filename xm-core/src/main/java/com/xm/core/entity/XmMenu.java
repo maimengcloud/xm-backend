@@ -7,9 +7,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames;<br>
+ *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths;<br>
  * 表 xm_menu 功能表的所有字段名: <br>
- *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names;<br>
+ *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -34,7 +34,7 @@ public class XmMenu  implements java.io.Serializable {
 	@ApiModelProperty(notes="备注",allowEmptyValue=true,example="",allowableValues="")
 	String remark;
 	
-	@ApiModelProperty(notes="状态0初始1设计中2开发中3测试中4uat测试2已上线3已下线4已删除",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="状态0初始1待评审2待设计3待开发4待sit测试5待uat测试6已测试待上线7已上线8已下线9已删除",allowEmptyValue=true,example="",allowableValues="")
 	String status;
 	
 	@ApiModelProperty(notes="是否已上线",allowEmptyValue=true,example="",allowableValues="")
@@ -87,6 +87,9 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="标签名称,逗号分割",allowEmptyValue=true,example="",allowableValues="")
 	String tagNames;
+	
+	@ApiModelProperty(notes="父级id逗号分割，最后一个为本节点节点编号,以,号结尾",allowEmptyValue=true,example="",allowableValues="")
+	String pidPaths;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -128,7 +131,7 @@ public class XmMenu  implements java.io.Serializable {
 		this.remark = remark;
 	}
 	/**
-	 * 状态0初始1设计中2开发中3测试中4uat测试2已上线3已下线4已删除
+	 * 状态0初始1待评审2待设计3待开发4待sit测试5待uat测试6已测试待上线7已上线8已下线9已删除
 	 **/
 	public void setStatus(String status) {
 		this.status = status;
@@ -235,6 +238,12 @@ public class XmMenu  implements java.io.Serializable {
 	public void setTagNames(String tagNames) {
 		this.tagNames = tagNames;
 	}
+	/**
+	 * 父级id逗号分割，最后一个为本节点节点编号,以,号结尾
+	 **/
+	public void setPidPaths(String pidPaths) {
+		this.pidPaths = pidPaths;
+	}
 	
 	/**
 	 * 功能编号
@@ -267,7 +276,7 @@ public class XmMenu  implements java.io.Serializable {
 		return this.remark;
 	}
 	/**
-	 * 状态0初始1设计中2开发中3测试中4uat测试2已上线3已下线4已删除
+	 * 状态0初始1待评审2待设计3待开发4待sit测试5待uat测试6已测试待上线7已上线8已下线9已删除
 	 **/
 	public String getStatus() {
 		return this.status;
@@ -373,6 +382,12 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public String getTagNames() {
 		return this.tagNames;
+	}
+	/**
+	 * 父级id逗号分割，最后一个为本节点节点编号,以,号结尾
+	 **/
+	public String getPidPaths() {
+		return this.pidPaths;
 	}
 
 }

@@ -128,7 +128,7 @@
 		insert into xm_menu(
 			<include refid="columns"/>
 		) values (
-		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames}
+		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths}
 		)
 	</insert>
 	
@@ -191,7 +191,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names
+		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -219,6 +219,7 @@
 		<if test="ltime != null">      and date_format(res.ltime,'%Y-%m-%d') = date_format(#{ltime},'%Y-%m-%d')     </if>
 		<if test="tagIds != null and tagIds != ''">      and res.tag_ids = #{tagIds}     </if>
 		<if test="tagNames != null and tagNames != ''">      and res.tag_names = #{tagNames}     </if>
+		<if test="pidPaths != null and pidPaths != ''">      and res.pid_paths = #{pidPaths}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -243,7 +244,8 @@
 		children_cnt = #{childrenCnt},
 		ltime = #{ltime},
 		tag_ids = #{tagIds},
-		tag_names = #{tagNames}
+		tag_names = #{tagNames},
+		pid_paths = #{pidPaths}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="menuName != null and menuName != ''"> menu_name = #{menuName},     </if>
@@ -268,6 +270,7 @@
 		<if test="ltime != null"> ltime = #{ltime},     </if>
 		<if test="tagIds != null and tagIds != ''"> tag_ids = #{tagIds},     </if>
 		<if test="tagNames != null and tagNames != ''"> tag_names = #{tagNames},     </if>
+		<if test="pidPaths != null and pidPaths != ''"> pid_paths = #{pidPaths},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -292,6 +295,7 @@
 			children_cnt = #{item.childrenCnt},
 			ltime = #{item.ltime},
 			tag_ids = #{item.tagIds},
-			tag_names = #{item.tagNames}
+			tag_names = #{item.tagNames},
+			pid_paths = #{item.pidPaths}
 	</sql>
 </mapper>
