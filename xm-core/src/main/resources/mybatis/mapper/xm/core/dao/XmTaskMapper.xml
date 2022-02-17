@@ -52,7 +52,7 @@
 		</if>
 		<if test="key != null and key !='' ">    and res.name like #{key}   </if>
 		<if test="work != null and work != ''"> and res.rate != '100' </if>
-		<if test="isTop!=null and isTop=='1'">
+		<if test="isTop!=null and isTop!=''">
 			and (res.parent_taskid is null or res.parent_taskid='')
 		</if>
     </sql>

@@ -18,7 +18,7 @@
 			and exists( select 1 from xm_task t where t.product_id=#{productId})
 		</if>
 		<if test="key != null and key !='' ">       </if>
-		<if test="isTop!=null and isTop=='1'">
+		<if test="isTop!=null and isTop!=''">
 			and (res.parent_phase_id is null or res.parent_phase_id='')
 		</if>
     </sql>
