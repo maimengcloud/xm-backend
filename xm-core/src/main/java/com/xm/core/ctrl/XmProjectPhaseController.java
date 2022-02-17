@@ -603,6 +603,37 @@ public class XmProjectPhaseController {
 		}  
 		m.put("tips", tips);
 		return m;
-	}  
-	
+	}
+
+	@ApiOperation( value = "计算bug、task、测试案例、等数据",notes="loadTasksToXmProjectPhase")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@HasQx(value = "xm_core_xmProjectPhase_loadTasksToXmProjectPhase",name = "计算各个阶段计划对应的bug、task、测试案例等数据",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/calcKeyPaths",method=RequestMethod.POST)
+	public Map<String,Object> calcKeyPaths(@RequestBody Map<String,Object> params) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功修改数据");
+		try{
+			String projectId=(String) params.get("projectId");
+			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
+			User user = LoginUtils.getCurrentUserInfo();
+			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
+			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
+			if( !meIsPm  && !meIsTeamHead ){
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许发起关键路径计算任务");
+				m.put("tips", tips);
+				return m;
+			}
+			xmProjectPhaseService.calcKeyPaths((String) params.get("projectId"));
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 }

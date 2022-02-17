@@ -169,6 +169,9 @@ public class XmProjectPhaseService extends BaseService {
 			this.batchUpdate(editList);
 		}
 	}
-	
+
+    public void calcKeyPaths(String projectId) {
+
+    }
 }
 
