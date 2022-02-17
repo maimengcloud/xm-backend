@@ -120,6 +120,11 @@ public class XmTaskService extends BaseService {
 		
 	}
 
+
+	public void updateTaskChildrenCntByTaskId(String taskId){
+		super.update("updateTaskChildrenCntByTaskId",taskId);
+	}
+
 	public List<Map<String,Object>> getTask(Map<String,Object> xmTask){  
 		List<Map<String,Object>> mapList = this.selectListMapByWhere(xmTask);//所有数据 
 		return mapList;

@@ -35,7 +35,11 @@ public class XmMenuService extends BaseService {
 		// TODO Auto-generated method stub
 		return this.selectList("selectListMapByWhereWithState", xmMenu);
 	}
-	
+
+
+	public void updateMenuChildrenCntByMenuId(String menuId){
+		super.update("updateMenuChildrenCntByMenuId",menuId);
+	}
 
 	@Transactional
 	public void batchInsertOrUpdate(List<XmMenuVo> xmMenus) {

@@ -65,7 +65,13 @@
 		select count(1) from xm_project_phase res where res.parent_phase_id = #{id}
 	</select>
 
-
+	<update id="updatePhaseChildrenCntByPhaseId" parameterType="String">
+		UPDATE xm_project_phase t
+		LEFT JOIN ( SELECT count( 1 ) AS children_cnt, tt.parent_phase_id AS id FROM xm_project_phase tt WHERE tt.parent_phase_id = #{id} ) t2 ON t2.id = t.id
+		SET t.children_cnt = ifnull( t2.children_cnt, 0 )
+		WHERE
+		t.id = #{id}
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

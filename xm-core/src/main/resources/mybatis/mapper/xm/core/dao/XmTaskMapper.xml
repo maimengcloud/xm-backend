@@ -78,6 +78,15 @@
 		update  xm_task set menu_id = #{menuId}, menu_name = #{menuName},product_id=#{productId},product_name=#{productName} where id = #{id}
 	</update>
 
+	<update id="updateTaskChildrenCntByTaskId" parameterType="String">
+		UPDATE xm_task t
+		LEFT JOIN ( SELECT count( 1 ) AS children_cnt, tt.parent_taskid AS id FROM xm_task tt WHERE tt.parent_taskid = #{id} ) t2 ON t2.id = t.id
+		SET t.children_cnt = ifnull( t2.children_cnt, 0 )
+		WHERE
+		t.id = #{id}
+	</update>
+
+
 	<!-- 插入流程审批表数据 -->
 	<insert id="insertProcessApprova"
 			parameterType="HashMap"

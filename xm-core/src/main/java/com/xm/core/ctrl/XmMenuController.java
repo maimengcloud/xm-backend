@@ -168,6 +168,9 @@ public class XmMenuController {
 				xmMenu.setMmUsername(user.getUsername());
 			}
 			xmMenuService.insert(xmMenu);
+			if(StringUtils.hasText(xmMenu.getPmenuId())){
+				this.xmMenuService.updateMenuChildrenCntByMenuId(xmMenu.getPmenuId());
+			}
 			m.put("data",xmMenu);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -205,6 +208,9 @@ public class XmMenuController {
 					tips.setFailureMsg("存在"+childCount+"个子故事关联该故事，不允许删除");
 				}else {
 					xmMenuService.deleteByPk(xmMenu);
+					if(StringUtils.hasText(xmMenu.getPmenuId())){
+						this.xmMenuService.updateMenuChildrenCntByMenuId(xmMenu.getPmenuId());
+					}
 				}
 			} 
 		}catch (BizException e) { 

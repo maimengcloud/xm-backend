@@ -261,6 +261,12 @@ public class XmTaskController {
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 
+
+			if(!StringUtils.hasText(xmTaskVo.getNtype())){
+				tips.setFailureMsg("节点类型ntype不能为空");
+				m.put("tips", tips);
+				return m;
+			}
 			User user=LoginUtils.getCurrentUserInfo();
 			xmTaskVo.setCreateUserid(user.getUserid());
 			xmTaskVo.setCreateUsername(user.getUsername());
@@ -299,7 +305,10 @@ public class XmTaskController {
 			taskBudgetCost=taskBudgetCost.add(taskBudgetInnerUserAt).add(taskBudgetOutUserAt).add(taskBudgetNouserAt);   
 			Tips judgetTips=xmTaskService.judgetBudget(projectPhaseId, taskBudgetCost,taskBudgetInnerUserAt,taskBudgetOutUserAt,taskBudgetNouserAt,null);
 			if(judgetTips.isOk()) {
-				xmTaskVo = xmTaskService.addTask(xmTaskVo); 
+				xmTaskVo = xmTaskService.addTask(xmTaskVo);
+				if(StringUtils.hasText(xmTaskVo.getParentTaskid())){
+					xmTaskService.updateTaskChildrenCntByTaskId(xmTaskVo.getParentTaskid());
+				}
 			}else {
 				tips=judgetTips;
 			}
@@ -424,7 +433,13 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
+			if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
+				xmTaskService.updateTaskChildrenCntByTaskId(xmTaskDb.getParentTaskid());
+			}
 			xmTaskService.deleteTask(xmTask);
+			if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
+				xmTaskService.updateTaskChildrenCntByTaskId(xmTaskDb.getParentTaskid());
+			}
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);

@@ -229,7 +229,10 @@ public class XmProjectPhaseController {
 			excludePhaseIds.add(xmProjectPhase.getId());
 			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
 			if(judgetTips.isOk()) { 
-				xmProjectPhaseService.insert(xmProjectPhase); 
+				xmProjectPhaseService.insert(xmProjectPhase);
+				if(StringUtils.hasText(xmProjectPhase.getParentPhaseId())){
+					this.xmProjectPhaseService.updatePhaseChildrenCntByPhaseId(xmProjectPhase.getParentPhaseId());
+				}
 				xmRecordService.addXmPhaseRecord(projectId, xmProjectPhase.getId(), "项目-阶段计划-新增计划", "新增阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
 				m.put("data",xmProjectPhase);
 			}else {
@@ -282,6 +285,9 @@ public class XmProjectPhaseController {
 				}else {
 
 					xmProjectPhaseService.deleteByPk(xmProjectPhase);
+					if(StringUtils.hasText(xmProjectPhase.getParentPhaseId())){
+						this.xmProjectPhaseService.updatePhaseChildrenCntByPhaseId(xmProjectPhase.getParentPhaseId());
+					}
 					xmRecordService.addXmPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-阶段计划-删除计划", "删除阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
 				}
 			}

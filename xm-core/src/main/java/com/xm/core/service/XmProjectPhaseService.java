@@ -145,6 +145,11 @@ public class XmProjectPhaseService extends BaseService {
 		Long i= this.selectOne("checkExistsTask", phaseId);
 		return i;
 	}
+
+
+	public void updatePhaseChildrenCntByPhaseId(String phaseId){
+		super.update("updatePhaseChildrenCntByPhaseId",phaseId);
+	}
 	
 	public Long checkExistsChildren(String phaseId) {
 		Long i= this.selectOne("checkExistsChildren", phaseId);
