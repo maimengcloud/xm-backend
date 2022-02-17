@@ -3,6 +3,7 @@ package com.xm.core.ctrl;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -229,6 +230,25 @@ public class XmMenuController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
+			if(!StringUtils.hasText(xmMenu.getMenuId())){
+				ResponseHelper.failed("menuId-0","menuId不能为空");
+			}
+			XmMenu xmMenuDb=xmMenuService.selectOneObject(new XmMenu(xmMenu.getMenuId()));
+			if(xmMenuDb==null){
+				ResponseHelper.failed("menu-0","该需求不存在");
+			}
+			if(StringUtils.hasText(xmMenu.getNtype())&&StringUtils.hasText(xmMenu.getNtype())&&StringUtils.hasText(xmMenuDb.getPmenuId())){
+				if(!xmMenuDb.getNtype().equals(xmMenu.getNtype())){
+					if(xmMenu.getNtype().equals("1")){
+						XmTask xmMenuParentDb=this.xmTaskService.selectOneObject(new XmTask(xmMenuDb.getPmenuId()));
+						if(xmMenuParentDb!=null){
+							if(!"1".equals(xmMenuParentDb.getNtype())){
+								ResponseHelper.failed("pmenu-ntype-0","上级任务"+xmMenuParentDb.getName()+"属于不是需求集,不能下挂需求集");
+							}
+						}
+					}
+				}
+			}
 			xmMenuService.updateByPk(xmMenu);
 			m.put("data",xmMenu);
 		}catch (BizException e) { 

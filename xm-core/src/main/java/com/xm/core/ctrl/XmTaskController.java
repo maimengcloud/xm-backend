@@ -9,6 +9,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -536,6 +537,18 @@ public class XmTaskController {
 				tips.setFailureMsg("您无权修改该任务基础信息！项目经理、组长可以修改任务的基础信息。");
 				m.put("tips", tips);
 				return m;
+			}
+			if(StringUtils.hasText(xmTaskDb.getNtype())&&StringUtils.hasText(xmTaskVo.getNtype())&&StringUtils.hasText(xmTaskDb.getParentTaskid())){
+				if(!xmTaskDb.getNtype().equals(xmTaskVo.getNtype())){
+					if(xmTaskVo.getNtype().equals("1")){
+						XmTask xmTaskParentDb=this.xmTaskService.selectOneObject(new XmTask(xmTaskDb.getParentTaskid()));
+						if(xmTaskParentDb!=null){
+							if(!"1".equals(xmTaskParentDb.getNtype())){
+								ResponseHelper.failed("ptask-ntype-0","上级任务"+xmTaskParentDb.getName()+"属于不是任务集,不能下挂任务集");
+							}
+						}
+					}
+				}
 			}
 			BigDecimal taskBudgetCost=BigDecimal.ZERO;
 			BigDecimal taskBudgetInnerUserAt=BigDecimal.ZERO;
