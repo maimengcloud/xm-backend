@@ -205,14 +205,20 @@ public class XmProjectPhaseService extends BaseService {
 		}
 		if(addList.size()>0) {
 			this.batchInsert(addList);
-			List<XmProjectPhase> list= xmProjectPhases.stream().filter(i->!xmProjectPhases.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
-			list=list.stream().filter(i->StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());
-			if(list.size()>0){
-				this.updateChildrenCntByIds(list.stream().map(i->i.getParentPhaseId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
-			}
+
 		}
+
 		if(editList.size()>0) {
 			this.batchUpdate(editList);
+		}
+
+		List<String> ids=new ArrayList<>();
+		List<XmProjectPhase> list= xmProjectPhases.stream().filter(i->!xmProjectPhases.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
+		list=list.stream().filter(i->StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());
+		ids=list.stream().map(i->i.getParentPhaseId()).collect(Collectors.toList());
+		ids=ids.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
+		if(list.size()>0){
+			this.updateChildrenCntByIds(ids);
 		}
 	}
 

@@ -577,6 +577,7 @@ public class XmProjectPhaseController {
 
 			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
 			if(judgetTips.isOk()) {
+				xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases.stream().map(i->(XmProjectPhase)i).collect(Collectors.toList()));
 				xmProjectPhaseService.batchInsertOrUpdate(xmProjectPhases);
 				for (XmProjectPhase phase : xmProjectPhases) {
 					xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-计划-修改计划预算", "修改计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
