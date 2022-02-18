@@ -37,7 +37,7 @@ public class XmProjectPhaseService extends BaseService {
 	@Autowired
 	XmProjectGroupService groupService;
 	/**
-	 * 查询项目及阶段计划总预算，用于判断是否超出预算 
+	 * 查询项目及计划总预算，用于判断是否超出预算 
 	 */
 	public Map<String,Object> selectTotalProjectAndPhaseBudgetCost(String projectId,List<String> excludePhaseIds){
 		Map<String,Object> p=new HashMap<>();
@@ -52,12 +52,12 @@ public class XmProjectPhaseService extends BaseService {
 		boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
 		boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
 		if( !meIsPm  && !meIsTeamHead ){
-			tips.setFailureMsg("您不是组长、也不是项目管理者，不允许设置阶段计划负责人");
+			tips.setFailureMsg("您不是组长、也不是项目管理者，不允许设置计划负责人");
 			return tips;
 		}
 		boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,mngUserid,myUserid);
 		if(  !meIsPm && !meIsHisTeamHead ){
-			tips.setFailureMsg("您不是"+mngUsername+"的组长，不允许设置其为阶段计划负责人");
+			tips.setFailureMsg("您不是"+mngUsername+"的组长，不允许设置其为计划负责人");
  			return tips;
 		}
 		return tips;
@@ -137,7 +137,7 @@ public class XmProjectPhaseService extends BaseService {
 		BigDecimal phaseBudgetCostAt=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);  
 		phaseBudgetCostAt=phaseBudgetCostAt.add(addPhaseBudgetCost);
 		if(phaseBudgetCostAt.compareTo(planTotalCost)>0) {
-			tips.setFailureMsg("阶段计划总体预算超出项目总预算"+phaseBudgetCostAt.subtract(planTotalCost)+"元");
+			tips.setFailureMsg("计划总体预算超出项目总预算"+phaseBudgetCostAt.subtract(planTotalCost)+"元");
 			return tips;
 		}else {
 			return tips;

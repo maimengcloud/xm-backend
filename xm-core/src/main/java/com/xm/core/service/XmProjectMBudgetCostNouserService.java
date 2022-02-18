@@ -27,7 +27,7 @@ public class XmProjectMBudgetCostNouserService extends BaseService {
 	XmRecordService xmRecordService;
 	
 	/**
-	 * 查询项目及阶段计划总预算，用于判断是否超出预算 
+	 * 查询项目及计划总预算，用于判断是否超出预算 
 	 */
 	public Map<String,Object> selectTotalProjectAndNouserBudgetCost(String projectId,List<String> excludeIds){
 		Map<String,Object> p=new HashMap<>();

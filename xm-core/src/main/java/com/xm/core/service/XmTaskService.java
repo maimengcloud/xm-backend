@@ -121,7 +121,7 @@ public class XmTaskService extends BaseService {
 		
 		BigDecimal phaseBudgetCostAt=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);  
 		if(phaseBudgetCostAt.compareTo(taskBudgetTotalCost)<0) {
-			tips.setFailureMsg("任务合计总预算超出阶段计划总预算");
+			tips.setFailureMsg("任务合计总预算超出计划总预算");
 			return tips;
 		}else {
 			return tips;

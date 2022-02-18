@@ -86,7 +86,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	@ApiModelProperty(notes="项目编号",allowEmptyValue=true,example="",allowableValues="")
 	String projectId;
 	
-	@ApiModelProperty(notes="阶段计划编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="计划编号",allowEmptyValue=true,example="",allowableValues="")
 	String projectPhaseId;
 	
 	@ApiModelProperty(notes="技能说明",allowEmptyValue=true,example="",allowableValues="")
@@ -104,7 +104,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	@ApiModelProperty(notes="项目所属机构",allowEmptyValue=true,example="",allowableValues="")
 	String branchId;
 	
-	@ApiModelProperty(notes="阶段计划名称",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="计划名称",allowEmptyValue=true,example="",allowableValues="")
 	String projectPhaseName;
 	
 	@ApiModelProperty(notes="任务名称",allowEmptyValue=true,example="",allowableValues="")
@@ -261,7 +261,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		this.projectId = projectId;
 	}
 	/**
-	 * 阶段计划编号
+	 * 计划编号
 	 **/
 	public void setProjectPhaseId(String projectPhaseId) {
 		this.projectPhaseId = projectPhaseId;
@@ -297,7 +297,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		this.branchId = branchId;
 	}
 	/**
-	 * 阶段计划名称
+	 * 计划名称
 	 **/
 	public void setProjectPhaseName(String projectPhaseName) {
 		this.projectPhaseName = projectPhaseName;
@@ -460,7 +460,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		return this.projectId;
 	}
 	/**
-	 * 阶段计划编号
+	 * 计划编号
 	 **/
 	public String getProjectPhaseId() {
 		return this.projectPhaseId;
@@ -496,7 +496,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		return this.branchId;
 	}
 	/**
-	 * 阶段计划名称
+	 * 计划名称
 	 **/
 	public String getProjectPhaseName() {
 		return this.projectPhaseName;

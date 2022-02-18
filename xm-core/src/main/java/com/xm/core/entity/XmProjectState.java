@@ -66,10 +66,10 @@ public class XmProjectState  implements java.io.Serializable {
 	@ApiModelProperty(notes="已完成任务总数-来自任务表",allowEmptyValue=true,example="",allowableValues="")
 	Integer totalCompleteTaskCnt;
 	
-	@ApiModelProperty(notes="项目阶段计划数",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目计划数",allowEmptyValue=true,example="",allowableValues="")
 	Integer totalPhaseCnt;
 	
-	@ApiModelProperty(notes="项目阶段计划已完成数",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目计划已完成数",allowEmptyValue=true,example="",allowableValues="")
 	Integer totalCompletePhaseCnt;
 	
 	@ApiModelProperty(notes="待付款总金额",allowEmptyValue=true,example="",allowableValues="")
@@ -156,10 +156,10 @@ public class XmProjectState  implements java.io.Serializable {
 	@ApiModelProperty(notes="待付款总人数",allowEmptyValue=true,example="",allowableValues="")
 	Integer totalNeedPayUserCnt;
 	
-	@ApiModelProperty(notes="内部人力总工作量-应该大于或等于阶段计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="内部人力总工作量-应该大于或等于计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal totalPlanInnerUserWorkload;
 	
-	@ApiModelProperty(notes="外购人力总工作量-应该大于或等于阶段计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="外购人力总工作量-应该大于或等于计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal totalPlanOutUserWorkload;
 	
 	@ApiModelProperty(notes="测试案例总数",allowEmptyValue=true,example="",allowableValues="")
@@ -283,13 +283,13 @@ public class XmProjectState  implements java.io.Serializable {
 		this.totalCompleteTaskCnt = totalCompleteTaskCnt;
 	}
 	/**
-	 * 项目阶段计划数
+	 * 项目计划数
 	 **/
 	public void setTotalPhaseCnt(Integer totalPhaseCnt) {
 		this.totalPhaseCnt = totalPhaseCnt;
 	}
 	/**
-	 * 项目阶段计划已完成数
+	 * 项目计划已完成数
 	 **/
 	public void setTotalCompletePhaseCnt(Integer totalCompletePhaseCnt) {
 		this.totalCompletePhaseCnt = totalCompletePhaseCnt;
@@ -463,13 +463,13 @@ public class XmProjectState  implements java.io.Serializable {
 		this.totalNeedPayUserCnt = totalNeedPayUserCnt;
 	}
 	/**
-	 * 内部人力总工作量-应该大于或等于阶段计划内部人力总成本
+	 * 内部人力总工作量-应该大于或等于计划内部人力总成本
 	 **/
 	public void setTotalPlanInnerUserWorkload(BigDecimal totalPlanInnerUserWorkload) {
 		this.totalPlanInnerUserWorkload = totalPlanInnerUserWorkload;
 	}
 	/**
-	 * 外购人力总工作量-应该大于或等于阶段计划外购人力总成本
+	 * 外购人力总工作量-应该大于或等于计划外购人力总成本
 	 **/
 	public void setTotalPlanOutUserWorkload(BigDecimal totalPlanOutUserWorkload) {
 		this.totalPlanOutUserWorkload = totalPlanOutUserWorkload;
@@ -608,13 +608,13 @@ public class XmProjectState  implements java.io.Serializable {
 		return this.totalCompleteTaskCnt;
 	}
 	/**
-	 * 项目阶段计划数
+	 * 项目计划数
 	 **/
 	public Integer getTotalPhaseCnt() {
 		return this.totalPhaseCnt;
 	}
 	/**
-	 * 项目阶段计划已完成数
+	 * 项目计划已完成数
 	 **/
 	public Integer getTotalCompletePhaseCnt() {
 		return this.totalCompletePhaseCnt;
@@ -788,13 +788,13 @@ public class XmProjectState  implements java.io.Serializable {
 		return this.totalNeedPayUserCnt;
 	}
 	/**
-	 * 内部人力总工作量-应该大于或等于阶段计划内部人力总成本
+	 * 内部人力总工作量-应该大于或等于计划内部人力总成本
 	 **/
 	public BigDecimal getTotalPlanInnerUserWorkload() {
 		return this.totalPlanInnerUserWorkload;
 	}
 	/**
-	 * 外购人力总工作量-应该大于或等于阶段计划外购人力总成本
+	 * 外购人力总工作量-应该大于或等于计划外购人力总成本
 	 **/
 	public BigDecimal getTotalPlanOutUserWorkload() {
 		return this.totalPlanOutUserWorkload;
