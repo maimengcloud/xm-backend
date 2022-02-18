@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * url编制采用rest风格,如对XM.xm_project_phase_template 项目阶段模板的操作有增删改查,对应的url分别为:<br>
+ * url编制采用rest风格,如对XM.xm_project_phase_template 项目计划模板的操作有增删改查,对应的url分别为:<br>
  *  新增: xm/xmProjectPhaseTemplate/add <br>
  *  查询: xm/xmProjectPhaseTemplate/list<br>
  *  模糊查询: xm/xmProjectPhaseTemplate/listKey<br>
@@ -30,7 +30,7 @@ import java.util.Map;
  ***/
 @RestController("xm.core.xmProjectPhaseTemplateController")
 @RequestMapping(value="/**/xm/core/xmProjectPhaseTemplate")
-@Api(tags={"项目阶段模板操作接口"})
+@Api(tags={"项目计划模板操作接口"})
 public class XmProjectPhaseTemplateController {
 	
 	static Log logger=LogFactory.getLog(XmProjectPhaseTemplateController.class);
@@ -41,12 +41,12 @@ public class XmProjectPhaseTemplateController {
 		
  
 	
-	@ApiOperation( value = "查询项目阶段模板信息列表",notes="listXmProjectPhaseTemplate,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiOperation( value = "查询项目计划模板信息列表",notes="listXmProjectPhaseTemplate,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="阶段主键,主键",required=false),
-		@ApiImplicitParam(name="phaseName",value="阶段名称",required=false),
+		@ApiImplicitParam(name="id",value="计划主键,主键",required=false),
+		@ApiImplicitParam(name="phaseName",value="计划名称",required=false),
 		@ApiImplicitParam(name="remark",value="备注",required=false),
-		@ApiImplicitParam(name="parentPhaseId",value="上级阶段编号",required=false),
+		@ApiImplicitParam(name="parentPhaseId",value="上级计划编号",required=false),
 		@ApiImplicitParam(name="branchId",value="机构编号",required=false),
 		@ApiImplicitParam(name="projectId",value="当前项目编号",required=false),
 		@ApiImplicitParam(name="beginDate",value="开始时间",required=false),
@@ -92,7 +92,7 @@ public class XmProjectPhaseTemplateController {
  
 	
 	/***/
-	@ApiOperation( value = "新增一条项目阶段模板信息",notes="addXmProjectPhaseTemplate,主键如果为空，后台自动生成")
+	@ApiOperation( value = "新增一条项目计划模板信息",notes="addXmProjectPhaseTemplate,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProjectPhaseTemplate.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
@@ -126,7 +126,7 @@ public class XmProjectPhaseTemplateController {
 	
 	
 	/***/
-	@ApiOperation( value = "删除一条项目阶段模板信息",notes="delXmProjectPhaseTemplate,仅需要上传主键字段")
+	@ApiOperation( value = "删除一条项目计划模板信息",notes="delXmProjectPhaseTemplate,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
@@ -150,7 +150,7 @@ public class XmProjectPhaseTemplateController {
 	
 	/***/
 	
-	@ApiOperation( value = "根据主键修改一条项目阶段模板信息",notes="editXmProjectPhaseTemplate")
+	@ApiOperation( value = "根据主键修改一条项目计划模板信息",notes="editXmProjectPhaseTemplate")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProjectPhaseTemplate.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
@@ -175,7 +175,7 @@ public class XmProjectPhaseTemplateController {
 
 	
 	/***/
-	@ApiOperation( value = "根据主键列表批量删除项目阶段模板信息",notes="batchDelXmProjectPhaseTemplate,仅需要上传主键字段")
+	@ApiOperation( value = "根据主键列表批量删除项目计划模板信息",notes="batchDelXmProjectPhaseTemplate,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 

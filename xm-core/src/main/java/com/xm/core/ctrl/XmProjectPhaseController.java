@@ -5,6 +5,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -25,14 +26,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
- * url编制采用rest风格,如对XM.xm_project_phase 项目阶段模板的操作有增删改查,对应的url分别为:<br>
+ * url编制采用rest风格,如对XM.xm_project_phase 项目计划模板的操作有增删改查,对应的url分别为:<br>
  *  新增: xm/xmProjectPhase/add <br>
  *  查询: xm/xmProjectPhase/list<br>
  *  模糊查询: xm/xmProjectPhase/listKey<br>
@@ -44,7 +42,7 @@ import java.util.stream.Collectors;
  ***/
 @RestController("xm.core.xmProjectPhaseController")
 @RequestMapping(value="/**/xm/core/xmProjectPhase")
-@Api(tags={"项目阶段模板操作接口"})
+@Api(tags={"项目计划模板操作接口"})
 public class XmProjectPhaseController {
 	
 	static Log logger=LogFactory.getLog(XmProjectPhaseController.class);
@@ -60,12 +58,12 @@ public class XmProjectPhaseController {
 	@Autowired
     XmRecordService xmRecordService;
 	
-	@ApiOperation( value = "查询项目阶段模板信息列表",notes="listXmProjectPhase,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiOperation( value = "查询项目计划模板信息列表",notes="listXmProjectPhase,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="阶段主键,主键",required=false),
-		@ApiImplicitParam(name="phaseName",value="阶段名称",required=false),
+		@ApiImplicitParam(name="id",value="计划主键,主键",required=false),
+		@ApiImplicitParam(name="phaseName",value="计划名称",required=false),
 		@ApiImplicitParam(name="remark",value="备注",required=false),
-		@ApiImplicitParam(name="parentPhaseId",value="上级阶段编号",required=false),
+		@ApiImplicitParam(name="parentPhaseId",value="上级计划编号",required=false),
 		@ApiImplicitParam(name="branchId",value="机构编号",required=false),
 		@ApiImplicitParam(name="projectId",value="当前项目编号",required=false),
 		@ApiImplicitParam(name="beginDate",value="开始时间",required=false),
@@ -95,7 +93,7 @@ public class XmProjectPhaseController {
 		@ApiImplicitParam(name="phaseBudgetOutUserCnt",value="外购人数",required=false),
 		@ApiImplicitParam(name="phaseBudgetInnerUserCnt",value="内部人数",required=false),
 		@ApiImplicitParam(name="actRate",value="实际进度0-100",required=false),
-		@ApiImplicitParam(name="phaseStatus",value="阶段状态0初始1执行中2完工3关闭4删除中5已删除6暂停",required=false),
+		@ApiImplicitParam(name="phaseStatus",value="计划状态0初始1执行中2完工3关闭4删除中5已删除6暂停",required=false),
 		@ApiImplicitParam(name="actOutUserAt",value="实际外部人力成本",required=false),
 		@ApiImplicitParam(name="taskCnt",value="任务数",required=false),
 		@ApiImplicitParam(name="finishTaskCnt",value="完成的任务数",required=false),
@@ -123,25 +121,25 @@ public class XmProjectPhaseController {
 	}
 
 
-	@HasQx(value = "xm_core_xmProjectPhase_setPhaseMngUser",name = "设置阶段计划负责人",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProjectPhase_setPhaseMngUser",name = "设置计划负责人",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/setPhaseMngUser",method=RequestMethod.POST)
 	public Map<String,Object> setPhaseMngUser(@RequestBody XmProjectPhase xmProjectPhase) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功设置");
 		try{
 			if(StringUtils.isEmpty(xmProjectPhase.getId())) {
-				tips.setFailureMsg("阶段计划编号不能为空");
+				tips.setFailureMsg("计划编号不能为空");
 				m.put("tips", tips);
 				return m;
 			}else if(StringUtils.isEmpty(xmProjectPhase.getId())) {
-				tips.setFailureMsg("阶段计划编号不能为空");
+				tips.setFailureMsg("计划编号不能为空");
 				m.put("tips", tips);
 				return m;
 			}else{
 				XmProjectPhase xmProjectPhaseQuery = new  XmProjectPhase(xmProjectPhase.getId());
 				XmProjectPhase xmProjectPhaseDb=this.xmProjectPhaseService.selectOneObject(xmProjectPhaseQuery);
 				if(xmProjectPhaseDb==null){
-					tips.setFailureMsg("阶段计划不存在");
+					tips.setFailureMsg("计划不存在");
 					m.put("tips", tips);
 					return m;
 				}
@@ -150,13 +148,13 @@ public class XmProjectPhaseController {
 				boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
 				boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
 				if( !meIsPm  && !meIsTeamHead ){
-					tips.setFailureMsg("您不是组长、也不是项目管理者，不允许设置阶段计划负责人");
+					tips.setFailureMsg("您不是组长、也不是项目管理者，不允许设置计划负责人");
 					m.put("tips", tips);
 					return m;
 				}
 				boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,xmProjectPhase.getMngUserid(),user.getUserid());
 				if(  !meIsPm && !meIsHisTeamHead ){
-					tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许设置其为阶段计划负责人");
+					tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许设置其为计划负责人");
 					m.put("tips", tips);
 					return m;
 				}
@@ -184,7 +182,7 @@ public class XmProjectPhaseController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProjectPhase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProjectPhase_add",name = "创建项目阶段计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProjectPhase_add",name = "创建项目计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmProjectPhase(@RequestBody XmProjectPhase xmProjectPhase) {
 		Map<String,Object> m = new HashMap<>();
@@ -210,13 +208,13 @@ public class XmProjectPhaseController {
 			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
 			if( !meIsPm  && !meIsTeamHead ){
-				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许设置阶段计划负责人");
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许设置计划负责人");
 				m.put("tips", tips);
 				return m;
 			}
 			boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,xmProjectPhase.getMngUserid(),user.getUserid());
 			if(  !meIsPm && !meIsHisTeamHead ){
-				tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许设置其为阶段计划负责人");
+				tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许设置其为计划负责人");
 				m.put("tips", tips);
 				return m;
 			}
@@ -232,9 +230,18 @@ public class XmProjectPhaseController {
 			excludePhaseIds.add(xmProjectPhase.getId());
 			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
 			if(judgetTips.isOk()) {
+				if(StringUtils.hasText(xmProjectPhase.getParentPhaseId())){
+					XmProjectPhase parentDb=xmProjectPhaseService.selectOneObject(new XmProjectPhase(xmProjectPhase.getParentPhaseId()));
+					if(parentDb==null){
+						return ResponseHelper.failed("p-no-exists","上级计划不存在");
+					}
+					if(!"1".equals(parentDb.getNtype())){
+						return ResponseHelper.failed("p-ntype-no-1","上级【"+parentDb.getPhaseName()+"】不是计划集，不能在其之下建立子计划");
+					}
+				}
 				xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhase);
  				xmProjectPhaseService.insert(xmProjectPhase);
-				xmRecordService.addXmPhaseRecord(projectId, xmProjectPhase.getId(), "项目-阶段计划-新增计划", "新增阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
+				xmRecordService.addXmPhaseRecord(projectId, xmProjectPhase.getId(), "项目-计划-新增计划", "新增计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
 				m.put("data",xmProjectPhase);
 			}else {
 				tips=judgetTips;
@@ -254,7 +261,7 @@ public class XmProjectPhaseController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmProjectPhase_del",name = "删除项目阶段计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProjectPhase_del",name = "删除项目计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmProjectPhase(@RequestBody XmProjectPhase xmProjectPhase){
 		Map<String,Object> m = new HashMap<>();
@@ -265,13 +272,13 @@ public class XmProjectPhaseController {
 			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
 			if( !meIsPm  && !meIsTeamHead ){
-				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许删除阶段计划");
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许删除计划");
 				m.put("tips", tips);
 				return m;
 			}
 			boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,xmProjectPhase.getMngUserid(),user.getUserid());
 			if(  !meIsPm && !meIsHisTeamHead ){
-				tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许删除其负责的阶段计划");
+				tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许删除其负责的计划");
 				m.put("tips", tips);
 				return m;
 			}
@@ -282,12 +289,12 @@ public class XmProjectPhaseController {
 			}else {
 				Long checkExistsChildren =xmProjectPhaseService.checkExistsChildren(xmProjectPhase.getId());
 				if(checkExistsChildren>0) {
-					tips.setFailureMsg("存在"+checkExistsChildren+"条子阶段计划,不允许删除");
+					tips.setFailureMsg("存在"+checkExistsChildren+"条子计划,不允许删除");
 				}else {
 
 					xmProjectPhaseService.deleteByPk(xmProjectPhase);
 
-					xmRecordService.addXmPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-阶段计划-删除计划", "删除阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
+					xmRecordService.addXmPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-计划-删除计划", "删除计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
 				}
 			}
 			
@@ -309,7 +316,7 @@ public class XmProjectPhaseController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProjectPhase.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProjectPhase_edit",name = "修改项目阶段计划基础信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProjectPhase_edit",name = "修改项目计划基础信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmProjectPhase(@RequestBody XmProjectPhase xmProjectPhase) {
 		Map<String,Object> m = new HashMap<>();
@@ -320,7 +327,7 @@ public class XmProjectPhaseController {
 			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
 			if( !meIsPm  && !meIsTeamHead ){
-				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许修改阶段计划");
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许修改计划");
 				m.put("tips", tips);
 				return m;
 			}
@@ -330,7 +337,7 @@ public class XmProjectPhaseController {
 			}
 			boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,xmProjectPhase.getMngUserid(),user.getUserid());
 			if(  !meIsPm && !meIsHisTeamHead ){
-				tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许修改其负责的阶段计划");
+				tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许修改其负责的计划");
 				m.put("tips", tips);
 				return m;
 			}
@@ -348,7 +355,7 @@ public class XmProjectPhaseController {
 			if(judgetTips.isOk()) { 
 				xmProjectPhase=xmProjectPhaseService.autoCalcWorkload(xmProjectPhase);
 				xmProjectPhaseService.updateByPk(xmProjectPhase);
-				xmRecordService.addXmPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-阶段计划-修改计划", "修改阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
+				xmRecordService.addXmPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-计划-修改计划", "修改计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
 				
 			}else {
 				tips=judgetTips;
@@ -372,14 +379,14 @@ public class XmProjectPhaseController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmProjectPhase_batchDel",name = "批量删除项目阶段计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProjectPhase_batchDel",name = "批量删除项目计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmProjectPhase(@RequestBody List<XmProjectPhase> xmProjectPhases) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除"+(xmProjectPhases==null?0:xmProjectPhases.size())+"条数据");
 		try{
 			if(xmProjectPhases==null || xmProjectPhases.size()==0){
-				tips.setFailureMsg("阶段计划不能为空");
+				tips.setFailureMsg("计划不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -392,7 +399,7 @@ public class XmProjectPhaseController {
 			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
 			if( !meIsPm  && !meIsTeamHead ){
-				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许删除阶段计划");
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许删除计划");
 				m.put("tips", tips);
 				return m;
 			}
@@ -415,7 +422,7 @@ public class XmProjectPhaseController {
  					}else {
 						delPhases.add(phase);
 						delCount=delCount+1;
-						xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-阶段计划-删除计划", "删除阶段计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
+						xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-计划-删除计划", "删除计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
 					}
 					 
 				}
@@ -425,7 +432,7 @@ public class XmProjectPhaseController {
 			}
 			String noQxTips="";
 			if(noQxUsernames.size()>0){
-				noQxTips="您无权删除以下人员所负责的阶段计划【"+StringUtils.arrayToCommaDelimitedString(noQxUsernames.toArray())+"】";
+				noQxTips="您无权删除以下人员所负责的计划【"+StringUtils.arrayToCommaDelimitedString(noQxUsernames.toArray())+"】";
 			}
 
 			if(noDelList.size()>0 && hasChildList.size()>0 ) {
@@ -456,14 +463,14 @@ public class XmProjectPhaseController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmProjectPhase_batchImportFromTemplate",name = "从模板批量创建项目阶段计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProjectPhase_batchImportFromTemplate",name = "从模板批量创建项目计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchImportFromTemplate",method=RequestMethod.POST)
 	public Map<String,Object> batchImportFromTemplate(@RequestBody List<XmProjectPhase> xmProjectPhases) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功导入"+xmProjectPhases.size()+"条数据"); 
 		try{
 			if(xmProjectPhases==null || xmProjectPhases.size()==0){
-				tips.setFailureMsg("阶段计划不能为空");
+				tips.setFailureMsg("计划不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -473,7 +480,7 @@ public class XmProjectPhaseController {
 			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
 			if( !meIsPm  && !meIsTeamHead ){
-				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许批量导入阶段计划");
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许批量导入计划");
 				m.put("tips", tips);
 				return m;
 			}
@@ -497,12 +504,17 @@ public class XmProjectPhaseController {
 			
 			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,null);
 			if(judgetTips.isOk()) {
-
+				for (XmProjectPhase projectPhase : xmProjectPhases) {
+					projectPhase.setMngUsername(user.getUsername());
+					projectPhase.setMngUserid(user.getUserid());
+					projectPhase.setCtime(new Date());
+					projectPhase.setLtime(new Date());
+				}
 				xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases);
 				xmProjectPhaseService.doBatchInsert(xmProjectPhases);
 
 				for (XmProjectPhase phase : xmProjectPhases) {
-					xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-阶段计划-新增计划", "新增阶段计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
+					xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-计划-新增计划", "新增计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
 					
 				}
 			}else {
@@ -524,14 +536,14 @@ public class XmProjectPhaseController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmProjectPhase_batchSaveBudget",name = "批量修改项目阶段计划的预算",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProjectPhase_batchSaveBudget",name = "批量修改项目计划的预算",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchSaveBudget",method=RequestMethod.POST)
 	public Map<String,Object> batchSaveBudget(@RequestBody List<XmProjectPhaseVo> xmProjectPhases) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功修改"+xmProjectPhases.size()+"条数据"); 
 		try{
 			if(xmProjectPhases==null || xmProjectPhases.size()==0){
-				tips.setFailureMsg("阶段计划不能为空");
+				tips.setFailureMsg("计划不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -541,7 +553,7 @@ public class XmProjectPhaseController {
 			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
 			if( !meIsPm  && !meIsTeamHead ){
-				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许修改阶段计划预算");
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许修改计划预算");
 				m.put("tips", tips);
 				return m;
 			}
@@ -567,7 +579,7 @@ public class XmProjectPhaseController {
 			if(judgetTips.isOk()) {
 				xmProjectPhaseService.batchInsertOrUpdate(xmProjectPhases);
 				for (XmProjectPhase phase : xmProjectPhases) {
-					xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-阶段计划-修改计划预算", "修改阶段计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
+					xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-计划-修改计划预算", "修改计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
 					
 				}
 			}else {
@@ -588,7 +600,7 @@ public class XmProjectPhaseController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmProjectPhase_loadTasksToXmProjectPhase",name = "计算各个阶段计划对应的bug、task、测试案例等数据",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProjectPhase_loadTasksToXmProjectPhase",name = "计算各个计划对应的bug、task、测试案例等数据",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/loadTasksToXmProjectPhase",method=RequestMethod.POST)
 	public Map<String,Object> loadTasksToXmProjectPhase(@RequestBody Map<String,Object> params) {
 		Map<String,Object> m = new HashMap<>();
@@ -600,7 +612,7 @@ public class XmProjectPhaseController {
 			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
 			if( !meIsPm  && !meIsTeamHead ){
-				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许发起阶段计划统计任务");
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许发起计划统计任务");
 				m.put("tips", tips);
 				return m;
 			}
@@ -620,7 +632,7 @@ public class XmProjectPhaseController {
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmProjectPhase_loadTasksToXmProjectPhase",name = "计算各个阶段计划对应的bug、task、测试案例等数据",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProjectPhase_loadTasksToXmProjectPhase",name = "计算各个计划对应的bug、task、测试案例等数据",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/calcKeyPaths",method=RequestMethod.POST)
 	public Map<String,Object> calcKeyPaths(@RequestBody Map<String,Object> params) {
 		Map<String,Object> m = new HashMap<>();

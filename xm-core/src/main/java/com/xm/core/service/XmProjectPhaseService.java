@@ -222,6 +222,13 @@ public class XmProjectPhaseService extends BaseService {
 
     @Transactional
 	public void doBatchInsert(List<XmProjectPhase> xmProjectPhases) {
+		for (XmProjectPhase xmProjectPhase : xmProjectPhases) {
+			long childrenCnt=xmProjectPhases.stream().filter(i->xmProjectPhase.getId().equals(i.getParentPhaseId())).count();
+			xmProjectPhase.setChildrenCnt(Integer.valueOf(childrenCnt+""));
+			if(childrenCnt>0){
+				xmProjectPhase.setNtype("1");
+			}
+		}
 		super.batchInsert(xmProjectPhases);
 		List<XmProjectPhase> list= xmProjectPhases.stream().filter(i->!xmProjectPhases.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
 		list=list.stream().filter(i->StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());

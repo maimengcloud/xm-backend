@@ -738,7 +738,7 @@ public class XmTaskController {
 				return m;
 			}
 			if( !StringUtils.hasText(projectPhaseId) ){
-				tips.setFailureMsg("阶段计划编号不能为空");
+				tips.setFailureMsg("计划编号不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -759,7 +759,7 @@ public class XmTaskController {
 			List<String> excludeTaskIds=new ArrayList<>();
 			for (XmTask g : xmTasks) {
 				if(!projectPhaseId.equals(g.getProjectPhaseId())){
-					tips.setFailureMsg("只能在同一个阶段计划下批量导入任务");
+					tips.setFailureMsg("只能在同一个计划下批量导入任务");
 					m.put("tips", tips);
 					return m;
 				}
@@ -1001,7 +1001,7 @@ public class XmTaskController {
 				return m;
 			}
 			if( !StringUtils.hasText(projectPhaseId) ){
-				tips.setFailureMsg("阶段计划编号不能为空");
+				tips.setFailureMsg("计划编号不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -1026,7 +1026,7 @@ public class XmTaskController {
 					return m;
 				}
 				if(!projectPhaseId.equals(task.getProjectPhaseId())){
-					tips.setFailureMsg("只能在同一个阶段计划下批量修改任务");
+					tips.setFailureMsg("只能在同一个计划下批量修改任务");
 					m.put("tips", tips);
 					return m;
 				}
@@ -1049,7 +1049,7 @@ public class XmTaskController {
 					return m;
 				}
 				if(!projectPhaseId.equals(task.getProjectPhaseId())){
-					tips.setFailureMsg("只能在同一个阶段计划下批量修改任务");
+					tips.setFailureMsg("只能在同一个计划下批量修改任务");
 					m.put("tips", tips);
 					return m;
 				}

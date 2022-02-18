@@ -46,10 +46,10 @@ public class XmProjectPhaseBaselineController {
 	@ApiImplicitParams({  
 		@ApiImplicitParam(name="id",value="基线主键,主键",required=false),
 		@ApiImplicitParam(name="baseCtime",value="基线建立时间",required=false),
-		@ApiImplicitParam(name="projectPhaseId",value="阶段主键",required=false),
-		@ApiImplicitParam(name="phaseName",value="阶段名称",required=false),
+		@ApiImplicitParam(name="projectPhaseId",value="计划主键",required=false),
+		@ApiImplicitParam(name="phaseName",value="计划名称",required=false),
 		@ApiImplicitParam(name="remark",value="备注",required=false),
-		@ApiImplicitParam(name="parentPhaseId",value="上级阶段编号",required=false),
+		@ApiImplicitParam(name="parentPhaseId",value="上级计划编号",required=false),
 		@ApiImplicitParam(name="branchId",value="机构编号",required=false),
 		@ApiImplicitParam(name="projectId",value="当前项目编号",required=false),
 		@ApiImplicitParam(name="beginDate",value="开始时间",required=false),

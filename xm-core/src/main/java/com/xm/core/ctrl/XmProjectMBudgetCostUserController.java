@@ -52,7 +52,7 @@ public class XmProjectMBudgetCostUserController {
 		@ApiImplicitParam(name="bizzMonth",value="费用归属月份yyyy-mm",required=false),
 		@ApiImplicitParam(name="bizProcInstId",value="当前流程实例编号",required=false),
 		@ApiImplicitParam(name="bizFlowState",value="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",required=false),
-		@ApiImplicitParam(name="projectPhaseId",value="项目阶段",required=false),
+		@ApiImplicitParam(name="projectPhaseId",value="项目计划",required=false),
 		@ApiImplicitParam(name="costType",value="成本类型0人力1内部人力2外购人力",required=false),
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="currentPage",value="当前页码,从1开始",required=false),

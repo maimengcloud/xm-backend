@@ -120,7 +120,7 @@ public class XmTaskExecuserController {
 			}
 
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算阶段，不允许再修改");
+				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改");
 				m.put("tips", tips);
 				return m;
 			}
@@ -252,7 +252,7 @@ public class XmTaskExecuserController {
 			}
 
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算阶段，不允许再修改");
+				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改");
 				m.put("tips", tips);
 				return m;
 			}
@@ -319,7 +319,7 @@ public class XmTaskExecuserController {
 				return m;
 			}
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算阶段，不允许再修改");
+				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改");
 				m.put("tips", tips);
 				return m;
 			}
@@ -366,7 +366,7 @@ public class XmTaskExecuserController {
 			}
 
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算阶段，不允许再修改");
+				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改");
 				m.put("tips", tips);
 				return m;
 			}
@@ -413,7 +413,7 @@ public class XmTaskExecuserController {
 			}
 
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算阶段，不允许再修改");
+				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改");
 				m.put("tips", tips);
 				return m;
 			}
@@ -459,7 +459,7 @@ public class XmTaskExecuserController {
 				return m;
 			}
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算阶段，不允许再修改报价");
+				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改报价");
 				m.put("tips", tips);
 				return m;
 			}
