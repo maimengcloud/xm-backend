@@ -577,6 +577,21 @@ public class XmProjectPhaseController {
 
 			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
 			if(judgetTips.isOk()) {
+
+				for (XmProjectPhaseVo projectPhase : xmProjectPhases) {
+					if(!"1".equals(projectPhase.getNtype()) && !"add".equals(projectPhase.getOpType())&& !"addSub".equals(projectPhase.getOpType())){
+						if(xmProjectPhases.stream().filter(i->projectPhase.getId().equals(i.getParentPhaseId())).findAny().isPresent()){
+							return ResponseHelper.failed("p-ntype-no-1",projectPhase.getPhaseName()+"不是计划集,不允许下挂子计划");
+						}
+					}
+					if("add".equals(projectPhase.getOpType())||"addSub".equals(projectPhase.getOpType())){
+						int childrenCnt=Integer.valueOf(xmProjectPhases.stream().filter(i->projectPhase.getId().equals(i.getParentPhaseId())).count()+"");
+						if(childrenCnt>0){
+							projectPhase.setChildrenCnt(childrenCnt);
+							projectPhase.setNtype("1");
+						}
+					}
+				}
 				xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases.stream().map(i->(XmProjectPhase)i).collect(Collectors.toList()));
 				xmProjectPhaseService.batchInsertOrUpdate(xmProjectPhases);
 				for (XmProjectPhase phase : xmProjectPhases) {
