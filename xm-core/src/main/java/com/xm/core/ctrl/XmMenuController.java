@@ -335,6 +335,7 @@ public class XmMenuController {
 		try{ 
 			 
 			if(xmMenus.size()>0) {
+
 				this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenus);
 				this.xmMenuService.doBatchInsert(xmMenus);
  			}else {
@@ -360,6 +361,7 @@ public class XmMenuController {
 		try{ 
 			 
 			if(xmMenus.size()>0) {
+				this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenus.stream().map(i->(XmMenu)i).collect(Collectors.toList()));
 				this.xmMenuService.batchInsertOrUpdate(xmMenus);
 				
  			}else {

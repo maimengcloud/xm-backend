@@ -3,6 +3,7 @@ package com.xm.core.service;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmMenu;
+import com.xm.core.entity.XmTask;
 import com.xm.core.vo.XmMenuVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,10 +58,9 @@ public class XmMenuService extends BaseService {
 			}
 		}
 		if(addList.size()>0) {
-			List<XmMenu> adds=this.parentIdPathsCalcBeforeSave(addList.stream().map(i->(XmMenu)i).collect(Collectors.toList()));
-			this.batchInsert(adds);
+			this.batchInsert(addList);
 
-			List<XmMenu> list= adds.stream().filter(i->!adds.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
+			List<XmMenu> list= addList.stream().filter(i->!addList.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
 			list=list.stream().filter(i-> StringUtils.hasText(i.getPmenuId())).collect(Collectors.toList());
 			if(list.size()>0){
 				this.updateChildrenCntByIds(list.stream().map(i->i.getPmenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
@@ -116,6 +116,11 @@ public class XmMenuService extends BaseService {
 				node.setPidPaths(idPath+node.getMenuId()+",");
 			}
 		}
+		for (XmMenu node : nodes) {
+			String idPaths=node.getPidPaths();
+			String[] idpss=idPaths.split(",");
+			node.setLvl(idpss.length-1);
+		}
 		return nodes;
 	}
 
@@ -131,6 +136,10 @@ public class XmMenuService extends BaseService {
 				idPath=idPath+parentList.get(i).getMenuId()+",";
 			}
 			currNode.setPidPaths(idPath+currNode.getMenuId()+",");
+
+			String idPaths=currNode.getPidPaths();
+			String[] idpss=idPaths.split(",");
+			currNode.setLvl(idpss.length-1);
 		}
 		return tips;
 	}

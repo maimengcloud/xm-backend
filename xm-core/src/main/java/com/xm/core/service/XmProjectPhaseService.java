@@ -6,6 +6,7 @@ import com.mdp.core.utils.NumberUtil;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProjectPhase;
+import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.vo.XmProjectGroupVo;
 import com.xm.core.vo.XmProjectPhaseVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -226,6 +227,112 @@ public class XmProjectPhaseService extends BaseService {
 		list=list.stream().filter(i->StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());
 		if(list.size()>0){
 			this.updateChildrenCntByIds(list.stream().map(i->i.getParentPhaseId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+		}
+	}
+
+
+	public List<XmProjectPhase> parentIdPathsCalcBeforeSave(List<XmProjectPhase> nodes) {
+		List<XmProjectPhase> noExistsList=nodes.stream().filter(i->!nodes.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
+		noExistsList=noExistsList.stream().filter(i->StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());
+		Map<String,String> hadCalcMap=new HashMap<>();
+		for (XmProjectPhase node : noExistsList) {
+			if(hadCalcMap.containsKey(node.getParentPhaseId())){
+				String idPaths=hadCalcMap.get(node.getParentPhaseId());
+				node.setPidPaths(idPaths+node.getId()+",");
+			}else{
+				this.parentIdPathsCalcBeforeSave(node);
+				String idPaths=node.getPidPaths();
+				idPaths=idPaths.substring(0,idPaths.length()-node.getId().length()-1);
+				hadCalcMap.put(node.getParentPhaseId(),idPaths);
+			}
+		}
+		for (XmProjectPhase node : nodes) {
+			if(!StringUtils.hasText(node.getParentPhaseId())){
+				node.setPidPaths("0,");
+				continue;
+			}
+			if(hadCalcMap.containsKey(node.getParentPhaseId())){
+				String idPaths=hadCalcMap.get(node.getParentPhaseId());
+				node.setPidPaths(idPaths+node.getId()+",");
+			}else{
+				List<XmProjectPhase> pnodeList=this.getParentList(node,nodes);
+				XmProjectPhase topParent=pnodeList.get(pnodeList.size()-1);
+				String idPath="0,";
+				if(hadCalcMap.containsKey(topParent.getParentPhaseId())){
+					idPath=hadCalcMap.get(topParent.getParentPhaseId());
+				}
+				for (int i = pnodeList.size() - 1; i >= 0; i--) {
+					idPath=idPath+pnodeList.get(i).getId()+",";
+				}
+				node.setPidPaths(idPath+node.getId()+",");
+			}
+		}
+		for (XmProjectPhase node : nodes) {
+			String idPaths=node.getPidPaths();
+			String[] idpss=idPaths.split(",");
+			node.setLvl(idpss.length-1);
+		}
+		return nodes;
+	}
+
+	public static void main(String[] args) {
+		String idpaths="0,1,2,3,";
+		String[] idpss=idpaths.split(",");
+		int lvl=idpss.length;
+
+	}
+
+	public Tips parentIdPathsCalcBeforeSave(XmProjectPhase currNode) {
+		Tips tips = new Tips("成功");
+		if (!StringUtils.hasText(currNode.getParentPhaseId()) || "0".equals(currNode.getParentPhaseId())) {
+			currNode.setPidPaths("0," + currNode.getId() + ",");
+			return tips;
+		} else {
+			List<XmProjectPhase> parentList=this.getParentList(currNode);
+			String idPath="0,";
+			for (int i = parentList.size() - 1; i >= 0; i--) {
+				idPath=idPath+parentList.get(i).getId()+",";
+			}
+			currNode.setPidPaths(idPath+currNode.getId()+",");
+
+			String idPaths=currNode.getPidPaths();
+			String[] idpss=idPaths.split(",");
+			currNode.setLvl(idpss.length-1);
+		}
+		return tips;
+	}
+
+	private List<XmProjectPhase> getParentList(XmProjectPhase currNode){
+		List<XmProjectPhase> parentList=new ArrayList<>();
+		XmProjectPhase current=currNode;
+		while (true){
+			if(!StringUtils.hasText(currNode.getParentPhaseId()) || "0".equals(currNode.getParentPhaseId())){
+				return parentList;
+			}
+			XmProjectPhase query=new XmProjectPhase();
+			query.setId(current.getParentPhaseId());
+			current=this.selectOneObject(query);
+			if(current==null){
+				return parentList;
+			}
+			parentList.add(current);
+		}
+	}
+
+	private List<XmProjectPhase> getParentList(XmProjectPhase currNode,List<XmProjectPhase> nodes){
+		List<XmProjectPhase> parentList=new ArrayList<>();
+		XmProjectPhase current=currNode;
+		while (true){
+			if(!StringUtils.hasText(currNode.getParentPhaseId()) || "0".equals(currNode.getParentPhaseId())){
+				return parentList;
+			}
+			XmProjectPhase query=new XmProjectPhase();
+			query.setId(current.getParentPhaseId());
+			current=nodes.stream().filter(i->i.getId().equals(query.getId())).findFirst().get();
+			if(current==null){
+				return parentList;
+			}
+			parentList.add(current);
 		}
 	}
 }

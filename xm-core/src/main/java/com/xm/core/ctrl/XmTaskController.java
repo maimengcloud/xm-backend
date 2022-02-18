@@ -789,6 +789,7 @@ public class XmTaskController {
 					task.setChildrenCnt( Integer.valueOf(xmTasks.stream().filter(i->task.getId().equals(i.getParentTaskid())).count()+""));
 				}
 
+				xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
 				xmTaskService.batchImportFromTemplate(xmTasks);
 
 				for (XmTask t : xmTasks) {

@@ -9,6 +9,7 @@ import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskSkill;
 import com.xm.core.vo.XmTaskVo;
@@ -158,7 +159,7 @@ public class XmTaskService extends BaseService {
 		if(StringUtils.isEmpty(xmTaskVo.getMilestone())){
 			xmTaskVo.setMilestone("0");
 		}
-		
+		this.parentIdPathsCalcBeforeSave(xmTaskVo);
 		XmTask xmTask = new XmTask();
 		BeanUtils.copyProperties(xmTaskVo,xmTask);
 		this.insert(xmTask);
@@ -364,7 +365,6 @@ public class XmTaskService extends BaseService {
 	}
 	@Transactional
 	public void batchImportFromTemplate(List<XmTask> xmTasks) {
-
 		this.batchInsert(xmTasks);
 		List<XmTaskSkill> xmTaskSkillList=new ArrayList<>();
 		xmTasks.forEach(new Consumer<XmTask>() {
@@ -439,6 +439,110 @@ public class XmTaskService extends BaseService {
 		super.update("updateChildrenCntByIds",ids);
 	}
 
-	/** 请在此类添加自定义函数 */
+
+	public List<XmTask> parentIdPathsCalcBeforeSave(List<XmTask> nodes) {
+		List<XmTask> noExistsList=nodes.stream().filter(i->!nodes.stream().filter(k->k.getId().equals(i.getParentTaskid())).findAny().isPresent()).collect(Collectors.toList());
+		noExistsList=noExistsList.stream().filter(i->StringUtils.hasText(i.getParentTaskid())).collect(Collectors.toList());
+		Map<String,String> hadCalcMap=new HashMap<>();
+		for (XmTask node : noExistsList) {
+			if(hadCalcMap.containsKey(node.getParentTaskid())){
+				String idPaths=hadCalcMap.get(node.getParentTaskid());
+				node.setPidPaths(idPaths+node.getId()+",");
+			}else{
+				this.parentIdPathsCalcBeforeSave(node);
+				String idPaths=node.getPidPaths();
+				idPaths=idPaths.substring(0,idPaths.length()-node.getId().length()-1);
+				hadCalcMap.put(node.getParentTaskid(),idPaths);
+			}
+		}
+		for (XmTask node : nodes) {
+			if(!StringUtils.hasText(node.getParentTaskid())){
+				node.setPidPaths("0,");
+				continue;
+			}
+			if(hadCalcMap.containsKey(node.getParentTaskid())){
+				String idPaths=hadCalcMap.get(node.getParentTaskid());
+				node.setPidPaths(idPaths+node.getId()+",");
+			}else{
+				List<XmTask> pnodeList=this.getParentList(node,nodes);
+				XmTask topParent=pnodeList.get(pnodeList.size()-1);
+				String idPath="0,";
+				if(hadCalcMap.containsKey(topParent.getParentTaskid())){
+					idPath=hadCalcMap.get(topParent.getParentTaskid());
+				}
+				for (int i = pnodeList.size() - 1; i >= 0; i--) {
+					idPath=idPath+pnodeList.get(i).getId()+",";
+				}
+				node.setPidPaths(idPath+node.getId()+",");
+			}
+		}
+		for (XmTask node : nodes) {
+			String idPaths=node.getPidPaths();
+			String[] idpss=idPaths.split(",");
+			node.setLvl(idpss.length-1);
+		}
+		return nodes;
+	}
+
+	public static void main(String[] args) {
+		String idpaths="0,1,2,3,";
+		String[] idpss=idpaths.split(",");
+		int lvl=idpss.length;
+
+	}
+
+	public Tips parentIdPathsCalcBeforeSave(XmTask currNode) {
+		Tips tips = new Tips("成功");
+		if (!StringUtils.hasText(currNode.getParentTaskid()) || "0".equals(currNode.getParentTaskid())) {
+			currNode.setPidPaths("0," + currNode.getId() + ",");
+			return tips;
+		} else {
+			List<XmTask> parentList=this.getParentList(currNode);
+			String idPath="0,";
+			for (int i = parentList.size() - 1; i >= 0; i--) {
+				idPath=idPath+parentList.get(i).getId()+",";
+			}
+			currNode.setPidPaths(idPath+currNode.getId()+",");
+
+			String idPaths=currNode.getPidPaths();
+			String[] idpss=idPaths.split(",");
+			currNode.setLvl(idpss.length-1);
+		}
+		return tips;
+	}
+
+	private List<XmTask> getParentList(XmTask currNode){
+		List<XmTask> parentList=new ArrayList<>();
+		XmTask current=currNode;
+		while (true){
+			if(!StringUtils.hasText(currNode.getParentTaskid()) || "0".equals(currNode.getParentTaskid())){
+				return parentList;
+			}
+			XmTask query=new XmTask();
+			query.setId(current.getParentTaskid());
+			current=this.selectOneObject(query);
+			if(current==null){
+				return parentList;
+			}
+			parentList.add(current);
+		}
+	}
+
+	private List<XmTask> getParentList(XmTask currNode,List<XmTask> nodes){
+		List<XmTask> parentList=new ArrayList<>();
+		XmTask current=currNode;
+		while (true){
+			if(!StringUtils.hasText(currNode.getParentTaskid()) || "0".equals(currNode.getParentTaskid())){
+				return parentList;
+			}
+			XmTask query=new XmTask();
+			query.setId(current.getParentTaskid());
+			current=nodes.stream().filter(i->i.getId().equals(query.getId())).findFirst().get();
+			if(current==null){
+				return parentList;
+			}
+			parentList.add(current);
+		}
+	}
 }
 

@@ -231,8 +231,9 @@ public class XmProjectPhaseController {
 			List<String> excludePhaseIds=new ArrayList<>();
 			excludePhaseIds.add(xmProjectPhase.getId());
 			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
-			if(judgetTips.isOk()) { 
-				xmProjectPhaseService.insert(xmProjectPhase);
+			if(judgetTips.isOk()) {
+				xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhase);
+ 				xmProjectPhaseService.insert(xmProjectPhase);
 				xmRecordService.addXmPhaseRecord(projectId, xmProjectPhase.getId(), "项目-阶段计划-新增计划", "新增阶段计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
 				m.put("data",xmProjectPhase);
 			}else {
@@ -496,6 +497,8 @@ public class XmProjectPhaseController {
 			
 			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,null);
 			if(judgetTips.isOk()) {
+
+				xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases);
 				xmProjectPhaseService.doBatchInsert(xmProjectPhases);
 
 				for (XmProjectPhase phase : xmProjectPhases) {
