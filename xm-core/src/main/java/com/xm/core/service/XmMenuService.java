@@ -60,7 +60,7 @@ public class XmMenuService extends BaseService {
 		if(addList.size()>0) {
 			this.batchInsert(addList);
 
-			List<XmMenu> list= addList.stream().filter(i->!addList.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
+			List<XmMenu> list= addList.stream().filter(i->!xmMenus.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
 			list=list.stream().filter(i-> StringUtils.hasText(i.getPmenuId())).collect(Collectors.toList());
 			if(list.size()>0){
 				this.updateChildrenCntByIds(list.stream().map(i->i.getPmenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
@@ -87,10 +87,11 @@ public class XmMenuService extends BaseService {
 		for (XmMenu node : noExistsList) {
 			if(hadCalcMap.containsKey(node.getPmenuId())){
 				String idPaths=hadCalcMap.get(node.getPmenuId());
-				node.setPidPaths(idPaths);
+				node.setPidPaths(idPaths+node.getMenuId()+",");
 			}else{
 				this.parentIdPathsCalcBeforeSave(node);
 				String idPaths=node.getPidPaths();
+				idPaths=idPaths.substring(0,idPaths.length()-node.getMenuId().length()-1);
 				hadCalcMap.put(node.getPmenuId(),idPaths);
 			}
 		}
@@ -101,7 +102,7 @@ public class XmMenuService extends BaseService {
 			}
 			if(hadCalcMap.containsKey(node.getPmenuId())){
 				String idPaths=hadCalcMap.get(node.getPmenuId());
-				node.setPidPaths(idPaths);
+				node.setPidPaths(idPaths+node.getMenuId()+",");
 			}else{
 				List<XmMenu> pnodeList=this.getParentList(node,nodes);
 				XmMenu topParent=pnodeList.get(pnodeList.size()-1);
@@ -112,13 +113,13 @@ public class XmMenuService extends BaseService {
 				for (int i = pnodeList.size() - 1; i >= 0; i--) {
 					idPath=idPath+pnodeList.get(i).getMenuId()+",";
 				}
-				node.setPidPaths(idPath);
+				node.setPidPaths(idPath+node.getMenuId()+",");
 			}
 		}
 		for (XmMenu node : nodes) {
 			String idPaths=node.getPidPaths();
 			String[] idpss=idPaths.split(",");
-			node.setLvl(idpss.length);
+			node.setLvl(idpss.length-1);
 		}
 		return nodes;
 	}
@@ -126,7 +127,7 @@ public class XmMenuService extends BaseService {
 	public Tips parentIdPathsCalcBeforeSave(XmMenu currNode) {
 		Tips tips = new Tips("成功");
 		if (!StringUtils.hasText(currNode.getPmenuId()) || "0".equals(currNode.getPmenuId())) {
-			currNode.setPidPaths("0,");
+			currNode.setPidPaths("0," + currNode.getMenuId() + ",");
 			return tips;
 		} else {
 			List<XmMenu> parentList=this.getParentList(currNode);
@@ -134,11 +135,11 @@ public class XmMenuService extends BaseService {
 			for (int i = parentList.size() - 1; i >= 0; i--) {
 				idPath=idPath+parentList.get(i).getMenuId()+",";
 			}
-			currNode.setPidPaths(idPath);
+			currNode.setPidPaths(idPath+currNode.getMenuId()+",");
 
 			String idPaths=currNode.getPidPaths();
 			String[] idpss=idPaths.split(",");
-			currNode.setLvl(idpss.length);
+			currNode.setLvl(idpss.length-1);
 		}
 		return tips;
 	}
