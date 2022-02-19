@@ -2,6 +2,7 @@ package com.xm.core.ctrl;
 
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
@@ -26,6 +27,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import static com.mdp.core.utils.BaseUtils.map;
 
 /**
  * url编制采用rest风格,如对XM.xm_menu 项目菜单表的操作有增删改查,对应的url分别为:<br>
@@ -90,6 +93,12 @@ public class XmMenuController {
 		}
 		List<Map<String,Object>>	xmMenuList = xmMenuService.selectListMapByWhere(xmMenu);	//列出XmMenu列表
 		PageUtils.responePage(m, xmMenuList);
+		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))){
+			List<String> pidPathsList=xmMenuList.stream().map(i->(String)i.get("pidPaths")).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+			List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhere(map("pidPathsList",pidPathsList));
+			xmMenuList.addAll(parentList);
+			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+		}
 		m.put("data",xmMenuList);
 		Tips tips=new Tips("查询成功");
 		m.put("tips", tips);
@@ -120,7 +129,14 @@ public class XmMenuController {
 			xmMenu.put("compete",user.getUserid());
 		}
 		List<Map<String,Object>>	xmMenuList = xmMenuService.selectListMapByWhereWithState(xmMenu);	//列出XmMenu列表
-			PageUtils.responePage(m, xmMenuList);
+		PageUtils.responePage(m, xmMenuList);
+		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))){
+			List<String> pidPathsList=xmMenuList.stream().map(i->(String)i.get("pidPaths")).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+			List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithState(map("pidPathsList",pidPathsList));
+			xmMenuList.addAll(parentList);
+			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+		}
+
 			m.put("data",xmMenuList);  
 		m.put("tips", tips);
 		return m;
@@ -137,6 +153,12 @@ public class XmMenuController {
 		}else {
 			List<Map<String,Object>>	xmMenuList = xmMenuService.selectListMapByWhereWithPlan(xmMenu);	//列出XmMenu列表
 			PageUtils.responePage(m, xmMenuList);
+			if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))){
+				List<String> pidPathsList=xmMenuList.stream().map(i->(String)i.get("pidPaths")).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+				List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithPlan(map("pidPathsList",pidPathsList));
+				xmMenuList.addAll(parentList);
+				m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+			}
 			m.put("data",xmMenuList);
 		}
 

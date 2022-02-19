@@ -447,11 +447,10 @@ public class XmTaskService extends BaseService {
 		for (XmTask node : noExistsList) {
 			if(hadCalcMap.containsKey(node.getParentTaskid())){
 				String idPaths=hadCalcMap.get(node.getParentTaskid());
-				node.setPidPaths(idPaths+node.getId()+",");
+				node.setPidPaths(idPaths);
 			}else{
 				this.parentIdPathsCalcBeforeSave(node);
 				String idPaths=node.getPidPaths();
-				idPaths=idPaths.substring(0,idPaths.length()-node.getId().length()-1);
 				hadCalcMap.put(node.getParentTaskid(),idPaths);
 			}
 		}
@@ -462,7 +461,7 @@ public class XmTaskService extends BaseService {
 			}
 			if(hadCalcMap.containsKey(node.getParentTaskid())){
 				String idPaths=hadCalcMap.get(node.getParentTaskid());
-				node.setPidPaths(idPaths+node.getId()+",");
+				node.setPidPaths(idPaths);
 			}else{
 				List<XmTask> pnodeList=this.getParentList(node,nodes);
 				XmTask topParent=pnodeList.get(pnodeList.size()-1);
@@ -473,13 +472,13 @@ public class XmTaskService extends BaseService {
 				for (int i = pnodeList.size() - 1; i >= 0; i--) {
 					idPath=idPath+pnodeList.get(i).getId()+",";
 				}
-				node.setPidPaths(idPath+node.getId()+",");
+				node.setPidPaths(idPath);
 			}
 		}
 		for (XmTask node : nodes) {
 			String idPaths=node.getPidPaths();
 			String[] idpss=idPaths.split(",");
-			node.setLvl(idpss.length-1);
+			node.setLvl(idpss.length);
 		}
 		return nodes;
 	}
@@ -494,7 +493,7 @@ public class XmTaskService extends BaseService {
 	public Tips parentIdPathsCalcBeforeSave(XmTask currNode) {
 		Tips tips = new Tips("成功");
 		if (!StringUtils.hasText(currNode.getParentTaskid()) || "0".equals(currNode.getParentTaskid())) {
-			currNode.setPidPaths("0," + currNode.getId() + ",");
+			currNode.setPidPaths("0,");
 			return tips;
 		} else {
 			List<XmTask> parentList=this.getParentList(currNode);
@@ -502,11 +501,11 @@ public class XmTaskService extends BaseService {
 			for (int i = parentList.size() - 1; i >= 0; i--) {
 				idPath=idPath+parentList.get(i).getId()+",";
 			}
-			currNode.setPidPaths(idPath+currNode.getId()+",");
+			currNode.setPidPaths(idPath);
 
 			String idPaths=currNode.getPidPaths();
 			String[] idpss=idPaths.split(",");
-			currNode.setLvl(idpss.length-1);
+			currNode.setLvl(idpss.length);
 		}
 		return tips;
 	}
