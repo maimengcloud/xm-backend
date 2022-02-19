@@ -217,5 +217,6 @@ public class XmMenuService extends BaseService {
 			this.updateChildrenCntByIds(list.stream().map(i->i.getPmenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
 		}
 	}
+
 }
 

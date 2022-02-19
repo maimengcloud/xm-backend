@@ -7,6 +7,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.entity.XmProjectPhase;
+import com.xm.core.entity.XmTask;
 import com.xm.core.vo.XmProjectGroupVo;
 import com.xm.core.vo.XmProjectPhaseVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -347,6 +345,78 @@ public class XmProjectPhaseService extends BaseService {
 			}
 			parentList.add(current);
 		}
+	}
+
+
+	@Transactional
+	public void sumParents(XmTask node){
+		String id=node.getId();
+		String pidPaths=node.getPidPaths();
+		if(!StringUtils.hasText(pidPaths)){
+			return;
+		}
+		if(!pidPaths.startsWith("0,")){
+			return;
+		}
+		if("0".equals(node.getNtype())){
+			pidPaths=pidPaths.substring(2,pidPaths.indexOf(id));
+		}else{
+			pidPaths=pidPaths.substring(2);
+		}
+
+		if(!StringUtils.hasText(pidPaths)){
+			return;
+		}
+		String[] pidPathss=pidPaths.split(",");
+		List<String> pidPathsList=new ArrayList<>();
+		for (int i = pidPathss.length-1; i >=0; i--) {
+			pidPathsList.add(pidPathss[i]);
+		}
+		if(pidPathsList.size()>0){
+			super.update("sumParents",pidPathsList	);
+		}
+
+	}
+	@Transactional
+	public void batchSumParents(List<XmTask> xmTasks) {
+		List<Set<String>> list=new ArrayList<>();
+		for (XmTask node : xmTasks) {
+			String id=node.getId();
+			String pidPaths=node.getPidPaths();
+			if(!StringUtils.hasText(pidPaths)){
+				continue;
+			}
+			if(!pidPaths.startsWith("0,")){
+				continue;
+			}
+			if("0".equals(node.getNtype())){
+				pidPaths=pidPaths.substring(2,pidPaths.indexOf(id));
+			}else{
+				pidPaths=pidPaths.substring(2);
+			}
+
+			if(!StringUtils.hasText(pidPaths)){
+				continue;
+			}
+			String[] pidPathss=pidPaths.split(",");
+			for (int i = 0; i <pidPathss.length; i++) {
+				if(list.size()<=i){
+					list.add(new HashSet<>());
+				}
+				Set<String> set=list.get(i);
+				set.add(pidPathss[i]);
+			}
+			Set<String> allSet=new HashSet<>();
+			for (int i = list.size() - 1; i >= 0; i--) {
+				allSet.addAll(list.get(i));
+			}
+			if(allSet.size()>0){
+				super.update("sumParents",allSet.stream().collect(Collectors.toList()));
+			}
+
+
+		}
+
 	}
 }
 

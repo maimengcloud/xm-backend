@@ -92,6 +92,41 @@
 			( #{item})
 		</foreach>
 	</update>
+
+	<update id="sumParents" parameterType="List">
+		<foreach collection="list" item="item" index="index" separator=";" >
+		UPDATE XM.xm_project_phase res
+		LEFT JOIN (
+		SELECT
+		t.project_id,
+		t.parent_phase_id,
+		sum(t.phase_act_inner_user_workload) as phase_act_inner_user_workload,
+		sum(t.phase_act_out_user_workload) as phase_act_out_user_workload,
+		sum(t.phase_act_workload) as phase_act_workload,
+		sum(t.act_inner_user_at) as act_inner_user_at,
+		sum(t.act_out_user_at) as act_out_user_at,
+		sum(ifnull(t.act_rate,0)*ifnull(t.task_budget_workload,0))/100/ifnull(sum(ifnull(t.task_budget_workload,0.000001)),999999) as act_rate,
+		sum(t.task_budget_workload) as task_budget_workload,
+		sum(t.task_budget_at) as task_budget_at
+		FROM xm_project_phase t
+		WHERE
+		t.parent_taskid=#{item}
+		GROUP BY
+		t.project_id,
+		t.parent_phase_id
+		) AS tc ON res.project_id = tc.project_id and res.id=tc.parent_phase_id
+		SET res.phase_act_inner_user_workload = tc.phase_act_inner_user_workload,
+		res.phase_act_out_user_workload = tc.phase_act_out_user_workload,
+		res.phase_act_workload = tc.phase_act_workload,
+		res.act_inner_user_at = tc.act_inner_user_at,
+		res.act_out_user_at = tc.act_out_user_at,
+		res.act_rate= tc.act_rate,
+		res.task_budget_workload=tc.task_budget_workload,
+		res.task_budget_at=tc.task_budget_at,
+		res.calc_time=now()
+		where res.id=#{item} and res.ntype='1'
+		</foreach>
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 
