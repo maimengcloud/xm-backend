@@ -29,6 +29,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.mdp.core.utils.BaseUtils.map;
+
 /**
  * url编制采用rest风格,如对XM.xm_project_phase 项目计划模板的操作有增删改查,对应的url分别为:<br>
  *  新增: xm/xmProjectPhase/add <br>
@@ -114,6 +116,13 @@ public class XmProjectPhaseController {
 		PageUtils.startPage(xmProjectPhase);
 		List<Map<String,Object>>	xmProjectPhaseList = xmProjectPhaseService.selectListMapByWhere(xmProjectPhase);	//列出XmProjectPhase列表
 		PageUtils.responePage(m, xmProjectPhaseList);
+		if("1".equals(xmProjectPhase.get("withParents"))  && !"1".equals(xmProjectPhase.get("isTop"))){
+			List<String> pidPathsList=xmProjectPhaseList.stream().map(i->(String)i.get("pidPaths")).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+			pidPathsList=pidPathsList.stream().map(i->i.substring(0,i.length()-2)).collect(Collectors.toList());
+			List<Map<String,Object>> parentList=xmProjectPhaseService.selectListMapByWhere(map("pidPathsList",pidPathsList));
+			xmProjectPhaseList.addAll(parentList);
+			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+		}
 		m.put("data",xmProjectPhaseList);
 		Tips tips=new Tips("查询成功");
 		m.put("tips", tips);

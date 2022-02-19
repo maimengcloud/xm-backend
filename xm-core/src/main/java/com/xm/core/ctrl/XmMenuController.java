@@ -95,6 +95,7 @@ public class XmMenuController {
 		PageUtils.responePage(m, xmMenuList);
 		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))){
 			List<String> pidPathsList=xmMenuList.stream().map(i->(String)i.get("pidPaths")).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+			pidPathsList=pidPathsList.stream().map(i->i.substring(0,i.length()-2)).collect(Collectors.toList());
 			List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhere(map("pidPathsList",pidPathsList));
 			xmMenuList.addAll(parentList);
 			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
@@ -132,6 +133,7 @@ public class XmMenuController {
 		PageUtils.responePage(m, xmMenuList);
 		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))){
 			List<String> pidPathsList=xmMenuList.stream().map(i->(String)i.get("pidPaths")).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+			pidPathsList=pidPathsList.stream().map(i->i.substring(0,i.length()-2)).collect(Collectors.toList());
 			List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithState(map("pidPathsList",pidPathsList));
 			xmMenuList.addAll(parentList);
 			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
@@ -155,6 +157,7 @@ public class XmMenuController {
 			PageUtils.responePage(m, xmMenuList);
 			if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))){
 				List<String> pidPathsList=xmMenuList.stream().map(i->(String)i.get("pidPaths")).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+				pidPathsList=pidPathsList.stream().map(i->i.substring(0,i.length()-2)).collect(Collectors.toList());
 				List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithPlan(map("pidPathsList",pidPathsList));
 				xmMenuList.addAll(parentList);
 				m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());

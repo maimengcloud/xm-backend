@@ -33,6 +33,8 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.mdp.core.utils.BaseUtils.map;
+
 /**
  * url编制采用rest风格,如对XM.xm_task xm_task的操作有增删改查,对应的url分别为:<br>
  *  新增: xm/xmTask/add <br>
@@ -139,6 +141,14 @@ public class XmTaskController {
 		}
 		List<Map<String,Object>> xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
 		PageUtils.responePage(m,xmTaskVoList);
+		if("1".equals(xmTask.get("withParents"))  && !"1".equals(xmTask.get("isTop"))){
+			List<String> pidPathsList=xmTaskVoList.stream().map(i->(String)i.get("pidPaths")).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+			pidPathsList=pidPathsList.stream().map(i->i.substring(0,i.length()-2)).collect(Collectors.toList());
+			List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsList));
+			xmTaskVoList.addAll(parentList);
+			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+		}
+
 		m.put("data",xmTaskVoList);
 		Tips tips=new Tips("查询成功");
 		m.put("tips", tips);
@@ -216,6 +226,13 @@ public class XmTaskController {
 		}else {
 			xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
 			PageUtils.responePage(m,xmTaskVoList);
+			if("1".equals(xmTask.get("withParents"))  && !"1".equals(xmTask.get("isTop"))){
+				List<String> pidPathsList=xmTaskVoList.stream().map(i->(String)i.get("pidPaths")).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+				pidPathsList=pidPathsList.stream().map(i->i.substring(0,i.length()-2)).collect(Collectors.toList());
+				List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsList));
+				xmTaskVoList.addAll(parentList);
+				m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+			}
 		}
 
 
