@@ -143,8 +143,16 @@ public class XmTaskController {
 		List<Map<String,Object>> xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
 		PageUtils.responePage(m,xmTaskVoList);
 		if("1".equals(xmTask.get("withParents"))  && !"1".equals(xmTask.get("isTop"))){
-			List<String> pidPathsList=xmTaskVoList.stream().map(i->PubTool.getPidPaths((String)i.get("pidPaths"),(String)i.get("id"))).collect(Collectors.toSet()).stream().collect(Collectors.toList());
-			List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsList));
+			Set<String> pidPathsSet=new HashSet<>();
+			Set<String> idSet=new HashSet<>();
+			for (Map<String, Object> map : xmTaskVoList) {
+				String id= (String) map.get("id");
+				idSet.add(id);
+				String pidPaths= (String) map.get("pidPaths");
+				pidPathsSet.add(PubTool.getPidPaths(pidPaths,id));
+			}
+			List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
+			parentList=parentList.stream().filter(i->!idSet.contains(i.get("id"))).collect(Collectors.toList());
 			xmTaskVoList.addAll(parentList);
 			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
 		}
@@ -227,8 +235,17 @@ public class XmTaskController {
 			xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
 			PageUtils.responePage(m,xmTaskVoList);
 			if("1".equals(xmTask.get("withParents"))  && !"1".equals(xmTask.get("isTop"))){
-				List<String> pidPathsList=xmTaskVoList.stream().map(i-> PubTool.getPidPaths((String)i.get("pidPaths"),(String)i.get("id"))).collect(Collectors.toSet()).stream().collect(Collectors.toList());
-				List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsList));
+
+				Set<String> pidPathsSet=new HashSet<>();
+				Set<String> idSet=new HashSet<>();
+				for (Map<String, Object> map : xmTaskVoList) {
+					String id= (String) map.get("id");
+					idSet.add(id);
+					String pidPaths= (String) map.get("pidPaths");
+					pidPathsSet.add(PubTool.getPidPaths(pidPaths,id));
+				}
+				List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
+				parentList=parentList.stream().filter(i->!idSet.contains(i.get("id"))).collect(Collectors.toList());
 				xmTaskVoList.addAll(parentList);
 				m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
 			}

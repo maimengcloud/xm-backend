@@ -118,8 +118,16 @@ public class XmProjectPhaseController {
 		List<Map<String,Object>>	xmProjectPhaseList = xmProjectPhaseService.selectListMapByWhere(xmProjectPhase);	//列出XmProjectPhase列表
 		PageUtils.responePage(m, xmProjectPhaseList);
 		if("1".equals(xmProjectPhase.get("withParents"))  && !"1".equals(xmProjectPhase.get("isTop"))){
-			List<String> pidPathsList=xmProjectPhaseList.stream().map(i-> PubTool.getPidPaths((String)i.get("pidPaths"),(String)i.get("id"))).collect(Collectors.toSet()).stream().collect(Collectors.toList());
-			List<Map<String,Object>> parentList=xmProjectPhaseService.selectListMapByWhere(map("pidPathsList",pidPathsList));
+			Set<String> pidPathsSet=new HashSet<>();
+			Set<String> idSet=new HashSet<>();
+			for (Map<String, Object> map : xmProjectPhaseList) {
+				String id= (String) map.get("id");
+				idSet.add(id);
+				String pidPaths= (String) map.get("pidPaths");
+				pidPathsSet.add(PubTool.getPidPaths(pidPaths,id));
+			}
+			List<Map<String,Object>> parentList=xmProjectPhaseService.selectListMapByWhere(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
+			parentList=parentList.stream().filter(i->!idSet.contains(i.get("id"))).collect(Collectors.toList());
 			xmProjectPhaseList.addAll(parentList);
 			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
 		}
