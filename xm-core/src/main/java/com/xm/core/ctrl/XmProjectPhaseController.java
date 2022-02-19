@@ -10,6 +10,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.PubTool;
 import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmProjectGroupService;
@@ -117,8 +118,7 @@ public class XmProjectPhaseController {
 		List<Map<String,Object>>	xmProjectPhaseList = xmProjectPhaseService.selectListMapByWhere(xmProjectPhase);	//列出XmProjectPhase列表
 		PageUtils.responePage(m, xmProjectPhaseList);
 		if("1".equals(xmProjectPhase.get("withParents"))  && !"1".equals(xmProjectPhase.get("isTop"))){
-			List<String> pidPathsList=xmProjectPhaseList.stream().map(i->(String)i.get("pidPaths")).collect(Collectors.toSet()).stream().collect(Collectors.toList());
-			pidPathsList=pidPathsList.stream().map(i->i.substring(0,i.length()-2)).collect(Collectors.toList());
+			List<String> pidPathsList=xmProjectPhaseList.stream().map(i-> PubTool.getPidPaths((String)i.get("pidPaths"),(String)i.get("id"))).collect(Collectors.toSet()).stream().collect(Collectors.toList());
 			List<Map<String,Object>> parentList=xmProjectPhaseService.selectListMapByWhere(map("pidPathsList",pidPathsList));
 			xmProjectPhaseList.addAll(parentList);
 			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());

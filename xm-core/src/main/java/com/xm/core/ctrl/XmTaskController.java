@@ -14,6 +14,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.PubTool;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.XmRecordService;
@@ -142,8 +143,7 @@ public class XmTaskController {
 		List<Map<String,Object>> xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
 		PageUtils.responePage(m,xmTaskVoList);
 		if("1".equals(xmTask.get("withParents"))  && !"1".equals(xmTask.get("isTop"))){
-			List<String> pidPathsList=xmTaskVoList.stream().map(i->(String)i.get("pidPaths")).collect(Collectors.toSet()).stream().collect(Collectors.toList());
-			pidPathsList=pidPathsList.stream().map(i->i.substring(0,i.length()-2)).collect(Collectors.toList());
+			List<String> pidPathsList=xmTaskVoList.stream().map(i->PubTool.getPidPaths((String)i.get("pidPaths"),(String)i.get("id"))).collect(Collectors.toSet()).stream().collect(Collectors.toList());
 			List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsList));
 			xmTaskVoList.addAll(parentList);
 			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
@@ -227,8 +227,7 @@ public class XmTaskController {
 			xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
 			PageUtils.responePage(m,xmTaskVoList);
 			if("1".equals(xmTask.get("withParents"))  && !"1".equals(xmTask.get("isTop"))){
-				List<String> pidPathsList=xmTaskVoList.stream().map(i->(String)i.get("pidPaths")).collect(Collectors.toSet()).stream().collect(Collectors.toList());
-				pidPathsList=pidPathsList.stream().map(i->i.substring(0,i.length()-2)).collect(Collectors.toList());
+				List<String> pidPathsList=xmTaskVoList.stream().map(i-> PubTool.getPidPaths((String)i.get("pidPaths"),(String)i.get("id"))).collect(Collectors.toSet()).stream().collect(Collectors.toList());
 				List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsList));
 				xmTaskVoList.addAll(parentList);
 				m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
