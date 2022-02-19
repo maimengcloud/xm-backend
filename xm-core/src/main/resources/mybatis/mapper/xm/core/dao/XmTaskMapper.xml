@@ -183,7 +183,39 @@
 		</foreach>
 	</select>
 
-
+	<update id="sumParents" parameterType="List">
+		<foreach collection="list" item="item" index="index" separator=";" >
+			UPDATE xm_task res
+			LEFT JOIN (
+			SELECT
+			t.parent_taskid,
+			sum( ifnull( t.budget_cost, 0 ) ) AS budget_cost,
+			sum( ifnull( t.budget_workload, 0 ) ) AS budget_workload,
+			sum( ifnull( t.act_cost, 0 ) ) AS act_cost,
+			sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
+			sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) )/100 / sum( ifnull( t.budget_workload, 0.00001 ) ) AS rate,
+			min( t.start_time ) AS start_time,
+			max( t.end_time ) AS end_time,
+			min( t.act_start_time ) AS act_start_time,
+			max( t.act_end_time ) AS act_end_time
+			FROM
+			xm_task t
+			WHERE
+			t.parent_taskid = #{item}
+			) t2 ON t2.parent_taskid = res.id
+			SET res.budget_cost = t2.budget_cost,
+			res.budget_workload = t2.budget_workload,
+			res.act_cost = t2.act_cost,
+			res.act_workload = t2.act_workload,
+			res.rate = t2.rate,
+			res.start_time = t2.start_time,
+			res.end_time = t2.end_time,
+			res.act_start_time = t2.act_start_time,
+			res.act_end_time = t2.act_end_time
+			WHERE
+			res.id = #{item} and res.ntype='1'
+		</foreach>
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

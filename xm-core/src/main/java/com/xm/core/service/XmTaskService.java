@@ -510,6 +510,27 @@ public class XmTaskService extends BaseService {
 		}
 		return tips;
 	}
+	@Transactional
+	public void sumParents(XmTask xmTaskDb){
+
+		String pidPaths=xmTaskDb.getPidPaths();
+		if(!StringUtils.hasText(pidPaths)){
+			return;
+		}
+		if(!pidPaths.startsWith("0,")){
+			return;
+		}
+		pidPaths=pidPaths.substring(2);
+		if(!StringUtils.hasText(pidPaths)){
+			return;
+		}
+		String[] pidPathss=pidPaths.split(",");
+		List<String> pidPathsList=new ArrayList<>();
+		for (int i = pidPathss.length-1; i >=0; i--) {
+			pidPathsList.add(pidPathss[i]);
+		}
+		super.update("sumParents",pidPathsList	);
+	}
 
 	private List<XmTask> getParentList(XmTask currNode){
 		List<XmTask> parentList=new ArrayList<>();
