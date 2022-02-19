@@ -11,7 +11,11 @@
                  ( #{item})
              </foreach>
          </if>
-
+		<if test=" pidPathsList != null">  and
+			<foreach collection="pidPathsList" item="item" index="index" open="(" separator=" or " close=")" >
+				#{item} like concat(res.pid_paths,'%')
+			</foreach>
+		</if>
 		<if test=" tagIdList != null"> and
 			<foreach collection="tagIdList" item="item" index="index" open="(" separator=" or " close=")" >
 				find_in_set(#{item},res.tag_ids)
