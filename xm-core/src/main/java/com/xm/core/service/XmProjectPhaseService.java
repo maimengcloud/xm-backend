@@ -65,7 +65,9 @@ public class XmProjectPhaseService extends BaseService {
 		int i= super.insert(parameter);
 		if(StringUtils.hasText(parameter.getParentPhaseId())){
 			this.updatePhaseChildrenCntByPhaseId(parameter.getParentPhaseId());
+			sumParents(parameter);
 		}
+
 		return i;
 	}
 
@@ -75,6 +77,7 @@ public class XmProjectPhaseService extends BaseService {
 		int i= super.deleteByPk(parameter);
 		if(StringUtils.hasText(parameter.getParentPhaseId())){
 			this.updatePhaseChildrenCntByPhaseId(parameter.getParentPhaseId());
+			sumParents(parameter);
 		}
 		return i;
 	}
@@ -150,6 +153,7 @@ public class XmProjectPhaseService extends BaseService {
 		list=list.stream().filter(i-> StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());
 		if(list.size()>0){
 			this.updateChildrenCntByIds(list.stream().map(i->i.getParentPhaseId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+			batchSumParents(batchValues);
 		}
 		return result;
 	}
@@ -218,6 +222,7 @@ public class XmProjectPhaseService extends BaseService {
 		if(list.size()>0){
 			this.updateChildrenCntByIds(ids);
 		}
+		this.batchSumParents(xmProjectPhases.stream().map(i->(XmProjectPhase)i).collect(Collectors.toList()));
 	}
 
     public void calcKeyPaths(String projectId) {
@@ -239,6 +244,7 @@ public class XmProjectPhaseService extends BaseService {
 		if(list.size()>0){
 			this.updateChildrenCntByIds(list.stream().map(i->i.getParentPhaseId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
 		}
+		batchSumParents(xmProjectPhases);
 	}
 
 
@@ -349,7 +355,7 @@ public class XmProjectPhaseService extends BaseService {
 
 
 	@Transactional
-	public void sumParents(XmTask node){
+	public void sumParents(XmProjectPhase node){
 		String id=node.getId();
 		String pidPaths=node.getPidPaths();
 		if(!StringUtils.hasText(pidPaths)){
@@ -378,9 +384,9 @@ public class XmProjectPhaseService extends BaseService {
 
 	}
 	@Transactional
-	public void batchSumParents(List<XmTask> xmTasks) {
+	public void batchSumParents(List<XmProjectPhase> xmTasks) {
 		List<Set<String>> list=new ArrayList<>();
-		for (XmTask node : xmTasks) {
+		for (XmProjectPhase node : xmTasks) {
 			String id=node.getId();
 			String pidPaths=node.getPidPaths();
 			if(!StringUtils.hasText(pidPaths)){

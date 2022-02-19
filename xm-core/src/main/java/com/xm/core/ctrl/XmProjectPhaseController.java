@@ -372,6 +372,7 @@ public class XmProjectPhaseController {
 			if(judgetTips.isOk()) { 
 				xmProjectPhase=xmProjectPhaseService.autoCalcWorkload(xmProjectPhase);
 				xmProjectPhaseService.updateByPk(xmProjectPhase);
+				xmProjectPhaseService.sumParents(xmProjectPhase);
 				xmRecordService.addXmPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-计划-修改计划", "修改计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
 				
 			}else {
