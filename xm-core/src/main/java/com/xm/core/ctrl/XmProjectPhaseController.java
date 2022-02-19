@@ -117,7 +117,7 @@ public class XmProjectPhaseController {
 		PageUtils.startPage(xmProjectPhase);
 		List<Map<String,Object>>	xmProjectPhaseList = xmProjectPhaseService.selectListMapByWhere(xmProjectPhase);	//列出XmProjectPhase列表
 		PageUtils.responePage(m, xmProjectPhaseList);
-		if("1".equals(xmProjectPhase.get("withParents"))  && !"1".equals(xmProjectPhase.get("isTop"))){
+		if("1".equals(xmProjectPhase.get("withParents"))  && !"1".equals(xmProjectPhase.get("isTop")) && xmProjectPhaseList.size()>0){
 			Set<String> pidPathsSet=new HashSet<>();
 			Set<String> idSet=new HashSet<>();
 			for (Map<String, Object> map : xmProjectPhaseList) {

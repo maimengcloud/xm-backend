@@ -91,7 +91,7 @@ public class XmMenuController {
 		}
 		List<Map<String,Object>>	xmMenuList = xmMenuService.selectListMapByWhere(xmMenu);	//列出XmMenu列表
 		PageUtils.responePage(m, xmMenuList);
-		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))){
+		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))&& xmMenuList.size()>0){
 			Set<String> pidPathsSet=new HashSet<>();
 			Set<String> idSet=new HashSet<>();
 			for (Map<String, Object> map : xmMenuList) {
@@ -136,7 +136,7 @@ public class XmMenuController {
 		}
 		List<Map<String,Object>>	xmMenuList = xmMenuService.selectListMapByWhereWithState(xmMenu);	//列出XmMenu列表
 		PageUtils.responePage(m, xmMenuList);
-		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))){
+		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))&& xmMenuList.size()>0){
 			Set<String> pidPathsSet=new HashSet<>();
 			Set<String> idSet=new HashSet<>();
 			for (Map<String, Object> map : xmMenuList) {
@@ -167,7 +167,7 @@ public class XmMenuController {
 		}else {
 			List<Map<String,Object>>	xmMenuList = xmMenuService.selectListMapByWhereWithPlan(xmMenu);	//列出XmMenu列表
 			PageUtils.responePage(m, xmMenuList);
-			if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))){
+			if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))&& xmMenuList.size()>0){
 				Set<String> pidPathsSet=new HashSet<>();
 				Set<String> idSet=new HashSet<>();
 				for (Map<String, Object> map : xmMenuList) {

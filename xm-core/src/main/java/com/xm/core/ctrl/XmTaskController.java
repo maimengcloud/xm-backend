@@ -142,7 +142,7 @@ public class XmTaskController {
 		}
 		List<Map<String,Object>> xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
 		PageUtils.responePage(m,xmTaskVoList);
-		if("1".equals(xmTask.get("withParents"))  && !"1".equals(xmTask.get("isTop"))){
+		if("1".equals(xmTask.get("withParents"))  && !"1".equals(xmTask.get("isTop"))&& xmTaskVoList.size()>0){
 			Set<String> pidPathsSet=new HashSet<>();
 			Set<String> idSet=new HashSet<>();
 			for (Map<String, Object> map : xmTaskVoList) {
@@ -234,7 +234,7 @@ public class XmTaskController {
 		}else {
 			xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
 			PageUtils.responePage(m,xmTaskVoList);
-			if("1".equals(xmTask.get("withParents"))  && !"1".equals(xmTask.get("isTop"))){
+			if("1".equals(xmTask.get("withParents"))  && !"1".equals(xmTask.get("isTop")) && xmTaskVoList.size()>0){
 
 				Set<String> pidPathsSet=new HashSet<>();
 				Set<String> idSet=new HashSet<>();
