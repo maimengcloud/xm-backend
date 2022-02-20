@@ -136,7 +136,46 @@ public class XmProductController {
 		m.put("tips", tips);
 		return m;
 	}
- 
+
+	/***/
+	@ApiOperation( value = "新增一条产品表信息",notes="addXmProduct,主键如果为空，后台自动生成")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmProduct.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@HasQx(value = "xm_core_xmProduct_copyTo",name = "通过复制创建产品/战略规划等",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/copyTo",method=RequestMethod.POST)
+	public Map<String,Object> copyTo(@RequestBody XmProduct xmProduct) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功新增一条数据");
+		try{
+			if(StringUtils.isEmpty(xmProduct.getId())) {
+				xmProduct.setId(xmProductService.createKey("id"));
+			}else{
+				XmProduct xmProductQuery = new  XmProduct(xmProduct.getId());
+				if(xmProductService.countByWhere(xmProductQuery)>0){
+					tips.setFailureMsg("编号重复，请修改编号再提交");
+					m.put("tips", tips);
+					return m;
+				}
+			}
+			User user=LoginUtils.getCurrentUserInfo();
+			if(StringUtils.isEmpty(xmProduct.getPmUserid())) {
+				xmProduct.setPmUserid(user.getUserid());
+				xmProduct.setPmUsername(user.getUsername());
+			}
+			xmProduct.setCtime(new Date());
+			xmProductService.insert(xmProduct);
+			m.put("data",xmProduct);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 	
 	/***/
 	@ApiOperation( value = "新增一条产品表信息",notes="addXmProduct,主键如果为空，后台自动生成")
