@@ -265,7 +265,7 @@ public class XmProjectPhaseService extends BaseService {
 		}
 		for (XmProjectPhase node : nodes) {
 			if(!StringUtils.hasText(node.getParentPhaseId())){
-				node.setPidPaths("0,");
+				node.setPidPaths("0,"+node.getId()+",");
 				continue;
 			}
 			if(hadCalcMap.containsKey(node.getParentPhaseId())){
@@ -273,6 +273,10 @@ public class XmProjectPhaseService extends BaseService {
 				node.setPidPaths(idPaths+node.getId()+",");
 			}else{
 				List<XmProjectPhase> pnodeList=this.getParentList(node,nodes);
+				if(pnodeList==null ||pnodeList.size()==0){
+					node.setPidPaths("0,"+node.getParentPhaseId()+","+node.getId()+",");
+					continue;
+				}
 				XmProjectPhase topParent=pnodeList.get(pnodeList.size()-1);
 				String idPath="0,";
 				if(hadCalcMap.containsKey(topParent.getParentPhaseId())){
@@ -303,9 +307,15 @@ public class XmProjectPhaseService extends BaseService {
 		Tips tips = new Tips("成功");
 		if (!StringUtils.hasText(currNode.getParentPhaseId()) || "0".equals(currNode.getParentPhaseId())) {
 			currNode.setPidPaths("0," + currNode.getId() + ",");
+			currNode.setLvl(1);
 			return tips;
 		} else {
 			List<XmProjectPhase> parentList=this.getParentList(currNode);
+			if(parentList==null ||parentList.size()==0){
+				currNode.setPidPaths("0,"+currNode.getParentPhaseId()+","+currNode.getId()+",");
+				currNode.setLvl(2);
+				return tips;
+			}
 			String idPath="0,";
 			for (int i = parentList.size() - 1; i >= 0; i--) {
 				idPath=idPath+parentList.get(i).getId()+",";
@@ -323,7 +333,7 @@ public class XmProjectPhaseService extends BaseService {
 		List<XmProjectPhase> parentList=new ArrayList<>();
 		XmProjectPhase current=currNode;
 		while (true){
-			if(!StringUtils.hasText(currNode.getParentPhaseId()) || "0".equals(currNode.getParentPhaseId())){
+			if(!StringUtils.hasText(current.getParentPhaseId()) || "0".equals(current.getParentPhaseId())){
 				return parentList;
 			}
 			XmProjectPhase query=new XmProjectPhase();
@@ -340,16 +350,18 @@ public class XmProjectPhaseService extends BaseService {
 		List<XmProjectPhase> parentList=new ArrayList<>();
 		XmProjectPhase current=currNode;
 		while (true){
-			if(!StringUtils.hasText(currNode.getParentPhaseId()) || "0".equals(currNode.getParentPhaseId())){
+			if(!StringUtils.hasText(current.getParentPhaseId()) || "0".equals(current.getParentPhaseId())){
 				return parentList;
 			}
 			XmProjectPhase query=new XmProjectPhase();
 			query.setId(current.getParentPhaseId());
-			current=nodes.stream().filter(i->i.getId().equals(query.getId())).findFirst().get();
-			if(current==null){
+			Optional<XmProjectPhase> optional=nodes.stream().filter(i->i.getId().equals(query.getId())).findFirst();
+			if(!optional.isPresent()){
+				current=optional.get();
+				parentList.add(current);
+			}else {
 				return parentList;
 			}
-			parentList.add(current);
 		}
 	}
 

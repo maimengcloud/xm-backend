@@ -110,7 +110,7 @@
 		sum(t.task_budget_at) as task_budget_at
 		FROM xm_project_phase t
 		WHERE
-		t.parent_taskid=#{item}
+		t.parent_phase_id=#{item}
 		GROUP BY
 		t.project_id,
 		t.parent_phase_id

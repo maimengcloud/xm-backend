@@ -128,9 +128,15 @@ public class XmMenuService extends BaseService {
 		Tips tips = new Tips("成功");
 		if (!StringUtils.hasText(currNode.getPmenuId()) || "0".equals(currNode.getPmenuId())) {
 			currNode.setPidPaths("0," + currNode.getMenuId() + ",");
+			currNode.setLvl(2);
 			return tips;
 		} else {
 			List<XmMenu> parentList=this.getParentList(currNode);
+			if(parentList==null || parentList.size()==0){
+				currNode.setPidPaths("0,"+currNode.getPmenuId()+","+currNode.getMenuId()+",");
+				currNode.setLvl(2);
+				return tips;
+			}
 			String idPath="0,";
 			for (int i = parentList.size() - 1; i >= 0; i--) {
 				idPath=idPath+parentList.get(i).getMenuId()+",";
@@ -148,7 +154,7 @@ public class XmMenuService extends BaseService {
 		List<XmMenu> parentList=new ArrayList<>();
 		XmMenu current=currNode;
 		while (true){
-			if(!StringUtils.hasText(currNode.getPmenuId()) || "0".equals(currNode.getPmenuId())){
+			if(!StringUtils.hasText(current.getPmenuId()) || "0".equals(current.getPmenuId())){
 				return parentList;
 			}
 			XmMenu query=new XmMenu();
@@ -165,16 +171,18 @@ public class XmMenuService extends BaseService {
 		List<XmMenu> parentList=new ArrayList<>();
 		XmMenu current=currNode;
 		while (true){
-			if(!StringUtils.hasText(currNode.getPmenuId()) || "0".equals(currNode.getPmenuId())){
+			if(!StringUtils.hasText(current.getPmenuId()) || "0".equals(current.getPmenuId())){
 				return parentList;
 			}
 			XmMenu query=new XmMenu();
 			query.setMenuId(current.getPmenuId());
-			current=nodes.stream().filter(i->i.getMenuId().equals(query.getMenuId())).findFirst().get();
-			if(current==null){
+			Optional<XmMenu> optional=nodes.stream().filter(i->i.getMenuId().equals(query.getMenuId())).findFirst();
+			if(optional.isPresent()){
+				current=optional.get();
+				parentList.add(current);
+			}else{
 				return parentList;
 			}
-			parentList.add(current);
 		}
 	}
 

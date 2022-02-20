@@ -105,7 +105,10 @@ public class XmProjectService extends BaseService {
 				String newId=newIdMap.get(oldId);
 				node.setProjectId(xmProjectTo.getId());
 				node.setId(newId);
-				node.setParentPhaseId(newIdMap.get(node.getParentPhaseId()));
+				if(StringUtils.hasText(node.getParentPhaseId())){
+					node.setParentPhaseId(newIdMap.get(node.getParentPhaseId()));
+				}
+
 				node.setCtime(new Date());
 				node.setMngUserid(user.getUserid());
 				node.setMngUsername(user.getUsername());
@@ -114,6 +117,7 @@ public class XmProjectService extends BaseService {
 				node.setBizFlowState("");
 				node.setBizProcInstId(null);
 			}
+			this.xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases);
 			this.xmProjectPhaseService.doBatchInsert(xmProjectPhases);
 		}
 

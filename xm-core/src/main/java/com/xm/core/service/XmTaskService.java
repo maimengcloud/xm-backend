@@ -427,7 +427,7 @@ public class XmTaskService extends BaseService {
 		}
 		for (XmTask node : nodes) {
 			if(!StringUtils.hasText(node.getParentTaskid())){
-				node.setPidPaths("0,");
+				node.setPidPaths("0,"+node.getId()+",");
 				continue;
 			}
 			if(hadCalcMap.containsKey(node.getParentTaskid())){
@@ -435,6 +435,10 @@ public class XmTaskService extends BaseService {
 				node.setPidPaths(idPaths+node.getId()+",");
 			}else{
 				List<XmTask> pnodeList=this.getParentList(node,nodes);
+				if(pnodeList==null ||pnodeList.size()==0){
+					node.setPidPaths("0,"+node.getParentTaskid()+","+node.getId()+",");
+					continue;
+				}
 				XmTask topParent=pnodeList.get(pnodeList.size()-1);
 				String idPath="0,";
 				if(hadCalcMap.containsKey(topParent.getParentTaskid())){
@@ -468,6 +472,11 @@ public class XmTaskService extends BaseService {
 			return tips;
 		} else {
 			List<XmTask> parentList=this.getParentList(currNode);
+			if(parentList==null ||parentList.size()==0){
+				currNode.setPidPaths("0,"+currNode.getParentTaskid()+","+currNode.getId()+",");
+				currNode.setLvl(2);
+				return tips;
+			}
 			String idPath="0,";
 			for (int i = parentList.size() - 1; i >= 0; i--) {
 				idPath=idPath+parentList.get(i).getId()+",";
@@ -485,7 +494,7 @@ public class XmTaskService extends BaseService {
 		List<XmTask> parentList=new ArrayList<>();
 		XmTask current=currNode;
 		while (true){
-			if(!StringUtils.hasText(currNode.getParentTaskid()) || "0".equals(currNode.getParentTaskid())){
+			if(!StringUtils.hasText(current.getParentTaskid()) || "0".equals(current.getParentTaskid())){
 				return parentList;
 			}
 			XmTask query=new XmTask();
@@ -502,16 +511,19 @@ public class XmTaskService extends BaseService {
 		List<XmTask> parentList=new ArrayList<>();
 		XmTask current=currNode;
 		while (true){
-			if(!StringUtils.hasText(currNode.getParentTaskid()) || "0".equals(currNode.getParentTaskid())){
+			if(!StringUtils.hasText(current.getParentTaskid()) || "0".equals(current.getParentTaskid())){
 				return parentList;
 			}
 			XmTask query=new XmTask();
 			query.setId(current.getParentTaskid());
-			current=nodes.stream().filter(i->i.getId().equals(query.getId())).findFirst().get();
-			if(current==null){
+			Optional<XmTask> optional=nodes.stream().filter(i->i.getId().equals(query.getId())).findFirst();
+			if(optional.isPresent()){
+				current=optional.get();
+				parentList.add(current);
+			}else{
 				return parentList;
 			}
-			parentList.add(current);
+
 		}
 	}
 
@@ -526,7 +538,7 @@ public class XmTaskService extends BaseService {
 		if(!pidPaths.startsWith("0,")){
 			return;
 		}
-		if("0".equals(node.getNtype())){
+		if("0".equals(node.getNtype())&&pidPaths.endsWith(id+",")){
 			pidPaths=pidPaths.substring(2,pidPaths.indexOf(id));
 		}else{
 			pidPaths=pidPaths.substring(2);
