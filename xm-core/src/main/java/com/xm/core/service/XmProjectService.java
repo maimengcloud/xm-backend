@@ -34,9 +34,6 @@ public class XmProjectService extends BaseService {
 
     @Autowired
     XmProjectService xmProjectService;
- 
-    @Autowired
-    XmProjectBaselineService xmProjectBaselineService;
 
       
 
@@ -371,7 +368,6 @@ public class XmProjectService extends BaseService {
 		XmProject p=new XmProject();
 		p.setId(projectId);
 		XmProject p2=this.selectOneObject(p);
-		this.xmProjectBaselineService.createBaseline(p2,remark);
 	}
 }
 
