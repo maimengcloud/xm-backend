@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProject所有属性名: <br>
- *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planInnerUserAt,planOutUserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planInnerUserPrice,planOutUserPrice,planOutUserCnt,planInnerUserCnt,planWorkingHours,taxRate,planInnerUserWorkload,planOutUserWorkload,fromTplId,budgetCtrl,deptid,showOut;<br>
- * 表 XM.xm_project xm_project的所有字段名: <br>
- *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out;<br>
+ *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planInnerUserAt,planOutUserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planInnerUserPrice,planOutUserPrice,planOutUserCnt,planInnerUserCnt,planWorkingHours,taxRate,planInnerUserWorkload,planOutUserWorkload,fromTplId,budgetCtrl,deptid,showOut,isTpl;<br>
+ * 表 xm_project xm_project的所有字段名: <br>
+ *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -77,13 +77,13 @@ public class XmProject  implements java.io.Serializable {
 	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
 	String bizFlowState;
 	
-	@ApiModelProperty(notes="非人力成本总预算-应该大于或等于计划非人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="非人力成本总预算-应该大于或等于阶段计划非人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planNouserAt;
 	
-	@ApiModelProperty(notes="内部人力成本总预算-应该大于或等于计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="内部人力成本总预算-应该大于或等于阶段计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planInnerUserAt;
 	
-	@ApiModelProperty(notes="外购人力成本总预算-应该大于或等于计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="外购人力成本总预算-应该大于或等于阶段计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planOutUserAt;
 	
 	@ApiModelProperty(notes="是否锁定整个项目不允许变化0否1是",allowEmptyValue=true,example="",allowableValues="")
@@ -98,7 +98,7 @@ public class XmProject  implements java.io.Serializable {
 	@ApiModelProperty(notes="基线主键",allowEmptyValue=true,example="",allowableValues="")
 	String baselineId;
 	
-	@ApiModelProperty(notes="总预算工作量-应该大于或等于计划总工作量",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="总预算工作量-应该大于或等于阶段计划总工作量",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planWorkload;
 	
 	@ApiModelProperty(notes="总预计收款金额",allowEmptyValue=true,example="",allowableValues="")
@@ -128,10 +128,10 @@ public class XmProject  implements java.io.Serializable {
 	@ApiModelProperty(notes="税率",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal taxRate;
 	
-	@ApiModelProperty(notes="内部人力总工作量-应该大于或等于计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="内部人力总工作量-应该大于或等于阶段计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planInnerUserWorkload;
 	
-	@ApiModelProperty(notes="外购人力总工作量-应该大于或等于计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="外购人力总工作量-应该大于或等于阶段计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planOutUserWorkload;
 	
 	@ApiModelProperty(notes="关联模板编号",allowEmptyValue=true,example="",allowableValues="")
@@ -145,6 +145,9 @@ public class XmProject  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="是否对外公开0否1是",allowEmptyValue=true,example="",allowableValues="")
 	String showOut;
+	
+	@ApiModelProperty(notes="是否为模板",allowEmptyValue=true,example="",allowableValues="")
+	String isTpl;
 
 	/**项目编号**/
 	public XmProject(String id) {
@@ -270,19 +273,19 @@ public class XmProject  implements java.io.Serializable {
 		this.bizFlowState = bizFlowState;
 	}
 	/**
-	 * 非人力成本总预算-应该大于或等于计划非人力总成本
+	 * 非人力成本总预算-应该大于或等于阶段计划非人力总成本
 	 **/
 	public void setPlanNouserAt(BigDecimal planNouserAt) {
 		this.planNouserAt = planNouserAt;
 	}
 	/**
-	 * 内部人力成本总预算-应该大于或等于计划内部人力总成本
+	 * 内部人力成本总预算-应该大于或等于阶段计划内部人力总成本
 	 **/
 	public void setPlanInnerUserAt(BigDecimal planInnerUserAt) {
 		this.planInnerUserAt = planInnerUserAt;
 	}
 	/**
-	 * 外购人力成本总预算-应该大于或等于计划外购人力总成本
+	 * 外购人力成本总预算-应该大于或等于阶段计划外购人力总成本
 	 **/
 	public void setPlanOutUserAt(BigDecimal planOutUserAt) {
 		this.planOutUserAt = planOutUserAt;
@@ -312,7 +315,7 @@ public class XmProject  implements java.io.Serializable {
 		this.baselineId = baselineId;
 	}
 	/**
-	 * 总预算工作量-应该大于或等于计划总工作量
+	 * 总预算工作量-应该大于或等于阶段计划总工作量
 	 **/
 	public void setPlanWorkload(BigDecimal planWorkload) {
 		this.planWorkload = planWorkload;
@@ -372,13 +375,13 @@ public class XmProject  implements java.io.Serializable {
 		this.taxRate = taxRate;
 	}
 	/**
-	 * 内部人力总工作量-应该大于或等于计划内部人力总成本
+	 * 内部人力总工作量-应该大于或等于阶段计划内部人力总成本
 	 **/
 	public void setPlanInnerUserWorkload(BigDecimal planInnerUserWorkload) {
 		this.planInnerUserWorkload = planInnerUserWorkload;
 	}
 	/**
-	 * 外购人力总工作量-应该大于或等于计划外购人力总成本
+	 * 外购人力总工作量-应该大于或等于阶段计划外购人力总成本
 	 **/
 	public void setPlanOutUserWorkload(BigDecimal planOutUserWorkload) {
 		this.planOutUserWorkload = planOutUserWorkload;
@@ -406,6 +409,12 @@ public class XmProject  implements java.io.Serializable {
 	 **/
 	public void setShowOut(String showOut) {
 		this.showOut = showOut;
+	}
+	/**
+	 * 是否为模板
+	 **/
+	public void setIsTpl(String isTpl) {
+		this.isTpl = isTpl;
 	}
 	
 	/**
@@ -523,19 +532,19 @@ public class XmProject  implements java.io.Serializable {
 		return this.bizFlowState;
 	}
 	/**
-	 * 非人力成本总预算-应该大于或等于计划非人力总成本
+	 * 非人力成本总预算-应该大于或等于阶段计划非人力总成本
 	 **/
 	public BigDecimal getPlanNouserAt() {
 		return this.planNouserAt;
 	}
 	/**
-	 * 内部人力成本总预算-应该大于或等于计划内部人力总成本
+	 * 内部人力成本总预算-应该大于或等于阶段计划内部人力总成本
 	 **/
 	public BigDecimal getPlanInnerUserAt() {
 		return this.planInnerUserAt;
 	}
 	/**
-	 * 外购人力成本总预算-应该大于或等于计划外购人力总成本
+	 * 外购人力成本总预算-应该大于或等于阶段计划外购人力总成本
 	 **/
 	public BigDecimal getPlanOutUserAt() {
 		return this.planOutUserAt;
@@ -565,7 +574,7 @@ public class XmProject  implements java.io.Serializable {
 		return this.baselineId;
 	}
 	/**
-	 * 总预算工作量-应该大于或等于计划总工作量
+	 * 总预算工作量-应该大于或等于阶段计划总工作量
 	 **/
 	public BigDecimal getPlanWorkload() {
 		return this.planWorkload;
@@ -625,13 +634,13 @@ public class XmProject  implements java.io.Serializable {
 		return this.taxRate;
 	}
 	/**
-	 * 内部人力总工作量-应该大于或等于计划内部人力总成本
+	 * 内部人力总工作量-应该大于或等于阶段计划内部人力总成本
 	 **/
 	public BigDecimal getPlanInnerUserWorkload() {
 		return this.planInnerUserWorkload;
 	}
 	/**
-	 * 外购人力总工作量-应该大于或等于计划外购人力总成本
+	 * 外购人力总工作量-应该大于或等于阶段计划外购人力总成本
 	 **/
 	public BigDecimal getPlanOutUserWorkload() {
 		return this.planOutUserWorkload;
@@ -659,6 +668,12 @@ public class XmProject  implements java.io.Serializable {
 	 **/
 	public String getShowOut() {
 		return this.showOut;
+	}
+	/**
+	 * 是否为模板
+	 **/
+	public String getIsTpl() {
+		return this.isTpl;
 	}
 
 }

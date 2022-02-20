@@ -7,9 +7,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProduct所有属性名: <br>
- *	id,productName,branchId,remark,version,pmUserid,pmUsername,ctime,deptid;<br>
- * 表 XM.xm_product 产品表的所有字段名: <br>
- *	id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid;<br>
+ *	id,productName,branchId,remark,version,pmUserid,pmUsername,ctime,deptid,pstatus,startTime,endTime,deptName,admUserid,admUsername,assistantUserid,assistantUsername,bizProcInstId,bizFlowState,isTpl,baselineId,baseTime;<br>
+ * 表 xm_product 产品表的所有字段名: <br>
+ *	id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,assistant_userid,assistant_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -45,6 +45,45 @@ public class XmProduct  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="归属部门",allowEmptyValue=true,example="",allowableValues="")
 	String deptid;
+	
+	@ApiModelProperty(notes="产品阶段:0未开始,1研发中,2已完成",allowEmptyValue=true,example="",allowableValues="")
+	String pstatus;
+	
+	@ApiModelProperty(notes="开始日期",allowEmptyValue=true,example="",allowableValues="")
+	Date startTime;
+	
+	@ApiModelProperty(notes="结束日期",allowEmptyValue=true,example="",allowableValues="")
+	Date endTime;
+	
+	@ApiModelProperty(notes="主管部门名称",allowEmptyValue=true,example="",allowableValues="")
+	String deptName;
+	
+	@ApiModelProperty(notes="主管领导编号",allowEmptyValue=true,example="",allowableValues="")
+	String admUserid;
+	
+	@ApiModelProperty(notes="主管领导名称",allowEmptyValue=true,example="",allowableValues="")
+	String admUsername;
+	
+	@ApiModelProperty(notes="副经理编号",allowEmptyValue=true,example="",allowableValues="")
+	String assistantUserid;
+	
+	@ApiModelProperty(notes="副经理名称",allowEmptyValue=true,example="",allowableValues="")
+	String assistantUsername;
+	
+	@ApiModelProperty(notes="当前流程实例编号",allowEmptyValue=true,example="",allowableValues="")
+	String bizProcInstId;
+	
+	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
+	String bizFlowState;
+	
+	@ApiModelProperty(notes="是否为模板",allowEmptyValue=true,example="",allowableValues="")
+	String isTpl;
+	
+	@ApiModelProperty(notes="基线编号",allowEmptyValue=true,example="",allowableValues="")
+	String baselineId;
+	
+	@ApiModelProperty(notes="基线时间",allowEmptyValue=true,example="",allowableValues="")
+	Date baseTime;
 
 	/**产品编号**/
 	public XmProduct(String id) {
@@ -109,6 +148,84 @@ public class XmProduct  implements java.io.Serializable {
 	public void setDeptid(String deptid) {
 		this.deptid = deptid;
 	}
+	/**
+	 * 产品阶段:0未开始,1研发中,2已完成
+	 **/
+	public void setPstatus(String pstatus) {
+		this.pstatus = pstatus;
+	}
+	/**
+	 * 开始日期
+	 **/
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
+	/**
+	 * 结束日期
+	 **/
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
+	/**
+	 * 主管部门名称
+	 **/
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
+	}
+	/**
+	 * 主管领导编号
+	 **/
+	public void setAdmUserid(String admUserid) {
+		this.admUserid = admUserid;
+	}
+	/**
+	 * 主管领导名称
+	 **/
+	public void setAdmUsername(String admUsername) {
+		this.admUsername = admUsername;
+	}
+	/**
+	 * 副经理编号
+	 **/
+	public void setAssistantUserid(String assistantUserid) {
+		this.assistantUserid = assistantUserid;
+	}
+	/**
+	 * 副经理名称
+	 **/
+	public void setAssistantUsername(String assistantUsername) {
+		this.assistantUsername = assistantUsername;
+	}
+	/**
+	 * 当前流程实例编号
+	 **/
+	public void setBizProcInstId(String bizProcInstId) {
+		this.bizProcInstId = bizProcInstId;
+	}
+	/**
+	 * 当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除
+	 **/
+	public void setBizFlowState(String bizFlowState) {
+		this.bizFlowState = bizFlowState;
+	}
+	/**
+	 * 是否为模板
+	 **/
+	public void setIsTpl(String isTpl) {
+		this.isTpl = isTpl;
+	}
+	/**
+	 * 基线编号
+	 **/
+	public void setBaselineId(String baselineId) {
+		this.baselineId = baselineId;
+	}
+	/**
+	 * 基线时间
+	 **/
+	public void setBaseTime(Date baseTime) {
+		this.baseTime = baseTime;
+	}
 	
 	/**
 	 * 产品编号
@@ -163,6 +280,84 @@ public class XmProduct  implements java.io.Serializable {
 	 **/
 	public String getDeptid() {
 		return this.deptid;
+	}
+	/**
+	 * 产品阶段:0未开始,1研发中,2已完成
+	 **/
+	public String getPstatus() {
+		return this.pstatus;
+	}
+	/**
+	 * 开始日期
+	 **/
+	public Date getStartTime() {
+		return this.startTime;
+	}
+	/**
+	 * 结束日期
+	 **/
+	public Date getEndTime() {
+		return this.endTime;
+	}
+	/**
+	 * 主管部门名称
+	 **/
+	public String getDeptName() {
+		return this.deptName;
+	}
+	/**
+	 * 主管领导编号
+	 **/
+	public String getAdmUserid() {
+		return this.admUserid;
+	}
+	/**
+	 * 主管领导名称
+	 **/
+	public String getAdmUsername() {
+		return this.admUsername;
+	}
+	/**
+	 * 副经理编号
+	 **/
+	public String getAssistantUserid() {
+		return this.assistantUserid;
+	}
+	/**
+	 * 副经理名称
+	 **/
+	public String getAssistantUsername() {
+		return this.assistantUsername;
+	}
+	/**
+	 * 当前流程实例编号
+	 **/
+	public String getBizProcInstId() {
+		return this.bizProcInstId;
+	}
+	/**
+	 * 当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除
+	 **/
+	public String getBizFlowState() {
+		return this.bizFlowState;
+	}
+	/**
+	 * 是否为模板
+	 **/
+	public String getIsTpl() {
+		return this.isTpl;
+	}
+	/**
+	 * 基线编号
+	 **/
+	public String getBaselineId() {
+		return this.baselineId;
+	}
+	/**
+	 * 基线时间
+	 **/
+	public Date getBaseTime() {
+		return this.baseTime;
 	}
 
 }

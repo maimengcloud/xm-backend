@@ -67,12 +67,12 @@
 		 left join xm_project_state s on s.project_id=res.id
 		 left join  xm_project_process_approva pa on res.id=pa.project_id and res.biz_proc_inst_id=pa.proc_inst_id
 
-		<where> 
-			<if test="ids != null">  and     
+		<where>
+			<if test="ids != null">  and
 				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
+				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+				        #{item}
+				    </foreach>
 			 </if>
 			<include refid="where"/>
 
@@ -163,27 +163,27 @@
 		insert into xm_project(
 			<include refid="columns"/>
 		) values (
-		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planInnerUserAt},#{planOutUserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planInnerUserPrice},#{planOutUserPrice},#{planOutUserCnt},#{planInnerUserCnt},#{planWorkingHours},#{taxRate},#{planInnerUserWorkload},#{planOutUserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut}
+		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planInnerUserAt},#{planOutUserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planInnerUserPrice},#{planOutUserPrice},#{planOutUserCnt},#{planInnerUserCnt},#{planWorkingHours},#{taxRate},#{planInnerUserWorkload},#{planOutUserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut},#{isTpl}
 		)
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProject">
-		delete from xm_project
+		delete from xm_project res
 		<where>  
-			1=2
+			<include refid="where"/>
 		</where>
 	</delete>
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProject">
-		delete from xm_project
+		delete from xm_project 
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProject">
-		update  xm_project
+		update  xm_project 
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -192,7 +192,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProject">
-		update  xm_project
+		update  xm_project 
 		<set>
 			<include refid="set"/>
 		</set>
@@ -207,7 +207,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_project
+   		update  xm_project 
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -215,20 +215,18 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_project
+		delete from xm_project 
 			where
-			(id)
-			    in
+			(id) in
                 <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
-                    ( #{item.id}
-                    )
+                    (  #{item.id} )
                 </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out
+		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -275,6 +273,7 @@
 		<if test="budgetCtrl != null and budgetCtrl != ''">      and res.budget_ctrl = #{budgetCtrl}     </if>
 		<if test="deptid != null and deptid != ''">      and res.deptid = #{deptid}     </if>
 		<if test="showOut != null and showOut != ''">      and res.show_out = #{showOut}     </if>
+		<if test="isTpl != null and isTpl != ''">      and res.is_tpl = #{isTpl}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -318,7 +317,8 @@
 		from_tpl_id = #{fromTplId},
 		budget_ctrl = #{budgetCtrl},
 		deptid = #{deptid},
-		show_out = #{showOut}
+		show_out = #{showOut},
+		is_tpl = #{isTpl}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="code != null and code != ''"> code = #{code},     </if>
@@ -362,6 +362,7 @@
 		<if test="budgetCtrl != null and budgetCtrl != ''"> budget_ctrl = #{budgetCtrl},     </if>
 		<if test="deptid != null and deptid != ''"> deptid = #{deptid},     </if>
 		<if test="showOut != null and showOut != ''"> show_out = #{showOut},     </if>
+		<if test="isTpl != null and isTpl != ''"> is_tpl = #{isTpl},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -405,6 +406,7 @@
 			from_tpl_id = #{item.fromTplId},
 			budget_ctrl = #{item.budgetCtrl},
 			deptid = #{item.deptid},
-			show_out = #{item.showOut}
+			show_out = #{item.showOut},
+			is_tpl = #{item.isTpl}
 	</sql>
 </mapper>
