@@ -13,6 +13,7 @@ import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.cache.XmProjectCacheService;
+import com.xm.core.vo.XmProjectCopyVo;
 import com.xm.core.vo.XmProjectVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,7 +72,7 @@ public class XmProjectService extends BaseService {
     	return projectCahce;
     }
     @Transactional
-    public XmProject copyProject(User user,XmProject xmProject){
+    public XmProject copyProject(User user, XmProjectCopyVo xmProject){
 		XmProject xmProjectDb=this.getProjectFromCache(xmProject.getId());
 		if(xmProjectDb==null){
 			 return null;

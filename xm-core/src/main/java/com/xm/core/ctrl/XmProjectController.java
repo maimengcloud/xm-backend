@@ -17,6 +17,7 @@ import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.XmProjectPhaseService;
 import com.xm.core.service.XmProjectService;
 import com.xm.core.service.XmTaskService;
+import com.xm.core.vo.XmProjectCopyVo;
 import com.xm.core.vo.XmProjectGroupVo;
 import com.xm.core.vo.XmProjectVo;
 import io.swagger.annotations.*;
@@ -369,7 +370,7 @@ public class XmProjectController {
 	})
 	@HasQx(value = "xm_core_xmProject_copy_to",name = "存为新项目",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/copyTo",method=RequestMethod.POST)
-	public Map<String,Object> copyTo(@RequestBody XmProject xmProject) {
+	public Map<String,Object> copyTo(@RequestBody XmProjectCopyVo xmProject) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
