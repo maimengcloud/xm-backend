@@ -366,36 +366,6 @@ public class XmTaskService extends BaseService {
 	@Transactional
 	public void batchImportFromTemplate(List<XmTask> xmTasks) {
 		this.batchInsert(xmTasks);
-		List<XmTaskSkill> xmTaskSkillList=new ArrayList<>();
-		xmTasks.forEach(new Consumer<XmTask>() {
-
-			@Override
-			public void accept(XmTask t) {
-				String names=t.getTaskSkillNames();
-				String ids=t.getTaskSkillIds();
-				if(StringUtils.isEmpty(names)) {
-					return;
-				}
-				String[] nameList=names.split(",");
-				String[] idList=ids.split(",");
-				if(nameList.length != idList.length ) {
-					return;
-				}
-				for (int i=0;i<nameList.length;i++) {
-					XmTaskSkill ts=new XmTaskSkill();
-					ts.setTaskSkillId(idList[i]);
-					ts.setTaskId(t.getId());
-					ts.setTaskSkillName(nameList[i]);
-					ts.setId(XmTaskService.this.xmTaskSkillService.createKey("id"));
-					xmTaskSkillList.add(ts);
-				}
-			}
-		});
-		if(xmTaskSkillList.size()>0){
-
-			xmTaskSkillService.batchInsert(xmTaskSkillList);
-		}
-
 		List<XmTask> list= xmTasks.stream().filter(i->!xmTasks.stream().filter(k->k.getId().equals(i.getParentTaskid())).findAny().isPresent()).collect(Collectors.toList());
 		list=list.stream().filter(i->StringUtils.hasText(i.getParentTaskid())).collect(Collectors.toList());
 		if(list.size()>0){

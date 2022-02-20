@@ -10,6 +10,8 @@ import com.mdp.core.utils.DateUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProject;
+import com.xm.core.entity.XmProjectPhase;
+import com.xm.core.entity.XmTask;
 import com.xm.core.service.cache.XmProjectCacheService;
 import com.xm.core.vo.XmProjectVo;
 import org.springframework.beans.BeanUtils;
@@ -32,8 +34,6 @@ import java.util.Map;
 @Service("xm.core.xmProjectService")
 public class XmProjectService extends BaseService {
 
-    @Autowired
-    XmProjectService xmProjectService;
 
       
 
@@ -57,6 +57,8 @@ public class XmProjectService extends BaseService {
     
     @Autowired
     XmProjectCacheService xmProjectCacheService;
+	@Autowired
+	XmProjectPhaseService xmProjectPhaseService;
     
     
     public XmProject getProjectFromCache(String projectId) {
@@ -68,6 +70,77 @@ public class XmProjectService extends BaseService {
     	}
     	return projectCahce;
     }
+    @Transactional
+    public XmProject copyProject(User user,XmProject xmProject){
+		XmProject xmProjectDb=this.getProjectFromCache(xmProject.getId());
+		if(xmProjectDb==null){
+			 return null;
+		}
+		String isTpl=xmProject.getIsTpl();
+		XmProjectVo xmProjectTo=new XmProjectVo();
+		BeanUtils.copyProperties(xmProjectDb,xmProjectTo);
+		xmProjectTo.setId(null);
+		xmProjectTo.setCode(xmProject.getCode());
+		xmProjectTo.setName(xmProject.getName());
+		if(StringUtils.hasText(xmProject.getName()) && xmProject.getName().equals(xmProjectDb.getName())){
+			xmProjectTo.setName(xmProject.getName()+"(复制)");
+		}
+		xmProjectTo.setGroups(null);
+		xmProjectTo.setIsTpl(isTpl);
+		xmProjectTo.setFromTplId(xmProjectDb.getId());
+		this.saveProject(xmProjectTo);
+
+		XmProjectPhase phaseQuery=new XmProjectPhase();
+		phaseQuery.setProjectId(xmProjectDb.getId());
+		List<XmProjectPhase> xmProjectPhases=this.xmProjectPhaseService.selectListByWhere(phaseQuery);
+		Map<String,String> newIdMap=new HashMap<>();
+		if(xmProjectPhases!=null && xmProjectPhases.size()>0){
+			for (XmProjectPhase node : xmProjectPhases) {
+				String id=this.xmProjectPhaseService.createKey("id");
+				newIdMap.put(node.getId(),id);
+			}
+			for (XmProjectPhase node : xmProjectPhases) {
+				String oldId=node.getId();
+				String newId=newIdMap.get(oldId);
+				node.setProjectId(xmProjectTo.getId());
+				node.setId(newId);
+				node.setParentPhaseId(newIdMap.get(node.getParentPhaseId()));
+				node.setCtime(new Date());
+				node.setMngUserid(user.getUserid());
+				node.setMngUsername(user.getUsername());
+				node.setIsTpl(isTpl);
+				node.setBranchId(user.getBranchId());
+			}
+			this.xmProjectPhaseService.doBatchInsert(xmProjectPhases);
+		}
+
+		XmTask taskQ=new XmTask();
+		taskQ.setProjectId(xmProjectDb.getId());
+		List<XmTask> xmTasks=this.xmTaskService.selectListByWhere(taskQ);
+		Map<String,String> newTaskIdMap=new HashMap<>();
+		if(xmTasks!=null && xmTasks.size()>0){
+			for (XmTask node : xmTasks) {
+				newTaskIdMap.put(node.getId(),this.xmTaskService.createKey("id"));
+			}
+			for (XmTask node : xmTasks) {
+				String oldId=node.getId();
+				String newId=newTaskIdMap.get(oldId);
+				node.setProjectId(xmProjectTo.getId());
+				node.setId(newId);
+				node.setParentTaskid(newIdMap.get(node.getParentTaskid()));
+				node.setCbranchId(user.getBranchId());
+				node.setCdeptid(user.getDeptid());
+				node.setCreateUsername(user.getUsername());
+				node.setCreateUserid(user.getUserid());
+				node.setCreateTime(new Date());
+				node.setProjectPhaseId(newIdMap.get(node.getProjectPhaseId()));
+				node.setIsTpl(isTpl);
+			}
+			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
+			this.xmTaskService.batchImportFromTemplate(xmTasks);
+		}
+		return xmProjectTo;
+	}
     
     public void clearProject(String projectId) {
     	xmProjectCacheService.putProject(projectId, null);
@@ -110,17 +183,18 @@ public class XmProjectService extends BaseService {
         	  tips.setFailureMsg("id不能事先预设，如果必须事先预设，请保持与code相同");
               throw new BizException(tips);
         } 
-        if(!StringUtils.isEmpty(xmProjectVo.getCode())) {
+        if(StringUtils.hasText(xmProjectVo.getCode())) {
         	XmProject xmProjectQuery = new  XmProject();
             xmProjectQuery.setCode(xmProjectVo.getCode());
-            if(xmProjectService.countByWhere(xmProjectQuery)>0){
+			xmProjectQuery.setBranchId(user.getBranchId());
+            if(this.countByWhere(xmProjectQuery)>0){
                 tips.setFailureMsg("编号重复，请修改编号再提交");
                 throw new BizException(tips);
             }
-            xmProjectVo.setId(xmProjectVo.getCode());
+            xmProjectVo.setId(this.createKey("id"));
         }else {
-        	xmProjectVo.setCode(sequenceService.getCommonNo("prj-"+xmProjectVo.getBranchId()+"-{date:yyymmddd}-{rand:4}"));
-        	xmProjectVo.setId(xmProjectVo.getCode());
+        	xmProjectVo.setCode(this.createProjectCode(user.getBranchId()));
+        	xmProjectVo.setId(this.createKey("id"));
         }
         
         //获取当前登录用户信息
@@ -135,6 +209,22 @@ public class XmProjectService extends BaseService {
         xmRecordService.addXmProjectRecord(xmProjectVo.getId(),  "项目-新增项目", "新建项目"+xmProjectVo.getName(), JSONObject.toJSONString(xmProjectVo),null);    
         return xmProjectVo;
     }
+    public String createProjectCode(String branchId){
+    	XmProject projectQ=new XmProject();
+    	projectQ.setBranchId(branchId);
+    	long count=this.countByWhere(projectQ);
+		String seq=(count+1)+"";
+		int preLength=6-seq.length();
+
+		if(preLength>0){
+			for (int i = 0; i < preLength; i++) {
+				seq="0"+seq;
+			}
+		}
+		String code=sequenceService.getCommonNo("prj-{date:yyyyMMdd}-"+seq+"-{rand:2}");
+		return code;
+
+	}
  
 	 
 	/**

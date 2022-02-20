@@ -5,25 +5,30 @@ import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProject;
+import com.xm.core.entity.XmProjectPhase;
+import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmProjectGroupService;
+import com.xm.core.service.XmProjectPhaseService;
 import com.xm.core.service.XmProjectService;
+import com.xm.core.service.XmTaskService;
 import com.xm.core.vo.XmProjectGroupVo;
 import com.xm.core.vo.XmProjectVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * url编制采用rest风格,如对XM.xm_project xm_project的操作有增删改查,对应的url分别为:<br>
@@ -47,6 +52,12 @@ public class XmProjectController {
 	private XmProjectService xmProjectService;
 	@Autowired
 	private XmProjectGroupService groupService;
+	@Autowired
+	private XmProjectPhaseService xmProjectPhaseService;
+
+
+	@Autowired
+	private XmTaskService xmTaskService;
 
 	@ApiOperation( value = "查询xm_project信息列表",notes="listXmProject,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
@@ -351,7 +362,50 @@ public class XmProjectController {
 		m.put("tips", tips);
 		return m;
 	}
-	
+
+	@ApiOperation( value = "存为模板",notes="editXmProject")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@HasQx(value = "xm_core_xmProject_copy_to",name = "存为新项目",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/copyTo",method=RequestMethod.POST)
+	public Map<String,Object> copyTo(@RequestBody XmProject xmProject) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新一条数据");
+		try{
+			User user= LoginUtils.getCurrentUserInfo();
+			if( !StringUtils.hasText(xmProject.getId())){
+				return ResponseHelper.failed("id-0","请上送原项目编号参数id");
+			}
+			if( !StringUtils.hasText(xmProject.getName())){
+				return ResponseHelper.failed("name-0","请上送新项目名称");
+			}
+			if(StringUtils.hasText(xmProject.getCode())){
+				XmProject pq=new XmProject();
+				pq.setBranchId(user.getBranchId());
+				pq.setCode(xmProject.getCode());
+				List<XmProject> xmProjectList=this.xmProjectService.selectListByWhere(pq);
+				if(xmProjectList!=null && xmProjectList.size()>0){
+					return ResponseHelper.failed("code-exists","项目编码【"+xmProject.getCode()+"】已存在，，请重新输入新的项目编码，如果为空，后台自动生成");
+				}
+			}
+			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
+			if(xmProjectDb==null){
+				tips.setFailureMsg("项目不存在");
+				m.put("tips", tips);
+				return m;
+			}
+			this.xmProjectService.copyProject(user,xmProject);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 
 	
 	/**
