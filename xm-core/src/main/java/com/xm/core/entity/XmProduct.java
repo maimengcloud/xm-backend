@@ -7,9 +7,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProduct所有属性名: <br>
- *	id,productName,branchId,remark,version,pmUserid,pmUsername,ctime,deptid,pstatus,startTime,endTime,deptName,admUserid,admUsername,assistantUserid,assistantUsername,bizProcInstId,bizFlowState,isTpl,baselineId,baseTime;<br>
+ *	id,productName,branchId,remark,version,pmUserid,pmUsername,ctime,deptid,pstatus,startTime,endTime,deptName,admUserid,admUsername,assistantUserid,assistantUsername,bizProcInstId,bizFlowState,isTpl,baselineId,baseTime,code;<br>
  * 表 xm_product 产品表的所有字段名: <br>
- *	id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,assistant_userid,assistant_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time;<br>
+ *	id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,assistant_userid,assistant_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -84,6 +84,9 @@ public class XmProduct  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="基线时间",allowEmptyValue=true,example="",allowableValues="")
 	Date baseTime;
+	
+	@ApiModelProperty(notes="产品编码",allowEmptyValue=true,example="",allowableValues="")
+	String code;
 
 	/**产品编号**/
 	public XmProduct(String id) {
@@ -226,6 +229,12 @@ public class XmProduct  implements java.io.Serializable {
 	public void setBaseTime(Date baseTime) {
 		this.baseTime = baseTime;
 	}
+	/**
+	 * 产品编码
+	 **/
+	public void setCode(String code) {
+		this.code = code;
+	}
 	
 	/**
 	 * 产品编号
@@ -358,6 +367,12 @@ public class XmProduct  implements java.io.Serializable {
 	 **/
 	public Date getBaseTime() {
 		return this.baseTime;
+	}
+	/**
+	 * 产品编码
+	 **/
+	public String getCode() {
+		return this.code;
 	}
 
 }
