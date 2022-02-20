@@ -210,6 +210,9 @@ public class XmProjectService extends BaseService {
         xmProjectVo.setCreateTime(new Date());
         xmProjectVo.setBranchId(user.getBranchId());
         xmProjectVo.setStatus("0");
+        if(!StringUtils.hasText(xmProjectVo.getIsTpl())){
+        	xmProjectVo.setIsTpl("0");
+		}
         XmProject projectDb=new XmProject();
         BeanUtils.copyProperties(xmProjectVo,projectDb); 
         this.insert(projectDb);

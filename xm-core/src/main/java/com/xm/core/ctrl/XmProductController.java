@@ -16,6 +16,7 @@ import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -41,8 +42,10 @@ public class XmProductController {
 	
 	@Autowired
 	private XmProductService xmProductService;
-	 
-		
+
+
+	@Value("${mdp.platform-branch-id:platform-branch-001}")
+	String platformBranchId="platform-branch-001";
  
 	
 	@ApiOperation( value = "查询产品表信息列表",notes="listXmProduct,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
@@ -85,12 +88,21 @@ public class XmProductController {
 			}
 		}
 
+
 		xmProduct.put("userid",user.getUserid());
 		if( !StringUtils.hasText(queryScope) && !(StringUtils.hasText(id) || StringUtils.hasText(projectId)|| StringUtils.hasText(pmUserid)||ids!=null
 				 ||ids!=null ) ){
 			xmProduct.put("compete",user.getUserid());
 		}
-
+		if(!StringUtils.hasText((String) xmProduct.get("isTpl"))){
+			xmProduct.put("isTpl","0");
+		}else{
+			if("1".equals(xmProduct.get("isTpl"))){
+				xmProduct.remove("branchId");
+				xmProduct.put("myBranchId",user.getBranchId());
+				xmProduct.put("platformBranchId",platformBranchId);
+			}
+		}
 		List<Map<String,Object>>	xmProductList = xmProductService.selectListMapByWhere(xmProduct);	//列出XmProduct列表
 		PageUtils.responePage(m, xmProductList);
 		m.put("data",xmProductList);
@@ -131,6 +143,15 @@ public class XmProductController {
 		if( !StringUtils.hasText(queryScope) && !(StringUtils.hasText(id) || StringUtils.hasText(projectId)|| StringUtils.hasText(pmUserid)||ids!=null
 				||ids!=null ) ){
 			xmProduct.put("compete",user.getUserid());
+		}
+		if(!StringUtils.hasText((String) xmProduct.get("isTpl"))){
+			xmProduct.put("isTpl","0");
+		}else{
+			if("1".equals(xmProduct.get("isTpl"))){
+				xmProduct.remove("branchId");
+				xmProduct.put("myBranchId",user.getBranchId());
+				xmProduct.put("platformBranchId",platformBranchId);
+			}
 		}
 		List<Map<String,Object>>	xmProductList = xmProductService.selectListMapByWhereWithState(xmProduct);	//列出XmProduct列表
 		PageUtils.responePage(m, xmProductList);

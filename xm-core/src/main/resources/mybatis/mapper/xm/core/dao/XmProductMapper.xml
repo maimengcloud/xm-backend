@@ -32,6 +32,10 @@
 			</if>
 			<if test="key != null and key !='' ">   and res.product_name like #{key}    </if>
 			<if test="ctimeStart!=null and ctimeEnd!=null ">and ctime between #{ctimeStart} and #{ctimeEnd}</if>
+
+			<if test="isTpl!=null and isTpl=='1'">
+				and (res.branch_id in( #{platformBranchId},#{myBranchId}) and res.is_tpl='1')
+			</if>
 		</where>
 	</select>
 

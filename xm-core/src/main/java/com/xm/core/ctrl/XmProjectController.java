@@ -25,6 +25,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
@@ -55,6 +56,9 @@ public class XmProjectController {
 	private XmProjectGroupService groupService;
 	@Autowired
 	private XmProjectPhaseService xmProjectPhaseService;
+
+	@Value("${mdp.platform-branch-id:platform-branch-001}")
+	String platformBranchId="platform-branch-001";
 
 
 	@Autowired
@@ -107,6 +111,15 @@ public class XmProjectController {
 				|| StringUtils.hasText(myExecuserStatus)||pgTypeIds!=null|| StringUtils.hasText(createUserid)) ){
 
 			xmProject.put("compete",user.getUserid());
+		}
+		if(!StringUtils.hasText((String) xmProject.get("isTpl"))){
+			xmProject.put("isTpl","0");
+		}else{
+			if("1".equals(xmProject.get("isTpl"))){
+				xmProject.remove("branchId");
+				xmProject.put("myBranchId",user.getBranchId());
+				xmProject.put("platformBranchId",platformBranchId);
+			}
 		}
 		List<Map<String,Object>> xmProjectList = xmProjectService.getProject(xmProject);	//列出XmProject列表
 		PageUtils.responePage(m, xmProjectList);
