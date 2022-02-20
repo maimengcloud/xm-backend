@@ -3,11 +3,14 @@ package com.xm.core.ctrl;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProduct;
+import com.xm.core.entity.XmProductCopyVo;
+import com.xm.core.entity.XmProject;
 import com.xm.core.service.XmProductService;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
@@ -144,28 +147,29 @@ public class XmProductController {
 	})
 	@HasQx(value = "xm_core_xmProduct_copyTo",name = "通过复制创建产品/战略规划等",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/copyTo",method=RequestMethod.POST)
-	public Map<String,Object> copyTo(@RequestBody XmProduct xmProduct) {
+	public Map<String,Object> copyTo(@RequestBody XmProductCopyVo xmProduct) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功新增一条数据");
+		Tips tips=new Tips("拷贝成功");
 		try{
-			if(StringUtils.isEmpty(xmProduct.getId())) {
-				xmProduct.setId(xmProductService.createKey("id"));
-			}else{
-				XmProduct xmProductQuery = new  XmProduct(xmProduct.getId());
-				if(xmProductService.countByWhere(xmProductQuery)>0){
-					tips.setFailureMsg("编号重复，请修改编号再提交");
-					m.put("tips", tips);
-					return m;
+			User user= LoginUtils.getCurrentUserInfo();
+			if( !StringUtils.hasText(xmProduct.getId())){
+				return ResponseHelper.failed("id-0","请上送原产品编号参数id");
+			}
+			if( !StringUtils.hasText(xmProduct.getProductName())){
+				return ResponseHelper.failed("productName-0","请上送新产品名称");
+			}
+			if(StringUtils.hasText(xmProduct.getCode())){
+				XmProduct pq=new XmProduct();
+				pq.setBranchId(user.getBranchId());
+				pq.setCode(xmProduct.getCode());
+				List<XmProduct> xmProductList=this.xmProductService.selectListByWhere(pq);
+				if(xmProductList!=null && xmProductList.size()>0){
+					return ResponseHelper.failed("code-exists","产品编码【"+xmProduct.getCode()+"】已存在，，请重新输入新的产品编码，如果为空，后台自动生成");
 				}
 			}
-			User user=LoginUtils.getCurrentUserInfo();
-			if(StringUtils.isEmpty(xmProduct.getPmUserid())) {
-				xmProduct.setPmUserid(user.getUserid());
-				xmProduct.setPmUsername(user.getUsername());
-			}
-			xmProduct.setCtime(new Date());
-			xmProductService.insert(xmProduct);
-			m.put("data",xmProduct);
+
+			XmProduct xmProductNew=xmProductService.copyTo(user,xmProduct);
+			m.put("data",xmProductNew);
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);

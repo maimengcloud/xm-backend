@@ -18,4 +18,36 @@ public class XmProductCopyVo {
     public void setId(String id) {
         this.id = id;
     }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public void setProductName(String productName) {
+        this.productName = productName;
+    }
+
+    public String getIsTpl() {
+        return isTpl;
+    }
+
+    public void setIsTpl(String isTpl) {
+        this.isTpl = isTpl;
+    }
+
+    public String getCopyMenu() {
+        return copyMenu;
+    }
+
+    public void setCopyMenu(String copyMenu) {
+        this.copyMenu = copyMenu;
+    }
 }

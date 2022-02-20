@@ -1,10 +1,17 @@
 package com.xm.core.service;
 
+import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
+import com.mdp.safe.client.entity.User;
 import com.xm.core.entity.XmMenu;
+import com.xm.core.entity.XmProduct;
+import com.xm.core.entity.XmProductCopyVo;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -40,12 +47,66 @@ public class XmProductService extends BaseService {
 	
 	/**
 	 * 连同产品关联的状态数据一起带出
-	 * @param xmMenu
+	 * @param iterationMap
 	 * @return
 	 */
 	public List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> iterationMap) {
 		// TODO Auto-generated method stub
 		return this.selectList("selectListMapByWhereWithState", iterationMap);
 	}
+
+    public XmProduct copyTo(User user, XmProductCopyVo xmProduct) {
+		XmProduct pq=new XmProduct();
+		pq.setId(xmProduct.getId());
+		XmProduct xmProductDb=this.selectOneObject(pq);
+		if(xmProductDb==null){
+			throw new BizException("产品不存在");
+		}
+		XmProduct xmProductTo=new XmProduct();
+		BeanUtils.copyProperties(xmProductDb,xmProductTo);
+		xmProductTo.setId(null);
+		xmProductTo.setProductName(xmProduct.getProductName());
+		xmProductTo.setCode(xmProduct.getCode());
+		xmProductTo.setBranchId(user.getBranchId());
+		xmProductTo.setDeptid(user.getDeptid());
+		xmProductTo.setDeptName(user.getDeptName());
+		xmProductTo.setAdmUserid(user.getUserid());
+		xmProductTo.setAdmUsername(user.getUsername());
+		xmProductTo.setPmUserid(user.getUserid());
+		xmProductTo.setPmUsername(user.getUsername());
+		xmProductTo.setCtime(new Date());
+		xmProductTo.setAssistantUserid(user.getUserid());
+		xmProductTo.setAssistantUsername(user.getUsername());
+		if(xmProduct.getProductName().equals(xmProductDb.getProductName())){
+			xmProductTo.setProductName(xmProduct.getProductName()+"(复制)");
+		}
+		if("1".equals(xmProduct.getIsTpl())){
+			xmProductTo.setIsTpl("1");
+		}
+		if("1".equals(xmProduct.getCopyMenu())){
+			XmMenu mq=new XmMenu();
+			mq.setProductId(xmProduct.getId());
+			List<XmMenu> xmMenus=this.xmMenuService.selectListByWhere(mq);
+			Map<String,String>	idMap=new HashMap<>();
+			if(xmMenus!=null && xmMenus.size()>0){
+				for (XmMenu node : xmMenus) {
+					idMap.put(node.getMenuId(),this.xmMenuService.createKey("id"));
+				}
+				for (XmMenu node : xmMenus) {
+					String oldId=node.getMenuId();
+					String newId=idMap.get(oldId);
+					node.setMenuId(newId);
+					node.setProductId(xmProductTo.getId());
+					node.setPmenuId(idMap.get(node.getPmenuId()));
+					node.setCtime(new Date());
+					node.setMmUserid(user.getUserid());
+					node.setMmUsername(user.getUsername());
+				}
+				this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenus);
+				this.xmMenuService.doBatchInsert(xmMenus);
+			}
+		}
+		return xmProductTo;
+    }
 }
 
