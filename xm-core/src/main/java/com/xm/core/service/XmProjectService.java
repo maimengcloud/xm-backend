@@ -110,6 +110,8 @@ public class XmProjectService extends BaseService {
 				node.setMngUsername(user.getUsername());
 				node.setIsTpl(isTpl);
 				node.setBranchId(user.getBranchId());
+				node.setBizFlowState("");
+				node.setBizProcInstId(null);
 			}
 			this.xmProjectPhaseService.doBatchInsert(xmProjectPhases);
 		}
@@ -135,6 +137,10 @@ public class XmProjectService extends BaseService {
 				node.setCreateTime(new Date());
 				node.setProjectPhaseId(newIdMap.get(node.getProjectPhaseId()));
 				node.setIsTpl(isTpl);
+				node.setMenuId("");
+				node.setMenuName("");
+				node.setProductId("");
+				node.setProductName("");
 			}
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
 			this.xmTaskService.batchImportFromTemplate(xmTasks);
