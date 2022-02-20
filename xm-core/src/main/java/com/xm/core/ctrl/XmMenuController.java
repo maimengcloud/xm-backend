@@ -98,7 +98,11 @@ public class XmMenuController {
 				String id= (String) map.get("menuId");
 				idSet.add(id);
 				String pidPaths= (String) map.get("pidPaths");
-				pidPathsSet.add(PubTool.getPidPaths(pidPaths,id));
+				pidPaths=PubTool.getPidPaths(pidPaths,id);
+				if(pidPaths.length()<=2){
+					continue;
+				}
+				pidPathsSet.add(pidPaths);
 			}
 			List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhere(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
 			parentList=parentList.stream().filter(i->!idSet.contains(i.get("menuId"))).collect(Collectors.toList());
@@ -143,7 +147,11 @@ public class XmMenuController {
 				String id= (String) map.get("menuId");
 				idSet.add(id);
 				String pidPaths= (String) map.get("pidPaths");
-				pidPathsSet.add(PubTool.getPidPaths(pidPaths,id));
+				pidPaths=PubTool.getPidPaths(pidPaths,id);
+				if(pidPaths.length()<=2){
+					continue;
+				}
+				pidPathsSet.add(pidPaths);
 			}
 			List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithState(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
 			parentList=parentList.stream().filter(i->!idSet.contains(i.get("menuId"))).collect(Collectors.toList());

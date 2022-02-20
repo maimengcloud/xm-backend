@@ -149,10 +149,11 @@ public class XmTaskController {
 				String id= (String) map.get("id");
 				idSet.add(id);
 				String pidPaths= (String) map.get("pidPaths");
+				pidPaths=PubTool.getPidPaths(pidPaths,id);
 				if(pidPaths.length()<=2){
 					continue;
 				}
-				pidPathsSet.add(PubTool.getPidPaths(pidPaths,id));
+				pidPathsSet.add(pidPaths);
 			}
 			List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
 			parentList=parentList.stream().filter(i->!idSet.contains(i.get("id"))).collect(Collectors.toList());
