@@ -134,7 +134,7 @@ public class XmProjectService extends BaseService {
 				String newId=newTaskIdMap.get(oldId);
 				node.setProjectId(xmProjectTo.getId());
 				node.setId(newId);
-				node.setParentTaskid(newIdMap.get(node.getParentTaskid()));
+				node.setParentTaskid(newTaskIdMap.get(node.getParentTaskid()));
 				node.setCbranchId(user.getBranchId());
 				node.setCdeptid(user.getDeptid());
 				node.setCreateUsername(user.getUsername());
