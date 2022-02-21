@@ -6,9 +6,12 @@ import com.mdp.safe.client.entity.User;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProductCopyVo;
+import com.xm.core.entity.XmProject;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -55,6 +58,7 @@ public class XmProductService extends BaseService {
 		return this.selectList("selectListMapByWhereWithState", iterationMap);
 	}
 
+	@Transactional
     public XmProduct copyTo(User user, XmProductCopyVo xmProduct) {
 		XmProduct pq=new XmProduct();
 		pq.setId(xmProduct.getId());
@@ -64,9 +68,12 @@ public class XmProductService extends BaseService {
 		}
 		XmProduct xmProductTo=new XmProduct();
 		BeanUtils.copyProperties(xmProductDb,xmProductTo);
-		xmProductTo.setId(null);
+		xmProductTo.setId(this.createKey("id"));
 		xmProductTo.setProductName(xmProduct.getProductName());
 		xmProductTo.setCode(xmProduct.getCode());
+		if(!StringUtils.hasText(xmProduct.getCode())){
+			xmProductTo.setCode(createProductCode(user.getBranchId()));
+		}
 		xmProductTo.setBranchId(user.getBranchId());
 		xmProductTo.setDeptid(user.getDeptid());
 		xmProductTo.setDeptName(user.getDeptName());
@@ -101,6 +108,7 @@ public class XmProductService extends BaseService {
 					node.setCtime(new Date());
 					node.setMmUserid(user.getUserid());
 					node.setMmUsername(user.getUsername());
+					node.setProductId(xmProductTo.getId());
 				}
 				this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenus);
 				this.xmMenuService.doBatchInsert(xmMenus);
@@ -108,5 +116,22 @@ public class XmProductService extends BaseService {
 		}
 		return xmProductTo;
     }
+
+	public String createProductCode(String branchId){
+		XmProject projectQ=new XmProject();
+		projectQ.setBranchId(branchId);
+		long count=this.countByWhere(projectQ);
+		String seq=(count+1)+"";
+		int preLength=6-seq.length();
+
+		if(preLength>0){
+			for (int i = 0; i < preLength; i++) {
+				seq="0"+seq;
+			}
+		}
+		String code=sequenceService.getCommonNo("pro-{date:yyyyMMdd}-"+seq+"-{rand:2}");
+		return code;
+
+	}
 }
 
