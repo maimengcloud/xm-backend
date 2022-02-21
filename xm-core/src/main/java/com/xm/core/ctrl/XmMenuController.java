@@ -104,10 +104,15 @@ public class XmMenuController {
 				}
 				pidPathsSet.add(pidPaths);
 			}
-			List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhere(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
-			parentList=parentList.stream().filter(i->!idSet.contains(i.get("menuId"))).collect(Collectors.toList());
-			xmMenuList.addAll(parentList);
-			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+
+			if(pidPathsSet!=null && pidPathsSet.size()>0){
+				List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhere(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
+				parentList=parentList.stream().filter(i->!idSet.contains(i.get("menuId"))).collect(Collectors.toList());
+				if(parentList!=null && parentList.size()>0){
+					xmMenuList.addAll(parentList);
+					m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+				}
+			}
 		}
 		m.put("data",xmMenuList);
 		Tips tips=new Tips("查询成功");
@@ -153,10 +158,14 @@ public class XmMenuController {
 				}
 				pidPathsSet.add(pidPaths);
 			}
-			List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithState(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
-			parentList=parentList.stream().filter(i->!idSet.contains(i.get("menuId"))).collect(Collectors.toList());
-			xmMenuList.addAll(parentList);
-			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+			if(pidPathsSet!=null && pidPathsSet.size()>0){
+				List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithState(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
+				parentList=parentList.stream().filter(i->!idSet.contains(i.get("menuId"))).collect(Collectors.toList());
+				if(parentList!=null && parentList.size()>0){
+					xmMenuList.addAll(parentList);
+					m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+				}
+			}
 		}
 
 			m.put("data",xmMenuList);  
@@ -184,10 +193,14 @@ public class XmMenuController {
 					String pidPaths= (String) map.get("pidPaths");
 					pidPathsSet.add(PubTool.getPidPaths(pidPaths,id));
 				}
- 				List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithPlan(map("projectId",xmMenu.get("projectId"),"pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
-				parentList=parentList.stream().filter(i->!idSet.contains(i.get("menuId"))).collect(Collectors.toList());
-				xmMenuList.addAll(parentList);
-				m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+				if(pidPathsSet!=null && pidPathsSet.size()>0){
+					List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithPlan(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
+					parentList=parentList.stream().filter(i->!idSet.contains(i.get("menuId"))).collect(Collectors.toList());
+					if(parentList!=null && parentList.size()>0){
+						xmMenuList.addAll(parentList);
+						m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+					}
+				}
 			}
 			m.put("data",xmMenuList);
 		}

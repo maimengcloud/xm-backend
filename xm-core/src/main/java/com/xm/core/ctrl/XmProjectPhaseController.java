@@ -130,10 +130,14 @@ public class XmProjectPhaseController {
 				}
 				pidPathsSet.add(pidPaths);
 			}
-			List<Map<String,Object>> parentList=xmProjectPhaseService.selectListMapByWhere(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
-			parentList=parentList.stream().filter(i->!idSet.contains(i.get("id"))).collect(Collectors.toList());
-			xmProjectPhaseList.addAll(parentList);
-			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+			if(pidPathsSet!=null && pidPathsSet.size()>0){
+				List<Map<String,Object>> parentList=xmProjectPhaseService.selectListMapByWhere(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
+				parentList=parentList.stream().filter(i->!idSet.contains(i.get("id"))).collect(Collectors.toList());
+				if(parentList!=null && parentList.size()>0){
+					xmProjectPhaseList.addAll(parentList);
+					m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+				}
+			}
 		}
 		m.put("data",xmProjectPhaseList);
 		Tips tips=new Tips("查询成功");

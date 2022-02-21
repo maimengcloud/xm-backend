@@ -155,10 +155,14 @@ public class XmTaskController {
 				}
 				pidPathsSet.add(pidPaths);
 			}
-			List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
-			parentList=parentList.stream().filter(i->!idSet.contains(i.get("id"))).collect(Collectors.toList());
-			xmTaskVoList.addAll(parentList);
-			m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+			if(pidPathsSet!=null && pidPathsSet.size()>0){
+				List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
+				parentList=parentList.stream().filter(i->!idSet.contains(i.get("id"))).collect(Collectors.toList());
+				if(parentList!=null && parentList.size()>0){
+					xmTaskVoList.addAll(parentList);
+					m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+				}
+			}
 		}
 
 		m.put("data",xmTaskVoList);
@@ -252,10 +256,15 @@ public class XmTaskController {
 					}
 					pidPathsSet.add(pidPaths);
 				}
-				List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
-				parentList=parentList.stream().filter(i->!idSet.contains(i.get("id"))).collect(Collectors.toList());
-				xmTaskVoList.addAll(parentList);
-				m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+
+				if(pidPathsSet!=null && pidPathsSet.size()>0){
+					List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
+					parentList=parentList.stream().filter(i->!idSet.contains(i.get("id"))).collect(Collectors.toList());
+					if(parentList!=null && parentList.size()>0){
+						xmTaskVoList.addAll(parentList);
+						m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
+					}
+				}
 			}
 		}
 
