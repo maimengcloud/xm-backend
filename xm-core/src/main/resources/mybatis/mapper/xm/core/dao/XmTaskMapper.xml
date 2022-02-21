@@ -192,7 +192,7 @@
 			sum( ifnull( t.budget_workload, 0 ) ) AS budget_workload,
 			sum( ifnull( t.act_cost, 0 ) ) AS act_cost,
 			sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
-			sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) )/100 / sum( ifnull( t.budget_workload, 0.00001 ) ) AS rate,
+			sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) ) / sum( ifnull( t.budget_workload, 0.00001 ) ) AS rate,
 			min( t.start_time ) AS start_time,
 			max( t.end_time ) AS end_time,
 			min( t.act_start_time ) AS act_start_time,

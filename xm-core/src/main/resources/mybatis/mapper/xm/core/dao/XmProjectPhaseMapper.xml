@@ -105,7 +105,7 @@
 		sum(t.phase_act_workload) as phase_act_workload,
 		sum(t.act_inner_user_at) as act_inner_user_at,
 		sum(t.act_out_user_at) as act_out_user_at,
-		sum(ifnull(t.act_rate,0)*ifnull(t.task_budget_workload,0))/100/ifnull(sum(ifnull(t.task_budget_workload,0.000001)),999999) as act_rate,
+		sum(ifnull(t.act_rate,0)*ifnull(t.task_budget_workload,0))/ifnull(sum(ifnull(t.task_budget_workload,0.000001)),999999) as act_rate,
 		sum(t.task_budget_workload) as task_budget_workload,
 		sum(t.task_budget_at) as task_budget_at
 		FROM xm_project_phase t

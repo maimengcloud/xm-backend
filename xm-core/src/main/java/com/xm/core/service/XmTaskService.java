@@ -200,7 +200,7 @@ public class XmTaskService extends BaseService {
 		if(checkExistsChildren(xmTask.getId())) {
 			throw new BizException("有子任务，不允许删除");
 		}
-		if(checkExistsExecuser(xmTask.getId())>0) {
+		if(!"1".equals(xmTask.getNtype()) && checkExistsExecuser(xmTask.getId())>0) {
 			throw new BizException("有未结算的执行人，不允许删除该任务");
 		}
 		this.deleteByPk(xmTask);
