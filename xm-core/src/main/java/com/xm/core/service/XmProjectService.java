@@ -88,6 +88,7 @@ public class XmProjectService extends BaseService {
 		}
 		xmProjectTo.setGroups(null);
 		xmProjectTo.setIsTpl(isTpl);
+		xmProjectTo.setStatus("0");
 		xmProjectTo.setFromTplId(xmProjectDb.getId());
 		this.saveProject(xmProjectTo);
 

@@ -62,7 +62,16 @@ public class XmProject  implements java.io.Serializable {
 	@ApiModelProperty(notes="考核备注",allowEmptyValue=true,example="",allowableValues="")
 	String assessRemarks;
 	
-	@ApiModelProperty(notes="项目状态，cs-初始，lxz-立项中，ssz-执行中，jxz-结项中，yjx-已结项，ztz-暂停，sq-售前，sh-售后",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目状态，0|初始\n" +
+			"1|售前\n" +
+			"2|立项中\n" +
+			"3|实施中\n" +
+			"4|暂停中\n" +
+			"5|结项中\n" +
+			"6|已结项\n" +
+			"7|售后\n" +
+			"8|已完成\n" +
+			"9|已关闭",allowEmptyValue=true,example="",allowableValues="")
 	String status;
 	
 	@ApiModelProperty(notes="机构编号",allowEmptyValue=true,example="",allowableValues="")

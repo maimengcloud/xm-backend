@@ -178,6 +178,12 @@ public class XmProjectController {
 			if(xmProjectDb==null){
 				tips.setFailureMsg("项目不存在");
 			}
+			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
+				return ResponseHelper.failed("branchId-not-right","该项目不属于您的组织，不允许您进行删除");
+			}
+			if(!"0".equals(xmProjectDb.getStatus())&&!"9".equals(xmProjectDb.getStatus())){
+				return ResponseHelper.failed("status-not-0","该项目不属于初始或者已关闭状态，不允许删除");
+			}
 			if(user.getUserid().equals(xmProjectDb.getCreateUserid())){
 				xmProjectService.deleteByPk(xmProject);
 				xmProjectService.clearProject(xmProject.getId());
