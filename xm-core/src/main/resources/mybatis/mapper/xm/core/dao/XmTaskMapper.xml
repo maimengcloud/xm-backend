@@ -23,7 +23,6 @@
 		</if>
 		<if test=" createTimeStart !=null "> and res.create_time &gt; #{createTimeStart} </if>
 		<if test=" createTimeEnd !=null "> and res.create_time &lt; #{createTimeEnd} </if>
-		<include refid="where"/>
 		<if test="parent != null and parent != ''"> and (res.parent_taskid = '' or res.parent_taskid IS NULL)</if>
 
 		<!-- 我参与的-->
