@@ -276,7 +276,7 @@ public class XmProductController {
 
 				 }
 			 }
-			 xmProductService.deleteByPk(xmProduct);
+			 xmProductService.doDeleteByPk(xmProduct);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -363,7 +363,7 @@ public class XmProductController {
 				}
 			}
 			if(canDelList.size()>0) {
-				xmProductService.batchDelete(canDelList);
+				xmProductService.doBatchDelete(canDelList);
 			}
 			String msg="成功删除"+canDelList.size()+"条产品信息";
 			if(canDelList.size()==xmProducts.size()){

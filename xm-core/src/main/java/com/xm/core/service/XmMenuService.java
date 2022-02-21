@@ -225,6 +225,9 @@ public class XmMenuService extends BaseService {
 			this.updateChildrenCntByIds(list.stream().map(i->i.getPmenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
 		}
 	}
-
+	@Transactional
+	public void doBatchDeleteByProductIds(List<String> productIds) {
+		super.delete("doBatchDeleteByProductIds",productIds);
+	}
 }
 

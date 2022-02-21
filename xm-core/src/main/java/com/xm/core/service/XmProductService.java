@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -83,13 +84,11 @@ public class XmProductService extends BaseService {
 		xmProductTo.setPmUsername(user.getUsername());
 		xmProductTo.setCtime(new Date());
 		xmProductTo.setPstatus("0");
+		xmProductTo.setIsTpl(xmProduct.getIsTpl());
 		xmProductTo.setAssistantUserid(user.getUserid());
 		xmProductTo.setAssistantUsername(user.getUsername());
 		if(xmProduct.getProductName().equals(xmProductDb.getProductName())){
 			xmProductTo.setProductName(xmProduct.getProductName()+"(复制)");
-		}
-		if("1".equals(xmProduct.getIsTpl())){
-			xmProductTo.setIsTpl("1");
 		}
 		this.insert(xmProductTo);
 		if("1".equals(xmProduct.getCopyMenu())){
@@ -134,6 +133,19 @@ public class XmProductService extends BaseService {
 		String code=sequenceService.getCommonNo("pro-{date:yyyyMMdd}-"+seq+"-{rand:2}");
 		return code;
 
+	}
+
+	@Transactional
+	public void doDeleteByPk(XmProduct xmProduct) {
+		XmMenu xmMenu=new XmMenu();
+		xmMenu.setProductId(xmProduct.getId());
+		this.xmMenuService.deleteByWhere(xmMenu);
+		super.deleteByPk(xmProduct);
+	}
+
+	public void doBatchDelete(List<XmProduct> canDelList) {
+		this.xmMenuService.doBatchDeleteByProductIds(canDelList.stream().map(i->i.getId()).collect(Collectors.toList()));
+		super.batchDelete(canDelList);
 	}
 }
 

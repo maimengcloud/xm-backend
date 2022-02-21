@@ -87,6 +87,12 @@
 			( #{item})
 		</foreach>
 	</update>
+	<delete id="doBatchDeleteByProductIds" parameterType="List">
+		delete from xm_menu where product_id in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+	</delete>
 	<!--结束 自定义sql函数区域-->
 	
 
