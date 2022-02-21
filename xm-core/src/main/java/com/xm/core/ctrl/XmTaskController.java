@@ -635,8 +635,7 @@ public class XmTaskController {
 			excludeTaskIds.add(xmTaskVo.getId());
 			Tips judgetTips=xmTaskService.judgetBudget(projectPhaseId, taskBudgetCost,taskBudgetInnerUserAt,taskBudgetOutUserAt,taskBudgetNouserAt,excludeTaskIds);
 			if(judgetTips.isOk()) {
-				xmTaskService.updateTask(xmTaskVo);
-				xmTaskService.sumParents(xmTaskDb);
+				xmTaskService.updateTask(xmTaskVo,xmTaskDb);
 				if(!StringUtils.isEmpty(xmTaskVo.getExecutorUserid())) {
 					List<XmProjectGroupVo> groups=groupService.getUserGroups(xmTaskVo.getProjectId(), xmTaskVo.getExecutorUserid());
 					if(groups!=null && groups.size()>0) {
@@ -698,7 +697,7 @@ public class XmTaskController {
 					return m;
 				}
 			}
-			xmTaskService.updateTime(xmTask);
+			xmTaskService.updateTime(xmTask,xmTaskDb);
 			m.put("data",xmTask);
 		}catch (BizException e) {
 			tips=e.getTips();
@@ -748,12 +747,11 @@ public class XmTaskController {
 					return m;
 				}
 			}
-			xmTaskService.updateProgress(xmTask);
-			xmTaskService.sumParents(xmTaskDb);
-			if(!StringUtils.isEmpty(xmTask.getExecutorUserid())) {
+			xmTaskService.updateProgress(xmTask,xmTaskDb);
+			if(!StringUtils.isEmpty(xmTaskDb.getExecutorUserid())) {
 				if(pgroups!=null && pgroups.size()>0) {
 					for (XmProjectGroupVo g : pgroups) {
-						xmPushMsgService.pushGroupMsg(user.getBranchId(), g.getId(), user.getUserid(), user.getUsername(), user.getUsername()+"将任务【"+xmTask.getName()+"】进度更新为"+xmTask.getRate()+"%");
+						xmPushMsgService.pushGroupMsg(user.getBranchId(), g.getId(), user.getUserid(), user.getUsername(), user.getUsername()+"将任务【"+xmTaskDb.getName()+"】进度更新为"+xmTask.getRate()+"%");
 					}
 				}
 			}
@@ -835,6 +833,8 @@ public class XmTaskController {
 				g.setExecutorUserid(user.getUserid());
 				g.setExecutorUsername(user.getUsername());
 				g.setCbranchId(user.getBranchId());
+				g.setExeUserids(null);
+				g.setExeUsernames(null);
 				g.setCdeptid(user.getDeptid());
 				if("1".equals(g.getTaskOut())) {
 					taskBudgetOutUserAt=taskBudgetOutUserAt.add(NumberUtil.getBigDecimal(g.getBudgetCost(),zero)); 
@@ -853,10 +853,6 @@ public class XmTaskController {
 
 				xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
 				xmTaskService.batchImportFromTemplate(xmTasks);
-
-
-
-
 				for (XmTask t : xmTasks) {
 					xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量新增任务", "新增任务"+t.getName(),JSON.toJSONString(t),null);
 					

@@ -181,13 +181,13 @@
 			#{item}
 		</foreach>
 	</select>
-
-	<update id="sumParents" parameterType="List">
-		<foreach collection="list" item="item" index="index" separator=";" >
+	<!-- 适合没有交叉的，没用父子关系的一批任务的更新 -->
+	<update id="batchSumParents" parameterType="List">
 			UPDATE xm_task res
 			LEFT JOIN (
 			SELECT
 			t.parent_taskid,
+			count(1) as children_cnt,
 			sum( ifnull( t.budget_cost, 0 ) ) AS budget_cost,
 			sum( ifnull( t.budget_workload, 0 ) ) AS budget_workload,
 			sum( ifnull( t.act_cost, 0 ) ) AS act_cost,
@@ -200,7 +200,11 @@
 			FROM
 			xm_task t
 			WHERE
-			t.parent_taskid = #{item}
+			t.parent_taskid in
+			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+			 group by t.parent_taskid
 			) t2 ON t2.parent_taskid = res.id
 			SET res.budget_cost = t2.budget_cost,
 			res.budget_workload = t2.budget_workload,
@@ -210,9 +214,50 @@
 			res.start_time = t2.start_time,
 			res.end_time = t2.end_time,
 			res.act_start_time = t2.act_start_time,
-			res.act_end_time = t2.act_end_time
+			res.act_end_time = t2.act_end_time,
+			res.children_cnt = ifnull( t2.children_cnt, 0 )
 			WHERE
-			res.id = #{item} and res.ntype='1'
+			res.id in
+			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+				and res.ntype='1'
+	</update>
+	<!-- 适合父子关系的一批任务的更新 -->
+	<update id="sumParents" parameterType="List">
+		<foreach collection="list" item="item" index="index" open="" separator=";" close="" >
+		UPDATE xm_task res
+		LEFT JOIN (
+		SELECT
+		t.parent_taskid,
+		count(1) as children_cnt,
+		sum( ifnull( t.budget_cost, 0 ) ) AS budget_cost,
+		sum( ifnull( t.budget_workload, 0 ) ) AS budget_workload,
+		sum( ifnull( t.act_cost, 0 ) ) AS act_cost,
+		sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
+		sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) ) / sum( ifnull( t.budget_workload, 0.00001 ) ) AS rate,
+		min( t.start_time ) AS start_time,
+		max( t.end_time ) AS end_time,
+		min( t.act_start_time ) AS act_start_time,
+		max( t.act_end_time ) AS act_end_time
+		FROM
+		xm_task t
+		WHERE
+			t.parent_taskid = #{item}
+		) t2 ON t2.parent_taskid = res.id
+		SET res.budget_cost = t2.budget_cost,
+		res.budget_workload = t2.budget_workload,
+		res.act_cost = t2.act_cost,
+		res.act_workload = t2.act_workload,
+		res.rate = t2.rate,
+		res.start_time = t2.start_time,
+		res.end_time = t2.end_time,
+		res.act_start_time = t2.act_start_time,
+		res.act_end_time = t2.act_end_time ,
+		res.children_cnt = ifnull( t2.children_cnt, 0 )
+		WHERE
+		res.id  = #{item}
+		and res.ntype='1'
 		</foreach>
 	</update>
 	<!--结束 自定义sql函数区域-->

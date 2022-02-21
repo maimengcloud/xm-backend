@@ -52,11 +52,7 @@ public class XmTaskService extends BaseService {
 	@Transactional
 	public   int[] doBatchDelete(List<XmTask> batchValues) {
 		int[] i2= super.batchDelete(batchValues);
-		List<XmTask> list= batchValues.stream().filter(i->!batchValues.stream().filter(k->k.getId().equals(i.getParentTaskid())).findAny().isPresent()).collect(Collectors.toList());
-		list=list.stream().filter(i->StringUtils.hasText(i.getParentTaskid())).collect(Collectors.toList());
-		if(list.size()>0){
-			this.updateChildrenCntByIds(list.stream().map(i->i.getParentTaskid()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
-		}
+		this.batchSumParents(batchValues);
 		return i2;
 	}
 
@@ -163,9 +159,8 @@ public class XmTaskService extends BaseService {
 		XmTask xmTask = new XmTask();
 		BeanUtils.copyProperties(xmTaskVo,xmTask);
 		this.insert(xmTask);
-
 		if(StringUtils.hasText(xmTask.getParentTaskid())){
-			this.updateTaskChildrenCntByTaskId(xmTask.getParentTaskid());
+			this.sumParents(xmTask);
 		}
 		//新增/更新附件
 		//xmAttachmentService.insertOrUpdate(xmTaskVo.getId(),TYPE,xmTaskVo.getAttachment());
@@ -182,15 +177,6 @@ public class XmTaskService extends BaseService {
 		return xmTaskVo;
 	}
 	/**
-	 * 检查该任务是否有子任务，有不允许删除
-	 * @param taskId
-	 * @return
-	 */
-	public boolean checkExistsChildren(String taskId) {
-		Long i=this.selectOne("checkExistsChildren", taskId);
-		return i>0;
-	}
-	/**
 	 * 有执行人，有子任务都不允许删除
 	 * @param xmTask
 	 */
@@ -198,29 +184,26 @@ public class XmTaskService extends BaseService {
 	public void deleteTask(XmTask xmTask) {
 		this.deleteByPk(xmTask);
 		if(StringUtils.hasText(xmTask.getParentTaskid())){
-			this.updateTaskChildrenCntByTaskId(xmTask.getParentTaskid());
+			this.sumParents(xmTask);
 		}
-		this.sumParents(xmTask);
-	}
-	
-	private Long checkExistsExecuser(String taskId) {
-		Long i= this.selectOne("checkExistsExecuser", taskId);
-		return i;
 	}
 	@Transactional
-	public void updateTask(XmTaskVo xmTaskVo) { 
+	public void updateTask(XmTaskVo xmTaskVo,XmTask xmTaskDb) {
 		XmTask xmTask = new XmTask();
 		BeanUtils.copyProperties(xmTaskVo,xmTask);
 		xmTask.setSortLevel(xmTaskVo.getSortLevel());
 		if(StringUtils.isEmpty(xmTask.getMilestone())){
 			xmTask.setMilestone("0");
 		}
-		this.updateSomeFieldByPk(xmTask);  
+		this.updateSomeFieldByPk(xmTask);
+		if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
+			this.sumParents(xmTaskDb);
+		}
 		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-更新任务基础信息", "更新任务"+xmTask.getName(),JSONObject.toJSONString(xmTask),null);  
 	}
 
 	@Transactional
-	public void updateTime(XmTask xmTask) {
+	public void updateTime(XmTask xmTask,XmTask xmTaskDb) {
 		//XmTask oldValue = this.selectOneObject(new XmTask(xmTask.getId()));
 		XmTask xmTask2=new XmTask();
 		xmTask2.setId(xmTask.getId());
@@ -229,7 +212,9 @@ public class XmTaskService extends BaseService {
 		xmTask2.setActStartTime(xmTask.getActStartTime());
 		xmTask2.setActEndTime(xmTask.getActEndTime());
 		this.updateSomeFieldByPk(xmTask);
-
+		if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
+			this.sumParents(xmTaskDb);
+		}
 		//更新父任务的进度
 		//updateParentProgress(xmTask.getParentTaskid());
 		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-计划", "更新任务计划开始时间为"+
@@ -237,13 +222,16 @@ public class XmTaskService extends BaseService {
 				"实际开始时间:"+DateUtils.format(xmTask.getActStartTime(),"yyyy-MM-dd")+",实际结束时间为"+DateUtils.format(xmTask.getActEndTime(),"yyyy-MM-dd"));
 	}
 	@Transactional
-	public void updateProgress(XmTask xmTask) {
+	public void updateProgress(XmTask xmTask,XmTask xmTaskDb) {
 		//XmTask oldValue = this.selectOneObject(new XmTask(xmTask.getId()));
 		XmTask xmTask2=new XmTask();
 		xmTask2.setId(xmTask.getId());
 		xmTask2.setRate(xmTask.getRate());
 		this.updateSomeFieldByPk(xmTask);
-		
+
+		if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
+			this.sumParents(xmTaskDb);
+		}
 		//更新父任务的进度
 		//updateParentProgress(xmTask.getParentTaskid());
 		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-进度", "更新任务进度为"+xmTask2.getRate());   
@@ -359,11 +347,7 @@ public class XmTaskService extends BaseService {
 	@Transactional
 	public void batchImportFromTemplate(List<XmTask> xmTasks) {
 		this.batchInsert(xmTasks);
-		List<XmTask> list= xmTasks.stream().filter(i->!xmTasks.stream().filter(k->k.getId().equals(i.getParentTaskid())).findAny().isPresent()).collect(Collectors.toList());
-		list=list.stream().filter(i->StringUtils.hasText(i.getParentTaskid())).collect(Collectors.toList());
-		if(list.size()>0){
-			this.updateChildrenCntByIds(list.stream().map(i->i.getParentTaskid()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
-		}
+		this.batchSumParents(xmTasks);
 		
 	}
 	
@@ -380,17 +364,17 @@ public class XmTaskService extends BaseService {
 
 	@Transactional
 	public void batchInsertOrUpdate(List<XmTask> insertXmTasks,List<XmTask> editXmTasks) {
+		List<XmTask> all=new ArrayList<>();
 		if(insertXmTasks!=null && insertXmTasks.size()>0) {
 			this.batchInsert(insertXmTasks);
-			List<XmTask> list= insertXmTasks.stream().filter(i->!insertXmTasks.stream().filter(k->k.getId().equals(i.getParentTaskid())).findAny().isPresent()).collect(Collectors.toList());
-			list=list.stream().filter(i->StringUtils.hasText(i.getParentTaskid())).collect(Collectors.toList());
-			if(list.size()>0){
-				this.updateChildrenCntByIds(list.stream().map(i->i.getParentTaskid()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
-			}
-
+			all.addAll(insertXmTasks);
 		}
 		if(editXmTasks!=null && editXmTasks.size()>0) {
 			this.batchUpdate(editXmTasks);
+			all.addAll(editXmTasks);
+		}
+		if(all.size()>0){
+			this.batchSumParents(all);
 		}
 	}
 
@@ -579,12 +563,21 @@ public class XmTaskService extends BaseService {
 				Set<String> set=list.get(i);
 				set.add(pidPathss[i]);
 			}
+			if(list.size()<=0){
+				return;
+			}
 			Set<String> allSet=new HashSet<>();
 			for (int i = list.size() - 1; i >= 0; i--) {
-				allSet.addAll(list.get(i));
-			}
-			if(allSet.size()>0){
-				super.update("sumParents",allSet.stream().collect(Collectors.toList()));
+				Set<String> set=list.get(i);
+				if(set.size()>0){
+					List<String> ids=set.stream().filter(k->!allSet.contains(k)).collect(Collectors.toList());
+					if(ids.size()>0){
+						allSet.addAll(ids.stream().collect(Collectors.toSet()));
+						super.update("batchSumParents", ids);
+					}
+
+				}
+
 			}
 
 
