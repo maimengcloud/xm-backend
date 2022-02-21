@@ -12,7 +12,6 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.PubTool;
 import com.xm.core.entity.XmProjectPhase;
-import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.XmProjectPhaseService;
 import com.xm.core.service.XmProjectService;
@@ -419,9 +418,8 @@ public class XmProjectPhaseController {
 				m.put("tips", tips);
 				return m;
 			}
-			List<String> noDelList=new ArrayList<>();
+			List<String> existsTaskList=new ArrayList<>();
 			List<String> hasChildList=new ArrayList<>();
-			int delCount=0;
 			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
 			User user = LoginUtils.getCurrentUserInfo();
 			boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
@@ -443,7 +441,7 @@ public class XmProjectPhaseController {
 				//检查是否由关联的任务，有则不允许删除
 				Long exists=this.xmProjectPhaseService.checkExistsTask(phase.getId());
 				if(exists>0) {
-					noDelList.add(phase.getPhaseName());
+					existsTaskList.add(phase.getPhaseName());
 				}else {
 					delPhases.add(phase);
 				}
@@ -461,20 +459,22 @@ public class XmProjectPhaseController {
 			if(canDelNodes.size()>0){
 				this.xmProjectPhaseService.doBatchDelete(canDelNodes);
 			}
-			String noQxTips="";
+			List<String> msgs=new ArrayList<>();
+			msgs.add("成功删除"+canDelNodes.size()+"条数据。");
 			if(noQxUsernames.size()>0){
-				noQxTips="您无权删除以下人员所负责的计划【"+StringUtils.arrayToCommaDelimitedString(noQxUsernames.toArray())+"】";
+				msgs.add("您无权删除以下人员所负责的计划【"+StringUtils.arrayToCommaDelimitedString(noQxUsernames.toArray())+"】");
+			}
+			if(hasChildList.size()>0){
+				msgs.add("以下计划存在子计划，不允许删除。【"+hasChildList.stream().collect(Collectors.joining(","))+"】");
 			}
 
-			if(noDelList.size()>0 && hasChildList.size()>0 ) {
-				tips.setOkMsg("成功删除"+(delCount)+"条数据，其中以下数据数据存在任务，不允许删除"+StringUtils.arrayToCommaDelimitedString(noDelList.toArray())+",以下计划存在子计划，不允许删除"
-						+StringUtils.arrayToCommaDelimitedString(hasChildList.toArray())+"。"+noQxTips);
-			}else if(noDelList.size()>0  ) {
-				tips.setOkMsg("成功删除"+(delCount)+"条数据，其中以下数据数据存在任务，不允许删除"+StringUtils.arrayToCommaDelimitedString(noDelList.toArray())+"。"+noQxTips);
-			}else if(noDelList.size()>0 && hasChildList.size()>0 ) {
-				tips.setOkMsg("成功删除"+(delCount)+"条数据，其中以下计划存在子计划，不允许删除"+StringUtils.arrayToCommaDelimitedString(hasChildList.toArray())+"。"+noQxTips);
-			}else {
-				tips.setOkMsg("成功删除"+(xmProjectPhases.size())+"条数据"+"。"+noQxTips);
+			if(existsTaskList.size()>0){
+				msgs.add("以下计划存在关联的任务，不允许删除。【"+existsTaskList.stream().collect(Collectors.joining(","))+"】");
+			}
+			if(canDelNodes.size()==0){
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(";\n")));
+			}else{
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(";\n")));
 			}
 			
 			
