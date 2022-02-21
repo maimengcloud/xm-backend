@@ -255,16 +255,28 @@ public class XmProductController {
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			long projects=xmProductService.checkExistsProject(xmProduct.getId());
-			
+			User user=LoginUtils.getCurrentUserInfo();
 			if(projects>0) {
 				tips.setFailureMsg("该产品有"+projects+"个项目关联，不允许删除，请先解绑项目");
 			}else {
-				long menus=xmProductService.checkExistsMenu(xmProduct.getId());
-				if(menus>0) {
-					tips.setFailureMsg("该产品有"+menus+"个故事关联，不允许删除，请先解绑故事");
-				}else { 
-					xmProductService.deleteByPk(xmProduct);
-				}
+				 XmProduct xmProductDb=xmProductService.selectOneObject(new XmProduct(xmProduct.getId()));
+				 if(xmProductDb==null){
+				 	return ResponseHelper.failed("data-0","产品已不存在");
+				 }else if(!"0".equals(xmProductDb.getPstatus())&&!"3".equals(xmProductDb.getPstatus())){
+					 return ResponseHelper.failed("pstatus-not-0-3","该产品不是初始、已关闭状态，不允许删除");
+				 }else if(!user.getBranchId().equals(xmProductDb.getBranchId())){
+					 return ResponseHelper.failed("branchId-not-right","该产品不属于您所在的机构，不允许删除");
+				 }else if(!user.getUserid().equals(xmProductDb.getPmUserid()) && !user.getUserid().equals(xmProductDb.getAssistantUserid())){
+					 return ResponseHelper.failed("pmUserid-not-right","您不是该产品产品负责人,也不是产品助理，不允许删除");
+				 }
+				 if(!"1".equals(xmProductDb.getIsTpl())){
+					 long menus=xmProductService.checkExistsMenu(xmProduct.getId());
+					 if(menus>0) {
+						 return ResponseHelper.failed("had-menus","该产品有"+menus+"个故事关联，不允许删除，请先解绑故事");
+
+					 }
+				 }
+				 xmProductService.deleteByPk(xmProduct);
 
 			}
 		}catch (BizException e) { 

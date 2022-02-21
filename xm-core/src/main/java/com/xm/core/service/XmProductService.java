@@ -82,6 +82,7 @@ public class XmProductService extends BaseService {
 		xmProductTo.setPmUserid(user.getUserid());
 		xmProductTo.setPmUsername(user.getUsername());
 		xmProductTo.setCtime(new Date());
+		xmProductTo.setPstatus("0");
 		xmProductTo.setAssistantUserid(user.getUserid());
 		xmProductTo.setAssistantUsername(user.getUsername());
 		if(xmProduct.getProductName().equals(xmProductDb.getProductName())){
