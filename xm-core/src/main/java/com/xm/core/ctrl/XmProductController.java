@@ -21,6 +21,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * url编制采用rest风格,如对XM.xm_product 产品表的操作有增删改查,对应的url分别为:<br>
@@ -328,36 +329,55 @@ public class XmProductController {
 	public Map<String,Object> batchDelXmProduct(@RequestBody List<XmProduct> xmProducts) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除"+xmProducts.size()+"条数据"); 
-		try{ 
+		try{
+			User user=LoginUtils.getCurrentUserInfo();
 			List<String> hasProjects=new ArrayList<>();
 			List<String> hasMenus=new ArrayList<>();
 			List<XmProduct> canDelList=new ArrayList<>();
+			List<Tips> errTips=new ArrayList<>();
 			for (XmProduct xmProduct : xmProducts) {
-				long projects=xmProductService.checkExistsProject(xmProduct.getId());
-				if(projects>0) {
-					hasProjects.add(xmProduct.getProductName());
-				}else {
-					long menus=xmProductService.checkExistsMenu(xmProduct.getId());
-					if(menus>0) { 
-						hasMenus.add(xmProduct.getProductName());
-					}else {  
-						canDelList.add(xmProduct);
+				XmProduct xmProductDb=xmProductService.selectOneObject(new XmProduct(xmProduct.getId()));
+				Tips otips=new Tips();
+				if(xmProductDb==null){
+					otips.setFailureMsg("data-0","","产品【"+xmProductDb.getProductName()+"】已不存在");
+				}else if(!"0".equals(xmProductDb.getPstatus())&&!"3".equals(xmProductDb.getPstatus())){
+					otips.setFailureMsg("pstatus-not-0-3","产品【"+xmProductDb.getProductName()+"】不是初始、已关闭状态，不允许删除");
+ 				}else if(!user.getBranchId().equals(xmProductDb.getBranchId())){
+					otips.setFailureMsg("branchId-not-right","产品【"+xmProductDb.getProductName()+"】不属于您所在的机构，不允许删除");
+ 				}else if(!user.getUserid().equals(xmProductDb.getPmUserid()) && !user.getUserid().equals(xmProductDb.getAssistantUserid())){
+					otips.setFailureMsg("pmUserid-not-right","您不是产品【"+xmProductDb.getProductName()+"】负责人,也不是产品助理，不允许删除");
+ 				}else{
+					if(!"1".equals(xmProductDb.getIsTpl())){
+						long menus=xmProductService.checkExistsMenu(xmProduct.getId());
+						if(menus>0) {
+							hasMenus.add(xmProduct.getProductName());
+							otips.setFailureMsg("had-menus","产品【"+xmProductDb.getProductName()+"】有"+menus+"个需求关联，不允许删除，请先解绑需求");
+						}
 					}
+				}
 
-					
+				if(otips.isOk()){
+					canDelList.add(xmProductDb);
+				}else {
+					errTips.add(tips);
 				}
 			}
 			if(canDelList.size()>0) {
 				xmProductService.batchDelete(canDelList);
 			}
-			String msg="成功删除"+canDelList+"条产品信息";
-			if(hasProjects.size()>0 ) {
-				msg=msg+",【"+StringUtils.arrayToDelimitedString(hasProjects.toArray(), ",")+"】存在项目关联，不允许删除";
-			} 
-			if(hasMenus.size()>0 ) {
-				msg=msg+",【"+StringUtils.arrayToDelimitedString(hasMenus.toArray(), ",")+"】存在需求关联，不允许删除";
-			} 
-			tips.setOkMsg(msg);
+			String msg="成功删除"+canDelList.size()+"条产品信息";
+			if(canDelList.size()==xmProducts.size()){
+				tips.setOkMsg(msg);
+			}else{
+				if(errTips.size()>0 && canDelList.size()>0){
+					String errmsg=errTips.stream().map(i->i.getMsg()).collect(Collectors.joining("\n"));
+					tips.setOkMsg(msg+"\n"+errmsg);
+				}else{
+					tips.setFailureMsg(errTips.stream().map(i->i.getMsg()).collect(Collectors.joining("\n")));
+				}
+			}
+			return tips;
+
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
