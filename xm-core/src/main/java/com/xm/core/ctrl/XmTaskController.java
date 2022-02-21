@@ -1023,12 +1023,8 @@ public class XmTaskController {
 			List<XmTask> canDelNodes=new ArrayList<>();
 			if(noExecuserList.size()>0){
 				for (XmTask node : noExecuserList) {
-					if(node.getChildrenCnt()==null || node.getChildrenCnt()<=0){
-						canDelNodes.add(node);
-						continue;
-					}
-					long childCount=noExecuserList.stream().filter(i->node.getId().equals(i.getParentTaskid())).count();
-					if(childCount>=node.getChildrenCnt()){
+					boolean canDel=this.xmTaskService.checkCanDelAllChild(node,noExecuserList);
+					if(canDel){
 						canDelNodes.add(node);
 					}else{
 						hadChildNodes.add(node);

@@ -596,5 +596,31 @@ public class XmTaskService extends BaseService {
 		}
 		return true;
 	}
+
+	/**
+	 * 检查是否能删除干净所有儿子孙子节点。
+	 * @param delNode 当前删除节点
+	 * @param delNodes 本批量需要删除的全部节点
+	 * @return
+	 */
+	public boolean checkCanDelAllChild(XmTask delNode, List<XmTask> delNodes) {
+		if(delNode==null){
+			return true;
+		}
+		if(delNode.getChildrenCnt()==null||delNode.getChildrenCnt()<=0){
+			return true;
+		}
+		List<XmTask> childList=delNodes.stream().filter(i->delNode.getId().equals(i.getParentTaskid())).collect(Collectors.toList());
+		if(childList==null||childList.size()<delNode.getChildrenCnt()){
+			return false;
+		}
+		for (XmTask n : childList) {
+			if (!this.checkCanDelAllChild(n, delNodes)) {
+				return false;
+			}
+		}
+		return true;
+
+	}
 }
 
