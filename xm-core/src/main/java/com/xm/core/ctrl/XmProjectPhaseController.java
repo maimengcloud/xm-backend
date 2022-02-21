@@ -312,14 +312,12 @@ public class XmProjectPhaseController {
 			if(exists>0) {
 				tips.setFailureMsg("存在"+exists+"条任务,不允许删除");
 			}else {
-				Long checkExistsChildren =xmProjectPhaseService.checkExistsChildren(xmProjectPhase.getId());
-				if(checkExistsChildren>0) {
-					tips.setFailureMsg("存在"+checkExistsChildren+"条子计划,不允许删除");
-				}else {
-
-					xmProjectPhaseService.deleteByPk(xmProjectPhase);
-
-					xmRecordService.addXmPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-计划-删除计划", "删除计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
+				XmProjectPhase xmProjectPhaseDb=this.xmProjectPhaseService.selectOneObject(xmProjectPhase);
+				if(xmProjectPhaseDb.getChildrenCnt()!=null && xmProjectPhaseDb.getChildrenCnt()>0){
+					tips.setFailureMsg("存在"+xmProjectPhaseDb.getChildrenCnt()+"条子计划,不允许删除");
+				} else {
+					xmProjectPhaseService.deleteByPk(xmProjectPhaseDb);
+					xmRecordService.addXmPhaseRecord(xmProjectPhaseDb.getProjectId(), xmProjectPhaseDb.getId(), "项目-计划-删除计划", "删除计划"+xmProjectPhaseDb.getPhaseName(),JSON.toJSONString(xmProjectPhaseDb),null);
 				}
 			}
 			
@@ -379,8 +377,7 @@ public class XmProjectPhaseController {
 			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
 			if(judgetTips.isOk()) { 
 				xmProjectPhase=xmProjectPhaseService.autoCalcWorkload(xmProjectPhase);
-				xmProjectPhaseService.updateByPk(xmProjectPhase);
-				xmProjectPhaseService.sumParents(xmProjectPhase);
+				xmProjectPhaseService.editByPk(xmProjectPhase);
 				xmRecordService.addXmPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-计划-修改计划", "修改计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
 				
 			}else {
@@ -417,6 +414,11 @@ public class XmProjectPhaseController {
 				return m;
 			}
 			XmProjectPhase xmProjectPhase=xmProjectPhases.get(0);
+			if(!StringUtils.hasText(xmProjectPhase.getProjectId())){
+				tips.setFailureMsg("项目编号不能为空");
+				m.put("tips", tips);
+				return m;
+			}
 			List<String> noDelList=new ArrayList<>();
 			List<String> hasChildList=new ArrayList<>();
 			int delCount=0;
@@ -431,7 +433,8 @@ public class XmProjectPhaseController {
 			}
 			List<String> noQxUsernames=new ArrayList<>();
 			List<XmProjectPhase> delPhases=new ArrayList<>();
-			for (XmProjectPhase phase : xmProjectPhases) {
+			List<XmProjectPhase> xmProjectPhaseListDb=this.xmProjectPhaseService.selectListByIds(xmProjectPhases.stream().map(i->i.getId()).collect(Collectors.toList()));
+			for (XmProjectPhase phase : xmProjectPhaseListDb) {
 				boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,phase.getMngUserid(),user.getUserid());
 				if(  !meIsPm && !meIsHisTeamHead ){
 					noQxUsernames.add(phase.getMngUsername());
@@ -448,7 +451,7 @@ public class XmProjectPhaseController {
 			List<XmProjectPhase> canDelNodes=new ArrayList<>();
 			for (XmProjectPhase phase : delPhases) {
 
-					boolean canDelAllChild =xmProjectPhaseService.checkCanDelAllChild(phase,xmProjectPhases);
+					boolean canDelAllChild =xmProjectPhaseService.checkCanDelAllChild(phase,delPhases);
 					if(!canDelAllChild) {
 						hasChildList.add(phase.getPhaseName());
 					}else {
@@ -456,7 +459,7 @@ public class XmProjectPhaseController {
  					}
 			}
 			if(canDelNodes.size()>0){
-				this.xmProjectPhaseService.doBatchDelete(delPhases);
+				this.xmProjectPhaseService.doBatchDelete(canDelNodes);
 			}
 			String noQxTips="";
 			if(noQxUsernames.size()>0){

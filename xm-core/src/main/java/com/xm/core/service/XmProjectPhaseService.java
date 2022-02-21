@@ -64,8 +64,7 @@ public class XmProjectPhaseService extends BaseService {
 	public int insert(XmProjectPhase parameter) {
 		int i= super.insert(parameter);
 		if(StringUtils.hasText(parameter.getParentPhaseId())){
-			this.updatePhaseChildrenCntByPhaseId(parameter.getParentPhaseId());
-			sumParents(parameter);
+ 			sumParents(parameter);
 		}
 
 		return i;
@@ -76,7 +75,6 @@ public class XmProjectPhaseService extends BaseService {
 	public  int deleteByPk(XmProjectPhase parameter) {
 		int i= super.deleteByPk(parameter);
 		if(StringUtils.hasText(parameter.getParentPhaseId())){
-			this.updatePhaseChildrenCntByPhaseId(parameter.getParentPhaseId());
 			sumParents(parameter);
 		}
 		return i;
@@ -232,15 +230,6 @@ public class XmProjectPhaseService extends BaseService {
 		if(editList.size()>0) {
 			this.batchUpdate(editList);
 		}
-
-		List<String> ids=new ArrayList<>();
-		List<XmProjectPhase> list= xmProjectPhases.stream().filter(i->!xmProjectPhases.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
-		list=list.stream().filter(i->StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());
-		ids=list.stream().map(i->i.getParentPhaseId()).collect(Collectors.toList());
-		ids=ids.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
-		if(list.size()>0){
-			this.updateChildrenCntByIds(ids);
-		}
 		this.batchSumParents(xmProjectPhases.stream().map(i->(XmProjectPhase)i).collect(Collectors.toList()));
 	}
 
@@ -258,11 +247,6 @@ public class XmProjectPhaseService extends BaseService {
 			}
 		}
 		super.batchInsert(xmProjectPhases);
-		List<XmProjectPhase> list= xmProjectPhases.stream().filter(i->!xmProjectPhases.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
-		list=list.stream().filter(i->StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());
-		if(list.size()>0){
-			this.updateChildrenCntByIds(list.stream().map(i->i.getParentPhaseId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
-		}
 		batchSumParents(xmProjectPhases);
 	}
 
@@ -463,6 +447,16 @@ public class XmProjectPhaseService extends BaseService {
 
 		}
 
+	}
+
+	@Transactional
+	public void editByPk(XmProjectPhase xmProjectPhase) {
+		super.updateByPk(xmProjectPhase);
+		this.sumParents(xmProjectPhase);
+	}
+
+	public List<XmProjectPhase> selectListByIds(List<String> ids) {
+		return super.selectList("selectListByIds",ids);
 	}
 }
 

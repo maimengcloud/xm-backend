@@ -170,6 +170,12 @@
 		</foreach>
 		and res.ntype='1'
 	</update>
+	<select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmProjectPhase">
+		select * from xm_project_phase res where res.id in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 
