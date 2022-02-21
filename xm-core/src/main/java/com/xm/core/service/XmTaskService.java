@@ -189,7 +189,6 @@ public class XmTaskService extends BaseService {
 	public boolean checkExistsChildren(String taskId) {
 		Long i=this.selectOne("checkExistsChildren", taskId);
 		return i>0;
-		
 	}
 	/**
 	 * 有执行人，有子任务都不允许删除
@@ -197,17 +196,11 @@ public class XmTaskService extends BaseService {
 	 */
 	@Transactional
 	public void deleteTask(XmTask xmTask) {
-		if(checkExistsChildren(xmTask.getId())) {
-			throw new BizException("有子任务，不允许删除");
-		}
-		if(!"1".equals(xmTask.getNtype()) && checkExistsExecuser(xmTask.getId())>0) {
-			throw new BizException("有未结算的执行人，不允许删除该任务");
-		}
 		this.deleteByPk(xmTask);
 		if(StringUtils.hasText(xmTask.getParentTaskid())){
 			this.updateTaskChildrenCntByTaskId(xmTask.getParentTaskid());
 		}
-		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-删除任务", "删除任务"+xmTask.getName()); 
+		this.sumParents(xmTask);
 	}
 	
 	private Long checkExistsExecuser(String taskId) {
@@ -597,6 +590,18 @@ public class XmTaskService extends BaseService {
 
 		}
 
+	}
+
+
+	public boolean checkExistsExecuser(XmTask node) {
+		String exec=node.getExeUserids();
+		if(!StringUtils.hasText(exec)){
+			return false;
+		}
+		if(exec.indexOf("(1)")>0 || exec.indexOf("(2)")>0|| exec.indexOf("(3)")>0|| exec.indexOf("(4)")>0|| exec.indexOf("(5)")>0){
+			return false;
+		}
+		return true;
 	}
 }
 

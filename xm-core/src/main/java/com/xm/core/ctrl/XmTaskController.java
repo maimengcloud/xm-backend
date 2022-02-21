@@ -481,8 +481,17 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
+			if(!xmTask.getProjectId().equals(xmTaskDb.getProjectId())){
+				return ResponseHelper.failed("projectId-err","请上送正确的项目编号[projectId]");
+			}
+			if(xmTaskDb.getChildrenCnt()!=null && xmTaskDb.getChildrenCnt()>0){
+				return ResponseHelper.failed("childrenCnt-no-0","有子任务不能删除");
+			}
+			if(xmTaskService.checkExistsExecuser(xmTaskDb)){
+				return ResponseHelper.failed("existsExecuser","有待验收、待结算的执行人，不能删除");
+			};
 			xmTaskService.deleteTask(xmTask);
-			xmTaskService.sumParents(xmTaskDb);
+			xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(), xmTaskDb.getId(), "项目-任务-删除任务", "删除任务"+xmTaskDb.getName());
 
 		}catch (BizException e) {
 			tips=e.getTips();
@@ -981,43 +990,75 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
-			List<XmTask> allowTasks=new ArrayList<>();
-			List<XmTask> noAllowTasks=new ArrayList<>();
-			Map<String,XmTask> xmTaskMap=this.xmTaskService.selectTasksMapByTasks(xmTasks);
-			for (XmTask task : xmTaskMap.values()) {
-				if( !projectId.equals(task.getProjectId()) ){
+			List<XmTask> allowDelNodes=new ArrayList<>();
+			List<XmTask> noAllowNodes=new ArrayList<>();
+			Map<String,XmTask> delNodesDbMap=this.xmTaskService.selectTasksMapByTasks(xmTasks);
+			for (XmTask node : delNodesDbMap.values()) {
+				if( !projectId.equals(node.getProjectId()) ){
 					tips.setFailureMsg("所有任务必须同属于一个项目");
 					m.put("tips", tips);
 					return m;
 				}
-				boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,task.getCreateUserid(),user.getUserid());
+				boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,node.getCreateUserid(),user.getUserid());
+
 				if(!isHead){
-					noAllowTasks.add(task);
+					noAllowNodes.add(node);
 				}else {
-					allowTasks.add(task);
+					allowDelNodes.add(node);
 				}
 
 			}
-			List<String> noDelList=new ArrayList<>();
-			List<XmTask> delTasks=new ArrayList<>();
-			allowTasks.forEach(t->{
-				try {
-					delTasks.add(t);
-				} catch (BizException e) {
-					noDelList.add(t.getName());
-				}
- 			});
-			if(delTasks.size()>0){
-				this.xmTaskService.doBatchDelete(delTasks);
+			if(allowDelNodes.size()==0){
+				return ResponseHelper.failed("noqx-del","组长或者管理人员可以删除管辖范围的任务，您无权限删除所选任务");
 			}
 
-			if(noDelList.size()>0 && allowTasks.size()>noDelList.size()) {
-				tips.setOkMsg("成功删除"+(allowTasks.size()-noDelList.size())+"条任务，其中以下任务可能存在未结算的执行人或者存在子任务，不允许删除"+StringUtils.arrayToCommaDelimitedString(noDelList.toArray()));
-			}if(noDelList.size()>0 && allowTasks.size()==noDelList.size()) {
-				tips.setFailureMsg("无法删除，所选任务都存在未结算执行人或者子任务");
-			}else {
-				tips.setOkMsg("成功删除"+allowTasks.size()+"条任务");
+			List<XmTask> existsExecuserList=new ArrayList<>();
+			List<XmTask> noExecuserList=new ArrayList<>();
+			if(allowDelNodes.size()>0){
+				for (XmTask node : allowDelNodes) {
+					if(this.xmTaskService.checkExistsExecuser(node)){
+						existsExecuserList.add(node);
+					}else{
+						noExecuserList.add(node);
+					}
+				}
 			}
+			List<XmTask> hadChildNodes=new ArrayList<>();
+			List<XmTask> canDelNodes=new ArrayList<>();
+			if(noExecuserList.size()>0){
+				for (XmTask node : noExecuserList) {
+					if(node.getChildrenCnt()==null || node.getChildrenCnt()<=0){
+						canDelNodes.add(node);
+						continue;
+					}
+					long childCount=noExecuserList.stream().filter(i->node.getId().equals(i.getParentTaskid())).count();
+					if(childCount>=node.getChildrenCnt()){
+						canDelNodes.add(node);
+					}else{
+						hadChildNodes.add(node);
+					}
+				}
+			}
+			if(canDelNodes.size()>0){
+				this.xmTaskService.doBatchDelete(canDelNodes);
+			}
+			List<String> msgs=new ArrayList<>();
+			msgs.add("删除了"+canDelNodes.size()+"个任务。");
+			if(hadChildNodes.size()>0){
+				msgs.add("以下"+hadChildNodes.size()+"个任务，【"+hadChildNodes.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】存在未删除的子任务，不能删除。");
+			}
+			if(noAllowNodes.size()>0){
+				msgs.add("以下"+noAllowNodes.size()+"个任务，【"+noAllowNodes.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】您无权删除。");
+			}
+			if(existsExecuserList.size()>0){
+				msgs.add("以下"+existsExecuserList.size()+"个任务，【"+existsExecuserList.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】存在待结算的执行人，不能删除。");
+			}
+			if(canDelNodes.size()==0){
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining("\n")));
+			}else{
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining("\n")));
+			}
+
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
