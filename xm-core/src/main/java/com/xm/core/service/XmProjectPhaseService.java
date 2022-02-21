@@ -148,14 +148,8 @@ public class XmProjectPhaseService extends BaseService {
 	@Transactional
 	public  int[] doBatchDelete(List<XmProjectPhase> batchValues) {
 		int[] result= super.batchDelete(batchValues);
-
-		List<XmProjectPhase> list= batchValues.stream().filter(i->!batchValues.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
-		list=list.stream().filter(i-> StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());
-		if(list.size()>0){
-			this.updateChildrenCntByIds(list.stream().map(i->i.getParentPhaseId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
 			batchSumParents(batchValues);
-		}
-		return result;
+			return result;
 	}
 
 	public XmProjectPhase autoCalcWorkload(XmProjectPhase phase) {
@@ -188,12 +182,37 @@ public class XmProjectPhaseService extends BaseService {
 	public void updatePhaseChildrenCntByPhaseId(String phaseId){
 		super.update("updatePhaseChildrenCntByPhaseId",phaseId);
 	}
-	
+
 	public Long checkExistsChildren(String phaseId) {
 		Long i= this.selectOne("checkExistsChildren", phaseId);
 		return i;
 	}
 
+	/**
+	 * 检查是否能删除干净所有儿子孙子节点。
+	 * @param delNode 当前删除节点
+	 * @param delNodes 本批量需要删除的全部节点
+	 * @return
+	 */
+	public boolean checkCanDelAllChild(XmProjectPhase delNode, List<XmProjectPhase> delNodes) {
+		if(delNode==null){
+			return true;
+		}
+		if(delNode.getChildrenCnt()==null||delNode.getChildrenCnt()<=0){
+			return true;
+		}
+		List<XmProjectPhase> childList=delNodes.stream().filter(i->delNode.getId().equals(i.getParentPhaseId())).collect(Collectors.toList());
+		if(childList==null||childList.size()<delNode.getChildrenCnt()){
+			return false;
+		}
+		for (XmProjectPhase n : childList) {
+			if (!this.checkCanDelAllChild(n, delNodes)) {
+				return false;
+			}
+		}
+		return true;
+
+	}
 	@Transactional
 	public void batchInsertOrUpdate(List<XmProjectPhaseVo> xmProjectPhases) {
 		List<XmProjectPhaseVo> addList=new ArrayList<>();
@@ -396,9 +415,9 @@ public class XmProjectPhaseService extends BaseService {
 
 	}
 	@Transactional
-	public void batchSumParents(List<XmProjectPhase> xmTasks) {
+	public void batchSumParents(List<XmProjectPhase> xmProjectPhases) {
 		List<Set<String>> list=new ArrayList<>();
-		for (XmProjectPhase node : xmTasks) {
+		for (XmProjectPhase node : xmProjectPhases) {
 			String id=node.getId();
 			String pidPaths=node.getPidPaths();
 			if(!StringUtils.hasText(pidPaths)){
@@ -424,12 +443,21 @@ public class XmProjectPhaseService extends BaseService {
 				Set<String> set=list.get(i);
 				set.add(pidPathss[i]);
 			}
+			if(list.size()<=0){
+				return;
+			}
 			Set<String> allSet=new HashSet<>();
 			for (int i = list.size() - 1; i >= 0; i--) {
-				allSet.addAll(list.get(i));
-			}
-			if(allSet.size()>0){
-				super.update("sumParents",allSet.stream().collect(Collectors.toList()));
+				Set<String> set=list.get(i);
+				if(set.size()>0){
+					List<String> ids=set.stream().filter(k->!allSet.contains(k)).collect(Collectors.toList());
+					if(ids.size()>0){
+						allSet.addAll(ids.stream().collect(Collectors.toSet()));
+						super.update("batchSumParents", ids);
+					}
+
+				}
+
 			}
 
 

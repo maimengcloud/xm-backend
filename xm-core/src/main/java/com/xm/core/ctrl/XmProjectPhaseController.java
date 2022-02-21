@@ -442,18 +442,20 @@ public class XmProjectPhaseController {
 				if(exists>0) {
 					noDelList.add(phase.getPhaseName());
 				}else {
-					Long checkExistsChildren =xmProjectPhaseService.checkExistsChildren(phase.getId());
-					if(checkExistsChildren>0) {
-						hasChildList.add(phase.getPhaseName());
- 					}else {
-						delPhases.add(phase);
-						delCount=delCount+1;
-						xmRecordService.addXmPhaseRecord(phase.getProjectId(), phase.getId(), "项目-计划-删除计划", "删除计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
-					}
-					 
+					delPhases.add(phase);
 				}
 			}
-			if(delPhases.size()>0){
+			List<XmProjectPhase> canDelNodes=new ArrayList<>();
+			for (XmProjectPhase phase : delPhases) {
+
+					boolean canDelAllChild =xmProjectPhaseService.checkCanDelAllChild(phase,xmProjectPhases);
+					if(!canDelAllChild) {
+						hasChildList.add(phase.getPhaseName());
+					}else {
+						canDelNodes.add(phase);
+ 					}
+			}
+			if(canDelNodes.size()>0){
 				this.xmProjectPhaseService.doBatchDelete(delPhases);
 			}
 			String noQxTips="";
