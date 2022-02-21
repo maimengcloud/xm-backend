@@ -90,6 +90,7 @@ public class XmProductService extends BaseService {
 		if("1".equals(xmProduct.getIsTpl())){
 			xmProductTo.setIsTpl("1");
 		}
+		this.insert(xmProductTo);
 		if("1".equals(xmProduct.getCopyMenu())){
 			XmMenu mq=new XmMenu();
 			mq.setProductId(xmProduct.getId());
@@ -118,9 +119,9 @@ public class XmProductService extends BaseService {
     }
 
 	public String createProductCode(String branchId){
-		XmProject projectQ=new XmProject();
-		projectQ.setBranchId(branchId);
-		long count=this.countByWhere(projectQ);
+		XmProduct product=new XmProduct();
+		product.setBranchId(branchId);
+		long count=this.countByWhere(product);
 		String seq=(count+1)+"";
 		int preLength=6-seq.length();
 
