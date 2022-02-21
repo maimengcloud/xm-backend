@@ -592,9 +592,9 @@ public class XmTaskService extends BaseService {
 			return false;
 		}
 		if(exec.indexOf("(1)")>0 || exec.indexOf("(2)")>0|| exec.indexOf("(3)")>0|| exec.indexOf("(4)")>0|| exec.indexOf("(5)")>0){
-			return false;
+			return true;
 		}
-		return true;
+		return false;
 	}
 
 	/**
