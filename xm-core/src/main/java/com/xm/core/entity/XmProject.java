@@ -86,13 +86,13 @@ public class XmProject  implements java.io.Serializable {
 	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
 	String bizFlowState;
 	
-	@ApiModelProperty(notes="非人力成本总预算-应该大于或等于阶段计划非人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="非人力成本总预算-应该大于或等于计划非人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planNouserAt;
 	
-	@ApiModelProperty(notes="内部人力成本总预算-应该大于或等于阶段计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="内部人力成本总预算-应该大于或等于计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planInnerUserAt;
 	
-	@ApiModelProperty(notes="外购人力成本总预算-应该大于或等于阶段计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="外购人力成本总预算-应该大于或等于计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planOutUserAt;
 	
 	@ApiModelProperty(notes="是否锁定整个项目不允许变化0否1是",allowEmptyValue=true,example="",allowableValues="")
@@ -107,7 +107,7 @@ public class XmProject  implements java.io.Serializable {
 	@ApiModelProperty(notes="基线主键",allowEmptyValue=true,example="",allowableValues="")
 	String baselineId;
 	
-	@ApiModelProperty(notes="总预算工作量-应该大于或等于阶段计划总工作量",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="总预算工作量-应该大于或等于计划总工作量",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planWorkload;
 	
 	@ApiModelProperty(notes="总预计收款金额",allowEmptyValue=true,example="",allowableValues="")
@@ -137,10 +137,10 @@ public class XmProject  implements java.io.Serializable {
 	@ApiModelProperty(notes="税率",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal taxRate;
 	
-	@ApiModelProperty(notes="内部人力总工作量-应该大于或等于阶段计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="内部人力总工作量-应该大于或等于计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planInnerUserWorkload;
 	
-	@ApiModelProperty(notes="外购人力总工作量-应该大于或等于阶段计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="外购人力总工作量-应该大于或等于计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planOutUserWorkload;
 	
 	@ApiModelProperty(notes="关联模板编号",allowEmptyValue=true,example="",allowableValues="")
@@ -282,19 +282,19 @@ public class XmProject  implements java.io.Serializable {
 		this.bizFlowState = bizFlowState;
 	}
 	/**
-	 * 非人力成本总预算-应该大于或等于阶段计划非人力总成本
+	 * 非人力成本总预算-应该大于或等于计划非人力总成本
 	 **/
 	public void setPlanNouserAt(BigDecimal planNouserAt) {
 		this.planNouserAt = planNouserAt;
 	}
 	/**
-	 * 内部人力成本总预算-应该大于或等于阶段计划内部人力总成本
+	 * 内部人力成本总预算-应该大于或等于计划内部人力总成本
 	 **/
 	public void setPlanInnerUserAt(BigDecimal planInnerUserAt) {
 		this.planInnerUserAt = planInnerUserAt;
 	}
 	/**
-	 * 外购人力成本总预算-应该大于或等于阶段计划外购人力总成本
+	 * 外购人力成本总预算-应该大于或等于计划外购人力总成本
 	 **/
 	public void setPlanOutUserAt(BigDecimal planOutUserAt) {
 		this.planOutUserAt = planOutUserAt;
@@ -324,7 +324,7 @@ public class XmProject  implements java.io.Serializable {
 		this.baselineId = baselineId;
 	}
 	/**
-	 * 总预算工作量-应该大于或等于阶段计划总工作量
+	 * 总预算工作量-应该大于或等于计划总工作量
 	 **/
 	public void setPlanWorkload(BigDecimal planWorkload) {
 		this.planWorkload = planWorkload;
@@ -384,13 +384,13 @@ public class XmProject  implements java.io.Serializable {
 		this.taxRate = taxRate;
 	}
 	/**
-	 * 内部人力总工作量-应该大于或等于阶段计划内部人力总成本
+	 * 内部人力总工作量-应该大于或等于计划内部人力总成本
 	 **/
 	public void setPlanInnerUserWorkload(BigDecimal planInnerUserWorkload) {
 		this.planInnerUserWorkload = planInnerUserWorkload;
 	}
 	/**
-	 * 外购人力总工作量-应该大于或等于阶段计划外购人力总成本
+	 * 外购人力总工作量-应该大于或等于计划外购人力总成本
 	 **/
 	public void setPlanOutUserWorkload(BigDecimal planOutUserWorkload) {
 		this.planOutUserWorkload = planOutUserWorkload;
@@ -541,19 +541,19 @@ public class XmProject  implements java.io.Serializable {
 		return this.bizFlowState;
 	}
 	/**
-	 * 非人力成本总预算-应该大于或等于阶段计划非人力总成本
+	 * 非人力成本总预算-应该大于或等于计划非人力总成本
 	 **/
 	public BigDecimal getPlanNouserAt() {
 		return this.planNouserAt;
 	}
 	/**
-	 * 内部人力成本总预算-应该大于或等于阶段计划内部人力总成本
+	 * 内部人力成本总预算-应该大于或等于计划内部人力总成本
 	 **/
 	public BigDecimal getPlanInnerUserAt() {
 		return this.planInnerUserAt;
 	}
 	/**
-	 * 外购人力成本总预算-应该大于或等于阶段计划外购人力总成本
+	 * 外购人力成本总预算-应该大于或等于计划外购人力总成本
 	 **/
 	public BigDecimal getPlanOutUserAt() {
 		return this.planOutUserAt;
@@ -583,7 +583,7 @@ public class XmProject  implements java.io.Serializable {
 		return this.baselineId;
 	}
 	/**
-	 * 总预算工作量-应该大于或等于阶段计划总工作量
+	 * 总预算工作量-应该大于或等于计划总工作量
 	 **/
 	public BigDecimal getPlanWorkload() {
 		return this.planWorkload;
@@ -643,13 +643,13 @@ public class XmProject  implements java.io.Serializable {
 		return this.taxRate;
 	}
 	/**
-	 * 内部人力总工作量-应该大于或等于阶段计划内部人力总成本
+	 * 内部人力总工作量-应该大于或等于计划内部人力总成本
 	 **/
 	public BigDecimal getPlanInnerUserWorkload() {
 		return this.planInnerUserWorkload;
 	}
 	/**
-	 * 外购人力总工作量-应该大于或等于阶段计划外购人力总成本
+	 * 外购人力总工作量-应该大于或等于计划外购人力总成本
 	 **/
 	public BigDecimal getPlanOutUserWorkload() {
 		return this.planOutUserWorkload;

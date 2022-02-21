@@ -74,10 +74,10 @@ public class XmTestCaseExec  implements java.io.Serializable {
 	@ApiModelProperty(notes="归属测试任务名称",allowEmptyValue=true,example="",allowableValues="")
 	String taskName;
 	
-	@ApiModelProperty(notes="故事编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="需求编号",allowEmptyValue=true,example="",allowableValues="")
 	String menuId;
 	
-	@ApiModelProperty(notes="故事名称",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="需求名称",allowEmptyValue=true,example="",allowableValues="")
 	String menuName;
 
 	/**执行编号**/
@@ -198,13 +198,13 @@ public class XmTestCaseExec  implements java.io.Serializable {
 		this.taskName = taskName;
 	}
 	/**
-	 * 故事编号
+	 * 需求编号
 	 **/
 	public void setMenuId(String menuId) {
 		this.menuId = menuId;
 	}
 	/**
-	 * 故事名称
+	 * 需求名称
 	 **/
 	public void setMenuName(String menuName) {
 		this.menuName = menuName;
@@ -319,13 +319,13 @@ public class XmTestCaseExec  implements java.io.Serializable {
 		return this.taskName;
 	}
 	/**
-	 * 故事编号
+	 * 需求编号
 	 **/
 	public String getMenuId() {
 		return this.menuId;
 	}
 	/**
-	 * 故事名称
+	 * 需求名称
 	 **/
 	public String getMenuName() {
 		return this.menuName;

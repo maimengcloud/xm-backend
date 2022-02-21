@@ -9,27 +9,27 @@ import java.math.BigDecimal;
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectPhase所有属性名: <br>
  *	id,phaseName,remark,parentPhaseId,branchId,projectId,beginDate,endDate,phaseBudgetHours,phaseBudgetStaffNu,ctime,phaseBudgetNouserAt,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,projectBaselineId,bizProcInstId,bizFlowState,phaseBudgetWorkload,phaseActWorkload,phaseActInnerUserWorkload,phaseActOutUserWorkload,taskType,planType,seqNo,phaseBudgetInnerUserWorkload,phaseBudgetOutUserWorkload,actNouserAt,actInnerUserAt,phaseBudgetInnerUserPrice,phaseBudgetOutUserPrice,phaseBudgetOutUserCnt,phaseBudgetInnerUserCnt,actRate,phaseStatus,actOutUserAt,taskCnt,finishTaskCnt,iterationCnt,calcTime,taskBudgetWorkload,taskBudgetAt,mngUserid,mngUsername,milestone,pleaf,tagIds,tagNames,ntype,childrenCnt,ltime,isKeyPath,pidPaths,lvl,isTpl;<br>
- * 表 xm_project_phase 项目阶段模板的所有字段名: <br>
+ * 表 xm_project_phase 项目计划模板的所有字段名: <br>
  *	id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf,tag_ids,tag_names,ntype,children_cnt,ltime,is_key_path,pid_paths,lvl,is_tpl;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
-@ApiModel(description="项目阶段模板")
+@ApiModel(description="项目计划模板")
 public class XmProjectPhase  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@ApiModelProperty(notes="阶段主键,主键",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="计划主键,主键",allowEmptyValue=true,example="",allowableValues="")
 	String id;
   	
 	
-	@ApiModelProperty(notes="阶段名称",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="计划名称",allowEmptyValue=true,example="",allowableValues="")
 	String phaseName;
 	
 	@ApiModelProperty(notes="备注",allowEmptyValue=true,example="",allowableValues="")
 	String remark;
 	
-	@ApiModelProperty(notes="上级阶段编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="上级计划编号",allowEmptyValue=true,example="",allowableValues="")
 	String parentPhaseId;
 	
 	@ApiModelProperty(notes="机构编号",allowEmptyValue=true,example="",allowableValues="")
@@ -119,7 +119,7 @@ public class XmProjectPhase  implements java.io.Serializable {
 	@ApiModelProperty(notes="实际进度0-100",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal actRate;
 	
-	@ApiModelProperty(notes="阶段状态0初始1执行中2完工3关闭4删除中5已删除6暂停",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="计划状态0初始1执行中2完工3关闭4删除中5已删除6暂停",allowEmptyValue=true,example="",allowableValues="")
 	String phaseStatus;
 	
 	@ApiModelProperty(notes="实际外部人力成本",allowEmptyValue=true,example="",allowableValues="")
@@ -182,23 +182,23 @@ public class XmProjectPhase  implements java.io.Serializable {
 	@ApiModelProperty(notes="是否为模板",allowEmptyValue=true,example="",allowableValues="")
 	String isTpl;
 
-	/**阶段主键**/
+	/**计划主键**/
 	public XmProjectPhase(String id) {
 		this.id = id;
 	}
     
-    /**项目阶段模板**/
+    /**项目计划模板**/
 	public XmProjectPhase() {
 	}
 	
 	/**
-	 * 阶段主键
+	 * 计划主键
 	 **/
 	public void setId(String id) {
 		this.id = id;
 	}
 	/**
-	 * 阶段名称
+	 * 计划名称
 	 **/
 	public void setPhaseName(String phaseName) {
 		this.phaseName = phaseName;
@@ -210,7 +210,7 @@ public class XmProjectPhase  implements java.io.Serializable {
 		this.remark = remark;
 	}
 	/**
-	 * 上级阶段编号
+	 * 上级计划编号
 	 **/
 	public void setParentPhaseId(String parentPhaseId) {
 		this.parentPhaseId = parentPhaseId;
@@ -390,7 +390,7 @@ public class XmProjectPhase  implements java.io.Serializable {
 		this.actRate = actRate;
 	}
 	/**
-	 * 阶段状态0初始1执行中2完工3关闭4删除中5已删除6暂停
+	 * 计划状态0初始1执行中2完工3关闭4删除中5已删除6暂停
 	 **/
 	public void setPhaseStatus(String phaseStatus) {
 		this.phaseStatus = phaseStatus;
@@ -517,13 +517,13 @@ public class XmProjectPhase  implements java.io.Serializable {
 	}
 	
 	/**
-	 * 阶段主键
+	 * 计划主键
 	 **/
 	public String getId() {
 		return this.id;
 	}
 	/**
-	 * 阶段名称
+	 * 计划名称
 	 **/
 	public String getPhaseName() {
 		return this.phaseName;
@@ -535,7 +535,7 @@ public class XmProjectPhase  implements java.io.Serializable {
 		return this.remark;
 	}
 	/**
-	 * 上级阶段编号
+	 * 上级计划编号
 	 **/
 	public String getParentPhaseId() {
 		return this.parentPhaseId;
@@ -715,7 +715,7 @@ public class XmProjectPhase  implements java.io.Serializable {
 		return this.actRate;
 	}
 	/**
-	 * 阶段状态0初始1执行中2完工3关闭4删除中5已删除6暂停
+	 * 计划状态0初始1执行中2完工3关闭4删除中5已删除6暂停
 	 **/
 	public String getPhaseStatus() {
 		return this.phaseStatus;

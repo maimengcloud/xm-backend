@@ -272,7 +272,7 @@ public class XmProductController {
 				 if(!"1".equals(xmProductDb.getIsTpl())){
 					 long menus=xmProductService.checkExistsMenu(xmProduct.getId());
 					 if(menus>0) {
-						 return ResponseHelper.failed("had-menus","该产品有"+menus+"个故事关联，不允许删除，请先解绑故事");
+						 return ResponseHelper.failed("had-menus","该产品有"+menus+"个需求关联，不允许删除，请先解绑需求");
 
 					 }
 				 }
@@ -355,7 +355,7 @@ public class XmProductController {
 				msg=msg+",【"+StringUtils.arrayToDelimitedString(hasProjects.toArray(), ",")+"】存在项目关联，不允许删除";
 			} 
 			if(hasMenus.size()>0 ) {
-				msg=msg+",【"+StringUtils.arrayToDelimitedString(hasMenus.toArray(), ",")+"】存在故事关联，不允许删除";
+				msg=msg+",【"+StringUtils.arrayToDelimitedString(hasMenus.toArray(), ",")+"】存在需求关联，不允许删除";
 			} 
 			tips.setOkMsg(msg);
 		}catch (BizException e) { 

@@ -66,7 +66,7 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
 	String bizFlowState;
 	
-	@ApiModelProperty(notes="项目计划阶段编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目计划计划编号",allowEmptyValue=true,example="",allowableValues="")
 	String projectPhaseId;
 	
 	@ApiModelProperty(notes="实际成本金额",allowEmptyValue=true,example="",allowableValues="")
@@ -84,7 +84,7 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 	@ApiModelProperty(notes="科目名称",allowEmptyValue=true,example="",allowableValues="")
 	String subjectName;
 	
-	@ApiModelProperty(notes="阶段名称",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="计划名称",allowEmptyValue=true,example="",allowableValues="")
 	String projectPhaseName;
 
 	/**主键**/
@@ -187,7 +187,7 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 		this.bizFlowState = bizFlowState;
 	}
 	/**
-	 * 项目计划阶段编号
+	 * 项目计划计划编号
 	 **/
 	public void setProjectPhaseId(String projectPhaseId) {
 		this.projectPhaseId = projectPhaseId;
@@ -223,7 +223,7 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 		this.subjectName = subjectName;
 	}
 	/**
-	 * 阶段名称
+	 * 计划名称
 	 **/
 	public void setProjectPhaseName(String projectPhaseName) {
 		this.projectPhaseName = projectPhaseName;
@@ -320,7 +320,7 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 		return this.bizFlowState;
 	}
 	/**
-	 * 项目计划阶段编号
+	 * 项目计划计划编号
 	 **/
 	public String getProjectPhaseId() {
 		return this.projectPhaseId;
@@ -356,7 +356,7 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 		return this.subjectName;
 	}
 	/**
-	 * 阶段名称
+	 * 计划名称
 	 **/
 	public String getProjectPhaseName() {
 		return this.projectPhaseName;

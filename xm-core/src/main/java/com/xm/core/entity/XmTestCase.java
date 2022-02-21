@@ -35,10 +35,10 @@ public class XmTestCase  implements java.io.Serializable {
 	@ApiModelProperty(notes="期望结果",allowEmptyValue=true,example="",allowableValues="")
 	String expectResult;
 	
-	@ApiModelProperty(notes="关联的故事",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="关联的需求",allowEmptyValue=true,example="",allowableValues="")
 	String menuId;
 	
-	@ApiModelProperty(notes="关联故事名",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="关联需求名",allowEmptyValue=true,example="",allowableValues="")
 	String menuName;
 	
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
@@ -105,13 +105,13 @@ public class XmTestCase  implements java.io.Serializable {
 		this.expectResult = expectResult;
 	}
 	/**
-	 * 关联的故事
+	 * 关联的需求
 	 **/
 	public void setMenuId(String menuId) {
 		this.menuId = menuId;
 	}
 	/**
-	 * 关联故事名
+	 * 关联需求名
 	 **/
 	public void setMenuName(String menuName) {
 		this.menuName = menuName;
@@ -196,13 +196,13 @@ public class XmTestCase  implements java.io.Serializable {
 		return this.expectResult;
 	}
 	/**
-	 * 关联的故事
+	 * 关联的需求
 	 **/
 	public String getMenuId() {
 		return this.menuId;
 	}
 	/**
-	 * 关联故事名
+	 * 关联需求名
 	 **/
 	public String getMenuName() {
 		return this.menuName;

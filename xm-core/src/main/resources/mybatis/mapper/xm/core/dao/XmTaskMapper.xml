@@ -148,7 +148,7 @@
 		delete from xm_task
 		where biz_proc_inst_id=#{procInstId}
 	</delete>
-	<!-- 查询任务总的预算及对应的阶段的预算，任务总预算不能大于阶段总预算 -->
+	<!-- 查询任务总的预算及对应的计划的预算，任务总预算不能大于计划总预算 -->
 	<select id="selectTotalPhaseAndTaskBudgetCost" parameterType="HashMap" resultType="HashMap">
 		SELECT
 		sum( ifnull(res.budget_cost,0) ) AS budget_cost,

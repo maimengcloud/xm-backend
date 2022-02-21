@@ -46,7 +46,7 @@ public class XmProduct  implements java.io.Serializable {
 	@ApiModelProperty(notes="归属部门",allowEmptyValue=true,example="",allowableValues="")
 	String deptid;
 	
-	@ApiModelProperty(notes="产品阶段:0未开始,1研发中,2已完成",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="产品计划:0未开始,1研发中,2已完成",allowEmptyValue=true,example="",allowableValues="")
 	String pstatus;
 	
 	@ApiModelProperty(notes="开始日期",allowEmptyValue=true,example="",allowableValues="")
@@ -152,7 +152,7 @@ public class XmProduct  implements java.io.Serializable {
 		this.deptid = deptid;
 	}
 	/**
-	 * 产品阶段:0未开始,1研发中,2已完成
+	 * 产品计划:0未开始,1研发中,2已完成
 	 **/
 	public void setPstatus(String pstatus) {
 		this.pstatus = pstatus;
@@ -291,7 +291,7 @@ public class XmProduct  implements java.io.Serializable {
 		return this.deptid;
 	}
 	/**
-	 * 产品阶段:0未开始,1研发中,2已完成
+	 * 产品计划:0未开始,1研发中,2已完成
 	 **/
 	public String getPstatus() {
 		return this.pstatus;

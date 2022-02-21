@@ -867,15 +867,15 @@ public class XmTaskController {
 		m.put("tips", tips);
 		return m;
 	} 
-	@ApiOperation( value = "批量将多个任务与一个用户故事关联",notes="")
+	@ApiOperation( value = "批量将多个任务与一个用户需求关联",notes="")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmTask_batchRelTasksWithMenu",name = "批量将任务与一个用户故事关联",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmTask_batchRelTasksWithMenu",name = "批量将任务与一个用户需求关联",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchRelTasksWithMenu",method=RequestMethod.POST)
 	public Map<String,Object> batchRelTasksWithMenu(@RequestBody List<XmTask> xmTasks) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功"+xmTasks.size()+"条任务数据与用户故事关联");
+		Tips tips=new Tips("成功"+xmTasks.size()+"条任务数据与用户需求关联");
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
 
@@ -923,16 +923,16 @@ public class XmTaskController {
 			if(allowTasks.size()>0){
 				xmTaskService.batchRelTasksWithMenu(allowTasks);
 				for (XmTask t : allowTasks) {
-					xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量更新任务", "将任务"+t.getName()+"与故事【"+t.getMenuId()+"-"+t.getMenuName()+"】关联",JSON.toJSONString(t),null);
+					xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量更新任务", "将任务"+t.getName()+"与需求【"+t.getMenuId()+"-"+t.getMenuName()+"】关联",JSON.toJSONString(t),null);
 
 				}
 				if(noAllowTasks.size()>0){
-					tips.setOkMsg(allowTasks.size()+"个任务成功关联用户故事，另外有"+noAllowTasks.size()+"个任务无权操作，只有任务负责人、项目经理、组长可以批量将任务与用户故事进行关联");
+					tips.setOkMsg(allowTasks.size()+"个任务成功关联用户需求，另外有"+noAllowTasks.size()+"个任务无权操作，只有任务负责人、项目经理、组长可以批量将任务与用户需求进行关联");
 				}
 
 			}else{
 				if(noAllowTasks.size()>0){
-					tips.setFailureMsg(allowTasks.size()+"个任务成功关联用户故事，另外有"+noAllowTasks.size()+"个任务无权操作，只有任务负责人、项目经理、组长可以批量将任务与用户故事进行关联");
+					tips.setFailureMsg(allowTasks.size()+"个任务成功关联用户需求，另外有"+noAllowTasks.size()+"个任务无权操作，只有任务负责人、项目经理、组长可以批量将任务与用户需求进行关联");
 				}
 			}
 

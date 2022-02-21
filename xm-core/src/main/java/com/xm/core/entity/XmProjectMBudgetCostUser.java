@@ -57,7 +57,7 @@ public class XmProjectMBudgetCostUser  implements java.io.Serializable {
 	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
 	String bizFlowState;
 	
-	@ApiModelProperty(notes="项目阶段",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目计划",allowEmptyValue=true,example="",allowableValues="")
 	String projectPhaseId;
 	
 	@ApiModelProperty(notes="成本类型0非人力1内部人力2外购人力",allowEmptyValue=true,example="",allowableValues="")
@@ -145,7 +145,7 @@ public class XmProjectMBudgetCostUser  implements java.io.Serializable {
 		this.bizFlowState = bizFlowState;
 	}
 	/**
-	 * 项目阶段
+	 * 项目计划
 	 **/
 	public void setProjectPhaseId(String projectPhaseId) {
 		this.projectPhaseId = projectPhaseId;
@@ -230,7 +230,7 @@ public class XmProjectMBudgetCostUser  implements java.io.Serializable {
 		return this.bizFlowState;
 	}
 	/**
-	 * 项目阶段
+	 * 项目计划
 	 **/
 	public String getProjectPhaseId() {
 		return this.projectPhaseId;

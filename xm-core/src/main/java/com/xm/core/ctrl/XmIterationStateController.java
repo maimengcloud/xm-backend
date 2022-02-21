@@ -55,7 +55,7 @@ public class XmIterationStateController {
 		@ApiImplicitParam(name="finishCases",value="完成案例总数",required=false),
 		@ApiImplicitParam(name="projectCnt",value="关联项目数",required=false),
 		@ApiImplicitParam(name="productCnt",value="关联产品数",required=false),
-		@ApiImplicitParam(name="menuCnt",value="关联故事数",required=false),
+		@ApiImplicitParam(name="menuCnt",value="关联需求数",required=false),
 		@ApiImplicitParam(name="taskCnt",value="关联任务数",required=false),
 		@ApiImplicitParam(name="finishTaskCnt",value="已完成的任务数",required=false),
 		@ApiImplicitParam(name="calcTime",value="计算日期",required=false),

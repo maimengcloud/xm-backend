@@ -61,10 +61,10 @@ public class XmMenu  implements java.io.Serializable {
 	@ApiModelProperty(notes="排序序号",allowEmptyValue=true,example="",allowableValues="")
 	String seqNo;
 	
-	@ApiModelProperty(notes="故事管理员编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="需求管理员编号",allowEmptyValue=true,example="",allowableValues="")
 	String mmUserid;
 	
-	@ApiModelProperty(notes="故事管理员姓名",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="需求管理员姓名",allowEmptyValue=true,example="",allowableValues="")
 	String mmUsername;
 	
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
@@ -191,13 +191,13 @@ public class XmMenu  implements java.io.Serializable {
 		this.seqNo = seqNo;
 	}
 	/**
-	 * 故事管理员编号
+	 * 需求管理员编号
 	 **/
 	public void setMmUserid(String mmUserid) {
 		this.mmUserid = mmUserid;
 	}
 	/**
-	 * 故事管理员姓名
+	 * 需求管理员姓名
 	 **/
 	public void setMmUsername(String mmUsername) {
 		this.mmUsername = mmUsername;
@@ -348,13 +348,13 @@ public class XmMenu  implements java.io.Serializable {
 		return this.seqNo;
 	}
 	/**
-	 * 故事管理员编号
+	 * 需求管理员编号
 	 **/
 	public String getMmUserid() {
 		return this.mmUserid;
 	}
 	/**
-	 * 故事管理员姓名
+	 * 需求管理员姓名
 	 **/
 	public String getMmUsername() {
 		return this.mmUsername;

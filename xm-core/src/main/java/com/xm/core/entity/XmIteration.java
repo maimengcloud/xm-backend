@@ -71,7 +71,7 @@ public class XmIteration  implements java.io.Serializable {
 	@ApiModelProperty(notes="备注",allowEmptyValue=true,example="",allowableValues="")
 	String remark;
 	
-	@ApiModelProperty(notes="迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="迭代计划:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成",allowEmptyValue=true,example="",allowableValues="")
 	String iphase;
 
 	/**迭代编码**/
@@ -186,7 +186,7 @@ public class XmIteration  implements java.io.Serializable {
 		this.remark = remark;
 	}
 	/**
-	 * 迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成
+	 * 迭代计划:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成
 	 **/
 	public void setIphase(String iphase) {
 		this.iphase = iphase;
@@ -295,7 +295,7 @@ public class XmIteration  implements java.io.Serializable {
 		return this.remark;
 	}
 	/**
-	 * 迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成
+	 * 迭代计划:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成
 	 **/
 	public String getIphase() {
 		return this.iphase;

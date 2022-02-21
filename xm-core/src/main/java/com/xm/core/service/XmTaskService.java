@@ -375,7 +375,7 @@ public class XmTaskService extends BaseService {
 	}
 	
 	/**
-	 * 批量更新任务的故事为新的故事或者更新为空
+	 * 批量更新任务的需求为新的需求或者更新为空
 	 * @param xmTasks
 	 */
 	@Transactional

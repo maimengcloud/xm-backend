@@ -64,7 +64,7 @@ public class XmTestCaseExecController {
 		@ApiImplicitParam(name="execUsername",value="执行人姓名",required=false),
 		@ApiImplicitParam(name="taskId",value="归属测试任务编号",required=false),
 		@ApiImplicitParam(name="taskName",value="归属测试任务名称",required=false),
-		@ApiImplicitParam(name="menuId",value="故事编号",required=false),
+		@ApiImplicitParam(name="menuId",value="需求编号",required=false),
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="currentPage",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),

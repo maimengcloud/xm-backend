@@ -54,7 +54,7 @@ public class XmIterationMenuController {
 	@ApiImplicitParams({  
 		@ApiImplicitParam(name="id",value="主键,主键",required=false),
 		@ApiImplicitParam(name="iterationId",value="对应的迭代编号",required=false),
-		@ApiImplicitParam(name="menuId",value="故事编号",required=false),
+		@ApiImplicitParam(name="menuId",value="需求编号",required=false),
 		@ApiImplicitParam(name="productId",value="产品编号",required=false),
 		@ApiImplicitParam(name="ctime",value="关联时间",required=false),
 		@ApiImplicitParam(name="relStatus",value="关联状态0不再关联1正常关联",required=false),
@@ -76,7 +76,7 @@ public class XmIterationMenuController {
 		String iterationId=(String)xmIterationMenu.get("iterationId");
 		String menuId=(String)xmIterationMenu.get("menuId");
 		if(!(StringUtils.hasText(iterationId)||StringUtils.hasText(menuId))){
-			tips.setFailureMsg("迭代编号iterationId、故事编号menuId最少一个不能为空");
+			tips.setFailureMsg("迭代编号iterationId、需求编号menuId最少一个不能为空");
 			m.put("tips", tips);
 			return m;
 		}
@@ -136,7 +136,7 @@ public class XmIterationMenuController {
 		try{
 			xmIterationMenuService.deleteByPk(xmIterationMenu);
 			User user = LoginUtils.getCurrentUserInfo(); 
-			this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将故事【"+xmIterationMenu.getMenuId()+"】移出迭代");
+			this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将需求【"+xmIterationMenu.getMenuId()+"】移出迭代");
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -190,7 +190,7 @@ public class XmIterationMenuController {
 			User user = LoginUtils.getCurrentUserInfo(); 
 
 			for (XmIterationMenu xmIterationMenu : xmIterationMenus) {
-				this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将故事【"+xmIterationMenu.getMenuId()+"】移出迭代");
+				this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将需求【"+xmIterationMenu.getMenuId()+"】移出迭代");
 
 			}
 		}catch (BizException e) { 
@@ -222,7 +222,7 @@ public class XmIterationMenuController {
 				if(menus!=null && menus.size()>0){
 					List<String> menuNames = menus.stream().map(XmMenu::getMenuName).collect(Collectors.toList());
 					String menusNameStr=StringUtils.arrayToDelimitedString(menuNames.toArray(),",");
-					tips.setFailureMsg("以下故事已加入本迭代计划，不能重复加入。"+menusNameStr);
+					tips.setFailureMsg("以下需求已加入本迭代计划，不能重复加入。"+menusNameStr);
 				}else{
 					xmIterationMenuService.batchInsert(xmIterationMenus);
 
@@ -230,7 +230,7 @@ public class XmIterationMenuController {
 
 					for (XmIterationMenu xmIterationMenu : xmIterationMenus) {
 
-						this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将故事【"+xmIterationMenu.getMenuId()+"】加入迭代");
+						this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将需求【"+xmIterationMenu.getMenuId()+"】加入迭代");
 
 					}
 				}

@@ -26,7 +26,7 @@ public class XmIterationMenu  implements java.io.Serializable {
 	@ApiModelProperty(notes="对应的迭代编号",allowEmptyValue=true,example="",allowableValues="")
 	String iterationId;
 	
-	@ApiModelProperty(notes="故事编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="需求编号",allowEmptyValue=true,example="",allowableValues="")
 	String menuId;
 	
 	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
@@ -69,7 +69,7 @@ public class XmIterationMenu  implements java.io.Serializable {
 		this.iterationId = iterationId;
 	}
 	/**
-	 * 故事编号
+	 * 需求编号
 	 **/
 	public void setMenuId(String menuId) {
 		this.menuId = menuId;
@@ -124,7 +124,7 @@ public class XmIterationMenu  implements java.io.Serializable {
 		return this.iterationId;
 	}
 	/**
-	 * 故事编号
+	 * 需求编号
 	 **/
 	public String getMenuId() {
 		return this.menuId;

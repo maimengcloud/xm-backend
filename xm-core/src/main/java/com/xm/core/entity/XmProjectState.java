@@ -180,7 +180,7 @@ public class XmProjectState  implements java.io.Serializable {
 	@ApiModelProperty(notes="产品数",allowEmptyValue=true,example="",allowableValues="")
 	Integer productCnt;
 	
-	@ApiModelProperty(notes="故事数",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="需求数",allowEmptyValue=true,example="",allowableValues="")
 	Integer menuCnt;
 
 	/**主键**/
@@ -511,7 +511,7 @@ public class XmProjectState  implements java.io.Serializable {
 		this.productCnt = productCnt;
 	}
 	/**
-	 * 故事数
+	 * 需求数
 	 **/
 	public void setMenuCnt(Integer menuCnt) {
 		this.menuCnt = menuCnt;
@@ -836,7 +836,7 @@ public class XmProjectState  implements java.io.Serializable {
 		return this.productCnt;
 	}
 	/**
-	 * 故事数
+	 * 需求数
 	 **/
 	public Integer getMenuCnt() {
 		return this.menuCnt;

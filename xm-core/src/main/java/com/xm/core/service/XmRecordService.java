@@ -112,7 +112,7 @@ public class XmRecordService extends BaseService {
 	/**
 	 * 针对项目下的任务的所有操作用此方法
 	 * @param projectId 项目编号
-	 * @param phaseId 阶段编号
+	 * @param phaseId 计划编号
 	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
 	 * @param remarks 人性化语言描述 
 	 */
@@ -130,7 +130,7 @@ public class XmRecordService extends BaseService {
 	/**
 	 * 针对项目下的任务的所有操作用此方法
 	 * @param projectId 项目编号
-	 * @param phaseId 阶段编号
+	 * @param phaseId 计划编号
 	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
 	 * @param remarks 人性化语言描述
 	 * @param newValue 需要记录下来的新数据 可空

@@ -97,7 +97,7 @@ public class XmProjectStateHisController {
 		@ApiImplicitParam(name="finishCases",value="完成案例总数",required=false),
 		@ApiImplicitParam(name="iterationCnt",value="迭代数",required=false),
 		@ApiImplicitParam(name="productCnt",value="产品数",required=false),
-		@ApiImplicitParam(name="menuCnt",value="故事数",required=false),
+		@ApiImplicitParam(name="menuCnt",value="需求数",required=false),
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="currentPage",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),

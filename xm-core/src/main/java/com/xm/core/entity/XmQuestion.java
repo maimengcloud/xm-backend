@@ -80,10 +80,10 @@ public class XmQuestion  implements java.io.Serializable {
 	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
 	String bizFlowState;
 	
-	@ApiModelProperty(notes="故事编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="需求编号",allowEmptyValue=true,example="",allowableValues="")
 	String menuId;
 	
-	@ApiModelProperty(notes="故事名称",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="需求名称",allowEmptyValue=true,example="",allowableValues="")
 	String menuName;
 	
 	@ApiModelProperty(notes="预估工时单位人时",allowEmptyValue=true,example="",allowableValues="")
@@ -279,13 +279,13 @@ public class XmQuestion  implements java.io.Serializable {
 		this.bizFlowState = bizFlowState;
 	}
 	/**
-	 * 故事编号
+	 * 需求编号
 	 **/
 	public void setMenuId(String menuId) {
 		this.menuId = menuId;
 	}
 	/**
-	 * 故事名称
+	 * 需求名称
 	 **/
 	public void setMenuName(String menuName) {
 		this.menuName = menuName;
@@ -538,13 +538,13 @@ public class XmQuestion  implements java.io.Serializable {
 		return this.bizFlowState;
 	}
 	/**
-	 * 故事编号
+	 * 需求编号
 	 **/
 	public String getMenuId() {
 		return this.menuId;
 	}
 	/**
-	 * 故事名称
+	 * 需求名称
 	 **/
 	public String getMenuName() {
 		return this.menuName;

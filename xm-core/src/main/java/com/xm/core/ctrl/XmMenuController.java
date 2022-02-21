@@ -214,7 +214,7 @@ public class XmMenuController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmMenu.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmMenu_add",name = "新增用户故事",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_add",name = "新增用户需求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmMenu(@RequestBody XmMenu xmMenu) {
 		Map<String,Object> m = new HashMap<>();
@@ -256,7 +256,7 @@ public class XmMenuController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmMenu_del",name = "删除用户故事",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_del",name = "删除用户需求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmMenu(@RequestBody XmMenu xmMenu){
 		Map<String,Object> m = new HashMap<>();
@@ -266,13 +266,13 @@ public class XmMenuController {
 			xmTask.setMenuId(xmMenu.getMenuId());
 			long taskCount=xmTaskService.countByWhere(xmTask);
 			if(taskCount>0) {
-				tips.setFailureMsg("存在"+taskCount+"个任务关联该故事，不允许删除");
+				tips.setFailureMsg("存在"+taskCount+"个任务关联该需求，不允许删除");
 			}else {
 				XmMenu query=new XmMenu();
 				query.setPmenuId(xmMenu.getMenuId());
 				long childCount=xmMenuService.countByWhere(query);
 				if(childCount>0) { 
-					tips.setFailureMsg("存在"+childCount+"个子故事关联该故事，不允许删除");
+					tips.setFailureMsg("存在"+childCount+"个子需求关联该需求，不允许删除");
 				}else {
 					xmMenuService.deleteByPk(xmMenu);
 				}
@@ -294,7 +294,7 @@ public class XmMenuController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmMenu_edit",name = "修改用户故事",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_edit",name = "修改用户需求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmMenu(@RequestBody XmMenu xmMenu) {
 		Map<String,Object> m = new HashMap<>();
@@ -340,7 +340,7 @@ public class XmMenuController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmMenu_batchDel",name = "批量删除用户故事",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_batchDel",name = "批量删除用户需求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmMenu(@RequestBody List<XmMenu> xmMenus) {
 		Map<String,Object> m = new HashMap<>();
@@ -371,12 +371,12 @@ public class XmMenuController {
 			if(canDelList.size()>0) {
 				xmMenuService.doBatchDelete(canDelList);
 			}
-			String msg="成功删除"+canDelList.size()+"个故事信息";
+			String msg="成功删除"+canDelList.size()+"个需求信息";
 			if(hasTasksMenus.size()>0 ) {
 				msg=msg+",【"+StringUtils.arrayToDelimitedString(hasTasksMenus.toArray(), ",")+"】存在任务关联，不允许删除";
 			} 
 			if(hasChildMenus.size()>0 ) {
-				msg=msg+",【"+StringUtils.arrayToDelimitedString(hasChildMenus.toArray(), ",")+"】存在子故事，不允许删除";
+				msg=msg+",【"+StringUtils.arrayToDelimitedString(hasChildMenus.toArray(), ",")+"】存在子需求，不允许删除";
 			} 
 			tips.setOkMsg(msg);
 			
@@ -392,7 +392,7 @@ public class XmMenuController {
 		return m;
 	}
 
-	@HasQx(value = "xm_core_xmMenu_batchAdd",name = "批量新增用户故事",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_batchAdd",name = "批量新增用户需求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
 	public Map<String,Object> batchAddXmMenu(@RequestBody List<XmMenu> xmMenus) {
 		Map<String,Object> m = new HashMap<>();
@@ -418,7 +418,7 @@ public class XmMenuController {
 		return m;
 	}
 
-	@HasQx(value = "xm_core_xmMenu_batchEdit",name = "批量修改用户故事",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_batchEdit",name = "批量修改用户需求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchEdit",method=RequestMethod.POST)
 	public Map<String,Object> batchEditXmMenu(@RequestBody List<XmMenuVo> xmMenus) {
 		Map<String,Object> m = new HashMap<>();

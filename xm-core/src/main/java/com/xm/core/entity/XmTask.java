@@ -119,10 +119,10 @@ public class XmTask  implements java.io.Serializable {
 	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
 	String bizFlowState;
 	
-	@ApiModelProperty(notes="项目阶段编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目计划编号",allowEmptyValue=true,example="",allowableValues="")
 	String projectPhaseId;
 	
-	@ApiModelProperty(notes="项目阶段名称",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目计划名称",allowEmptyValue=true,example="",allowableValues="")
 	String projectPhaseName;
 	
 	@ApiModelProperty(notes="技能列表,逗号分隔",allowEmptyValue=true,example="",allowableValues="")
@@ -396,13 +396,13 @@ public class XmTask  implements java.io.Serializable {
 		this.bizFlowState = bizFlowState;
 	}
 	/**
-	 * 项目阶段编号
+	 * 项目计划编号
 	 **/
 	public void setProjectPhaseId(String projectPhaseId) {
 		this.projectPhaseId = projectPhaseId;
 	}
 	/**
-	 * 项目阶段名称
+	 * 项目计划名称
 	 **/
 	public void setProjectPhaseName(String projectPhaseName) {
 		this.projectPhaseName = projectPhaseName;
@@ -733,13 +733,13 @@ public class XmTask  implements java.io.Serializable {
 		return this.bizFlowState;
 	}
 	/**
-	 * 项目阶段编号
+	 * 项目计划编号
 	 **/
 	public String getProjectPhaseId() {
 		return this.projectPhaseId;
 	}
 	/**
-	 * 项目阶段名称
+	 * 项目计划名称
 	 **/
 	public String getProjectPhaseName() {
 		return this.projectPhaseName;

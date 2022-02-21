@@ -22,7 +22,7 @@ public class XmMenuPushMsgService extends PushMsgService {
 	
 	
 	/**
-	 * 发消息给故事相关人员
+	 * 发消息给需求相关人员
 	 * 产品经理/客户/任务执行人
 	 * @param branchId
 	 * @param menuId

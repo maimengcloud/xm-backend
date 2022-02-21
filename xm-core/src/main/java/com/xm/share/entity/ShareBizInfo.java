@@ -64,7 +64,7 @@ public class ShareBizInfo  implements java.io.Serializable {
 	@ApiModelProperty(notes="上级分享人姓名，冗余字段，方便计算",allowEmptyValue=true,example="",allowableValues="")
 	String pshareUsername;
 	
-	@ApiModelProperty(notes="业务分类0商品1项目2任务3故事4app",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="业务分类0商品1项目2任务3需求4app",allowEmptyValue=true,example="",allowableValues="")
 	String bizType;
 	
 	@ApiModelProperty(notes="业务分类的主键，用于与分佣方案比对，分佣方案是可以针对一类商品进行分佣，可以对于具体的商品进行分佣",allowEmptyValue=true,example="",allowableValues="")
@@ -170,7 +170,7 @@ public class ShareBizInfo  implements java.io.Serializable {
 		this.pshareUsername = pshareUsername;
 	}
 	/**
-	 * 业务分类0商品1项目2任务3故事4app
+	 * 业务分类0商品1项目2任务3需求4app
 	 **/
 	public void setBizType(String bizType) {
 		this.bizType = bizType;
@@ -273,7 +273,7 @@ public class ShareBizInfo  implements java.io.Serializable {
 		return this.pshareUsername;
 	}
 	/**
-	 * 业务分类0商品1项目2任务3故事4app
+	 * 业务分类0商品1项目2任务3需求4app
 	 **/
 	public String getBizType() {
 		return this.bizType;
