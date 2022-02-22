@@ -18,6 +18,112 @@
 		{call load_tasks_to_xm_menu_state(#{productId,mode=IN})}
 	</update>
 
+
+	<!-- 适合没有交叉的，没用父子关系的一批任务的更新 -->
+	<update id="batchSumParents" parameterType="List">
+		update xm_menu_state s  inner join
+		(select m.pmenu_id,
+		sum(ss.plan_workload) as plan_workload ,
+		sum(ss.plan_cost_amount) as plan_cost_amount ,
+		sum(ss.act_workload) as act_workload ,
+		sum(ss.act_cost_amount) as act_cost_amount ,
+		sum(ifnull(ss.finish_rate,0) * ifnull(ss.plan_workload,0))/ifnull(sum(ifnull(ss.plan_workload,0.00001)),9999) as finish_rate ,
+		sum(ss.task_cnt) as task_cnt ,
+		sum(ss.finish_task_cnt) as finish_task_cnt ,
+		sum(ss.project_cnt) as project_cnt ,
+		sum(ss.iteration_cnt) as iteration_cnt ,
+		sum(ss.test_cases) as test_cases ,
+		sum(ss.exec_cases) as exec_cases ,
+		sum(ss.design_cases) as design_cases ,
+		sum(ss.finish_cases) as finish_cases ,
+		sum(ss.bug_cnt) as bug_cnt ,
+		sum(ss.active_bugs) as active_bugs ,
+		sum(ss.confirmed_bugs) as confirmed_bugs ,
+		sum(ss.resolved_bugs) as resolved_bugs ,
+		sum(ss.closed_bugs) as closed_bugs
+		from xm_menu_state ss inner join xm_menu m on ss.menu_id=m.menu_id   where m.pmenu_id in
+		<foreach collection="list" index="index" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+
+		group by m.pmenu_id) s2 on s2.pmenu_id=s.menu_id
+		set s.plan_workload=s2.plan_workload,
+		s.plan_cost_amount=s2.plan_cost_amount,
+		s.act_workload=s2.act_workload,
+		s.act_cost_amount=s2.act_cost_amount,
+		s.finish_rate=s2.finish_rate,
+		s.task_cnt=s2.task_cnt,
+		s.finish_task_cnt=s2.finish_task_cnt,
+		s.project_cnt=s2.project_cnt,
+		s.iteration_cnt=s2.iteration_cnt,
+
+		s.test_cases=s2.test_cases,
+		s.exec_cases=s2.exec_cases,
+		s.design_cases=s2.design_cases,
+		s.finish_cases=s2.finish_cases,
+
+		s.bug_cnt=s2.bug_cnt,
+		s.active_bugs=s2.active_bugs,
+		s.confirmed_bugs=s2.confirmed_bugs,
+		s.resolved_bugs=s2.resolved_bugs,
+		s.closed_bugs=s2.closed_bugs
+		where s.menu_id in
+		<foreach collection="list" index="index" item="item" open="(" close=")" separator=",">
+			#{item}
+		</foreach>
+	</update>
+	<!-- 适合父子关系的一批任务的更新 -->
+	<update id="sumParents" parameterType="List">
+		<foreach collection="list" item="item" index="index" open="" separator=";" close="" >
+			update xm_menu_state s  inner join
+			(select m.pmenu_id,
+			sum(ss.plan_workload) as plan_workload ,
+			sum(ss.plan_cost_amount) as plan_cost_amount ,
+			sum(ss.act_workload) as act_workload ,
+			sum(ss.act_cost_amount) as act_cost_amount ,
+			sum(ifnull(ss.finish_rate,0) * ifnull(ss.plan_workload,0))/ifnull(sum(ifnull(ss.plan_workload,0.00001)),9999) as finish_rate ,
+			sum(ss.task_cnt) as task_cnt ,
+			sum(ss.finish_task_cnt) as finish_task_cnt ,
+			sum(ss.project_cnt) as project_cnt ,
+			sum(ss.iteration_cnt) as iteration_cnt ,
+			sum(ss.test_cases) as test_cases ,
+			sum(ss.exec_cases) as exec_cases ,
+			sum(ss.design_cases) as design_cases ,
+			sum(ss.finish_cases) as finish_cases ,
+			sum(ss.bug_cnt) as bug_cnt ,
+			sum(ss.active_bugs) as active_bugs ,
+			sum(ss.confirmed_bugs) as confirmed_bugs ,
+			sum(ss.resolved_bugs) as resolved_bugs ,
+			sum(ss.closed_bugs) as closed_bugs
+			from xm_menu_state ss inner join xm_menu m on ss.menu_id=m.menu_id   where m.pmenu_id =#{item}
+
+			group by m.pmenu_id) s2 on s2.pmenu_id=s.menu_id
+			set s.plan_workload=s2.plan_workload,
+			s.plan_cost_amount=s2.plan_cost_amount,
+			s.act_workload=s2.act_workload,
+			s.act_cost_amount=s2.act_cost_amount,
+			s.finish_rate=s2.finish_rate,
+			s.task_cnt=s2.task_cnt,
+			s.finish_task_cnt=s2.finish_task_cnt,
+			s.project_cnt=s2.project_cnt,
+			s.iteration_cnt=s2.iteration_cnt,
+
+			s.test_cases=s2.test_cases,
+			s.exec_cases=s2.exec_cases,
+			s.design_cases=s2.design_cases,
+			s.finish_cases=s2.finish_cases,
+
+			s.bug_cnt=s2.bug_cnt,
+			s.active_bugs=s2.active_bugs,
+			s.confirmed_bugs=s2.confirmed_bugs,
+			s.resolved_bugs=s2.resolved_bugs,
+			s.closed_bugs=s2.closed_bugs
+			where s.menu_id = #{item}
+		</foreach>
+	</update>
+	<insert id="batchLoadXmMenuToState" parameterType="HashMap">
+		insert into xm_menu_state (id,product_id,menu_id,biz_date) select CONCAT(#{bizDate},i.menu_id),i.product_id,i.menu_id,#{bizDate} from xm_menu i left join xm_menu_state s on s.product_id=i.product_id and s.menu_id=i.menu_id  where i.product_id=#{productId}  and s.menu_id is null
+	</insert>
 	<!--结束 自定义sql函数区域-->
 	
 

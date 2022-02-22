@@ -313,7 +313,7 @@ public class XmMenuController {
 						XmMenu xmMenuParentDb=this.xmTaskService.selectOneObject(new XmMenu(xmMenuDb.getPmenuId()));
 						if(xmMenuParentDb!=null){
 							if(!"1".equals(xmMenuParentDb.getNtype())){
-								ResponseHelper.failed("pmenu-ntype-0","上级任务"+xmMenuParentDb.getMenuName()+"属于不是需求集,不能下挂需求集");
+								ResponseHelper.failed("pmenu-ntype-0","上级需求"+xmMenuParentDb.getMenuName()+"不是需求集,不能下挂需求集");
 							}
 						}
 					}
@@ -346,41 +346,29 @@ public class XmMenuController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除"+xmMenus.size()+"条数据"); 
 		try{ 
-			List<String> hasTasksMenus=new ArrayList<>();
 			List<String> hasChildMenus=new ArrayList<>();
 			List<XmMenu> canDelList=new ArrayList<>();
-			for (XmMenu xmMenu : xmMenus) {
-				XmMenu query=new XmMenu();
-				query.setPmenuId(xmMenu.getMenuId());
-				long childCount=xmMenuService.countByWhere(query);
-				if(childCount>0) {
+			List<XmMenu> xmMenusDb=this.xmMenuService.selectListByIds(xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()));
+			for (XmMenu xmMenu : xmMenusDb) {
+				boolean canDel=this.xmMenuService.checkCanDelAllChild(xmMenu,xmMenusDb);
+				if(canDel){
+					canDelList.add(xmMenu);
+				}else{
 					hasChildMenus.add(xmMenu.getMenuName());
-				}else {
-					XmTask xmTask = new XmTask();
-					xmTask.setMenuId(xmMenu.getMenuId());
-					long taskCount=xmTaskService.countByWhere(xmTask);
-					if(taskCount>0) { 
-						hasTasksMenus.add(xmMenu.getMenuName());
-					}else {  
-						canDelList.add(xmMenu);
-					}
-
-					
 				}
 			}
 			if(canDelList.size()>0) {
 				xmMenuService.doBatchDelete(canDelList);
 			}
-			String msg="成功删除"+canDelList.size()+"个需求信息";
-			if(hasTasksMenus.size()>0 ) {
-				msg=msg+",【"+StringUtils.arrayToDelimitedString(hasTasksMenus.toArray(), ",")+"】存在任务关联，不允许删除";
-			} 
+			String msg="成功删除"+canDelList.size()+"个需求信息。\n";
 			if(hasChildMenus.size()>0 ) {
-				msg=msg+",【"+StringUtils.arrayToDelimitedString(hasChildMenus.toArray(), ",")+"】存在子需求，不允许删除";
-			} 
-			tips.setOkMsg(msg);
-			
-			
+				msg=msg+"以下"+hasChildMenus.size()+"个需求存在子需求，不允许删除。【"+StringUtils.arrayToDelimitedString(hasChildMenus.toArray(), ",")+"】";
+			}
+			if(canDelList.size()==0){
+				tips.setFailureMsg(msg);
+			}else{
+				tips.setOkMsg(msg);
+			}
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);

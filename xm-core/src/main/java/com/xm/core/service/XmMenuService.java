@@ -5,6 +5,7 @@ import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
 import com.xm.core.vo.XmMenuVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -19,6 +20,9 @@ import java.util.stream.Collectors;
  ***/
 @Service("xm.core.xmMenuService")
 public class XmMenuService extends BaseService {
+
+	@Autowired
+	XmMenuStateService xmMenuStateService;
 
 	/**
 	 * 连同功能关联的计划数据一起带出
@@ -57,22 +61,22 @@ public class XmMenuService extends BaseService {
 				editList.add(vo);
 			}
 		}
+		List<XmMenu> xmMenuList=new ArrayList<>();
 		if(addList.size()>0) {
+			xmMenuList.addAll(addList.stream().map(i->(XmMenu)i).collect(Collectors.toList()));
 			this.batchInsert(addList);
-
-			List<XmMenu> list= addList.stream().filter(i->!xmMenus.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
-			list=list.stream().filter(i-> StringUtils.hasText(i.getPmenuId())).collect(Collectors.toList());
-			if(list.size()>0){
-				this.updateChildrenCntByIds(list.stream().map(i->i.getPmenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
-			}
+ 			this.xmMenuStateService.batchLoadXmMenuToState(xmMenus.get(0).getProductId());
 		}
 		if(editList.size()>0) {
+			xmMenuList.addAll(editList.stream().map(i->(XmMenu)i).collect(Collectors.toList()));
 			this.batchUpdate(editList);
+		}
+		if(xmMenuList.size()>0){
+			this.xmMenuStateService.batchSumParents(xmMenuList);
 		}
 	}
 	public List< Map<String, Object>> queryTaskUsersByMenuId(String menuId) {
-		// TODO Auto-generated method stub
-		return this.selectList("queryTaskUsersByMenuId", menuId);
+ 		return this.selectList("queryTaskUsersByMenuId", menuId);
 	}
 
     public List<XmMenu> selectExistIterationMenus(List<String> menuIds) {
@@ -189,45 +193,64 @@ public class XmMenuService extends BaseService {
     @Transactional
 	public   int insert(XmMenu xmMenu) {
 		int i= super.insert(xmMenu);
-		if(StringUtils.hasText(xmMenu.getPmenuId())){
-			this.updateMenuChildrenCntByMenuId(xmMenu.getPmenuId());
-		}
+		xmMenuStateService.batchLoadXmMenuToState(xmMenu.getProductId());
+		xmMenuStateService.sumParents(xmMenu);
 		return i;
 	}
 
 	@Transactional
 	public   int updateByPk(XmMenu xmMenu) {
 		int i= super.updateByPk(xmMenu);
-
-		if(StringUtils.hasText(xmMenu.getPmenuId())){
-			this.updateMenuChildrenCntByMenuId(xmMenu.getPmenuId());
-		}
 		return i;
 	}
 
 	@Transactional
 	public void doBatchInsert(List<XmMenu> xmMenus) {
 		super.batchInsert(xmMenus);
-		List<XmMenu> list= xmMenus.stream().filter(i->!xmMenus.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
-		list=list.stream().filter(i->StringUtils.hasText(i.getPmenuId())).collect(Collectors.toList());
-		if(list.size()>0){
-			this.updateChildrenCntByIds(list.stream().map(i->i.getPmenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
-		}
+		this.xmMenuStateService.batchLoadXmMenuToState(xmMenus.get(0).getProductId());
+		this.xmMenuStateService.batchSumParents(xmMenus);
+
 	}
 
 	@Transactional
 	public void doBatchDelete(List<XmMenu> canDelList) {
 		super.batchDelete(canDelList);
-
-		List<XmMenu> list= canDelList.stream().filter(i->!canDelList.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
-		list=list.stream().filter(i->StringUtils.hasText(i.getPmenuId())).collect(Collectors.toList());
-		if(list.size()>0){
-			this.updateChildrenCntByIds(list.stream().map(i->i.getPmenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
-		}
+		this.xmMenuStateService.batchSumParents(canDelList);
 	}
 	@Transactional
 	public void doBatchDeleteByProductIds(List<String> productIds) {
 		super.delete("doBatchDeleteByProductIds",productIds);
+	}
+
+
+	/**
+	 * 检查是否能删除干净所有儿子孙子节点。
+	 * @param delNode 当前删除节点
+	 * @param delNodes 本批量需要删除的全部节点
+	 * @return
+	 */
+	public boolean checkCanDelAllChild(XmMenu delNode, List<XmMenu> delNodes) {
+		if(delNode==null){
+			return true;
+		}
+		if(delNode.getChildrenCnt()==null||delNode.getChildrenCnt()<=0){
+			return true;
+		}
+		List<XmMenu> childList=delNodes.stream().filter(i->delNode.getMenuId().equals(i.getPmenuId())).collect(Collectors.toList());
+		if(childList==null||childList.size()<delNode.getChildrenCnt()){
+			return false;
+		}
+		for (XmMenu n : childList) {
+			if (!this.checkCanDelAllChild(n, delNodes)) {
+				return false;
+			}
+		}
+		return true;
+
+	}
+
+	public List<XmMenu> selectListByIds(List<String> ids) {
+		return super.selectList("selectListByIds",ids);
 	}
 }
 

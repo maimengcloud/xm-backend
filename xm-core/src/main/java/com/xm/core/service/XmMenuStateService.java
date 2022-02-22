@@ -2,14 +2,18 @@ package com.xm.core.service;
 
 import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
+import com.mdp.core.utils.DateUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmMenuState;
+import com.xm.core.entity.XmTask;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -64,6 +68,7 @@ public class XmMenuStateService extends BaseService {
 				state.setPlanStartTime(new Date());
 				state.setCtime(new Date());
 				state.setLtime(new Date());
+				state.setBizDate(DateUtils.getDate("yyyy-MM-dd"));
 				state.setCuserid(user.getUserid());
 				state.setCusername(user.getUsername()); 
 				state.setProductName(productName);
@@ -73,7 +78,95 @@ public class XmMenuStateService extends BaseService {
 		this.batchInsert(addStates);
 		return tips;
 		
-	} 
+	}
+
+
+	public long batchLoadXmMenuToState(String productId){
+		long i=super.insert("batchLoadXmMenuToState",map("bizDate",DateUtils.getDate("yyyy-MM-dd"),"productId",productId));
+		return i;
+	}
+
+	@Transactional
+	public void sumParents(XmMenu node){
+		String id=node.getMenuId();
+		String pidPaths=node.getPidPaths();
+		if(!StringUtils.hasText(pidPaths)){
+			return;
+		}
+		if(!pidPaths.startsWith("0,")){
+			return;
+		}
+		if("0".equals(node.getNtype())&&pidPaths.endsWith(id+",")){
+			pidPaths=pidPaths.substring(2,pidPaths.indexOf(id));
+		}else{
+			pidPaths=pidPaths.substring(2);
+		}
+
+		if(!StringUtils.hasText(pidPaths)){
+			return;
+		}
+		String[] pidPathss=pidPaths.split(",");
+		List<String> pidPathsList=new ArrayList<>();
+		for (int i = pidPathss.length-1; i >=0; i--) {
+			pidPathsList.add(pidPathss[i]);
+		}
+		if(pidPathsList.size()>0){
+			super.update("sumParents",pidPathsList	);
+		}
+
+	}
+	@Transactional
+	public void batchSumParents(List<XmMenu> xmMenus) {
+		List<Set<String>> list=new ArrayList<>();
+		for (XmMenu node : xmMenus) {
+			String id=node.getMenuId();
+			String pidPaths=node.getPidPaths();
+			if(!StringUtils.hasText(pidPaths)){
+				continue;
+			}
+			if(!pidPaths.startsWith("0,")){
+				continue;
+			}
+			if("0".equals(node.getNtype())){
+				pidPaths=pidPaths.substring(2,pidPaths.indexOf(id));
+			}else{
+				pidPaths=pidPaths.substring(2);
+			}
+
+			if(!StringUtils.hasText(pidPaths)){
+				continue;
+			}
+			String[] pidPathss=pidPaths.split(",");
+			for (int i = 0; i <pidPathss.length; i++) {
+				if(list.size()<=i){
+					list.add(new HashSet<>());
+				}
+				Set<String> set=list.get(i);
+				set.add(pidPathss[i]);
+			}
+			if(list.size()<=0){
+				return;
+			}
+			Set<String> allSet=new HashSet<>();
+			for (int i = list.size() - 1; i >= 0; i--) {
+				Set<String> set=list.get(i);
+				if(set.size()>0){
+					List<String> ids=set.stream().filter(k->!allSet.contains(k)).collect(Collectors.toList());
+					if(ids.size()>0){
+						allSet.addAll(ids.stream().collect(Collectors.toSet()));
+						super.update("batchSumParents", ids);
+					}
+
+				}
+
+			}
+
+
+		}
+
+	}
+
+
 	/**
 	 * 计算bug、task、测试案例、等数据
 	 * @param productId
