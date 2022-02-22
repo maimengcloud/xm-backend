@@ -1,15 +1,14 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.util.Date;
 
 /**
- * 组织 com.qqkj  顶级模块 xm 大模块 core  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectGroupUser所有属性名: <br>
  *	joinTime,id,groupId,userid,username,isHead,outTime,status,bizProcInstId,bizFlowState,projectId;<br>
- * 表 XM.xm_project_group_user xm_project_group_user的所有字段名: <br>
+ * 表 xm_project_group_user xm_project_group_user的所有字段名: <br>
  *	join_time,id,group_id,userid,username,is_head,out_time,status,biz_proc_inst_id,biz_flow_state,project_id;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>

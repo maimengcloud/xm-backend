@@ -6,25 +6,46 @@
 	<!--开始 自定sql函数区域 -->
 		<!--请在此区域添加自定义函数-->
 
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+		<if test="key != null and key !='' ">   and res.product_name like #{key}    </if>
+		<if test=" projectId !=null and projectId!=''">
+			and exists( select 1 from  xm_product_project_link ppl
+			where ppl.project_id=#{projectId}  and ppl.product_id=res.id
+			)
+		</if>
+		<if test="compete !=null and compete!=''">
+			and ( exists ( select 1 from xm_project_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
+			or res.pm_userid=#{compete}
+			or exists ( select 1 from xm_menu m where m.mm_userid=#{compete} and m.product_id=res.id)
+			)
+		</if>
+		<if test="ctimeStart!=null and ctimeEnd!=null ">and ctime between #{ctimeStart} and #{ctimeEnd}</if>
+    </sql>
+
 	<select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
 		select res.*,s.* from xm_product res left join xm_product_state s on res.id=s.product_id
 		<where>
 			<if test="ids != null">  and
 				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-				        #{item}
-				    </foreach>
-			 </if>
+				<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+					#{item}
+				</foreach>
+			</if>
 			<include refid="where"/>
 			<if test=" projectId !=null and projectId!=''">
 				and exists( select 1 from  xm_product_project_link ppl
-					where ppl.project_id=#{projectId}  and ppl.product_id=res.id
+				where ppl.project_id=#{projectId}  and ppl.product_id=res.id
 				)
 			</if>
 			<if test="iterationId!=null and iterationId!=''">
 				and exists( select 1 from xm_iteration_product_link ipl where ipl.product_id =res.id and ipl.iteration_id=#{iterationId} )
 			</if>
-			 <if test="compete !=null and compete!=''">
+			<if test="compete !=null and compete!=''">
 				and ( exists ( select 1 from xm_project_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
 				or res.pm_userid=#{compete}
 				or exists ( select 1 from xm_menu m where m.mm_userid=#{compete} and m.product_id=res.id)
@@ -39,6 +60,7 @@
 		</where>
 	</select>
 
+
 	<!--结束 自定义sql函数区域-->
 	
 
@@ -47,26 +69,8 @@
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
 		select * from xm_product res
 		<where>
-			<if test="ids != null">  and
-				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-				        #{item}
-				    </foreach>
-			 </if>
+		    <include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">   and res.product_name like #{key}    </if>
-			<if test=" projectId !=null and projectId!=''">
-				and exists( select 1 from  xm_product_project_link ppl
-				where ppl.project_id=#{projectId}  and ppl.product_id=res.id
-				)
-			</if>
-			<if test="compete !=null and compete!=''">
-				and ( exists ( select 1 from xm_project_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
-				    	or res.pm_userid=#{compete}
-						or exists ( select 1 from xm_menu m where m.mm_userid=#{compete} and m.product_id=res.id)
-					)
-			</if>
-			<if test="ctimeStart!=null and ctimeEnd!=null ">and ctime between #{ctimeStart} and #{ctimeEnd}</if>
 		</where>
 	</select>
 	
@@ -103,7 +107,7 @@
 		insert into xm_product(
 			<include refid="columns"/>
 		) values (
-		#{id},#{productName},#{branchId},#{remark},#{version},#{pmUserid},#{pmUsername},#{ctime},#{deptid},#{pstatus},#{startTime},#{endTime},#{deptName},#{admUserid},#{admUsername},#{assistantUserid},#{assistantUsername},#{bizProcInstId},#{bizFlowState},#{isTpl},#{baselineId},#{baseTime},#{code}
+		#{id},#{productName},#{branchId},#{remark},#{version},#{pmUserid},#{pmUsername},#{ctime},#{deptid},#{pstatus},#{startTime},#{endTime},#{deptName},#{admUserid},#{admUsername},#{assistantUserid},#{assistantUsername},#{bizProcInstId},#{bizFlowState},#{isTpl},#{baselineId},#{baseTime},#{code},#{pbudgetWorkload},#{pbudgetAmount},#{pmenuBudgetWorkload},#{pmenuBudgetAmount}
 		)
 	</insert>
 	
@@ -166,7 +170,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,assistant_userid,assistant_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code
+		id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,assistant_userid,assistant_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code,pbudget_workload,pbudget_amount,pmenu_budget_workload,pmenu_budget_amount
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -194,6 +198,10 @@
 		<if test="baselineId != null and baselineId != ''">      and res.baseline_id = #{baselineId}     </if>
 		<if test="baseTime != null">      and date_format(res.base_time,'%Y-%m-%d') = date_format(#{baseTime},'%Y-%m-%d')     </if>
 		<if test="code != null and code != ''">      and res.code = #{code}     </if>
+		<if test="pbudgetWorkload != null and pbudgetWorkload != ''">      and res.pbudget_workload = #{pbudgetWorkload}     </if>
+		<if test="pbudgetAmount != null and pbudgetAmount != ''">      and res.pbudget_amount = #{pbudgetAmount}     </if>
+		<if test="pmenuBudgetWorkload != null and pmenuBudgetWorkload != ''">      and res.pmenu_budget_workload = #{pmenuBudgetWorkload}     </if>
+		<if test="pmenuBudgetAmount != null and pmenuBudgetAmount != ''">      and res.pmenu_budget_amount = #{pmenuBudgetAmount}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -218,7 +226,11 @@
 		is_tpl = #{isTpl},
 		baseline_id = #{baselineId},
 		base_time = #{baseTime},
-		code = #{code}
+		code = #{code},
+		pbudget_workload = #{pbudgetWorkload},
+		pbudget_amount = #{pbudgetAmount},
+		pmenu_budget_workload = #{pmenuBudgetWorkload},
+		pmenu_budget_amount = #{pmenuBudgetAmount}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
@@ -243,6 +255,10 @@
 		<if test="baselineId != null and baselineId != ''"> baseline_id = #{baselineId},     </if>
 		<if test="baseTime != null"> base_time = #{baseTime},     </if>
 		<if test="code != null and code != ''"> code = #{code},     </if>
+		<if test="pbudgetWorkload != null and pbudgetWorkload != ''"> pbudget_workload = #{pbudgetWorkload},     </if>
+		<if test="pbudgetAmount != null and pbudgetAmount != ''"> pbudget_amount = #{pbudgetAmount},     </if>
+		<if test="pmenuBudgetWorkload != null and pmenuBudgetWorkload != ''"> pmenu_budget_workload = #{pmenuBudgetWorkload},     </if>
+		<if test="pmenuBudgetAmount != null and pmenuBudgetAmount != ''"> pmenu_budget_amount = #{pmenuBudgetAmount},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -267,6 +283,10 @@
 			is_tpl = #{item.isTpl},
 			baseline_id = #{item.baselineId},
 			base_time = #{item.baseTime},
-			code = #{item.code}
+			code = #{item.code},
+			pbudget_workload = #{item.pbudgetWorkload},
+			pbudget_amount = #{item.pbudgetAmount},
+			pmenu_budget_workload = #{item.pmenuBudgetWorkload},
+			pmenu_budget_amount = #{item.pmenuBudgetAmount}
 	</sql>
 </mapper>

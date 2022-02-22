@@ -223,7 +223,7 @@
 		insert into xm_project_phase(
 			<include refid="columns"/>
 		) values (
-		#{id},#{phaseName},#{remark},#{parentPhaseId},#{branchId},#{projectId},#{beginDate},#{endDate},#{phaseBudgetHours},#{phaseBudgetStaffNu},#{ctime},#{phaseBudgetNouserAt},#{phaseBudgetInnerUserAt},#{phaseBudgetOutUserAt},#{projectBaselineId},#{bizProcInstId},#{bizFlowState},#{phaseBudgetWorkload},#{phaseActWorkload},#{phaseActInnerUserWorkload},#{phaseActOutUserWorkload},#{taskType},#{planType},#{seqNo},#{phaseBudgetInnerUserWorkload},#{phaseBudgetOutUserWorkload},#{actNouserAt},#{actInnerUserAt},#{phaseBudgetInnerUserPrice},#{phaseBudgetOutUserPrice},#{phaseBudgetOutUserCnt},#{phaseBudgetInnerUserCnt},#{actRate},#{phaseStatus},#{actOutUserAt},#{taskCnt},#{finishTaskCnt},#{iterationCnt},#{calcTime},#{taskBudgetWorkload},#{taskBudgetAt},#{mngUserid},#{mngUsername},#{milestone},#{pleaf},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{isKeyPath},#{pidPaths},#{lvl},#{isTpl}
+		#{id},#{phaseName},#{remark},#{parentPhaseId},#{branchId},#{projectId},#{beginDate},#{endDate},#{phaseBudgetHours},#{phaseBudgetStaffNu},#{ctime},#{phaseBudgetNouserAt},#{phaseBudgetInnerUserAt},#{phaseBudgetOutUserAt},#{projectBaselineId},#{bizProcInstId},#{bizFlowState},#{phaseBudgetWorkload},#{phaseActWorkload},#{phaseActInnerUserWorkload},#{phaseActOutUserWorkload},#{taskType},#{planType},#{seqNo},#{phaseBudgetInnerUserWorkload},#{phaseBudgetOutUserWorkload},#{actNouserAt},#{actInnerUserAt},#{phaseBudgetInnerUserPrice},#{phaseBudgetOutUserPrice},#{phaseBudgetOutUserCnt},#{phaseBudgetInnerUserCnt},#{actRate},#{phaseStatus},#{actOutUserAt},#{taskCnt},#{finishTaskCnt},#{iterationCnt},#{calcTime},#{taskBudgetWorkload},#{taskBudgetAt},#{mngUserid},#{mngUsername},#{milestone},#{pleaf},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{isKeyPath},#{pidPaths},#{lvl},#{isTpl},#{phaseClass},#{productId}
 		)
 	</insert>
 	
@@ -286,7 +286,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf,tag_ids,tag_names,ntype,children_cnt,ltime,is_key_path,pid_paths,lvl,is_tpl
+		id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf,tag_ids,tag_names,ntype,children_cnt,ltime,is_key_path,pid_paths,lvl,is_tpl,phase_class,product_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -345,6 +345,8 @@
 		<if test="pidPaths != null and pidPaths != ''">      and res.pid_paths = #{pidPaths}     </if>
 		<if test="lvl != null and lvl != ''">      and res.lvl = #{lvl}     </if>
 		<if test="isTpl != null and isTpl != ''">      and res.is_tpl = #{isTpl}     </if>
+		<if test="phaseClass != null and phaseClass != ''">      and res.phase_class = #{phaseClass}     </if>
+		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -400,7 +402,9 @@
 		is_key_path = #{isKeyPath},
 		pid_paths = #{pidPaths},
 		lvl = #{lvl},
-		is_tpl = #{isTpl}
+		is_tpl = #{isTpl},
+		phase_class = #{phaseClass},
+		product_id = #{productId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="phaseName != null and phaseName != ''"> phase_name = #{phaseName},     </if>
@@ -456,6 +460,8 @@
 		<if test="pidPaths != null and pidPaths != ''"> pid_paths = #{pidPaths},     </if>
 		<if test="lvl != null and lvl != ''"> lvl = #{lvl},     </if>
 		<if test="isTpl != null and isTpl != ''"> is_tpl = #{isTpl},     </if>
+		<if test="phaseClass != null and phaseClass != ''"> phase_class = #{phaseClass},     </if>
+		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -511,6 +517,8 @@
 			is_key_path = #{item.isKeyPath},
 			pid_paths = #{item.pidPaths},
 			lvl = #{item.lvl},
-			is_tpl = #{item.isTpl}
+			is_tpl = #{item.isTpl},
+			phase_class = #{item.phaseClass},
+			product_id = #{item.productId}
 	</sql>
 </mapper>

@@ -146,7 +146,7 @@
 		insert into xm_menu(
 			<include refid="columns"/>
 		) values (
-		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl}
+		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{budgetHours},#{budgetStaffNu},#{budgetWorkload},#{budgetAmount},#{phaseId}
 		)
 	</insert>
 	
@@ -209,7 +209,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl
+		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -240,6 +240,11 @@
 		<if test="pidPaths != null and pidPaths != ''">      and res.pid_paths = #{pidPaths}     </if>
 		<if test="lvl != null and lvl != ''">      and res.lvl = #{lvl}     </if>
 		<if test="isTpl != null and isTpl != ''">      and res.is_tpl = #{isTpl}     </if>
+		<if test="budgetHours != null and budgetHours != ''">      and res.budget_hours = #{budgetHours}     </if>
+		<if test="budgetStaffNu != null and budgetStaffNu != ''">      and res.budget_staff_nu = #{budgetStaffNu}     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
+		<if test="budgetAmount != null and budgetAmount != ''">      and res.budget_amount = #{budgetAmount}     </if>
+		<if test="phaseId != null and phaseId != ''">      and res.phase_id = #{phaseId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -267,7 +272,12 @@
 		tag_names = #{tagNames},
 		pid_paths = #{pidPaths},
 		lvl = #{lvl},
-		is_tpl = #{isTpl}
+		is_tpl = #{isTpl},
+		budget_hours = #{budgetHours},
+		budget_staff_nu = #{budgetStaffNu},
+		budget_workload = #{budgetWorkload},
+		budget_amount = #{budgetAmount},
+		phase_id = #{phaseId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="menuName != null and menuName != ''"> menu_name = #{menuName},     </if>
@@ -295,6 +305,11 @@
 		<if test="pidPaths != null and pidPaths != ''"> pid_paths = #{pidPaths},     </if>
 		<if test="lvl != null and lvl != ''"> lvl = #{lvl},     </if>
 		<if test="isTpl != null and isTpl != ''"> is_tpl = #{isTpl},     </if>
+		<if test="budgetHours != null and budgetHours != ''"> budget_hours = #{budgetHours},     </if>
+		<if test="budgetStaffNu != null and budgetStaffNu != ''"> budget_staff_nu = #{budgetStaffNu},     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
+		<if test="budgetAmount != null and budgetAmount != ''"> budget_amount = #{budgetAmount},     </if>
+		<if test="phaseId != null and phaseId != ''"> phase_id = #{phaseId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -322,6 +337,11 @@
 			tag_names = #{item.tagNames},
 			pid_paths = #{item.pidPaths},
 			lvl = #{item.lvl},
-			is_tpl = #{item.isTpl}
+			is_tpl = #{item.isTpl},
+			budget_hours = #{item.budgetHours},
+			budget_staff_nu = #{item.budgetStaffNu},
+			budget_workload = #{item.budgetWorkload},
+			budget_amount = #{item.budgetAmount},
+			phase_id = #{item.phaseId}
 	</sql>
 </mapper>

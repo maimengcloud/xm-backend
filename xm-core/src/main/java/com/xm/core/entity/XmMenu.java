@@ -3,13 +3,14 @@ package  com.xm.core.entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl;<br>
+ *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId;<br>
  * 表 xm_menu 功能表的所有字段名: <br>
- *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl;<br>
+ *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -61,10 +62,10 @@ public class XmMenu  implements java.io.Serializable {
 	@ApiModelProperty(notes="排序序号",allowEmptyValue=true,example="",allowableValues="")
 	String seqNo;
 	
-	@ApiModelProperty(notes="需求管理员编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="故事管理员编号",allowEmptyValue=true,example="",allowableValues="")
 	String mmUserid;
 	
-	@ApiModelProperty(notes="需求管理员姓名",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="故事管理员姓名",allowEmptyValue=true,example="",allowableValues="")
 	String mmUsername;
 	
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
@@ -96,6 +97,21 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="是否为模板",allowEmptyValue=true,example="",allowableValues="")
 	String isTpl;
+	
+	@ApiModelProperty(notes="预算工时总数从上到下分配",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal budgetHours;
+	
+	@ApiModelProperty(notes="投入人员数，从上到下分配",allowEmptyValue=true,example="",allowableValues="")
+	Integer budgetStaffNu;
+	
+	@ApiModelProperty(notes="总工作量单位人时，从上到下分配，下级汇总不能大于上级",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal budgetWorkload;
+	
+	@ApiModelProperty(notes="预算金额，从上到下汇总，从上到下分配，下级汇总不能大于上级",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal budgetAmount;
+	
+	@ApiModelProperty(notes="计划编号",allowEmptyValue=true,example="",allowableValues="")
+	String phaseId;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -191,13 +207,13 @@ public class XmMenu  implements java.io.Serializable {
 		this.seqNo = seqNo;
 	}
 	/**
-	 * 需求管理员编号
+	 * 故事管理员编号
 	 **/
 	public void setMmUserid(String mmUserid) {
 		this.mmUserid = mmUserid;
 	}
 	/**
-	 * 需求管理员姓名
+	 * 故事管理员姓名
 	 **/
 	public void setMmUsername(String mmUsername) {
 		this.mmUsername = mmUsername;
@@ -261,6 +277,36 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public void setIsTpl(String isTpl) {
 		this.isTpl = isTpl;
+	}
+	/**
+	 * 预算工时总数从上到下分配
+	 **/
+	public void setBudgetHours(BigDecimal budgetHours) {
+		this.budgetHours = budgetHours;
+	}
+	/**
+	 * 投入人员数，从上到下分配
+	 **/
+	public void setBudgetStaffNu(Integer budgetStaffNu) {
+		this.budgetStaffNu = budgetStaffNu;
+	}
+	/**
+	 * 总工作量单位人时，从上到下分配，下级汇总不能大于上级
+	 **/
+	public void setBudgetWorkload(BigDecimal budgetWorkload) {
+		this.budgetWorkload = budgetWorkload;
+	}
+	/**
+	 * 预算金额，从上到下汇总，从上到下分配，下级汇总不能大于上级
+	 **/
+	public void setBudgetAmount(BigDecimal budgetAmount) {
+		this.budgetAmount = budgetAmount;
+	}
+	/**
+	 * 计划编号
+	 **/
+	public void setPhaseId(String phaseId) {
+		this.phaseId = phaseId;
 	}
 	
 	/**
@@ -348,13 +394,13 @@ public class XmMenu  implements java.io.Serializable {
 		return this.seqNo;
 	}
 	/**
-	 * 需求管理员编号
+	 * 故事管理员编号
 	 **/
 	public String getMmUserid() {
 		return this.mmUserid;
 	}
 	/**
-	 * 需求管理员姓名
+	 * 故事管理员姓名
 	 **/
 	public String getMmUsername() {
 		return this.mmUsername;
@@ -418,6 +464,36 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public String getIsTpl() {
 		return this.isTpl;
+	}
+	/**
+	 * 预算工时总数从上到下分配
+	 **/
+	public BigDecimal getBudgetHours() {
+		return this.budgetHours;
+	}
+	/**
+	 * 投入人员数，从上到下分配
+	 **/
+	public Integer getBudgetStaffNu() {
+		return this.budgetStaffNu;
+	}
+	/**
+	 * 总工作量单位人时，从上到下分配，下级汇总不能大于上级
+	 **/
+	public BigDecimal getBudgetWorkload() {
+		return this.budgetWorkload;
+	}
+	/**
+	 * 预算金额，从上到下汇总，从上到下分配，下级汇总不能大于上级
+	 **/
+	public BigDecimal getBudgetAmount() {
+		return this.budgetAmount;
+	}
+	/**
+	 * 计划编号
+	 **/
+	public String getPhaseId() {
+		return this.phaseId;
 	}
 
 }

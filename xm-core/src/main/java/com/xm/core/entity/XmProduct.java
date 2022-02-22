@@ -3,13 +3,14 @@ package  com.xm.core.entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProduct所有属性名: <br>
- *	id,productName,branchId,remark,version,pmUserid,pmUsername,ctime,deptid,pstatus,startTime,endTime,deptName,admUserid,admUsername,assistantUserid,assistantUsername,bizProcInstId,bizFlowState,isTpl,baselineId,baseTime,code;<br>
+ *	id,productName,branchId,remark,version,pmUserid,pmUsername,ctime,deptid,pstatus,startTime,endTime,deptName,admUserid,admUsername,assistantUserid,assistantUsername,bizProcInstId,bizFlowState,isTpl,baselineId,baseTime,code,pbudgetWorkload,pbudgetAmount,pmenuBudgetWorkload,pmenuBudgetAmount;<br>
  * 表 xm_product 产品表的所有字段名: <br>
- *	id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,assistant_userid,assistant_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code;<br>
+ *	id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,assistant_userid,assistant_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code,pbudget_workload,pbudget_amount,pmenu_budget_workload,pmenu_budget_amount;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -46,7 +47,7 @@ public class XmProduct  implements java.io.Serializable {
 	@ApiModelProperty(notes="归属部门",allowEmptyValue=true,example="",allowableValues="")
 	String deptid;
 	
-	@ApiModelProperty(notes="产品计划:0未开始,1研发中,2已完成",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="产品阶段:0未开始,1研发中,2已完成,3已关闭",allowEmptyValue=true,example="",allowableValues="")
 	String pstatus;
 	
 	@ApiModelProperty(notes="开始日期",allowEmptyValue=true,example="",allowableValues="")
@@ -87,6 +88,18 @@ public class XmProduct  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="产品编码",allowEmptyValue=true,example="",allowableValues="")
 	String code;
+	
+	@ApiModelProperty(notes="产品预计总工作量，应该大于一级需求总预算工作量",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal pbudgetWorkload;
+	
+	@ApiModelProperty(notes="产品预计总金额，应该大于一级需求总预算金额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal pbudgetAmount;
+	
+	@ApiModelProperty(notes="从需求汇总来的总预算工作量",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal pmenuBudgetWorkload;
+	
+	@ApiModelProperty(notes="从需求汇总的总预算金额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal pmenuBudgetAmount;
 
 	/**产品编号**/
 	public XmProduct(String id) {
@@ -152,7 +165,7 @@ public class XmProduct  implements java.io.Serializable {
 		this.deptid = deptid;
 	}
 	/**
-	 * 产品计划:0未开始,1研发中,2已完成
+	 * 产品阶段:0未开始,1研发中,2已完成,3已关闭
 	 **/
 	public void setPstatus(String pstatus) {
 		this.pstatus = pstatus;
@@ -235,6 +248,30 @@ public class XmProduct  implements java.io.Serializable {
 	public void setCode(String code) {
 		this.code = code;
 	}
+	/**
+	 * 产品预计总工作量，应该大于一级需求总预算工作量
+	 **/
+	public void setPbudgetWorkload(BigDecimal pbudgetWorkload) {
+		this.pbudgetWorkload = pbudgetWorkload;
+	}
+	/**
+	 * 产品预计总金额，应该大于一级需求总预算金额
+	 **/
+	public void setPbudgetAmount(BigDecimal pbudgetAmount) {
+		this.pbudgetAmount = pbudgetAmount;
+	}
+	/**
+	 * 从需求汇总来的总预算工作量
+	 **/
+	public void setPmenuBudgetWorkload(BigDecimal pmenuBudgetWorkload) {
+		this.pmenuBudgetWorkload = pmenuBudgetWorkload;
+	}
+	/**
+	 * 从需求汇总的总预算金额
+	 **/
+	public void setPmenuBudgetAmount(BigDecimal pmenuBudgetAmount) {
+		this.pmenuBudgetAmount = pmenuBudgetAmount;
+	}
 	
 	/**
 	 * 产品编号
@@ -291,7 +328,7 @@ public class XmProduct  implements java.io.Serializable {
 		return this.deptid;
 	}
 	/**
-	 * 产品计划:0未开始,1研发中,2已完成
+	 * 产品阶段:0未开始,1研发中,2已完成,3已关闭
 	 **/
 	public String getPstatus() {
 		return this.pstatus;
@@ -373,6 +410,30 @@ public class XmProduct  implements java.io.Serializable {
 	 **/
 	public String getCode() {
 		return this.code;
+	}
+	/**
+	 * 产品预计总工作量，应该大于一级需求总预算工作量
+	 **/
+	public BigDecimal getPbudgetWorkload() {
+		return this.pbudgetWorkload;
+	}
+	/**
+	 * 产品预计总金额，应该大于一级需求总预算金额
+	 **/
+	public BigDecimal getPbudgetAmount() {
+		return this.pbudgetAmount;
+	}
+	/**
+	 * 从需求汇总来的总预算工作量
+	 **/
+	public BigDecimal getPmenuBudgetWorkload() {
+		return this.pmenuBudgetWorkload;
+	}
+	/**
+	 * 从需求汇总的总预算金额
+	 **/
+	public BigDecimal getPmenuBudgetAmount() {
+		return this.pmenuBudgetAmount;
 	}
 
 }
