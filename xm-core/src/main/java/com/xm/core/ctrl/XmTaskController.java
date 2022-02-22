@@ -1,7 +1,6 @@
 package com.xm.core.ctrl;
 
 import com.alibaba.fastjson.JSON;
-import com.github.pagehelper.Page;
 import com.github.pagehelper.PageSerializable;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
@@ -637,7 +636,7 @@ public class XmTaskController {
 			if(judgetTips.isOk()) {
 				xmTaskService.updateTask(xmTaskVo,xmTaskDb);
 				if(!StringUtils.isEmpty(xmTaskVo.getExecutorUserid())) {
-					List<XmProjectGroupVo> groups=groupService.getUserGroups(xmTaskVo.getProjectId(), xmTaskVo.getExecutorUserid());
+					List<XmProjectGroupVo> groups=groupService.getUserGroupsByProjectId(xmTaskVo.getProjectId(), xmTaskVo.getExecutorUserid());
 					if(groups!=null && groups.size()>0) {
 						for (XmProjectGroupVo g : groups) {
 							xmPushMsgService.pushGroupMsg(user.getBranchId(), g.getId(), user.getUserid(), user.getUsername(), user.getUsername()+"修改了任务【"+xmTaskVo.getName()+"】信息");

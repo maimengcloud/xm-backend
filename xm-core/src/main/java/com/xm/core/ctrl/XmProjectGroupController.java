@@ -9,8 +9,10 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmProjectGroup;
+import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.XmProjectService;
 import com.xm.core.service.XmRecordService;
@@ -51,6 +53,10 @@ public class XmProjectGroupController {
 	
 	@Autowired
 	private XmProjectService xmProjectService;
+
+
+	@Autowired
+	private XmProductService xmProductService;
 	
 	@Autowired
     XmPushMsgService pushMsgService;
@@ -64,39 +70,46 @@ public class XmProjectGroupController {
 	})
 	@HasQx(value = "xm_core_xmProjectGroup_updateGroup",name = "批量更新修改项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/updateGroup",method=RequestMethod.POST)
-	public Map<String,Object> updateGroup(@RequestBody XmProjectGroup xmProjectGroup) {
+	public Map<String,Object> updateGroup(@RequestBody XmProjectGroup group) {
 
-		Tips tips=new Tips("团队更新成功");
+		Tips tips=new Tips("小组更新成功");
 		Map<String,Object> m = new HashMap<>();
-		if(xmProjectGroup==null){
-			tips.setFailureMsg("团队信息不能为空");
+		if(group==null){
+			tips.setFailureMsg("小组信息不能为空");
 			m.put("tips", tips);
 			return m;
 		}
-		if(StringUtils.hasText(xmProjectGroup.getId())){
-			return ResponseHelper.failed("id-0","团队编号不能为空");
-		}
-		XmProjectGroup groupDb=this.xmProjectGroupService.selectOneObject(new XmProjectGroup(xmProjectGroup.getId()));
-		if(groupDb==null){
-			return ResponseHelper.failed("data-0","该团队已不存在");
-		}
-		XmProject xmProject=this.xmProjectService.getProjectFromCache(groupDb.getProjectId());
-		if(xmProject==null){
-			return ResponseHelper.failed("prj-0","项目已不存在");
-		}
-		if("4".equals(xmProject.getStatus())){
-			return ResponseHelper.failed("prj-status-4","项目暂停中，不能操作");
-		}
-		if("9".equals(xmProject.getStatus())){
-			return ResponseHelper.failed("prj-status-9","项目已关闭，不能操作");
+		if(StringUtils.hasText(group.getId())){
+			return ResponseHelper.failed("id-0","小组编号不能为空");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
-		if(!xmProject.getCreateUserid().equals(user.getUserid())&& user.getUserid().equals(xmProject.get)){
-
+		XmProjectGroup groupDb=this.xmProjectGroupService.selectOneObject(new XmProjectGroup(group.getId()));
+		if(groupDb==null){
+			return ResponseHelper.failed("data-0","小组已不存在。");
 		}
-		xmProjectGroupService.parentIdPathsCalcBeforeSave(xmProjectGroup);
-		tips= xmProjectGroupService.updateGroup(xmProjectGroup,groupDb);	//列出XmProjectGroup列表
-		//m.put("data",xmProjectGroupVo);
+		if("1".equals(groupDb.getPgClass())){
+			XmProduct xmProduct=this.xmProductService.selectOneObject(new XmProduct(groupDb.getProductId()));
+			tips=this.xmProjectGroupService.checkProductStatus(xmProduct);
+			if(tips.isOk()==false){
+				return ResponseHelper.failed(tips);
+			}
+			tips=this.xmProjectGroupService.checkHasEditProdcutGroupQx(user,group,groupDb,xmProduct);
+			if(tips.isOk()==false){
+				return ResponseHelper.failed(tips);
+			}
+		}else{
+			XmProject xmProject=this.xmProjectService.getProjectFromCache(groupDb.getProjectId());
+			tips=this.xmProjectGroupService.checkProjectStatus(xmProject);
+			if(tips.isOk()==false){
+				return ResponseHelper.failed(tips);
+			}
+			tips=this.xmProjectGroupService.checkHasEditProjectGroupQx(user,group,groupDb,xmProject);
+			if(tips.isOk()==false){
+				return ResponseHelper.failed(tips);
+			}
+		}
+		xmProjectGroupService.parentIdPathsCalcBeforeSave(group);
+		tips= xmProjectGroupService.updateGroup(group,groupDb);	//列出XmProjectGroup列表
 		m.put("tips", tips);
 		return m;
 	}

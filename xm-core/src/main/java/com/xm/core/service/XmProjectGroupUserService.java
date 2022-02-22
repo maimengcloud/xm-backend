@@ -21,7 +21,11 @@ public class XmProjectGroupUserService extends BaseService {
 	public List<XmProjectGroupUser> selectGroupUserListByProjectId(String projectId) {
 		return this.selectList("selectGroupUserListByProjectId", projectId); 
 	}
-	
+
+	public List<XmProjectGroupUser> selectGroupUserListByProductId(String productId) {
+		return this.selectList("selectGroupUserListByProductId", productId);
+	}
+
 	/** 请在此类添加自定义函数 */
 
 }

@@ -2,7 +2,6 @@ package com.xm.core.service;
 
 import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
@@ -10,7 +9,6 @@ import com.xm.core.entity.*;
 import com.xm.core.service.cache.XmProjectGroupCacheService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmProjectGroupVo;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.util.*;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 /**
@@ -51,25 +48,29 @@ public class XmProjectGroupService extends BaseService {
 	@Autowired
 	private XmProjectService xmProjectService;
 
+
+	@Autowired
+	private XmProductService xmProductService;
+
     @Autowired
     XmPushMsgService pushMsgService;
 
 	/** 请在此类添加自定义函数 */
-	public List<XmProjectGroupVo> getProjectGroupVoList(String projectId) { 
+	public List<XmProjectGroupVo> getProjectGroupVoList(String projectId) {
 		List<XmProjectGroupVo>	groupVoList=new ArrayList<>();
-		List<XmProjectGroupVo>	groupVoList2  = groupCacheService.getGroups(projectId);
+		List<XmProjectGroupVo>	groupVoList2  = groupCacheService.getProjectGroups(projectId);
 		if(groupVoList2==null) { 
 			
 		    XmProjectGroup group = new XmProjectGroup();
 		    group.setProjectId(projectId);
 		    List<XmProjectGroup> groupList = this.selectListByWhere(group);
 		     if(groupList==null || groupList.size()==0) {
-		    	 groupCacheService.putGroups(projectId, groupVoList);
+		    	 groupCacheService.putProjectGroups(projectId, groupVoList);
 		    	 return groupVoList;
 		     }
 		    List<XmProjectGroupUser> groupUserList=this.xmProjectGroupUserService.selectGroupUserListByProjectId(projectId); 
 		    if(groupUserList==null || groupUserList.size()==0) {
-		    	 groupCacheService.putGroups(projectId, groupVoList);
+		    	 groupCacheService.putProjectGroups(projectId, groupVoList);
 		    	 return groupVoList;
 		    }
 		    groupList.forEach(g -> { 
@@ -84,13 +85,49 @@ public class XmProjectGroupService extends BaseService {
 	            gvo.setGroupUsers(groupUsers );
 	            groupVoList.add(gvo);
 	        });
-		    groupCacheService.putGroups(projectId, groupVoList);
+		    groupCacheService.putProjectGroups(projectId, groupVoList);
 		    return groupVoList;
 		}else {
 			return groupVoList2;
 		}
 	    
     }
+	public List<XmProjectGroupVo> getProductGroupVoList(String productId) {
+		List<XmProjectGroupVo>	groupVoList=new ArrayList<>();
+		List<XmProjectGroupVo>	groupVoList2  = groupCacheService.getProductGroups(productId);
+		if(groupVoList2==null) {
+
+			XmProjectGroup group = new XmProjectGroup();
+			group.setProductId(productId);
+			List<XmProjectGroup> groupList = this.selectListByWhere(group);
+			if(groupList==null || groupList.size()==0) {
+				groupCacheService.putProductGroups(productId, groupVoList);
+				return groupVoList;
+			}
+			List<XmProjectGroupUser> groupUserList=this.xmProjectGroupUserService.selectGroupUserListByProductId(productId);
+			if(groupUserList==null || groupUserList.size()==0) {
+				groupCacheService.putProductGroups(productId, groupVoList);
+				return groupVoList;
+			}
+			groupList.forEach(g -> {
+				XmProjectGroupVo gvo = new XmProjectGroupVo();
+				BeanUtils.copyProperties(g,gvo);
+				List<XmProjectGroupUser> groupUsers=new ArrayList<>();
+				groupUserList.forEach(gu -> {
+					if(g.getId().equals(gu.getGroupId())) {
+						groupUsers.add(gu);
+					}
+				});
+				gvo.setGroupUsers(groupUsers );
+				groupVoList.add(gvo);
+			});
+			groupCacheService.putProductGroups(productId, groupVoList);
+			return groupVoList;
+		}else {
+			return groupVoList2;
+		}
+
+	}
 	/**
 	 * 新增项目时，同时新增项目团队及小组组员等
 	 * @param projectId
@@ -146,7 +183,7 @@ public class XmProjectGroupService extends BaseService {
 		if(groupUsers.size()>0) {
 			xmProjectGroupUserService.batchInsert(groupUsers);
 		}
-		groupCacheService.putGroups(projectId, null);
+		groupCacheService.putProjectGroups(projectId, null);
 	}
     /*
      * 更新项目团队
@@ -175,10 +212,20 @@ public class XmProjectGroupService extends BaseService {
 	 * @param userid
 	 * @return
 	 */
-    public List<XmProjectGroupVo>  getUserGroups(String projectId,String userid){
+    public List<XmProjectGroupVo> getUserGroupsByProjectId(String projectId, String userid){
     	List<XmProjectGroupVo> xmProjectGroupVoList=this.getProjectGroupVoList(projectId);
     	return this.getUserGroups(xmProjectGroupVoList, userid);
     }
+	/**
+	 * 获取用户在某个项目中的组
+	 * @param productId
+	 * @param userid
+	 * @return
+	 */
+	public List<XmProjectGroupVo> getUserGroupsByProductId(String productId, String userid){
+		List<XmProjectGroupVo> xmProjectGroupVoList=this.getProductGroupVoList(productId);
+		return this.getUserGroups(xmProjectGroupVoList, userid);
+	}
 
 	/**
 	 * 检查用户是否在一些组中任意个组当组长
@@ -192,14 +239,8 @@ public class XmProjectGroupService extends BaseService {
 			return false;
 		}
 		for (XmProjectGroupVo xmProjectGroupVo : xmProjectGroupVoList) {
-			List<XmProjectGroupUser> gus=xmProjectGroupVo.getGroupUsers();
-			if(gus==null) {
-				continue;
-			}
-			for (XmProjectGroupUser gu : gus) {
-				if(teamHeadUserid.equals(gu.getUserid()) && "1".equals(gu.getIsHead())) {
-					 return true;
-				}
+			if(teamHeadUserid.equals(xmProjectGroupVo.getLeaderUserid())){
+				return true;
 			}
 
 		}
@@ -224,45 +265,43 @@ public class XmProjectGroupService extends BaseService {
 
 		for (XmProjectGroupVo xmProjectGroupVo : xmProjectGroupVoList) {
 			if(groupId.equals(xmProjectGroupVo.getId())){
-				List<XmProjectGroupUser> gus=xmProjectGroupVo.getGroupUsers();
-				if(gus==null) {
-					continue;
-				}
-				for (XmProjectGroupUser gu : gus) {
-					if(teamHeadUserid.equals(gu.getUserid()) && "1".equals(gu.getIsHead())) {
-						return true;
-					}
-				}
+				 if(teamHeadUserid.equals(xmProjectGroupVo.getLeaderUserid())){
+				 	return true;
+				 }
 			}
 		}
 		return false;
 	}
-    public List<XmProjectGroupVo>  getUserGroups( List<XmProjectGroupVo> xmProjectGroupVoList,String userid){
+    public List<XmProjectGroupVo> getUserGroups(List<XmProjectGroupVo> xmProjectGroupVoList, String userid){
      	List<XmProjectGroupVo> userGroups=new ArrayList<>();
      	if(xmProjectGroupVoList==null) {
      		return userGroups;
      	}
-    	for (XmProjectGroupVo xmProjectGroupVo : xmProjectGroupVoList) {
-    		List<XmProjectGroupUser> gus=xmProjectGroupVo.getGroupUsers();
-    		boolean exists=false;
-    		if(gus==null) {
-    			continue;
-    		}
-    		for (XmProjectGroupUser gu : gus) {
-				if(userid.equals(gu.getUserid())) {
-					exists=true;
-					break;
+		for (XmProjectGroupVo g : xmProjectGroupVoList) {
+			if(userid.equals(g.getLeaderUserid())||userid.equals(g.getAssUserid())){
+				userGroups.add(g);
+			}else{
+				List<XmProjectGroupUser> gus=g.getGroupUsers();
+				boolean exists=false;
+				if(gus==null) {
+					continue;
+				}
+				for (XmProjectGroupUser gu : gus) {
+					if(userid.equals(gu.getUserid())) {
+						exists=true;
+						break;
+					}
+				}
+				if(exists) {
+					userGroups.add(g);
+
 				}
 			}
-    		if(exists) {
-				userGroups.add(xmProjectGroupVo);
-
-    		}
 		}
     	return userGroups;
     }
     public boolean  checkUserExistsGroup(String projectId,String userid){
-    	List<XmProjectGroupVo> userGroups=getUserGroups(projectId,userid);
+    	List<XmProjectGroupVo> userGroups= getUserGroupsByProjectId(projectId,userid);
     	return userGroups!=null && userGroups.size()>0;
     }
 	/**
@@ -275,16 +314,8 @@ public class XmProjectGroupService extends BaseService {
 		if(xmProjectGroupVo==null){
 			return false;
 		}
-		List<XmProjectGroupUser> gus= xmProjectGroupVo.getGroupUsers();
-		if(gus==null || gus.size()==0){
-			return false;
-		}
-		for (XmProjectGroupUser guser : gus) {
-			if(guser.getUserid().equals(headUserid)) {
-				if("1".equals(guser.getIsHead())) {
-					return true;
-				}
-			}
+		if(headUserid.equals(xmProjectGroupVo.getLeaderUserid())){
+			return true;
 		}
 		return false;
 
@@ -305,23 +336,12 @@ public class XmProjectGroupService extends BaseService {
     	if(userGroups==null || userGroups.size()==0) {
     		return false;
     	}
-    	boolean isHead=false;
     	for (XmProjectGroupVo ug : userGroups) {
-    	
-    		List<XmProjectGroupUser> gus= ug.getGroupUsers();
-    		for (XmProjectGroupUser guser : gus) {
-    			if(guser.getUserid().equals(headUserid)) {
-    				if("1".equals(guser.getIsHead())) {
-    					isHead=true;
-    					break;
-    				}
-    			}
-    		}
-    		if(isHead) {
-    			break;
-    		}
+    		if(headUserid.equals(ug.getLeaderUserid())){
+    			return true;
+			}
     	}
-    	return isHead;
+    	return false;
     }
     
   public  List<XmProjectGroupUser> getProjectManagers( List<XmProjectGroupVo> xmProjectGroupVoList){
@@ -335,40 +355,7 @@ public class XmProjectGroupService extends BaseService {
     	
     }
 
-	/**
-	 * 找到项目管理者
-	 * @param xmProjectGroupVoList
-	 * @return
-	 */
-	public XmProjectGroupUser getHeadProjectManager( List<XmProjectGroupVo> xmProjectGroupVoList){
-    	List<XmProjectGroupUser> getProjectManagers=this.getProjectManagers(xmProjectGroupVoList);
-    	if(getProjectManagers==null || getProjectManagers.size()==0) {
-    		return null;
-    	}
-    	for (XmProjectGroupUser user : getProjectManagers) {
-    		if( "1".equals(user.getIsHead())) {
-    			return user;
-    		}
-        	
-		}
-		return null;
-    }
 
-	/**
-	 * 检测某个用户是否项目管理者
-	 * @param xmProjectGroupVoList
-	 * @param headPmUserid
-	 * @return
-	 */
-	public boolean checkUserIsHeadProjectManager( List<XmProjectGroupVo> xmProjectGroupVoList,String headPmUserid){
-		 XmProjectGroupUser groupUser=this.getHeadProjectManager(xmProjectGroupVoList);
-		 if(groupUser!=null){
-		 	if(groupUser.getUserid().equals(headPmUserid)){
-		 		return true;
-			}
-		 }
-		 return false;
-	}
 
 	/**
 	 * 检测某个用户是否属于项目组的内部管理团队成员，内部管理组成员
@@ -415,19 +402,8 @@ public class XmProjectGroupService extends BaseService {
 	 * @return
 	 */
 	public List<XmProjectGroupVo> getProjectGroupVoListByProductId(String productId) {
-		XmProductProjectLink xmProductProjectLink=new XmProductProjectLink();
-		xmProductProjectLink.setProductId(productId);
-		List<XmProductProjectLink> list=this.xmProductProjectLinkService.selectListByWhere(xmProductProjectLink);
-		List<XmProjectGroupVo> datas=new ArrayList<>();
-		if(list!=null && list.size()>0){
-			for (XmProductProjectLink productProjectLink : list) {
-				List<XmProjectGroupVo> data0=this.getProjectGroupVoList(productProjectLink.getProjectId());
-				if(data0!=null && data0.size()>0){
-					datas.addAll(data0);
-				}
-			}
-		}
-		return datas;
+		List<XmProjectGroupVo> data0=this.getProductGroupVoList(productId);
+		return data0;
 	}
 
 
@@ -485,6 +461,126 @@ public class XmProjectGroupService extends BaseService {
 		String[] idpss=idpaths.split(",");
 		int lvl=idpss.length;
 
+	}
+
+	public Tips checkProjectStatus(XmProject xmProject){
+		Tips tips=new Tips("成功");
+		if(xmProject==null){
+			tips.setFailureMsg("prj-0","项目已不存在");
+		} else if("4".equals(xmProject.getStatus())){
+			tips.setFailureMsg("prj-status-4","项目暂停中，不能操作");
+		} else if("9".equals(xmProject.getStatus())){
+			tips.setFailureMsg("prj-status-9","项目已关闭，不能操作");
+		}
+		return tips;
+	}
+	public Tips checkHasProjectEditQx(User user,XmProject xmProject){
+ 		Tips tips=new Tips("成功");
+		Map<String,String> pmUserMap=new HashMap<>();
+		pmUserMap.put(xmProject.getCreateUserid(),xmProject.getCreateUsername());
+		pmUserMap.put(xmProject.getPmUserid(),xmProject.getPmUsername());
+		pmUserMap.put(xmProject.getAdmUserid(),xmProject.getAdmUsername());
+		pmUserMap.put(xmProject.getAssUserid(),xmProject.getAssUsername());
+		if(!pmUserMap.containsKey(user.getUserid())){
+			tips.setFailureMsg("no-project-edit-qx","您不是项目【"+xmProject.getName()+"】的管理人员，无权修改项目信息。");
+		}
+		return tips;
+	}
+	public Tips checkProductStatus( XmProduct xmProductDb) {
+		Tips tips=new Tips("成功");
+		if(xmProductDb==null){
+			tips.setFailureMsg("product-0","产品已不存在");
+		} else if("3".equals(xmProductDb.getPstatus())){
+			tips.setFailureMsg("pstatus-3","产品已经关闭，不能再操作");
+		}
+		return tips;
+	}
+
+	public Map<String,String> getProductAdmUsers(XmProduct xmProductDb){
+
+		Map<String,String> proUsersMap=new HashMap<>();
+		proUsersMap.put(xmProductDb.getPmUserid(),xmProductDb.getPmUsername());
+		proUsersMap.put(xmProductDb.getAssUserid(),xmProductDb.getAssUserid());
+		proUsersMap.put(xmProductDb.getAdmUserid(),xmProductDb.getAdmUserid());
+		return proUsersMap;
+	}
+	public Tips checkHasProductEditQx(User user,XmProduct xmProductDb) {
+		Tips tips=new Tips("成功");
+		Map<String,String> proUsersMap=this.getProductAdmUsers(xmProductDb);
+		if(!proUsersMap.containsKey(user.getUserid())){
+			tips.setFailureMsg("no-product-edit-qx","您不是产品【"+xmProductDb.getProductName()+"】的管理人员，无权修改产品信息。");
+		}
+		return tips;
+	}
+
+	public Tips checkHasEditProdcutGroupQx(User user,XmProjectGroup group,XmProjectGroup groupDb,XmProduct xmProductDb){
+		Tips tips = new Tips("成功");
+		if(groupDb==null){
+			tips.setFailureMsg("data-0","该小组已不存在");
+			return tips;
+		}
+		Map<String,String> proUsersMap=this.getProductAdmUsers(xmProductDb);
+
+			if(StringUtils.hasText(group.getAssUserid()) && !group.getAssUserid().equals(groupDb.getAssUserid())){
+				if(!proUsersMap.containsKey(user.getUserid()) && !user.getUserid().equals(groupDb.getLeaderUserid())){
+					tips.setFailureMsg("no-qx-change-g-assUserid","您无权限修改小组助理.组长及以上人员可以修改。");
+				}
+			}
+			if(StringUtils.hasText(group.getLeaderUserid()) && !group.getLeaderUserid().equals(groupDb.getLeaderUserid())){
+				if(!proUsersMap.containsKey(user.getUserid())){
+					tips.setFailureMsg("no-qx-change-g-leaderUserid","您无权限修改小组组长.产品级助理及以上人员可以修改。");
+				}
+			}
+			if(StringUtils.hasText(group.getPgroupId()) && !group.getPgroupId().equals(groupDb.getPgroupId())){
+				if(!proUsersMap.containsKey(user.getUserid())){
+					tips.setFailureMsg("no-qx-change-g-pgroupId","您无权限修改小组归属上级单位.产品级助理及以上人员可以修改。");
+				}
+			}
+		return tips;
+	}
+
+	public Map<String,String> getProjectAdmUsers(XmProject xmProject){
+		Map<String,String> pmUserMap=new HashMap<>();
+		pmUserMap.put(xmProject.getCreateUserid(),xmProject.getCreateUsername());
+		pmUserMap.put(xmProject.getPmUserid(),xmProject.getPmUsername());
+		pmUserMap.put(xmProject.getAdmUserid(),xmProject.getAdmUsername());
+		pmUserMap.put(xmProject.getAssUserid(),xmProject.getAssUsername());
+		return pmUserMap;
+	}
+	public Tips checkHasEditProjectGroupQx(User user,XmProjectGroup group,XmProjectGroup groupDb,XmProject xmProject){
+		Tips tips = new Tips("成功");
+		if(groupDb==null){
+			tips.setFailureMsg("data-0","该小组已不存在");
+			return tips;
+		}
+
+		Map<String,String> pmUserMap=this.getProjectAdmUsers(xmProject);
+			if(!pmUserMap.containsKey(user.getUserid())){
+				if(!user.getUserid().equals(groupDb.getLeaderUserid()) && !user.getUserid().equals(groupDb.getAssUserid())){
+					tips.setFailureMsg("not-prj-group-adm-user","您无权修改小组信息。 组长助理及以上人员有权限修改。");
+					return tips;
+				}
+			}
+			if(StringUtils.hasText(group.getAssUserid()) && !group.getAssUserid().equals(groupDb.getAssUserid())){
+				if(!pmUserMap.containsKey(user.getUserid()) && !user.getUserid().equals(groupDb.getLeaderUserid())){
+					tips.setFailureMsg("no-qx-change-g-assUserid","您无权限修改小组助理.组长及以上人员可以修改。");
+					return tips;
+				}
+			}
+			if(StringUtils.hasText(group.getLeaderUserid()) && !group.getLeaderUserid().equals(groupDb.getLeaderUserid())){
+				if(!pmUserMap.containsKey(user.getUserid())){
+					tips.setFailureMsg("no-qx-change-g-leaderUserid","您无权限修改小组组长.项目级助理及以上人员可以修改。");
+					return tips;
+				}
+			}
+			if(StringUtils.hasText(group.getPgroupId()) && !group.getPgroupId().equals(groupDb.getPgroupId())){
+				if(!pmUserMap.containsKey(user.getUserid())){
+					tips.setFailureMsg("no-qx-change-g-pgroupId","您无权限修改小组归属上级单位.项目级助理及以上人员可以修改。");
+					return tips;
+				}
+			}
+
+		return tips;
 	}
 
 	public Tips parentIdPathsCalcBeforeSave(XmProjectGroup currNode) {
@@ -630,17 +726,6 @@ public class XmProjectGroupService extends BaseService {
 
 	}
 
-
-	public boolean checkExistsExecuser(XmProjectGroup node) {
-		String exec=node.getExeUserids();
-		if(!StringUtils.hasText(exec)){
-			return false;
-		}
-		if(exec.indexOf("(1)")>0 || exec.indexOf("(2)")>0|| exec.indexOf("(3)")>0|| exec.indexOf("(4)")>0|| exec.indexOf("(5)")>0){
-			return true;
-		}
-		return false;
-	}
 
 	/**
 	 * 检查是否能删除干净所有儿子孙子节点。
