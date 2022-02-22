@@ -2,16 +2,14 @@ package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import io.swagger.models.auth.In;
-
 import java.util.Date;
 
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectGroup所有属性名: <br>
- *	id,groupName,projectId,pgTypeId,pgTypeName,leaderUserid,leaderUsername,ctime,ltime,productId,branchId,pgClass,pgroupId,lvl,pidPaths,isTpl,assUserid,assUsername,childrenCnt,userCnt,qxCode,calcWorkload;<br>
+ *	id,groupName,projectId,pgTypeId,pgTypeName,leaderUserid,leaderUsername,ctime,ltime,productId,branchId,pgClass,pgroupId,lvl,pidPaths,isTpl,assUserid,assUsername,childrenCnt,userCnt,qxCode,calcWorkload,ntype;<br>
  * 表 xm_project_group xm_project_group的所有字段名: <br>
- *	id,group_name,project_id,pg_type_id,pg_type_name,leader_userid,leader_username,ctime,ltime,product_id,branch_id,pg_class,pgroup_id,lvl,pid_paths,is_tpl,ass_userid,ass_username,children_cnt,user_cnt,qx_code,calc_workload;<br>
+ *	id,group_name,project_id,pg_type_id,pg_type_name,leader_userid,leader_username,ctime,ltime,product_id,branch_id,pg_class,pgroup_id,lvl,pid_paths,is_tpl,ass_userid,ass_username,children_cnt,user_cnt,qx_code,calc_workload,ntype;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -86,6 +84,9 @@ public class XmProjectGroup  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="是否计算工作量0否1是",allowEmptyValue=true,example="",allowableValues="")
 	String calcWorkload;
+	
+	@ApiModelProperty(notes="节点类型0管理团队、1执行团队",allowEmptyValue=true,example="",allowableValues="")
+	String ntype;
 
 	/**主键**/
 	public XmProjectGroup(String id) {
@@ -228,6 +229,12 @@ public class XmProjectGroup  implements java.io.Serializable {
 	public void setCalcWorkload(String calcWorkload) {
 		this.calcWorkload = calcWorkload;
 	}
+	/**
+	 * 节点类型0管理团队、1执行团队
+	 **/
+	public void setNtype(String ntype) {
+		this.ntype = ntype;
+	}
 	
 	/**
 	 * 主键
@@ -360,6 +367,12 @@ public class XmProjectGroup  implements java.io.Serializable {
 	 **/
 	public String getCalcWorkload() {
 		return this.calcWorkload;
+	}
+	/**
+	 * 节点类型0管理团队、1执行团队
+	 **/
+	public String getNtype() {
+		return this.ntype;
 	}
 
 }

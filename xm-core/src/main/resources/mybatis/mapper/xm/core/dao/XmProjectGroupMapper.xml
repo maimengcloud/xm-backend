@@ -64,7 +64,7 @@
 		insert into xm_project_group(
 			<include refid="columns"/>
 		) values (
-		#{id},#{groupName},#{projectId},#{pgTypeId},#{pgTypeName},#{leaderUserid},#{leaderUsername},#{ctime},#{ltime},#{productId},#{branchId},#{pgClass},#{pgroupId},#{lvl},#{pidPaths},#{isTpl},#{assUserid},#{assUsername},#{childrenCnt},#{userCnt},#{qxCode},#{calcWorkload}
+		#{id},#{groupName},#{projectId},#{pgTypeId},#{pgTypeName},#{leaderUserid},#{leaderUsername},#{ctime},#{ltime},#{productId},#{branchId},#{pgClass},#{pgroupId},#{lvl},#{pidPaths},#{isTpl},#{assUserid},#{assUsername},#{childrenCnt},#{userCnt},#{qxCode},#{calcWorkload},#{ntype}
 		)
 	</insert>
 	
@@ -127,7 +127,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,group_name,project_id,pg_type_id,pg_type_name,leader_userid,leader_username,ctime,ltime,product_id,branch_id,pg_class,pgroup_id,lvl,pid_paths,is_tpl,ass_userid,ass_username,children_cnt,user_cnt,qx_code,calc_workload
+		id,group_name,project_id,pg_type_id,pg_type_name,leader_userid,leader_username,ctime,ltime,product_id,branch_id,pg_class,pgroup_id,lvl,pid_paths,is_tpl,ass_userid,ass_username,children_cnt,user_cnt,qx_code,calc_workload,ntype
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -154,6 +154,7 @@
 		<if test="userCnt != null and userCnt != ''">      and res.user_cnt = #{userCnt}     </if>
 		<if test="qxCode != null and qxCode != ''">      and res.qx_code = #{qxCode}     </if>
 		<if test="calcWorkload != null and calcWorkload != ''">      and res.calc_workload = #{calcWorkload}     </if>
+		<if test="ntype != null and ntype != ''">      and res.ntype = #{ntype}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -177,7 +178,8 @@
 		children_cnt = #{childrenCnt},
 		user_cnt = #{userCnt},
 		qx_code = #{qxCode},
-		calc_workload = #{calcWorkload}
+		calc_workload = #{calcWorkload},
+		ntype = #{ntype}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="groupName != null and groupName != ''"> group_name = #{groupName},     </if>
@@ -201,6 +203,7 @@
 		<if test="userCnt != null and userCnt != ''"> user_cnt = #{userCnt},     </if>
 		<if test="qxCode != null and qxCode != ''"> qx_code = #{qxCode},     </if>
 		<if test="calcWorkload != null and calcWorkload != ''"> calc_workload = #{calcWorkload},     </if>
+		<if test="ntype != null and ntype != ''"> ntype = #{ntype},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -224,6 +227,7 @@
 			children_cnt = #{item.childrenCnt},
 			user_cnt = #{item.userCnt},
 			qx_code = #{item.qxCode},
-			calc_workload = #{item.calcWorkload}
+			calc_workload = #{item.calcWorkload},
+			ntype = #{item.ntype}
 	</sql>
 </mapper>
