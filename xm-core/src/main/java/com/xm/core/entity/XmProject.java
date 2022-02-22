@@ -252,7 +252,17 @@ public class XmProject  implements java.io.Serializable {
 		this.assessRemarks = assessRemarks;
 	}
 	/**
-	 * 项目状态，cs-初始，lxz-立项中，ssz-执行中，jxz-结项中，yjx-已结项，ztz-暂停，sq-售前，sh-售后
+	 * 项目状态，
+	 * 0|初始
+	 * 1|售前
+	 * 2|立项中
+	 * 3|实施中
+	 * 4|暂停中
+	 * 5|结项中
+	 * 6|已结项
+	 * 7|售后
+	 * 8|已完成
+	 * 9|已关闭
 	 **/
 	public void setStatus(String status) {
 		this.status = status;
@@ -511,7 +521,17 @@ public class XmProject  implements java.io.Serializable {
 		return this.assessRemarks;
 	}
 	/**
-	 * 项目状态，cs-初始，lxz-立项中，ssz-执行中，jxz-结项中，yjx-已结项，ztz-暂停，sq-售前，sh-售后
+	 * 项目状态，
+	 * 0|初始
+	 * 1|售前
+	 * 2|立项中
+	 * 3|实施中
+	 * 4|暂停中
+	 * 5|结项中
+	 * 6|已结项
+	 * 7|售后
+	 * 8|已完成
+	 * 9|已关闭
 	 **/
 	public String getStatus() {
 		return this.status;

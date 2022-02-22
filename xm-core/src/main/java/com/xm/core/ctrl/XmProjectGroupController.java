@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -63,22 +64,38 @@ public class XmProjectGroupController {
 	})
 	@HasQx(value = "xm_core_xmProjectGroup_updateGroup",name = "批量更新修改项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/updateGroup",method=RequestMethod.POST)
-	public Map<String,Object> updateGroup(@RequestBody List<XmProjectGroupVo> xmProjectGroupVo) {
+	public Map<String,Object> updateGroup(@RequestBody XmProjectGroup xmProjectGroup) {
 
 		Tips tips=new Tips("团队更新成功");
 		Map<String,Object> m = new HashMap<>();
-		if(xmProjectGroupVo==null || xmProjectGroupVo.size()==0){
-			tips.setFailureMsg("团队列表不能为空");
+		if(xmProjectGroup==null){
+			tips.setFailureMsg("团队信息不能为空");
 			m.put("tips", tips);
 			return m;
 		}
-		String projectId = xmProjectGroupVo.get(0).getProjectId();
-		if(!StringUtils.hasText(projectId)){
-			tips.setFailureMsg("项目编号projectId不能为空");
-			m.put("tips", tips);
-			return m;
+		if(StringUtils.hasText(xmProjectGroup.getId())){
+			return ResponseHelper.failed("id-0","团队编号不能为空");
 		}
-		tips= xmProjectGroupService.updateGroup(projectId,xmProjectGroupVo);	//列出XmProjectGroup列表
+		XmProjectGroup groupDb=this.xmProjectGroupService.selectOneObject(new XmProjectGroup(xmProjectGroup.getId()));
+		if(groupDb==null){
+			return ResponseHelper.failed("data-0","该团队已不存在");
+		}
+		XmProject xmProject=this.xmProjectService.getProjectFromCache(groupDb.getProjectId());
+		if(xmProject==null){
+			return ResponseHelper.failed("prj-0","项目已不存在");
+		}
+		if("4".equals(xmProject.getStatus())){
+			return ResponseHelper.failed("prj-status-4","项目暂停中，不能操作");
+		}
+		if("9".equals(xmProject.getStatus())){
+			return ResponseHelper.failed("prj-status-9","项目已关闭，不能操作");
+		}
+		User user=LoginUtils.getCurrentUserInfo();
+		if(!xmProject.getCreateUserid().equals(user.getUserid())&& user.getUserid().equals(xmProject.get)){
+
+		}
+		xmProjectGroupService.parentIdPathsCalcBeforeSave(xmProjectGroup);
+		tips= xmProjectGroupService.updateGroup(xmProjectGroup,groupDb);	//列出XmProjectGroup列表
 		//m.put("data",xmProjectGroupVo);
 		m.put("tips", tips);
 		return m;
