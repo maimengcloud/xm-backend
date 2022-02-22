@@ -3,14 +3,21 @@
 <mapper namespace="com.xm.core.entity.XmMenuState">
 	
 	
-	<!--开始 自定sql函数区域 -->
-		<!--请在此区域添加自定义函数-->
-		
-		
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
+
 	<update id="loadTasksToXmMenuState" parameterType="String" statementType="CALLABLE">
-		 {call load_tasks_to_xm_menu_state(#{productId,mode=IN})} 
+		{call load_tasks_to_xm_menu_state(#{productId,mode=IN})}
 	</update>
-		
+
 	<!--结束 自定义sql函数区域-->
 	
 
@@ -18,15 +25,9 @@
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
 		select * from xm_menu_state res
-		<where> 
-			<if test="ids != null">  and     
-				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
-			 </if>
+		<where>
+		    <include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">       </if> 
 		</where>
 	</select>
 	
@@ -59,7 +60,7 @@
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmMenuState" useGeneratedKeys="false" keyProperty="id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmMenuState" useGeneratedKeys="false"   keyProperty="id">
 		insert into xm_menu_state(
 			<include refid="columns"/>
 		) values (
@@ -77,13 +78,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmMenuState">
-		delete from xm_menu_state
+		delete from xm_menu_state 
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmMenuState">
-		update  xm_menu_state
+		update  xm_menu_state 
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -92,7 +93,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmMenuState">
-		update  xm_menu_state
+		update  xm_menu_state 
 		<set>
 			<include refid="set"/>
 		</set>
@@ -107,7 +108,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_menu_state
+   		update  xm_menu_state 
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -115,11 +116,12 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_menu_state
-			where id in
-			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
-			        #{item.id }  
-			    </foreach>  
+		delete from xm_menu_state 
+			where
+			(id) in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    (  #{item.id} )
+                </foreach>
 	</delete>
 	
 	
@@ -127,15 +129,15 @@
 	<sql id="columns">
 		id,menu_id,plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,online_status,online_time,plan_status,charge_userid,charge_username,menu_status,ctime,ltime,cuserid,cusername,calc_time,menu_name,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,product_id,product_name,test_cases,exec_cases,design_cases,finish_cases,project_cnt,iteration_cnt,task_cnt,finish_task_cnt,biz_date,bug_cnt
 	</sql>
-	
+
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
 	<sql id="where">
 		<if test="id != null and id != ''">      and res.id = #{id}     </if>
 		<if test="menuId != null and menuId != ''">      and res.menu_id = #{menuId}     </if>
-		<if test="planStartTime != null">      and TO_CHAR(res.plan_start_time,'YYYY-MM-DD') = TO_CHAR(#{planStartTime},'YYYY-MM-DD')     </if>
-		<if test="planEndTime != null">      and TO_CHAR(res.plan_end_time,'YYYY-MM-DD') = TO_CHAR(#{planEndTime},'YYYY-MM-DD')     </if>
-		<if test="actStartTime != null">      and TO_CHAR(res.act_start_time,'YYYY-MM-DD') = TO_CHAR(#{actStartTime},'YYYY-MM-DD')     </if>
-		<if test="actEndTime != null">      and TO_CHAR(res.act_end_time,'YYYY-MM-DD') = TO_CHAR(#{actEndTime},'YYYY-MM-DD')     </if>
+		<if test="planStartTime != null">      and date_format(res.plan_start_time,'%Y-%m-%d') = date_format(#{planStartTime},'%Y-%m-%d')     </if>
+		<if test="planEndTime != null">      and date_format(res.plan_end_time,'%Y-%m-%d') = date_format(#{planEndTime},'%Y-%m-%d')     </if>
+		<if test="actStartTime != null">      and date_format(res.act_start_time,'%Y-%m-%d') = date_format(#{actStartTime},'%Y-%m-%d')     </if>
+		<if test="actEndTime != null">      and date_format(res.act_end_time,'%Y-%m-%d') = date_format(#{actEndTime},'%Y-%m-%d')     </if>
 		<if test="planWorkload != null and planWorkload != ''">      and res.plan_workload = #{planWorkload}     </if>
 		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
 		<if test="planCostAmount != null and planCostAmount != ''">      and res.plan_cost_amount = #{planCostAmount}     </if>
@@ -147,16 +149,16 @@
 		<if test="uatRate != null and uatRate != ''">      and res.uat_rate = #{uatRate}     </if>
 		<if test="sitRate != null and sitRate != ''">      and res.sit_rate = #{sitRate}     </if>
 		<if test="onlineStatus != null and onlineStatus != ''">      and res.online_status = #{onlineStatus}     </if>
-		<if test="onlineTime != null">      and TO_CHAR(res.online_time,'YYYY-MM-DD') = TO_CHAR(#{onlineTime},'YYYY-MM-DD')     </if>
+		<if test="onlineTime != null">      and date_format(res.online_time,'%Y-%m-%d') = date_format(#{onlineTime},'%Y-%m-%d')     </if>
 		<if test="planStatus != null and planStatus != ''">      and res.plan_status = #{planStatus}     </if>
 		<if test="chargeUserid != null and chargeUserid != ''">      and res.charge_userid = #{chargeUserid}     </if>
 		<if test="chargeUsername != null and chargeUsername != ''">      and res.charge_username = #{chargeUsername}     </if>
 		<if test="menuStatus != null and menuStatus != ''">      and res.menu_status = #{menuStatus}     </if>
-		<if test="ctime != null">      and TO_CHAR(res.ctime,'YYYY-MM-DD') = TO_CHAR(#{ctime},'YYYY-MM-DD')     </if>
-		<if test="ltime != null">      and TO_CHAR(res.ltime,'YYYY-MM-DD') = TO_CHAR(#{ltime},'YYYY-MM-DD')     </if>
+		<if test="ctime != null">      and date_format(res.ctime,'%Y-%m-%d') = date_format(#{ctime},'%Y-%m-%d')     </if>
+		<if test="ltime != null">      and date_format(res.ltime,'%Y-%m-%d') = date_format(#{ltime},'%Y-%m-%d')     </if>
 		<if test="cuserid != null and cuserid != ''">      and res.cuserid = #{cuserid}     </if>
 		<if test="cusername != null and cusername != ''">      and res.cusername = #{cusername}     </if>
-		<if test="calcTime != null">      and TO_CHAR(res.calc_time,'YYYY-MM-DD') = TO_CHAR(#{calcTime},'YYYY-MM-DD')     </if>
+		<if test="calcTime != null">      and date_format(res.calc_time,'%Y-%m-%d') = date_format(#{calcTime},'%Y-%m-%d')     </if>
 		<if test="menuName != null and menuName != ''">      and res.menu_name = #{menuName}     </if>
 		<if test="planWorkhours != null and planWorkhours != ''">      and res.plan_workhours = #{planWorkhours}     </if>
 		<if test="planWorkerCnt != null and planWorkerCnt != ''">      and res.plan_worker_cnt = #{planWorkerCnt}     </if>
