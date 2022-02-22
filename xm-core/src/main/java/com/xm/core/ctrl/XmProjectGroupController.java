@@ -194,22 +194,52 @@ public class XmProjectGroupController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-			XmProject project=xmProjectService.getProjectFromCache(xmProjectGroup.getProjectId());
-			User u=LoginUtils.getCurrentUserInfo();
+			User u = LoginUtils.getCurrentUserInfo();
+			if(!"1".equals(xmProjectGroup.getPgClass())) {
+				if(!StringUtils.hasText(xmProjectGroup.getProjectId())){
+					return ResponseHelper.failed("projectId-0","项目编号不能为空");
+				}
+				XmProject project = xmProjectService.getProjectFromCache(xmProjectGroup.getProjectId());
+				if(project==null){
+					return ResponseHelper.failed("project-0","项目已不存在");
+				}
+				tips=this.xmProjectGroupService.checkProjectStatus(project);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
+				Map<String,String> projectAdmMap=xmProjectGroupService.getProjectAdmUsers(project);
+				if (projectAdmMap.containsKey(u.getUserid())) {
+					return ResponseHelper.failed("not-project-adm","您不是项目管理人员，不能创建小组。项目级助理以上人员可以创建小组。");
+				}
 
-			if(!u.getUserid().equals(project.getCreateUserid())) {
-				tips.setFailureMsg("你不是项目创建人，不允许创建该项目的小组");
-			}
-			if(StringUtils.isEmpty(xmProjectGroup.getId())) {
-				xmProjectGroup.setId(xmProjectGroupService.createKey("id"));
 			}else{
-				 XmProjectGroup xmProjectGroupQuery = new  XmProjectGroup(xmProjectGroup.getId());
-				if(xmProjectGroupService.countByWhere(xmProjectGroupQuery)>0){
+				if(!StringUtils.hasText(xmProjectGroup.getProductId())){
+					return ResponseHelper.failed("productId-0","产品编号不能为空");
+				}
+				XmProduct product = xmProductService.selectOneObject(new XmProduct(xmProjectGroup.getProductId()));
+				if(product==null){
+					return ResponseHelper.failed("product-0","产品已不存在");
+				}
+				tips=this.xmProjectGroupService.checkProductStatus(product);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
+				Map<String,String> productAdmMap=xmProjectGroupService.getProductAdmUsers(product);
+				if (productAdmMap.containsKey(u.getUserid())) {
+					return ResponseHelper.failed("not-product-adm","您不是产品管理人员，不能创建小组。产品级助理及以上人员可以创建小组。");
+				}
+			}
+			if (StringUtils.isEmpty(xmProjectGroup.getId())) {
+				xmProjectGroup.setId(xmProjectGroupService.createKey("id"));
+			} else {
+				XmProjectGroup xmProjectGroupQuery = new XmProjectGroup(xmProjectGroup.getId());
+				if (xmProjectGroupService.countByWhere(xmProjectGroupQuery) > 0) {
 					tips.setFailureMsg("编号重复，请修改编号再提交");
 					m.put("tips", tips);
 					return m;
 				}
 			}
+			this.xmProjectGroupService.parentIdPathsCalcBeforeSave(xmProjectGroup);
 			xmProjectGroupService.insert(xmProjectGroup);
 			pushMsgService.pushChannelGroupCreateMsg(u.getBranchId(),  xmProjectGroup.getProjectId(),xmProjectGroup.getId(),  xmProjectGroup.getId(),xmProjectGroup.getGroupName(), u.getUserid(), u.getUsername(), null, "新增小组"+xmProjectGroup.getGroupName());
 			xmRecordService.addXmGroupRecord(xmProjectGroup.getProjectId(), xmProjectGroup.getId(), "项目-团队-新增小组", "新增小组"+xmProjectGroup.getGroupName(),JSON.toJSONString(xmProjectGroup),null);
