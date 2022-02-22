@@ -93,6 +93,13 @@
 			#{item}
 		</foreach>
 	</delete>
+
+	<select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmMenu">
+		select * from xm_menu res where res.menu_id in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 
