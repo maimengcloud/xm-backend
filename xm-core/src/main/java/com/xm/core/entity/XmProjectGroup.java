@@ -2,6 +2,8 @@ package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
+import io.swagger.models.auth.In;
+
 import java.util.Date;
 
 /**
@@ -59,7 +61,7 @@ public class XmProjectGroup  implements java.io.Serializable {
 	String pgroupId;
 	
 	@ApiModelProperty(notes="级别0级1级2级3级4级",allowEmptyValue=true,example="",allowableValues="")
-	String lvl;
+	Integer lvl;
 	
 	@ApiModelProperty(notes="上级编号路径逗号分割,0,开始，本组编号+逗号结束",allowEmptyValue=true,example="",allowableValues="")
 	String pidPaths;
@@ -175,7 +177,7 @@ public class XmProjectGroup  implements java.io.Serializable {
 	/**
 	 * 级别0级1级2级3级4级
 	 **/
-	public void setLvl(String lvl) {
+	public void setLvl(Integer lvl) {
 		this.lvl = lvl;
 	}
 	/**
@@ -308,7 +310,7 @@ public class XmProjectGroup  implements java.io.Serializable {
 	/**
 	 * 级别0级1级2级3级4级
 	 **/
-	public String getLvl() {
+	public Integer getLvl() {
 		return this.lvl;
 	}
 	/**

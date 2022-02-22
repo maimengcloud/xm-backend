@@ -19,6 +19,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.*;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -112,7 +113,6 @@ public class XmProjectGroupService extends BaseService {
 					xmProjectGroupUser.setGroupId(group.getId());
 					xmProjectGroupUser.setJoinTime(new Date());
 					xmProjectGroupUser.setStatus("0");
-					xmProjectGroupUser.setId(xmProjectGroupUserService.createKey("id"));
 					groupUsers.add(xmProjectGroupUser);
 				}
 				
@@ -241,7 +241,6 @@ public class XmProjectGroupService extends BaseService {
 	            if( guser !=null && guser.size()>0) {
 	            	for (XmProjectGroupUser guser2 : guser) {
 						guser2.setGroupId(gvo.getId());
-						guser2.setProjectId(projectId);
 						allUsersFromUi.add(guser2);
 					} 
 	            }
@@ -266,8 +265,6 @@ public class XmProjectGroupService extends BaseService {
 						}
 					}
         			if(!existsInDb) {
-						gu.setId(this.createKey("id"));
-						gu.setProjectId(projectId);
 						gu.setJoinTime(new Date());
 						gu.setStatus("0");
         				if(isPm || isProjectCreate ){ //项目创建者、管理者平躺
@@ -277,7 +274,6 @@ public class XmProjectGroupService extends BaseService {
         					if(!gu.getUserid().equals(user.getUserid())){//不允许自己加自己
 								XmProjectGroupVo xmProjectGroupVo = groupVoMap.get(gu.getGroupId());
 								if (this.checkUserIsTeamHead(xmProjectGroupVo, user.getUserid())) {
-									gu.setIsHead("0");
 									allUsersAdd.add(gu);
 								}else{
 									tipsList.add(gu.getUsername()+"添加到小组"+xmProjectGroupVo.getGroupName()+"不成功！只有项目创建人、管理者、组长可以添加人员。");
@@ -397,8 +393,6 @@ public class XmProjectGroupService extends BaseService {
             		List<XmProjectGroupUser> allUsersEdit2=new ArrayList<>();
         			allUsersEdit.forEach(u->{
         				XmProjectGroupUser u2=new XmProjectGroupUser();
-        				u2.setId(u.getId());
-        				u2.setIsHead(u.getIsHead());
         				allUsersEdit2.add(u2);
         				xmProjectGroupUserService.updateSomeFieldByPk(u2);
         				xmRecordService.addXmGroupRecord(projectId, u2.getGroupId(),"项目-团队-变更小组成员状态", "变更["+u.getUsername()+"]为 "+("0".equals(u2.getIsHead())?"普通组员":"组长"),u2.getUserid(),null); 
@@ -438,9 +432,7 @@ public class XmProjectGroupService extends BaseService {
 						userMap.put("userid", u.getUserid());
 						userMap.put("username", u.getUsername());
 						users.add(userMap);
-						u.setId(xmProjectGroupUserService.createKey("id"));
 						u.setGroupId(gvo.getId());
-						u.setProjectId(projectId);
 						u.setJoinTime(new Date());
 						u.setStatus("0");
 						addGroupUsernames.add(u.getUsername());
@@ -725,6 +717,244 @@ public class XmProjectGroupService extends BaseService {
 			}
 		}
 		return datas;
+	}
+
+
+
+	public List<XmProjectGroup> parentIdPathsCalcBeforeSave(List<XmProjectGroup> nodes) {
+		List<XmProjectGroup> noExistsList=nodes.stream().filter(i->!nodes.stream().filter(k->k.getId().equals(i.getPgroupId())).findAny().isPresent()).collect(Collectors.toList());
+		noExistsList=noExistsList.stream().filter(i->StringUtils.hasText(i.getPgroupId())).collect(Collectors.toList());
+		Map<String,String> hadCalcMap=new HashMap<>();
+		for (XmProjectGroup node : noExistsList) {
+			if(hadCalcMap.containsKey(node.getPgroupId())){
+				String idPaths=hadCalcMap.get(node.getPgroupId());
+				node.setPidPaths(idPaths+node.getId()+",");
+			}else{
+				this.parentIdPathsCalcBeforeSave(node);
+				String idPaths=node.getPidPaths();
+				idPaths=idPaths.substring(0,idPaths.length()-node.getId().length()-1);
+				hadCalcMap.put(node.getPgroupId(),idPaths);
+			}
+		}
+		for (XmProjectGroup node : nodes) {
+			if(!StringUtils.hasText(node.getPgroupId())){
+				node.setPidPaths("0,"+node.getId()+",");
+				continue;
+			}
+			if(hadCalcMap.containsKey(node.getPgroupId())){
+				String idPaths=hadCalcMap.get(node.getPgroupId());
+				node.setPidPaths(idPaths+node.getId()+",");
+			}else{
+				List<XmProjectGroup> pnodeList=this.getParentList(node,nodes);
+				if(pnodeList==null ||pnodeList.size()==0){
+					node.setPidPaths("0,"+node.getPgroupId()+","+node.getId()+",");
+					continue;
+				}
+				XmProjectGroup topParent=pnodeList.get(pnodeList.size()-1);
+				String idPath="0,";
+				if(hadCalcMap.containsKey(topParent.getPgroupId())){
+					idPath=hadCalcMap.get(topParent.getPgroupId());
+				}
+				for (int i = pnodeList.size() - 1; i >= 0; i--) {
+					idPath=idPath+pnodeList.get(i).getId()+",";
+				}
+				node.setPidPaths(idPath+node.getId()+",");
+			}
+		}
+		for (XmProjectGroup node : nodes) {
+			String idPaths=node.getPidPaths();
+			String[] idpss=idPaths.split(",");
+			node.setLvl(idpss.length-1);
+		}
+		return nodes;
+	}
+
+	public static void main(String[] args) {
+		String idpaths="0,1,2,3,";
+		String[] idpss=idpaths.split(",");
+		int lvl=idpss.length;
+
+	}
+
+	public Tips parentIdPathsCalcBeforeSave(XmProjectGroup currNode) {
+		Tips tips = new Tips("成功");
+		if (!StringUtils.hasText(currNode.getPgroupId()) || "0".equals(currNode.getPgroupId())) {
+			currNode.setPidPaths("0," + currNode.getId() + ",");
+			return tips;
+		} else {
+			List<XmProjectGroup> parentList=this.getParentList(currNode);
+			if(parentList==null ||parentList.size()==0){
+				currNode.setPidPaths("0,"+currNode.getPgroupId()+","+currNode.getId()+",");
+				currNode.setLvl(2);
+				return tips;
+			}
+			String idPath="0,";
+			for (int i = parentList.size() - 1; i >= 0; i--) {
+				idPath=idPath+parentList.get(i).getId()+",";
+			}
+			currNode.setPidPaths(idPath+currNode.getId()+",");
+
+			String idPaths=currNode.getPidPaths();
+			String[] idpss=idPaths.split(",");
+			currNode.setLvl(idpss.length-1);
+		}
+		return tips;
+	}
+
+	private List<XmProjectGroup> getParentList(XmProjectGroup currNode){
+		List<XmProjectGroup> parentList=new ArrayList<>();
+		XmProjectGroup current=currNode;
+		while (true){
+			if(!StringUtils.hasText(current.getPgroupId()) || "0".equals(current.getPgroupId())){
+				return parentList;
+			}
+			XmProjectGroup query=new XmProjectGroup();
+			query.setId(current.getPgroupId());
+			current=this.selectOneObject(query);
+			if(current==null){
+				return parentList;
+			}
+			parentList.add(current);
+		}
+	}
+
+	private List<XmProjectGroup> getParentList(XmProjectGroup currNode,List<XmProjectGroup> nodes){
+		List<XmProjectGroup> parentList=new ArrayList<>();
+		XmProjectGroup current=currNode;
+		while (true){
+			if(!StringUtils.hasText(current.getPgroupId()) || "0".equals(current.getPgroupId())){
+				return parentList;
+			}
+			XmProjectGroup query=new XmProjectGroup();
+			query.setId(current.getPgroupId());
+			Optional<XmProjectGroup> optional=nodes.stream().filter(i->i.getId().equals(query.getId())).findFirst();
+			if(optional.isPresent()){
+				current=optional.get();
+				parentList.add(current);
+			}else{
+				return parentList;
+			}
+
+		}
+	}
+
+
+	@Transactional
+	public void sumParents(XmProjectGroup node){
+		String id=node.getId();
+		String pidPaths=node.getPidPaths();
+		if(!StringUtils.hasText(pidPaths)){
+			return;
+		}
+		if(!pidPaths.startsWith("0,")){
+			return;
+		}
+		if("0".equals(node.getNtype())&&pidPaths.endsWith(id+",")){
+			pidPaths=pidPaths.substring(2,pidPaths.indexOf(id));
+		}else{
+			pidPaths=pidPaths.substring(2);
+		}
+
+		if(!StringUtils.hasText(pidPaths)){
+			return;
+		}
+		String[] pidPathss=pidPaths.split(",");
+		List<String> pidPathsList=new ArrayList<>();
+		for (int i = pidPathss.length-1; i >=0; i--) {
+			pidPathsList.add(pidPathss[i]);
+		}
+		if(pidPathsList.size()>0){
+			super.update("sumParents",pidPathsList	);
+		}
+
+	}
+	@Transactional
+	public void batchSumParents(List<XmProjectGroup> xmTasks) {
+		List<Set<String>> list=new ArrayList<>();
+		for (XmProjectGroup node : xmTasks) {
+			String id=node.getId();
+			String pidPaths=node.getPidPaths();
+			if(!StringUtils.hasText(pidPaths)){
+				continue;
+			}
+			if(!pidPaths.startsWith("0,")){
+				continue;
+			}
+			if("0".equals(node.getNtype())){
+				pidPaths=pidPaths.substring(2,pidPaths.indexOf(id));
+			}else{
+				pidPaths=pidPaths.substring(2);
+			}
+
+			if(!StringUtils.hasText(pidPaths)){
+				continue;
+			}
+			String[] pidPathss=pidPaths.split(",");
+			for (int i = 0; i <pidPathss.length; i++) {
+				if(list.size()<=i){
+					list.add(new HashSet<>());
+				}
+				Set<String> set=list.get(i);
+				set.add(pidPathss[i]);
+			}
+			if(list.size()<=0){
+				return;
+			}
+			Set<String> allSet=new HashSet<>();
+			for (int i = list.size() - 1; i >= 0; i--) {
+				Set<String> set=list.get(i);
+				if(set.size()>0){
+					List<String> ids=set.stream().filter(k->!allSet.contains(k)).collect(Collectors.toList());
+					if(ids.size()>0){
+						allSet.addAll(ids.stream().collect(Collectors.toSet()));
+						super.update("batchSumParents", ids);
+					}
+
+				}
+
+			}
+
+
+		}
+
+	}
+
+
+	public boolean checkExistsExecuser(XmProjectGroup node) {
+		String exec=node.getExeUserids();
+		if(!StringUtils.hasText(exec)){
+			return false;
+		}
+		if(exec.indexOf("(1)")>0 || exec.indexOf("(2)")>0|| exec.indexOf("(3)")>0|| exec.indexOf("(4)")>0|| exec.indexOf("(5)")>0){
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * 检查是否能删除干净所有儿子孙子节点。
+	 * @param delNode 当前删除节点
+	 * @param delNodes 本批量需要删除的全部节点
+	 * @return
+	 */
+	public boolean checkCanDelAllChild(XmProjectGroup delNode, List<XmProjectGroup> delNodes) {
+		if(delNode==null){
+			return true;
+		}
+		if(delNode.getChildrenCnt()==null||delNode.getChildrenCnt()<=0){
+			return true;
+		}
+		List<XmProjectGroup> childList=delNodes.stream().filter(i->delNode.getId().equals(i.getPgroupId())).collect(Collectors.toList());
+		if(childList==null||childList.size()<delNode.getChildrenCnt()){
+			return false;
+		}
+		for (XmProjectGroup n : childList) {
+			if (!this.checkCanDelAllChild(n, delNodes)) {
+				return false;
+			}
+		}
+		return true;
+
 	}
 }
 
