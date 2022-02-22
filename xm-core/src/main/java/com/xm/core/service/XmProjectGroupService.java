@@ -752,5 +752,27 @@ public class XmProjectGroupService extends BaseService {
 		return true;
 
 	}
+
+	@Transactional
+	public void doDeleteByPk(XmProjectGroup xmProjectGroup,XmProjectGroup groupDb) {
+		super.deleteByPk(xmProjectGroup);
+		this.sumParents(groupDb);
+	}
+
+	public List<XmProjectGroup> selectListByIds(List<String> ids) {
+		return super.selectList("selectListByIds",ids);
+	}
+
+	@Transactional
+	public void doBatchDeleteProductGroups(List<XmProjectGroup> canDelNodes) {
+		super.batchDelete(canDelNodes);
+		batchSumParents(canDelNodes);
+	}
+
+	@Transactional
+	public void doBatchDeleteProjectGroups(List<XmProjectGroup> canDelNodes) {
+		super.batchDelete(canDelNodes);
+		batchSumParents(canDelNodes);
+	}
 }
 
