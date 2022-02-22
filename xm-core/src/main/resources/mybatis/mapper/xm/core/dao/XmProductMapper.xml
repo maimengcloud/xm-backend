@@ -106,7 +106,7 @@
 		insert into xm_product(
 			<include refid="columns"/>
 		) values (
-		#{id},#{productName},#{branchId},#{remark},#{version},#{pmUserid},#{pmUsername},#{ctime},#{deptid},#{pstatus},#{startTime},#{endTime},#{deptName},#{admUserid},#{admUsername},#{assistantUserid},#{assistantUsername},#{bizProcInstId},#{bizFlowState},#{isTpl},#{baselineId},#{baseTime},#{code},#{pbudgetWorkload},#{pbudgetAmount},#{pmenuBudgetWorkload},#{pmenuBudgetAmount}
+		#{id},#{productName},#{branchId},#{remark},#{version},#{pmUserid},#{pmUsername},#{ctime},#{deptid},#{pstatus},#{startTime},#{endTime},#{deptName},#{admUserid},#{admUsername},#{assUserid},#{assUsername},#{bizProcInstId},#{bizFlowState},#{isTpl},#{baselineId},#{baseTime},#{code},#{pbudgetWorkload},#{pbudgetAmount},#{pmenuBudgetWorkload},#{pmenuBudgetAmount}
 		)
 	</insert>
 	
@@ -169,7 +169,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,assistant_userid,assistant_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code,pbudget_workload,pbudget_amount,pmenu_budget_workload,pmenu_budget_amount
+		id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,ass_userid,ass_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code,pbudget_workload,pbudget_amount,pmenu_budget_workload,pmenu_budget_amount
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -189,8 +189,8 @@
 		<if test="deptName != null and deptName != ''">      and res.dept_name = #{deptName}     </if>
 		<if test="admUserid != null and admUserid != ''">      and res.adm_userid = #{admUserid}     </if>
 		<if test="admUsername != null and admUsername != ''">      and res.adm_username = #{admUsername}     </if>
-		<if test="assistantUserid != null and assistantUserid != ''">      and res.assistant_userid = #{assistantUserid}     </if>
-		<if test="assistantUsername != null and assistantUsername != ''">      and res.assistant_username = #{assistantUsername}     </if>
+		<if test="assUserid != null and assUserid != ''">      and res.ass_userid = #{assUserid}     </if>
+		<if test="assUsername != null and assUsername != ''">      and res.ass_username = #{assUsername}     </if>
 		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
 		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
 		<if test="isTpl != null and isTpl != ''">      and res.is_tpl = #{isTpl}     </if>
@@ -218,8 +218,8 @@
 		dept_name = #{deptName},
 		adm_userid = #{admUserid},
 		adm_username = #{admUsername},
-		assistant_userid = #{assistantUserid},
-		assistant_username = #{assistantUsername},
+		ass_userid = #{assUserid},
+		ass_username = #{assUsername},
 		biz_proc_inst_id = #{bizProcInstId},
 		biz_flow_state = #{bizFlowState},
 		is_tpl = #{isTpl},
@@ -246,8 +246,8 @@
 		<if test="deptName != null and deptName != ''"> dept_name = #{deptName},     </if>
 		<if test="admUserid != null and admUserid != ''"> adm_userid = #{admUserid},     </if>
 		<if test="admUsername != null and admUsername != ''"> adm_username = #{admUsername},     </if>
-		<if test="assistantUserid != null and assistantUserid != ''"> assistant_userid = #{assistantUserid},     </if>
-		<if test="assistantUsername != null and assistantUsername != ''"> assistant_username = #{assistantUsername},     </if>
+		<if test="assUserid != null and assUserid != ''"> ass_userid = #{assUserid},     </if>
+		<if test="assUsername != null and assUsername != ''"> ass_username = #{assUsername},     </if>
 		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
 		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
 		<if test="isTpl != null and isTpl != ''"> is_tpl = #{isTpl},     </if>
@@ -275,8 +275,8 @@
 			dept_name = #{item.deptName},
 			adm_userid = #{item.admUserid},
 			adm_username = #{item.admUsername},
-			assistant_userid = #{item.assistantUserid},
-			assistant_username = #{item.assistantUsername},
+			ass_userid = #{item.assUserid},
+			ass_username = #{item.assUsername},
 			biz_proc_inst_id = #{item.bizProcInstId},
 			biz_flow_state = #{item.bizFlowState},
 			is_tpl = #{item.isTpl},

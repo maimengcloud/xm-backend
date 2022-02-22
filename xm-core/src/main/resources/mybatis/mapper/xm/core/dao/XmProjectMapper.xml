@@ -3,43 +3,101 @@
 <mapper namespace="com.xm.core.entity.XmProject">
 	
 	
-	<!--开始 自定sql函数区域 -->
-		<!--请在此区域添加自定义函数-->
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
 
-		<!-- 插入流程审批表数据 -->
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if><!-- 筛选属于当前年份的项目 -->
+		<if test="startYear != null and startYear != ''" >and (
+			date_format(start_time,'%Y') = #{startYear}
+			or date_format(end_time,'%Y') = #{startYear}
+			or ( date_format(start_time,'%Y') &lt; #{startYear} and date_format(end_time,'%Y') &gt; #{startYear} )
+			)
+		</if>
+		<!-- 筛选掉已结束项目 -->
+		<if test="hideStatus != null and hideStatus != ''">
+			and res.status != #{hideStatus}
+		</if>
+		<!-- 我参与的  包括我创建的，我监控的，我审核的-->
+		<if test=" compete !=null and compete !='' ">
+			and (    exists ( select 1 from xm_project_group g,XM.xm_project_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id )
+			or  res.create_userid=#{compete}
+			or  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{compete} )
+			)
+		</if>
+		<!-- 按参与角色查询等-->
+		<if test="pgTypeIds != null ">
+			and  exists ( select 1 from xm_project_group g,XM.xm_project_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id
+			and   g.pg_type_id in
+			<foreach collection="pgTypeIds" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+			)
+		</if>
+
+		<if test=" myExecuserStatus != null and myExecuserStatus != ''">
+			and  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{userid}
+			<if test=' myExecuserStatus != "all" '>
+				and exe.status=#{myExecuserStatus}
+			</if>
+			)
+		</if>
+
+		<if test="myFocus != null and myFocus != ''">
+			and exists ( select 1 from xm_my_focus f where f.userid=#{userid} and f.project_id=res.id  )
+		</if>
+		<if test=" productId !=null and productId!='' ">
+			and exists( select 1 from  xm_product_project_link ppl
+			where ppl.product_id=#{productId}  and ppl.project_id=res.id
+			)
+		</if>
+		<if test="iterationId!=null and iterationId!=''">
+			and exists( select 1 from xm_iteration_product_link ipl inner join xm_product_project_link ppl
+			on ipl.product_id=ppl.product_id
+			where ppl.project_id =res.id and ipl.iteration_id=#{iterationId}
+			)
+		</if>
+		<if test="key != null and key !='' ">  and res.name like #{key}  </if>
+		<if test="isTpl!=null and isTpl=='1'">
+			and (res.branch_id in( #{platformBranchId},#{myBranchId}) and res.is_tpl='1')
+		</if>
+    </sql>
 	<insert id="insertProcessApprova"
-		parameterType="HashMap"
-		useGeneratedKeys="false" keyProperty="id">
+			parameterType="HashMap"
+			useGeneratedKeys="false" keyProperty="id">
 		insert into xm_project_process_approva (
-		 id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
+		id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
 		) values (
-			#{id},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
+		#{id},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
 		)
 	</insert>
 
-		<!-- 同时修改业务表及流程审批表数据状态 -->
+	<!-- 同时修改业务表及流程审批表数据状态 -->
 	<update id="updateProcessApprova"
-		parameterType="HashMap">
+			parameterType="HashMap">
 		update xm_project  b ,XM.xm_project_process_approva pa
-			<set>
-				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
-				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
-				<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>
-				<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if>
-				<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
-				<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
-				 pa.flow_last_time = now(),
-				<if test=' eventName != null and eventName !="" '> pa.event_name = #{eventName},</if>
-				<if test=' flowState != null and flowState !="" '> pa.flow_state=#{flowState},</if>
-				<if test=' bizFlowState != null and bizFlowState !="" '> b.biz_flow_state=#{bizFlowState},</if>
-				<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
-			</set>
+		<set>
+			<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
+			<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
+			<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>
+			<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if>
+			<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
+			<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
+			pa.flow_last_time = now(),
+			<if test=' eventName != null and eventName !="" '> pa.event_name = #{eventName},</if>
+			<if test=' flowState != null and flowState !="" '> pa.flow_state=#{flowState},</if>
+			<if test=' bizFlowState != null and bizFlowState !="" '> b.biz_flow_state=#{bizFlowState},</if>
+			<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
+		</set>
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
-		      and b.id=pa.project_id
+		and b.id=pa.project_id
 	</update>
 
 	<update id="updateFlowStateByProcInstForDeleteSuccess"
-		parameterType="HashMap">
+			parameterType="HashMap">
 		update xm_project_process_approva pa set pa.flow_state='2'
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
 	</update>
@@ -47,7 +105,7 @@
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByProcInstId" parameterType="HashMap">
 		delete from xm_project
-		 where biz_proc_inst_id=#{procInstId}
+		where biz_proc_inst_id=#{procInstId}
 	</delete>
 
 	<!--结束 自定义sql函数区域-->
@@ -57,79 +115,18 @@
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
 		select res.*,s.project_id,s.biz_date,s.total_file_cnt,s.total_bug_cnt,s.total_task_cnt,s.total_budget_nouser_amount,s.project_name,s.total_staff_cnt,s.calc_time,s.calc_status,
-		       s.total_cost_nouser_amount,s.total_closed_bug_cnt,s.total_resolved_bug_cnt,s.total_complete_task_cnt,s.total_phase_cnt,s.total_complete_phase_cnt,s.total_need_pay_amount,
-		       s.total_finish_pay_amount,s.total_need_col_amount,s.total_finish_col_amount,s.total_cost_user_amount,s.total_budget_inner_user_amount,s.total_plan_workload,
-		       s.total_risk_cnt,s.total_complete_risk_cnt,s.branch_name,s.total_budget_out_user_amount,s.total_complete_workload,s.total_cost_inner_user_amount,s.total_cost_out_user_amount,
-		       s.total_progress,s.total_active_bug_cnt,s.total_confirmed_bug_cnt,s.project_status,s.total_act_workload,s.total_act_out_workload,s.total_act_inner_workload,
-		       s.total_task_budget_cost_at,s.total_task_out_cnt,s.total_need_pay_cnt,s.total_finish_pay_cnt,s.total_finish_pay_user_cnt,s.total_need_pay_user_cnt,s.total_plan_inner_user_workload,
-		       s.total_plan_out_user_workload,s.test_cases,s.exec_cases,s.design_cases,s.finish_cases,s.iteration_cnt,s.product_cnt,s.menu_cnt,
+		s.total_cost_nouser_amount,s.total_closed_bug_cnt,s.total_resolved_bug_cnt,s.total_complete_task_cnt,s.total_phase_cnt,s.total_complete_phase_cnt,s.total_need_pay_amount,
+		s.total_finish_pay_amount,s.total_need_col_amount,s.total_finish_col_amount,s.total_cost_user_amount,s.total_budget_inner_user_amount,s.total_plan_workload,
+		s.total_risk_cnt,s.total_complete_risk_cnt,s.branch_name,s.total_budget_out_user_amount,s.total_complete_workload,s.total_cost_inner_user_amount,s.total_cost_out_user_amount,
+		s.total_progress,s.total_active_bug_cnt,s.total_confirmed_bug_cnt,s.project_status,s.total_act_workload,s.total_act_out_workload,s.total_act_inner_workload,
+		s.total_task_budget_cost_at,s.total_task_out_cnt,s.total_need_pay_cnt,s.total_finish_pay_cnt,s.total_finish_pay_user_cnt,s.total_need_pay_user_cnt,s.total_plan_inner_user_workload,
+		s.total_plan_out_user_workload,s.test_cases,s.exec_cases,s.design_cases,s.finish_cases,s.iteration_cnt,s.product_cnt,s.menu_cnt,
 		pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from xm_project res
-		 left join xm_project_state s on s.project_id=res.id
-		 left join  xm_project_process_approva pa on res.id=pa.project_id and res.biz_proc_inst_id=pa.proc_inst_id
-
+		left join xm_project_state s on s.project_id=res.id
+		left join  xm_project_process_approva pa on res.id=pa.project_id and res.biz_proc_inst_id=pa.proc_inst_id
 		<where>
-			<if test="ids != null">  and
-				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-				        #{item}
-				    </foreach>
-			 </if>
+		    <include refid="whereForMap"/>
 			<include refid="where"/>
-
- 			<!-- 筛选属于当前年份的项目 -->
-			<if test="startYear != null and startYear != ''" >and (
-				date_format(start_time,'%Y') = #{startYear}
-				or date_format(end_time,'%Y') = #{startYear}
-				or ( date_format(start_time,'%Y') &lt; #{startYear} and date_format(end_time,'%Y') &gt; #{startYear} )
-				)
-			</if>
-			<!-- 筛选掉已结束项目 -->
-			<if test="hideStatus != null and hideStatus != ''">
-				and res.status != #{hideStatus}
-			</if>
-			<!-- 我参与的  包括我创建的，我监控的，我审核的-->
-			<if test=" compete !=null and compete !='' ">
-				and (    exists ( select 1 from xm_project_group g,XM.xm_project_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id )
-					 or  res.create_userid=#{compete}
-					 or  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{compete} )
-					)
-			</if>
-			<!-- 按参与角色查询等-->
-			<if test="pgTypeIds != null ">
-				and  exists ( select 1 from xm_project_group g,XM.xm_project_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id
-								and   g.pg_type_id in
-							    <foreach collection="pgTypeIds" item="item" index="index" open="(" separator="," close=")" >
-							        #{item}
-							    </foreach>
-				)
-			</if>
-
-			<if test=" myExecuserStatus != null and myExecuserStatus != ''">
-				and  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{userid}
-					<if test=' myExecuserStatus != "all" '>
-					and exe.status=#{myExecuserStatus}
-					</if>
-				)
-			</if>
-
-			<if test="myFocus != null and myFocus != ''">
-				and exists ( select 1 from xm_my_focus f where f.userid=#{userid} and f.project_id=res.id  )
-			</if>
-			<if test=" productId !=null and productId!='' ">
-				and exists( select 1 from  xm_product_project_link ppl
-				where ppl.product_id=#{productId}  and ppl.project_id=res.id
-				)
-			</if>
-			<if test="iterationId!=null and iterationId!=''">
-				and exists( select 1 from xm_iteration_product_link ipl inner join xm_product_project_link ppl
-				on ipl.product_id=ppl.product_id
-				where ppl.project_id =res.id and ipl.iteration_id=#{iterationId}
-				)
-			</if>
-			<if test="key != null and key !='' ">  and res.name like #{key}  </if>
-			<if test="isTpl!=null and isTpl=='1'">
-				and (res.branch_id in( #{platformBranchId},#{myBranchId}) and res.is_tpl='1')
-			</if>
 		</where>
 	</select>
 	
@@ -166,7 +163,7 @@
 		insert into xm_project(
 			<include refid="columns"/>
 		) values (
-		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planInnerUserAt},#{planOutUserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planInnerUserPrice},#{planOutUserPrice},#{planOutUserCnt},#{planInnerUserCnt},#{planWorkingHours},#{taxRate},#{planInnerUserWorkload},#{planOutUserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut},#{isTpl}
+		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planInnerUserAt},#{planOutUserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planInnerUserPrice},#{planOutUserPrice},#{planOutUserCnt},#{planInnerUserCnt},#{planWorkingHours},#{taxRate},#{planInnerUserWorkload},#{planOutUserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut},#{isTpl},#{pmUserid},#{pmUsername},#{assUserid},#{assUsername},#{admUserid},#{admUsername}
 		)
 	</insert>
 	
@@ -229,7 +226,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl
+		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -277,6 +274,12 @@
 		<if test="deptid != null and deptid != ''">      and res.deptid = #{deptid}     </if>
 		<if test="showOut != null and showOut != ''">      and res.show_out = #{showOut}     </if>
 		<if test="isTpl != null and isTpl != ''">      and res.is_tpl = #{isTpl}     </if>
+		<if test="pmUserid != null and pmUserid != ''">      and res.pm_userid = #{pmUserid}     </if>
+		<if test="pmUsername != null and pmUsername != ''">      and res.pm_username = #{pmUsername}     </if>
+		<if test="assUserid != null and assUserid != ''">      and res.ass_userid = #{assUserid}     </if>
+		<if test="assUsername != null and assUsername != ''">      and res.ass_username = #{assUsername}     </if>
+		<if test="admUserid != null and admUserid != ''">      and res.adm_userid = #{admUserid}     </if>
+		<if test="admUsername != null and admUsername != ''">      and res.adm_username = #{admUsername}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -321,7 +324,13 @@
 		budget_ctrl = #{budgetCtrl},
 		deptid = #{deptid},
 		show_out = #{showOut},
-		is_tpl = #{isTpl}
+		is_tpl = #{isTpl},
+		pm_userid = #{pmUserid},
+		pm_username = #{pmUsername},
+		ass_userid = #{assUserid},
+		ass_username = #{assUsername},
+		adm_userid = #{admUserid},
+		adm_username = #{admUsername}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="code != null and code != ''"> code = #{code},     </if>
@@ -366,6 +375,12 @@
 		<if test="deptid != null and deptid != ''"> deptid = #{deptid},     </if>
 		<if test="showOut != null and showOut != ''"> show_out = #{showOut},     </if>
 		<if test="isTpl != null and isTpl != ''"> is_tpl = #{isTpl},     </if>
+		<if test="pmUserid != null and pmUserid != ''"> pm_userid = #{pmUserid},     </if>
+		<if test="pmUsername != null and pmUsername != ''"> pm_username = #{pmUsername},     </if>
+		<if test="assUserid != null and assUserid != ''"> ass_userid = #{assUserid},     </if>
+		<if test="assUsername != null and assUsername != ''"> ass_username = #{assUsername},     </if>
+		<if test="admUserid != null and admUserid != ''"> adm_userid = #{admUserid},     </if>
+		<if test="admUsername != null and admUsername != ''"> adm_username = #{admUsername},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -410,6 +425,12 @@
 			budget_ctrl = #{item.budgetCtrl},
 			deptid = #{item.deptid},
 			show_out = #{item.showOut},
-			is_tpl = #{item.isTpl}
+			is_tpl = #{item.isTpl},
+			pm_userid = #{item.pmUserid},
+			pm_username = #{item.pmUsername},
+			ass_userid = #{item.assUserid},
+			ass_username = #{item.assUsername},
+			adm_userid = #{item.admUserid},
+			adm_username = #{item.admUsername}
 	</sql>
 </mapper>

@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProduct所有属性名: <br>
- *	id,productName,branchId,remark,version,pmUserid,pmUsername,ctime,deptid,pstatus,startTime,endTime,deptName,admUserid,admUsername,assistantUserid,assistantUsername,bizProcInstId,bizFlowState,isTpl,baselineId,baseTime,code,pbudgetWorkload,pbudgetAmount,pmenuBudgetWorkload,pmenuBudgetAmount;<br>
+ *	id,productName,branchId,remark,version,pmUserid,pmUsername,ctime,deptid,pstatus,startTime,endTime,deptName,admUserid,admUsername,assUserid,assUsername,bizProcInstId,bizFlowState,isTpl,baselineId,baseTime,code,pbudgetWorkload,pbudgetAmount,pmenuBudgetWorkload,pmenuBudgetAmount;<br>
  * 表 xm_product 产品表的所有字段名: <br>
- *	id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,assistant_userid,assistant_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code,pbudget_workload,pbudget_amount,pmenu_budget_workload,pmenu_budget_amount;<br>
+ *	id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,ass_userid,ass_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code,pbudget_workload,pbudget_amount,pmenu_budget_workload,pmenu_budget_amount;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -66,10 +66,10 @@ public class XmProduct  implements java.io.Serializable {
 	String admUsername;
 	
 	@ApiModelProperty(notes="副经理编号",allowEmptyValue=true,example="",allowableValues="")
-	String assistantUserid;
+	String assUserid;
 	
 	@ApiModelProperty(notes="副经理名称",allowEmptyValue=true,example="",allowableValues="")
-	String assistantUsername;
+	String assUsername;
 	
 	@ApiModelProperty(notes="当前流程实例编号",allowEmptyValue=true,example="",allowableValues="")
 	String bizProcInstId;
@@ -203,14 +203,14 @@ public class XmProduct  implements java.io.Serializable {
 	/**
 	 * 副经理编号
 	 **/
-	public void setAssistantUserid(String assistantUserid) {
-		this.assistantUserid = assistantUserid;
+	public void setAssUserid(String assUserid) {
+		this.assUserid = assUserid;
 	}
 	/**
 	 * 副经理名称
 	 **/
-	public void setAssistantUsername(String assistantUsername) {
-		this.assistantUsername = assistantUsername;
+	public void setAssUsername(String assUsername) {
+		this.assUsername = assUsername;
 	}
 	/**
 	 * 当前流程实例编号
@@ -366,14 +366,14 @@ public class XmProduct  implements java.io.Serializable {
 	/**
 	 * 副经理编号
 	 **/
-	public String getAssistantUserid() {
-		return this.assistantUserid;
+	public String getAssUserid() {
+		return this.assUserid;
 	}
 	/**
 	 * 副经理名称
 	 **/
-	public String getAssistantUsername() {
-		return this.assistantUsername;
+	public String getAssUsername() {
+		return this.assUsername;
 	}
 	/**
 	 * 当前流程实例编号
