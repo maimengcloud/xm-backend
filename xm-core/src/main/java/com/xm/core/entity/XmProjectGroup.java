@@ -7,9 +7,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectGroup所有属性名: <br>
- *	id,groupName,projectId,pgTypeId,pgTypeName,leaderUserid,leaderUsername,ctime,ltime,productId,branchId,pgClass;<br>
+ *	id,groupName,projectId,pgTypeId,pgTypeName,leaderUserid,leaderUsername,ctime,ltime,productId,branchId,pgClass,pgroupId,lvl,pidPaths,isTpl,assUserid,assUsername,childrenCnt,userCnt,qxCode,calcWorkload;<br>
  * 表 xm_project_group xm_project_group的所有字段名: <br>
- *	id,group_name,project_id,pg_type_id,pg_type_name,leader_userid,leader_username,ctime,ltime,product_id,branch_id,pg_class;<br>
+ *	id,group_name,project_id,pg_type_id,pg_type_name,leader_userid,leader_username,ctime,ltime,product_id,branch_id,pg_class,pgroup_id,lvl,pid_paths,is_tpl,ass_userid,ass_username,children_cnt,user_cnt,qx_code,calc_workload;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -54,6 +54,36 @@ public class XmProjectGroup  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="团队类别0项目1产品",allowEmptyValue=true,example="",allowableValues="")
 	String pgClass;
+	
+	@ApiModelProperty(notes="上级团队编号",allowEmptyValue=true,example="",allowableValues="")
+	String pgroupId;
+	
+	@ApiModelProperty(notes="级别0级1级2级3级4级",allowEmptyValue=true,example="",allowableValues="")
+	String lvl;
+	
+	@ApiModelProperty(notes="上级编号路径逗号分割,0,开始，本组编号+逗号结束",allowEmptyValue=true,example="",allowableValues="")
+	String pidPaths;
+	
+	@ApiModelProperty(notes="是否为模板",allowEmptyValue=true,example="",allowableValues="")
+	String isTpl;
+	
+	@ApiModelProperty(notes="副组长编号",allowEmptyValue=true,example="",allowableValues="")
+	String assUserid;
+	
+	@ApiModelProperty(notes="副组长姓名",allowEmptyValue=true,example="",allowableValues="")
+	String assUsername;
+	
+	@ApiModelProperty(notes="下级团队数量",allowEmptyValue=true,example="",allowableValues="")
+	Integer childrenCnt;
+	
+	@ApiModelProperty(notes="组员数量",allowEmptyValue=true,example="",allowableValues="")
+	Integer userCnt;
+	
+	@ApiModelProperty(notes="权限码",allowEmptyValue=true,example="",allowableValues="")
+	String qxCode;
+	
+	@ApiModelProperty(notes="是否计算工作量0否1是",allowEmptyValue=true,example="",allowableValues="")
+	String calcWorkload;
 
 	/**主键**/
 	public XmProjectGroup(String id) {
@@ -136,6 +166,66 @@ public class XmProjectGroup  implements java.io.Serializable {
 	public void setPgClass(String pgClass) {
 		this.pgClass = pgClass;
 	}
+	/**
+	 * 上级团队编号
+	 **/
+	public void setPgroupId(String pgroupId) {
+		this.pgroupId = pgroupId;
+	}
+	/**
+	 * 级别0级1级2级3级4级
+	 **/
+	public void setLvl(String lvl) {
+		this.lvl = lvl;
+	}
+	/**
+	 * 上级编号路径逗号分割,0,开始，本组编号+逗号结束
+	 **/
+	public void setPidPaths(String pidPaths) {
+		this.pidPaths = pidPaths;
+	}
+	/**
+	 * 是否为模板
+	 **/
+	public void setIsTpl(String isTpl) {
+		this.isTpl = isTpl;
+	}
+	/**
+	 * 副组长编号
+	 **/
+	public void setAssUserid(String assUserid) {
+		this.assUserid = assUserid;
+	}
+	/**
+	 * 副组长姓名
+	 **/
+	public void setAssUsername(String assUsername) {
+		this.assUsername = assUsername;
+	}
+	/**
+	 * 下级团队数量
+	 **/
+	public void setChildrenCnt(Integer childrenCnt) {
+		this.childrenCnt = childrenCnt;
+	}
+	/**
+	 * 组员数量
+	 **/
+	public void setUserCnt(Integer userCnt) {
+		this.userCnt = userCnt;
+	}
+	/**
+	 * 权限码
+	 **/
+	public void setQxCode(String qxCode) {
+		this.qxCode = qxCode;
+	}
+	/**
+	 * 是否计算工作量0否1是
+	 **/
+	public void setCalcWorkload(String calcWorkload) {
+		this.calcWorkload = calcWorkload;
+	}
 	
 	/**
 	 * 主键
@@ -208,6 +298,66 @@ public class XmProjectGroup  implements java.io.Serializable {
 	 **/
 	public String getPgClass() {
 		return this.pgClass;
+	}
+	/**
+	 * 上级团队编号
+	 **/
+	public String getPgroupId() {
+		return this.pgroupId;
+	}
+	/**
+	 * 级别0级1级2级3级4级
+	 **/
+	public String getLvl() {
+		return this.lvl;
+	}
+	/**
+	 * 上级编号路径逗号分割,0,开始，本组编号+逗号结束
+	 **/
+	public String getPidPaths() {
+		return this.pidPaths;
+	}
+	/**
+	 * 是否为模板
+	 **/
+	public String getIsTpl() {
+		return this.isTpl;
+	}
+	/**
+	 * 副组长编号
+	 **/
+	public String getAssUserid() {
+		return this.assUserid;
+	}
+	/**
+	 * 副组长姓名
+	 **/
+	public String getAssUsername() {
+		return this.assUsername;
+	}
+	/**
+	 * 下级团队数量
+	 **/
+	public Integer getChildrenCnt() {
+		return this.childrenCnt;
+	}
+	/**
+	 * 组员数量
+	 **/
+	public Integer getUserCnt() {
+		return this.userCnt;
+	}
+	/**
+	 * 权限码
+	 **/
+	public String getQxCode() {
+		return this.qxCode;
+	}
+	/**
+	 * 是否计算工作量0否1是
+	 **/
+	public String getCalcWorkload() {
+		return this.calcWorkload;
 	}
 
 }

@@ -64,7 +64,7 @@
 		insert into xm_project_group(
 			<include refid="columns"/>
 		) values (
-		#{id},#{groupName},#{projectId},#{pgTypeId},#{pgTypeName},#{leaderUserid},#{leaderUsername},#{ctime},#{ltime},#{productId},#{branchId},#{pgClass}
+		#{id},#{groupName},#{projectId},#{pgTypeId},#{pgTypeName},#{leaderUserid},#{leaderUsername},#{ctime},#{ltime},#{productId},#{branchId},#{pgClass},#{pgroupId},#{lvl},#{pidPaths},#{isTpl},#{assUserid},#{assUsername},#{childrenCnt},#{userCnt},#{qxCode},#{calcWorkload}
 		)
 	</insert>
 	
@@ -127,7 +127,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,group_name,project_id,pg_type_id,pg_type_name,leader_userid,leader_username,ctime,ltime,product_id,branch_id,pg_class
+		id,group_name,project_id,pg_type_id,pg_type_name,leader_userid,leader_username,ctime,ltime,product_id,branch_id,pg_class,pgroup_id,lvl,pid_paths,is_tpl,ass_userid,ass_username,children_cnt,user_cnt,qx_code,calc_workload
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -144,6 +144,16 @@
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
 		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
 		<if test="pgClass != null and pgClass != ''">      and res.pg_class = #{pgClass}     </if>
+		<if test="pgroupId != null and pgroupId != ''">      and res.pgroup_id = #{pgroupId}     </if>
+		<if test="lvl != null and lvl != ''">      and res.lvl = #{lvl}     </if>
+		<if test="pidPaths != null and pidPaths != ''">      and res.pid_paths = #{pidPaths}     </if>
+		<if test="isTpl != null and isTpl != ''">      and res.is_tpl = #{isTpl}     </if>
+		<if test="assUserid != null and assUserid != ''">      and res.ass_userid = #{assUserid}     </if>
+		<if test="assUsername != null and assUsername != ''">      and res.ass_username = #{assUsername}     </if>
+		<if test="childrenCnt != null and childrenCnt != ''">      and res.children_cnt = #{childrenCnt}     </if>
+		<if test="userCnt != null and userCnt != ''">      and res.user_cnt = #{userCnt}     </if>
+		<if test="qxCode != null and qxCode != ''">      and res.qx_code = #{qxCode}     </if>
+		<if test="calcWorkload != null and calcWorkload != ''">      and res.calc_workload = #{calcWorkload}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -157,7 +167,17 @@
 		ltime = #{ltime},
 		product_id = #{productId},
 		branch_id = #{branchId},
-		pg_class = #{pgClass}
+		pg_class = #{pgClass},
+		pgroup_id = #{pgroupId},
+		lvl = #{lvl},
+		pid_paths = #{pidPaths},
+		is_tpl = #{isTpl},
+		ass_userid = #{assUserid},
+		ass_username = #{assUsername},
+		children_cnt = #{childrenCnt},
+		user_cnt = #{userCnt},
+		qx_code = #{qxCode},
+		calc_workload = #{calcWorkload}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="groupName != null and groupName != ''"> group_name = #{groupName},     </if>
@@ -171,6 +191,16 @@
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
 		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
 		<if test="pgClass != null and pgClass != ''"> pg_class = #{pgClass},     </if>
+		<if test="pgroupId != null and pgroupId != ''"> pgroup_id = #{pgroupId},     </if>
+		<if test="lvl != null and lvl != ''"> lvl = #{lvl},     </if>
+		<if test="pidPaths != null and pidPaths != ''"> pid_paths = #{pidPaths},     </if>
+		<if test="isTpl != null and isTpl != ''"> is_tpl = #{isTpl},     </if>
+		<if test="assUserid != null and assUserid != ''"> ass_userid = #{assUserid},     </if>
+		<if test="assUsername != null and assUsername != ''"> ass_username = #{assUsername},     </if>
+		<if test="childrenCnt != null and childrenCnt != ''"> children_cnt = #{childrenCnt},     </if>
+		<if test="userCnt != null and userCnt != ''"> user_cnt = #{userCnt},     </if>
+		<if test="qxCode != null and qxCode != ''"> qx_code = #{qxCode},     </if>
+		<if test="calcWorkload != null and calcWorkload != ''"> calc_workload = #{calcWorkload},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -184,6 +214,16 @@
 			ltime = #{item.ltime},
 			product_id = #{item.productId},
 			branch_id = #{item.branchId},
-			pg_class = #{item.pgClass}
+			pg_class = #{item.pgClass},
+			pgroup_id = #{item.pgroupId},
+			lvl = #{item.lvl},
+			pid_paths = #{item.pidPaths},
+			is_tpl = #{item.isTpl},
+			ass_userid = #{item.assUserid},
+			ass_username = #{item.assUsername},
+			children_cnt = #{item.childrenCnt},
+			user_cnt = #{item.userCnt},
+			qx_code = #{item.qxCode},
+			calc_workload = #{item.calcWorkload}
 	</sql>
 </mapper>

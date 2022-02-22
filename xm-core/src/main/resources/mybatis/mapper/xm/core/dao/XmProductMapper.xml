@@ -3,8 +3,7 @@
 <mapper namespace="com.xm.core.entity.XmProduct">
 	
 	
-	<!--开始 自定sql函数区域 -->
-		<!--请在此区域添加自定义函数-->
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
 
     <sql id="whereForMap">
          <if test=" ids != null">  and (res.id) in

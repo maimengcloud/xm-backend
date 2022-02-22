@@ -7,35 +7,29 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectGroupUser所有属性名: <br>
- *	joinTime,id,groupId,userid,username,isHead,outTime,status,bizProcInstId,bizFlowState,projectId;<br>
+ *	joinTime,groupId,userid,username,outTime,status,obranchId,isPri,seqNo;<br>
  * 表 xm_project_group_user xm_project_group_user的所有字段名: <br>
- *	join_time,id,group_id,userid,username,is_head,out_time,status,biz_proc_inst_id,biz_flow_state,project_id;<br>
+ *	join_time,group_id,userid,username,out_time,status,obranch_id,is_pri,seq_no;<br>
  * 当前主键(包括多主键):<br>
- *	id;<br>
+ *	group_id,userid;<br>
  */
 @ApiModel(description="xm_project_group_user")
 public class XmProjectGroupUser  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@ApiModelProperty(notes="主键,主键",allowEmptyValue=true,example="",allowableValues="")
-	String id;
+	@ApiModelProperty(notes="团队编号,主键",allowEmptyValue=true,example="",allowableValues="")
+	String groupId;
+	
+	@ApiModelProperty(notes="团队成员编号,主键",allowEmptyValue=true,example="",allowableValues="")
+	String userid;
   	
 	
 	@ApiModelProperty(notes="加入时间",allowEmptyValue=true,example="",allowableValues="")
 	Date joinTime;
 	
-	@ApiModelProperty(notes="团队编号",allowEmptyValue=true,example="",allowableValues="")
-	String groupId;
-	
-	@ApiModelProperty(notes="团队成员编号",allowEmptyValue=true,example="",allowableValues="")
-	String userid;
-	
 	@ApiModelProperty(notes="团队成员",allowEmptyValue=true,example="",allowableValues="")
 	String username;
-	
-	@ApiModelProperty(notes="是否组长，1是，0否",allowEmptyValue=true,example="",allowableValues="")
-	String isHead;
 	
 	@ApiModelProperty(notes="离队时间",allowEmptyValue=true,example="",allowableValues="")
 	Date outTime;
@@ -43,18 +37,19 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	@ApiModelProperty(notes="当前状态0参与中1已退出团队",allowEmptyValue=true,example="",allowableValues="")
 	String status;
 	
-	@ApiModelProperty(notes="当前流程实例编号",allowEmptyValue=true,example="",allowableValues="")
-	String bizProcInstId;
+	@ApiModelProperty(notes="组员原归属机构编号",allowEmptyValue=true,example="",allowableValues="")
+	String obranchId;
 	
-	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
-	String bizFlowState;
+	@ApiModelProperty(notes="是否私人加入0否1是",allowEmptyValue=true,example="",allowableValues="")
+	String isPri;
 	
-	@ApiModelProperty(notes="项目编号",allowEmptyValue=true,example="",allowableValues="")
-	String projectId;
+	@ApiModelProperty(notes="排序号--从1开始",allowEmptyValue=true,example="",allowableValues="")
+	Integer seqNo;
 
-	/**主键**/
-	public XmProjectGroupUser(String id) {
-		this.id = id;
+	/**团队编号,团队成员编号**/
+	public XmProjectGroupUser(String groupId,String userid) {
+		this.groupId = groupId;
+		this.userid = userid;
 	}
     
     /**xm_project_group_user**/
@@ -66,12 +61,6 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	 **/
 	public void setJoinTime(Date joinTime) {
 		this.joinTime = joinTime;
-	}
-	/**
-	 * 主键
-	 **/
-	public void setId(String id) {
-		this.id = id;
 	}
 	/**
 	 * 团队编号
@@ -92,12 +81,6 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 		this.username = username;
 	}
 	/**
-	 * 是否组长，1是，0否
-	 **/
-	public void setIsHead(String isHead) {
-		this.isHead = isHead;
-	}
-	/**
 	 * 离队时间
 	 **/
 	public void setOutTime(Date outTime) {
@@ -110,22 +93,22 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 		this.status = status;
 	}
 	/**
-	 * 当前流程实例编号
+	 * 组员原归属机构编号
 	 **/
-	public void setBizProcInstId(String bizProcInstId) {
-		this.bizProcInstId = bizProcInstId;
+	public void setObranchId(String obranchId) {
+		this.obranchId = obranchId;
 	}
 	/**
-	 * 当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除
+	 * 是否私人加入0否1是
 	 **/
-	public void setBizFlowState(String bizFlowState) {
-		this.bizFlowState = bizFlowState;
+	public void setIsPri(String isPri) {
+		this.isPri = isPri;
 	}
 	/**
-	 * 项目编号
+	 * 排序号--从1开始
 	 **/
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
+	public void setSeqNo(Integer seqNo) {
+		this.seqNo = seqNo;
 	}
 	
 	/**
@@ -133,12 +116,6 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	 **/
 	public Date getJoinTime() {
 		return this.joinTime;
-	}
-	/**
-	 * 主键
-	 **/
-	public String getId() {
-		return this.id;
 	}
 	/**
 	 * 团队编号
@@ -159,12 +136,6 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 		return this.username;
 	}
 	/**
-	 * 是否组长，1是，0否
-	 **/
-	public String getIsHead() {
-		return this.isHead;
-	}
-	/**
 	 * 离队时间
 	 **/
 	public Date getOutTime() {
@@ -177,22 +148,22 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 		return this.status;
 	}
 	/**
-	 * 当前流程实例编号
+	 * 组员原归属机构编号
 	 **/
-	public String getBizProcInstId() {
-		return this.bizProcInstId;
+	public String getObranchId() {
+		return this.obranchId;
 	}
 	/**
-	 * 当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除
+	 * 是否私人加入0否1是
 	 **/
-	public String getBizFlowState() {
-		return this.bizFlowState;
+	public String getIsPri() {
+		return this.isPri;
 	}
 	/**
-	 * 项目编号
+	 * 排序号--从1开始
 	 **/
-	public String getProjectId() {
-		return this.projectId;
+	public Integer getSeqNo() {
+		return this.seqNo;
 	}
 
 }
