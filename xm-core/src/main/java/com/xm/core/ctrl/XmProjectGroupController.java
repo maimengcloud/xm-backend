@@ -70,7 +70,7 @@ public class XmProjectGroupController {
 			@ApiResponse(code = 200,response= XmProjectGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@HasQx(value = "xm_core_xmProjectGroup_updateGroup",name = "批量更新修改项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
-	@RequestMapping(value="/updateGroup",method=RequestMethod.POST)
+	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> updateGroup(@RequestBody XmProjectGroup group) {
 
 		Tips tips=new Tips("小组更新成功");
@@ -313,30 +313,7 @@ public class XmProjectGroupController {
 		m.put("tips", tips);
 		return m;
 	}
-	
-	/**
-	@ApiOperation( value = "根据主键修改一条xm_project_group信息",notes="editXmProjectGroup")
-	@ApiResponses({
-		@ApiResponse(code = 200,response=XmProjectGroup.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
-	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmProjectGroup(@RequestBody XmProjectGroup xmProjectGroup) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功更新一条数据");
-		try{
-			xmProjectGroupService.updateByPk(xmProjectGroup);
-			m.put("data",xmProjectGroup);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
-	}
-	*/
+
 	
 
 
