@@ -33,6 +33,7 @@
 		sum( ifnull(res.phase_budget_nouser_at,0) ) AS phase_budget_nouser_at,
 		sum( ifnull(res.phase_budget_inner_user_at,0) ) AS phase_budget_inner_user_at,
 		sum( ifnull(res.phase_budget_out_user_at,0) ) AS phase_budget_out_user_at,
+		sum( ifnull(res.phase_budget_at,0) ) AS phase_budget_at,
 		p.plan_nouser_at,
 		p.plan_inner_user_at,
 		p.plan_out_user_at,
@@ -65,6 +66,8 @@
 		sum( ifnull(res.phase_budget_nouser_at,0) ) AS phase_budget_nouser_at,
 		sum( ifnull(res.phase_budget_inner_user_at,0) ) AS phase_budget_inner_user_at,
 		sum( ifnull(res.phase_budget_out_user_at,0) ) AS phase_budget_out_user_at,
+		sum( ifnull(res.phase_budget_at,0) ) AS phase_budget_at,
+
 		p.pbudget_workload,
 		p.pbudget_amount,
 		p.pmenu_budget_workload,
@@ -79,6 +82,38 @@
 			</foreach>
 		</if>
 		where p.id=#{productId}
+	</select>
+	<select id="selectPhaseBudgetCost" parameterType="HashMap" resultType="HashMap">
+		select
+		res2.id,
+		res2.phase_budget_workload,
+		res2.phase_budget_nouser_at,
+		res2.phase_budget_inner_user_at,
+		res2.phase_budget_out_user_at,
+		res2.phase_budget_at,
+		res0.child_phase_budget_workload,
+		res0.child_phase_budget_nouser_at,
+		res0.child_phase_budget_inner_user_at,
+		res0.child_phase_budget_out_user_at,
+		res0.child_phase_budget_at
+		from xm_project_phase res2 left join
+		(
+		SELECT
+		res.parent_phase_id,
+		sum( ifnull(res.phase_budget_workload,0) ) AS child_phase_budget_workload,
+		sum( ifnull(res.phase_budget_nouser_at,0) ) AS child_phase_budget_nouser_at,
+		sum( ifnull(res.phase_budget_inner_user_at,0) ) AS child_phase_budget_inner_user_at,
+		sum( ifnull(res.phase_budget_out_user_at,0) ) AS child_phase_budget_out_user_at,
+		sum( ifnull(res.phase_budget_at,0) ) AS child_phase_budget_at,
+		FROM  	xm_project_phase res  where res.parent_phase_id=#{id}
+		<if test=" excludePhaseIds !=null "> and res.id not  in
+			<foreach collection="excludePhaseIds" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+		</if>
+		group by res.parent_phase_id
+		) as res0 on res2.parent_phase_id=res2.id
+		where res2.id=#{id}
 	</select>
 	<update id="loadTasksToXmProjectPhase" parameterType="String" statementType="CALLABLE">
 		{call load_tasks_to_xm_project_phase(#{projectId,mode=IN})}

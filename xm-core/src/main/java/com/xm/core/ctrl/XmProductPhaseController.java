@@ -244,9 +244,8 @@ public class XmProductPhaseController {
 				return m;
 			}
 			BigDecimal phaseBudgetCost=BigDecimal.ZERO;
-			String productId=null;
-			BigDecimal zero=BigDecimal.ZERO; 
-			productId=xmProjectPhase.getProductId();
+			BigDecimal zero=BigDecimal.ZERO;
+			String productId=xmProjectPhase.getProductId();
 			BigDecimal phaseBudgetInnerUserAt=NumberUtil.getBigDecimal(xmProjectPhase.getPhaseBudgetInnerUserAt(),zero);
 			BigDecimal phaseBudgetOutUserAt=NumberUtil.getBigDecimal(xmProjectPhase.getPhaseBudgetOutUserAt(),zero); 
 			BigDecimal phaseBudgetNouserAt=NumberUtil.getBigDecimal(xmProjectPhase.getPhaseBudgetNouserAt(),zero); 
@@ -255,6 +254,9 @@ public class XmProductPhaseController {
 			excludePhaseIds.add(xmProjectPhase.getId());
 			if(!StringUtils.hasText(xmProjectPhase.getParentPhaseId())){//如果为顶级计划，预算不能大于产品总预算
 				Tips judgetTips=xmProjectPhaseService.judgetProductBudget(productId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
+				if(!judgetTips.isOk()){
+					return ResponseHelper.failed(judgetTips);
+				}
 			}else{
 				XmProjectPhase parentDb=xmProjectPhaseService.selectOneObject(new XmProjectPhase(xmProjectPhase.getParentPhaseId()));
 				if(parentDb==null){
@@ -262,6 +264,10 @@ public class XmProductPhaseController {
 				}
 				if(!"1".equals(parentDb.getNtype())){
 					return ResponseHelper.failed("p-ntype-no-1","上级【"+parentDb.getPhaseName()+"】不是计划集，不能在其之下建立子计划");
+				}
+				Tips judgetTips=xmProjectPhaseService.judgetPhaseBudget(xmProjectPhase.getParentPhaseId(), phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
+				if(!judgetTips.isOk()){
+					return ResponseHelper.failed(judgetTips);
 				}
 			}
 				xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhase);

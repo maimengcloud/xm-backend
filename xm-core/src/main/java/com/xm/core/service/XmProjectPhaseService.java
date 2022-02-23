@@ -522,5 +522,48 @@ public class XmProjectPhaseService extends BaseService {
 		p.put("excludePhaseIds", excludePhaseIds);
 		return this.selectOne("selectTotalProductAndPhaseBudgetCost", p);
 	}
+	public Map<String,Object> selectPhaseBudgetCost(String phaseId,List<String> excludePhaseIds){
+		Map<String,Object> p=new HashMap<>();
+		p.put("id", phaseId);
+		p.put("excludePhaseIds", excludePhaseIds);
+		return this.selectOne("selectPhaseBudgetCost", p);
+	}
+
+	/**
+	 * 		res2.id,
+	 * 		res2.phase_budget_workload,
+	 * 		res2.phase_budget_nouser_at,
+	 * 		res2.phase_budget_inner_user_at,
+	 * 		res2.phase_budget_out_user_at,
+	 * 		res2.phase_budget_at,
+	 * 		res0.child_phase_budget_workload,
+	 * 		res0.child_phase_budget_nouser_at,
+	 * 		res0.child_phase_budget_inner_user_at,
+	 * 		res0.child_phase_budget_out_user_at,
+	 * 		res0.child_phase_budget_at
+	 * @param parentPhaseId
+	 * @param phaseBudgetCost
+	 * @param phaseBudgetInnerUserAt
+	 * @param phaseBudgetOutUserAt
+	 * @param phaseBudgetNouserAt
+	 * @param excludePhaseIds
+	 * @return
+	 */
+	public Tips judgetPhaseBudget(String parentPhaseId, BigDecimal phaseBudgetCost, BigDecimal phaseBudgetInnerUserAt, BigDecimal phaseBudgetOutUserAt, BigDecimal phaseBudgetNouserAt, List<String> excludePhaseIds) {
+		Tips tips= new Tips("检查通过");
+		Map<String,Object> phaseBudget=this.selectPhaseBudgetCost(parentPhaseId,excludePhaseIds);
+		if(phaseBudget==null || phaseBudget.isEmpty()){
+			tips.setFailureMsg("计划不存在");
+		}else{
+			BigDecimal childPhaseBudgetAt=NumberUtil.getBigDecimal(phaseBudget.get("childPhaseBudgetAt"),BigDecimal.ZERO);
+
+			BigDecimal phaseBudgetAt=NumberUtil.getBigDecimal(phaseBudget.get("phaseBudgetAt"),BigDecimal.ZERO);
+
+			if(childPhaseBudgetAt.add(phaseBudgetCost).compareTo(phaseBudgetAt)>0){
+				tips.setFailureMsg("预算金额超出剩余预算金额"+childPhaseBudgetAt.add(phaseBudgetCost).subtract(phaseBudgetAt)+"元");
+			}
+		}
+		return tips;
+	}
 }
 

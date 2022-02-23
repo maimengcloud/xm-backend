@@ -252,24 +252,28 @@ public class XmProjectPhaseController {
 			phaseBudgetCost=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);  
 			List<String> excludePhaseIds=new ArrayList<>();
 			excludePhaseIds.add(xmProjectPhase.getId());
-			Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
-			if(judgetTips.isOk()) {
-				if(StringUtils.hasText(xmProjectPhase.getParentPhaseId())){
-					XmProjectPhase parentDb=xmProjectPhaseService.selectOneObject(new XmProjectPhase(xmProjectPhase.getParentPhaseId()));
-					if(parentDb==null){
-						return ResponseHelper.failed("p-no-exists","上级计划不存在");
-					}
-					if(!"1".equals(parentDb.getNtype())){
-						return ResponseHelper.failed("p-ntype-no-1","上级【"+parentDb.getPhaseName()+"】不是计划集，不能在其之下建立子计划");
-					}
+			if(!StringUtils.hasText(xmProjectPhase.getParentPhaseId())){//如果为顶级计划，预算不能大于产品总预算
+				Tips judgetTips=xmProjectPhaseService.judgetBudget(projectId, phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
+				if(!judgetTips.isOk()){
+					return ResponseHelper.failed(judgetTips);
 				}
+			}else{
+				XmProjectPhase parentDb=xmProjectPhaseService.selectOneObject(new XmProjectPhase(xmProjectPhase.getParentPhaseId()));
+				if(parentDb==null){
+					return ResponseHelper.failed("p-no-exists","上级计划不存在");
+				}
+				if(!"1".equals(parentDb.getNtype())){
+					return ResponseHelper.failed("p-ntype-no-1","上级【"+parentDb.getPhaseName()+"】不是计划集，不能在其之下建立子计划");
+				}
+				Tips judgetTips=xmProjectPhaseService.judgetPhaseBudget(xmProjectPhase.getParentPhaseId(), phaseBudgetCost,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,phaseBudgetNouserAt,excludePhaseIds);
+				if(!judgetTips.isOk()){
+					return ResponseHelper.failed(judgetTips);
+				}
+			}
 				xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhase);
  				xmProjectPhaseService.insert(xmProjectPhase);
 				xmRecordService.addProjectPhaseRecord(projectId, xmProjectPhase.getId(), "项目-计划-新增计划", "新增计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
 				m.put("data",xmProjectPhase);
-			}else {
-				tips=judgetTips;
-			}
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
