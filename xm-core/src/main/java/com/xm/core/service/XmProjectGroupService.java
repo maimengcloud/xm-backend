@@ -92,6 +92,50 @@ public class XmProjectGroupService extends BaseService {
 		}
 	    
     }
+
+	public boolean checkUserIsProjectAdm(XmProject xmProject,String userid){
+		if(xmProject==null){
+			return false;
+		}
+		Map<String,String> map=this.getProjectAdmUsers(xmProject);
+		if(map.containsKey(userid)){
+			return true;
+		}
+		return false;
+	}
+    public boolean checkUserIsProjectAdm(String projectId,String userid){
+		XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
+		if(xmProject==null){
+			return false;
+		}
+		Map<String,String> map=this.getProjectAdmUsers(xmProject);
+		if(map.containsKey(userid)){
+			return true;
+		}
+		return false;
+	}
+
+	public boolean checkUserIsProductAdm(XmProduct xmProduct,String userid){
+		if(xmProduct==null){
+			return false;
+		}
+		Map<String,String> map=this.getProductAdmUsers(xmProduct);
+		if(map.containsKey(userid)){
+			return true;
+		}
+		return false;
+	}
+	public boolean checkUserIsProductAdm(String productId,String userid){
+		XmProduct xmProduct=xmProductService.getProductFromCache(productId);
+		if(xmProduct==null){
+			return false;
+		}
+		Map<String,String> map=this.getProductAdmUsers(xmProduct);
+		if(map.containsKey(userid)){
+			return true;
+		}
+		return false;
+	}
 	public List<XmProjectGroupVo> getProductGroupVoList(String productId) {
 		List<XmProjectGroupVo>	groupVoList=new ArrayList<>();
 		List<XmProjectGroupVo>	groupVoList2  = groupCacheService.getProductGroups(productId);
@@ -812,6 +856,27 @@ public class XmProjectGroupService extends BaseService {
 	public void doBatchDeleteProjectGroups(List<XmProjectGroup> canDelNodes) {
 		super.batchDelete(canDelNodes);
 		batchSumParents(canDelNodes);
+	}
+
+	public XmProjectGroupVo getProductGroupFromCache(String productId, String groupId) {
+		XmProjectGroupVo groupVo=groupCacheService.getProductGroup(productId,groupId);
+		if(groupVo==null){
+			XmProjectGroup group=this.selectOneObject(new XmProjectGroup(groupId));
+			if(group==null){
+				return null;
+			}else{
+				XmProjectGroupUser xmProjectGroupUser=new XmProjectGroupUser();
+				xmProjectGroupUser.setGroupId(groupId);
+				List<XmProjectGroupUser> users=this.xmProjectGroupUserService.selectListByWhere(xmProjectGroupUser);
+				XmProjectGroupVo xmProjectGroupVo=new XmProjectGroupVo();
+				BeanUtils.copyProperties(group,xmProjectGroupVo);
+				xmProjectGroupVo.setGroupUsers(users);
+				this.groupCacheService.putProductGroup(xmProjectGroupVo);
+				return xmProjectGroupVo;
+			}
+		}else {
+			return groupVo;
+		}
 	}
 }
 

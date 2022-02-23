@@ -12,6 +12,7 @@ import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmProjectGroup;
+import com.xm.core.entity.XmProjectGroupUser;
 import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.XmProjectService;
@@ -121,6 +122,7 @@ public class XmProjectGroupController {
 		}else {
 			xmProjectGroupCacheService.clearProjectGroup(groupDb.getProjectId(),groupDb.getId());
 		}
+
 
 		m.put("tips", tips);
 		return m;
