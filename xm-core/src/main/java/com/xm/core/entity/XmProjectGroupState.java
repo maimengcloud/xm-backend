@@ -1,27 +1,26 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
- * 组织 com.qqkj  顶级模块 xm 大模块 core  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectGroupState所有属性名: <br>
- *	id,planStartTime,planEndTime,actStartTime,actEndTime,planWorkload,actWorkload,planCostAmount,actCostAmount,finishRate,demandRate,designRate,devRate,uatRate,sitRate,ctime,calcTime,planWorkhours,planWorkerCnt,closedBugs,activeBugs,confirmedBugs,resolvedBugs,testCases,execCases,designCases,finishCases,iterationCnt,taskCnt,finishTaskCnt,bizDate,bugCnt,groupId,projectId,projectName,groupName;<br>
- * 表 XM.xm_project_group_state 功能状态表,无需前端维护，所有数据由汇总统计得出的所有字段名: <br>
- *	id,plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,ctime,calc_time,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,task_cnt,finish_task_cnt,biz_date,bug_cnt,group_id,project_id,project_name,group_name;<br>
+ *	planStartTime,planEndTime,actStartTime,actEndTime,planWorkload,actWorkload,planCostAmount,actCostAmount,finishRate,demandRate,designRate,devRate,uatRate,sitRate,ctime,calcTime,planWorkhours,planWorkerCnt,closedBugs,activeBugs,confirmedBugs,resolvedBugs,testCases,execCases,designCases,finishCases,iterationCnt,taskCnt,finishTaskCnt,bizDate,bugCnt,groupId,projectId,projectName,groupName;<br>
+ * 表 xm_project_group_state 功能状态表,无需前端维护，所有数据由汇总统计得出的所有字段名: <br>
+ *	plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,ctime,calc_time,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,task_cnt,finish_task_cnt,biz_date,bug_cnt,group_id,project_id,project_name,group_name;<br>
  * 当前主键(包括多主键):<br>
- *	id;<br>
+ *	group_id;<br>
  */
 @ApiModel(description="功能状态表,无需前端维护，所有数据由汇总统计得出")
 public class XmProjectGroupState  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@ApiModelProperty(notes="主键,主键",allowEmptyValue=true,example="",allowableValues="")
-	String id;
+	@ApiModelProperty(notes="团队编号,主键",allowEmptyValue=true,example="",allowableValues="")
+	String groupId;
   	
 	
 	@ApiModelProperty(notes="开始时间",allowEmptyValue=true,example="",allowableValues="")
@@ -117,9 +116,6 @@ public class XmProjectGroupState  implements java.io.Serializable {
 	@ApiModelProperty(notes="bug总数",allowEmptyValue=true,example="",allowableValues="")
 	Integer bugCnt;
 	
-	@ApiModelProperty(notes="团队编号",allowEmptyValue=true,example="",allowableValues="")
-	String groupId;
-	
 	@ApiModelProperty(notes="项目编号",allowEmptyValue=true,example="",allowableValues="")
 	String projectId;
 	
@@ -129,21 +125,15 @@ public class XmProjectGroupState  implements java.io.Serializable {
 	@ApiModelProperty(notes="团队名称",allowEmptyValue=true,example="",allowableValues="")
 	String groupName;
 
-	/**主键**/
-	public XmProjectGroupState(String id) {
-		this.id = id;
+	/**团队编号**/
+	public XmProjectGroupState(String groupId) {
+		this.groupId = groupId;
 	}
     
     /**功能状态表,无需前端维护，所有数据由汇总统计得出**/
 	public XmProjectGroupState() {
 	}
 	
-	/**
-	 * 主键
-	 **/
-	public void setId(String id) {
-		this.id = id;
-	}
 	/**
 	 * 开始时间
 	 **/
@@ -355,12 +345,6 @@ public class XmProjectGroupState  implements java.io.Serializable {
 		this.groupName = groupName;
 	}
 	
-	/**
-	 * 主键
-	 **/
-	public String getId() {
-		return this.id;
-	}
 	/**
 	 * 开始时间
 	 **/

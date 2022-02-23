@@ -1,27 +1,26 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 组织 com.qqkj  顶级模块 xm 大模块 core  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmIterationState所有属性名: <br>
- *	id,distBudgetCost,distBudgetWorkload,actCost,actWorkload,actStaffNum,finishRate,testCases,execCases,designCases,finishCases,projectCnt,productCnt,menuCnt,taskCnt,finishTaskCnt,calcTime,iterationName,budgetCost,budgetWorkload,iterationId,bizDate,closedBugCnt,resolvedBugCnt,activeBugCnt,confirmedBugCnt,bugCnt;<br>
- * 表 XM.xm_iteration_state 迭代定义的所有字段名: <br>
- *	id,dist_budget_cost,dist_budget_workload,act_cost,act_workload,act_staff_num,finish_rate,test_cases,exec_cases,design_cases,finish_cases,project_cnt,product_cnt,menu_cnt,task_cnt,finish_task_cnt,calc_time,iteration_name,budget_cost,budget_workload,iteration_id,biz_date,closed_bug_cnt,resolved_bug_cnt,active_bug_cnt,confirmed_bug_cnt,bug_cnt;<br>
+ *	distBudgetCost,distBudgetWorkload,actCost,actWorkload,actStaffNum,finishRate,testCases,execCases,designCases,finishCases,projectCnt,productCnt,menuCnt,taskCnt,finishTaskCnt,calcTime,iterationName,budgetCost,budgetWorkload,iterationId,bizDate,closedBugCnt,resolvedBugCnt,activeBugCnt,confirmedBugCnt,bugCnt;<br>
+ * 表 xm_iteration_state 迭代定义的所有字段名: <br>
+ *	dist_budget_cost,dist_budget_workload,act_cost,act_workload,act_staff_num,finish_rate,test_cases,exec_cases,design_cases,finish_cases,project_cnt,product_cnt,menu_cnt,task_cnt,finish_task_cnt,calc_time,iteration_name,budget_cost,budget_workload,iteration_id,biz_date,closed_bug_cnt,resolved_bug_cnt,active_bug_cnt,confirmed_bug_cnt,bug_cnt;<br>
  * 当前主键(包括多主键):<br>
- *	id;<br>
+ *	iteration_id;<br>
  */
 @ApiModel(description="迭代定义")
 public class XmIterationState  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@ApiModelProperty(notes="迭代编码,主键",allowEmptyValue=true,example="",allowableValues="")
-	String id;
+	@ApiModelProperty(notes="迭代编号,主键",allowEmptyValue=true,example="",allowableValues="")
+	String iterationId;
   	
 	
 	@ApiModelProperty(notes="已分配到任务的预算从任务表汇总而来",allowEmptyValue=true,example="",allowableValues="")
@@ -37,7 +36,7 @@ public class XmIterationState  implements java.io.Serializable {
 	BigDecimal actWorkload;
 	
 	@ApiModelProperty(notes="实际投入人员数",allowEmptyValue=true,example="",allowableValues="")
-	Integer actStaffNum;
+	BigDecimal actStaffNum;
 	
 	@ApiModelProperty(notes="进度",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal finishRate;
@@ -60,7 +59,7 @@ public class XmIterationState  implements java.io.Serializable {
 	@ApiModelProperty(notes="关联产品数",allowEmptyValue=true,example="",allowableValues="")
 	Integer productCnt;
 	
-	@ApiModelProperty(notes="关联需求数",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="关联故事数",allowEmptyValue=true,example="",allowableValues="")
 	Integer menuCnt;
 	
 	@ApiModelProperty(notes="关联任务数",allowEmptyValue=true,example="",allowableValues="")
@@ -81,9 +80,6 @@ public class XmIterationState  implements java.io.Serializable {
 	@ApiModelProperty(notes="预算工作量",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal budgetWorkload;
 	
-	@ApiModelProperty(notes="迭代编号",allowEmptyValue=true,example="",allowableValues="")
-	String iterationId;
-	
 	@ApiModelProperty(notes="业务日期yyyy-MM-dd字符串",allowEmptyValue=true,example="",allowableValues="")
 	String bizDate;
 	
@@ -102,21 +98,15 @@ public class XmIterationState  implements java.io.Serializable {
 	@ApiModelProperty(notes="bug总数",allowEmptyValue=true,example="",allowableValues="")
 	Integer bugCnt;
 
-	/**迭代编码**/
-	public XmIterationState(String id) {
-		this.id = id;
+	/**迭代编号**/
+	public XmIterationState(String iterationId) {
+		this.iterationId = iterationId;
 	}
     
     /**迭代定义**/
 	public XmIterationState() {
 	}
 	
-	/**
-	 * 迭代编码
-	 **/
-	public void setId(String id) {
-		this.id = id;
-	}
 	/**
 	 * 已分配到任务的预算从任务表汇总而来
 	 **/
@@ -144,7 +134,7 @@ public class XmIterationState  implements java.io.Serializable {
 	/**
 	 * 实际投入人员数
 	 **/
-	public void setActStaffNum(Integer actStaffNum) {
+	public void setActStaffNum(BigDecimal actStaffNum) {
 		this.actStaffNum = actStaffNum;
 	}
 	/**
@@ -190,7 +180,7 @@ public class XmIterationState  implements java.io.Serializable {
 		this.productCnt = productCnt;
 	}
 	/**
-	 * 关联需求数
+	 * 关联故事数
 	 **/
 	public void setMenuCnt(Integer menuCnt) {
 		this.menuCnt = menuCnt;
@@ -275,12 +265,6 @@ public class XmIterationState  implements java.io.Serializable {
 	}
 	
 	/**
-	 * 迭代编码
-	 **/
-	public String getId() {
-		return this.id;
-	}
-	/**
 	 * 已分配到任务的预算从任务表汇总而来
 	 **/
 	public BigDecimal getDistBudgetCost() {
@@ -307,7 +291,7 @@ public class XmIterationState  implements java.io.Serializable {
 	/**
 	 * 实际投入人员数
 	 **/
-	public Integer getActStaffNum() {
+	public BigDecimal getActStaffNum() {
 		return this.actStaffNum;
 	}
 	/**
@@ -353,7 +337,7 @@ public class XmIterationState  implements java.io.Serializable {
 		return this.productCnt;
 	}
 	/**
-	 * 关联需求数
+	 * 关联故事数
 	 **/
 	public Integer getMenuCnt() {
 		return this.menuCnt;

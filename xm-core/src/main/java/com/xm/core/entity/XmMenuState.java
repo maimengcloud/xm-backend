@@ -8,23 +8,20 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenuState所有属性名: <br>
- *	id,menuId,planStartTime,planEndTime,actStartTime,actEndTime,planWorkload,actWorkload,planCostAmount,actCostAmount,finishRate,demandRate,designRate,devRate,uatRate,sitRate,onlineStatus,onlineTime,planStatus,chargeUserid,chargeUsername,menuStatus,ctime,ltime,cuserid,cusername,calcTime,menuName,planWorkhours,planWorkerCnt,closedBugs,activeBugs,confirmedBugs,resolvedBugs,productId,productName,testCases,execCases,designCases,finishCases,projectCnt,iterationCnt,taskCnt,finishTaskCnt,bizDate,bugCnt;<br>
+ *	menuId,planStartTime,planEndTime,actStartTime,actEndTime,planWorkload,actWorkload,planCostAmount,actCostAmount,finishRate,demandRate,designRate,devRate,uatRate,sitRate,onlineStatus,onlineTime,planStatus,chargeUserid,chargeUsername,menuStatus,ctime,ltime,cuserid,cusername,calcTime,menuName,planWorkhours,planWorkerCnt,closedBugs,activeBugs,confirmedBugs,resolvedBugs,productId,productName,testCases,execCases,designCases,finishCases,projectCnt,iterationCnt,taskCnt,finishTaskCnt,bizDate,bugCnt;<br>
  * 表 xm_menu_state 功能状态表,无需前端维护，所有数据由汇总统计得出的所有字段名: <br>
- *	id,menu_id,plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,online_status,online_time,plan_status,charge_userid,charge_username,menu_status,ctime,ltime,cuserid,cusername,calc_time,menu_name,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,product_id,product_name,test_cases,exec_cases,design_cases,finish_cases,project_cnt,iteration_cnt,task_cnt,finish_task_cnt,biz_date,bug_cnt;<br>
+ *	menu_id,plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,online_status,online_time,plan_status,charge_userid,charge_username,menu_status,ctime,ltime,cuserid,cusername,calc_time,menu_name,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,product_id,product_name,test_cases,exec_cases,design_cases,finish_cases,project_cnt,iteration_cnt,task_cnt,finish_task_cnt,biz_date,bug_cnt;<br>
  * 当前主键(包括多主键):<br>
- *	id;<br>
+ *	menu_id;<br>
  */
 @ApiModel(description="功能状态表,无需前端维护，所有数据由汇总统计得出")
 public class XmMenuState  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@ApiModelProperty(notes="主键,主键",allowEmptyValue=true,example="",allowableValues="")
-	String id;
-  	
-	
-	@ApiModelProperty(notes="功能编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="功能编号,主键",allowEmptyValue=true,example="",allowableValues="")
 	String menuId;
+  	
 	
 	@ApiModelProperty(notes="开始时间",allowEmptyValue=true,example="",allowableValues="")
 	Date planStartTime;
@@ -158,21 +155,15 @@ public class XmMenuState  implements java.io.Serializable {
 	@ApiModelProperty(notes="bug总数",allowEmptyValue=true,example="",allowableValues="")
 	Integer bugCnt;
 
-	/**主键**/
-	public XmMenuState(String id) {
-		this.id = id;
+	/**功能编号**/
+	public XmMenuState(String menuId) {
+		this.menuId = menuId;
 	}
     
     /**功能状态表,无需前端维护，所有数据由汇总统计得出**/
 	public XmMenuState() {
 	}
 	
-	/**
-	 * 主键
-	 **/
-	public void setId(String id) {
-		this.id = id;
-	}
 	/**
 	 * 功能编号
 	 **/
@@ -444,12 +435,6 @@ public class XmMenuState  implements java.io.Serializable {
 		this.bugCnt = bugCnt;
 	}
 	
-	/**
-	 * 主键
-	 **/
-	public String getId() {
-		return this.id;
-	}
 	/**
 	 * 功能编号
 	 **/

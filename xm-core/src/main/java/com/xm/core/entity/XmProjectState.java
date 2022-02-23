@@ -1,31 +1,27 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 组织 com.qqkj  顶级模块 xm 大模块 core  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectState所有属性名: <br>
- *	projectId,bizDate,totalFileCnt,totalBugCnt,totalTaskCnt,totalBudgetNouserAmount,projectName,id,totalStaffCnt,calcTime,calcStatus,totalCostNouserAmount,totalClosedBugCnt,totalResolvedBugCnt,totalCompleteTaskCnt,totalPhaseCnt,totalCompletePhaseCnt,totalNeedPayAmount,totalFinishPayAmount,totalNeedColAmount,totalFinishColAmount,totalCostUserAmount,totalBudgetInnerUserAmount,totalPlanWorkload,totalRiskCnt,totalCompleteRiskCnt,branchId,branchName,totalBudgetOutUserAmount,totalCompleteWorkload,totalCostInnerUserAmount,totalCostOutUserAmount,totalProgress,totalActiveBugCnt,totalConfirmedBugCnt,projectStatus,totalActWorkload,totalActOutWorkload,totalActInnerWorkload,totalTaskBudgetCostAt,totalTaskOutCnt,totalNeedPayCnt,totalFinishPayCnt,totalFinishPayUserCnt,totalNeedPayUserCnt,totalPlanInnerUserWorkload,totalPlanOutUserWorkload,testCases,execCases,designCases,finishCases,iterationCnt,productCnt,menuCnt;<br>
- * 表 XM.xm_project_state 项目指标日统计表的所有字段名: <br>
- *	project_id,biz_date,total_file_cnt,total_bug_cnt,total_task_cnt,total_budget_nouser_amount,project_name,id,total_staff_cnt,calc_time,calc_status,total_cost_nouser_amount,total_closed_bug_cnt,total_resolved_bug_cnt,total_complete_task_cnt,total_phase_cnt,total_complete_phase_cnt,total_need_pay_amount,total_finish_pay_amount,total_need_col_amount,total_finish_col_amount,total_cost_user_amount,total_budget_inner_user_amount,total_plan_workload,total_risk_cnt,total_complete_risk_cnt,branch_id,branch_name,total_budget_out_user_amount,total_complete_workload,total_cost_inner_user_amount,total_cost_out_user_amount,total_progress,total_active_bug_cnt,total_confirmed_bug_cnt,project_status,total_act_workload,total_act_out_workload,total_act_inner_workload,total_task_budget_cost_at,total_task_out_cnt,total_need_pay_cnt,total_finish_pay_cnt,total_finish_pay_user_cnt,total_need_pay_user_cnt,total_plan_inner_user_workload,total_plan_out_user_workload,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,product_cnt,menu_cnt;<br>
+ *	projectId,bizDate,totalFileCnt,totalBugCnt,totalTaskCnt,totalBudgetNouserAmount,projectName,totalStaffCnt,calcTime,calcStatus,totalCostNouserAmount,totalClosedBugCnt,totalResolvedBugCnt,totalCompleteTaskCnt,totalPhaseCnt,totalCompletePhaseCnt,totalNeedPayAmount,totalFinishPayAmount,totalNeedColAmount,totalFinishColAmount,totalCostUserAmount,totalBudgetInnerUserAmount,totalPlanWorkload,totalRiskCnt,totalCompleteRiskCnt,branchId,branchName,totalBudgetOutUserAmount,totalCompleteWorkload,totalCostInnerUserAmount,totalCostOutUserAmount,totalProgress,totalActiveBugCnt,totalConfirmedBugCnt,projectStatus,totalActWorkload,totalActOutWorkload,totalActInnerWorkload,totalTaskBudgetCostAt,totalTaskOutCnt,totalNeedPayCnt,totalFinishPayCnt,totalFinishPayUserCnt,totalNeedPayUserCnt,totalPlanInnerUserWorkload,totalPlanOutUserWorkload,testCases,execCases,designCases,finishCases,iterationCnt,productCnt,menuCnt;<br>
+ * 表 xm_project_state 项目指标日统计表的所有字段名: <br>
+ *	project_id,biz_date,total_file_cnt,total_bug_cnt,total_task_cnt,total_budget_nouser_amount,project_name,total_staff_cnt,calc_time,calc_status,total_cost_nouser_amount,total_closed_bug_cnt,total_resolved_bug_cnt,total_complete_task_cnt,total_phase_cnt,total_complete_phase_cnt,total_need_pay_amount,total_finish_pay_amount,total_need_col_amount,total_finish_col_amount,total_cost_user_amount,total_budget_inner_user_amount,total_plan_workload,total_risk_cnt,total_complete_risk_cnt,branch_id,branch_name,total_budget_out_user_amount,total_complete_workload,total_cost_inner_user_amount,total_cost_out_user_amount,total_progress,total_active_bug_cnt,total_confirmed_bug_cnt,project_status,total_act_workload,total_act_out_workload,total_act_inner_workload,total_task_budget_cost_at,total_task_out_cnt,total_need_pay_cnt,total_finish_pay_cnt,total_finish_pay_user_cnt,total_need_pay_user_cnt,total_plan_inner_user_workload,total_plan_out_user_workload,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,product_cnt,menu_cnt;<br>
  * 当前主键(包括多主键):<br>
- *	id;<br>
+ *	project_id;<br>
  */
 @ApiModel(description="项目指标日统计表")
 public class XmProjectState  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@ApiModelProperty(notes="主键,主键",allowEmptyValue=true,example="",allowableValues="")
-	String id;
-  	
-	
-	@ApiModelProperty(notes="项目编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目编号,主键",allowEmptyValue=true,example="",allowableValues="")
 	String projectId;
+  	
 	
 	@ApiModelProperty(notes="统计日期yyyy-mm-dd类型",allowEmptyValue=true,example="",allowableValues="")
 	String bizDate;
@@ -66,10 +62,10 @@ public class XmProjectState  implements java.io.Serializable {
 	@ApiModelProperty(notes="已完成任务总数-来自任务表",allowEmptyValue=true,example="",allowableValues="")
 	Integer totalCompleteTaskCnt;
 	
-	@ApiModelProperty(notes="项目计划数",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目阶段计划数",allowEmptyValue=true,example="",allowableValues="")
 	Integer totalPhaseCnt;
 	
-	@ApiModelProperty(notes="项目计划已完成数",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目阶段计划已完成数",allowEmptyValue=true,example="",allowableValues="")
 	Integer totalCompletePhaseCnt;
 	
 	@ApiModelProperty(notes="待付款总金额",allowEmptyValue=true,example="",allowableValues="")
@@ -142,24 +138,24 @@ public class XmProjectState  implements java.io.Serializable {
 	BigDecimal totalTaskBudgetCostAt;
 	
 	@ApiModelProperty(notes="外购任务数，来自任务表",allowEmptyValue=true,example="",allowableValues="")
-	Integer totalTaskOutCnt;
+	BigDecimal totalTaskOutCnt;
 	
 	@ApiModelProperty(notes="待付款笔数",allowEmptyValue=true,example="",allowableValues="")
-	Integer totalNeedPayCnt;
+	BigDecimal totalNeedPayCnt;
 	
 	@ApiModelProperty(notes="完成付款总比数",allowEmptyValue=true,example="",allowableValues="")
-	Integer totalFinishPayCnt;
+	BigDecimal totalFinishPayCnt;
 	
 	@ApiModelProperty(notes="已付款总人数",allowEmptyValue=true,example="",allowableValues="")
-	Integer totalFinishPayUserCnt;
+	BigDecimal totalFinishPayUserCnt;
 	
 	@ApiModelProperty(notes="待付款总人数",allowEmptyValue=true,example="",allowableValues="")
-	Integer totalNeedPayUserCnt;
+	BigDecimal totalNeedPayUserCnt;
 	
-	@ApiModelProperty(notes="内部人力总工作量-应该大于或等于计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="内部人力总工作量-应该大于或等于阶段计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal totalPlanInnerUserWorkload;
 	
-	@ApiModelProperty(notes="外购人力总工作量-应该大于或等于计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="外购人力总工作量-应该大于或等于阶段计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal totalPlanOutUserWorkload;
 	
 	@ApiModelProperty(notes="测试案例总数",allowEmptyValue=true,example="",allowableValues="")
@@ -180,12 +176,12 @@ public class XmProjectState  implements java.io.Serializable {
 	@ApiModelProperty(notes="产品数",allowEmptyValue=true,example="",allowableValues="")
 	Integer productCnt;
 	
-	@ApiModelProperty(notes="需求数",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="故事数",allowEmptyValue=true,example="",allowableValues="")
 	Integer menuCnt;
 
-	/**主键**/
-	public XmProjectState(String id) {
-		this.id = id;
+	/**项目编号**/
+	public XmProjectState(String projectId) {
+		this.projectId = projectId;
 	}
     
     /**项目指标日统计表**/
@@ -235,12 +231,6 @@ public class XmProjectState  implements java.io.Serializable {
 		this.projectName = projectName;
 	}
 	/**
-	 * 主键
-	 **/
-	public void setId(String id) {
-		this.id = id;
-	}
-	/**
 	 * 总参与人数
 	 **/
 	public void setTotalStaffCnt(Integer totalStaffCnt) {
@@ -283,13 +273,13 @@ public class XmProjectState  implements java.io.Serializable {
 		this.totalCompleteTaskCnt = totalCompleteTaskCnt;
 	}
 	/**
-	 * 项目计划数
+	 * 项目阶段计划数
 	 **/
 	public void setTotalPhaseCnt(Integer totalPhaseCnt) {
 		this.totalPhaseCnt = totalPhaseCnt;
 	}
 	/**
-	 * 项目计划已完成数
+	 * 项目阶段计划已完成数
 	 **/
 	public void setTotalCompletePhaseCnt(Integer totalCompletePhaseCnt) {
 		this.totalCompletePhaseCnt = totalCompletePhaseCnt;
@@ -435,41 +425,41 @@ public class XmProjectState  implements java.io.Serializable {
 	/**
 	 * 外购任务数，来自任务表
 	 **/
-	public void setTotalTaskOutCnt(Integer totalTaskOutCnt) {
+	public void setTotalTaskOutCnt(BigDecimal totalTaskOutCnt) {
 		this.totalTaskOutCnt = totalTaskOutCnt;
 	}
 	/**
 	 * 待付款笔数
 	 **/
-	public void setTotalNeedPayCnt(Integer totalNeedPayCnt) {
+	public void setTotalNeedPayCnt(BigDecimal totalNeedPayCnt) {
 		this.totalNeedPayCnt = totalNeedPayCnt;
 	}
 	/**
 	 * 完成付款总比数
 	 **/
-	public void setTotalFinishPayCnt(Integer totalFinishPayCnt) {
+	public void setTotalFinishPayCnt(BigDecimal totalFinishPayCnt) {
 		this.totalFinishPayCnt = totalFinishPayCnt;
 	}
 	/**
 	 * 已付款总人数
 	 **/
-	public void setTotalFinishPayUserCnt(Integer totalFinishPayUserCnt) {
+	public void setTotalFinishPayUserCnt(BigDecimal totalFinishPayUserCnt) {
 		this.totalFinishPayUserCnt = totalFinishPayUserCnt;
 	}
 	/**
 	 * 待付款总人数
 	 **/
-	public void setTotalNeedPayUserCnt(Integer totalNeedPayUserCnt) {
+	public void setTotalNeedPayUserCnt(BigDecimal totalNeedPayUserCnt) {
 		this.totalNeedPayUserCnt = totalNeedPayUserCnt;
 	}
 	/**
-	 * 内部人力总工作量-应该大于或等于计划内部人力总成本
+	 * 内部人力总工作量-应该大于或等于阶段计划内部人力总成本
 	 **/
 	public void setTotalPlanInnerUserWorkload(BigDecimal totalPlanInnerUserWorkload) {
 		this.totalPlanInnerUserWorkload = totalPlanInnerUserWorkload;
 	}
 	/**
-	 * 外购人力总工作量-应该大于或等于计划外购人力总成本
+	 * 外购人力总工作量-应该大于或等于阶段计划外购人力总成本
 	 **/
 	public void setTotalPlanOutUserWorkload(BigDecimal totalPlanOutUserWorkload) {
 		this.totalPlanOutUserWorkload = totalPlanOutUserWorkload;
@@ -511,7 +501,7 @@ public class XmProjectState  implements java.io.Serializable {
 		this.productCnt = productCnt;
 	}
 	/**
-	 * 需求数
+	 * 故事数
 	 **/
 	public void setMenuCnt(Integer menuCnt) {
 		this.menuCnt = menuCnt;
@@ -560,12 +550,6 @@ public class XmProjectState  implements java.io.Serializable {
 		return this.projectName;
 	}
 	/**
-	 * 主键
-	 **/
-	public String getId() {
-		return this.id;
-	}
-	/**
 	 * 总参与人数
 	 **/
 	public Integer getTotalStaffCnt() {
@@ -608,13 +592,13 @@ public class XmProjectState  implements java.io.Serializable {
 		return this.totalCompleteTaskCnt;
 	}
 	/**
-	 * 项目计划数
+	 * 项目阶段计划数
 	 **/
 	public Integer getTotalPhaseCnt() {
 		return this.totalPhaseCnt;
 	}
 	/**
-	 * 项目计划已完成数
+	 * 项目阶段计划已完成数
 	 **/
 	public Integer getTotalCompletePhaseCnt() {
 		return this.totalCompletePhaseCnt;
@@ -760,41 +744,41 @@ public class XmProjectState  implements java.io.Serializable {
 	/**
 	 * 外购任务数，来自任务表
 	 **/
-	public Integer getTotalTaskOutCnt() {
+	public BigDecimal getTotalTaskOutCnt() {
 		return this.totalTaskOutCnt;
 	}
 	/**
 	 * 待付款笔数
 	 **/
-	public Integer getTotalNeedPayCnt() {
+	public BigDecimal getTotalNeedPayCnt() {
 		return this.totalNeedPayCnt;
 	}
 	/**
 	 * 完成付款总比数
 	 **/
-	public Integer getTotalFinishPayCnt() {
+	public BigDecimal getTotalFinishPayCnt() {
 		return this.totalFinishPayCnt;
 	}
 	/**
 	 * 已付款总人数
 	 **/
-	public Integer getTotalFinishPayUserCnt() {
+	public BigDecimal getTotalFinishPayUserCnt() {
 		return this.totalFinishPayUserCnt;
 	}
 	/**
 	 * 待付款总人数
 	 **/
-	public Integer getTotalNeedPayUserCnt() {
+	public BigDecimal getTotalNeedPayUserCnt() {
 		return this.totalNeedPayUserCnt;
 	}
 	/**
-	 * 内部人力总工作量-应该大于或等于计划内部人力总成本
+	 * 内部人力总工作量-应该大于或等于阶段计划内部人力总成本
 	 **/
 	public BigDecimal getTotalPlanInnerUserWorkload() {
 		return this.totalPlanInnerUserWorkload;
 	}
 	/**
-	 * 外购人力总工作量-应该大于或等于计划外购人力总成本
+	 * 外购人力总工作量-应该大于或等于阶段计划外购人力总成本
 	 **/
 	public BigDecimal getTotalPlanOutUserWorkload() {
 		return this.totalPlanOutUserWorkload;
@@ -836,7 +820,7 @@ public class XmProjectState  implements java.io.Serializable {
 		return this.productCnt;
 	}
 	/**
-	 * 需求数
+	 * 故事数
 	 **/
 	public Integer getMenuCnt() {
 		return this.menuCnt;

@@ -1,27 +1,26 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
- * 组织 com.qqkj  顶级模块 xm 大模块 core  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProductState所有属性名: <br>
- *	id,planStartTime,planEndTime,actStartTime,actEndTime,planWorkload,actWorkload,planCostAmount,actCostAmount,finishRate,demandRate,designRate,devRate,uatRate,sitRate,ctime,ltime,cuserid,cusername,calcTime,planWorkhours,planWorkerCnt,closedBugs,activeBugs,confirmedBugs,resolvedBugs,productId,productName,testCases,execCases,designCases,finishCases,projectCnt,iterationCnt,taskCnt,finishTaskCnt,bizDate,branchId,bugCnt;<br>
- * 表 XM.xm_product_state 功能状态表,无需前端维护，所有数据由汇总统计得出的所有字段名: <br>
- *	id,plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,ctime,ltime,cuserid,cusername,calc_time,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,product_id,product_name,test_cases,exec_cases,design_cases,finish_cases,project_cnt,iteration_cnt,task_cnt,finish_task_cnt,biz_date,branch_id,bug_cnt;<br>
+ *	planStartTime,planEndTime,actStartTime,actEndTime,planWorkload,actWorkload,planCostAmount,actCostAmount,finishRate,demandRate,designRate,devRate,uatRate,sitRate,ctime,ltime,cuserid,cusername,calcTime,planWorkhours,planWorkerCnt,closedBugs,activeBugs,confirmedBugs,resolvedBugs,productId,productName,testCases,execCases,designCases,finishCases,projectCnt,iterationCnt,taskCnt,finishTaskCnt,bizDate,branchId,bugCnt,menuCnt;<br>
+ * 表 xm_product_state 功能状态表,无需前端维护，所有数据由汇总统计得出的所有字段名: <br>
+ *	plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,ctime,ltime,cuserid,cusername,calc_time,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,product_id,product_name,test_cases,exec_cases,design_cases,finish_cases,project_cnt,iteration_cnt,task_cnt,finish_task_cnt,biz_date,branch_id,bug_cnt,menu_cnt;<br>
  * 当前主键(包括多主键):<br>
- *	id;<br>
+ *	product_id;<br>
  */
 @ApiModel(description="功能状态表,无需前端维护，所有数据由汇总统计得出")
 public class XmProductState  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@ApiModelProperty(notes="主键,主键",allowEmptyValue=true,example="",allowableValues="")
-	String id;
+	@ApiModelProperty(notes="产品编号,主键",allowEmptyValue=true,example="",allowableValues="")
+	String productId;
   	
 	
 	@ApiModelProperty(notes="开始时间",allowEmptyValue=true,example="",allowableValues="")
@@ -85,22 +84,19 @@ public class XmProductState  implements java.io.Serializable {
 	BigDecimal planWorkhours;
 	
 	@ApiModelProperty(notes="总人数",allowEmptyValue=true,example="",allowableValues="")
-	Integer planWorkerCnt;
+	BigDecimal planWorkerCnt;
 	
 	@ApiModelProperty(notes="总关闭bugs",allowEmptyValue=true,example="",allowableValues="")
-	Integer closedBugs;
+	BigDecimal closedBugs;
 	
 	@ApiModelProperty(notes="激活bugs",allowEmptyValue=true,example="",allowableValues="")
-	Integer activeBugs;
+	BigDecimal activeBugs;
 	
 	@ApiModelProperty(notes="已确认bugs总数",allowEmptyValue=true,example="",allowableValues="")
-	Integer confirmedBugs;
+	BigDecimal confirmedBugs;
 	
 	@ApiModelProperty(notes="已解决bugs总数",allowEmptyValue=true,example="",allowableValues="")
-	Integer resolvedBugs;
-	
-	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
-	String productId;
+	BigDecimal resolvedBugs;
 	
 	@ApiModelProperty(notes="产品名称",allowEmptyValue=true,example="",allowableValues="")
 	String productName;
@@ -137,22 +133,19 @@ public class XmProductState  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="bug总数",allowEmptyValue=true,example="",allowableValues="")
 	Integer bugCnt;
+	
+	@ApiModelProperty(notes="故事数",allowEmptyValue=true,example="",allowableValues="")
+	Integer menuCnt;
 
-	/**主键**/
-	public XmProductState(String id) {
-		this.id = id;
+	/**产品编号**/
+	public XmProductState(String productId) {
+		this.productId = productId;
 	}
     
     /**功能状态表,无需前端维护，所有数据由汇总统计得出**/
 	public XmProductState() {
 	}
 	
-	/**
-	 * 主键
-	 **/
-	public void setId(String id) {
-		this.id = id;
-	}
 	/**
 	 * 开始时间
 	 **/
@@ -276,31 +269,31 @@ public class XmProductState  implements java.io.Serializable {
 	/**
 	 * 总人数
 	 **/
-	public void setPlanWorkerCnt(Integer planWorkerCnt) {
+	public void setPlanWorkerCnt(BigDecimal planWorkerCnt) {
 		this.planWorkerCnt = planWorkerCnt;
 	}
 	/**
 	 * 总关闭bugs
 	 **/
-	public void setClosedBugs(Integer closedBugs) {
+	public void setClosedBugs(BigDecimal closedBugs) {
 		this.closedBugs = closedBugs;
 	}
 	/**
 	 * 激活bugs
 	 **/
-	public void setActiveBugs(Integer activeBugs) {
+	public void setActiveBugs(BigDecimal activeBugs) {
 		this.activeBugs = activeBugs;
 	}
 	/**
 	 * 已确认bugs总数
 	 **/
-	public void setConfirmedBugs(Integer confirmedBugs) {
+	public void setConfirmedBugs(BigDecimal confirmedBugs) {
 		this.confirmedBugs = confirmedBugs;
 	}
 	/**
 	 * 已解决bugs总数
 	 **/
-	public void setResolvedBugs(Integer resolvedBugs) {
+	public void setResolvedBugs(BigDecimal resolvedBugs) {
 		this.resolvedBugs = resolvedBugs;
 	}
 	/**
@@ -381,13 +374,13 @@ public class XmProductState  implements java.io.Serializable {
 	public void setBugCnt(Integer bugCnt) {
 		this.bugCnt = bugCnt;
 	}
-	
 	/**
-	 * 主键
+	 * 故事数
 	 **/
-	public String getId() {
-		return this.id;
+	public void setMenuCnt(Integer menuCnt) {
+		this.menuCnt = menuCnt;
 	}
+	
 	/**
 	 * 开始时间
 	 **/
@@ -511,31 +504,31 @@ public class XmProductState  implements java.io.Serializable {
 	/**
 	 * 总人数
 	 **/
-	public Integer getPlanWorkerCnt() {
+	public BigDecimal getPlanWorkerCnt() {
 		return this.planWorkerCnt;
 	}
 	/**
 	 * 总关闭bugs
 	 **/
-	public Integer getClosedBugs() {
+	public BigDecimal getClosedBugs() {
 		return this.closedBugs;
 	}
 	/**
 	 * 激活bugs
 	 **/
-	public Integer getActiveBugs() {
+	public BigDecimal getActiveBugs() {
 		return this.activeBugs;
 	}
 	/**
 	 * 已确认bugs总数
 	 **/
-	public Integer getConfirmedBugs() {
+	public BigDecimal getConfirmedBugs() {
 		return this.confirmedBugs;
 	}
 	/**
 	 * 已解决bugs总数
 	 **/
-	public Integer getResolvedBugs() {
+	public BigDecimal getResolvedBugs() {
 		return this.resolvedBugs;
 	}
 	/**
@@ -615,6 +608,12 @@ public class XmProductState  implements java.io.Serializable {
 	 **/
 	public Integer getBugCnt() {
 		return this.bugCnt;
+	}
+	/**
+	 * 故事数
+	 **/
+	public Integer getMenuCnt() {
+		return this.menuCnt;
 	}
 
 }

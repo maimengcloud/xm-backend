@@ -3,14 +3,21 @@
 <mapper namespace="com.xm.core.entity.XmProjectGroupState">
 	
 	
-	<!--开始 自定sql函数区域 -->
-		<!--请在此区域添加自定义函数-->
-		
-		
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" groupIds != null">  and (res.group_id) in
+             <foreach collection="groupIds" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
 	<update id="loadTasksToXmProjectGroupState" parameterType="String" statementType="CALLABLE">
-		 {call load_tasks_to_xm_project_group_state(#{projectId,mode=IN})} 
+		{call load_tasks_to_xm_project_group_state(#{projectId,mode=IN})}
 	</update>
-		
+
+
 	<!--结束 自定义sql函数区域-->
 	
 
@@ -18,15 +25,9 @@
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
 		select * from xm_project_group_state res
-		<where> 
-			<if test="ids != null">  and     
-				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
-			 </if>
+		<where>
+		    <include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">       </if> 
 		</where>
 	</select>
 	
@@ -42,14 +43,14 @@
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProjectGroupState" resultType="com.xm.core.entity.XmProjectGroupState">
 		select * from xm_project_group_state res
 		where 
-			res.id = #{id}
+			res.group_id = #{groupId}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_project_group_state res
 		where 
-			 res.id = #{id}
+			 res.group_id = #{groupId}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProjectGroupState" resultType="long">
@@ -58,12 +59,12 @@
 			<include refid="where"/>
 		</where>
 	</select>
-	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmProjectGroupState" useGeneratedKeys="false" keyProperty="id">
+	<!-- 新增一条记录  主键group_id,-->
+	<insert id="insert" parameterType="com.xm.core.entity.XmProjectGroupState" useGeneratedKeys="false"   keyProperty="group_id">
 		insert into xm_project_group_state(
 			<include refid="columns"/>
 		) values (
-		#{id},#{planStartTime},#{planEndTime},#{actStartTime},#{actEndTime},#{planWorkload},#{actWorkload},#{planCostAmount},#{actCostAmount},#{finishRate},#{demandRate},#{designRate},#{devRate},#{uatRate},#{sitRate},#{ctime},#{calcTime},#{planWorkhours},#{planWorkerCnt},#{closedBugs},#{activeBugs},#{confirmedBugs},#{resolvedBugs},#{testCases},#{execCases},#{designCases},#{finishCases},#{iterationCnt},#{taskCnt},#{finishTaskCnt},#{bizDate},#{bugCnt},#{groupId},#{projectId},#{projectName},#{groupName}
+		#{planStartTime},#{planEndTime},#{actStartTime},#{actEndTime},#{planWorkload},#{actWorkload},#{planCostAmount},#{actCostAmount},#{finishRate},#{demandRate},#{designRate},#{devRate},#{uatRate},#{sitRate},#{ctime},#{calcTime},#{planWorkhours},#{planWorkerCnt},#{closedBugs},#{activeBugs},#{confirmedBugs},#{resolvedBugs},#{testCases},#{execCases},#{designCases},#{finishCases},#{iterationCnt},#{taskCnt},#{finishTaskCnt},#{bizDate},#{bugCnt},#{groupId},#{projectId},#{projectName},#{groupName}
 		)
 	</insert>
 	
@@ -77,26 +78,26 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProjectGroupState">
-		delete from xm_project_group_state
-		where id = #{id} 
+		delete from xm_project_group_state 
+		where group_id = #{groupId} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProjectGroupState">
-		update  xm_project_group_state
+		update  xm_project_group_state 
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
-		where id = #{id} 
+		where group_id = #{groupId} 
 	</update>
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProjectGroupState">
-		update  xm_project_group_state
+		update  xm_project_group_state 
 		<set>
 			<include refid="set"/>
 		</set>
-		where id = #{id} 
+		where group_id = #{groupId} 
 	</update>
 
 	<!-- 批量新增  批量插入 借用insert 循环插入实现
@@ -107,34 +108,34 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_project_group_state
+   		update  xm_project_group_state 
 		set 
 			<include refid="batchSet"/>
-			where id = #{item.id}  
+			where group_id = #{item.groupId}  
 		</foreach> 
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_project_group_state
-			where id in
-			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
-			        #{item.id }  
-			    </foreach>  
+		delete from xm_project_group_state 
+			where
+			(group_id) in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    (  #{item.groupId} )
+                </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,ctime,calc_time,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,task_cnt,finish_task_cnt,biz_date,bug_cnt,group_id,project_id,project_name,group_name
+		plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,ctime,calc_time,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,task_cnt,finish_task_cnt,biz_date,bug_cnt,group_id,project_id,project_name,group_name
 	</sql>
-	
+
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
 	<sql id="where">
-		<if test="id != null and id != ''">      and res.id = #{id}     </if>
-		<if test="planStartTime != null">      and TO_CHAR(res.plan_start_time,'YYYY-MM-DD') = TO_CHAR(#{planStartTime},'YYYY-MM-DD')     </if>
-		<if test="planEndTime != null">      and TO_CHAR(res.plan_end_time,'YYYY-MM-DD') = TO_CHAR(#{planEndTime},'YYYY-MM-DD')     </if>
-		<if test="actStartTime != null">      and TO_CHAR(res.act_start_time,'YYYY-MM-DD') = TO_CHAR(#{actStartTime},'YYYY-MM-DD')     </if>
-		<if test="actEndTime != null">      and TO_CHAR(res.act_end_time,'YYYY-MM-DD') = TO_CHAR(#{actEndTime},'YYYY-MM-DD')     </if>
+		<if test="planStartTime != null">      and date_format(res.plan_start_time,'%Y-%m-%d') = date_format(#{planStartTime},'%Y-%m-%d')     </if>
+		<if test="planEndTime != null">      and date_format(res.plan_end_time,'%Y-%m-%d') = date_format(#{planEndTime},'%Y-%m-%d')     </if>
+		<if test="actStartTime != null">      and date_format(res.act_start_time,'%Y-%m-%d') = date_format(#{actStartTime},'%Y-%m-%d')     </if>
+		<if test="actEndTime != null">      and date_format(res.act_end_time,'%Y-%m-%d') = date_format(#{actEndTime},'%Y-%m-%d')     </if>
 		<if test="planWorkload != null and planWorkload != ''">      and res.plan_workload = #{planWorkload}     </if>
 		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
 		<if test="planCostAmount != null and planCostAmount != ''">      and res.plan_cost_amount = #{planCostAmount}     </if>
@@ -145,8 +146,8 @@
 		<if test="devRate != null and devRate != ''">      and res.dev_rate = #{devRate}     </if>
 		<if test="uatRate != null and uatRate != ''">      and res.uat_rate = #{uatRate}     </if>
 		<if test="sitRate != null and sitRate != ''">      and res.sit_rate = #{sitRate}     </if>
-		<if test="ctime != null">      and TO_CHAR(res.ctime,'YYYY-MM-DD') = TO_CHAR(#{ctime},'YYYY-MM-DD')     </if>
-		<if test="calcTime != null">      and TO_CHAR(res.calc_time,'YYYY-MM-DD') = TO_CHAR(#{calcTime},'YYYY-MM-DD')     </if>
+		<if test="ctime != null">      and date_format(res.ctime,'%Y-%m-%d') = date_format(#{ctime},'%Y-%m-%d')     </if>
+		<if test="calcTime != null">      and date_format(res.calc_time,'%Y-%m-%d') = date_format(#{calcTime},'%Y-%m-%d')     </if>
 		<if test="planWorkhours != null and planWorkhours != ''">      and res.plan_workhours = #{planWorkhours}     </if>
 		<if test="planWorkerCnt != null and planWorkerCnt != ''">      and res.plan_worker_cnt = #{planWorkerCnt}     </if>
 		<if test="closedBugs != null and closedBugs != ''">      and res.closed_bugs = #{closedBugs}     </if>
@@ -200,7 +201,6 @@
 		finish_task_cnt = #{finishTaskCnt},
 		biz_date = #{bizDate},
 		bug_cnt = #{bugCnt},
-		group_id = #{groupId},
 		project_id = #{projectId},
 		project_name = #{projectName},
 		group_name = #{groupName}
@@ -237,7 +237,6 @@
 		<if test="finishTaskCnt != null and finishTaskCnt != ''"> finish_task_cnt = #{finishTaskCnt},     </if>
 		<if test="bizDate != null and bizDate != ''"> biz_date = #{bizDate},     </if>
 		<if test="bugCnt != null and bugCnt != ''"> bug_cnt = #{bugCnt},     </if>
-		<if test="groupId != null and groupId != ''"> group_id = #{groupId},     </if>
 		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
 		<if test="projectName != null and projectName != ''"> project_name = #{projectName},     </if>
 		<if test="groupName != null and groupName != ''"> group_name = #{groupName},     </if>
@@ -275,7 +274,6 @@
 			finish_task_cnt = #{item.finishTaskCnt},
 			biz_date = #{item.bizDate},
 			bug_cnt = #{item.bugCnt},
-			group_id = #{item.groupId},
 			project_id = #{item.projectId},
 			project_name = #{item.projectName},
 			group_name = #{item.groupName}
