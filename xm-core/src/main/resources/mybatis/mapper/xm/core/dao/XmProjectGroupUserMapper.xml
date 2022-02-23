@@ -39,7 +39,12 @@
 		</where>
 	</select>
 
-
+	<select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmProjectGroupUser">
+		   select * from xm_project_group_user res where  (res.group_id, res.userid) in
+			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+				( #{item.groupId},  #{item.userid})
+			</foreach>
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 

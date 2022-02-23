@@ -13,7 +13,7 @@ public class XmProjectGroupStateService extends BaseService {
 	
 	/**
 	 * 计算bug、task、测试案例、等数据
-	 * @param productId
+	 * @param projectId
 	 * @return
 	 */
 	public int loadTasksToXmProjectGroupState(String projectId) {
