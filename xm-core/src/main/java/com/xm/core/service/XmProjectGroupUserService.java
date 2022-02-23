@@ -26,6 +26,14 @@ public class XmProjectGroupUserService extends BaseService {
 		return this.selectList("selectGroupUserListByProductId", productId);
 	}
 
+    public List<XmProjectGroupUser> selectListByIds(List<XmProjectGroupUser> gus) {
+		return super.selectList("selectListByIds",gus);
+    }
+
+	public void doBatchDelete(List<XmProjectGroupUser> canDelUsers) {
+		super.batchDelete(canDelUsers);
+	}
+
 	/** 请在此类添加自定义函数 */
 
 }

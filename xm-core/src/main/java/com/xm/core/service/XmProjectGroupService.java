@@ -878,5 +878,25 @@ public class XmProjectGroupService extends BaseService {
 			return groupVo;
 		}
 	}
+	public XmProjectGroupVo getProjectGroupFromCache(String projectId, String groupId) {
+		XmProjectGroupVo groupVo=groupCacheService.getProjectGroup(projectId,groupId);
+		if(groupVo==null){
+			XmProjectGroup group=this.selectOneObject(new XmProjectGroup(groupId));
+			if(group==null){
+				return null;
+			}else{
+				XmProjectGroupUser xmProjectGroupUser=new XmProjectGroupUser();
+				xmProjectGroupUser.setGroupId(groupId);
+				List<XmProjectGroupUser> users=this.xmProjectGroupUserService.selectListByWhere(xmProjectGroupUser);
+				XmProjectGroupVo xmProjectGroupVo=new XmProjectGroupVo();
+				BeanUtils.copyProperties(group,xmProjectGroupVo);
+				xmProjectGroupVo.setGroupUsers(users);
+				this.groupCacheService.putProjectGroup(xmProjectGroupVo);
+				return xmProjectGroupVo;
+			}
+		}else {
+			return groupVo;
+		}
+	}
 }
 
