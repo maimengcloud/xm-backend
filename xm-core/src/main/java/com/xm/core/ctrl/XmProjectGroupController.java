@@ -16,6 +16,7 @@ import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.XmProjectService;
 import com.xm.core.service.XmRecordService;
+import com.xm.core.service.cache.XmProjectGroupCacheService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmProjectGroupVo;
 import io.swagger.annotations.*;
@@ -51,6 +52,10 @@ public class XmProjectGroupController {
 	
 	@Autowired
 	private XmProjectGroupService xmProjectGroupService;
+
+
+	@Autowired
+	private XmProjectGroupCacheService xmProjectGroupCacheService;
 	
 	@Autowired
 	private XmProjectService xmProjectService;
@@ -111,6 +116,12 @@ public class XmProjectGroupController {
 		}
 		xmProjectGroupService.parentIdPathsCalcBeforeSave(group);
 		tips= xmProjectGroupService.updateGroup(group,groupDb);	//列出XmProjectGroup列表
+		if("1".equals(groupDb.getPgClass())){
+			xmProjectGroupCacheService.clearProductGroup(groupDb.getProductId(),groupDb.getId());
+		}else {
+			xmProjectGroupCacheService.clearProjectGroup(groupDb.getProjectId(),groupDb.getId());
+		}
+
 		m.put("tips", tips);
 		return m;
 	}
@@ -242,6 +253,11 @@ public class XmProjectGroupController {
 			}
 			this.xmProjectGroupService.parentIdPathsCalcBeforeSave(xmProjectGroup);
 			xmProjectGroupService.insert(xmProjectGroup);
+			if("1".equals(xmProjectGroup.getPgClass())){
+				xmProjectGroupCacheService.clearProductGroup(xmProjectGroup.getProductId(),xmProjectGroup.getId());
+			}else {
+				xmProjectGroupCacheService.clearProjectGroup(xmProjectGroup.getProjectId(),xmProjectGroup.getId());
+			}
 			pushMsgService.pushChannelGroupCreateMsg(u.getBranchId(),  xmProjectGroup.getProjectId(),xmProjectGroup.getId(),  xmProjectGroup.getId(),xmProjectGroup.getGroupName(), u.getUserid(), u.getUsername(), null, "新增小组"+xmProjectGroup.getGroupName());
 			xmRecordService.addXmGroupRecord(xmProjectGroup.getProjectId(), xmProjectGroup.getId(), "项目-团队-新增小组", "新增小组"+xmProjectGroup.getGroupName(),JSON.toJSONString(xmProjectGroup),null);
 			m.put("data",xmProjectGroup);
@@ -303,6 +319,12 @@ public class XmProjectGroupController {
 				return ResponseHelper.failed("childrenCnt-no-0","该小组有下级小组，不能删除。请先删除下级小组。");
 			}
 			xmProjectGroupService.doDeleteByPk(xmProjectGroup,groupDb);
+			if("1".equals(groupDb.getPgClass())){
+				xmProjectGroupCacheService.clearProductGroup(groupDb.getProductId(),groupDb.getId());
+			}else {
+				xmProjectGroupCacheService.clearProjectGroup(groupDb.getProjectId(),groupDb.getId());
+			}
+
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -365,8 +387,10 @@ public class XmProjectGroupController {
 			if(canDelNodes.size()>0){
 				if("1".equals(pgClass)){
 					xmProjectGroupService.doBatchDeleteProductGroups(canDelNodes);
+					xmProjectGroupCacheService.clearProductGroups(groupDb.getProductId());
 				}else {
 					xmProjectGroupService.doBatchDeleteProjectGroups(canDelNodes);
+					xmProjectGroupCacheService.clearProjectGroups(groupDb.getProjectId());
 				}
 			}
 		}catch (BizException e) { 

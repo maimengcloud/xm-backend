@@ -320,6 +320,22 @@ public class XmProjectGroupService extends BaseService {
 		return false;
 
 	}
+	/**
+	 * 检查某个人是否为指定的小组的组长\副组长\助理
+	 * @param xmProjectGroupVo
+	 * @param headUserid
+	 * @return
+	 */
+	public boolean checkUserIsTeamHeadOrAss(XmProjectGroupVo xmProjectGroupVo, String headUserid){
+		if(xmProjectGroupVo==null){
+			return false;
+		}
+		if(headUserid.equals(xmProjectGroupVo.getLeaderUserid())||headUserid.equals(xmProjectGroupVo.getAssUserid())){
+			return true;
+		}
+		return false;
+
+	}
     /**
      * 检查某个人是否另外一个人的组长
      * @param xmProjectGroupVoList
@@ -343,7 +359,30 @@ public class XmProjectGroupService extends BaseService {
     	}
     	return false;
     }
-    
+
+	/**
+	 * 检查某个人是否另外一个人的组长
+	 * @param xmProjectGroupVoList
+	 * @param memUserid
+	 * @param headUserid
+	 * @return
+	 */
+	public boolean checkUserIsOtherUserTeamHeadOrAss(List<XmProjectGroupVo> xmProjectGroupVoList, String memUserid, String headUserid){
+		if(xmProjectGroupVoList==null || xmProjectGroupVoList.size()==0) {
+			return false;
+		}
+
+		List<XmProjectGroupVo> userGroups=this.getUserGroups(xmProjectGroupVoList, memUserid);
+		if(userGroups==null || userGroups.size()==0) {
+			return false;
+		}
+		for (XmProjectGroupVo ug : userGroups) {
+			if(headUserid.equals(ug.getLeaderUserid())||headUserid.equals(ug.getAssUserid())){
+				return true;
+			}
+		}
+		return false;
+	}
   public  List<XmProjectGroupUser> getProjectManagers( List<XmProjectGroupVo> xmProjectGroupVoList){
     	for (XmProjectGroupVo g : xmProjectGroupVoList) {
     		if("nbxmjl".equals(g.getPgTypeId())) {

@@ -14,8 +14,10 @@ import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.PubTool;
+import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmProjectGroupService;
+import com.xm.core.service.XmProjectService;
 import com.xm.core.service.XmRecordService;
 import com.xm.core.service.XmTaskService;
 import com.xm.core.service.cache.XmTaskCacheService;
@@ -67,6 +69,8 @@ public class XmTaskController {
 	
 	@Autowired
 	private XmPushMsgService xmPushMsgService;
+
+	private XmProjectService xmProjectService;
 
 
 	@ApiOperation( value = "查询xm_task信息列表",notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
@@ -468,7 +472,7 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
-			boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,user.getUserid(),user.getUserid());
+			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),user.getUserid());
 			if(!isHead){
 				tips.setFailureMsg("您无权删除该任务！项目经理、组长可以删除任务。");
 				m.put("tips", tips);
@@ -524,6 +528,7 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
+
 			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskVo.getProjectId());
 			if(pgroups==null || pgroups.size()==0){
 				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
@@ -536,7 +541,7 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
-			boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
+			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
 			if(!isHead){
 				boolean isPm=groupService.checkUserIsProjectManager(pgroups,user.getUserid());
 				if(!isPm){
@@ -599,7 +604,7 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
-			boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
+			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
 			if(!isHead){
 				tips.setFailureMsg("您无权修改该任务基础信息！项目经理、组长可以修改任务的基础信息。");
 				m.put("tips", tips);
@@ -686,7 +691,7 @@ public class XmTaskController {
 				return m;
 			}
 			XmTask xmTaskDb=xmTaskService.selectOneObject(xmTask);
-			boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
+			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
 			if(!isHead){
 				boolean isCreateUser=user.getUserid().equals(xmTaskDb.getCreateUserid());
 				boolean isExecUser=user.getUserid().equals(xmTaskDb.getExecutorUserid());
@@ -736,7 +741,7 @@ public class XmTaskController {
 				return m;
 			}
 			XmTask xmTaskDb=xmTaskService.selectOneObject(xmTask);
-			boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
+			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
 			if(!isHead){
 				boolean isCreateUser=user.getUserid().equals(xmTaskDb.getCreateUserid());
 				boolean isExecUser=user.getUserid().equals(xmTaskDb.getExecutorUserid());
@@ -808,7 +813,7 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
-			boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,user.getUserid(),user.getUserid());
+			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),user.getUserid());
 			if(!isHead){
 				tips.setFailureMsg("您无权批量导入任务！项目经理、组长可以批量导入任务。");
 				m.put("tips", tips);
@@ -915,7 +920,7 @@ public class XmTaskController {
 				if(isMyCreate){
 					allowTasks.add(task);
 				}else{
-					boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,task.getCreateUserid(),user.getUserid());
+					boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,task.getCreateUserid(),user.getUserid());
 					if(!isHead){
 						noAllowTasks.add(task);
 					}else {
@@ -994,7 +999,7 @@ public class XmTaskController {
 					m.put("tips", tips);
 					return m;
 				}
-				boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,node.getCreateUserid(),user.getUserid());
+				boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,node.getCreateUserid(),user.getUserid());
 
 				if(!isHead){
 					noAllowNodes.add(node);
@@ -1141,7 +1146,7 @@ public class XmTaskController {
 					m.put("tips", tips);
 					return m;
 				}
-					boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,task.getCreateUserid(),user.getUserid());
+					boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,task.getCreateUserid(),user.getUserid());
 					if(!isHead){
 						noAllowTasksDbMap.put(task.getId(),task);
 					}else {
