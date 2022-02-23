@@ -227,7 +227,7 @@ public class XmProjectController {
 			}
 			List<XmProjectGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
-			boolean isPm=groupService.checkUserIsProjectManager(groups,user.getUserid());
+			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isCreate && !isPm ) {
 				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目基础数据");
 				m.put("tips", tips);
@@ -272,7 +272,7 @@ public class XmProjectController {
 			}
 			List<XmProjectGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
-			boolean isPm=groupService.checkUserIsProjectManager(groups,user.getUserid());
+			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isCreate && !isPm ) {
 				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目状态");
 				m.put("tips", tips);
@@ -317,7 +317,7 @@ public class XmProjectController {
 			}
 			List<XmProjectGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
-			boolean isPm=groupService.checkUserIsProjectManager(groups,user.getUserid());
+			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isCreate && !isPm ) {
 				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目预算");
 				m.put("tips", tips);
@@ -362,7 +362,7 @@ public class XmProjectController {
 			}
 			List<XmProjectGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
-			boolean isPm=groupService.checkUserIsProjectManager(groups,user.getUserid());
+			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isCreate && !isPm ) {
 				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目基础信息");
 				m.put("tips", tips);
