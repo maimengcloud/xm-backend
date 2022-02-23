@@ -12,6 +12,8 @@ import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProductCopyVo;
 import com.xm.core.entity.XmProject;
 import com.xm.core.service.XmProductService;
+import com.xm.core.service.XmProjectGroupService;
+import com.xm.core.service.XmProjectService;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -44,6 +46,8 @@ public class XmProductController {
 	@Autowired
 	private XmProductService xmProductService;
 
+	@Autowired
+	private XmProjectGroupService groupService;
 
 	@Value("${mdp.platform-branch-id:platform-branch-001}")
 	String platformBranchId="platform-branch-001";
@@ -266,7 +270,7 @@ public class XmProductController {
 				 return ResponseHelper.failed("pstatus-not-0-3","该产品不是初始、已关闭状态，不允许删除");
 			 }else if(!user.getBranchId().equals(xmProductDb.getBranchId())){
 				 return ResponseHelper.failed("branchId-not-right","该产品不属于您所在的机构，不允许删除");
-			 }else if(!user.getUserid().equals(xmProductDb.getPmUserid()) && !user.getUserid().equals(xmProductDb.getAssUserid())){
+			 }else if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
 				 return ResponseHelper.failed("pmUserid-not-right","您不是该产品产品负责人,也不是产品助理，不允许删除");
 			 }
 			 if(!"1".equals(xmProductDb.getIsTpl())){
@@ -301,6 +305,11 @@ public class XmProductController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
+			XmProduct xmProductDb=xmProductService.getProductFromCache(xmProduct.getId());
+			if(xmProductDb==null){
+				return ResponseHelper.failed("product-0","产品已不存在");
+			}
+
 			xmProductService.updateByPk(xmProduct);
 			xmProductService.clearCache(xmProduct.getId());
 			m.put("data",xmProduct);
@@ -347,7 +356,7 @@ public class XmProductController {
 					otips.setFailureMsg("pstatus-not-0-3","产品【"+xmProductDb.getProductName()+"】不是初始、已关闭状态，不允许删除");
  				}else if(!user.getBranchId().equals(xmProductDb.getBranchId())){
 					otips.setFailureMsg("branchId-not-right","产品【"+xmProductDb.getProductName()+"】不属于您所在的机构，不允许删除");
- 				}else if(!user.getUserid().equals(xmProductDb.getPmUserid()) && !user.getUserid().equals(xmProductDb.getAssUserid())){
+ 				}else if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
 					otips.setFailureMsg("pmUserid-not-right","您不是产品【"+xmProductDb.getProductName()+"】负责人,也不是产品助理，不允许删除");
  				}else{
 					if(!"1".equals(xmProductDb.getIsTpl())){

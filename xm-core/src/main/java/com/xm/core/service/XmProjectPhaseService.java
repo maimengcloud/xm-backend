@@ -458,5 +458,69 @@ public class XmProjectPhaseService extends BaseService {
 	public List<XmProjectPhase> selectListByIds(List<String> ids) {
 		return super.selectList("selectListByIds",ids);
 	}
+
+	/**
+	 * 判断新增预算是否超出产品总预算
+	 * @param productId
+	 * @param addPhaseBudgetCost
+	 * @param addPhaseBudgetInnerUserAt
+	 * @param addPhaseBudgetOutUserAt
+	 * @param addPhaseBudgetNouserAt
+	 * @param excludePhaseIds
+	 * @return
+	 */
+	public Tips judgetProductBudget(String productId,BigDecimal addPhaseBudgetCost,BigDecimal addPhaseBudgetInnerUserAt,BigDecimal addPhaseBudgetOutUserAt,BigDecimal addPhaseBudgetNouserAt,List<String> excludePhaseIds){
+		Tips tips=new Tips("检查预算成功");
+		Map<String,Object> g=this.selectTotalProductAndPhaseBudgetCost(productId,excludePhaseIds);
+		BigDecimal phaseBudgetCost=BigDecimal.ZERO;
+		BigDecimal zero=BigDecimal.ZERO;
+
+		if(addPhaseBudgetCost==null) {
+			addPhaseBudgetCost=BigDecimal.ZERO;
+		}
+		if(addPhaseBudgetInnerUserAt==null) {
+			addPhaseBudgetInnerUserAt=BigDecimal.ZERO;
+		}
+		if(addPhaseBudgetOutUserAt==null) {
+			addPhaseBudgetOutUserAt=BigDecimal.ZERO;
+		}
+		if(addPhaseBudgetNouserAt==null) {
+			addPhaseBudgetNouserAt=BigDecimal.ZERO;
+		}
+		BigDecimal phaseBudgetInnerUserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetInnerUserAt"),zero);
+		BigDecimal phaseBudgetOutUserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetOutUserAt"),zero);
+		BigDecimal phaseBudgetNouserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetNouserAt"),zero);
+
+		/**
+		 *
+		 p.pbudget_workload,
+		 p.pbudget_amount,
+		 p.pmenu_budget_workload,
+		 p.pmenu_budget_amount
+		 */
+		BigDecimal pbudgetWorkload=NumberUtil.getBigDecimal(g.get("pbudgetWorkload"),zero);
+		BigDecimal planTotalCost=NumberUtil.getBigDecimal(g.get("pbudgetAmount"),zero);
+
+
+		BigDecimal phaseBudgetCostAt=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);
+		phaseBudgetCostAt=phaseBudgetCostAt.add(addPhaseBudgetCost);
+		if(phaseBudgetCostAt.compareTo(planTotalCost)>0) {
+			tips.setFailureMsg("计划总体预算超出产品总预算"+phaseBudgetCostAt.subtract(planTotalCost)+"元");
+			return tips;
+		}else {
+			return tips;
+		}
+
+	}
+
+	/**
+	 * 查询产品及计划总预算，用于判断是否超出预算
+	 */
+	public Map<String,Object> selectTotalProductAndPhaseBudgetCost(String productId,List<String> excludePhaseIds){
+		Map<String,Object> p=new HashMap<>();
+		p.put("productId", productId);
+		p.put("excludePhaseIds", excludePhaseIds);
+		return this.selectOne("selectTotalProductAndPhaseBudgetCost", p);
+	}
 }
 

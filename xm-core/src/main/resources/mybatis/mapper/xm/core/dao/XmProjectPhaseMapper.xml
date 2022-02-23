@@ -29,10 +29,10 @@
     </sql>
 	<select id="selectTotalProjectAndPhaseBudgetCost" parameterType="HashMap" resultType="HashMap">
 		SELECT
-		sum( res.phase_budget_workload ) AS phase_budget_workload,
-		sum( res.phase_budget_nouser_at ) AS phase_budget_nouser_at,
-		sum( res.phase_budget_inner_user_at ) AS phase_budget_inner_user_at,
-		sum( res.phase_budget_out_user_at ) AS phase_budget_out_user_at,
+		sum( ifnull(res.phase_budget_workload,0) ) AS phase_budget_workload,
+		sum( ifnull(res.phase_budget_nouser_at,0) ) AS phase_budget_nouser_at,
+		sum( ifnull(res.phase_budget_inner_user_at,0) ) AS phase_budget_inner_user_at,
+		sum( ifnull(res.phase_budget_out_user_at,0) ) AS phase_budget_out_user_at,
 		p.plan_nouser_at,
 		p.plan_inner_user_at,
 		p.plan_out_user_at,
@@ -50,7 +50,7 @@
 		FROM
 		XM.xm_project p
 		LEFT JOIN 	XM.xm_project_phase res
-		ON p.id = res.project_id
+		ON p.id = res.project_id and res.lvl=1
 		<if test=" excludePhaseIds !=null "> and res.id not  in
 			<foreach collection="excludePhaseIds" item="item" index="index" open="(" separator="," close=")" >
 				#{item}
@@ -59,6 +59,27 @@
 		where p.id=#{projectId}
 	</select>
 
+	<select id="selectTotalProductAndPhaseBudgetCost" parameterType="HashMap" resultType="HashMap">
+		SELECT
+		sum( ifnull(res.phase_budget_workload,0) ) AS phase_budget_workload,
+		sum( ifnull(res.phase_budget_nouser_at,0) ) AS phase_budget_nouser_at,
+		sum( ifnull(res.phase_budget_inner_user_at,0) ) AS phase_budget_inner_user_at,
+		sum( ifnull(res.phase_budget_out_user_at,0) ) AS phase_budget_out_user_at,
+		p.pbudget_workload,
+		p.pbudget_amount,
+		p.pmenu_budget_workload,
+		p.pmenu_budget_amount
+		FROM
+		XM.xm_product p
+		LEFT JOIN 	XM.xm_project_phase res
+		ON p.id = res.product_id and res.lvl=1
+		<if test=" excludePhaseIds !=null "> and res.id not  in
+			<foreach collection="excludePhaseIds" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+		</if>
+		where p.id=#{productId}
+	</select>
 	<update id="loadTasksToXmProjectPhase" parameterType="String" statementType="CALLABLE">
 		{call load_tasks_to_xm_project_phase(#{projectId,mode=IN})}
 	</update>
