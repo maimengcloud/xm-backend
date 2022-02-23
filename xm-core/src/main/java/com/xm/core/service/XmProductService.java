@@ -7,6 +7,7 @@ import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProductCopyVo;
 import com.xm.core.entity.XmProject;
+import com.xm.core.service.cache.XmProductCacheService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -34,6 +35,9 @@ public class XmProductService extends BaseService {
 	
 	@Autowired
 	XmMenuService xmMenuService;
+
+	@Autowired
+	XmProductCacheService xmProductCacheService;
 	/**
 	 * 产品不直接根项目关联，此函数作废了
 	 * @param productId
@@ -48,7 +52,19 @@ public class XmProductService extends BaseService {
 		p.setProductId(productId);
 		return xmMenuService.countByWhere(p);
 	}
-	
+	public XmProduct getProductFromCache(String productId) {
+		XmProduct productCahce=xmProductCacheService.getProduct(productId);
+		if(productCahce==null) {
+			productCahce = this.selectOneObject(new XmProduct(productId));
+			xmProductCacheService.putProduct(productId, productCahce);
+			return productCahce;
+		}
+		return productCahce;
+	}
+	public void clearCache(String productId){
+		xmProductCacheService.clear(productId);
+	}
+
 	/**
 	 * 连同产品关联的状态数据一起带出
 	 * @param iterationMap
@@ -85,8 +101,8 @@ public class XmProductService extends BaseService {
 		xmProductTo.setCtime(new Date());
 		xmProductTo.setPstatus("0");
 		xmProductTo.setIsTpl(xmProduct.getIsTpl());
-		xmProductTo.setAssistantUserid(user.getUserid());
-		xmProductTo.setAssistantUsername(user.getUsername());
+		xmProductTo.setAssUserid(user.getUserid());
+		xmProductTo.setAssUsername(user.getUsername());
 		if(xmProduct.getProductName().equals(xmProductDb.getProductName())){
 			xmProductTo.setProductName(xmProduct.getProductName()+"(复制)");
 		}

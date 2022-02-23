@@ -259,14 +259,14 @@ public class XmProductController {
 				return ResponseHelper.failed("id-0","","产品编号不能为空");
 			}
  			User user=LoginUtils.getCurrentUserInfo();
-			 XmProduct xmProductDb=xmProductService.selectOneObject(new XmProduct(xmProduct.getId()));
+			 XmProduct xmProductDb=xmProductService.getProductFromCache(xmProduct.getId());
 			 if(xmProductDb==null){
 				return ResponseHelper.failed("data-0","产品已不存在");
 			 }else if(!"0".equals(xmProductDb.getPstatus())&&!"3".equals(xmProductDb.getPstatus())){
 				 return ResponseHelper.failed("pstatus-not-0-3","该产品不是初始、已关闭状态，不允许删除");
 			 }else if(!user.getBranchId().equals(xmProductDb.getBranchId())){
 				 return ResponseHelper.failed("branchId-not-right","该产品不属于您所在的机构，不允许删除");
-			 }else if(!user.getUserid().equals(xmProductDb.getPmUserid()) && !user.getUserid().equals(xmProductDb.getAssistantUserid())){
+			 }else if(!user.getUserid().equals(xmProductDb.getPmUserid()) && !user.getUserid().equals(xmProductDb.getAssUserid())){
 				 return ResponseHelper.failed("pmUserid-not-right","您不是该产品产品负责人,也不是产品助理，不允许删除");
 			 }
 			 if(!"1".equals(xmProductDb.getIsTpl())){
@@ -277,6 +277,7 @@ public class XmProductController {
 				 }
 			 }
 			 xmProductService.doDeleteByPk(xmProduct);
+			xmProductService.clearCache(xmProduct.getId());
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -301,6 +302,7 @@ public class XmProductController {
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			xmProductService.updateByPk(xmProduct);
+			xmProductService.clearCache(xmProduct.getId());
 			m.put("data",xmProduct);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -345,7 +347,7 @@ public class XmProductController {
 					otips.setFailureMsg("pstatus-not-0-3","产品【"+xmProductDb.getProductName()+"】不是初始、已关闭状态，不允许删除");
  				}else if(!user.getBranchId().equals(xmProductDb.getBranchId())){
 					otips.setFailureMsg("branchId-not-right","产品【"+xmProductDb.getProductName()+"】不属于您所在的机构，不允许删除");
- 				}else if(!user.getUserid().equals(xmProductDb.getPmUserid()) && !user.getUserid().equals(xmProductDb.getAssistantUserid())){
+ 				}else if(!user.getUserid().equals(xmProductDb.getPmUserid()) && !user.getUserid().equals(xmProductDb.getAssUserid())){
 					otips.setFailureMsg("pmUserid-not-right","您不是产品【"+xmProductDb.getProductName()+"】负责人,也不是产品助理，不允许删除");
  				}else{
 					if(!"1".equals(xmProductDb.getIsTpl())){
@@ -364,6 +366,9 @@ public class XmProductController {
 			}
 			if(canDelList.size()>0) {
 				xmProductService.doBatchDelete(canDelList);
+				for (XmProduct xmProduct : canDelList) {
+					xmProductService.clearCache(xmProduct.getId());
+				}
 			}
 			String msg="成功删除"+canDelList.size()+"条产品信息";
 			if(canDelList.size()==xmProducts.size()){

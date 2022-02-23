@@ -34,14 +34,14 @@ public class XmTaskCacheService {
  		return "xm_task";
 	} 
 	public void putTasks(String queryKeys, PageSerializable<Map<String,Object>> tasks){
-		String key=this.getKey()+"_"+queryKeys;
-		String hashKey=key;
+		String key=this.getKey();
+		String hashKey=queryKeys;
 		redisTemplate.opsForHash().put(key, hashKey, tasks);
 	}
 	
 	public PageSerializable<Map<String,Object>> getTasks(String queryKeys){
-		String key=this.getKey()+"_"+queryKeys;
-		String hashKey=key;
+		String key=this.getKey();
+		String hashKey=queryKeys;
 		return (PageSerializable<Map<String,Object>>) redisTemplate.opsForHash().get(key, hashKey);
 		
 	}

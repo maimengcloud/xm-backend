@@ -1,6 +1,6 @@
 package com.xm.core.service.cache;
 
-import com.xm.core.entity.XmProject;
+import com.xm.core.entity.XmProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class XmProjectCacheService {
+public class XmProductCacheService {
 	
 	@Autowired
 	RedisTemplate redisTemplate;
@@ -28,28 +28,33 @@ public class XmProjectCacheService {
 		}
 	}
 	String getCacheKey() {
- 		return "xm_project";
+ 		return "xm_product";
 	} 
-	public void putProject(String projectId,XmProject Project){
+	public void putProduct(String productId,XmProduct Product){
 		String key=this.getKey();
-		String hashKey=projectId;
-		redisTemplate.opsForHash().put(key, hashKey, Project);
+		String hashKey=productId;
+		redisTemplate.opsForHash().put(key, hashKey, Product);
 	}
 	
-	public  XmProject  getProject(String projectId){
+	public  XmProduct  getProduct(String productId){
 		String key=this.getKey();
-		String hashKey=projectId;
-		return (XmProject) redisTemplate.opsForHash().get(key, hashKey);
+		String hashKey=productId;
+		return (XmProduct) redisTemplate.opsForHash().get(key, hashKey);
 		
 	}
 
-	public void putPortalProjectStates(List<Map<String,Object>> projects){
+	public void clear(String productId){
 		String key=this.getKey();
-		String hashKey="portal";
-		redisTemplate.opsForHash().put(key, hashKey, projects);
+		redisTemplate.opsForHash().delete(key,productId);
 	}
 
-	public List<Map<String,Object>> getPortalProjectStates(){
+	public void putPortalProductStates(List<Map<String,Object>> products){
+		String key=this.getKey();
+		String hashKey="portal";
+		redisTemplate.opsForHash().put(key, hashKey, products);
+	}
+
+	public List<Map<String,Object>> getPortalProductStates(){
 		String key=this.getKey();
 		String hashKey="portal";
 		return (List<Map<String,Object>>) redisTemplate.opsForHash().get(key, hashKey);
