@@ -1,16 +1,15 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.util.Date;
 
 /**
- * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmRecord所有属性名: <br>
- *	id,projectId,operUserid,operUsername,operTime,objType,action,oldValue,newValue,remarks,taskId,reqNo,branchId,ip;<br>
- * 表 XM.xm_record xm_record的所有字段名: <br>
- *	id,project_id,oper_userid,oper_username,oper_time,obj_type,action,old_value,new_value,remarks,task_id,req_no,branch_id,ip;<br>
+ *	id,projectId,operUserid,operUsername,operTime,objType,action,oldValue,newValue,remarks,reqNo,branchId,ip,bizId,pbizId,productId;<br>
+ * 表 xm_record xm_record的所有字段名: <br>
+ *	id,project_id,oper_userid,oper_username,oper_time,obj_type,action,old_value,new_value,remarks,req_no,branch_id,ip,biz_id,pbiz_id,product_id;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -35,7 +34,7 @@ public class XmRecord  implements java.io.Serializable {
 	@ApiModelProperty(notes="操作时间",allowEmptyValue=true,example="",allowableValues="")
 	Date operTime;
 	
-	@ApiModelProperty(notes="操作对象project/task",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="操作对象project/task/phase/group/budget/cost",allowEmptyValue=true,example="",allowableValues="")
 	String objType;
 	
 	@ApiModelProperty(notes="操作的id",allowEmptyValue=true,example="",allowableValues="")
@@ -50,9 +49,6 @@ public class XmRecord  implements java.io.Serializable {
 	@ApiModelProperty(notes="备注",allowEmptyValue=true,example="",allowableValues="")
 	String remarks;
 	
-	@ApiModelProperty(notes="任务编号",allowEmptyValue=true,example="",allowableValues="")
-	String taskId;
-	
 	@ApiModelProperty(notes="请求编号，用于跟踪日志",allowEmptyValue=true,example="",allowableValues="")
 	String reqNo;
 	
@@ -61,6 +57,15 @@ public class XmRecord  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="ip地址",allowEmptyValue=true,example="",allowableValues="")
 	String ip;
+	
+	@ApiModelProperty(notes="业务主键编号",allowEmptyValue=true,example="",allowableValues="")
+	String bizId;
+	
+	@ApiModelProperty(notes="上级业务主键编号",allowEmptyValue=true,example="",allowableValues="")
+	String pbizId;
+	
+	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
+	String productId;
 
 	/**日志编号**/
 	public XmRecord(String id) {
@@ -102,7 +107,7 @@ public class XmRecord  implements java.io.Serializable {
 		this.operTime = operTime;
 	}
 	/**
-	 * 操作对象project/task
+	 * 操作对象project/task/phase/group/budget/cost
 	 **/
 	public void setObjType(String objType) {
 		this.objType = objType;
@@ -132,12 +137,6 @@ public class XmRecord  implements java.io.Serializable {
 		this.remarks = remarks;
 	}
 	/**
-	 * 任务编号
-	 **/
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-	/**
 	 * 请求编号，用于跟踪日志
 	 **/
 	public void setReqNo(String reqNo) {
@@ -154,6 +153,24 @@ public class XmRecord  implements java.io.Serializable {
 	 **/
 	public void setIp(String ip) {
 		this.ip = ip;
+	}
+	/**
+	 * 业务主键编号
+	 **/
+	public void setBizId(String bizId) {
+		this.bizId = bizId;
+	}
+	/**
+	 * 上级业务主键编号
+	 **/
+	public void setPbizId(String pbizId) {
+		this.pbizId = pbizId;
+	}
+	/**
+	 * 产品编号
+	 **/
+	public void setProductId(String productId) {
+		this.productId = productId;
 	}
 	
 	/**
@@ -187,7 +204,7 @@ public class XmRecord  implements java.io.Serializable {
 		return this.operTime;
 	}
 	/**
-	 * 操作对象project/task
+	 * 操作对象project/task/phase/group/budget/cost
 	 **/
 	public String getObjType() {
 		return this.objType;
@@ -217,12 +234,6 @@ public class XmRecord  implements java.io.Serializable {
 		return this.remarks;
 	}
 	/**
-	 * 任务编号
-	 **/
-	public String getTaskId() {
-		return this.taskId;
-	}
-	/**
 	 * 请求编号，用于跟踪日志
 	 **/
 	public String getReqNo() {
@@ -239,6 +250,24 @@ public class XmRecord  implements java.io.Serializable {
 	 **/
 	public String getIp() {
 		return this.ip;
+	}
+	/**
+	 * 业务主键编号
+	 **/
+	public String getBizId() {
+		return this.bizId;
+	}
+	/**
+	 * 上级业务主键编号
+	 **/
+	public String getPbizId() {
+		return this.pbizId;
+	}
+	/**
+	 * 产品编号
+	 **/
+	public String getProductId() {
+		return this.productId;
 	}
 
 }
