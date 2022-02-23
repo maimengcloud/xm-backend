@@ -119,8 +119,11 @@ public class XmProjectGroupController {
 		tips= xmProjectGroupService.updateGroup(group,groupDb);	//列出XmProjectGroup列表
 		if("1".equals(groupDb.getPgClass())){
 			xmProjectGroupCacheService.clearProductGroup(groupDb.getProductId(),groupDb.getId());
+			xmRecordService.addXmProductGroupRecord(groupDb.getProductId(),groupDb.getId(),"团队-小组-修改小组","修改小组信息【"+groupDb.getGroupName()+"】");
 		}else {
 			xmProjectGroupCacheService.clearProjectGroup(groupDb.getProjectId(),groupDb.getId());
+			xmRecordService.addXmGroupRecord(groupDb.getProjectId(),groupDb.getId(),"团队-小组-修改小组","修改小组信息【"+groupDb.getGroupName()+"】");
+
 		}
 
 
@@ -257,12 +260,13 @@ public class XmProjectGroupController {
 			xmProjectGroupService.insert(xmProjectGroup);
 			if("1".equals(xmProjectGroup.getPgClass())){
 				xmProjectGroupCacheService.clearProductGroup(xmProjectGroup.getProductId(),xmProjectGroup.getId());
+				xmRecordService.addXmProductGroupRecord(xmProjectGroup.getProductId(),xmProjectGroup.getId(),"团队-小组-新增小组","新增小组【"+xmProjectGroup.getGroupName()+"】");
+
 			}else {
 				xmProjectGroupCacheService.clearProjectGroup(xmProjectGroup.getProjectId(),xmProjectGroup.getId());
+				xmRecordService.addXmProductGroupRecord(xmProjectGroup.getProductId(),xmProjectGroup.getId(),"团队-小组-新增小组","新增小组【"+xmProjectGroup.getGroupName()+"】");
 			}
-			pushMsgService.pushChannelGroupCreateMsg(u.getBranchId(),  xmProjectGroup.getProjectId(),xmProjectGroup.getId(),  xmProjectGroup.getId(),xmProjectGroup.getGroupName(), u.getUserid(), u.getUsername(), null, "新增小组"+xmProjectGroup.getGroupName());
-			xmRecordService.addXmGroupRecord(xmProjectGroup.getProjectId(), xmProjectGroup.getId(), "项目-团队-新增小组", "新增小组"+xmProjectGroup.getGroupName(),JSON.toJSONString(xmProjectGroup),null);
-			m.put("data",xmProjectGroup);
+  			m.put("data",xmProjectGroup);
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -323,9 +327,11 @@ public class XmProjectGroupController {
 			xmProjectGroupService.doDeleteByPk(xmProjectGroup,groupDb);
 			if("1".equals(groupDb.getPgClass())){
 				xmProjectGroupCacheService.clearProductGroup(groupDb.getProductId(),groupDb.getId());
-				xmRecordService.addXmGroupRecord();
+				xmRecordService.addXmProductGroupRecord(groupDb.getProductId(),groupDb.getId(),"团队-小组-删除小组","删除小组【"+groupDb.getGroupName()+"】");
 			}else {
 				xmProjectGroupCacheService.clearProjectGroup(groupDb.getProjectId(),groupDb.getId());
+				xmRecordService.addXmGroupRecord(groupDb.getProjectId(),groupDb.getId(),"团队-小组-删除小组","删除小组【"+groupDb.getGroupName()+"】");
+
 			}
 
 		}catch (BizException e) { 
@@ -388,12 +394,17 @@ public class XmProjectGroupController {
 				}
 			}
 			if(canDelNodes.size()>0){
+				String groupNames=canDelNodes.stream().map(i->i.getGroupName()).collect(Collectors.joining(","));
 				if("1".equals(pgClass)){
 					xmProjectGroupService.doBatchDeleteProductGroups(canDelNodes);
 					xmProjectGroupCacheService.clearProductGroups(groupDb.getProductId());
+					xmRecordService.addXmProductGroupRecord(groupDb.getProductId(),groupDb.getId(),"团队-小组-批量删除小组","删除"+canDelNodes.size()+"个小组【"+groupNames+"】");
+
 				}else {
 					xmProjectGroupService.doBatchDeleteProjectGroups(canDelNodes);
 					xmProjectGroupCacheService.clearProjectGroups(groupDb.getProjectId());
+					xmRecordService.addXmGroupRecord(groupDb.getProjectId(),groupDb.getId(),"团队-小组-批量删除小组","删除"+canDelNodes.size()+"个小组【"+groupNames+"】");
+
 				}
 			}
 		}catch (BizException e) { 
