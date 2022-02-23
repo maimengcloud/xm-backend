@@ -59,7 +59,6 @@ public class XmMenuPlanService extends BaseService {
 				plan.setProjectId(projectId);
 				plan.setMenuId(xmMenu.getMenuId());
 				plan.setMenuName(xmMenu.getMenuName());
-				plan.setId(this.createKey("id"));
 				plan.setPlanStartTime(new Date());
 				plan.setCtime(new Date());
 				plan.setLtime(new Date());
@@ -76,7 +75,7 @@ public class XmMenuPlanService extends BaseService {
 	
 	/**
 	 * 计算bug、task、测试案例、等数据
-	 * @param productId
+	 * @param projectId
 	 * @return
 	 */
 	public int loadTasksToXmMenuPlan(String projectId) {

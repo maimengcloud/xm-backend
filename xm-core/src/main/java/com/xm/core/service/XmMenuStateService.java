@@ -64,7 +64,6 @@ public class XmMenuStateService extends BaseService {
 				state.setProductId(productId);
 				state.setMenuId(xmMenu.getMenuId());
 				state.setMenuName(xmMenu.getMenuName());
-				state.setId(this.createKey("id"));
 				state.setPlanStartTime(new Date());
 				state.setCtime(new Date());
 				state.setLtime(new Date());
