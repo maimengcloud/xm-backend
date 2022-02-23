@@ -323,6 +323,7 @@ public class XmProjectGroupController {
 			xmProjectGroupService.doDeleteByPk(xmProjectGroup,groupDb);
 			if("1".equals(groupDb.getPgClass())){
 				xmProjectGroupCacheService.clearProductGroup(groupDb.getProductId(),groupDb.getId());
+				xmRecordService.addXmGroupRecord();
 			}else {
 				xmProjectGroupCacheService.clearProjectGroup(groupDb.getProjectId(),groupDb.getId());
 			}
