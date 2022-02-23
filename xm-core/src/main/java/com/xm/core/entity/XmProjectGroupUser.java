@@ -7,9 +7,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectGroupUser所有属性名: <br>
- *	joinTime,groupId,userid,username,outTime,status,obranchId,isPri,seqNo,projectId,productId;<br>
+ *	joinTime,groupId,userid,username,outTime,status,obranchId,isPri,seqNo,projectId,productId,pgClass;<br>
  * 表 xm_project_group_user xm_project_group_user的所有字段名: <br>
- *	join_time,group_id,userid,username,out_time,status,obranch_id,is_pri,seq_no,project_id,product_id;<br>
+ *	join_time,group_id,userid,username,out_time,status,obranch_id,is_pri,seq_no,project_id,product_id,pg_class;<br>
  * 当前主键(包括多主键):<br>
  *	group_id,userid;<br>
  */
@@ -51,6 +51,9 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
 	String productId;
+	
+	@ApiModelProperty(notes="0-项目，1-产品",allowEmptyValue=true,example="",allowableValues="")
+	String pgClass;
 
 	/**团队编号,团队成员编号**/
 	public XmProjectGroupUser(String groupId,String userid) {
@@ -128,6 +131,12 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	public void setProductId(String productId) {
 		this.productId = productId;
 	}
+	/**
+	 * 0-项目，1-产品
+	 **/
+	public void setPgClass(String pgClass) {
+		this.pgClass = pgClass;
+	}
 	
 	/**
 	 * 加入时间
@@ -194,6 +203,12 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	 **/
 	public String getProductId() {
 		return this.productId;
+	}
+	/**
+	 * 0-项目，1-产品
+	 **/
+	public String getPgClass() {
+		return this.pgClass;
 	}
 
 }

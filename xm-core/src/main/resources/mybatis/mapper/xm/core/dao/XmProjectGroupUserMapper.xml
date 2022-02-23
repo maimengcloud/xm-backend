@@ -88,7 +88,7 @@
 		insert into xm_project_group_user(
 			<include refid="columns"/>
 		) values (
-		#{joinTime},#{groupId},#{userid},#{username},#{outTime},#{status},#{obranchId},#{isPri},#{seqNo},#{projectId},#{productId}
+		#{joinTime},#{groupId},#{userid},#{username},#{outTime},#{status},#{obranchId},#{isPri},#{seqNo},#{projectId},#{productId},#{pgClass}
 		)
 	</insert>
 	
@@ -151,7 +151,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		join_time,group_id,userid,username,out_time,status,obranch_id,is_pri,seq_no,project_id,product_id
+		join_time,group_id,userid,username,out_time,status,obranch_id,is_pri,seq_no,project_id,product_id,pg_class
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -167,6 +167,7 @@
 		<if test="seqNo != null and seqNo != ''">      and res.seq_no = #{seqNo}     </if>
 		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
+		<if test="pgClass != null and pgClass != ''">      and res.pg_class = #{pgClass}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -178,7 +179,8 @@
 		is_pri = #{isPri},
 		seq_no = #{seqNo},
 		project_id = #{projectId},
-		product_id = #{productId}
+		product_id = #{productId},
+		pg_class = #{pgClass}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="joinTime != null"> join_time = #{joinTime},     </if>
@@ -190,6 +192,7 @@
 		<if test="seqNo != null and seqNo != ''"> seq_no = #{seqNo},     </if>
 		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
+		<if test="pgClass != null and pgClass != ''"> pg_class = #{pgClass},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -201,6 +204,7 @@
 			is_pri = #{item.isPri},
 			seq_no = #{item.seqNo},
 			project_id = #{item.projectId},
-			product_id = #{item.productId}
+			product_id = #{item.productId},
+			pg_class = #{item.pgClass}
 	</sql>
 </mapper>
