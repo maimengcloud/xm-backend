@@ -7,9 +7,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectGroupUser所有属性名: <br>
- *	joinTime,groupId,userid,username,outTime,status,obranchId,isPri,seqNo;<br>
+ *	joinTime,groupId,userid,username,outTime,status,obranchId,isPri,seqNo,projectId,productId;<br>
  * 表 xm_project_group_user xm_project_group_user的所有字段名: <br>
- *	join_time,group_id,userid,username,out_time,status,obranch_id,is_pri,seq_no;<br>
+ *	join_time,group_id,userid,username,out_time,status,obranch_id,is_pri,seq_no,project_id,product_id;<br>
  * 当前主键(包括多主键):<br>
  *	group_id,userid;<br>
  */
@@ -45,6 +45,12 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="排序号--从1开始",allowEmptyValue=true,example="",allowableValues="")
 	Integer seqNo;
+	
+	@ApiModelProperty(notes="项目编号",allowEmptyValue=true,example="",allowableValues="")
+	String projectId;
+	
+	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
+	String productId;
 
 	/**团队编号,团队成员编号**/
 	public XmProjectGroupUser(String groupId,String userid) {
@@ -110,6 +116,18 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	public void setSeqNo(Integer seqNo) {
 		this.seqNo = seqNo;
 	}
+	/**
+	 * 项目编号
+	 **/
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
+	/**
+	 * 产品编号
+	 **/
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
 	
 	/**
 	 * 加入时间
@@ -164,6 +182,18 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	 **/
 	public Integer getSeqNo() {
 		return this.seqNo;
+	}
+	/**
+	 * 项目编号
+	 **/
+	public String getProjectId() {
+		return this.projectId;
+	}
+	/**
+	 * 产品编号
+	 **/
+	public String getProductId() {
+		return this.productId;
 	}
 
 }

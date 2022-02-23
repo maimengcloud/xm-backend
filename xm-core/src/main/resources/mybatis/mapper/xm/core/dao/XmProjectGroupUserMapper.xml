@@ -88,7 +88,7 @@
 		insert into xm_project_group_user(
 			<include refid="columns"/>
 		) values (
-		#{joinTime},#{groupId},#{userid},#{username},#{outTime},#{status},#{obranchId},#{isPri},#{seqNo}
+		#{joinTime},#{groupId},#{userid},#{username},#{outTime},#{status},#{obranchId},#{isPri},#{seqNo},#{projectId},#{productId}
 		)
 	</insert>
 	
@@ -151,7 +151,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		join_time,group_id,userid,username,out_time,status,obranch_id,is_pri,seq_no
+		join_time,group_id,userid,username,out_time,status,obranch_id,is_pri,seq_no,project_id,product_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -165,6 +165,8 @@
 		<if test="obranchId != null and obranchId != ''">      and res.obranch_id = #{obranchId}     </if>
 		<if test="isPri != null and isPri != ''">      and res.is_pri = #{isPri}     </if>
 		<if test="seqNo != null and seqNo != ''">      and res.seq_no = #{seqNo}     </if>
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
+		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -174,7 +176,9 @@
 		status = #{status},
 		obranch_id = #{obranchId},
 		is_pri = #{isPri},
-		seq_no = #{seqNo}
+		seq_no = #{seqNo},
+		project_id = #{projectId},
+		product_id = #{productId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="joinTime != null"> join_time = #{joinTime},     </if>
@@ -184,6 +188,8 @@
 		<if test="obranchId != null and obranchId != ''"> obranch_id = #{obranchId},     </if>
 		<if test="isPri != null and isPri != ''"> is_pri = #{isPri},     </if>
 		<if test="seqNo != null and seqNo != ''"> seq_no = #{seqNo},     </if>
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
+		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -193,6 +199,8 @@
 			status = #{item.status},
 			obranch_id = #{item.obranchId},
 			is_pri = #{item.isPri},
-			seq_no = #{item.seqNo}
+			seq_no = #{item.seqNo},
+			project_id = #{item.projectId},
+			product_id = #{item.productId}
 	</sql>
 </mapper>
