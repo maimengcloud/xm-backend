@@ -122,7 +122,7 @@
 		</foreach>
 	</update>
 	<insert id="batchLoadXmMenuToState" parameterType="HashMap">
-		insert into xm_menu_state (id,product_id,menu_id,biz_date) select CONCAT(#{bizDate},i.menu_id),i.product_id,i.menu_id,#{bizDate} from xm_menu i left join xm_menu_state s on s.product_id=i.product_id and s.menu_id=i.menu_id  where i.product_id=#{productId}  and s.menu_id is null
+		insert into xm_menu_state (product_id,menu_id,biz_date) select i.product_id,i.menu_id,#{bizDate} from xm_menu i left join xm_menu_state s on s.product_id=i.product_id and s.menu_id=i.menu_id  where i.product_id=#{productId}  and s.menu_id is null
 	</insert>
 	<!--结束 自定义sql函数区域-->
 	
