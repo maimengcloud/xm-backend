@@ -46,7 +46,7 @@
 		where t.menu_id=#{menuId} and te.status !='8' and te.status !='7'
 	</select>
 	<select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
-		select res.*,s.* from xm_menu res left join xm_menu_state s on res.menu_id=s.menu_id
+		select res.*,s.*,i.iteration_name from xm_menu res left join xm_menu_state s on res.menu_id=s.menu_id left join xm_iteration i on res.iteration_id=i.id
 		<where>
 			<include refid="whereForMap"/>
 			<include refid="where"/>
@@ -122,7 +122,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from xm_menu res
+		select * from xm_menu res left join xm_iteration i on res.iteration_id=i.id
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
