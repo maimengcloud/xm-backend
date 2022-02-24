@@ -15,6 +15,7 @@ import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmMenuService;
+import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.XmRecordService;
 import com.xm.core.service.XmTaskService;
 import com.xm.core.vo.XmMenuVo;
@@ -58,6 +59,9 @@ public class XmMenuController {
 
 	@Autowired
 	private XmRecordService xmRecordService;
+
+	@Autowired
+	private XmProjectGroupService groupService;
 	
 	@ApiOperation( value = "查询项目菜单表信息列表",notes="listXmMenu,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
@@ -308,6 +312,9 @@ public class XmMenuController {
 				xmMenu.setMmUserid(user.getUserid());
 				xmMenu.setMmUsername(user.getUsername());
 			}
+			if(!groupService.calcCanOpMenus(xmMenu)){
+				return ResponseHelper.failed("noqx","您无权新增需求。");
+			}
 			xmMenuService.parentIdPathsCalcBeforeSave(xmMenu);
 			xmMenuService.insert(xmMenu);
 			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"新增产品需求","新增需求"+xmMenu.getMenuName());
@@ -341,16 +348,16 @@ public class XmMenuController {
 			if(taskCount>0) {
 				tips.setFailureMsg("存在"+taskCount+"个任务关联该需求，不允许删除");
 			}else {
-				XmMenu query=new XmMenu();
-				query.setPmenuId(xmMenu.getMenuId());
-				long childCount=xmMenuService.countByWhere(query);
-				if(childCount>0) { 
-					tips.setFailureMsg("存在"+childCount+"个子需求关联该需求，不允许删除");
-				}else {
+					xmMenu=this.xmMenuService.selectOneObject(xmMenu);
+					if(xmMenu.getChildrenCnt()!=null && xmMenu.getChildrenCnt()>0){
+						return ResponseHelper.failed("hadChild","该需求集有子需求，不能删除");
+					}
+					if(!groupService.calcCanOpMenus(xmMenu)){
+						return ResponseHelper.failed("noqx","您无权删除此需求。");
+					}
 					xmMenuService.deleteByPk(xmMenu);
 					xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"删除产品需求","删除需求"+xmMenu.getMenuName(),"",JSON.toJSONString(xmMenu));
 
-				}
 			} 
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -382,10 +389,13 @@ public class XmMenuController {
 			if(xmMenuDb==null){
 				ResponseHelper.failed("menu-0","该需求不存在");
 			}
+			if(!groupService.calcCanOpMenus(xmMenuDb)){
+				return ResponseHelper.failed("noqx","您无权修改此需求。");
+			}
 			if(StringUtils.hasText(xmMenu.getNtype())&&StringUtils.hasText(xmMenu.getNtype())&&StringUtils.hasText(xmMenuDb.getPmenuId())){
 				if(!xmMenuDb.getNtype().equals(xmMenu.getNtype())){
 					if(xmMenu.getNtype().equals("1")){
-						XmMenu xmMenuParentDb=this.xmTaskService.selectOneObject(new XmMenu(xmMenuDb.getPmenuId()));
+						XmMenu xmMenuParentDb=this.xmMenuService.selectOneObject(new XmMenu(xmMenuDb.getPmenuId()));
 						if(xmMenuParentDb!=null){
 							if(!"1".equals(xmMenuParentDb.getNtype())){
 								ResponseHelper.failed("pmenu-ntype-0","上级需求"+xmMenuParentDb.getMenuName()+"不是需求集,不能下挂需求集");
@@ -434,19 +444,26 @@ public class XmMenuController {
 					hasChildMenus.add(xmMenu.getMenuName());
 				}
 			}
+			List<XmMenu> canDelResult=new ArrayList<>();
+			List<XmMenu> noQxResult=new ArrayList<>();
 			if(canDelList.size()>0) {
-				xmMenuService.doBatchDelete(canDelList);
-				xmRecordService.addXmMenuRecord(canDelList.get(0).getProductId(),"","批量删除产品需求","批量删除产品需求"+canDelList.size()+"个。【"+canDelList.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】","", JSON.toJSONString(canDelList));
-
+				groupService.calcCanOpMenus(canDelList,canDelResult,noQxResult);
+				if(canDelResult.size()>0){
+					xmMenuService.doBatchDelete(canDelResult);
+ 				}
 			}
-			String msg="成功删除"+canDelList.size()+"个需求信息。\n";
+			List<String> msg=new ArrayList<>();
+			msg.add("成功删除"+canDelResult.size()+"个需求信息。");
 			if(hasChildMenus.size()>0 ) {
-				msg=msg+"以下"+hasChildMenus.size()+"个需求存在子需求，不允许删除。【"+StringUtils.arrayToDelimitedString(hasChildMenus.toArray(), ",")+"】";
+				msg.add("以下"+hasChildMenus.size()+"个需求存在子需求，不允许删除。【"+StringUtils.arrayToDelimitedString(hasChildMenus.toArray(), ",")+"】");
 			}
-			if(canDelList.size()==0){
-				tips.setFailureMsg(msg);
+			if(noQxResult.size()>0){
+				msg.add("无权限操作以下"+noQxResult.size()+"个需求.【"+noQxResult.stream().map(i->i.getMenuName()).collect(Collectors.joining(",")) +"】");
+			}
+			if(canDelResult.size()==0){
+				tips.setFailureMsg(msg.stream().collect(Collectors.joining(" ")));
 			}else{
-				tips.setOkMsg(msg);
+				tips.setOkMsg(msg.stream().collect(Collectors.joining(" ")));
 			}
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -467,10 +484,17 @@ public class XmMenuController {
 		try{ 
 			 
 			if(xmMenus.size()>0) {
+				List<XmMenu> canEdit=new ArrayList<>();
+				List<XmMenu> noQx=new ArrayList<>();
+				groupService.calcCanOpMenus(xmMenus,canEdit,noQx);
+				if(canEdit.size()>0){
+					this.xmMenuService.parentIdPathsCalcBeforeSave(canEdit);
+					this.xmMenuService.doBatchInsert(canEdit);
+					xmRecordService.addXmMenuRecord(canEdit,"批量新增产品需求","批量新增产品需求");
+				}else{
+					tips.setFailureMsg("您无权限新增需求。");
+				}
 
-				this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenus);
-				this.xmMenuService.doBatchInsert(xmMenus);
-				xmRecordService.addXmMenuRecord(xmMenus.get(0).getProductId(),"","批量新增产品需求","批量新增产品需求"+xmMenus.size()+"个。【"+xmMenus.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
 
 			}else {
  				tips.setFailureMsg("没有数据可以新增，请上送数据");
@@ -492,15 +516,18 @@ public class XmMenuController {
 	public Map<String,Object> batchEditXmMenu(@RequestBody List<XmMenuVo> xmMenus) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功修改"+xmMenus.size()+"条数据"); 
-		try{ 
-			 
-			if(xmMenus.size()>0) {
-				this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenus.stream().map(i->(XmMenu)i).collect(Collectors.toList()));
-				this.xmMenuService.batchInsertOrUpdate(xmMenus);
-				xmRecordService.addXmMenuRecord(xmMenus.get(0).getProductId(),"","批量修改产品需求","批量修改产品需求【"+xmMenus.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
-
+		try{
+			List<XmMenu> xmMenuList=xmMenus.stream().map(i->(XmMenu)i).collect(Collectors.toList());
+			List<XmMenu> canEdit=new ArrayList<>();
+			List<XmMenu> noQx=new ArrayList<>();
+			groupService.calcCanOpMenus(xmMenuList,canEdit,noQx);
+			if(canEdit.size()>0) {
+				List<XmMenuVo> xmMenuVos=xmMenus.stream().filter(i->canEdit.stream().filter(k->k.getMenuId().equals(i.getMenuId())).findAny().isPresent()).collect(Collectors.toList());
+				this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenuVos.stream().map(i->(XmMenu)i).collect(Collectors.toList()));
+				this.xmMenuService.batchInsertOrUpdate(xmMenuVos);
+				xmRecordService.addXmMenuRecord(xmMenuList,"批量修改产品需求","批量修改产品需求 ");
 			}else {
- 				tips.setFailureMsg("没有数据可以修改，请上送数据");
+ 				tips.setFailureMsg("您无权限修改数据");
  			} 
 			
 		}catch (BizException e) { 

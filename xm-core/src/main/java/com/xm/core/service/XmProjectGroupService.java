@@ -56,8 +56,17 @@ public class XmProjectGroupService extends BaseService {
     XmPushMsgService pushMsgService;
 
 
-    public void calcCanOpMenus(List<XmMenu> menus,List<XmMenu> canOpResult,List<XmMenu> noQxOpResult){
-
+	public boolean calcCanOpMenus(XmMenu menus){
+		List<XmMenu> menuList=new ArrayList<>();
+		menuList.add(menus);
+		List<XmMenu> can=new ArrayList<>();
+		List<XmMenu> no=new ArrayList<>();
+		Tips tips = new Tips();
+		calcCanOpMenus(menuList,can,no);
+		return can.size()>0;
+	}
+    public void calcCanOpMenus(List<XmMenu> menus,List<XmMenu> canOpResult,List<XmMenu> noQxOpResult ){
+		Tips tips=new Tips("成功");
 		//按产品分组检查权限
 		Map<String,List<XmMenu>> productMenusMap=new HashMap<>();
 		for (XmMenu menu : menus) {
