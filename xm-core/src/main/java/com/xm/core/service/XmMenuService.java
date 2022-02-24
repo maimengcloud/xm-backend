@@ -6,6 +6,7 @@ import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
 import com.xm.core.vo.XmIterationMenuVo;
 import com.xm.core.vo.XmMenuVo;
+import com.xm.core.vo.XmPhaseMenusVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -266,6 +267,15 @@ public class XmMenuService extends BaseService {
 
 	public void batchIteration(XmIterationMenuVo xmIterationMenus) {
 		super.update("batchIteration",xmIterationMenus);
+	}
+
+
+	public void batchUnProductPhase(XmPhaseMenusVo xmPhaseMenusVo) {
+		super.update("batchUnProductPhase",xmPhaseMenusVo);
+	}
+
+	public void batchProductPhase(XmPhaseMenusVo xmPhaseMenusVo) {
+		super.update("batchProductPhase",xmPhaseMenusVo);
 	}
 }
 
