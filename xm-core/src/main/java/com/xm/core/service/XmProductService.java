@@ -103,6 +103,8 @@ public class XmProductService extends BaseService {
 		xmProductTo.setIsTpl(xmProduct.getIsTpl());
 		xmProductTo.setAssUserid(user.getUserid());
 		xmProductTo.setAssUsername(user.getUsername());
+		xmProductTo.setBizProcInstId(null);
+		xmProductTo.setBizFlowState("0");
 		if(xmProduct.getProductName().equals(xmProductDb.getProductName())){
 			xmProductTo.setProductName(xmProduct.getProductName()+"(复制)");
 		}

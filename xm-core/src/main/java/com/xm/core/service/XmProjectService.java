@@ -90,6 +90,8 @@ public class XmProjectService extends BaseService {
 		xmProjectTo.setIsTpl(isTpl);
 		xmProjectTo.setStatus("0");
 		xmProjectTo.setFromTplId(xmProjectDb.getId());
+		xmProjectTo.setBizFlowState("0");
+		xmProjectTo.setBizProcInstId(null);
 		this.saveProject(xmProjectTo);
 
 		XmProjectPhase phaseQuery=new XmProjectPhase();
