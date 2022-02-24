@@ -22,8 +22,8 @@
 			</foreach>
 		</if>
 		<if test=' iterationFilterType!=null and iterationFilterType!=""'>
-			and <if test='iterationFilterType=="not-join"'> not  </if>
-			exists ( select 1 from xm_iteration_menu im where im.menu_id=res.menu_id)
+			<if test='iterationFilterType=="not-join"'> and (res.iteration_id is  null or res.iteration_id ='') </if>
+			<if test='iterationFilterType!="not-join"'> and res.iteration_id is not null and res.iteration_id !='' </if>
 		</if>
 		<if test=' taskFilterType!=null and taskFilterType!="" '>
 			and <if test='taskFilterType=="not-join"'> not  </if>
@@ -35,11 +35,11 @@
 
 	<select id="selectExistIterationMenus" parameterType="HashMap" resultType="com.xm.core.entity.XmMenu">
 		select  * from xm_menu res
-		where exists (select 1 from xm_iteration_menu im where im.menu_id  in
+		where res.menu_id  in
 		<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
 		</foreach>
-		and im.menu_id = res.menu_id )
+		and res.iteration_id is not null
 	</select>
 	<select id="queryTaskUsersByMenuId" parameterType="HashMap" resultType="HashMap">
 		select distinct te.userid,te.username,t.executor_userid, t.executor_username from xm_task_execuser te inner join xm_task t on t.id=te.task_id

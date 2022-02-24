@@ -25,7 +25,7 @@
 			<if test=" onlineTimeEnd !=null "> and res.online_time &lt; #{onlineTimeEnd} </if>
 			<include refid="where"/>
 			<if test=" ( menuId != null and menuId !='')">
-			and exists ( select 1 from xm_iteration_menu im where  im.iteration_id=res.id and  im.menu_id=#{menuId}
+			and exists ( select 1 from xm_menu im where  im.iteration_id=res.id and  im.menu_id=#{menuId}
 					<if test="productId != null and productId !='' ">  and  im.product_id=#{productId}    </if>
 			 )
 		    </if>
@@ -44,7 +44,7 @@
 			</if>
 			<if test="compete !=null and compete!=''">
 				and ( res.admin_userid=#{compete}
-					  or exists (select 1 from  xm_iteration_menu im left join xm_menu m on im.product_id=m.product_id where m.mm_userid=#{compete} and im.iteration_id=res.id)
+					  or exists (select 1 from  xm_menu m where m.mm_userid=#{compete} and m.iteration_id=res.id)
 				)
 			</if>
 
@@ -71,7 +71,7 @@
 			<if test=" onlineTimeEnd !=null "> and res.online_time &lt; #{onlineTimeEnd} </if>
 			<include refid="where"/>
 			<if test=" ( menuId != null and menuId !='')">
-				and exists ( select 1 from xm_iteration_menu im where  im.iteration_id=res.id and  im.menu_id=#{menuId}
+				and exists ( select 1 from xm_menu im where  im.iteration_id=res.id and  im.menu_id=#{menuId}
 				<if test="productId != null and productId !='' ">  and  im.product_id=#{productId}    </if>
 				)
 			</if>
@@ -90,7 +90,7 @@
 			</if>
 			<if test="compete !=null and compete!=''">
 				and ( res.admin_userid=#{compete}
-				or exists (select 1 from  xm_iteration_menu im left join xm_menu m on im.product_id=m.product_id where m.mm_userid=#{compete} and im.iteration_id=res.id)
+				or exists (select 1 from  xm_menu m where m.mm_userid=#{compete} and m.iteration_id=res.id)
 				)
 			</if>
 			<if test="key != null and key !='' ">   and res.iteration_name like #{key}    </if>
