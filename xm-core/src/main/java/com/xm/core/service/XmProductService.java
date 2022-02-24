@@ -3,10 +3,7 @@ package com.xm.core.service;
 import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
-import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmProduct;
-import com.xm.core.entity.XmProductCopyVo;
-import com.xm.core.entity.XmProject;
+import com.xm.core.entity.*;
 import com.xm.core.service.cache.XmProductCacheService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,10 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -38,6 +32,18 @@ public class XmProductService extends BaseService {
 
 	@Autowired
 	XmProductCacheService xmProductCacheService;
+
+
+	@Autowired
+	XmProjectGroupService groupService;
+
+	@Autowired
+	XmProjectGroupUserService groupUserService;
+
+
+	@Autowired
+	XmProjectPhaseService xmProjectPhaseService;
+	
 	/**
 	 * 产品不直接根项目关联，此函数作废了
 	 * @param productId
@@ -83,6 +89,7 @@ public class XmProductService extends BaseService {
 		if(xmProductDb==null){
 			throw new BizException("产品不存在");
 		}
+		String isTpl=xmProduct.getIsTpl();
 		XmProduct xmProductTo=new XmProduct();
 		BeanUtils.copyProperties(xmProductDb,xmProductTo);
 		xmProductTo.setId(this.createKey("id"));
@@ -100,7 +107,7 @@ public class XmProductService extends BaseService {
 		xmProductTo.setPmUsername(user.getUsername());
 		xmProductTo.setCtime(new Date());
 		xmProductTo.setPstatus("0");
-		xmProductTo.setIsTpl(xmProduct.getIsTpl());
+		xmProductTo.setIsTpl(isTpl);
 		xmProductTo.setAssUserid(user.getUserid());
 		xmProductTo.setAssUsername(user.getUsername());
 		xmProductTo.setBizProcInstId(null);
@@ -109,27 +116,112 @@ public class XmProductService extends BaseService {
 			xmProductTo.setProductName(xmProduct.getProductName()+"(复制)");
 		}
 		this.insert(xmProductTo);
+
+
+		Map<String,String> newPhaseIdMap=new HashMap<>();
+		if("1".equals(xmProduct.getCopyPhase())){
+			XmProjectPhase phaseQuery=new XmProjectPhase();
+			phaseQuery.setProductId(xmProductDb.getId());
+			List<XmProjectPhase> xmProjectPhases=this.xmProjectPhaseService.selectListByWhere(phaseQuery);
+			if(xmProjectPhases!=null && xmProjectPhases.size()>0){
+				for (XmProjectPhase node : xmProjectPhases) {
+					String id=this.xmProjectPhaseService.createKey("id");
+					newPhaseIdMap.put(node.getId(),id);
+				}
+				for (XmProjectPhase node : xmProjectPhases) {
+					String oldId=node.getId();
+					String newId=newPhaseIdMap.get(oldId);
+					node.setProjectId(null);
+					node.setProductId(xmProductTo.getId());
+					node.setId(newId);
+					if(StringUtils.hasText(node.getParentPhaseId())){
+						node.setParentPhaseId(newPhaseIdMap.get(node.getParentPhaseId()));
+					}
+
+					node.setCtime(new Date());
+					node.setMngUserid(user.getUserid());
+					node.setMngUsername(user.getUsername());
+					node.setIsTpl(isTpl);
+					node.setBranchId(user.getBranchId());
+					node.setBizFlowState("");
+					node.setBizProcInstId(null);
+				}
+				this.xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases);
+				this.xmProjectPhaseService.doBatchInsert(xmProjectPhases);
+			}
+
+		}
+		Map<String,String>	newMenuIdMap=new HashMap<>();
 		if("1".equals(xmProduct.getCopyMenu())){
 			XmMenu mq=new XmMenu();
 			mq.setProductId(xmProduct.getId());
 			List<XmMenu> xmMenus=this.xmMenuService.selectListByWhere(mq);
-			Map<String,String>	idMap=new HashMap<>();
+
 			if(xmMenus!=null && xmMenus.size()>0){
 				for (XmMenu node : xmMenus) {
-					idMap.put(node.getMenuId(),this.xmMenuService.createKey("id"));
+					newMenuIdMap.put(node.getMenuId(),this.xmMenuService.createKey("id"));
 				}
 				for (XmMenu node : xmMenus) {
 					String oldId=node.getMenuId();
-					String newId=idMap.get(oldId);
+					String newId=newMenuIdMap.get(oldId);
 					node.setMenuId(newId);
 					node.setProductId(xmProductTo.getId());
-					node.setPmenuId(idMap.get(node.getPmenuId()));
+					node.setPmenuId(newMenuIdMap.get(node.getPmenuId()));
+					node.setPhaseId(newPhaseIdMap.get(node.getPhaseId()));
 					node.setCtime(new Date());
 					node.setMmUserid(user.getUserid());
 					node.setMmUsername(user.getUsername());
+					node.setIterationId(null);
 				}
 				this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenus);
 				this.xmMenuService.doBatchInsert(xmMenus);
+			}
+		}
+
+		List<XmProjectGroup> groupsDb=new ArrayList<>();
+		Map<String, String> newGroupIdMap = new HashMap<>();
+		if( "1".equals(xmProduct.getCopyGroup())||"1".equals(xmProduct.getCopyGroupUser())) {
+			XmProjectGroup groupQ = new XmProjectGroup();
+			groupQ.setProductId(xmProductDb.getId());
+			groupsDb = this.groupService.selectListByWhere(groupQ);
+			if (groupsDb != null && groupsDb.size() > 0) {
+				for (XmProjectGroup group : groupsDb) {
+					newGroupIdMap.put(group.getId(), this.groupService.createKey("id"));
+				}
+				for (XmProjectGroup node : groupsDb) {
+					String oldId = node.getId();
+					String newId = newGroupIdMap.get(oldId);
+					node.setProductId(xmProductTo.getId());
+					node.setId(newId);
+					node.setPgroupId(newGroupIdMap.get(node.getPgroupId()));
+					node.setBranchId(user.getBranchId());
+					node.setProjectId(null);
+					node.setCtime(new Date());
+					node.setAssUserid(user.getUserid());
+					node.setAssUsername(user.getUsername());
+					node.setLeaderUserid(user.getUserid());
+					node.setLeaderUsername(user.getUsername());
+					node.setIsTpl(isTpl);
+					node.setPgClass("1");
+				}
+				this.groupService.parentIdPathsCalcBeforeSave(groupsDb);
+				this.groupService.batchInsert(groupsDb);
+			}
+		}
+		if(groupsDb.size()>0 && "1".equals(xmProduct.getCopyGroupUser())){
+			XmProjectGroupUser userQ=new XmProjectGroupUser();
+			userQ.setProductId(xmProductDb.getId());
+			List<XmProjectGroupUser> usersDb=this.groupUserService.selectGroupUserListByProductId(xmProductDb.getId());
+			if(usersDb!=null && usersDb.size()>0){
+				for (XmProjectGroupUser node : usersDb) {
+					node.setProjectId(null);
+					node.setProductId(xmProductTo.getId());
+					node.setGroupId(newGroupIdMap.get(node.getGroupId()));
+					node.setStatus("0");
+					node.setJoinTime(new Date());
+					node.setPgClass("1");
+				}
+				this.groupUserService.batchInsert(usersDb);
 			}
 		}
 		return xmProductTo;

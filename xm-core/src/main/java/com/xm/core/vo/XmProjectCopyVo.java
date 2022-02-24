@@ -7,7 +7,8 @@ public class XmProjectCopyVo {
     String isTpl;//是否复制为模板项目 0否1是
     String copyPhase;//是否复制计划 0否1是
     String copyTask;//是否复制任务  0否1是
-    String copyGrup;//是否复制组织架构 0否1是
+    String copyGroup;//是否复制组织架构 0否1是
+    String copyGroupUser;//是否复制组织架构中用户 0否1是
 
     public String getId() {
         return id;
@@ -57,11 +58,19 @@ public class XmProjectCopyVo {
         this.copyTask = copyTask;
     }
 
-    public String getCopyGrup() {
-        return copyGrup;
+    public String getCopyGroup() {
+        return copyGroup;
     }
 
-    public void setCopyGrup(String copyGrup) {
-        this.copyGrup = copyGrup;
+    public void setCopyGroup(String copyGroup) {
+        this.copyGroup = copyGroup;
+    }
+
+    public String getCopyGroupUser() {
+        return copyGroupUser;
+    }
+
+    public void setCopyGroupUser(String copyGroupUser) {
+        this.copyGroupUser = copyGroupUser;
     }
 }

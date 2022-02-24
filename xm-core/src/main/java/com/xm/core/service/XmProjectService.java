@@ -9,9 +9,7 @@ import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.XmProject;
-import com.xm.core.entity.XmProjectPhase;
-import com.xm.core.entity.XmTask;
+import com.xm.core.entity.*;
 import com.xm.core.service.cache.XmProjectCacheService;
 import com.xm.core.vo.XmProjectCopyVo;
 import com.xm.core.vo.XmProjectVo;
@@ -22,10 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -60,6 +55,12 @@ public class XmProjectService extends BaseService {
     XmProjectCacheService xmProjectCacheService;
 	@Autowired
 	XmProjectPhaseService xmProjectPhaseService;
+
+	@Autowired
+	XmProjectGroupService groupService;
+
+	@Autowired
+	XmProjectGroupUserService groupUserService;
     
     
     public XmProject getProjectFromCache(String projectId) {
@@ -96,62 +97,112 @@ public class XmProjectService extends BaseService {
 
 		XmProjectPhase phaseQuery=new XmProjectPhase();
 		phaseQuery.setProjectId(xmProjectDb.getId());
-		List<XmProjectPhase> xmProjectPhases=this.xmProjectPhaseService.selectListByWhere(phaseQuery);
-		Map<String,String> newIdMap=new HashMap<>();
-		if(xmProjectPhases!=null && xmProjectPhases.size()>0){
-			for (XmProjectPhase node : xmProjectPhases) {
-				String id=this.xmProjectPhaseService.createKey("id");
-				newIdMap.put(node.getId(),id);
-			}
-			for (XmProjectPhase node : xmProjectPhases) {
-				String oldId=node.getId();
-				String newId=newIdMap.get(oldId);
-				node.setProjectId(xmProjectTo.getId());
-				node.setId(newId);
-				if(StringUtils.hasText(node.getParentPhaseId())){
-					node.setParentPhaseId(newIdMap.get(node.getParentPhaseId()));
+		Map<String,String> newPhaseIdMap=new HashMap<>();
+		if("1".equals(xmProject.getCopyPhase()) ||"1".equals(xmProject.getCopyTask())){
+			List<XmProjectPhase> xmProjectPhases=this.xmProjectPhaseService.selectListByWhere(phaseQuery);
+			if(xmProjectPhases!=null && xmProjectPhases.size()>0){
+				for (XmProjectPhase node : xmProjectPhases) {
+					String id=this.xmProjectPhaseService.createKey("id");
+					newPhaseIdMap.put(node.getId(),id);
 				}
+				for (XmProjectPhase node : xmProjectPhases) {
+					String oldId=node.getId();
+					String newId=newPhaseIdMap.get(oldId);
+					node.setProjectId(xmProjectTo.getId());
+					node.setId(newId);
+					if(StringUtils.hasText(node.getParentPhaseId())){
+						node.setParentPhaseId(newPhaseIdMap.get(node.getParentPhaseId()));
+					}
 
-				node.setCtime(new Date());
-				node.setMngUserid(user.getUserid());
-				node.setMngUsername(user.getUsername());
-				node.setIsTpl(isTpl);
-				node.setBranchId(user.getBranchId());
-				node.setBizFlowState("");
-				node.setBizProcInstId(null);
+					node.setCtime(new Date());
+					node.setMngUserid(user.getUserid());
+					node.setMngUsername(user.getUsername());
+					node.setIsTpl(isTpl);
+					node.setBranchId(user.getBranchId());
+					node.setBizFlowState("");
+					node.setBizProcInstId(null);
+				}
+				this.xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases);
+				this.xmProjectPhaseService.doBatchInsert(xmProjectPhases);
 			}
-			this.xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases);
-			this.xmProjectPhaseService.doBatchInsert(xmProjectPhases);
+
+		}
+		if("1".equals(xmProject.getCopyTask()) && "1".equals(xmProject.getCopyPhase())){
+			XmTask taskQ=new XmTask();
+			taskQ.setProjectId(xmProjectDb.getId());
+			List<XmTask> xmTasks=this.xmTaskService.selectListByWhere(taskQ);
+			Map<String,String> newTaskIdMap=new HashMap<>();
+			if(xmTasks!=null && xmTasks.size()>0){
+				for (XmTask node : xmTasks) {
+					newTaskIdMap.put(node.getId(),this.xmTaskService.createKey("id"));
+				}
+				for (XmTask node : xmTasks) {
+					String oldId=node.getId();
+					String newId=newTaskIdMap.get(oldId);
+					node.setProjectId(xmProjectTo.getId());
+					node.setId(newId);
+					node.setParentTaskid(newTaskIdMap.get(node.getParentTaskid()));
+					node.setCbranchId(user.getBranchId());
+					node.setCdeptid(user.getDeptid());
+					node.setCreateUsername(user.getUsername());
+					node.setCreateUserid(user.getUserid());
+					node.setCreateTime(new Date());
+					node.setProjectPhaseId(newPhaseIdMap.get(node.getProjectPhaseId()));
+					node.setIsTpl(isTpl);
+					node.setMenuId(null);
+					node.setMenuName(null);
+					node.setProductId(null);
+					node.setProductName(null);
+				}
+				this.xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
+				this.xmTaskService.batchImportFromTemplate(xmTasks);
+			}
 		}
 
-		XmTask taskQ=new XmTask();
-		taskQ.setProjectId(xmProjectDb.getId());
-		List<XmTask> xmTasks=this.xmTaskService.selectListByWhere(taskQ);
-		Map<String,String> newTaskIdMap=new HashMap<>();
-		if(xmTasks!=null && xmTasks.size()>0){
-			for (XmTask node : xmTasks) {
-				newTaskIdMap.put(node.getId(),this.xmTaskService.createKey("id"));
+		List<XmProjectGroup> groupsDb=new ArrayList<>();
+		Map<String, String> newGroupIdMap = new HashMap<>();
+		if( "1".equals(xmProject.getCopyGroup())||"1".equals(xmProject.getCopyGroupUser())) {
+			XmProjectGroup groupQ = new XmProjectGroup();
+			groupQ.setProjectId(xmProjectDb.getId());
+			groupsDb = this.groupService.selectListByWhere(groupQ);
+			if (groupsDb != null && groupsDb.size() > 0) {
+				for (XmProjectGroup group : groupsDb) {
+					newGroupIdMap.put(group.getId(), this.groupService.createKey("id"));
+				}
+				for (XmProjectGroup node : groupsDb) {
+					String oldId = node.getId();
+					String newId = newGroupIdMap.get(oldId);
+					node.setProjectId(xmProjectTo.getId());
+					node.setId(newId);
+					node.setPgroupId(newGroupIdMap.get(node.getPgroupId()));
+					node.setBranchId(user.getBranchId());
+					node.setProductId(null);
+					node.setCtime(new Date());
+					node.setAssUserid(user.getUserid());
+					node.setAssUsername(user.getUsername());
+					node.setLeaderUserid(user.getUserid());
+					node.setLeaderUsername(user.getUsername());
+					node.setIsTpl(isTpl);
+					node.setPgClass("0");
+				}
+				this.groupService.parentIdPathsCalcBeforeSave(groupsDb);
+				this.groupService.batchInsert(groupsDb);
 			}
-			for (XmTask node : xmTasks) {
-				String oldId=node.getId();
-				String newId=newTaskIdMap.get(oldId);
-				node.setProjectId(xmProjectTo.getId());
-				node.setId(newId);
-				node.setParentTaskid(newTaskIdMap.get(node.getParentTaskid()));
-				node.setCbranchId(user.getBranchId());
-				node.setCdeptid(user.getDeptid());
-				node.setCreateUsername(user.getUsername());
-				node.setCreateUserid(user.getUserid());
-				node.setCreateTime(new Date());
-				node.setProjectPhaseId(newIdMap.get(node.getProjectPhaseId()));
-				node.setIsTpl(isTpl);
-				node.setMenuId("");
-				node.setMenuName("");
-				node.setProductId("");
-				node.setProductName("");
+		}
+		if(groupsDb.size()>0 && "1".equals(xmProject.getCopyGroupUser())){
+			XmProjectGroupUser userQ=new XmProjectGroupUser();
+			userQ.setProjectId(xmProjectDb.getId());
+			List<XmProjectGroupUser> usersDb=this.groupUserService.selectGroupUserListByProjectId(xmProjectDb.getId());
+			if(usersDb!=null && usersDb.size()>0){
+				for (XmProjectGroupUser node : usersDb) {
+					node.setProjectId(xmProjectTo.getId());
+					node.setGroupId(newGroupIdMap.get(node.getGroupId()));
+					node.setStatus("0");
+					node.setJoinTime(new Date());
+					node.setPgClass("0");
+				}
+				this.groupUserService.batchInsert(usersDb);
 			}
-			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
-			this.xmTaskService.batchImportFromTemplate(xmTasks);
 		}
 		return xmProjectTo;
 	}
