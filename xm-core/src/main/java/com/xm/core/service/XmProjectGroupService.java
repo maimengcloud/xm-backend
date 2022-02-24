@@ -55,6 +55,57 @@ public class XmProjectGroupService extends BaseService {
     @Autowired
     XmPushMsgService pushMsgService;
 
+
+    public void calcCanOpMenus(List<XmMenu> menus,List<XmMenu> canOpResult,List<XmMenu> noQxOpResult){
+
+		//按产品分组检查权限
+		Map<String,List<XmMenu>> productMenusMap=new HashMap<>();
+		for (XmMenu menu : menus) {
+			List<XmMenu> menus0=productMenusMap.get(menu.getProductId());
+			if(menus0==null){
+				menus0=new ArrayList<>();
+				productMenusMap.put(menu.getProductId(),menus0);
+			}
+			menus0.add(menu);
+		}
+
+		User user= LoginUtils.getCurrentUserInfo();
+		productMenusMap.forEach((key,menuList)->{
+			XmProduct xmProduct=this.xmProductService.getProductFromCache(key);
+			if(xmProduct==null||"3".equals(xmProduct.getPstatus())){
+				noQxOpResult.addAll(menuList);
+			}else{
+				if(!this.checkUserIsProductAdm(xmProduct,user.getUserid())){
+					List<XmProjectGroupVo> groupVoList=this.getProductGroupVoList(xmProduct.getId());
+					for (XmMenu xmMenu : menuList) {
+						boolean canOp=false;
+						if(user.getUserid().equals(xmMenu.getMmUserid())){
+							canOp=true;
+						}else{
+							if(StringUtils.hasText(xmMenu.getMmUserid())){
+								if(this.checkUserIsOtherUserTeamHeadOrAss(groupVoList,xmMenu.getMmUserid(),user.getUserid())){
+									canOp=true;
+								}
+							}else{
+								if(this.checkUserIsOtherUserTeamHeadOrAss(groupVoList,user.getUserid(),user.getUserid())){
+									canOp=true;
+								}
+							}
+						}
+						if(canOp){
+							canOpResult.add(xmMenu);
+						}else{
+							noQxOpResult.add(xmMenu);
+						}
+
+					}
+				}else{
+					canOpResult.addAll(menuList);
+				}
+			}
+		});
+	}
+
 	/** 请在此类添加自定义函数 */
 	public List<XmProjectGroupVo> getProjectGroupVoList(String projectId) {
 		List<XmProjectGroupVo>	groupVoList=new ArrayList<>();

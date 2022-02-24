@@ -3,12 +3,16 @@ package com.xm.core.service;
 import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmRecord;
 import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
  * 组织 com.qqkj  顶级模块 oa 大模块 xm 小模块 <br>
@@ -28,7 +32,7 @@ public class XmRecordService extends BaseService {
 		record.setReqNo(MDC.get("reqNo"));
 		record.setOperUserid(user.getUserid());
 		record.setOperUsername(user.getUsername());
-		record.setBranchId(user.getBranchId()); 
+		record.setBranchId(user.getBranchId());
 		return record;
 	}
 
@@ -164,7 +168,37 @@ public class XmRecordService extends BaseService {
 		record.setObjType("menu");
 		this.insert(record);
 	}
+	/**
+	 * 针对产品下的需求的所有操作用此方法
+	 * @param productId 产品编号
+	 * @param menus 需求列表
+	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
+	 * @param remarks 人性化语言描述 ,自动添加 需求名称【xxxxx】
+	 */
+	@Async
+	public void addXmMenuRecord(List<XmMenu> menus, String action, String remarks) {
+		User user=LoginUtils.getCurrentUserInfo();
+		List<XmRecord> records=new ArrayList<>();
+		for (XmMenu menu : menus) {
+			XmRecord record=new XmRecord();
+			record.setId(this.createKey("id"));
+			record.setOperTime(new Date());
+			record.setReqNo(MDC.get("reqNo"));
+			record.setOperUserid(user.getUserid());
+			record.setOperUsername(user.getUsername());
+			record.setBranchId(user.getBranchId());
+			record.setProductId(menu.getProductId());
+			record.setBizId(menu.getMenuId());
+			record.setAction(action);
+			record.setRemarks(remarks+" 需求名称【"+menu.getMenuName()+"】");
+			record.setObjType("menu");
+			records.add(record);
+		}
+		if(records.size()>0){
+			super.batchDelete(records);
+		}
 
+	}
 	/**
 	 * 针对产品下的需求的所有操作用此方法
 	 * @param productId 产品编号

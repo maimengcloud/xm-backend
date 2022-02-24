@@ -445,9 +445,9 @@ public class XmProjectGroupUserController {
 				msg.add("以下"+noDelUsers.size()+"个小组用户无权限删除。【"+noDelUsers.stream().collect(Collectors.toSet()).stream().collect(Collectors.joining(","))+"】");
  			}
 			if(canDelUsers.size()!=0){
-				tips.setOkMsg(msg.stream().collect(Collectors.joining("\n")));
+				tips.setOkMsg(msg.stream().collect(Collectors.joining(";")));
 			}else{
-				tips.setFailureMsg(msg.stream().collect(Collectors.joining("\n")));
+				tips.setFailureMsg(msg.stream().collect(Collectors.joining(";")));
 			}
 			groupUsersMap.forEach((groupId,groupUsers)->{
 				List<Map<String,Object>> users=groupUsers.stream().map(i->map("userid",i.getUserid(),"username",i.getUsername())).collect(Collectors.toList());

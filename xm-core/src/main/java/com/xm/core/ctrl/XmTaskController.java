@@ -1050,9 +1050,9 @@ public class XmTaskController {
 				msgs.add("以下"+existsExecuserList.size()+"个任务存在待结算的执行人，不能删除。【"+existsExecuserList.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			if(canDelNodes.size()==0){
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining("\n")));
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(";")));
 			}else{
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining("\n")));
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(";")));
 			}
 
 		}catch (BizException e) { 

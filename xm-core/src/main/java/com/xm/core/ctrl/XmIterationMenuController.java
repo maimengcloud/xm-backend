@@ -10,6 +10,7 @@ import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.service.XmMenuService;
+import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.push.XmMenuPushMsgService;
 import com.xm.core.vo.XmIterationMenuVo;
 import io.swagger.annotations.*;
@@ -47,6 +48,10 @@ public class XmIterationMenuController {
 
 	@Autowired
 	XmMenuService xmMenuService;
+
+
+	@Autowired
+	XmProjectGroupService groupService;
 
 	@Autowired
 	XmMenuController xmMenuController;
@@ -113,16 +118,13 @@ public class XmIterationMenuController {
 			if(menus==null || menus.size()==0){
 				return ResponseHelper.failed("menus-0","需求已不存在");
 			}
-			/**
-			String productId=menus.get(0).getProductId();
-			if(menus.stream().filter(i->!productId.equals(i.getProductId())).findAny().isPresent()){
-				return ResponseHelper.failed("productId-0","批量操作的需求必须是同一个产品下的需求。");
-			}
-			 **/
+			List<XmMenu> noQxOpList=new ArrayList<>();
+			List<XmMenu> canOpList=new ArrayList<>();
+			groupService.calcCanOpMenus(menus,canOpList,noQxOpList);
 			List<XmMenu> notJoins=new ArrayList<>();
 			List<XmMenu> status7=new ArrayList<>();
 			List<XmMenu> canDels=new ArrayList<>();
-			for (XmMenu menu : menus) {
+			for (XmMenu menu : canOpList) {
 				if(!StringUtils.hasText(menu.getIterationId())){
 					notJoins.add(menu);
 					continue;
@@ -147,9 +149,9 @@ public class XmIterationMenuController {
 				msgs.add("有"+notJoins.size()+"个需求未加入迭代，无需移出。【"+notJoins.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
 			}
 			if(canDels.size()==0){
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining("\n")));
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(";")));
 			}else {
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining("\n")));
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(";")));
 			}
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -177,17 +179,15 @@ public class XmIterationMenuController {
 			if(menus==null || menus.size()==0){
 				return ResponseHelper.failed("menus-0","需求已不存在");
 			}
-			/**
-			String productId=menus.get(0).getProductId();
-			if(menus.stream().filter(i->!productId.equals(i.getProductId())).findAny().isPresent()){
-				return ResponseHelper.failed("productId-0","批量操作的需求必须是同一个产品下的需求。");
-			}
-			 **/
+
+			List<XmMenu> noQxOpList=new ArrayList<>();
+			List<XmMenu> canOpList=new ArrayList<>();
+			groupService.calcCanOpMenus(menus,canOpList,noQxOpList);
 			List<XmMenu> hadJoin=new ArrayList<>();
 			List<XmMenu> ntype1=new ArrayList<>();
 			List<XmMenu> status789=new ArrayList<>();
 			List<XmMenu> canAdds=new ArrayList<>();
-			for (XmMenu menu : menus) {
+			for (XmMenu menu : canOpList) {
 				if(StringUtils.hasText(menu.getIterationId())){
 					hadJoin.add(menu);
 					continue;
@@ -219,9 +219,9 @@ public class XmIterationMenuController {
 				msgs.add("有"+ntype1.size()+"个为需求集，不用加入迭代。【"+ntype1.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
 			}
 			if(canAdds.size()==0){
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining("\n")));
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(";")));
 			}else {
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining("\n")));
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(";")));
 			}
 
 		}catch (BizException e) { 
