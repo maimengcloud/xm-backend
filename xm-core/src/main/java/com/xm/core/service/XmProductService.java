@@ -7,6 +7,7 @@ import com.xm.core.entity.*;
 import com.xm.core.service.cache.XmProductCacheService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -21,8 +22,10 @@ import java.util.stream.Collectors;
  ***/
 @Service("xm.core.xmProductService")
 public class XmProductService extends BaseService {
-	
-	/** 请在此类添加自定义函数 */
+
+
+	@Value("${mdp.platform-branch-id:platform-branch-001}")
+	String platformBranchId="platform-branch-001";
 	
 	@Autowired
 	XmProjectService xmProjectService;
@@ -43,6 +46,8 @@ public class XmProductService extends BaseService {
 
 	@Autowired
 	XmProjectPhaseService xmProjectPhaseService;
+
+
 	
 	/**
 	 * 产品不直接根项目关联，此函数作废了
@@ -88,6 +93,17 @@ public class XmProductService extends BaseService {
 		XmProduct xmProductDb=this.selectOneObject(pq);
 		if(xmProductDb==null){
 			throw new BizException("产品不存在");
+		}
+		if(!"1".equals(xmProductDb.getIsTpl())){
+			if(!user.getBranchId().equals(xmProductDb.getBranchId())){
+				throw new BizException("您无权复制其它组织的产品。");
+			}
+		}else{
+			if(!user.getBranchId().equals(xmProductDb.getBranchId())){
+				if(!platformBranchId.equals(xmProductDb.getBranchId())){
+					throw new BizException("您无权复制其它组织的产品");
+				}
+			}
 		}
 		String isTpl=xmProduct.getIsTpl();
 		XmProduct xmProductTo=new XmProduct();

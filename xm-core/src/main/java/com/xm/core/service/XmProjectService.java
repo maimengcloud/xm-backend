@@ -15,6 +15,7 @@ import com.xm.core.vo.XmProjectCopyVo;
 import com.xm.core.vo.XmProjectVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -31,6 +32,8 @@ import java.util.*;
 public class XmProjectService extends BaseService {
 
 
+	@Value("${mdp.platform-branch-id:platform-branch-001}")
+	String platformBranchId="platform-branch-001";
       
 
     @Autowired
@@ -77,6 +80,18 @@ public class XmProjectService extends BaseService {
 		XmProject xmProjectDb=this.getProjectFromCache(xmProject.getId());
 		if(xmProjectDb==null){
 			 return null;
+		}
+
+		if(!"1".equals(xmProjectDb.getIsTpl())){
+			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
+				throw new BizException("您无权复制其它组织的项目。");
+			}
+		}else{
+			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
+				if(!platformBranchId.equals(xmProjectDb.getBranchId())){
+					throw new BizException("您无权复制其它组织的项目");
+				}
+			}
 		}
 		String isTpl=xmProject.getIsTpl();
 		XmProjectVo xmProjectTo=new XmProjectVo();
