@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId;<br>
+ *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId,iterationId;<br>
  * 表 xm_menu 功能表的所有字段名: <br>
- *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id;<br>
+ *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -112,6 +112,9 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="计划编号",allowEmptyValue=true,example="",allowableValues="")
 	String phaseId;
+	
+	@ApiModelProperty(notes="迭代编号",allowEmptyValue=true,example="",allowableValues="")
+	String iterationId;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -308,6 +311,12 @@ public class XmMenu  implements java.io.Serializable {
 	public void setPhaseId(String phaseId) {
 		this.phaseId = phaseId;
 	}
+	/**
+	 * 迭代编号
+	 **/
+	public void setIterationId(String iterationId) {
+		this.iterationId = iterationId;
+	}
 	
 	/**
 	 * 功能编号
@@ -494,6 +503,12 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public String getPhaseId() {
 		return this.phaseId;
+	}
+	/**
+	 * 迭代编号
+	 **/
+	public String getIterationId() {
+		return this.iterationId;
 	}
 
 }
