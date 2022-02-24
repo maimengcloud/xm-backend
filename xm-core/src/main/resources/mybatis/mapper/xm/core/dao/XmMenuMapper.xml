@@ -63,6 +63,17 @@
 		order by res.seq_no asc
 	</select>
 
+
+	<select id="selectListMapByWhereWithPhase" parameterType="HashMap" resultType="HashMap">
+		select res.*,p.phase_name from xm_menu res left join xm_project_phase p on res.phase_id=p.id and res.product_id=p.product_id
+		<where>
+			<include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+
+		order by res.seq_no asc
+	</select>
+
 	<update id="updateMenuChildrenCntByMenuId" parameterType="String">
 		UPDATE xm_menu t
 		LEFT JOIN ( SELECT count( 1 ) AS children_cnt, tt.pmenu_id AS menu_id FROM xm_menu tt WHERE tt.pmenu_id = #{menuId} ) t2 ON t2.menu_id = t.menu_id
@@ -112,6 +123,23 @@
 	</update>
 	<update id="batchIteration" parameterType="com.xm.core.vo.XmIterationMenuVo">
 		update xm_menu res set res.iteration_id = #{iterationId} where res.menu_id in
+		<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+	</update>
+
+
+	<update id="batchUnProductPhase" parameterType="com.xm.core.vo.XmPhaseMenusVo">
+		update xm_menu res set res.phase_id = null where res.menu_id in
+		<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+		<if test="phaseId!=null and phaseId!=''">
+			and res.phase_id=#{phaseId}
+		</if>
+	</update>
+	<update id="batchProductPhase" parameterType="com.xm.core.vo.XmPhaseMenusVo">
+		update xm_menu res set res.phase_id = #{phaseId} where res.menu_id in
 		<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
 		</foreach>

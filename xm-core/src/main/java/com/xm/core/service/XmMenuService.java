@@ -27,12 +27,11 @@ public class XmMenuService extends BaseService {
 	XmMenuStateService xmMenuStateService;
 
 	/**
-	 * 连同功能关联的计划数据一起带出
+	 * 连同功能关联的项目需求计划数据一起带出
 	 * @param xmMenu
 	 * @return
 	 */
 	public List<Map<String, Object>> selectListMapByWhereWithPlan(Map<String, Object> xmMenu) {
-		// TODO Auto-generated method stub
 		return this.selectList("selectListMapByWhereWithPlan", xmMenu);
 	}
 	/**
@@ -41,9 +40,20 @@ public class XmMenuService extends BaseService {
 	 * @return
 	 */
 	public List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> xmMenu) {
-		// TODO Auto-generated method stub
+
 		return this.selectList("selectListMapByWhereWithState", xmMenu);
 	}
+
+	/**
+	 * 连同功能关联的产品计划一并带出
+	 * @param xmMenu
+	 * @return
+	 */
+	public List<Map<String, Object>> selectListMapByWhereWithPhase(Map<String, Object> xmMenu) {
+
+		return this.selectList("selectListMapByWhereWithPhase", xmMenu);
+	}
+
 
 
 	public void updateMenuChildrenCntByMenuId(String menuId){
