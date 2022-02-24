@@ -100,6 +100,22 @@
 			#{item}
 		</foreach>
 	</select>
+
+	<update id="batchUnIteration" parameterType="com.xm.core.vo.XmIterationMenuVo">
+		update xm_menu res set res.iteration_id = null where res.menu_id in
+		<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+		<if test="iterationId!=null and iterationId!=''">
+			and res.iteration_id=#{iterationId}
+		</if>
+	</update>
+	<update id="batchIteration" parameterType="com.xm.core.vo.XmIterationMenuVo">
+		update xm_menu res set res.iteration_id = #{iterationId} where res.menu_id in
+		<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

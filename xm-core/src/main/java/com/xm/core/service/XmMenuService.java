@@ -4,6 +4,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
+import com.xm.core.vo.XmIterationMenuVo;
 import com.xm.core.vo.XmMenuVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -251,6 +252,14 @@ public class XmMenuService extends BaseService {
 
 	public List<XmMenu> selectListByIds(List<String> ids) {
 		return super.selectList("selectListByIds",ids);
+	}
+
+    public void batchUnIteration(XmIterationMenuVo xmIterationMenus) {
+		super.update("batchUnIteration",xmIterationMenus);
+    }
+
+	public void batchIteration(XmIterationMenuVo xmIterationMenus) {
+		super.update("batchIteration",xmIterationMenus);
 	}
 }
 
