@@ -48,6 +48,31 @@ public class XmIterationMenuController {
 	@Autowired
 	XmMenuService xmMenuService;
 
+	@Autowired
+	XmMenuController xmMenuController;
+
+	@ApiOperation( value = "查询迭代定义信息列表",notes="listXmIterationMenu,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="id",value="主键,主键",required=false),
+			@ApiImplicitParam(name="iterationId",value="对应的迭代编号",required=false),
+			@ApiImplicitParam(name="menuId",value="需求编号",required=false),
+			@ApiImplicitParam(name="productId",value="产品编号",required=false),
+			@ApiImplicitParam(name="ctime",value="关联时间",required=false),
+			@ApiImplicitParam(name="relStatus",value="关联状态0不再关联1正常关联",required=false),
+			@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
+			@ApiImplicitParam(name="currentPage",value="当前页码,从1开始",required=false),
+			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
+			@ApiImplicitParam(name="orderFields",value="排序列 如性别、学生编号排序 ['sex','studentId']",required=false),
+			@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false)
+	})
+	@ApiResponses({
+			@ApiResponse(code = 200,response= Map.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/list",method=RequestMethod.GET)
+	public Map<String,Object> listXmIterationMenu( @RequestParam Map<String,Object> xmIterationMenu){
+		 return xmMenuController.listWithState(xmIterationMenu);
+	}
+
 
 	@ApiOperation( value = "删除一条迭代定义信息",notes="delXmIterationMenu,仅需要上传主键字段")
 	@ApiResponses({
@@ -88,10 +113,12 @@ public class XmIterationMenuController {
 			if(menus==null || menus.size()==0){
 				return ResponseHelper.failed("menus-0","需求已不存在");
 			}
+			/**
 			String productId=menus.get(0).getProductId();
 			if(menus.stream().filter(i->!productId.equals(i.getProductId())).findAny().isPresent()){
 				return ResponseHelper.failed("productId-0","批量操作的需求必须是同一个产品下的需求。");
 			}
+			 **/
 			List<XmMenu> notJoins=new ArrayList<>();
 			List<XmMenu> status7=new ArrayList<>();
 			List<XmMenu> canDels=new ArrayList<>();
@@ -150,10 +177,12 @@ public class XmIterationMenuController {
 			if(menus==null || menus.size()==0){
 				return ResponseHelper.failed("menus-0","需求已不存在");
 			}
+			/**
 			String productId=menus.get(0).getProductId();
 			if(menus.stream().filter(i->!productId.equals(i.getProductId())).findAny().isPresent()){
 				return ResponseHelper.failed("productId-0","批量操作的需求必须是同一个产品下的需求。");
 			}
+			 **/
 			List<XmMenu> hadJoin=new ArrayList<>();
 			List<XmMenu> ntype1=new ArrayList<>();
 			List<XmMenu> status789=new ArrayList<>();

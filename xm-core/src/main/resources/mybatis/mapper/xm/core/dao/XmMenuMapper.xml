@@ -23,7 +23,7 @@
 		</if>
 		<if test=' iterationFilterType!=null and iterationFilterType!=""'>
 			<if test='iterationFilterType=="not-join"'> and (res.iteration_id is  null or res.iteration_id ='') </if>
-			<if test='iterationFilterType!="not-join"'> and res.iteration_id is not null and res.iteration_id !='' </if>
+			<if test='iterationFilterType=="join"'> and res.iteration_id is not null and res.iteration_id !='' </if>
 		</if>
 		<if test=' taskFilterType!=null and taskFilterType!="" '>
 			and <if test='taskFilterType=="not-join"'> not  </if>
