@@ -8,9 +8,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmIteration;
-import com.xm.core.entity.XmIterationMenu;
 import com.xm.core.entity.XmMenu;
-import com.xm.core.service.XmIterationMenuService;
 import com.xm.core.service.XmMenuService;
 import com.xm.core.service.push.XmMenuPushMsgService;
 import com.xm.core.vo.XmIterationMenuVo;
@@ -50,44 +48,7 @@ public class XmIterationMenuController {
 	@Autowired
 	XmMenuService xmMenuService;
 
-	
- 
-	
-	/**
-	@ApiOperation( value = "新增一条迭代定义信息",notes="addXmIterationMenu,主键如果为空，后台自动生成")
-	@ApiResponses({
-		@ApiResponse(code = 200,response=XmIterationMenu.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
-	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmIterationMenu(@RequestBody XmIterationMenu xmIterationMenu) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功新增一条数据");
-		try{
-			if(StringUtils.isEmpty(xmIterationMenu.getId())) {
-				xmIterationMenu.setId(xmIterationMenuService.createKey("id"));
-			}else{
-				 XmIterationMenu xmIterationMenuQuery = new  XmIterationMenu(xmIterationMenu.getId());
-				if(xmIterationMenuService.countByWhere(xmIterationMenuQuery)>0){
-					tips.setFailureMsg("编号重复，请修改编号再提交");
-					m.put("tips", tips);
-					return m;
-				}
-			}
-			xmIterationMenuService.insert(xmIterationMenu);
-			m.put("data",xmIterationMenu);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
-	}
-	*/
-	
-	/** */
+
 	@ApiOperation( value = "删除一条迭代定义信息",notes="delXmIterationMenu,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -97,9 +58,7 @@ public class XmIterationMenuController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
-			xmMenuService.batchUnIteration(xmIterationMenus);
-			User user = LoginUtils.getCurrentUserInfo(); 
-			this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将需求【"+xmIterationMenu.getMenuId()+"】移出迭代");
+			return batchDelXmIterationMenu(xmIterationMenus);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -110,35 +69,8 @@ public class XmIterationMenuController {
 		m.put("tips", tips);
 		return m;
 	}
-	
-	
-	/**
-	@ApiOperation( value = "根据主键修改一条迭代定义信息",notes="editXmIterationMenu")
-	@ApiResponses({
-		@ApiResponse(code = 200,response=XmIterationMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
-	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmIterationMenu(@RequestBody XmIterationMenu xmIterationMenu) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功更新一条数据");
-		try{
-			xmIterationMenuService.updateByPk(xmIterationMenu);
-			m.put("data",xmIterationMenu);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
-	}
-	*/
 	
 
-	
-	/***/
 	@ApiOperation( value = "根据主键列表批量删除迭代定义信息",notes="batchDelXmIterationMenu,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -146,13 +78,52 @@ public class XmIterationMenuController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmIterationMenu(@RequestBody XmIterationMenuVo xmIterationMenus) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功删除"+xmIterationMenus.getMenuIds().size()+"条数据");
+		Tips tips=new Tips("成功将需求移出迭代");
 		try{
-			xmMenuService.batchUnIteration(xmIterationMenus);
-
-			User user = LoginUtils.getCurrentUserInfo();
-			this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将需求【"+xmIterationMenu.getMenuId()+"】移出迭代");
-
+			List<String> menuIds=xmIterationMenus.getMenuIds();
+			if(menuIds==null || menuIds.size()==0){
+				return ResponseHelper.failed("menuIds-0","需求编号不能为空");
+			}
+			List<XmMenu> menus=xmMenuService.selectListByIds(menuIds);
+			if(menus==null || menus.size()==0){
+				return ResponseHelper.failed("menus-0","需求已不存在");
+			}
+			String productId=menus.get(0).getProductId();
+			if(menus.stream().filter(i->!productId.equals(i.getProductId())).findAny().isPresent()){
+				return ResponseHelper.failed("productId-0","批量操作的需求必须是同一个产品下的需求。");
+			}
+			List<XmMenu> notJoins=new ArrayList<>();
+			List<XmMenu> status7=new ArrayList<>();
+			List<XmMenu> canDels=new ArrayList<>();
+			for (XmMenu menu : menus) {
+				if(!StringUtils.hasText(menu.getIterationId())){
+					notJoins.add(menu);
+					continue;
+				}
+				if("7".equals(menu.getStatus())){
+					status7.add(menu);
+					continue;
+				}
+				canDels.add(menu);
+			}
+			List<String> msgs=new ArrayList<>();
+			if(canDels.size()>0){
+				msgs.add("成功将"+canDels.size()+"个需求移出迭代");
+				xmIterationMenus.setMenuIds(canDels.stream().map(i->i.getMenuId()).collect(Collectors.toList()));
+				xmMenuService.batchUnIteration(xmIterationMenus);
+				//this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将需求【"+xmIterationMenu.getMenuId()+"】加入迭代");
+			}
+			if(status7.size()>0){
+				msgs.add("有"+status7.size()+"个需求状态为已上线,不能移出迭代。【"+status7.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
+			}
+			if(notJoins.size()>0){
+				msgs.add("有"+notJoins.size()+"个需求未加入迭代，无需移出。【"+notJoins.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
+			}
+			if(canDels.size()==0){
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining("\n")));
+			}else {
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining("\n")));
+			}
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -176,23 +147,54 @@ public class XmIterationMenuController {
 				return ResponseHelper.failed("menuIds-0","需求编号不能为空");
 			}
 			List<XmMenu> menus=xmMenuService.selectListByIds(menuIds);
-			List<XmMenu> hadJoin=menus.stream().filter(i->StringUtils.hasText(i.getIterationId())).collect(Collectors.toList());
-			List<String> msgs=new ArrayList<>();
-			if(menus!=null && menus.size()==menuIds.size()){
-				return ResponseHelper.failed("menus-had-iteration","需求全部都已加入迭代，不能重复加入。");
+			if(menus==null || menus.size()==0){
+				return ResponseHelper.failed("menus-0","需求已不存在");
 			}
-				List<String> menuNames = menus.stream().map(XmMenu::getMenuName).collect(Collectors.toList());
-				String menusNameStr=StringUtils.arrayToDelimitedString(menuNames.toArray(),",");
-				msgs.add("以下需求已加入迭代计划，不能重复加入。"+menusNameStr);
-				xmMenuService.batchIteration(xmIterationMenus);
-
-				User user = LoginUtils.getCurrentUserInfo();
-
-				for (XmIterationMenu xmIterationMenu : xmIterationMenus) {
-
-					this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将需求【"+xmIterationMenu.getMenuId()+"】加入迭代");
-
+			String productId=menus.get(0).getProductId();
+			if(menus.stream().filter(i->!productId.equals(i.getProductId())).findAny().isPresent()){
+				return ResponseHelper.failed("productId-0","批量操作的需求必须是同一个产品下的需求。");
+			}
+			List<XmMenu> hadJoin=new ArrayList<>();
+			List<XmMenu> ntype1=new ArrayList<>();
+			List<XmMenu> status789=new ArrayList<>();
+			List<XmMenu> canAdds=new ArrayList<>();
+			for (XmMenu menu : menus) {
+				if(StringUtils.hasText(menu.getIterationId())){
+					hadJoin.add(menu);
+					continue;
 				}
+				if("1".equals(menu.getNtype())){
+					ntype1.add(menu);
+					continue;
+				}
+				if("7".equals(menu.getStatus())||"8".equals(menu.getStatus())||"9".equals(menu.getStatus())){
+					status789.add(menu);
+					continue;
+				}
+				canAdds.add(menu);
+			}
+			List<String> msgs=new ArrayList<>();
+			if(canAdds.size()>0){
+				msgs.add("成功将"+canAdds.size()+"个需求加入迭代");
+				xmIterationMenus.setMenuIds(canAdds.stream().map(i->i.getMenuId()).collect(Collectors.toList()));
+				xmMenuService.batchIteration(xmIterationMenus);
+				//this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将需求【"+xmIterationMenu.getMenuId()+"】加入迭代");
+			}
+			if(status789.size()>0){
+				msgs.add("有"+status789.size()+"个需求状态为已上线、已下线、已删除状态，不能加入迭代。【"+status789.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
+			}
+			if(hadJoin.size()>0){
+				msgs.add("有"+hadJoin.size()+"个需求已加入迭代，不能重复加入。【"+hadJoin.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
+			}
+			if(ntype1.size()>0){
+				msgs.add("有"+ntype1.size()+"个为需求集，不用加入迭代。【"+ntype1.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
+			}
+			if(canAdds.size()==0){
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining("\n")));
+			}else {
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining("\n")));
+			}
+
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
