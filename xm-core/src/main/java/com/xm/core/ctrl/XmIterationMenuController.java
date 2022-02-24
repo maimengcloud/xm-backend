@@ -11,6 +11,7 @@ import com.xm.core.entity.XmIteration;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.service.XmMenuService;
 import com.xm.core.service.XmProjectGroupService;
+import com.xm.core.service.XmRecordService;
 import com.xm.core.service.push.XmMenuPushMsgService;
 import com.xm.core.vo.XmIterationMenuVo;
 import io.swagger.annotations.*;
@@ -55,6 +56,10 @@ public class XmIterationMenuController {
 
 	@Autowired
 	XmMenuController xmMenuController;
+
+
+	@Autowired
+	XmRecordService xmRecordService;
 
 	@ApiOperation( value = "查询迭代定义信息列表",notes="listXmIterationMenu,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({
@@ -140,6 +145,7 @@ public class XmIterationMenuController {
 				msgs.add("成功将"+canDels.size()+"个需求移出迭代");
 				xmIterationMenus.setMenuIds(canDels.stream().map(i->i.getMenuId()).collect(Collectors.toList()));
 				xmMenuService.batchUnIteration(xmIterationMenus);
+				xmRecordService.addXmMenuRecord(canDels,"产品-迭代-需求移出迭代","将需求移出迭代.");
 				//this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将需求【"+xmIterationMenu.getMenuId()+"】加入迭代");
 			}
 			if(status7.size()>0){
@@ -207,6 +213,8 @@ public class XmIterationMenuController {
 				msgs.add("成功将"+canAdds.size()+"个需求加入迭代");
 				xmIterationMenus.setMenuIds(canAdds.stream().map(i->i.getMenuId()).collect(Collectors.toList()));
 				xmMenuService.batchIteration(xmIterationMenus);
+				xmRecordService.addXmMenuRecord(canAdds,"产品-迭代-需求加入迭代","将需求加入迭代.");
+
 				//this.xmMenuPushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmIterationMenu.getMenuId(), user.getUserid(), user.getUsername(), user.getUsername()+"将需求【"+xmIterationMenu.getMenuId()+"】加入迭代");
 			}
 			if(status789.size()>0){
