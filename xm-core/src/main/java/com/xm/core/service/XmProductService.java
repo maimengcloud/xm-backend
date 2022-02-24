@@ -125,7 +125,6 @@ public class XmProductService extends BaseService {
 					node.setCtime(new Date());
 					node.setMmUserid(user.getUserid());
 					node.setMmUsername(user.getUsername());
-					node.setProductId(xmProductTo.getId());
 				}
 				this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenus);
 				this.xmMenuService.doBatchInsert(xmMenus);

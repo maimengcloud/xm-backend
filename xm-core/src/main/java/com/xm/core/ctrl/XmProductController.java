@@ -273,6 +273,7 @@ public class XmProductController {
 			 }else if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
 				 return ResponseHelper.failed("pmUserid-not-right","您不是该产品产品负责人,也不是产品助理，不允许删除");
 			 }
+			 /**
 			 if(!"1".equals(xmProductDb.getIsTpl())){
 				 long menus=xmProductService.checkExistsMenu(xmProduct.getId());
 				 if(menus>0) {
@@ -280,6 +281,7 @@ public class XmProductController {
 
 				 }
 			 }
+			  **/
 			 xmProductService.doDeleteByPk(xmProduct);
 			xmProductService.clearCache(xmProduct.getId());
 		}catch (BizException e) { 

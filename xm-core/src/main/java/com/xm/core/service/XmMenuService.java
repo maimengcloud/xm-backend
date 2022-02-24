@@ -102,7 +102,7 @@ public class XmMenuService extends BaseService {
 		}
 		for (XmMenu node : nodes) {
 			if(!StringUtils.hasText(node.getPmenuId())){
-				node.setPidPaths("0,");
+				node.setPidPaths("0,"+node.getMenuId()+",");
 				continue;
 			}
 			if(hadCalcMap.containsKey(node.getPmenuId())){
@@ -110,6 +110,11 @@ public class XmMenuService extends BaseService {
 				node.setPidPaths(idPaths+node.getMenuId()+",");
 			}else{
 				List<XmMenu> pnodeList=this.getParentList(node,nodes);
+				if(pnodeList==null ||pnodeList.size()==0){
+					node.setPidPaths("0,"+node.getMenuId()+",");
+					node.setPmenuId(null);
+					continue;
+				}
 				XmMenu topParent=pnodeList.get(pnodeList.size()-1);
 				String idPath="0,";
 				if(hadCalcMap.containsKey(topParent.getPmenuId())){
@@ -133,13 +138,14 @@ public class XmMenuService extends BaseService {
 		Tips tips = new Tips("成功");
 		if (!StringUtils.hasText(currNode.getPmenuId()) || "0".equals(currNode.getPmenuId())) {
 			currNode.setPidPaths("0," + currNode.getMenuId() + ",");
-			currNode.setLvl(2);
+			currNode.setLvl(1);
 			return tips;
 		} else {
 			List<XmMenu> parentList=this.getParentList(currNode);
 			if(parentList==null || parentList.size()==0){
-				currNode.setPidPaths("0,"+currNode.getPmenuId()+","+currNode.getMenuId()+",");
-				currNode.setLvl(2);
+				currNode.setPidPaths("0,"+currNode.getMenuId()+",");
+				currNode.setPmenuId(null);
+				currNode.setLvl(1);
 				return tips;
 			}
 			String idPath="0,";
@@ -159,8 +165,8 @@ public class XmMenuService extends BaseService {
 		List<XmMenu> parentList=new ArrayList<>();
 		XmMenu current=currNode;
 		while (true){
-			if(!StringUtils.hasText(current.getPmenuId()) || "0".equals(current.getPmenuId())){
-				return parentList;
+			if(!StringUtils.hasText(current.getPmenuId()) || "0".equals(current.getPmenuId())||current.getMenuId().equals(current.getPmenuId())){
+ 				return parentList;
 			}
 			XmMenu query=new XmMenu();
 			query.setMenuId(current.getPmenuId());
@@ -176,7 +182,7 @@ public class XmMenuService extends BaseService {
 		List<XmMenu> parentList=new ArrayList<>();
 		XmMenu current=currNode;
 		while (true){
-			if(!StringUtils.hasText(current.getPmenuId()) || "0".equals(current.getPmenuId())){
+			if(!StringUtils.hasText(current.getPmenuId()) || "0".equals(current.getPmenuId())||current.getMenuId().equals(current.getPmenuId())){
 				return parentList;
 			}
 			XmMenu query=new XmMenu();
