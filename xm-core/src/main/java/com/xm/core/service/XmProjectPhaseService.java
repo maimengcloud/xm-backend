@@ -169,6 +169,16 @@ public class XmProjectPhaseService extends BaseService {
 		 
 		return this.update("loadTasksToXmProjectPhase", projectId);
 	}
+
+	/**
+	 * 计算bug、task、测试案例、等数据
+	 * @param productId
+	 * @return
+	 */
+	public int loadTasksToXmProductPhase(String productId) {
+
+		return this.update("loadTasksToXmProductPhase", productId);
+	}
 	public Long checkExistsTask(String phaseId) {
 		Long i= this.selectOne("checkExistsTask", phaseId);
 		return i;

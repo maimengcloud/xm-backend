@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
@@ -14,6 +15,7 @@ import com.xm.core.entity.XmProject;
 import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmProjectGroupService;
 import com.xm.core.service.XmProjectService;
+import com.xm.core.service.XmRecordService;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -48,6 +50,10 @@ public class XmProductController {
 
 	@Autowired
 	private XmProjectGroupService groupService;
+
+
+	@Autowired
+	private XmRecordService xmRecordService;
 
 	@Value("${mdp.platform-branch-id:platform-branch-001}")
 	String platformBranchId="platform-branch-001";
@@ -195,6 +201,7 @@ public class XmProductController {
 			}
 
 			XmProduct xmProductNew=xmProductService.copyTo(user,xmProduct);
+			xmRecordService.addXmProductRecord(xmProductNew.getId(),"通过拷贝创建产品","拷贝项目【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】,创建新的项目【"+xmProductNew.getId()+"】【"+xmProductNew.getProductName()+"】","参数:"+ JSON.toJSONString(xmProduct),"");
 			m.put("data",xmProductNew);
 		}catch (BizException e) {
 			tips=e.getTips();
@@ -235,6 +242,8 @@ public class XmProductController {
 			}
 			xmProduct.setCtime(new Date());
 			xmProductService.insert(xmProduct);
+			xmRecordService.addXmProductRecord(xmProduct.getId(),"创建产品","创建产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】");
+
 			m.put("data",xmProduct);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -284,6 +293,8 @@ public class XmProductController {
 			  **/
 			 xmProductService.doDeleteByPk(xmProduct);
 			xmProductService.clearCache(xmProduct.getId());
+			xmRecordService.addXmProductRecord(xmProduct.getId(),"删除产品","删除产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】","",JSON.toJSONString(xmProductDb));
+
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -314,6 +325,8 @@ public class XmProductController {
 
 			xmProductService.updateByPk(xmProduct);
 			xmProductService.clearCache(xmProduct.getId());
+			xmRecordService.addXmProductRecord(xmProduct.getId(),"修改产品","修改产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】",JSON.toJSONString(xmProduct),JSON.toJSONString(xmProductDb));
+
 			m.put("data",xmProduct);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -379,7 +392,11 @@ public class XmProductController {
 				xmProductService.doBatchDelete(canDelList);
 				for (XmProduct xmProduct : canDelList) {
 					xmProductService.clearCache(xmProduct.getId());
+					xmRecordService.addXmProductRecord(xmProduct.getId(),"批量删除产品","批量删除产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】","",JSON.toJSONString(xmProduct));
+
 				}
+
+
 			}
 			String msg="成功删除"+canDelList.size()+"条产品信息";
 			if(canDelList.size()==xmProducts.size()){

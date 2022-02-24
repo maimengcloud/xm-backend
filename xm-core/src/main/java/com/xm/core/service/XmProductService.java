@@ -94,6 +94,7 @@ public class XmProductService extends BaseService {
 		if(xmProductDb==null){
 			throw new BizException("产品不存在");
 		}
+
 		if(!"1".equals(xmProductDb.getIsTpl())){
 			if(!user.getBranchId().equals(xmProductDb.getBranchId())){
 				throw new BizException("您无权复制其它组织的产品。");
@@ -240,6 +241,7 @@ public class XmProductService extends BaseService {
 				this.groupUserService.batchInsert(usersDb);
 			}
 		}
+		xmProduct.setProductName(xmProductDb.getProductName());
 		return xmProductTo;
     }
 

@@ -31,7 +31,44 @@ public class XmRecordService extends BaseService {
 		record.setBranchId(user.getBranchId()); 
 		return record;
 	}
-	
+
+	/**
+	 * 针对产品的所有的操作日志用此方法
+	 * @param productId 项目编号
+	 * @param action 操作如 新增产品，修改产品，修改产品进度 等
+	 * @param remarks 人性化语言描述
+	 * @param newValue 需要记录下来的新数据，可空
+	 * @param oldValue 需要记录下来的旧数据，可空
+	 */
+	@Async
+	public void addXmProductRecord(String productId,String action,String remarks,String newValue,String oldValue) {
+		XmRecord record=this.initXmRecord();
+		record.setProductId(productId);
+		record.setBizId(productId);
+		record.setAction(action);
+		record.setRemarks(remarks);
+		record.setObjType("product");
+		record.setNewValue(newValue);
+		record.setOldValue(oldValue);
+		this.insert(record);
+	}
+
+	/**
+	 * 针对产品的所有的操作日志用此方法
+	 * @param productId 产品编号
+	 * @param action 操作如 新增产品，修改产品，修改产品进度 等
+	 * @param remarks 人性化语言描述
+	 */
+	@Async
+	public void addXmProductRecord(String productId,String action,String remarks) {
+		XmRecord record=this.initXmRecord();
+		record.setProductId(productId);
+		record.setAction(action);
+		record.setBizId(productId);
+		record.setRemarks(remarks);
+		record.setObjType("product");
+		this.insert(record);
+	}
 	/**
 	 * 针对项目的所有的操作日志用此方法
 	 * @param projectId 项目编号
@@ -44,6 +81,7 @@ public class XmRecordService extends BaseService {
 	public void addXmProjectRecord(String projectId,String action,String remarks,String newValue,String oldValue) {
 		XmRecord record=this.initXmRecord();
 		record.setProjectId(projectId);
+		record.setBizId(projectId);
 		record.setAction(action);
 		record.setRemarks(remarks); 
 		record.setObjType("project"); 
@@ -63,7 +101,8 @@ public class XmRecordService extends BaseService {
 		XmRecord record=this.initXmRecord();
 		record.setProjectId(projectId);
 		record.setAction(action);
-		record.setRemarks(remarks); 
+		record.setRemarks(remarks);
+		record.setBizId(projectId);
 		record.setObjType("project");  
 		this.insert(record);
 	}
@@ -107,7 +146,46 @@ public class XmRecordService extends BaseService {
 		record.setOldValue(oldValue);
 		this.insert(record);
 	}
-	
+
+	/**
+	 * 针对产品下的需求的所有操作用此方法
+	 * @param productId 产品编号
+	 * @param menuId 需求编号
+	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
+	 * @param remarks 人性化语言描述 
+	 */
+	@Async
+	public void addXmMenuRecord(String productId,String menuId,String action,String remarks) {
+		XmRecord record=this.initXmRecord();
+		record.setProductId(productId);
+		record.setBizId(menuId);
+		record.setAction(action);
+		record.setRemarks(remarks);
+		record.setObjType("menu");
+		this.insert(record);
+	}
+
+	/**
+	 * 针对产品下的需求的所有操作用此方法
+	 * @param productId 产品编号
+	 * @param menuId 需求编号
+	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
+	 * @param remarks 人性化语言描述
+	 * @param newValue 需要记录下来的新数据 可空
+	 * @param oldValue 需要记录下来的旧数据 可空
+	 */
+	@Async
+	public void addXmMenuRecord(String productId,String menuId,String action,String remarks,String newValue,String oldValue) {
+		XmRecord record=this.initXmRecord();
+		record.setProductId(productId);
+		record.setBizId(menuId);
+		record.setAction(action);
+		record.setRemarks(remarks);
+		record.setObjType("task");
+		record.setNewValue(newValue);
+		record.setOldValue(oldValue);
+		this.insert(record);
+	}
 
 	/**
 	 * 针对项目下的任务的所有操作用此方法
@@ -151,7 +229,7 @@ public class XmRecordService extends BaseService {
 
 	/**
 	 * 针对项目下的任务的所有操作用此方法
-	 * @param productId 项目编号
+	 * @param productId 产品编号
 	 * @param phaseId 计划编号
 	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
 	 * @param remarks 人性化语言描述
@@ -159,7 +237,7 @@ public class XmRecordService extends BaseService {
 	@Async
 	public void addProductPhaseRecord(String productId, String phaseId, String action, String remarks) {
 		XmRecord record=this.initXmRecord();
-		record.setProjectId(productId);
+		record.setProductId(productId);
 		record.setBizId(phaseId);
 		record.setAction(action);
 		record.setRemarks(remarks);
@@ -169,7 +247,7 @@ public class XmRecordService extends BaseService {
 
 	/**
 	 * 针对项目下的任务的所有操作用此方法
-	 * @param productId 项目编号
+	 * @param productId 产品编号
 	 * @param phaseId 计划编号
 	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
 	 * @param remarks 人性化语言描述
@@ -179,7 +257,7 @@ public class XmRecordService extends BaseService {
 	@Async
 	public void addProductPhaseRecord(String productId, String phaseId, String action, String remarks, String newValue, String oldValue) {
 		XmRecord record=this.initXmRecord();
-		record.setProjectId(productId);
+		record.setProductId(productId);
 		record.setBizId(phaseId);
 		record.setAction(action);
 		record.setRemarks(remarks);
@@ -230,7 +308,7 @@ public class XmRecordService extends BaseService {
 
 	/**
 	 * 针对项目下的任务的所有操作用此方法
-	 * @param productId 项目编号
+	 * @param productId 产品编号
 	 * @param groupId 小组编号
 	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
 	 * @param remarks 人性化语言描述
@@ -238,7 +316,7 @@ public class XmRecordService extends BaseService {
 	@Async
 	public void addXmProductGroupRecord(String productId,String groupId,String action,String remarks) {
 		XmRecord record=this.initXmRecord();
-		record.setProjectId(productId);
+		record.setProductId(productId);
 		record.setBizId(groupId);
 		record.setAction(action);
 		record.setRemarks(remarks);
@@ -248,7 +326,7 @@ public class XmRecordService extends BaseService {
 
 	/**
 	 * 针对项目下的任务的所有操作用此方法
-	 * @param productId 项目编号
+	 * @param productId 产品编号
 	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
 	 * @param remarks 人性化语言描述
 	 * @param newValue 需要记录下来的新数据 可空
@@ -257,7 +335,7 @@ public class XmRecordService extends BaseService {
 	@Async
 	public void addXmProductGroupRecord(String productId,String groupId,String action,String remarks,String newValue,String oldValue) {
 		XmRecord record=this.initXmRecord();
-		record.setProjectId(productId);
+		record.setProductId(productId);
 		record.setBizId(groupId);
 		record.setAction(action);
 		record.setRemarks(remarks);
@@ -322,7 +400,7 @@ public class XmRecordService extends BaseService {
 		record.setBizId(costId);
 		record.setAction(action);
 		record.setRemarks(remarks); 
-		record.setObjType("group"); 
+		record.setObjType("cost");
 		this.insert(record);
 	}
 
@@ -342,7 +420,7 @@ public class XmRecordService extends BaseService {
 		record.setBizId(costId);
 		record.setAction(action);
 		record.setRemarks(remarks); 
-		record.setObjType("group");
+		record.setObjType("cost");
 		record.setNewValue(newValue);
 		record.setOldValue(oldValue);
 		this.insert(record);

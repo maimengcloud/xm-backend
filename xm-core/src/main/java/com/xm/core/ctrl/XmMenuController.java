@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.NumberUtil;
@@ -14,6 +15,7 @@ import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmMenuService;
+import com.xm.core.service.XmRecordService;
 import com.xm.core.service.XmTaskService;
 import com.xm.core.vo.XmMenuVo;
 import io.swagger.annotations.*;
@@ -52,6 +54,10 @@ public class XmMenuController {
 		
 	@Autowired
 	private XmTaskService xmTaskService;
+
+
+	@Autowired
+	private XmRecordService xmRecordService;
 	
 	@ApiOperation( value = "查询项目菜单表信息列表",notes="listXmMenu,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
@@ -304,7 +310,7 @@ public class XmMenuController {
 			}
 			xmMenuService.parentIdPathsCalcBeforeSave(xmMenu);
 			xmMenuService.insert(xmMenu);
-
+			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"新增产品需求","新增需求"+xmMenu.getMenuName());
 			m.put("data",xmMenu);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -342,6 +348,8 @@ public class XmMenuController {
 					tips.setFailureMsg("存在"+childCount+"个子需求关联该需求，不允许删除");
 				}else {
 					xmMenuService.deleteByPk(xmMenu);
+					xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"删除产品需求","删除需求"+xmMenu.getMenuName(),"",JSON.toJSONString(xmMenu));
+
 				}
 			} 
 		}catch (BizException e) { 
@@ -387,6 +395,8 @@ public class XmMenuController {
 				}
 			}
 			xmMenuService.updateByPk(xmMenu);
+			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"修改产品需求","修改产品需求"+xmMenu.getMenuName(),"", JSON.toJSONString(xmMenu));
+
 			m.put("data",xmMenu);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -426,6 +436,8 @@ public class XmMenuController {
 			}
 			if(canDelList.size()>0) {
 				xmMenuService.doBatchDelete(canDelList);
+				xmRecordService.addXmMenuRecord(canDelList.get(0).getProductId(),"","批量删除产品需求","批量删除产品需求"+canDelList.size()+"个。【"+canDelList.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】","", JSON.toJSONString(canDelList));
+
 			}
 			String msg="成功删除"+canDelList.size()+"个需求信息。\n";
 			if(hasChildMenus.size()>0 ) {
@@ -458,7 +470,9 @@ public class XmMenuController {
 
 				this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenus);
 				this.xmMenuService.doBatchInsert(xmMenus);
- 			}else {
+				xmRecordService.addXmMenuRecord(xmMenus.get(0).getProductId(),"","批量新增产品需求","批量新增产品需求"+xmMenus.size()+"个。【"+xmMenus.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
+
+			}else {
  				tips.setFailureMsg("没有数据可以新增，请上送数据");
  			} 
 			
@@ -483,8 +497,9 @@ public class XmMenuController {
 			if(xmMenus.size()>0) {
 				this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenus.stream().map(i->(XmMenu)i).collect(Collectors.toList()));
 				this.xmMenuService.batchInsertOrUpdate(xmMenus);
-				
- 			}else {
+				xmRecordService.addXmMenuRecord(xmMenus.get(0).getProductId(),"","批量修改产品需求","批量修改产品需求【"+xmMenus.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
+
+			}else {
  				tips.setFailureMsg("没有数据可以修改，请上送数据");
  			} 
 			

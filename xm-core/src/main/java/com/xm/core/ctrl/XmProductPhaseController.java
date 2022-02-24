@@ -188,6 +188,7 @@ public class XmProductPhaseController {
 					xmProjectPhaseToUpdate.setMngUserid(xmProjectPhase.getMngUserid());
 					xmProjectPhaseToUpdate.setMngUsername(xmProjectPhase.getMngUsername());
 					this.xmProjectPhaseService.updateSomeFieldByPk(xmProjectPhaseToUpdate);
+					this.xmRecordService.addProductPhaseRecord(xmProduct.getId(),xmProjectPhase.getId(),"产品-计划-设置计划负责人","计划负责人由【"+xmProjectPhaseDb.getMngUsername()+"】变更为【"+xmProjectPhase.getMngUsername()+"】");
 				}
 			}
 
@@ -321,7 +322,7 @@ public class XmProductPhaseController {
 					tips.setFailureMsg("存在"+xmProjectPhaseDb.getChildrenCnt()+"条子计划,不允许删除");
 				} else {
 					xmProjectPhaseService.deleteByPk(xmProjectPhaseDb);
-					xmRecordService.addProductPhaseRecord(xmProjectPhaseDb.getProductId(), xmProjectPhaseDb.getId(), "产品-计划-删除计划", "删除计划"+xmProjectPhaseDb.getPhaseName(),JSON.toJSONString(xmProjectPhaseDb),null);
+					xmRecordService.addProductPhaseRecord(xmProjectPhaseDb.getProductId(), xmProjectPhaseDb.getId(), "产品-计划-删除计划", "删除计划"+xmProjectPhaseDb.getPhaseName(),"",JSON.toJSONString(xmProjectPhaseDb));
 				}
 			}
 			
@@ -465,6 +466,8 @@ public class XmProductPhaseController {
 			}
 			if(canDelNodes.size()>0){
 				this.xmProjectPhaseService.doBatchDelete(canDelNodes);
+				xmRecordService.addProductPhaseRecord(xmProjectPhase.getProductId(), "", "产品-计划-批量删除计划", "批量删除计划"+canDelNodes.stream().map(i->i.getPhaseName()).collect(Collectors.joining(",")),"",JSON.toJSONString(canDelNodes));
+
 			}
 			List<String> msgs=new ArrayList<>();
 			msgs.add("成功删除"+canDelNodes.size()+"条数据。");
@@ -674,7 +677,10 @@ public class XmProductPhaseController {
 				m.put("tips", tips);
 				return m;
 			}
-			int i= xmProjectPhaseService.loadTasksToXmProjectPhase((String) params.get("productId"));
+			int i= xmProjectPhaseService.loadTasksToXmProductPhase(xmProduct.getId());
+			xmRecordService.addProductPhaseRecord(xmProduct.getId(), "", "产品-计划-汇总统计", "计算产品计划进度","",null);
+
+
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -686,11 +692,11 @@ public class XmProductPhaseController {
 		return m;
 	}
 
-	@ApiOperation( value = "计算bug、task、测试案例、等数据",notes="loadTasksToXmProjectPhase")
+	@ApiOperation( value = "关键路径计算",notes="calcKeyPaths")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmProductPhase_loadTasksToXmProductPhase",name = "计算各个计划对应的bug、task、测试案例等数据",categoryId = "admin-xm",categoryName = "管理端-产品管理系统")
+	@HasQx(value = "xm_core_xmProductPhase_calcKeyPaths",name = "关键路径计算",categoryId = "admin-xm",categoryName = "管理端-产品管理系统")
 	@RequestMapping(value="/calcKeyPaths",method=RequestMethod.POST)
 	public Map<String,Object> calcKeyPaths(@RequestBody Map<String,Object> params) {
 		Map<String,Object> m = new HashMap<>();
@@ -709,6 +715,8 @@ public class XmProductPhaseController {
 				return m;
 			}
 			xmProjectPhaseService.calcKeyPaths((String) params.get("productId"));
+			xmRecordService.addProductPhaseRecord(xmProduct.getId(), "", "产品-计划-关键路径计算", "计算产品计划关键路径","",null);
+
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
