@@ -136,8 +136,8 @@ public class XmProjectGroupService extends BaseService {
 		     }
 		    List<XmProjectGroupUser> groupUserList=this.xmProjectGroupUserService.selectGroupUserListByProjectId(projectId); 
 		    if(groupUserList==null || groupUserList.size()==0) {
-		    	 groupCacheService.putProjectGroups(projectId, groupVoList);
-		    	 return groupVoList;
+		    	 //groupCacheService.putProjectGroups(projectId, groupVoList);
+		    	 //return groupVoList;
 		    }
 		    groupList.forEach(g -> { 
 	            XmProjectGroupVo gvo = new XmProjectGroupVo();
@@ -216,8 +216,6 @@ public class XmProjectGroupService extends BaseService {
 			}
 			List<XmProjectGroupUser> groupUserList=this.xmProjectGroupUserService.selectGroupUserListByProductId(productId);
 			if(groupUserList==null || groupUserList.size()==0) {
-				groupCacheService.putProductGroups(productId, groupVoList);
-				return groupVoList;
 			}
 			groupList.forEach(g -> {
 				XmProjectGroupVo gvo = new XmProjectGroupVo();

@@ -63,9 +63,8 @@ public class XmProjectGroupCacheService {
 	/**
 	 *
 	 * @param projectId
-	 * @param groupId
 	 */
-	public  void  clearProjectGroup(String projectId,String groupId){
+	public  void  clearProjectGroup(String projectId){
 		String key=this.getProjectKey(projectId);
 		this.clearProjectGroups(projectId);
 	}
