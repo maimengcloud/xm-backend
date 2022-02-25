@@ -242,7 +242,7 @@ public class XmProjectGroupController {
 					return ResponseHelper.failed(tips);
 				}
 				Map<String,String> productAdmMap=xmProjectGroupService.getProductAdmUsers(product);
-				if (productAdmMap.containsKey(u.getUserid())) {
+				if(!productAdmMap.containsKey(u.getUserid())) {
 					return ResponseHelper.failed("not-product-adm","您不是产品管理人员，不能创建小组。产品级助理及以上人员可以创建小组。");
 				}
 			}
@@ -315,7 +315,7 @@ public class XmProjectGroupController {
 						return ResponseHelper.failed("product-0","产品已不存在");
 					}
 					Map<String,String> productAdmMap=xmProjectGroupService.getProductAdmUsers(product);
-					if (productAdmMap.containsKey(u.getUserid())) {
+					if(!productAdmMap.containsKey(u.getUserid())) {
 						return ResponseHelper.failed("not-product-adm","您不是产品管理人员，不能删除小组。产品级助理及以上人员可以删除小组。");
 					}
 				}
@@ -380,7 +380,7 @@ public class XmProjectGroupController {
 				id=groupDb.getProductId();
 				XmProduct product=this.xmProductService.selectOneObject(new XmProduct(id));
 				Map<String,String> productAdmMap=xmProjectGroupService.getProductAdmUsers(product);
-				if (productAdmMap.containsKey(user.getUserid())) {
+				if(!productAdmMap.containsKey(user.getUserid())) {
 					return ResponseHelper.failed("not-product-adm","您不是产品管理人员，不能删除小组。产品级助理以上人员可以删除小组。");
 				}
 			}
