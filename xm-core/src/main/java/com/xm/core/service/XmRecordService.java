@@ -5,6 +5,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmRecord;
+import com.xm.core.entity.XmTask;
 import org.slf4j.MDC;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -110,7 +111,36 @@ public class XmRecordService extends BaseService {
 		record.setObjType("project");  
 		this.insert(record);
 	}
-	
+
+	/**
+	 * 针对项目下的任务的所有操作用此方法
+	 * @param tasks 任务列表
+	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
+	 * @param remarks 人性化语言描述
+	 */
+	@Async
+	public void addXmTaskRecord(List<XmTask> tasks,String action, String remarks) {
+		User user=LoginUtils.getCurrentUserInfo();
+		List<XmRecord> records=new ArrayList<>();
+		for (XmTask task : tasks) {
+			XmRecord record=new XmRecord();
+			record.setId(this.createKey("id"));
+			record.setOperTime(new Date());
+			record.setReqNo(MDC.get("reqNo"));
+			record.setOperUserid(user.getUserid());
+			record.setOperUsername(user.getUsername());
+			record.setBranchId(user.getBranchId());
+			record.setProductId(task.getProductId());
+			record.setBizId(task.getId());
+			record.setAction(action);
+			record.setRemarks(remarks+" 任务名称【"+task.getName()+"】");
+			record.setObjType("task");
+			records.add(record);
+		}
+		if(records.size()>0){
+			super.batchInsert(records);
+		}
+	}
 	/**
 	 * 针对项目下的任务的所有操作用此方法
 	 * @param projectId 项目编号

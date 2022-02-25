@@ -408,6 +408,10 @@ public class XmProjectGroupService extends BaseService {
     	List<XmProjectGroupVo> userGroups= getUserGroupsByProjectId(projectId,userid);
     	return userGroups!=null && userGroups.size()>0;
     }
+	public boolean  checkUserExistsGroup(List<XmProjectGroupVo> userGroups,String userid){
+		List<XmProjectGroupVo> userGroups2= this.getUserGroups(userGroups, userid);
+		return userGroups2!=null && userGroups2.size()>0;
+	}
 	/**
 	 * 检查某个人是否为指定的小组的组长
 	 * @param xmProjectGroupVo

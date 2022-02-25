@@ -543,14 +543,14 @@ public class XmTaskController {
 			}
 			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
 			if(!isHead){
-				boolean isPm=groupService.checkUserIsProjectManager(pgroups,user.getUserid());
+				boolean isPm=groupService.checkUserIsProjectAdm(xmTaskDb.getProjectId(),user.getUserid());
 				if(!isPm){
 					tips.setFailureMsg("您无权修改该该任务的责任人！项目管理者、组长可以修改任务的责任人。");
 					m.put("tips", tips);
 					return m;
 				}
 			}
-			boolean existsGrouop=groupService.checkUserExistsGroup(xmTaskVo.getProjectId(),xmTaskVo.getCreateUserid());
+			boolean existsGrouop=groupService.checkUserExistsGroup(pgroups,xmTaskVo.getCreateUserid());
 			if(!existsGrouop){
 				tips.setFailureMsg(xmTaskVo.getCreateUsername()+"不是项目组成员，不能作为任务责任人");
 				m.put("tips", tips);
@@ -560,6 +560,7 @@ public class XmTaskController {
 			xmTask.setCreateUserid(xmTaskVo.getCreateUserid());
 			xmTask.setCreateUsername(xmTaskVo.getCreateUsername());
 			 this.xmTaskService.updateSomeFieldByPk(xmTask);
+			 this.xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(),xmTaskDb.getId(),"项目-任务-修改任务责任人","修改任务【"+xmTaskDb.getName()+"】责任人。原责任人【"+xmTaskDb.getCreateUsername()+"】，新责任人【"+xmTask.getCreateUsername()+"】");
 			m.put("data",xmTaskVo);
 		}catch (BizException e) {
 			tips=e.getTips();
@@ -648,7 +649,8 @@ public class XmTaskController {
 						}
 					}
 				}
-				//xmRecordService.addXmTaskRecord(xmTaskVo.getProjectPhaseId(), xmTaskVo.getId(), "项目-任务-修改任务", "修改任务"+xmTaskVo.getName(),JSON.toJSONString(xmTaskVo),null); 
+				//改为服务处记录
+				//xmRecordService.addXmTaskRecord(xmTaskVo.getProjectPhaseId(), xmTaskVo.getId(), "项目-任务-修改任务", "修改任务"+xmTaskVo.getName(),JSON.toJSONString(xmTaskVo),null);
 			}else {
 				tips=judgetTips;
 			}
@@ -858,7 +860,7 @@ public class XmTaskController {
 				xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
 				xmTaskService.batchImportFromTemplate(xmTasks);
 				for (XmTask t : xmTasks) {
-					xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量新增任务", "新增任务"+t.getName(),JSON.toJSONString(t),null);
+					xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量新增任务", "新增任务"+t.getName(),"",null);
 					
 				}
 
@@ -1037,6 +1039,7 @@ public class XmTaskController {
 			}
 			if(canDelNodes.size()>0){
 				this.xmTaskService.doBatchDelete(canDelNodes);
+				xmRecordService.addXmTaskRecord(canDelNodes,"项目-任务-批量删除","删除任务");
 			}
 			List<String> msgs=new ArrayList<>();
 			msgs.add("删除了"+canDelNodes.size()+"个任务。");
