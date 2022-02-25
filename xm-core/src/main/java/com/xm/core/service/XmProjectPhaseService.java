@@ -90,7 +90,7 @@ public class XmProjectPhaseService extends BaseService {
 	 * @param excludePhaseIds
 	 * @return
 	 */
-	public Tips judgetBudget(String projectId,BigDecimal addPhaseBudgetCost,BigDecimal addPhaseBudgetInnerUserAt,BigDecimal addPhaseBudgetOutUserAt,BigDecimal addPhaseBudgetNouserAt,List<String> excludePhaseIds){
+	public Tips judgetProjectBudget(String projectId, BigDecimal addPhaseBudgetCost, BigDecimal addPhaseBudgetInnerUserAt, BigDecimal addPhaseBudgetOutUserAt, BigDecimal addPhaseBudgetNouserAt, List<String> excludePhaseIds){
 		Tips tips=new Tips("检查预算成功");
 		Map<String,Object> g=this.selectTotalProjectAndPhaseBudgetCost(projectId,excludePhaseIds);
 		BigDecimal phaseBudgetCost=BigDecimal.ZERO; 
@@ -575,5 +575,7 @@ public class XmProjectPhaseService extends BaseService {
 		}
 		return tips;
 	}
+
+
 }
 
