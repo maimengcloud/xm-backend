@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.alibaba.fastjson.JSON;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Tips;
@@ -13,10 +14,7 @@ import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.entity.XmTask;
-import com.xm.core.service.XmProjectGroupService;
-import com.xm.core.service.XmProjectPhaseService;
-import com.xm.core.service.XmProjectService;
-import com.xm.core.service.XmTaskService;
+import com.xm.core.service.*;
 import com.xm.core.vo.XmProjectCopyVo;
 import com.xm.core.vo.XmProjectGroupVo;
 import com.xm.core.vo.XmProjectVo;
@@ -54,6 +52,11 @@ public class XmProjectController {
 	private XmProjectService xmProjectService;
 	@Autowired
 	private XmProjectGroupService groupService;
+
+
+	@Autowired
+	private XmRecordService xmRecordService;
+
 	@Autowired
 	private XmProjectPhaseService xmProjectPhaseService;
 
@@ -235,6 +238,7 @@ public class XmProjectController {
 			}
 			xmProjectService.updateByPk(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
+			xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-项目估算","修改项目【"+xmProjectDb.getName()+"】的预算数据", JSON.toJSONString(xmProject), JSON.toJSONString(xmProjectDb));
 			m.put("data",xmProject);
 		}catch (BizException e) {
 			tips=e.getTips();
@@ -280,6 +284,8 @@ public class XmProjectController {
 			}
 			xmProjectService.updateStatus(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
+			xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-项目状态变更","修改项目【"+xmProjectDb.getName()+"】的状态", xmProject.getStatus(),xmProjectDb.getStatus());
+
 
 			m.put("data",xmProject);
 		}catch (BizException e) {
@@ -325,6 +331,7 @@ public class XmProjectController {
 			}
 			xmProjectService.editBudget(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
+			xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-项目预算","修改项目【"+xmProjectDb.getName()+"】的预算数据", JSON.toJSONString(xmProject), JSON.toJSONString(xmProjectDb));
 
 			m.put("data",xmProject);
 		}catch (BizException e) {
@@ -370,6 +377,7 @@ public class XmProjectController {
 			}
 			xmProjectService.updateProject(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
+			xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-修改","修改项目【"+xmProjectDb.getName()+"】的基础信息", JSON.toJSONString(xmProject), JSON.toJSONString(xmProjectDb));
 
 			m.put("data",xmProject);
 		}catch (BizException e) { 
@@ -415,7 +423,9 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			this.xmProjectService.copyProject(user,xmProject);
+			XmProject xmProjectTo=this.xmProjectService.copyProject(user,xmProject);
+			xmRecordService.addXmProjectRecord(xmProjectTo.getId(),"项目-通过拷贝创建新项目","拷贝项目【"+xmProjectTo.getName()+"】,创建新的项目【】", JSON.toJSONString(xmProjectTo), JSON.toJSONString(xmProjectDb));
+
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
