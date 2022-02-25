@@ -118,7 +118,7 @@ public class XmProjectGroupController {
 		xmProjectGroupService.parentIdPathsCalcBeforeSave(group);
 		tips= xmProjectGroupService.updateGroup(group,groupDb);	//列出XmProjectGroup列表
 		if("1".equals(groupDb.getPgClass())){
-			xmProjectGroupCacheService.clearProductGroup(groupDb.getProductId(),groupDb.getId());
+			xmProjectGroupCacheService.clearProductGroup(groupDb.getProductId());
 			xmRecordService.addXmProductGroupRecord(groupDb.getProductId(),groupDb.getId(),"团队-小组-修改小组","修改小组信息【"+groupDb.getGroupName()+"】");
 		}else {
 			xmProjectGroupCacheService.clearProjectGroup(groupDb.getProjectId(),groupDb.getId());
@@ -259,7 +259,7 @@ public class XmProjectGroupController {
 			this.xmProjectGroupService.parentIdPathsCalcBeforeSave(xmProjectGroup);
 			xmProjectGroupService.insert(xmProjectGroup);
 			if("1".equals(xmProjectGroup.getPgClass())){
-				xmProjectGroupCacheService.clearProductGroup(xmProjectGroup.getProductId(),xmProjectGroup.getId());
+				xmProjectGroupCacheService.clearProductGroup(xmProjectGroup.getProductId());
 				xmRecordService.addXmProductGroupRecord(xmProjectGroup.getProductId(),xmProjectGroup.getId(),"团队-小组-新增小组","新增小组【"+xmProjectGroup.getGroupName()+"】");
 
 			}else {
@@ -326,7 +326,7 @@ public class XmProjectGroupController {
 			}
 			xmProjectGroupService.doDeleteByPk(xmProjectGroup,groupDb);
 			if("1".equals(groupDb.getPgClass())){
-				xmProjectGroupCacheService.clearProductGroup(groupDb.getProductId(),groupDb.getId());
+				xmProjectGroupCacheService.clearProductGroup(groupDb.getProductId());
 				xmRecordService.addXmProductGroupRecord(groupDb.getProductId(),groupDb.getId(),"团队-小组-删除小组","删除小组【"+groupDb.getGroupName()+"】");
 			}else {
 				xmProjectGroupCacheService.clearProjectGroup(groupDb.getProjectId(),groupDb.getId());
