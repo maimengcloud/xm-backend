@@ -225,7 +225,7 @@ public class XmProjectGroupController {
 					return ResponseHelper.failed(tips);
 				}
 				Map<String,String> projectAdmMap=xmProjectGroupService.getProjectAdmUsers(project);
-				if (projectAdmMap.containsKey(u.getUserid())) {
+				if(!projectAdmMap.containsKey(u.getUserid())) {
 					return ResponseHelper.failed("not-project-adm","您不是项目管理人员，不能创建小组。项目级助理以上人员可以创建小组。");
 				}
 
@@ -302,7 +302,7 @@ public class XmProjectGroupController {
 						return ResponseHelper.failed("project-0","项目已不存在");
 					}
 					Map<String,String> projectAdmMap=xmProjectGroupService.getProjectAdmUsers(project);
-					if (projectAdmMap.containsKey(u.getUserid())) {
+					if(!projectAdmMap.containsKey(u.getUserid())) {
 						return ResponseHelper.failed("not-project-adm","您不是项目管理人员，不能删除小组。项目级助理以上人员可以删除小组。");
 					}
 				}
@@ -373,7 +373,7 @@ public class XmProjectGroupController {
 				id=groupDb.getProjectId();
 				XmProject prject=this.xmProjectService.getProjectFromCache(id);
 				Map<String,String> projectAdmMap=xmProjectGroupService.getProjectAdmUsers(prject);
-				if (projectAdmMap.containsKey(user.getUserid())) {
+				if (!projectAdmMap.containsKey(user.getUserid())) {
 					return ResponseHelper.failed("not-project-adm","您不是项目管理人员，不能删除小组。项目级助理以上人员可以删除小组。");
 				}
 			}else{
