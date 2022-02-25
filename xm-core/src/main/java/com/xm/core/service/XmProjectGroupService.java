@@ -119,7 +119,7 @@ public class XmProjectGroupService extends BaseService {
 	public List<XmProjectGroupVo> getProjectGroupVoList(String projectId) {
 		List<XmProjectGroupVo>	groupVoList=new ArrayList<>();
 		List<XmProjectGroupVo>	groupVoList2  = groupCacheService.getProjectGroups(projectId);
-		if(groupVoList2==null) { 
+		if(groupVoList2==null||groupVoList2.size()==0) {
 			
 		    XmProjectGroup group = new XmProjectGroup();
 		    group.setProjectId(projectId);
@@ -199,7 +199,7 @@ public class XmProjectGroupService extends BaseService {
 	public List<XmProjectGroupVo> getProductGroupVoList(String productId) {
 		List<XmProjectGroupVo>	groupVoList=new ArrayList<>();
 		List<XmProjectGroupVo>	groupVoList2  = groupCacheService.getProductGroups(productId);
-		if(groupVoList2==null) {
+		if(groupVoList2==null||groupVoList2.size()==0) {
 
 			XmProjectGroup group = new XmProjectGroup();
 			group.setProductId(productId);
