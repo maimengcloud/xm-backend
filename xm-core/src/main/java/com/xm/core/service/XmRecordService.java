@@ -170,7 +170,6 @@ public class XmRecordService extends BaseService {
 	}
 	/**
 	 * 针对产品下的需求的所有操作用此方法
-	 * @param productId 产品编号
 	 * @param menus 需求列表
 	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
 	 * @param remarks 人性化语言描述 ,自动添加 需求名称【xxxxx】
@@ -195,7 +194,7 @@ public class XmRecordService extends BaseService {
 			records.add(record);
 		}
 		if(records.size()>0){
-			super.batchDelete(records);
+			super.batchInsert(records);
 		}
 
 	}
@@ -220,7 +219,40 @@ public class XmRecordService extends BaseService {
 		record.setOldValue(oldValue);
 		this.insert(record);
 	}
+	/**
+	 * 针对迭代下的所有操作用此方法
+	 * @param iterationId 迭代编号
+	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
+	 * @param remarks 人性化语言描述 ,自动添加 需求名称【xxxxx】
+	 */
+	@Async
+	public void addXmIterationRecord(String iterationId, String action, String remarks) {
+		XmRecord record=this.initXmRecord();
+		 record.setBizId(iterationId);
+		 record.setObjType("iteration");
+		 record.setAction(action);
+		 record.setRemarks(remarks);
+		 super.insert(record);
 
+	}
+	/**
+	 * 针对迭代下的所有操作用此方法
+	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
+	 * @param remarks 人性化语言描述
+	 * @param newValue 需要记录下来的新数据 可空
+	 * @param oldValue 需要记录下来的旧数据 可空
+	 */
+	@Async
+	public void addXmIterationRecord(String iterationId,String action,String remarks,String newValue,String oldValue) {
+		XmRecord record=this.initXmRecord();
+		record.setBizId(iterationId);
+		record.setObjType("iteration");
+		record.setAction(action);
+		record.setRemarks(remarks);
+		record.setNewValue(newValue);
+		record.setOldValue(oldValue);
+		super.insert(record);
+	}
 	/**
 	 * 针对项目下的任务的所有操作用此方法
 	 * @param projectId 项目编号

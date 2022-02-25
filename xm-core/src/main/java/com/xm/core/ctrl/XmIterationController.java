@@ -1,14 +1,18 @@
 package com.xm.core.ctrl;
 
+import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.service.XmIterationService;
+import com.xm.core.service.XmProductService;
+import com.xm.core.service.XmRecordService;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -40,10 +44,14 @@ public class XmIterationController {
 	
 	@Autowired
 	private XmIterationService xmIterationService;
-	 
-		
- 
-	
+
+	@Autowired
+	private XmProductService xmProductService;
+
+
+	@Autowired
+	private XmRecordService  xmRecordService;
+
 	@ApiOperation( value = "查询迭代定义信息列表",notes="listXmIteration,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
 		@ApiImplicitParam(name="id",value="迭代编码,主键",required=false),
@@ -164,6 +172,7 @@ public class XmIterationController {
 			xmIteration.setBranchId(user.getBranchId());
 			xmIteration.setIstatus("0");
 			xmIterationService.insert(xmIteration);
+			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-新增","新增迭代"+xmIteration.getIterationName());
 			m.put("data",xmIteration);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -188,7 +197,20 @@ public class XmIterationController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
+			if(!StringUtils.hasText(xmIteration.getId())){
+				return ResponseHelper.failed("id-0","请上送迭代编号");
+			}
+			XmIteration iterationDb=this.xmIterationService.selectOneObject(xmIteration);
+			if(iterationDb==null){
+				return ResponseHelper.failed("data-0","迭代不存在");
+			}
+			User user=LoginUtils.getCurrentUserInfo();
+			if(!user.getUserid().equals(iterationDb.getAdminUserid()) && user.getUserid().equals(iterationDb.getAdminUserid())){
+				return ResponseHelper.failed("no-qx","您无权删除，迭代创建人、负责人可以删除");
+			}
 			xmIterationService.deleteByPk(xmIteration);
+			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-删除","删除迭代"+iterationDb.getIterationName(),"", JSON.toJSONString(iterationDb));
+
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -212,7 +234,19 @@ public class XmIterationController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
+			if(!StringUtils.hasText(xmIteration.getId())){
+				return ResponseHelper.failed("id-0","请上送迭代编号");
+			}
+			XmIteration iterationDb=this.xmIterationService.selectOneObject(xmIteration);
+			if(iterationDb==null){
+				return ResponseHelper.failed("data-0","迭代不存在");
+			}
+			User user=LoginUtils.getCurrentUserInfo();
+			if(!user.getUserid().equals(iterationDb.getAdminUserid()) && user.getUserid().equals(iterationDb.getAdminUserid())){
+				return ResponseHelper.failed("no-qx","您无权修改，迭代创建人、负责人可以修改");
+			}
 			xmIterationService.updateByPk(xmIteration);
+			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-修改","修改迭代"+iterationDb.getIterationName(),JSON.toJSONString(xmIteration), JSON.toJSONString(iterationDb));
 			m.put("data",xmIteration);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -233,11 +267,20 @@ public class XmIterationController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
+			if(!StringUtils.hasText(xmIteration.getId())){
+				return ResponseHelper.failed("id-0","请上送迭代编号");
+			}
 			if(xmIteration==null || StringUtils.isEmpty(xmIteration.getId())) {
 				tips.setFailureMsg("请输入迭代编号id");
-			}else { 
+			}else {
+				XmIteration iterationDb=this.xmIterationService.selectOneObject(xmIteration);
+				if(iterationDb==null){
+					return ResponseHelper.failed("data-0","迭代不存在");
+				}
 				xmIterationService.loadTasksToXmIterationState(xmIteration.getId());
- 			}
+				xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-汇总","汇总计算迭代数据"+iterationDb.getIterationName());
+
+			}
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
