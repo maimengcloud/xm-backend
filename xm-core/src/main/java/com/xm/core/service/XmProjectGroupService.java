@@ -55,6 +55,12 @@ public class XmProjectGroupService extends BaseService {
     @Autowired
     XmPushMsgService pushMsgService;
 
+    public void clearProjectGroup(String projectId){
+		groupCacheService.clearProjectGroups(projectId);
+	}
+	public void clearProductGroup(String productId){
+		groupCacheService.clearProductGroups(productId);
+	}
 
 	public boolean calcCanOpMenus(XmMenu menus){
 		List<XmMenu> menuList=new ArrayList<>();

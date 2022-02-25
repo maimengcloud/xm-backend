@@ -175,8 +175,10 @@ public class XmProjectGroupUserController {
 			users.add(usermap);
 			pushMsgService.pushJoinChannelGroupMsg(user.getBranchId(), gu.getGroupId(), users);
 			if("1".equals(pgClass)){
+				xmProjectGroupService.clearProductGroup(gu.getProductId());
 				xmRecordService.addXmGroupRecord(gu.getProductId(),gu.getGroupId(), "产品-团队-新增小组成员", "增加组员["+gu.getUsername()+"]",gu.getUserid(),null);
 			}else{
+				xmProjectGroupService.clearProjectGroup(gu.getProjectId());
 				xmRecordService.addXmGroupRecord(gu.getProjectId(),gu.getGroupId(), "项目-团队-新增小组成员", "增加组员["+gu.getUsername()+"]",gu.getUserid(),null);
 			}
 
@@ -206,7 +208,7 @@ public class XmProjectGroupUserController {
 			}
 			gu=this.xmProjectGroupUserService.selectOneObject(gu);
 			if(gu==null){
-				return ResponseHelper.failed("data-0","小组已不存在");
+				return ResponseHelper.failed("data-0","小组组员已不存在");
 			}
 			String pgClass=gu.getPgClass();
 			User user=LoginUtils.getCurrentUserInfo();
@@ -257,8 +259,11 @@ public class XmProjectGroupUserController {
 			users.add(usermap);
 			pushMsgService.pushLeaveChannelGroupMsg(user.getBranchId(), gu.getGroupId(), users);
 			if("1".equals(pgClass)){
+
+				xmProjectGroupService.clearProductGroup(gu.getProductId());
 				xmRecordService.addXmGroupRecord(gu.getProductId(),gu.getGroupId(), "项目-团队-删除小组成员", "删除组员["+gu.getUsername()+"]",gu.getUserid(),null);
 			}else{
+				xmProjectGroupService.clearProjectGroup(gu.getProjectId());
 				xmRecordService.addXmGroupRecord(gu.getProjectId(),gu.getGroupId(), "项目-团队-删除小组成员", "删除组员["+gu.getUsername()+"]",gu.getUserid(),null);
 			}
 
@@ -332,9 +337,14 @@ public class XmProjectGroupUserController {
 				}
 			}
 			xmProjectGroupUserService.updateSomeFieldByPk(gu0);
+
 			if("0".equals(pgClass)){
+
+				xmProjectGroupService.clearProjectGroup(gu.getProjectId());
 				xmRecordService.addXmGroupRecord(gu.getProjectId(), gu.getGroupId(),"项目-团队-修改小组成员信息", "变更["+gu.getUsername()+"]");
 			}else {
+
+				xmProjectGroupService.clearProductGroup(gu.getProductId());
 				xmRecordService.addXmGroupRecord(gu.getProductId(), gu.getGroupId(),"项目-团队-修改小组成员信息", "变更["+gu.getUsername()+"]");
 			}
 
@@ -450,11 +460,15 @@ public class XmProjectGroupUserController {
 				tips.setFailureMsg(msg.stream().collect(Collectors.joining(";")));
 			}
 			groupUsersMap.forEach((groupId,groupUsers)->{
+
 				List<Map<String,Object>> users=groupUsers.stream().map(i->map("userid",i.getUserid(),"username",i.getUsername())).collect(Collectors.toList());
 				pushMsgService.pushLeaveChannelGroupMsg(user.getBranchId(),groupId, users);
 				if("0".equals(pgClass)){
+
+					xmProjectGroupService.clearProjectGroup(projectId);
 					xmRecordService.addXmGroupRecord(projectId,groupId, "项目-团队-删除小组成员", "删除组员["+groupUsers.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"]",user.getUserid(),null);
 				}else{
+					xmProjectGroupService.clearProductGroup(productId);
 					xmRecordService.addXmGroupRecord(productId,groupId, "产品-团队-删除小组成员", "删除组员["+groupUsers.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"]",user.getUserid(),null);
 				}
 			});

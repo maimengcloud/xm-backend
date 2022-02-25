@@ -374,6 +374,7 @@ public class XmRecordService extends BaseService {
 	public void addXmGroupRecord(String projectId,String groupId,String action,String remarks) {
 		XmRecord record=this.initXmRecord();
 		record.setProjectId(projectId);
+		record.setProductId(projectId);
 		record.setBizId(groupId);
 		record.setAction(action);
 		record.setRemarks(remarks); 
@@ -394,6 +395,7 @@ public class XmRecordService extends BaseService {
 		XmRecord record=this.initXmRecord();
 		record.setProjectId(projectId);
 		record.setBizId(groupId);
+		record.setProductId(projectId);
 		record.setAction(action);
 		record.setRemarks(remarks); 
 		record.setObjType("group");

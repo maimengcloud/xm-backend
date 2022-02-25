@@ -101,7 +101,7 @@ public class XmProjectGroupCacheService {
 		String key=this.getProductKey(group.getProductId());
 		redisTemplate.opsForHash().put(key, group.getId(), group);
 	}
-	public  void  clearProductGroup(String productId,String groupId){
+	public  void  clearProductGroup(String productId){
 		String key=this.getProductKey(productId);
 		this.clearProductGroups(productId);
 	}
