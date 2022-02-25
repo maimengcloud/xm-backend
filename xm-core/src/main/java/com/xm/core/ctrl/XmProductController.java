@@ -322,7 +322,10 @@ public class XmProductController {
 			if(xmProductDb==null){
 				return ResponseHelper.failed("product-0","产品已不存在");
 			}
-
+			User user=LoginUtils.getCurrentUserInfo();
+			if(groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
+				return ResponseHelper.failed("no-qx-0","您无权修改该产品");
+			}
 			xmProductService.updateByPk(xmProduct);
 			xmProductService.clearCache(xmProduct.getId());
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"修改产品","修改产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】",JSON.toJSONString(xmProduct),JSON.toJSONString(xmProductDb));
@@ -363,7 +366,7 @@ public class XmProductController {
 					errTips.add(otips);
 					continue;
 				}
-				XmProduct xmProductDb=xmProductService.selectOneObject(new XmProduct(xmProduct.getId()));
+				XmProduct xmProductDb=xmProductService.getProductFromCache(xmProduct.getId());
 
 				if(xmProductDb==null){
 					otips.setFailureMsg("data-0","","产品【"+xmProductDb.getProductName()+"】已不存在");
