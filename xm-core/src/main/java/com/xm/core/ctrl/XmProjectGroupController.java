@@ -145,8 +145,8 @@ public class XmProjectGroupController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProjectGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProjectGroup_getGroup",name = "查找项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
-	@RequestMapping(value="/getGroup",method=RequestMethod.GET)
+	@HasQx(value = "xm_core_xmProjectGroup_getGroups",name = "查找项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/getGroups",method=RequestMethod.GET)
 	public Map<String,Object> getGroup(@RequestParam Map<String,Object> params) {
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(params, "ids");

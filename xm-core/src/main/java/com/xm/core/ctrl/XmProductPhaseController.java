@@ -127,7 +127,7 @@ public class XmProductPhaseController {
 				idSet.add(id);
 				String pidPaths= (String) map.get("pidPaths");
 				pidPaths=PubTool.getPidPaths(pidPaths,id);
-				if(pidPaths.length()<=2){
+				if(pidPaths==null || pidPaths.length()<=2){
 					continue;
 				}
 				pidPathsSet.add(pidPaths);
