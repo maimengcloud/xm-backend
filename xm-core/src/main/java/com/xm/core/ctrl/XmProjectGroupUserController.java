@@ -359,7 +359,140 @@ public class XmProjectGroupUserController {
 		m.put("tips", tips);
 		return m;
 	}
-	
+
+
+	@ApiOperation( value = "根据主键列表批量新增xm_project_group_user信息",notes="batchAddXmProjectGroupUser,仅需要上传主键字段")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
+	public Map<String,Object> batchAddXmProjectGroupUser(@RequestBody List<XmProjectGroupUser> gus) {
+		Map<String,Object> m = new HashMap<>();
+		if(gus==null || gus.size()==0){
+			return ResponseHelper.failed("data-0","请上送要删除的小组成员");
+		}
+		Tips tips=new Tips("成功新增"+gus.size()+"条数据");
+		try{
+			if(gus.stream().filter(i->!StringUtils.hasText(i.getUserid())||!StringUtils.hasText(i.getGroupId())).findAny().isPresent()){
+				return ResponseHelper.failed("userid-or-groupId-0","请上送用户编号及小组编号");
+			}else{
+				for (XmProjectGroupUser gu : gus) {
+					if(!"1".equals(gu.getPgClass())&&StringUtils.hasText(gu.getProjectId())){
+						return ResponseHelper.failed("projectId-0","项目编号不能为空");
+					}else{
+						return ResponseHelper.failed("productId-0","产品编号不能为空");
+					}
+				}
+			}
+			List<XmProjectGroupUser> gusDb=this.xmProjectGroupUserService.selectListByIds(gus);
+			//过滤掉已经存在的
+			gus=gus.stream().filter(i->!(gusDb.stream().filter(k->k.getGroupId().equals(i.getGroupId())&&k.getUserid().equals(i.getUserid()))).findAny().isPresent()).collect(Collectors.toList());
+			User user=LoginUtils.getCurrentUserInfo();
+			XmProjectGroupUser gu=gus.get(0);
+			String productId=gu.getProductId();
+			String projectId=gu.getProjectId();
+			String pgClass=gu.getPgClass();
+			List<XmProjectGroupUser> gus2=new ArrayList<>();
+			XmProduct xmProduct=null;
+			XmProject xmProject=null;
+			if("1".equals(pgClass)){
+				xmProduct=this.xmProductService.getProductFromCache(gu.getProductId());
+				if(xmProduct==null){
+					return ResponseHelper.failed("product-0","产品已不存在");
+				}
+				gus2=gusDb.stream().filter(i->productId.equals(i.getProductId())).collect(Collectors.toList());
+				if(gus2.size()<gusDb.size()){
+					return ResponseHelper.failed("data-0","批量新增只能新增同一个产品的成员。");
+				}
+			}else {
+				xmProject=this.xmProjectService.getProjectFromCache(gu.getProjectId());
+				if(xmProject==null){
+					return ResponseHelper.failed("project-0","项目已不存在");
+				}
+				gus2=gusDb.stream().filter(i->projectId.equals(i.getProductId())).collect(Collectors.toList());
+				if(gus2.size()<gusDb.size()){
+					return ResponseHelper.failed("data-0","批量新增只能新增同一个项目的成员。");
+				}
+			}
+
+			Set<String> groupIds=gus.stream().map(i->i.getGroupId()).collect(Collectors.toSet());
+			List<XmProjectGroupUser> canAddUsers=new ArrayList<>();
+			Map<String,List<XmProjectGroupUser>> groupUsersMap=new HashMap<>();
+			for (String groupId : groupIds) {
+				if("1".equals(pgClass)){
+					boolean isPm=xmProjectGroupService.checkUserIsProductAdm(xmProduct,user.getUserid());
+					if(!isPm){
+						XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProduct.getId(),groupId);
+						if(xmProjectGroupVo==null){
+							continue;
+						}
+						boolean isHead=xmProjectGroupService.checkUserIsTeamHeadOrAss(xmProjectGroupVo,user.getUserid());
+						if(isHead==false){
+							continue;
+						}
+					}
+				}else {
+					boolean isPm=xmProjectGroupService.checkUserIsProjectAdm(xmProject,user.getUserid());
+					if(!isPm){
+						XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProduct.getId(),groupId);
+						if(xmProjectGroupVo==null){
+							continue;
+						}
+						boolean isHead=xmProjectGroupService.checkUserIsTeamHeadOrAss(xmProjectGroupVo,user.getUserid());
+						if(isHead==false){
+							continue;
+						}
+					}
+				}
+				List<XmProjectGroupUser> cdus=gus2.stream().filter(i->groupId.equals(i.getGroupId())).collect(Collectors.toList());
+				canAddUsers.addAll(cdus);
+				groupUsersMap.put(groupId,cdus);
+			}
+			List<String> msg=new ArrayList<>();
+			msg.add("成功新增"+canAddUsers.size()+"个小组用户.");
+			if(canAddUsers.size()>0){
+				xmProjectGroupUserService.batchInsert(canAddUsers);
+			}
+			List<String> noAddUsers=new ArrayList<>();
+			if(canAddUsers.size()<gus.size()){
+
+				for (XmProjectGroupUser gu0 : gus) {
+					if(!canAddUsers.stream().filter(i->i.getUserid().equals(gu0.getUserid())&&i.getGroupId().equals(gu0.getGroupId())).findAny().isPresent()){
+						noAddUsers.add(gu0.getUsername());
+					}
+				}
+				msg.add("以下"+noAddUsers.size()+"个小组用户无需新增。【"+noAddUsers.stream().collect(Collectors.toSet()).stream().collect(Collectors.joining(","))+"】");
+			}
+			if(canAddUsers.size()!=0){
+				tips.setOkMsg(msg.stream().collect(Collectors.joining(";")));
+			}else{
+				tips.setFailureMsg(msg.stream().collect(Collectors.joining(";")));
+			}
+			groupUsersMap.forEach((groupId,groupUsers)->{
+
+				List<Map<String,Object>> users=groupUsers.stream().map(i->map("userid",i.getUserid(),"username",i.getUsername())).collect(Collectors.toList());
+				pushMsgService.pushLeaveChannelGroupMsg(user.getBranchId(),groupId, users);
+				if("0".equals(pgClass)){
+
+					xmProjectGroupService.clearProjectGroup(projectId);
+					xmRecordService.addXmGroupRecord(projectId,groupId, "项目-团队-新增小组成员", "新增组员["+groupUsers.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"]",user.getUserid(),null);
+				}else{
+					xmProjectGroupService.clearProductGroup(productId);
+					xmRecordService.addXmGroupRecord(productId,groupId, "产品-团队-新增小组成员", "新增组员["+groupUsers.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"]",user.getUserid(),null);
+				}
+			});
+
+
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 
 
 	@ApiOperation( value = "根据主键列表批量删除xm_project_group_user信息",notes="batchDelXmProjectGroupUser,仅需要上传主键字段")

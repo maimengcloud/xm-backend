@@ -821,8 +821,8 @@ public class XmProjectGroupService extends BaseService {
 		for (int i = pidPathss.length-1; i >=0; i--) {
 			pidPathsList.add(pidPathss[i]);
 		}
-		if(pidPathsList.size()>0){
-			super.update("sumParents",pidPathsList	);
+		if(pidPathsList.size()>0){//暂时不处理，改由前端手段更新
+			//super.update("sumParents",pidPathsList	);
 		}
 
 	}
@@ -865,7 +865,7 @@ public class XmProjectGroupService extends BaseService {
 					List<String> ids=set.stream().filter(k->!allSet.contains(k)).collect(Collectors.toList());
 					if(ids.size()>0){
 						allSet.addAll(ids.stream().collect(Collectors.toSet()));
-						super.update("batchSumParents", ids);
+						//super.update("batchSumParents", ids);////暂时不处理，改由前端手段更新
 					}
 
 				}
