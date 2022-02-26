@@ -151,7 +151,7 @@ public class XmProjectGroupUserController {
 					return ResponseHelper.failed("product-0","产品已不存在");
 				}
 				if(!xmProjectGroupService.checkUserIsProjectAdm(xmProject, user.getUserid())){
-					XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProject.getId(),gu.getGroupId());
+					XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProject.getId(),gu.getGroupId());
 					if(xmProjectGroupVo==null){
 						return ResponseHelper.failed("group-0","小组已不存在");
 					}
@@ -238,10 +238,10 @@ public class XmProjectGroupUserController {
 
 				XmProject xmProject=this.xmProjectService.getProjectFromCache(gu.getProjectId());
 				if(xmProject==null){
-					return ResponseHelper.failed("product-0","产品已不存在");
+					return ResponseHelper.failed("project-0","项目已不存在");
 				}
 				if(!xmProjectGroupService.checkUserIsProjectAdm(xmProject, user.getUserid())){
-					XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProject.getId(),gu.getGroupId());
+					XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProject.getId(),gu.getGroupId());
 					if(xmProjectGroupVo==null){
 						return ResponseHelper.failed("group-0","小组已不存在");
 					}
@@ -400,7 +400,7 @@ public class XmProjectGroupUserController {
 				if(xmProduct==null){
 					return ResponseHelper.failed("product-0","产品已不存在");
 				}
-				gus2=gusDb.stream().filter(i->productId.equals(i.getProductId())).collect(Collectors.toList());
+				gus2=gus.stream().filter(i->productId.equals(i.getProductId())).collect(Collectors.toList());
 				if(gus2.size()<gusDb.size()){
 					return ResponseHelper.failed("data-0","批量新增只能新增同一个产品的成员。");
 				}
@@ -409,7 +409,7 @@ public class XmProjectGroupUserController {
 				if(xmProject==null){
 					return ResponseHelper.failed("project-0","项目已不存在");
 				}
-				gus2=gusDb.stream().filter(i->projectId.equals(i.getProductId())).collect(Collectors.toList());
+				gus2=gus.stream().filter(i->projectId.equals(i.getProjectId())).collect(Collectors.toList());
 				if(gus2.size()<gusDb.size()){
 					return ResponseHelper.failed("data-0","批量新增只能新增同一个项目的成员。");
 				}
@@ -434,7 +434,7 @@ public class XmProjectGroupUserController {
 				}else {
 					boolean isPm=xmProjectGroupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 					if(!isPm){
-						XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProduct.getId(),groupId);
+						XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProject.getId(),groupId);
 						if(xmProjectGroupVo==null){
 							continue;
 						}
@@ -533,7 +533,7 @@ public class XmProjectGroupUserController {
 				if(xmProject==null){
 					return ResponseHelper.failed("project-0","项目已不存在");
 				}
-				gus2=gusDb.stream().filter(i->projectId.equals(i.getProductId())).collect(Collectors.toList());
+				gus2=gusDb.stream().filter(i->projectId.equals(i.getProjectId())).collect(Collectors.toList());
 				if(gus2.size()<gusDb.size()){
 					return ResponseHelper.failed("data-0","批量删除只能删除同一个项目的成员。");
 				}
@@ -558,7 +558,7 @@ public class XmProjectGroupUserController {
 				}else {
 					boolean isPm=xmProjectGroupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 					if(!isPm){
-						XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProduct.getId(),groupId);
+						XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProject.getId(),groupId);
 						if(xmProjectGroupVo==null){
 							continue;
 						}

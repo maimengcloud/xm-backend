@@ -86,7 +86,7 @@ public class XmProjectGroupController {
 			m.put("tips", tips);
 			return m;
 		}
-		if(StringUtils.hasText(group.getId())){
+		if(!StringUtils.hasText(group.getId())){
 			return ResponseHelper.failed("id-0","小组编号不能为空");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
