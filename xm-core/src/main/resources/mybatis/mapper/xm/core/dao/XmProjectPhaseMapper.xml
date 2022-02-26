@@ -112,7 +112,7 @@
 			</foreach>
 		</if>
 		group by res.parent_phase_id
-		) as res0 on res2.parent_phase_id=res2.id
+		) as res0 on res0.parent_phase_id=res2.id
 		where res2.id=#{id}
 	</select>
 	<update id="loadTasksToXmProjectPhase" parameterType="String" statementType="CALLABLE">
