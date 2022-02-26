@@ -377,12 +377,12 @@ public class XmProjectGroupUserController {
 				return ResponseHelper.failed("userid-or-groupId-0","请上送用户编号及小组编号");
 			}else{
 				for (XmProjectGroupUser gu : gus) {
-					if(!"1".equals(gu.getPgClass())&&StringUtils.hasText(gu.getProjectId())){
+					if(!"1".equals(gu.getPgClass())&&!StringUtils.hasText(gu.getProjectId())){
 						return ResponseHelper.failed("projectId-0","项目编号不能为空");
-					}else{
+					}else if("1".equals(gu.getPgClass())&&!StringUtils.hasText(gu.getProductId()))
 						return ResponseHelper.failed("productId-0","产品编号不能为空");
 					}
-				}
+
 			}
 			List<XmProjectGroupUser> gusDb=this.xmProjectGroupUserService.selectListByIds(gus);
 			//过滤掉已经存在的
@@ -471,7 +471,7 @@ public class XmProjectGroupUserController {
 			groupUsersMap.forEach((groupId,groupUsers)->{
 
 				List<Map<String,Object>> users=groupUsers.stream().map(i->map("userid",i.getUserid(),"username",i.getUsername())).collect(Collectors.toList());
-				pushMsgService.pushLeaveChannelGroupMsg(user.getBranchId(),groupId, users);
+				pushMsgService.pushJoinChannelGroupMsg(user.getBranchId(),groupId, users);
 				if("0".equals(pgClass)){
 
 					xmProjectGroupService.clearProjectGroup(projectId);
