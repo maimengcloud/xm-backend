@@ -1,6 +1,7 @@
 package com.xm.core.service;
 
 import com.mdp.core.service.BaseService;
+import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
@@ -34,6 +35,7 @@ public class XmRecordService extends BaseService {
 		record.setOperUserid(user.getUserid());
 		record.setOperUsername(user.getUsername());
 		record.setBranchId(user.getBranchId());
+		record.setIp(RequestUtils.getIpAddr(RequestUtils.getRequest()));
 		return record;
 	}
 
@@ -122,6 +124,7 @@ public class XmRecordService extends BaseService {
 	public void addXmTaskRecord(List<XmTask> tasks,String action, String remarks) {
 		User user=LoginUtils.getCurrentUserInfo();
 		List<XmRecord> records=new ArrayList<>();
+		String ip= RequestUtils.getIpAddr(RequestUtils.getRequest());
 		for (XmTask task : tasks) {
 			XmRecord record=new XmRecord();
 			record.setId(this.createKey("id"));
@@ -136,6 +139,7 @@ public class XmRecordService extends BaseService {
 			record.setRemarks(remarks+" 任务名称【"+task.getName()+"】");
 			record.setObjType("task");
 			records.add(record);
+			record.setIp(ip);
 		}
 		if(records.size()>0){
 			super.batchInsert(records);
@@ -208,6 +212,8 @@ public class XmRecordService extends BaseService {
 	public void addXmMenuRecord(List<XmMenu> menus, String action, String remarks) {
 		User user=LoginUtils.getCurrentUserInfo();
 		List<XmRecord> records=new ArrayList<>();
+
+		String ip= RequestUtils.getIpAddr(RequestUtils.getRequest());
 		for (XmMenu menu : menus) {
 			XmRecord record=new XmRecord();
 			record.setId(this.createKey("id"));
@@ -222,6 +228,7 @@ public class XmRecordService extends BaseService {
 			record.setRemarks(remarks+" 需求名称【"+menu.getMenuName()+"】");
 			record.setObjType("menu");
 			records.add(record);
+			record.setIp(ip);
 		}
 		if(records.size()>0){
 			super.batchInsert(records);
