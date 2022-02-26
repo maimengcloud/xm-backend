@@ -358,18 +358,20 @@ public class XmProjectPhaseController {
 				m.put("tips", tips);
 				return m;
 			}
+			xmProjectPhase=xmProjectPhaseService.autoCalcWorkload(xmProjectPhase);
 			xmProjectPhaseService.calcPhaseBudgetAmount(xmProjectPhase);
 			List<String> excludePhaseIds=new ArrayList<>();
 			excludePhaseIds.add(xmProjectPhase.getId());
-			if(xmProjectPhase.getLvl()==1){
-				tips=this.xmProjectPhaseService.judgetProjectBudget(xmProject.getId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
-			}else{
-				tips=this.xmProjectPhaseService.judgetPhaseBudget(xmProjectPhase.getParentPhaseId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
+			if("1".equals(xmProject.getBudgetCtrl())){
+				if(xmProjectPhase.getLvl()==1){
+					tips=this.xmProjectPhaseService.judgetProjectBudget(xmProject.getId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
+				}else{
+					tips=this.xmProjectPhaseService.judgetPhaseBudget(xmProjectPhase.getParentPhaseId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
+				}
 			}
 			if(!tips.isOk()) {
 				return ResponseHelper.failed(tips);
 			}
-			xmProjectPhase=xmProjectPhaseService.autoCalcWorkload(xmProjectPhase);
 			xmProjectPhaseService.editByPk(xmProjectPhase);
 			xmRecordService.addProjectPhaseRecord(xmProjectPhase.getProjectId(), xmProjectPhase.getId(), "项目-计划-修改计划", "修改计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
 

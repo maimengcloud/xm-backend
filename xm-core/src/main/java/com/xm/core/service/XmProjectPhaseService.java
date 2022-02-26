@@ -552,7 +552,7 @@ public class XmProjectPhaseService extends BaseService {
 		if(phase.getPhaseBudgetAt()==null){
 			phase.setPhaseBudgetAt(BigDecimal.ZERO);
 		}
-		phase.setPhaseBudgetAt(phase.getPhaseBudgetInnerUserAt().add(phase.getPhaseBudgetNouserAt()).add(phase.getPhaseBudgetAt()));
+		phase.setPhaseBudgetAt(phase.getPhaseBudgetInnerUserAt().add(phase.getPhaseBudgetNouserAt()).add(phase.getPhaseBudgetOutUserAt()));
 	}
 
 	/**
