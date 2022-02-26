@@ -146,7 +146,7 @@ public class XmProjectController {
 
 	        if(StringUtils.isEmpty(xmProjectVo.getCode())) {
 	        	 tips.setFailureMsg("编号不能为空，请修改编号再提交"); 
-	        }else if(StringUtils.hasText(xmProjectVo.getBranchId())){
+	        }else if(!StringUtils.hasText(xmProjectVo.getBranchId())){
 				tips.setFailureMsg("项目归属机构号不能为空");
 			}else {
 				xmProjectService.saveProject(xmProjectVo);
