@@ -243,6 +243,7 @@ public class XmProjectPhaseController {
 			}
 			List<String> excludePhaseIds=new ArrayList<>();
 			excludePhaseIds.add(xmProjectPhase.getId());
+			xmProjectPhaseService.calcPhaseBudgetAmount(xmProjectPhase);
 			xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhase);
 			if(xmProjectPhase.getLvl()==1){
 				tips=xmProjectPhaseService.judgetProjectBudget(xmProject.getId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
@@ -357,6 +358,7 @@ public class XmProjectPhaseController {
 				m.put("tips", tips);
 				return m;
 			}
+			xmProjectPhaseService.calcPhaseBudgetAmount(xmProjectPhase);
 			List<String> excludePhaseIds=new ArrayList<>();
 			excludePhaseIds.add(xmProjectPhase.getId());
 			if(xmProjectPhase.getLvl()==1){
@@ -537,6 +539,7 @@ public class XmProjectPhaseController {
 					BigDecimal phaseTotalBudgetAt=BigDecimal.ZERO;
 					List<String> excludeIds=children.stream().map(i->i.getId()).collect(Collectors.toList());
 					for (XmProjectPhase child : children) {
+						xmProjectPhaseService.calcPhaseBudgetAmount(child);
 						phaseTotalBudgetAt=phaseTotalBudgetAt.add(child.getPhaseBudgetAt());
 					}
 					Tips tips2=xmProjectPhaseService.judgetPhaseBudget(parentId,phaseTotalBudgetAt,null,null,null,excludeIds);
@@ -549,6 +552,7 @@ public class XmProjectPhaseController {
 				BigDecimal phaseTotalBudgetWorkload=BigDecimal.ZERO;
 				BigDecimal phaseTotalBudgetAt=BigDecimal.ZERO;
 				for (XmProjectPhase l1Phase : l1Phases) {
+					xmProjectPhaseService.calcPhaseBudgetAmount(l1Phase);
 					phaseTotalBudgetWorkload=phaseTotalBudgetWorkload.add(l1Phase.getPhaseBudgetWorkload());
 					phaseTotalBudgetAt=phaseTotalBudgetAt.add(l1Phase.getPhaseBudgetAt());
 				}
@@ -635,6 +639,7 @@ public class XmProjectPhaseController {
 					BigDecimal phaseTotalBudgetAt=BigDecimal.ZERO;
 					List<String> excludeIds=children.stream().map(i->i.getId()).collect(Collectors.toList());
 					for (XmProjectPhase child : children) {
+						xmProjectPhaseService.calcPhaseBudgetAmount(child);
 						phaseTotalBudgetAt=phaseTotalBudgetAt.add(child.getPhaseBudgetAt());
 					}
 					Tips tips2=xmProjectPhaseService.judgetPhaseBudget(parentId,phaseTotalBudgetAt,null,null,null,excludeIds);
@@ -647,6 +652,7 @@ public class XmProjectPhaseController {
 				BigDecimal phaseTotalBudgetWorkload=BigDecimal.ZERO;
 				BigDecimal phaseTotalBudgetAt=BigDecimal.ZERO;
 				for (XmProjectPhase l1Phase : l1Phases) {
+					xmProjectPhaseService.calcPhaseBudgetAmount(l1Phase);
 					phaseTotalBudgetWorkload=phaseTotalBudgetWorkload.add(l1Phase.getPhaseBudgetWorkload());
 					phaseTotalBudgetAt=phaseTotalBudgetAt.add(l1Phase.getPhaseBudgetAt());
 				}

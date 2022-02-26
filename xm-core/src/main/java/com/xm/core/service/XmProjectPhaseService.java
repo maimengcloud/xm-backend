@@ -133,10 +133,10 @@ public class XmProjectPhaseService extends BaseService {
 			return tips;
 		}
 		
-		BigDecimal phaseBudgetCostAt=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);  
-		phaseBudgetCostAt=phaseBudgetCostAt.add(addPhaseBudgetCost);
-		if(phaseBudgetCostAt.compareTo(planTotalCost)>0) {
-			tips.setFailureMsg("计划总体预算超出项目总预算"+phaseBudgetCostAt.subtract(planTotalCost)+"元");
+		BigDecimal phaseBudgetAt=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);  
+		phaseBudgetAt=phaseBudgetAt.add(addPhaseBudgetCost);
+		if(phaseBudgetAt.compareTo(planTotalCost)>0) {
+			tips.setFailureMsg("计划总体预算超出项目总预算"+phaseBudgetAt.subtract(planTotalCost)+"元");
 			return tips;
 		}else {
 			return tips;
@@ -512,10 +512,10 @@ public class XmProjectPhaseService extends BaseService {
 		BigDecimal planTotalCost=NumberUtil.getBigDecimal(g.get("pbudgetAmount"),zero);
 
 
-		BigDecimal phaseBudgetCostAt=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);
-		phaseBudgetCostAt=phaseBudgetCostAt.add(addPhaseBudgetCost);
-		if(phaseBudgetCostAt.compareTo(planTotalCost)>0) {
-			tips.setFailureMsg("计划总体预算超出产品总预算"+phaseBudgetCostAt.subtract(planTotalCost)+"元");
+		BigDecimal phaseBudgetAt=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);
+		phaseBudgetAt=phaseBudgetAt.add(addPhaseBudgetCost);
+		if(phaseBudgetAt.compareTo(planTotalCost)>0) {
+			tips.setFailureMsg("计划总体预算超出产品总预算"+phaseBudgetAt.subtract(planTotalCost)+"元");
 			return tips;
 		}else {
 			return tips;
@@ -537,6 +537,22 @@ public class XmProjectPhaseService extends BaseService {
 		p.put("id", phaseId);
 		p.put("excludePhaseIds", excludePhaseIds);
 		return this.selectOne("selectPhaseBudgetCost", p);
+	}
+
+	public void calcPhaseBudgetAmount(XmProjectPhase phase){
+		if(phase.getPhaseBudgetInnerUserAt()==null){
+			phase.setPhaseBudgetInnerUserAt(BigDecimal.ZERO);
+		}
+		if(phase.getPhaseBudgetNouserAt()==null){
+			phase.setPhaseBudgetNouserAt(BigDecimal.ZERO);
+		}
+		if(phase.getPhaseBudgetOutUserAt()==null){
+			phase.setPhaseBudgetOutUserAt(BigDecimal.ZERO);
+		}
+		if(phase.getPhaseBudgetAt()==null){
+			phase.setPhaseBudgetAt(BigDecimal.ZERO);
+		}
+		phase.setPhaseBudgetAt(phase.getPhaseBudgetInnerUserAt().add(phase.getPhaseBudgetNouserAt()).add(phase.getPhaseBudgetAt()));
 	}
 
 	/**

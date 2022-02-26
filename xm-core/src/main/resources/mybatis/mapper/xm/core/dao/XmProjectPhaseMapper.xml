@@ -104,7 +104,7 @@
 		sum( ifnull(res.phase_budget_nouser_at,0) ) AS child_phase_budget_nouser_at,
 		sum( ifnull(res.phase_budget_inner_user_at,0) ) AS child_phase_budget_inner_user_at,
 		sum( ifnull(res.phase_budget_out_user_at,0) ) AS child_phase_budget_out_user_at,
-		sum( ifnull(res.phase_budget_at,0) ) AS child_phase_budget_at,
+		sum( ifnull(res.phase_budget_at,0) ) AS child_phase_budget_at
 		FROM  	xm_project_phase res  where res.parent_phase_id=#{id}
 		<if test=" excludePhaseIds !=null "> and res.id not  in
 			<foreach collection="excludePhaseIds" item="item" index="index" open="(" separator="," close=")" >
