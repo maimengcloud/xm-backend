@@ -7,9 +7,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectGroupUser所有属性名: <br>
- *	joinTime,groupId,userid,username,outTime,status,obranchId,isPri,seqNo,projectId,productId,pgClass;<br>
+ *	joinTime,groupId,userid,username,outTime,status,obranchId,isPri,seqNo,projectId,productId,pgClass,obranchName;<br>
  * 表 xm_project_group_user xm_project_group_user的所有字段名: <br>
- *	join_time,group_id,userid,username,out_time,status,obranch_id,is_pri,seq_no,project_id,product_id,pg_class;<br>
+ *	join_time,group_id,userid,username,out_time,status,obranch_id,is_pri,seq_no,project_id,product_id,pg_class,obranch_name;<br>
  * 当前主键(包括多主键):<br>
  *	group_id,userid;<br>
  */
@@ -54,6 +54,9 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="0-项目，1-产品",allowEmptyValue=true,example="",allowableValues="")
 	String pgClass;
+	
+	@ApiModelProperty(notes="原归属机构名称",allowEmptyValue=true,example="",allowableValues="")
+	String obranchName;
 
 	/**团队编号,团队成员编号**/
 	public XmProjectGroupUser(String groupId,String userid) {
@@ -137,6 +140,12 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	public void setPgClass(String pgClass) {
 		this.pgClass = pgClass;
 	}
+	/**
+	 * 原归属机构名称
+	 **/
+	public void setObranchName(String obranchName) {
+		this.obranchName = obranchName;
+	}
 	
 	/**
 	 * 加入时间
@@ -209,6 +218,12 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	 **/
 	public String getPgClass() {
 		return this.pgClass;
+	}
+	/**
+	 * 原归属机构名称
+	 **/
+	public String getObranchName() {
+		return this.obranchName;
 	}
 
 }

@@ -64,7 +64,7 @@
 		insert into xm_project_group(
 			<include refid="columns"/>
 		) values (
-		#{id},#{groupName},#{projectId},#{pgTypeId},#{pgTypeName},#{leaderUserid},#{leaderUsername},#{ctime},#{ltime},#{productId},#{branchId},#{pgClass},#{pgroupId},#{lvl},#{pidPaths},#{isTpl},#{assUserid},#{assUsername},#{childrenCnt},#{userCnt},#{qxCode},#{calcWorkload},#{ntype}
+		#{id},#{groupName},#{projectId},#{pgTypeId},#{pgTypeName},#{leaderUserid},#{leaderUsername},#{ctime},#{ltime},#{productId},#{branchId},#{pgClass},#{pgroupId},#{lvl},#{pidPaths},#{isTpl},#{assUserid},#{assUsername},#{childrenCnt},#{userCnt},#{qxCode},#{calcWorkload},#{ntype},#{crowBranchId},#{crowBranchName},#{isCrow}
 		)
 	</insert>
 	
@@ -127,7 +127,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,group_name,project_id,pg_type_id,pg_type_name,leader_userid,leader_username,ctime,ltime,product_id,branch_id,pg_class,pgroup_id,lvl,pid_paths,is_tpl,ass_userid,ass_username,children_cnt,user_cnt,qx_code,calc_workload,ntype
+		id,group_name,project_id,pg_type_id,pg_type_name,leader_userid,leader_username,ctime,ltime,product_id,branch_id,pg_class,pgroup_id,lvl,pid_paths,is_tpl,ass_userid,ass_username,children_cnt,user_cnt,qx_code,calc_workload,ntype,crow_branch_id,crow_branch_name,is_crow
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -155,6 +155,9 @@
 		<if test="qxCode != null and qxCode != ''">      and res.qx_code = #{qxCode}     </if>
 		<if test="calcWorkload != null and calcWorkload != ''">      and res.calc_workload = #{calcWorkload}     </if>
 		<if test="ntype != null and ntype != ''">      and res.ntype = #{ntype}     </if>
+		<if test="crowBranchId != null and crowBranchId != ''">      and res.crow_branch_id = #{crowBranchId}     </if>
+		<if test="crowBranchName != null and crowBranchName != ''">      and res.crow_branch_name = #{crowBranchName}     </if>
+		<if test="isCrow != null and isCrow != ''">      and res.is_crow = #{isCrow}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -179,7 +182,10 @@
 		user_cnt = #{userCnt},
 		qx_code = #{qxCode},
 		calc_workload = #{calcWorkload},
-		ntype = #{ntype}
+		ntype = #{ntype},
+		crow_branch_id = #{crowBranchId},
+		crow_branch_name = #{crowBranchName},
+		is_crow = #{isCrow}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="groupName != null and groupName != ''"> group_name = #{groupName},     </if>
@@ -204,6 +210,9 @@
 		<if test="qxCode != null and qxCode != ''"> qx_code = #{qxCode},     </if>
 		<if test="calcWorkload != null and calcWorkload != ''"> calc_workload = #{calcWorkload},     </if>
 		<if test="ntype != null and ntype != ''"> ntype = #{ntype},     </if>
+		<if test="crowBranchId != null and crowBranchId != ''"> crow_branch_id = #{crowBranchId},     </if>
+		<if test="crowBranchName != null and crowBranchName != ''"> crow_branch_name = #{crowBranchName},     </if>
+		<if test="isCrow != null and isCrow != ''"> is_crow = #{isCrow},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -228,6 +237,9 @@
 			user_cnt = #{item.userCnt},
 			qx_code = #{item.qxCode},
 			calc_workload = #{item.calcWorkload},
-			ntype = #{item.ntype}
+			ntype = #{item.ntype},
+			crow_branch_id = #{item.crowBranchId},
+			crow_branch_name = #{item.crowBranchName},
+			is_crow = #{item.isCrow}
 	</sql>
 </mapper>
