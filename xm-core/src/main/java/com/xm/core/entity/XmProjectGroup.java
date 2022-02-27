@@ -89,7 +89,7 @@ public class XmProjectGroup  implements java.io.Serializable {
 	String ntype;
 	
 	@ApiModelProperty(notes="协作公司编号",allowEmptyValue=true,example="",allowableValues="")
-	Integer crowBranchId;
+	String crowBranchId;
 	
 	@ApiModelProperty(notes="协作公司名称",allowEmptyValue=true,example="",allowableValues="")
 	String crowBranchName;
@@ -247,7 +247,7 @@ public class XmProjectGroup  implements java.io.Serializable {
 	/**
 	 * 协作公司编号
 	 **/
-	public void setCrowBranchId(Integer crowBranchId) {
+	public void setCrowBranchId(String crowBranchId) {
 		this.crowBranchId = crowBranchId;
 	}
 	/**
@@ -404,7 +404,7 @@ public class XmProjectGroup  implements java.io.Serializable {
 	/**
 	 * 协作公司编号
 	 **/
-	public Integer getCrowBranchId() {
+	public String getCrowBranchId() {
 		return this.crowBranchId;
 	}
 	/**
