@@ -210,6 +210,9 @@ public class XmProjectPhaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
+			if(!StringUtils.hasText(xmProjectPhase.getProjectId())){
+				return ResponseHelper.failed("projectId-0","请上送项目编号");
+			}
 			if(StringUtils.isEmpty(xmProjectPhase.getId())) {
 				xmProjectPhase.setId(xmProjectPhaseService.createKey("id"));
 			}else{
@@ -349,6 +352,13 @@ public class XmProjectPhaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
+			if(!StringUtils.hasText(xmProjectPhase.getId())){
+				return ResponseHelper.failed("id-0","请上送计划编号");
+			}
+			XmProjectPhase xmProjectPhaseDb=this.xmProjectPhaseService.selectOneObject(xmProjectPhase);
+			if(xmProjectPhaseDb==null){
+				return ResponseHelper.failed("data-0","该计划已不存在");
+			}
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhase.getProjectId());
 			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
 			User user = LoginUtils.getCurrentUserInfo();
@@ -373,7 +383,7 @@ public class XmProjectPhaseController {
 			xmProjectPhaseService.calcPhaseBudgetAmount(xmProjectPhase);
 			List<String> excludePhaseIds=new ArrayList<>();
 			excludePhaseIds.add(xmProjectPhase.getId());
-			XmProjectPhase xmProjectPhaseDb=this.xmProjectPhaseService.selectOneObject(xmProjectPhase);
+
 			//如果修改了预算数据，才进行预算判断
 			if(xmProjectPhaseDb.getPhaseBudgetAt()!=null && xmProjectPhaseDb.getPhaseBudgetAt().compareTo(xmProjectPhase.getPhaseBudgetAt())!=0){
 				if(xmProjectPhase.getLvl()==1){
