@@ -767,4 +767,39 @@ public class XmProjectPhaseController {
 		m.put("tips", tips);
 		return m;
 	}
+	@ApiOperation( value = "查询项目与计划汇总数据",notes="selectTotalProjectAndPhaseBudgetCost")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@HasQx(value = "xm_core_xmProjectPhase_selectTotalProjectAndPhaseBudgetCost",name = "查询项目与计划汇总数据",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/selectTotalProjectAndPhaseBudgetCost",method=RequestMethod.POST)
+	public Map<String,Object> getProjectBudgetWithsPhaseBudget(@RequestBody Map<String,Object> params) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功查询预算数据");
+		try{
+			String projectId=(String) params.get("projectId");
+			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
+			User user = LoginUtils.getCurrentUserInfo();
+
+			XmProject xmProject=this.xmProjectService.getProjectFromCache(projectId);
+			boolean meIsPm=groupService.checkUserIsProjectAdm(xmProject,user.getUserid());
+			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
+			if( !meIsPm  && !meIsTeamHead ){
+				tips.setFailureMsg("您不是组长、也不是项目管理者，不允许查询项目与计划汇总数据");
+				m.put("tips", tips);
+				return m;
+			}
+			Map<String,Object> data=xmProjectPhaseService.selectTotalProjectAndPhaseBudgetCost((String) params.get("projectId"),null);
+			m.put("data",data);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
+
 }
