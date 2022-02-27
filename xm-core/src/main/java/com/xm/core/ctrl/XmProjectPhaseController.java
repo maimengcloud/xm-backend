@@ -246,9 +246,13 @@ public class XmProjectPhaseController {
 			xmProjectPhaseService.calcPhaseBudgetAmount(xmProjectPhase);
 			xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhase);
 			if(xmProjectPhase.getLvl()==1){
-				tips=xmProjectPhaseService.judgetProjectBudget(xmProject.getId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
+				if("1".equals(xmProject.getBudgetCtrl())){
+					tips=xmProjectPhaseService.judgetProjectBudget(xmProject.getId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
+				}
 			}else {
-				tips=xmProjectPhaseService.judgetPhaseBudget(xmProjectPhase.getParentPhaseId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
+				if("1".equals(xmProject.getPhaseBudgetCtrl())) {
+					tips = xmProjectPhaseService.judgetPhaseBudget(xmProjectPhase.getParentPhaseId(), xmProjectPhase.getPhaseBudgetAt(), null, null, null, excludePhaseIds);
+				}
 			}
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
@@ -284,8 +288,15 @@ public class XmProjectPhaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
-			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhase.getProjectId());
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
+			if(!StringUtils.hasText(xmProjectPhase.getId())){
+				return ResponseHelper.failed("id-0","请上送计划编号");
+			}
+			XmProjectPhase xmProjectPhaseDb=this.xmProjectPhaseService.selectOneObject(xmProjectPhase);
+			if(xmProjectPhaseDb==null){
+				return ResponseHelper.failed("data-0","该计划已不存在");
+			}
+			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhaseDb.getProjectId());
+			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhaseDb.getProjectId());
 			User user = LoginUtils.getCurrentUserInfo();
 			boolean meIsPm=groupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -294,9 +305,9 @@ public class XmProjectPhaseController {
 				m.put("tips", tips);
 				return m;
 			}
-			boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,xmProjectPhase.getMngUserid(),user.getUserid());
+			boolean meIsHisTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,xmProjectPhaseDb.getMngUserid(),user.getUserid());
 			if(  !meIsPm && !meIsHisTeamHead ){
-				tips.setFailureMsg("您不是"+xmProjectPhase.getMngUsername()+"的组长，不允许删除其负责的计划");
+				tips.setFailureMsg("您不是"+xmProjectPhaseDb.getMngUsername()+"的组长，不允许删除其负责的计划");
 				m.put("tips", tips);
 				return m;
 			}
@@ -305,7 +316,7 @@ public class XmProjectPhaseController {
 			if(exists>0) {
 				tips.setFailureMsg("存在"+exists+"条任务,不允许删除");
 			}else {
-				XmProjectPhase xmProjectPhaseDb=this.xmProjectPhaseService.selectOneObject(xmProjectPhase);
+
 				if(xmProjectPhaseDb.getChildrenCnt()!=null && xmProjectPhaseDb.getChildrenCnt()>0){
 					tips.setFailureMsg("存在"+xmProjectPhaseDb.getChildrenCnt()+"条子计划,不允许删除");
 				} else {
@@ -362,12 +373,19 @@ public class XmProjectPhaseController {
 			xmProjectPhaseService.calcPhaseBudgetAmount(xmProjectPhase);
 			List<String> excludePhaseIds=new ArrayList<>();
 			excludePhaseIds.add(xmProjectPhase.getId());
-			if("1".equals(xmProject.getBudgetCtrl())){
+			XmProjectPhase xmProjectPhaseDb=this.xmProjectPhaseService.selectOneObject(xmProjectPhase);
+			//如果修改了预算数据，才进行预算判断
+			if(xmProjectPhaseDb.getPhaseBudgetAt()!=null && xmProjectPhaseDb.getPhaseBudgetAt().compareTo(xmProjectPhase.getPhaseBudgetAt())!=0){
 				if(xmProjectPhase.getLvl()==1){
-					tips=this.xmProjectPhaseService.judgetProjectBudget(xmProject.getId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
+					if("1".equals(xmProject.getBudgetCtrl())){
+						tips=this.xmProjectPhaseService.judgetProjectBudget(xmProject.getId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
+					}
 				}else{
-					tips=this.xmProjectPhaseService.judgetPhaseBudget(xmProjectPhase.getParentPhaseId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
-				}
+						if("1".equals(xmProject.getPhaseBudgetCtrl())) {
+							tips = this.xmProjectPhaseService.judgetPhaseBudget(xmProjectPhase.getParentPhaseId(), xmProjectPhase.getPhaseBudgetAt(), null, null, null, excludePhaseIds);
+						}
+					}
+
 			}
 			if(!tips.isOk()) {
 				return ResponseHelper.failed(tips);
@@ -518,6 +536,7 @@ public class XmProjectPhaseController {
 				g.setMngUserid(user.getUserid());
 				g.setMngUsername(user.getUsername());
 				g=xmProjectPhaseService.autoCalcWorkload(g);
+				xmProjectPhaseService.calcPhaseBudgetAmount(g);
 
 			}
 			xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases);
@@ -541,26 +560,28 @@ public class XmProjectPhaseController {
 					BigDecimal phaseTotalBudgetAt=BigDecimal.ZERO;
 					List<String> excludeIds=children.stream().map(i->i.getId()).collect(Collectors.toList());
 					for (XmProjectPhase child : children) {
-						xmProjectPhaseService.calcPhaseBudgetAmount(child);
 						phaseTotalBudgetAt=phaseTotalBudgetAt.add(child.getPhaseBudgetAt());
 					}
-					Tips tips2=xmProjectPhaseService.judgetPhaseBudget(parentId,phaseTotalBudgetAt,null,null,null,excludeIds);
-					if(!tips2.isOk()){
-						tips2.setFailureMsg(tips2.getMsg()+" 相关计划为【"+children.stream().map(i->i.getPhaseName()).collect(Collectors.joining(","))+"】");
-						return ResponseHelper.failed(tips2);
+					if("1".equals(xmProject.getPhaseBudgetCtrl())){
+						Tips tips2=xmProjectPhaseService.judgetPhaseBudget(parentId,phaseTotalBudgetAt,null,null,null,excludeIds);
+						if(!tips2.isOk()){
+							tips2.setFailureMsg(tips2.getMsg()+" 相关计划为【"+children.stream().map(i->i.getPhaseName()).collect(Collectors.joining(","))+"】");
+							return ResponseHelper.failed(tips2);
+						}
 					}
 				}
 			}else{//直接导入到项目之下，需要判断当前一级预算是否超出项目总预算
 				BigDecimal phaseTotalBudgetWorkload=BigDecimal.ZERO;
 				BigDecimal phaseTotalBudgetAt=BigDecimal.ZERO;
 				for (XmProjectPhase l1Phase : l1Phases) {
-					xmProjectPhaseService.calcPhaseBudgetAmount(l1Phase);
 					phaseTotalBudgetWorkload=phaseTotalBudgetWorkload.add(l1Phase.getPhaseBudgetWorkload());
 					phaseTotalBudgetAt=phaseTotalBudgetAt.add(l1Phase.getPhaseBudgetAt());
 				}
-				tips=xmProjectPhaseService.judgetProjectBudget(projectId,phaseTotalBudgetAt,null,null,null,l1Phases.stream().map(i->i.getId()).collect(Collectors.toList()));
-				if(!tips.isOk()){
-					return ResponseHelper.failed(tips);
+				if("1".equals(xmProject.getBudgetCtrl())) {
+					tips = xmProjectPhaseService.judgetProjectBudget(projectId, phaseTotalBudgetAt, null, null, null, l1Phases.stream().map(i -> i.getId()).collect(Collectors.toList()));
+					if (!tips.isOk()) {
+						return ResponseHelper.failed(tips);
+					}
 				}
 			}
 			if(tips.isOk()) {
@@ -620,6 +641,7 @@ public class XmProjectPhaseController {
 			for (XmProjectPhase g : xmProjectPhases) {
 				projectId=g.getProjectId();
 				g=xmProjectPhaseService.autoCalcWorkload(g);
+				xmProjectPhaseService.calcPhaseBudgetAmount(g);
 			}
 			List<XmProjectPhase> l1Phases=xmProjectPhases.stream().filter(i->1==i.getLvl()).collect(Collectors.toList());
 			if(l1Phases==null ||l1Phases.size()==0){//如果是导入到某个计划之下，
@@ -641,26 +663,28 @@ public class XmProjectPhaseController {
 					BigDecimal phaseTotalBudgetAt=BigDecimal.ZERO;
 					List<String> excludeIds=children.stream().map(i->i.getId()).collect(Collectors.toList());
 					for (XmProjectPhase child : children) {
-						xmProjectPhaseService.calcPhaseBudgetAmount(child);
 						phaseTotalBudgetAt=phaseTotalBudgetAt.add(child.getPhaseBudgetAt());
 					}
-					Tips tips2=xmProjectPhaseService.judgetPhaseBudget(parentId,phaseTotalBudgetAt,null,null,null,excludeIds);
-					if(!tips2.isOk()){
-						tips2.setFailureMsg(tips2.getMsg()+" 相关计划为【"+children.stream().map(i->i.getPhaseName()).collect(Collectors.joining(","))+"】");
-						return ResponseHelper.failed(tips2);
+					if("1".equals(xmProject.getPhaseBudgetCtrl())) {
+						Tips tips2 = xmProjectPhaseService.judgetPhaseBudget(parentId, phaseTotalBudgetAt, null, null, null, excludeIds);
+						if (!tips2.isOk()) {
+							tips2.setFailureMsg(tips2.getMsg() + " 相关计划为【" + children.stream().map(i -> i.getPhaseName()).collect(Collectors.joining(",")) + "】");
+							return ResponseHelper.failed(tips2);
+						}
 					}
 				}
 			}else{//直接导入到项目之下，需要判断当前一级预算是否超出项目总预算
 				BigDecimal phaseTotalBudgetWorkload=BigDecimal.ZERO;
 				BigDecimal phaseTotalBudgetAt=BigDecimal.ZERO;
 				for (XmProjectPhase l1Phase : l1Phases) {
-					xmProjectPhaseService.calcPhaseBudgetAmount(l1Phase);
 					phaseTotalBudgetWorkload=phaseTotalBudgetWorkload.add(l1Phase.getPhaseBudgetWorkload());
 					phaseTotalBudgetAt=phaseTotalBudgetAt.add(l1Phase.getPhaseBudgetAt());
 				}
-				tips=xmProjectPhaseService.judgetProjectBudget(projectId,phaseTotalBudgetAt,null,null,null,l1Phases.stream().map(i->i.getId()).collect(Collectors.toList()));
-				if(!tips.isOk()){
-					return ResponseHelper.failed(tips);
+				if("1".equals(xmProject.getBudgetCtrl())){
+					tips=xmProjectPhaseService.judgetProjectBudget(projectId,phaseTotalBudgetAt,null,null,null,l1Phases.stream().map(i->i.getId()).collect(Collectors.toList()));
+					if(!tips.isOk()){
+						return ResponseHelper.failed(tips);
+					}
 				}
 			}
 
