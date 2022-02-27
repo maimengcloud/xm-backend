@@ -406,10 +406,10 @@ public class XmProductController {
 				tips.setOkMsg(msg);
 			}else{
 				if(errTips.size()>0 && canDelList.size()>0){
-					String errmsg=errTips.stream().map(i->i.getMsg()).collect(Collectors.joining(";"));
+					String errmsg=errTips.stream().map(i->i.getMsg()).collect(Collectors.joining(" "));
 					tips.setOkMsg(msg+"\n"+errmsg);
 				}else{
-					tips.setFailureMsg(errTips.stream().map(i->i.getMsg()).collect(Collectors.joining(";")));
+					tips.setFailureMsg(errTips.stream().map(i->i.getMsg()).collect(Collectors.joining(" ")));
 				}
 			}
 			return tips;

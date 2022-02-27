@@ -155,9 +155,9 @@ public class XmIterationMenuController {
 				msgs.add("有"+notJoins.size()+"个需求未加入迭代，无需移出。【"+notJoins.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
 			}
 			if(canDels.size()==0){
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(";")));
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}else {
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining(";")));
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -227,9 +227,9 @@ public class XmIterationMenuController {
 				msgs.add("有"+ntype1.size()+"个为需求集，不用加入迭代。【"+ntype1.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
 			}
 			if(canAdds.size()==0){
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(";")));
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}else {
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining(";")));
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}
 
 		}catch (BizException e) { 

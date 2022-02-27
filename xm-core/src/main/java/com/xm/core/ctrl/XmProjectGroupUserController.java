@@ -464,9 +464,9 @@ public class XmProjectGroupUserController {
 				msg.add("以下"+noAddUsers.size()+"个小组用户无需新增。【"+noAddUsers.stream().collect(Collectors.toSet()).stream().collect(Collectors.joining(","))+"】");
 			}
 			if(canAddUsers.size()!=0){
-				tips.setOkMsg(msg.stream().collect(Collectors.joining(";")));
+				tips.setOkMsg(msg.stream().collect(Collectors.joining(" ")));
 			}else{
-				tips.setFailureMsg(msg.stream().collect(Collectors.joining(";")));
+				tips.setFailureMsg(msg.stream().collect(Collectors.joining(" ")));
 			}
 			groupUsersMap.forEach((groupId,groupUsers)->{
 
@@ -588,9 +588,9 @@ public class XmProjectGroupUserController {
 				msg.add("以下"+noDelUsers.size()+"个小组用户无权限删除。【"+noDelUsers.stream().collect(Collectors.toSet()).stream().collect(Collectors.joining(","))+"】");
  			}
 			if(canDelUsers.size()!=0){
-				tips.setOkMsg(msg.stream().collect(Collectors.joining(";")));
+				tips.setOkMsg(msg.stream().collect(Collectors.joining(" ")));
 			}else{
-				tips.setFailureMsg(msg.stream().collect(Collectors.joining(";")));
+				tips.setFailureMsg(msg.stream().collect(Collectors.joining(" ")));
 			}
 			groupUsersMap.forEach((groupId,groupUsers)->{
 
