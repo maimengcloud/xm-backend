@@ -148,29 +148,59 @@
 		delete from xm_task
 		where biz_proc_inst_id=#{procInstId}
 	</delete>
+
 	<!-- 查询任务总的预算及对应的计划的预算，任务总预算不能大于计划总预算 -->
-	<select id="selectTotalPhaseAndTaskBudgetCost" parameterType="HashMap" resultType="HashMap">
+	<select id="selectTotalTaskBudgetCost" parameterType="HashMap" resultType="HashMap">
 		SELECT
-		sum( ifnull(res.budget_cost,0) ) AS budget_cost,
-		sum( case when res.task_out='1' then ifnull(res.budget_cost,0) else 0 end ) AS task_budget_out_user_at,
-		sum( case when res.task_out='1' then 0 else ifnull(res.budget_cost,0)  end ) AS task_budget_inner_user_at,
-		sum(0) AS task_budget_nouser_at,
-		sum( res.budget_workload ) AS budget_workload,
-		p.phase_budget_nouser_at,
-		p.phase_budget_inner_user_at,
-		p.phase_budget_out_user_at,
-		p.phase_budget_workload,
-		p.phase_budget_hours,
-		p.phase_budget_staff_nu
-		FROM xm_project_phase p	LEFT JOIN   xm_task res
-		ON p.id = res.project_phase_id
-		WHERE
-		p.id = #{projectPhaseId}
+		ifnull(p.budget_cost,0) as budget_cost,
+		ifnull(p.budget_workload,0) as budget_workload,
+		tc.*
+		FROM xm_task p	LEFT JOIN
+		(select
+		res.parent_taskid,
+		sum( ifnull(res.budget_cost,0) ) AS child_budget_cost,
+		sum( ifnull(res.budget_workload,0) ) AS child_budget_workload
+		from
+		xm_task res where res.parent_taskid=#{parentTaskid} and res.lvl=1
 		<if test=" excludeTaskIds !=null "> and res.id not in
 			<foreach collection="excludeTaskIds" item="item" index="index" open="(" separator="," close=")" >
 				#{item}
 			</foreach>
 		</if>
+		) as tc ON p.id = tc.parent_taskid
+		WHERE
+		p.id = #{parentTaskid}
+
+	</select>
+	<!-- 查询任务总的预算及对应的计划的预算，任务总预算不能大于计划总预算 -->
+	<select id="selectTotalPhaseAndTaskBudgetCost" parameterType="HashMap" resultType="HashMap">
+		SELECT
+		p.phase_budget_nouser_at,
+		p.phase_budget_inner_user_at,
+		p.phase_budget_out_user_at,
+		p.phase_budget_at,
+		p.phase_budget_workload,
+		p.phase_budget_hours,
+		p.phase_budget_staff_nu,
+		tc.*
+		FROM xm_project_phase p	LEFT JOIN
+			(select
+		res.project_phase_id,
+		sum( ifnull(res.budget_cost,0) ) AS budget_cost,
+		sum( case when res.task_out='1' then ifnull(res.budget_cost,0) else 0 end ) AS task_budget_out_user_at,
+		sum( case when res.task_out='1' then 0 else ifnull(res.budget_cost,0)  end ) AS task_budget_inner_user_at,
+		sum(0) AS task_budget_nouser_at,
+		sum( res.budget_workload ) AS budget_workload
+		from
+		xm_task res where res.project_phase_id=#{projectPhaseId} and res.lvl=1
+			<if test=" excludeTaskIds !=null "> and res.id not in
+				<foreach collection="excludeTaskIds" item="item" index="index" open="(" separator="," close=")" >
+					#{item}
+				</foreach>
+			</if>
+		) as tc ON p.id = tc.project_phase_id
+		WHERE
+		p.id = #{projectPhaseId}
 
 	</select>
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->

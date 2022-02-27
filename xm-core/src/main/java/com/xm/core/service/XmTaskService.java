@@ -67,8 +67,8 @@ public class XmTaskService extends BaseService {
 	 * @param addTaskBudgetCost
 	 * @return
 	 */
-	public Tips judgetBudget(String projectPhaseId,BigDecimal addTaskBudgetCost,BigDecimal addTaskBudgetInnerUserAt,BigDecimal addTaskBudgetOutUserAt,BigDecimal addTaskBudgetNouserAt,List<String> excludeTaskIds){
-		Tips tips=new Tips("检查预算成功");
+	public Tips judgetPhaseBudget(String projectPhaseId, BigDecimal addTaskBudgetCost, BigDecimal addTaskBudgetInnerUserAt, BigDecimal addTaskBudgetOutUserAt, BigDecimal addTaskBudgetNouserAt, List<String> excludeTaskIds){
+		Tips tips=new Tips("成功");
 		if(!StringUtils.hasText(projectPhaseId)){
 			tips.setFailureMsg("projectPhaseId参数不能为空");
 			return tips;
@@ -91,7 +91,8 @@ public class XmTaskService extends BaseService {
 		}
 		if(addTaskBudgetNouserAt==null) {
 			addTaskBudgetNouserAt=BigDecimal.ZERO;
-		} 
+		}
+		BigDecimal phaseBudgetAt=NumberUtil.getBigDecimal(g.get("phaseBudgetAt"),zero);
 		BigDecimal phaseBudgetInnerUserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetInnerUserAt"),zero);
 		BigDecimal phaseBudgetOutUserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetOutUserAt"),zero); 
 		BigDecimal phaseBudgetNouserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetNouserAt"),zero); 
@@ -101,7 +102,7 @@ public class XmTaskService extends BaseService {
 		BigDecimal taskBudgetNouserAt=NumberUtil.getBigDecimal(g.get("taskBudgetNouserAt"),zero); 
 		BigDecimal taskBudgetTotalCost=NumberUtil.getBigDecimal(g.get("budgetCost"),zero);  
 		
-		
+		/**
 		if(addTaskBudgetInnerUserAt.add(taskBudgetInnerUserAt).compareTo(phaseBudgetInnerUserAt)>0) {
 			tips.setFailureMsg("内部人力预算超出项目内部人力预算");
 			return tips;
@@ -114,17 +115,52 @@ public class XmTaskService extends BaseService {
 			tips.setFailureMsg("非人力预算超出项目非人力预算");
 			return tips;
 		}
-		
-		BigDecimal phaseBudgetAt=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);  
-		if(phaseBudgetAt.compareTo(taskBudgetTotalCost)<0) {
-			tips.setFailureMsg("任务合计总预算超出计划总预算");
+		**/
+		BigDecimal totalTaskBudgetAt=taskBudgetTotalCost.add(addTaskBudgetCost);
+		if(phaseBudgetAt.compareTo(totalTaskBudgetAt)<0) {
+			tips.setFailureMsg("任务合计总预算超出计划总预算"+totalTaskBudgetAt.subtract(phaseBudgetAt)+"元");
 			return tips;
 		}else {
 			return tips;
 		} 
 		
 	}
+	/**
+	 *
+	 *
+	 ifnull(p.budget_cost,0) as budget_cost,
+	 ifnull(p.budget_workload,0) as budget_workload,
+	 sum( ifnull(res.budget_cost,0) ) AS child_budget_cost,
+	 sum( ifnull(res.budget_workload,0) ) AS child_budget_workload
+	 * 判断新增预算是否超出项目总预算
+	 * @param addTaskBudgetCost
+	 * @return
+	 */
+	public Tips judgetTaskBudget(String parentTaskid, BigDecimal addTaskBudgetCost, BigDecimal addTaskBudgetInnerUserAt, BigDecimal addTaskBudgetOutUserAt, BigDecimal addTaskBudgetNouserAt, List<String> excludeTaskIds){
+		Tips tips=new Tips("成功");
+		if(!StringUtils.hasText(parentTaskid)){
+			tips.setFailureMsg("parentTaskid参数不能为空");
+			return tips;
+		}
+		Map<String,Object> g=this.selectTotalTaskBudgetCost(parentTaskid,excludeTaskIds);
+		if(g==null || g.isEmpty()){
+			return tips;
+		}
 
+		BigDecimal budgetCost=NumberUtil.getBigDecimal(g.get("budgetCost"));
+		BigDecimal childBudgetCost=NumberUtil.getBigDecimal(g.get("childBudgetCost"));
+		if(budgetCost.compareTo(childBudgetCost)<0) {
+			tips.setFailureMsg("任务合计总预算超出上级总预算"+childBudgetCost.subtract(budgetCost)+"元");
+			return tips;
+		}else {
+			return tips;
+		}
+
+	}
+
+	private Map<String, Object> selectTotalTaskBudgetCost(String parentTaskid, List<String> excludeTaskIds) {
+		return selectOne("selectTotalTaskBudgetCost",map("parentTaskid",parentTaskid,"excludeTaskIds",excludeTaskIds));
+	}
 
 	public void updateTaskChildrenCntByTaskId(String taskId){
 		super.update("updateTaskChildrenCntByTaskId",taskId);
@@ -155,7 +191,6 @@ public class XmTaskService extends BaseService {
 		if(StringUtils.isEmpty(xmTaskVo.getMilestone())){
 			xmTaskVo.setMilestone("0");
 		}
-		this.parentIdPathsCalcBeforeSave(xmTaskVo);
 		XmTask xmTask = new XmTask();
 		BeanUtils.copyProperties(xmTaskVo,xmTask);
 		this.insert(xmTask);
@@ -446,6 +481,7 @@ public class XmTaskService extends BaseService {
 		Tips tips = new Tips("成功");
 		if (!StringUtils.hasText(currNode.getParentTaskid()) || "0".equals(currNode.getParentTaskid())) {
 			currNode.setPidPaths("0," + currNode.getId() + ",");
+			currNode.setLvl(1);
 			return tips;
 		} else {
 			List<XmTask> parentList=this.getParentList(currNode);
