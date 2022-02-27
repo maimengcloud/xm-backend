@@ -162,7 +162,7 @@
 		sum(t.phase_act_workload) as phase_act_workload,
 		sum(t.act_inner_user_at) as act_inner_user_at,
 		sum(t.act_out_user_at) as act_out_user_at,
-		sum(ifnull(t.act_rate,0)*ifnull(t.task_budget_workload,0))/ifnull(sum(ifnull(t.task_budget_workload,0.000001)),999999) as act_rate,
+		sum(ifnull(t.act_rate,0)*ifnull(t.task_budget_workload,0)) as task_budget_workload_act_rate,
 		sum(t.task_budget_workload) as task_budget_workload,
 		sum(t.task_budget_at) as task_budget_at
 		FROM xm_project_phase t
@@ -177,7 +177,7 @@
 		res.phase_act_workload = tc.phase_act_workload,
 		res.act_inner_user_at = tc.act_inner_user_at,
 		res.act_out_user_at = tc.act_out_user_at,
-		res.act_rate= tc.act_rate,
+		res.act_rate= case when tc.task_budget_workload_act_rate=0 then 0 else  tc.task_budget_workload_act_rate / tc.task_budget_workload end,
 		res.task_budget_workload=tc.task_budget_workload,
 		res.task_budget_at=tc.task_budget_at,
 		res.calc_time=now(),
@@ -197,7 +197,7 @@
 			sum(t.phase_act_workload) as phase_act_workload,
 			sum(t.act_inner_user_at) as act_inner_user_at,
 			sum(t.act_out_user_at) as act_out_user_at,
-			sum(ifnull(t.act_rate,0)*ifnull(t.task_budget_workload,0))/ifnull(sum(ifnull(t.task_budget_workload,0.000001)),999999) as act_rate,
+			sum(ifnull(t.act_rate,0)*ifnull(t.task_budget_workload,0))  as task_budget_workload_act_rate,
 			sum(t.task_budget_workload) as task_budget_workload,
 			sum(t.task_budget_at) as task_budget_at
 			FROM xm_project_phase t
@@ -215,7 +215,7 @@
 			res.phase_act_workload = tc.phase_act_workload,
 			res.act_inner_user_at = tc.act_inner_user_at,
 			res.act_out_user_at = tc.act_out_user_at,
-			res.act_rate= tc.act_rate,
+			res.act_rate= case when tc.task_budget_workload_act_rate=0 then 0 else  tc.task_budget_workload_act_rate / tc.task_budget_workload end,
 			res.task_budget_workload=tc.task_budget_workload,
 			res.task_budget_at=tc.task_budget_at,
 			res.calc_time=now(),
