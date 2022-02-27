@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProduct所有属性名: <br>
- *	id,productName,branchId,remark,version,pmUserid,pmUsername,ctime,deptid,pstatus,startTime,endTime,deptName,admUserid,admUsername,assUserid,assUsername,bizProcInstId,bizFlowState,isTpl,baselineId,baseTime,code,pbudgetWorkload,pbudgetAmount,pmenuBudgetWorkload,pmenuBudgetAmount;<br>
+ *	id,productName,branchId,remark,version,pmUserid,pmUsername,ctime,deptid,pstatus,startTime,endTime,deptName,admUserid,admUsername,assUserid,assUsername,bizProcInstId,bizFlowState,isTpl,baselineId,baseTime,code,pbudgetWorkload,pbudgetAmount,pmenuBudgetWorkload,pmenuBudgetAmount,budgetCtrl,phaseBudgetCtrl,phaseActCtrl;<br>
  * 表 xm_product 产品表的所有字段名: <br>
- *	id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,ass_userid,ass_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code,pbudget_workload,pbudget_amount,pmenu_budget_workload,pmenu_budget_amount;<br>
+ *	id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,ass_userid,ass_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code,pbudget_workload,pbudget_amount,pmenu_budget_workload,pmenu_budget_amount,budget_ctrl,phase_budget_ctrl,phase_act_ctrl;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -100,6 +100,15 @@ public class XmProduct  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="从需求汇总的总预算金额",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal pmenuBudgetAmount;
+	
+	@ApiModelProperty(notes="是否进行预算控制，计划中一级计划总预算不能大于项目预算",allowEmptyValue=true,example="",allowableValues="")
+	String budgetCtrl;
+	
+	@ApiModelProperty(notes="是否进行计划明细预算控制，计划中下级预算不能大于上级预算",allowEmptyValue=true,example="",allowableValues="")
+	String phaseBudgetCtrl;
+	
+	@ApiModelProperty(notes="计划是否进行实际金额控制，实际金额不能大于预算金额",allowEmptyValue=true,example="",allowableValues="")
+	String phaseActCtrl;
 
 	/**产品编号**/
 	public XmProduct(String id) {
@@ -272,6 +281,24 @@ public class XmProduct  implements java.io.Serializable {
 	public void setPmenuBudgetAmount(BigDecimal pmenuBudgetAmount) {
 		this.pmenuBudgetAmount = pmenuBudgetAmount;
 	}
+	/**
+	 * 是否进行预算控制，计划中一级计划总预算不能大于项目预算
+	 **/
+	public void setBudgetCtrl(String budgetCtrl) {
+		this.budgetCtrl = budgetCtrl;
+	}
+	/**
+	 * 是否进行计划明细预算控制，计划中下级预算不能大于上级预算
+	 **/
+	public void setPhaseBudgetCtrl(String phaseBudgetCtrl) {
+		this.phaseBudgetCtrl = phaseBudgetCtrl;
+	}
+	/**
+	 * 计划是否进行实际金额控制，实际金额不能大于预算金额
+	 **/
+	public void setPhaseActCtrl(String phaseActCtrl) {
+		this.phaseActCtrl = phaseActCtrl;
+	}
 	
 	/**
 	 * 产品编号
@@ -434,6 +461,24 @@ public class XmProduct  implements java.io.Serializable {
 	 **/
 	public BigDecimal getPmenuBudgetAmount() {
 		return this.pmenuBudgetAmount;
+	}
+	/**
+	 * 是否进行预算控制，计划中一级计划总预算不能大于项目预算
+	 **/
+	public String getBudgetCtrl() {
+		return this.budgetCtrl;
+	}
+	/**
+	 * 是否进行计划明细预算控制，计划中下级预算不能大于上级预算
+	 **/
+	public String getPhaseBudgetCtrl() {
+		return this.phaseBudgetCtrl;
+	}
+	/**
+	 * 计划是否进行实际金额控制，实际金额不能大于预算金额
+	 **/
+	public String getPhaseActCtrl() {
+		return this.phaseActCtrl;
 	}
 
 }

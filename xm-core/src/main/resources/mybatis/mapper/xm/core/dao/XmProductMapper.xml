@@ -106,7 +106,7 @@
 		insert into xm_product(
 			<include refid="columns"/>
 		) values (
-		#{id},#{productName},#{branchId},#{remark},#{version},#{pmUserid},#{pmUsername},#{ctime},#{deptid},#{pstatus},#{startTime},#{endTime},#{deptName},#{admUserid},#{admUsername},#{assUserid},#{assUsername},#{bizProcInstId},#{bizFlowState},#{isTpl},#{baselineId},#{baseTime},#{code},#{pbudgetWorkload},#{pbudgetAmount},#{pmenuBudgetWorkload},#{pmenuBudgetAmount}
+		#{id},#{productName},#{branchId},#{remark},#{version},#{pmUserid},#{pmUsername},#{ctime},#{deptid},#{pstatus},#{startTime},#{endTime},#{deptName},#{admUserid},#{admUsername},#{assUserid},#{assUsername},#{bizProcInstId},#{bizFlowState},#{isTpl},#{baselineId},#{baseTime},#{code},#{pbudgetWorkload},#{pbudgetAmount},#{pmenuBudgetWorkload},#{pmenuBudgetAmount},#{budgetCtrl},#{phaseBudgetCtrl},#{phaseActCtrl}
 		)
 	</insert>
 	
@@ -169,7 +169,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,ass_userid,ass_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code,pbudget_workload,pbudget_amount,pmenu_budget_workload,pmenu_budget_amount
+		id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,ass_userid,ass_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code,pbudget_workload,pbudget_amount,pmenu_budget_workload,pmenu_budget_amount,budget_ctrl,phase_budget_ctrl,phase_act_ctrl
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -201,6 +201,9 @@
 		<if test="pbudgetAmount != null and pbudgetAmount != ''">      and res.pbudget_amount = #{pbudgetAmount}     </if>
 		<if test="pmenuBudgetWorkload != null and pmenuBudgetWorkload != ''">      and res.pmenu_budget_workload = #{pmenuBudgetWorkload}     </if>
 		<if test="pmenuBudgetAmount != null and pmenuBudgetAmount != ''">      and res.pmenu_budget_amount = #{pmenuBudgetAmount}     </if>
+		<if test="budgetCtrl != null and budgetCtrl != ''">      and res.budget_ctrl = #{budgetCtrl}     </if>
+		<if test="phaseBudgetCtrl != null and phaseBudgetCtrl != ''">      and res.phase_budget_ctrl = #{phaseBudgetCtrl}     </if>
+		<if test="phaseActCtrl != null and phaseActCtrl != ''">      and res.phase_act_ctrl = #{phaseActCtrl}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -229,7 +232,10 @@
 		pbudget_workload = #{pbudgetWorkload},
 		pbudget_amount = #{pbudgetAmount},
 		pmenu_budget_workload = #{pmenuBudgetWorkload},
-		pmenu_budget_amount = #{pmenuBudgetAmount}
+		pmenu_budget_amount = #{pmenuBudgetAmount},
+		budget_ctrl = #{budgetCtrl},
+		phase_budget_ctrl = #{phaseBudgetCtrl},
+		phase_act_ctrl = #{phaseActCtrl}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
@@ -258,6 +264,9 @@
 		<if test="pbudgetAmount != null and pbudgetAmount != ''"> pbudget_amount = #{pbudgetAmount},     </if>
 		<if test="pmenuBudgetWorkload != null and pmenuBudgetWorkload != ''"> pmenu_budget_workload = #{pmenuBudgetWorkload},     </if>
 		<if test="pmenuBudgetAmount != null and pmenuBudgetAmount != ''"> pmenu_budget_amount = #{pmenuBudgetAmount},     </if>
+		<if test="budgetCtrl != null and budgetCtrl != ''"> budget_ctrl = #{budgetCtrl},     </if>
+		<if test="phaseBudgetCtrl != null and phaseBudgetCtrl != ''"> phase_budget_ctrl = #{phaseBudgetCtrl},     </if>
+		<if test="phaseActCtrl != null and phaseActCtrl != ''"> phase_act_ctrl = #{phaseActCtrl},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -286,6 +295,9 @@
 			pbudget_workload = #{item.pbudgetWorkload},
 			pbudget_amount = #{item.pbudgetAmount},
 			pmenu_budget_workload = #{item.pmenuBudgetWorkload},
-			pmenu_budget_amount = #{item.pmenuBudgetAmount}
+			pmenu_budget_amount = #{item.pmenuBudgetAmount},
+			budget_ctrl = #{item.budgetCtrl},
+			phase_budget_ctrl = #{item.phaseBudgetCtrl},
+			phase_act_ctrl = #{item.phaseActCtrl}
 	</sql>
 </mapper>

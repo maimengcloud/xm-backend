@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProject所有属性名: <br>
- *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planInnerUserAt,planOutUserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planInnerUserPrice,planOutUserPrice,planOutUserCnt,planInnerUserCnt,planWorkingHours,taxRate,planInnerUserWorkload,planOutUserWorkload,fromTplId,budgetCtrl,deptid,showOut,isTpl,pmUserid,pmUsername,assUserid,assUsername,admUserid,admUsername;<br>
+ *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planInnerUserAt,planOutUserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planInnerUserPrice,planOutUserPrice,planOutUserCnt,planInnerUserCnt,planWorkingHours,taxRate,planInnerUserWorkload,planOutUserWorkload,fromTplId,budgetCtrl,deptid,showOut,isTpl,pmUserid,pmUsername,assUserid,assUsername,admUserid,admUsername,phaseBudgetCtrl,phaseActCtrl;<br>
  * 表 xm_project xm_project的所有字段名: <br>
- *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username;<br>
+ *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -137,7 +137,7 @@ public class XmProject  implements java.io.Serializable {
 	@ApiModelProperty(notes="关联模板编号",allowEmptyValue=true,example="",allowableValues="")
 	String fromTplId;
 	
-	@ApiModelProperty(notes="是否进行预算控制",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="是否进行预算控制，计划中一级计划总预算不能大于项目预算",allowEmptyValue=true,example="",allowableValues="")
 	String budgetCtrl;
 	
 	@ApiModelProperty(notes="部门编号",allowEmptyValue=true,example="",allowableValues="")
@@ -166,6 +166,12 @@ public class XmProject  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="主管领导姓名",allowEmptyValue=true,example="",allowableValues="")
 	String admUsername;
+	
+	@ApiModelProperty(notes="是否进行计划明细预算控制，计划中下级预算不能大于上级预算",allowEmptyValue=true,example="",allowableValues="")
+	String phaseBudgetCtrl;
+	
+	@ApiModelProperty(notes="计划是否进行实际金额控制，实际金额不能大于预算金额",allowEmptyValue=true,example="",allowableValues="")
+	String phaseActCtrl;
 
 	/**项目编号**/
 	public XmProject(String id) {
@@ -411,7 +417,7 @@ public class XmProject  implements java.io.Serializable {
 		this.fromTplId = fromTplId;
 	}
 	/**
-	 * 是否进行预算控制
+	 * 是否进行预算控制，计划中一级计划总预算不能大于项目预算
 	 **/
 	public void setBudgetCtrl(String budgetCtrl) {
 		this.budgetCtrl = budgetCtrl;
@@ -469,6 +475,18 @@ public class XmProject  implements java.io.Serializable {
 	 **/
 	public void setAdmUsername(String admUsername) {
 		this.admUsername = admUsername;
+	}
+	/**
+	 * 是否进行计划明细预算控制，计划中下级预算不能大于上级预算
+	 **/
+	public void setPhaseBudgetCtrl(String phaseBudgetCtrl) {
+		this.phaseBudgetCtrl = phaseBudgetCtrl;
+	}
+	/**
+	 * 计划是否进行实际金额控制，实际金额不能大于预算金额
+	 **/
+	public void setPhaseActCtrl(String phaseActCtrl) {
+		this.phaseActCtrl = phaseActCtrl;
 	}
 	
 	/**
@@ -706,7 +724,7 @@ public class XmProject  implements java.io.Serializable {
 		return this.fromTplId;
 	}
 	/**
-	 * 是否进行预算控制
+	 * 是否进行预算控制，计划中一级计划总预算不能大于项目预算
 	 **/
 	public String getBudgetCtrl() {
 		return this.budgetCtrl;
@@ -764,6 +782,18 @@ public class XmProject  implements java.io.Serializable {
 	 **/
 	public String getAdmUsername() {
 		return this.admUsername;
+	}
+	/**
+	 * 是否进行计划明细预算控制，计划中下级预算不能大于上级预算
+	 **/
+	public String getPhaseBudgetCtrl() {
+		return this.phaseBudgetCtrl;
+	}
+	/**
+	 * 计划是否进行实际金额控制，实际金额不能大于预算金额
+	 **/
+	public String getPhaseActCtrl() {
+		return this.phaseActCtrl;
 	}
 
 }

@@ -163,7 +163,7 @@
 		insert into xm_project(
 			<include refid="columns"/>
 		) values (
-		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planInnerUserAt},#{planOutUserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planInnerUserPrice},#{planOutUserPrice},#{planOutUserCnt},#{planInnerUserCnt},#{planWorkingHours},#{taxRate},#{planInnerUserWorkload},#{planOutUserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut},#{isTpl},#{pmUserid},#{pmUsername},#{assUserid},#{assUsername},#{admUserid},#{admUsername}
+		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planInnerUserAt},#{planOutUserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planInnerUserPrice},#{planOutUserPrice},#{planOutUserCnt},#{planInnerUserCnt},#{planWorkingHours},#{taxRate},#{planInnerUserWorkload},#{planOutUserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut},#{isTpl},#{pmUserid},#{pmUsername},#{assUserid},#{assUsername},#{admUserid},#{admUsername},#{phaseBudgetCtrl},#{phaseActCtrl}
 		)
 	</insert>
 	
@@ -226,7 +226,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username
+		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -280,6 +280,8 @@
 		<if test="assUsername != null and assUsername != ''">      and res.ass_username = #{assUsername}     </if>
 		<if test="admUserid != null and admUserid != ''">      and res.adm_userid = #{admUserid}     </if>
 		<if test="admUsername != null and admUsername != ''">      and res.adm_username = #{admUsername}     </if>
+		<if test="phaseBudgetCtrl != null and phaseBudgetCtrl != ''">      and res.phase_budget_ctrl = #{phaseBudgetCtrl}     </if>
+		<if test="phaseActCtrl != null and phaseActCtrl != ''">      and res.phase_act_ctrl = #{phaseActCtrl}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -330,7 +332,9 @@
 		ass_userid = #{assUserid},
 		ass_username = #{assUsername},
 		adm_userid = #{admUserid},
-		adm_username = #{admUsername}
+		adm_username = #{admUsername},
+		phase_budget_ctrl = #{phaseBudgetCtrl},
+		phase_act_ctrl = #{phaseActCtrl}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="code != null and code != ''"> code = #{code},     </if>
@@ -381,6 +385,8 @@
 		<if test="assUsername != null and assUsername != ''"> ass_username = #{assUsername},     </if>
 		<if test="admUserid != null and admUserid != ''"> adm_userid = #{admUserid},     </if>
 		<if test="admUsername != null and admUsername != ''"> adm_username = #{admUsername},     </if>
+		<if test="phaseBudgetCtrl != null and phaseBudgetCtrl != ''"> phase_budget_ctrl = #{phaseBudgetCtrl},     </if>
+		<if test="phaseActCtrl != null and phaseActCtrl != ''"> phase_act_ctrl = #{phaseActCtrl},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -431,6 +437,8 @@
 			ass_userid = #{item.assUserid},
 			ass_username = #{item.assUsername},
 			adm_userid = #{item.admUserid},
-			adm_username = #{item.admUsername}
+			adm_username = #{item.admUsername},
+			phase_budget_ctrl = #{item.phaseBudgetCtrl},
+			phase_act_ctrl = #{item.phaseActCtrl}
 	</sql>
 </mapper>
