@@ -496,9 +496,9 @@ public class XmProjectPhaseController {
 				msgs.add("以下计划存在关联的任务，不允许删除。【"+existsTaskList.stream().collect(Collectors.joining(","))+"】");
 			}
 			if(canDelNodes.size()==0){
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(";\n")));
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}else{
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining(";\n")));
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}
 
 
