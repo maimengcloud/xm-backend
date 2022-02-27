@@ -530,6 +530,10 @@ public class XmProjectPhaseController {
 				return m;
 			}
 			XmProjectPhase xmProjectPhase=xmProjectPhases.get(0);
+
+			if(!StringUtils.hasText(xmProjectPhase.getProjectId())){
+				return ResponseHelper.failed("projectId-0","请上送项目编号");
+			}
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhase.getProjectId());
 			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
 			User user = LoginUtils.getCurrentUserInfo();
@@ -636,6 +640,9 @@ public class XmProjectPhaseController {
 				return m;
 			}
 			XmProjectPhase xmProjectPhase=xmProjectPhases.get(0);
+			if(!StringUtils.hasText(xmProjectPhase.getProjectId())){
+				return ResponseHelper.failed("projectId-0","请上送项目编号");
+			}
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhase.getProjectId());
 			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
 			User user = LoginUtils.getCurrentUserInfo();
@@ -740,6 +747,10 @@ public class XmProjectPhaseController {
 		Tips tips=new Tips("成功修改数据");
 		try{
 			String projectId=(String) params.get("projectId");
+
+			if(!StringUtils.hasText(projectId)){
+				return ResponseHelper.failed("projectId-0","请上送项目编号");
+			}
 			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
 			User user = LoginUtils.getCurrentUserInfo();
 
@@ -777,6 +788,10 @@ public class XmProjectPhaseController {
 		Tips tips=new Tips("成功修改数据");
 		try{
 			String projectId=(String) params.get("projectId");
+
+			if(!StringUtils.hasText(projectId)){
+				return ResponseHelper.failed("projectId-0","请上送项目编号");
+			}
 			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
 			User user = LoginUtils.getCurrentUserInfo();
 
@@ -812,6 +827,10 @@ public class XmProjectPhaseController {
 		Tips tips=new Tips("成功查询预算数据");
 		try{
 			String projectId=(String) params.get("projectId");
+
+			if(!StringUtils.hasText(projectId)){
+				return ResponseHelper.failed("projectId-0","请上送项目编号");
+			}
 			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
 			User user = LoginUtils.getCurrentUserInfo();
 
