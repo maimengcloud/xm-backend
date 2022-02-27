@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId,iterationId;<br>
+ *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId,iterationId,calcType;<br>
  * 表 xm_menu 功能表的所有字段名: <br>
- *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id;<br>
+ *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -115,6 +115,9 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="迭代编号",allowEmptyValue=true,example="",allowableValues="")
 	String iterationId;
+	
+	@ApiModelProperty(notes="叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报",allowEmptyValue=true,example="",allowableValues="")
+	String calcType;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -317,6 +320,12 @@ public class XmMenu  implements java.io.Serializable {
 	public void setIterationId(String iterationId) {
 		this.iterationId = iterationId;
 	}
+	/**
+	 * 叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报
+	 **/
+	public void setCalcType(String calcType) {
+		this.calcType = calcType;
+	}
 	
 	/**
 	 * 功能编号
@@ -509,6 +518,12 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public String getIterationId() {
 		return this.iterationId;
+	}
+	/**
+	 * 叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报
+	 **/
+	public String getCalcType() {
+		return this.calcType;
 	}
 
 }
