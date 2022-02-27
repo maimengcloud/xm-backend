@@ -222,25 +222,20 @@ public class XmProjectPhaseService extends BaseService {
 
 	}
 	@Transactional
-	public void batchInsertOrUpdate(List<XmProjectPhaseVo> xmProjectPhases) {
-		List<XmProjectPhaseVo> addList=new ArrayList<>();
-		List<XmProjectPhaseVo> editList=new ArrayList<>();
-		for (XmProjectPhaseVo vo : xmProjectPhases) {
-			if("addSub".equals(vo.getOpType())||"add".equals(vo.getOpType())) {
-				addList.add(vo);
-			}else {
-				editList.add(vo);
-			}
-		}
+	public void batchInsertOrUpdate(List<XmProjectPhase> inserts,List<XmProjectPhase> updates) {
+		List<XmProjectPhase> addList=inserts;
+		List<XmProjectPhase> editList=updates;
+		List<XmProjectPhase> all=new ArrayList<>();
 		if(addList.size()>0) {
+			all.addAll(addList);
 			this.batchInsert(addList);
 
 		}
-
 		if(editList.size()>0) {
+			all.addAll(editList);
 			this.batchUpdate(editList);
 		}
-		this.batchSumParents(xmProjectPhases.stream().map(i->(XmProjectPhase)i).collect(Collectors.toList()));
+		this.batchSumParents(all);
 	}
 
     public void calcKeyPaths(String projectId) {

@@ -630,7 +630,7 @@ public class XmProjectPhaseController {
 	})
 	@HasQx(value = "xm_core_xmProjectPhase_batchSaveBudget",name = "批量修改项目计划的预算",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchSaveBudget",method=RequestMethod.POST)
-	public Map<String,Object> batchSaveBudget(@RequestBody List<XmProjectPhaseVo> xmProjectPhases) {
+	public Map<String,Object> batchSaveBudget(@RequestBody List<XmProjectPhase> xmProjectPhases) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功修改"+xmProjectPhases.size()+"条数据");
 		try{
@@ -643,6 +643,8 @@ public class XmProjectPhaseController {
 			if(!StringUtils.hasText(xmProjectPhase.getProjectId())){
 				return ResponseHelper.failed("projectId-0","请上送项目编号");
 			}
+			List<XmProjectPhase> xmProjectPhaseListDb=xmProjectPhaseService.selectListByIds(xmProjectPhases.stream().map(i->i.getId()).collect(Collectors.toList()));
+
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhase.getProjectId());
 			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
 			User user = LoginUtils.getCurrentUserInfo();
@@ -654,12 +656,12 @@ public class XmProjectPhaseController {
 				return m;
 			}
 			String projectId=null;
-			List<String> excludePhaseIds=new ArrayList<>();
 			for (XmProjectPhase g : xmProjectPhases) {
 				projectId=g.getProjectId();
 				g=xmProjectPhaseService.autoCalcWorkload(g);
 				xmProjectPhaseService.calcPhaseBudgetAmount(g);
 			}
+			xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases);
 			List<XmProjectPhase> l1Phases=xmProjectPhases.stream().filter(i->1==i.getLvl()).collect(Collectors.toList());
 			if(l1Phases==null ||l1Phases.size()==0){//如果是导入到某个计划之下，
 				//找到导入的树中最上面的节点
@@ -705,22 +707,17 @@ public class XmProjectPhaseController {
 				}
 			}
 
-			for (XmProjectPhaseVo projectPhase : xmProjectPhases) {
-				if(!"1".equals(projectPhase.getNtype()) && !"add".equals(projectPhase.getOpType())&& !"addSub".equals(projectPhase.getOpType())){
-					if(xmProjectPhases.stream().filter(i->projectPhase.getId().equals(i.getParentPhaseId())).findAny().isPresent()){
-						return ResponseHelper.failed("p-ntype-no-1",projectPhase.getPhaseName()+"不是计划集,不允许下挂子计划");
-					}
-				}
-				if("add".equals(projectPhase.getOpType())||"addSub".equals(projectPhase.getOpType())){
+			for (XmProjectPhase projectPhase : xmProjectPhases) {
 					int childrenCnt=Integer.valueOf(xmProjectPhases.stream().filter(i->projectPhase.getId().equals(i.getParentPhaseId())).count()+"");
 					if(childrenCnt>0){
 						projectPhase.setChildrenCnt(childrenCnt);
 						projectPhase.setNtype("1");
 					}
-				}
 			}
-			xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases.stream().map(i->(XmProjectPhase)i).collect(Collectors.toList()));
-			xmProjectPhaseService.batchInsertOrUpdate(xmProjectPhases);
+
+			List<XmProjectPhase> inserts=xmProjectPhases.stream().filter(i->xmProjectPhaseListDb.stream().filter(k->k.getId().equals(i.getId())).findAny().isPresent()).collect(Collectors.toList());
+			List<XmProjectPhase> updates=xmProjectPhases.stream().filter(i->!xmProjectPhaseListDb.stream().filter(k->k.getId().equals(i.getId())).findAny().isPresent()).collect(Collectors.toList());
+			xmProjectPhaseService.batchInsertOrUpdate(inserts,updates);
 			for (XmProjectPhase phase : xmProjectPhases) {
 				xmRecordService.addProjectPhaseRecord(phase.getProjectId(), phase.getId(), "项目-计划-修改计划预算", "修改计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
 
