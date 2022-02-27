@@ -643,7 +643,6 @@ public class XmProjectPhaseController {
 			if(!StringUtils.hasText(xmProjectPhase.getProjectId())){
 				return ResponseHelper.failed("projectId-0","请上送项目编号");
 			}
-			List<XmProjectPhase> xmProjectPhaseListDb=xmProjectPhaseService.selectListByIds(xmProjectPhases.stream().map(i->i.getId()).collect(Collectors.toList()));
 
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhase.getProjectId());
 			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
@@ -714,9 +713,10 @@ public class XmProjectPhaseController {
 						projectPhase.setNtype("1");
 					}
 			}
+			List<XmProjectPhase> xmProjectPhaseListDb=xmProjectPhaseService.selectListByIds(xmProjectPhases.stream().map(i->i.getId()).collect(Collectors.toList()));
 
-			List<XmProjectPhase> inserts=xmProjectPhases.stream().filter(i->xmProjectPhaseListDb.stream().filter(k->k.getId().equals(i.getId())).findAny().isPresent()).collect(Collectors.toList());
-			List<XmProjectPhase> updates=xmProjectPhases.stream().filter(i->!xmProjectPhaseListDb.stream().filter(k->k.getId().equals(i.getId())).findAny().isPresent()).collect(Collectors.toList());
+			List<XmProjectPhase> inserts=xmProjectPhases.stream().filter(i->!xmProjectPhaseListDb.stream().filter(k->k.getId().equals(i.getId())).findAny().isPresent()).collect(Collectors.toList());
+			List<XmProjectPhase> updates=xmProjectPhases.stream().filter(i->xmProjectPhaseListDb.stream().filter(k->k.getId().equals(i.getId())).findAny().isPresent()).collect(Collectors.toList());
 			xmProjectPhaseService.batchInsertOrUpdate(inserts,updates);
 			for (XmProjectPhase phase : xmProjectPhases) {
 				xmRecordService.addProjectPhaseRecord(phase.getProjectId(), phase.getId(), "项目-计划-修改计划预算", "修改计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
