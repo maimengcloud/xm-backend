@@ -674,7 +674,7 @@ public class XmProductPhaseController {
 					}
 				}
 				xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases.stream().map(i->(XmProjectPhase)i).collect(Collectors.toList()));
-				xmProjectPhaseService.batchInsertOrUpdate(xmProjectPhases);
+				//xmProjectPhaseService.batchInsertOrUpdate(xmProjectPhases);
 				for (XmProjectPhase phase : xmProjectPhases) {
 					xmRecordService.addProductPhaseRecord(phase.getProductId(), phase.getId(), "产品-计划-修改计划预算", "修改计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
 					
