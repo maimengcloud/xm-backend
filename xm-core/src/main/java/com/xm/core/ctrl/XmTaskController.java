@@ -335,7 +335,7 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
-			boolean isHead=groupService.checkUserIsOtherUserTeamHead(pgroups,user.getUserid(),user.getUserid());
+			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),user.getUserid());
 			if(!isHead){
 				tips.setFailureMsg("您无权新建任务！项目经理、组长可以新建任务。");
 				m.put("tips", tips);
