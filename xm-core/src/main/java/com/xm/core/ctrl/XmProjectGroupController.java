@@ -193,6 +193,14 @@ public class XmProjectGroupController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmProjectGroup, "ids");
 		PageUtils.startPage(xmProjectGroup);
+		User user=LoginUtils.getCurrentUserInfo();
+		String projectId= (String) xmProjectGroup.get("projectId");
+		String productId= (String) xmProjectGroup.get("productId");
+		String iterationId= (String) xmProjectGroup.get("iterationId");
+		if(!StringUtils.hasText(projectId) && !StringUtils.hasText(productId) && !StringUtils.hasText(iterationId)){
+			xmProjectGroup.put("branchId",user.getBranchId());
+			xmProjectGroup.put("orCrowBranchId",user.getBranchId());
+		}
 		List<Map<String,Object>>	xmProjectGroupList = xmProjectGroupService.selectListMapByWhere(xmProjectGroup);	//列出XmProjectGroup列表
 		PageUtils.responePage(m, xmProjectGroupList);
 		m.put("data",xmProjectGroupList);

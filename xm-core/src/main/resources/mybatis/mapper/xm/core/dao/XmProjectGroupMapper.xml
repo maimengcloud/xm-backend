@@ -11,7 +11,8 @@
                  ( #{item})
              </foreach>
          </if>
-        <if test="key != null and key !='' ">       </if>
+        <if test="key != null and key !='' ">    and res.group_name like concat('%',#{key},'%')   </if>
+		<if test="orCrowBranchId!=null and orCrowBranchId!=''"> and (res.branch_id=#{branchId} or res.crow_branch_id=#{orCrowBranchId})</if>
     </sql>
 	<delete id="deleteByProjectId" parameterType="com.xm.core.entity.XmProjectGroup">
 		delete from xm_project_group where project_id = #{projectId}

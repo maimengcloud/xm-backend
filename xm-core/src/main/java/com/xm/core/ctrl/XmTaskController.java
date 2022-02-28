@@ -348,11 +348,16 @@ public class XmTaskController {
 				xmTaskVo.setMilestone("0");
 			} 
 			String projectPhaseId=xmTaskVo.getProjectPhaseId();
+			if(xmTaskVo.getBudgetCost()==null){
+				xmTaskVo.setBudgetCost(BigDecimal.ZERO);
+			}
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTaskVo);
-			if(xmTaskVo.getLvl()<=1){
-				tips=xmTaskService.judgetPhaseBudget(projectPhaseId, xmTaskVo.getBudgetCost(),null,null,null,null);
-			}else{
-				tips=xmTaskService.judgetTaskBudget(xmTaskVo.getParentTaskid(), xmTaskVo.getBudgetCost(),null,null,null,null);
+			if(xmTaskVo.getBudgetCost()!=null  && xmTaskVo.getBudgetCost().compareTo(BigDecimal.ZERO)>0){
+				if(xmTaskVo.getLvl()<=1){
+					tips=xmTaskService.judgetPhaseBudget(projectPhaseId, xmTaskVo.getBudgetCost(),null,null,null,null);
+				}else{
+					tips=xmTaskService.judgetTaskBudget(xmTaskVo.getParentTaskid(), xmTaskVo.getBudgetCost(),null,null,null,null);
+				}
 			}
 			if(tips.isOk()) {
 				xmTaskVo = xmTaskService.addTask(xmTaskVo);

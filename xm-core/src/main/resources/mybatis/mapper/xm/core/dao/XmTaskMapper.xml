@@ -263,8 +263,11 @@
 		sum( ifnull( t.act_cost, 0 ) ) AS act_cost,
 		sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
 		sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) ) as budget_workload_rate,
-		min( t.act_start_time ) AS act_start_time,
-		max( t.act_end_time ) AS act_end_time
+			sum( ifnull( t.budget_workload, 0 )) as budget_workload,
+			min( t.act_start_time ) AS act_start_time,
+			max( t.act_end_time ) AS act_end_time,
+			min( t.start_time ) AS start_time,
+			max( t.end_time ) AS end_time
 		FROM
 		xm_task t
 		WHERE
