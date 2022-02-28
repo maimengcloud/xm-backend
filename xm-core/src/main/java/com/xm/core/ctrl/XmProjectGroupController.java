@@ -238,6 +238,8 @@ public class XmProjectGroupController {
 				}
 				xmProjectGroup.setProductId(null);
 
+				xmProjectGroup.setBranchId(project.getBranchId());
+
 			}else{
 				if(!StringUtils.hasText(xmProjectGroup.getProductId())){
 					return ResponseHelper.failed("productId-0","产品编号不能为空");
@@ -251,6 +253,7 @@ public class XmProjectGroupController {
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
+				xmProjectGroup.setBranchId(product.getBranchId());
 				Map<String,String> productAdmMap=xmProjectGroupService.getProductAdmUsers(product);
 				if(!productAdmMap.containsKey(u.getUserid())) {
 					return ResponseHelper.failed("not-product-adm","您不是产品管理人员，不能创建小组。产品级助理及以上人员可以创建小组。");
@@ -389,7 +392,7 @@ public class XmProjectGroupController {
 				}
 			}else{
 				id=groupDb.getProductId();
-				XmProduct product=this.xmProductService.selectOneObject(new XmProduct(id));
+				XmProduct product=this.xmProductService.getProductFromCache( id );
 				Map<String,String> productAdmMap=xmProjectGroupService.getProductAdmUsers(product);
 				if(!productAdmMap.containsKey(user.getUserid())) {
 					return ResponseHelper.failed("not-product-adm","您不是产品管理人员，不能删除小组。产品级助理以上人员可以删除小组。");

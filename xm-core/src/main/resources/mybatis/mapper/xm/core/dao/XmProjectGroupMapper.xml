@@ -13,6 +13,7 @@
          </if>
         <if test="key != null and key !='' ">    and res.group_name like concat('%',#{key},'%')   </if>
 		<if test="orCrowBranchId!=null and orCrowBranchId!=''"> and (res.branch_id=#{branchId} or res.crow_branch_id=#{orCrowBranchId})</if>
+		<if test="iterationId!=null and iterationId!=''"> and exists ( select 1 from xm_iteration_product_link ipl left join xm_product_project_link ppl on ipl.product_id=ppl.product_id and (ipl.product_id=res.product_id or ppl.project_id = res.project_id))</if>
     </sql>
 	<delete id="deleteByProjectId" parameterType="com.xm.core.entity.XmProjectGroup">
 		delete from xm_project_group where project_id = #{projectId}

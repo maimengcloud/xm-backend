@@ -18,7 +18,7 @@
 	</delete>
 
 	<select id="selectListByWhereHead" parameterType="com.xm.core.entity.XmProjectGroupUser" resultType="com.xm.core.entity.XmProjectGroupUser">
-		select * from xm_project_group_user res
+		select res.*,g.group_name,g.crow_branch_name,g.crow_branch_id,g.is_crow from xm_project_group_user res left join xm_project_group g on res.group_id=g.id
 		<where>
 			<include refid="where"/>
 		</where>

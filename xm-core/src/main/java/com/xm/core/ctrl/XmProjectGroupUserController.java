@@ -386,9 +386,12 @@ public class XmProjectGroupUserController {
 			}
 			List<XmProjectGroupUser> gusDb=this.xmProjectGroupUserService.selectListByIds(gus);
 			//过滤掉已经存在的
-			gus=gus.stream().filter(i->!(gusDb.stream().filter(k->k.getGroupId().equals(i.getGroupId())&&k.getUserid().equals(i.getUserid()))).findAny().isPresent()).collect(Collectors.toList());
+			List<XmProjectGroupUser> gusNoExists=gus.stream().filter(i->!(gusDb.stream().filter(k->k.getGroupId().equals(i.getGroupId())&&k.getUserid().equals(i.getUserid()))).findAny().isPresent()).collect(Collectors.toList());
+			if(gusNoExists.size()==0){
+				return ResponseHelper.failed("user-had-exists","成功添加0个组员。以下用户已在小组中，不用再添加。【"+gusDb.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"】");
+			}
 			User user=LoginUtils.getCurrentUserInfo();
-			XmProjectGroupUser gu=gus.get(0);
+			XmProjectGroupUser gu=gusNoExists.get(0);
 			String productId=gu.getProductId();
 			String projectId=gu.getProjectId();
 			String pgClass=gu.getPgClass();
@@ -400,8 +403,8 @@ public class XmProjectGroupUserController {
 				if(xmProduct==null){
 					return ResponseHelper.failed("product-0","产品已不存在");
 				}
-				gus2=gus.stream().filter(i->productId.equals(i.getProductId())).collect(Collectors.toList());
-				if(gus2.size()<gusDb.size()){
+				gus2=gusNoExists.stream().filter(i->productId.equals(i.getProductId())).collect(Collectors.toList());
+				if(gus2.size()<gusNoExists.size()){
 					return ResponseHelper.failed("data-0","批量新增只能新增同一个产品的成员。");
 				}
 			}else {
@@ -409,13 +412,13 @@ public class XmProjectGroupUserController {
 				if(xmProject==null){
 					return ResponseHelper.failed("project-0","项目已不存在");
 				}
-				gus2=gus.stream().filter(i->projectId.equals(i.getProjectId())).collect(Collectors.toList());
-				if(gus2.size()<gusDb.size()){
+				gus2=gusNoExists.stream().filter(i->projectId.equals(i.getProjectId())).collect(Collectors.toList());
+				if(gus2.size()<gusNoExists.size()){
 					return ResponseHelper.failed("data-0","批量新增只能新增同一个项目的成员。");
 				}
 			}
 
-			Set<String> groupIds=gus.stream().map(i->i.getGroupId()).collect(Collectors.toSet());
+			Set<String> groupIds=gusNoExists.stream().map(i->i.getGroupId()).collect(Collectors.toSet());
 			List<XmProjectGroupUser> canAddUsers=new ArrayList<>();
 			Map<String,List<XmProjectGroupUser>> groupUsersMap=new HashMap<>();
 			for (String groupId : groupIds) {
@@ -453,15 +456,8 @@ public class XmProjectGroupUserController {
 			if(canAddUsers.size()>0){
 				xmProjectGroupUserService.batchInsert(canAddUsers);
 			}
-			List<String> noAddUsers=new ArrayList<>();
-			if(canAddUsers.size()<gus.size()){
-
-				for (XmProjectGroupUser gu0 : gus) {
-					if(!canAddUsers.stream().filter(i->i.getUserid().equals(gu0.getUserid())&&i.getGroupId().equals(gu0.getGroupId())).findAny().isPresent()){
-						noAddUsers.add(gu0.getUsername());
-					}
-				}
-				msg.add("以下"+noAddUsers.size()+"个小组用户无需新增。【"+noAddUsers.stream().collect(Collectors.toSet()).stream().collect(Collectors.joining(","))+"】");
+ 			if(canAddUsers.size()<gus.size()){
+				msg.add("以下"+gusDb.size()+"个小组用户已在组里，无需再添加。【"+gusDb.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"】");
 			}
 			if(canAddUsers.size()!=0){
 				tips.setOkMsg(msg.stream().collect(Collectors.joining(" ")));
