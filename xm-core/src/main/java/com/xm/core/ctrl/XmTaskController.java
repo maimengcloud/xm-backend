@@ -1179,26 +1179,33 @@ public class XmTaskController {
 						return ResponseHelper.failed(tips);
 					}
 				}
-			}else{
-				List<XmTask> tasks=canOpTasks.stream().filter(i->!canOpTasks.stream().filter(k->k.getId().equals(i.getParentTaskid())).findAny().isPresent()).collect(Collectors.toList());
-				tasks=tasks.stream().filter(i->StringUtils.hasText(i.getParentTaskid())).collect(Collectors.toList());
-				if(tasks.size()>0){
-					Set<String> parentTaskIdSet=tasks.stream().map(i->i.getParentTaskid()).collect(Collectors.toSet());
-					for (String pid : parentTaskIdSet) {
-						BigDecimal childBudgetCost=BigDecimal.ZERO;
-						List<XmTask> childs=canOpTasks.stream().filter(i->pid.equals(i.getParentTaskid())).collect(Collectors.toList());
-						for (XmTask child : childs) {
-							childBudgetCost=childBudgetCost.add(child.getBudgetCost());
-						}
-						if(childBudgetCost.compareTo(BigDecimal.ZERO)>0){
-							tips= xmTaskService.judgetTaskBudget(pid,childBudgetCost,null,null,null,childs.stream().map(i->i.getId()).collect(Collectors.toList()));
-							if(!tips.isOk()){
-								return ResponseHelper.failed("budget-not-enought",tips.getMsg()+" 相关任务【"+childs.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
-							}
-						}
+			}
+			Map<String,List<XmTask>> map=new HashMap<>();
+			for (XmTask canOpTask : canOpTasks) {
+				if(!StringUtils.hasText(canOpTask.getParentTaskid())||canOpTask.getParentTaskid().equals("0")){
+					continue;
+				}
+				List<XmTask> childs=map.get(canOpTask.getParentTaskid());
+				if(childs==null){
+					childs=new ArrayList<>();
+				}
+				childs.add(canOpTask);
+				map.put(canOpTask.getParentTaskid(),childs);
+			}
+			for (Map.Entry<String, List<XmTask>> kv : map.entrySet()) {
+				BigDecimal childBudgetCost = BigDecimal.ZERO;
+				List<XmTask> childs = kv.getValue();
+				for (XmTask child : childs) {
+					childBudgetCost = childBudgetCost.add(child.getBudgetCost());
+				}
+				if (childBudgetCost.compareTo(BigDecimal.ZERO) > 0) {
+					tips = xmTaskService.judgetTaskBudget(kv.getKey(), childBudgetCost, null, null, null, childs.stream().map(i -> i.getId()).collect(Collectors.toList()));
+					if (!tips.isOk()) {
+						return ResponseHelper.failed("budget-not-enought", tips.getMsg() + " 相关任务【" + childs.stream().map(i -> i.getName()).collect(Collectors.joining(",")) + "】");
 					}
 				}
 			}
+
 
 			//过滤掉我没有权限的
 			List<XmTask> canUpdateTasks=canOpTasks.stream().filter(i->xmTaskDbMap.containsKey(i.getId())).collect(Collectors.toList());
