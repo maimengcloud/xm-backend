@@ -1126,6 +1126,12 @@ public class XmTaskController {
 					m.put("tips", tips);
 					return m;
 				}
+				if(task.getBudgetCost()==null){
+					task.setBudgetCost(BigDecimal.ZERO);
+				}
+				if(task.getBudgetWorkload()==null){
+					task.setBudgetWorkload(BigDecimal.ZERO);
+				}
 				frontParamsTaskMap.put(task.getId(),task);
 				if(xmTaskDbMap.containsKey(task.getId())){
 					updateTasks.add(task);
@@ -1163,6 +1169,7 @@ public class XmTaskController {
 			if(tasksLvl1.size()>0){
 				BigDecimal totalTaskBudgetCost=BigDecimal.ZERO;
 				for (XmTask task : tasksLvl1) {
+
 					totalTaskBudgetCost=totalTaskBudgetCost.add(task.getBudgetCost());
 				}
 				if(totalTaskBudgetCost.compareTo(BigDecimal.ZERO)>0){
