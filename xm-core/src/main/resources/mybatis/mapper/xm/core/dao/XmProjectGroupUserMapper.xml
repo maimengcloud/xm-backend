@@ -17,14 +17,6 @@
 		delete from xm_project_group_user where group_id = #{groupId}
 	</delete>
 
-	<select id="selectListByWhereHead" parameterType="com.xm.core.entity.XmProjectGroupUser" resultType="com.xm.core.entity.XmProjectGroupUser">
-		select res.*,g.group_name,g.crow_branch_name,g.crow_branch_id,g.is_crow from xm_project_group_user res left join xm_project_group g on res.group_id=g.id
-		<where>
-			<include refid="where"/>
-		</where>
-		order by is_head desc
-	</select>
-
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectGroupUserListByProjectId" parameterType="String" resultType="com.xm.core.entity.XmProjectGroupUser">
 		select * from xm_project_group_user res
@@ -51,11 +43,12 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from xm_project_group_user res
+		select res.*,g.group_name,g.crow_branch_name,g.crow_branch_id,g.is_crow from xm_project_group_user res left join xm_project_group g on res.group_id=g.id
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
 		</where>
+		order by res.seq_no asc
 	</select>
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
