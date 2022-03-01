@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmQuestion所有属性名: <br>
- *	id,name,projectId,projectName,caseId,caseName,endTime,askUserid,askUsername,handlerUserid,handlerUsername,priority,solution,description,createUserid,createUsername,createTime,bugStatus,bizProcInstId,bizFlowState,menuId,menuName,planWorkload,planCostAmount,totalActWorkload,totalActCostAmount,expectResult,opStep,currResult,refRequire,bugSeverity,bugType,tagIds,tagNames,urls,ltime,qtype,taskId,taskName,iterationId,iterationName,caseExecId,lremark;<br>
- * 表 XM.xm_question xm_question的所有字段名: <br>
- *	id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,plan_workload,plan_cost_amount,total_act_workload,total_act_cost_amount,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,task_id,task_name,iteration_id,iteration_name,case_exec_id,lremark;<br>
+ *	id,name,projectId,projectName,caseId,caseName,endTime,askUserid,askUsername,handlerUserid,handlerUsername,priority,solution,description,createUserid,createUsername,createTime,bugStatus,bizProcInstId,bizFlowState,menuId,menuName,planWorkload,planCostAmount,totalActWorkload,totalActCostAmount,expectResult,opStep,currResult,refRequire,bugSeverity,bugType,tagIds,tagNames,urls,ltime,qtype,taskId,taskName,iterationId,iterationName,caseExecId,lremark,productId;<br>
+ * 表 xm_question xm_question的所有字段名: <br>
+ *	id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,plan_workload,plan_cost_amount,total_act_workload,total_act_cost_amount,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,task_id,task_name,iteration_id,iteration_name,case_exec_id,lremark,product_id;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -80,10 +80,10 @@ public class XmQuestion  implements java.io.Serializable {
 	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
 	String bizFlowState;
 	
-	@ApiModelProperty(notes="需求编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="故事编号",allowEmptyValue=true,example="",allowableValues="")
 	String menuId;
 	
-	@ApiModelProperty(notes="需求名称",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="故事名称",allowEmptyValue=true,example="",allowableValues="")
 	String menuName;
 	
 	@ApiModelProperty(notes="预估工时单位人时",allowEmptyValue=true,example="",allowableValues="")
@@ -148,6 +148,9 @@ public class XmQuestion  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="最后更新说明",allowEmptyValue=true,example="",allowableValues="")
 	String lremark;
+	
+	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
+	String productId;
 
 	/**问题编号**/
 	public XmQuestion(String id) {
@@ -279,13 +282,13 @@ public class XmQuestion  implements java.io.Serializable {
 		this.bizFlowState = bizFlowState;
 	}
 	/**
-	 * 需求编号
+	 * 故事编号
 	 **/
 	public void setMenuId(String menuId) {
 		this.menuId = menuId;
 	}
 	/**
-	 * 需求名称
+	 * 故事名称
 	 **/
 	public void setMenuName(String menuName) {
 		this.menuName = menuName;
@@ -416,6 +419,12 @@ public class XmQuestion  implements java.io.Serializable {
 	public void setLremark(String lremark) {
 		this.lremark = lremark;
 	}
+	/**
+	 * 产品编号
+	 **/
+	public void setProductId(String productId) {
+		this.productId = productId;
+	}
 	
 	/**
 	 * 问题编号
@@ -538,13 +547,13 @@ public class XmQuestion  implements java.io.Serializable {
 		return this.bizFlowState;
 	}
 	/**
-	 * 需求编号
+	 * 故事编号
 	 **/
 	public String getMenuId() {
 		return this.menuId;
 	}
 	/**
-	 * 需求名称
+	 * 故事名称
 	 **/
 	public String getMenuName() {
 		return this.menuName;
@@ -674,6 +683,12 @@ public class XmQuestion  implements java.io.Serializable {
 	 **/
 	public String getLremark() {
 		return this.lremark;
+	}
+	/**
+	 * 产品编号
+	 **/
+	public String getProductId() {
+		return this.productId;
 	}
 
 }

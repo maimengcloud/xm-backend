@@ -270,6 +270,9 @@ public class XmProjectGroupController {
 					return m;
 				}
 			}
+			if(StringUtils.hasText(xmProjectGroup.getBranchId())){
+				xmProjectGroup.setBranchId(u.getBranchId());
+			}
 			this.xmProjectGroupService.parentIdPathsCalcBeforeSave(xmProjectGroup);
 			xmProjectGroupService.insert(xmProjectGroup);
 			if("1".equals(xmProjectGroup.getPgClass())){

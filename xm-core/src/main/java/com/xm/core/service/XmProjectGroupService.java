@@ -738,6 +738,7 @@ public class XmProjectGroupService extends BaseService {
 		Tips tips = new Tips("成功");
 		if (!StringUtils.hasText(currNode.getPgroupId()) || "0".equals(currNode.getPgroupId())) {
 			currNode.setPidPaths("0," + currNode.getId() + ",");
+			currNode.setLvl(1);
 			return tips;
 		} else {
 			List<XmProjectGroup> parentList=this.getParentList(currNode);

@@ -3,45 +3,71 @@
 <mapper namespace="com.xm.core.entity.XmQuestion">
 	
 	
-	<!--开始 自定sql函数区域 -->
-		<!--请在此区域添加自定义函数-->
-		
-		
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
 
-		<!-- 插入流程审批表数据 -->
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+		<if test=" tagIdList != null"> and
+			<foreach collection="tagIdList" item="item" index="index" open="(" separator=" or " close=")" >
+				find_in_set(#{item},res.tag_ids)
+			</foreach>
+		</if>
+		<if test="hisHandlerUserid !=null "> and exists (select 1 from xm_question_handle h where h.question_id = res.id and h.handler_userid=#{hisHandlerUserid} and handle_status=#{hisHandleStatus})</if>
+		<if test=" createTimeStart !=null "> and res.create_time between #{createTimeStart} and #{createTimeEnd} </if>
+		<if test=" ltimeStart !=null "> and res.ltime between #{ltimeStart} and #{ltimeEnd} </if>
+		<include refid="where"/>
+		<if test=" productId !=null and productId!='' "> and exists( select 1 from xm_menu m where m.menu_id=res.menu_id and m.product_id=#{productId}) </if>
+		<if test="myUserid != null and myUserid != ''"> and ( res.create_userid=#{myUserid} or res.handler_userid=#{myUserid}) </if>
+		<if test="menuIds != null">  and
+			res.menu_id in
+			<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+		</if>
+		<if test="compete !=null and compete!=''">
+			and exists ( select 1 from xm_project_group_user gu where gu.userid=#{compete} and gu.project_id=res.project_id )
+		</if>
+		<if test="key != null and key !='' ">  and res.name like #{key}     </if>
+		<if test="work != null and work != ''"> and res.status != 'resolved' </if>
+    </sql>
+	<!-- 插入流程审批表数据 -->
 	<insert id="insertProcessApprova"
-		parameterType="HashMap"
-		useGeneratedKeys="false" keyProperty="id">
+			parameterType="HashMap"
+			useGeneratedKeys="false" keyProperty="id">
 		insert into xm_question_process_approva (
-		 id,question_id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
+		id,question_id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
 		) values (
-			#{id},#{questionId},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
+		#{id},#{questionId},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
 		)
 	</insert>
 
-		<!-- 同时修改业务表及流程审批表数据状态 -->
+	<!-- 同时修改业务表及流程审批表数据状态 -->
 	<update id="updateProcessApprova"
-		parameterType="HashMap">
+			parameterType="HashMap">
 		update xm_question  b ,XM.xm_question_process_approva pa
-			<set>
-				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
-				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
-				<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>
-				<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if>
-				<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
-				<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
-				 pa.flow_last_time = now(),
-				<if test=' eventName != null and eventName !="" '> pa.event_name = #{eventName},</if>
-				<if test=' flowState != null and flowState !="" '> pa.flow_state=#{flowState},</if>
-				<if test=' bizFlowState != null and bizFlowState !="" '> b.biz_flow_state=#{bizFlowState},</if>
-				<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
-			</set>
+		<set>
+			<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
+			<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
+			<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>
+			<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if>
+			<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
+			<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
+			pa.flow_last_time = now(),
+			<if test=' eventName != null and eventName !="" '> pa.event_name = #{eventName},</if>
+			<if test=' flowState != null and flowState !="" '> pa.flow_state=#{flowState},</if>
+			<if test=' bizFlowState != null and bizFlowState !="" '> b.biz_flow_state=#{bizFlowState},</if>
+			<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
+		</set>
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
-		      and b.id=pa.question_id
+		and b.id=pa.question_id
 	</update>
 
 	<update id="updateFlowStateByProcInstForDeleteSuccess"
-		parameterType="HashMap">
+			parameterType="HashMap">
 		update xm_question_process_approva pa set pa.flow_state='2'
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
 	</update>
@@ -49,7 +75,7 @@
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByProcInstId" parameterType="HashMap">
 		delete from xm_question
-		 where biz_proc_inst_id=#{procInstId}
+		where biz_proc_inst_id=#{procInstId}
 	</delete>
 
 	<!--结束 自定义sql函数区域-->
@@ -58,37 +84,10 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from xm_question res   left join  xm_question_process_approva pa on res.id=pa.question_id and res.biz_proc_inst_id=pa.proc_inst_id
-
-		<where> 
-			<if test="ids != null">  and     
-				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
-			 </if>
-			<if test=" tagIdList != null"> and
-				<foreach collection="tagIdList" item="item" index="index" open="(" separator=" or " close=")" >
-					find_in_set(#{item},res.tag_ids)
-				</foreach>
-			</if>
-			<if test="hisHandlerUserid !=null "> and exists (select 1 from xm_question_handle h where h.question_id = res.id and h.handler_userid=#{hisHandlerUserid} and handle_status=#{hisHandleStatus})</if>
-			<if test=" createTimeStart !=null "> and res.create_time between #{createTimeStart} and #{createTimeEnd} </if>
-			<if test=" ltimeStart !=null "> and res.ltime between #{ltimeStart} and #{ltimeEnd} </if>
+		select * from xm_question res
+		<where>
+		    <include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test=" productId !=null and productId!='' "> and exists( select 1 from xm_menu m where m.menu_id=res.menu_id and m.product_id=#{productId}) </if>
-			<if test="myUserid != null and myUserid != ''"> and ( res.create_userid=#{myUserid} or res.handler_userid=#{myUserid}) </if>
-			<if test="menuIds != null">  and
-				res.menu_id in
-				<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
-					#{item}
-				</foreach>
-			</if>
-			<if test="compete !=null and compete!=''">
-				and exists ( select 1 from xm_project_group_user gu where gu.userid=#{compete} and gu.project_id=res.project_id )
-			</if>
-			<if test="key != null and key !='' ">  and res.name like #{key}     </if>
-			<if test="work != null and work != ''"> and res.status != 'resolved' </if>
 		</where>
 	</select>
 	
@@ -125,27 +124,27 @@
 		insert into xm_question(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{projectId},#{projectName},#{caseId},#{caseName},#{endTime},#{askUserid},#{askUsername},#{handlerUserid},#{handlerUsername},#{priority},#{solution},#{description},#{createUserid},#{createUsername},#{createTime},#{bugStatus},#{bizProcInstId},#{bizFlowState},#{menuId},#{menuName},#{planWorkload},#{planCostAmount},#{totalActWorkload},#{totalActCostAmount},#{expectResult},#{opStep},#{currResult},#{refRequire},#{bugSeverity},#{bugType},#{tagIds},#{tagNames},#{urls},#{ltime},#{qtype},#{taskId},#{taskName},#{iterationId},#{iterationName},#{caseExecId},#{lremark}
+		#{id},#{name},#{projectId},#{projectName},#{caseId},#{caseName},#{endTime},#{askUserid},#{askUsername},#{handlerUserid},#{handlerUsername},#{priority},#{solution},#{description},#{createUserid},#{createUsername},#{createTime},#{bugStatus},#{bizProcInstId},#{bizFlowState},#{menuId},#{menuName},#{planWorkload},#{planCostAmount},#{totalActWorkload},#{totalActCostAmount},#{expectResult},#{opStep},#{currResult},#{refRequire},#{bugSeverity},#{bugType},#{tagIds},#{tagNames},#{urls},#{ltime},#{qtype},#{taskId},#{taskName},#{iterationId},#{iterationName},#{caseExecId},#{lremark},#{productId}
 		)
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmQuestion">
-		delete from xm_question
+		delete from xm_question res
 		<where>  
-			1=2
+			<include refid="where"/>
 		</where>
 	</delete>
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmQuestion">
-		delete from xm_question
+		delete from xm_question 
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmQuestion">
-		update  xm_question
+		update  xm_question 
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -154,7 +153,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmQuestion">
-		update  xm_question
+		update  xm_question 
 		<set>
 			<include refid="set"/>
 		</set>
@@ -169,7 +168,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_question
+   		update  xm_question 
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -177,20 +176,18 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_question
+		delete from xm_question 
 			where
-			(id)
-			    in
+			(id) in
                 <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
-                    ( #{item.id}
-                    )
+                    (  #{item.id} )
                 </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,plan_workload,plan_cost_amount,total_act_workload,total_act_cost_amount,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,task_id,task_name,iteration_id,iteration_name,case_exec_id,lremark
+		id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,plan_workload,plan_cost_amount,total_act_workload,total_act_cost_amount,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,task_id,task_name,iteration_id,iteration_name,case_exec_id,lremark,product_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -238,6 +235,7 @@
 		<if test="iterationName != null and iterationName != ''">      and res.iteration_name = #{iterationName}     </if>
 		<if test="caseExecId != null and caseExecId != ''">      and res.case_exec_id = #{caseExecId}     </if>
 		<if test="lremark != null and lremark != ''">      and res.lremark = #{lremark}     </if>
+		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -282,7 +280,8 @@
 		iteration_id = #{iterationId},
 		iteration_name = #{iterationName},
 		case_exec_id = #{caseExecId},
-		lremark = #{lremark}
+		lremark = #{lremark},
+		product_id = #{productId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -327,6 +326,7 @@
 		<if test="iterationName != null and iterationName != ''"> iteration_name = #{iterationName},     </if>
 		<if test="caseExecId != null and caseExecId != ''"> case_exec_id = #{caseExecId},     </if>
 		<if test="lremark != null and lremark != ''"> lremark = #{lremark},     </if>
+		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -371,6 +371,7 @@
 			iteration_id = #{item.iterationId},
 			iteration_name = #{item.iterationName},
 			case_exec_id = #{item.caseExecId},
-			lremark = #{item.lremark}
+			lremark = #{item.lremark},
+			product_id = #{item.productId}
 	</sql>
 </mapper>
