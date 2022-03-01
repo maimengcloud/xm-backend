@@ -823,8 +823,7 @@ public class XmProjectPhaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功查询预算数据");
 		try{
-			String projectId=(String) params.get("projectId");
-
+			String projectId=(String) params.get("projectId"); 
 			if(!StringUtils.hasText(projectId)){
 				return ResponseHelper.failed("projectId-0","请上送项目编号");
 			}

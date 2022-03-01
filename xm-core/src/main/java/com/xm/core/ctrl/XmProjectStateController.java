@@ -153,7 +153,7 @@ public class XmProjectStateController {
 	@RequestMapping(value="/loadTasksToXmProjectState",method=RequestMethod.POST)
 	public Map<String,Object> loadTasksToXmProjectState(@RequestBody XmProjectState xmProjectState){
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功一条项目数据");
+		Tips tips=new Tips("成功更新一条项目数据");
 		try{
 			if(StringUtils.isEmpty(xmProjectState.getProjectId())) {
 				tips.setFailureMsg("项目编号projectId必填");
@@ -178,7 +178,7 @@ public class XmProjectStateController {
 	@RequestMapping(value="/loadTasksSettleToXmProjectState",method=RequestMethod.POST)
 	public Map<String,Object> loadTasksSettleToXmProjectState(@RequestBody XmProjectState xmProjectState){
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功一条项目数据");
+		Tips tips=new Tips("成功更新一条项目数据");
 		try{
 			if(StringUtils.isEmpty(xmProjectState.getProjectId())) {
 				tips.setFailureMsg("项目编号projectId必填");
