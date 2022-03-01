@@ -19,8 +19,6 @@
 		<if test="hisHandlerUserid !=null "> and exists (select 1 from xm_question_handle h where h.question_id = res.id and h.handler_userid=#{hisHandlerUserid} and handle_status=#{hisHandleStatus})</if>
 		<if test=" createTimeStart !=null "> and res.create_time between #{createTimeStart} and #{createTimeEnd} </if>
 		<if test=" ltimeStart !=null "> and res.ltime between #{ltimeStart} and #{ltimeEnd} </if>
-		<include refid="where"/>
-		<if test=" productId !=null and productId!='' "> and exists( select 1 from xm_menu m where m.menu_id=res.menu_id and m.product_id=#{productId}) </if>
 		<if test="myUserid != null and myUserid != ''"> and ( res.create_userid=#{myUserid} or res.handler_userid=#{myUserid}) </if>
 		<if test="menuIds != null">  and
 			res.menu_id in
@@ -29,7 +27,7 @@
 			</foreach>
 		</if>
 		<if test="compete !=null and compete!=''">
-			and exists ( select 1 from xm_project_group_user gu where gu.userid=#{compete} and gu.project_id=res.project_id )
+			and exists ( select 1 from xm_project_group_user gu where gu.userid=#{compete} and (gu.project_id=res.project_id or gu.product_id=res.product_id))
 		</if>
 		<if test="key != null and key !='' ">  and res.name like #{key}     </if>
 		<if test="work != null and work != ''"> and res.status != 'resolved' </if>
