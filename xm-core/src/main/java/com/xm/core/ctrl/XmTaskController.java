@@ -14,13 +14,12 @@ import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.PubTool;
-import com.xm.core.entity.XmTask;
-import com.xm.core.service.XmProjectGroupService;
-import com.xm.core.service.XmProjectService;
-import com.xm.core.service.XmRecordService;
-import com.xm.core.service.XmTaskService;
+import com.xm.core.entity.*;
+import com.xm.core.service.*;
 import com.xm.core.service.cache.XmTaskCacheService;
 import com.xm.core.service.push.XmPushMsgService;
+import com.xm.core.vo.BatchRelTasksWithMenu;
+import com.xm.core.vo.BatchRelTasksWithPhase;
 import com.xm.core.vo.XmProjectGroupVo;
 import com.xm.core.vo.XmTaskVo;
 import io.swagger.annotations.*;
@@ -70,7 +69,14 @@ public class XmTaskController {
 	private XmPushMsgService xmPushMsgService;
 
 	private XmProjectService xmProjectService;
+	@Autowired
+	XmProjectPhaseService xmProjectPhaseService;
 
+	@Autowired
+	XmMenuService xmMenusService;
+
+	@Autowired
+	XmProductService xmProductService;
 
 	@ApiOperation( value = "查询xm_task信息列表",notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({
@@ -882,46 +888,60 @@ public class XmTaskController {
 		}  
 		m.put("tips", tips);
 		return m;
-	} 
-	@ApiOperation( value = "批量将多个任务与一个用户需求关联",notes="")
+	}
+
+
+	@ApiOperation( value = "批量将任务与一个项目计划关联",notes="")
 	@ApiResponses({
-		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmTask_batchRelTasksWithMenu",name = "批量将任务与一个用户需求关联",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
-	@RequestMapping(value="/batchRelTasksWithMenu",method=RequestMethod.POST)
-	public Map<String,Object> batchRelTasksWithMenu(@RequestBody List<XmTask> xmTasks) {
+	@HasQx(value = "xm_core_xmTask_batchRelTasksWithPhase",name = "批量将任务与一个项目计划关联",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/batchRelTasksWithPhase",method=RequestMethod.POST)
+	public Map<String,Object> batchRelTasksWithPhase(@RequestBody BatchRelTasksWithPhase tasksPhase) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功"+xmTasks.size()+"条任务数据与用户需求关联");
+		Tips tips=new Tips("成功将任务数据与项目计划关联");
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
 
-			if(xmTasks==null || xmTasks.size()==0){
-				tips.setFailureMsg("任务列表不能为空");
-				m.put("tips", tips);
-				return m;
-			}
-			XmTask xmTask=xmTasks.get(0);
-			String projectId=xmTask.getProjectId();
-			if( !StringUtils.hasText(projectId) ){
-				tips.setFailureMsg("项目编号不能为空");
-				m.put("tips", tips);
-				return m;
+			if(tasksPhase==null){
+				return ResponseHelper.failed("params-0","参数不能为空");
 			}
 
-			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
+			String projectPhaseId=tasksPhase.getProjectPhaseId();
+			if( !StringUtils.hasText(projectPhaseId) ){
+				return ResponseHelper.failed("projectPhaseId-0","项目计划编号不能为空");
+			}
+			XmProjectPhase xmProjectPhaseDb=this.xmProjectPhaseService.selectOneObject(new XmProjectPhase(projectPhaseId));
+
+
+			if(xmProjectPhaseDb==null){
+				return ResponseHelper.failed("phase-0","计划【"+xmProjectPhaseDb.getPhaseName()+"】已不存在");
+			}
+			if("1".equals(xmProjectPhaseDb.getNtype())){
+				return ResponseHelper.failed("phase-ntype-1","【"+xmProjectPhaseDb.getPhaseName()+"】属于计划集，无需关联任务。");
+			}
+			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProjectPhaseDb.getProjectId());
+			if(xmProjectDb==null){
+				return ResponseHelper.failed("project-0","项目已不存在");
+			}
+			if("8".equals(xmProjectDb.getStatus())){
+				return ResponseHelper.failed("project-status-8","项目已完成,不能再修改");
+			}
+			if( "9".equals(xmProjectDb.getStatus())){
+				return ResponseHelper.failed("project-status-9","项目关闭,不能再修改");
+			}
+			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(xmProjectDb.getId());
 			if(pgroups==null || pgroups.size()==0){
-				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
-				m.put("tips", tips);
-				return m;
+				return ResponseHelper.failed("group-0","该项目还未建立项目团队，请先进行团队成员维护");
 			}
 			List<XmTask> allowTasks=new ArrayList<>();
 			List<XmTask> noAllowTasks=new ArrayList<>();
-			Map<String,XmTask> xmTaskDbMap=this.xmTaskService.selectTasksMapByTasks(xmTasks);
-			for (XmTask task : xmTaskDbMap.values()) {
-				if( !projectId.equals(task.getProjectId()) ){
-					tips.setFailureMsg("所有任务必须同属于一个项目");
-					m.put("tips", tips);
-					return m;
+			List<XmTask> ntype1Tasks=new ArrayList<>();
+			List<XmTask> tasksDb=this.xmTaskService.selectTaskListByIds(tasksPhase.getTaskIds());
+			for (XmTask task : tasksDb) {
+				if("1".equals(task.getNtype())){
+					ntype1Tasks.add(task);
+					continue;
 				}
 				boolean isMyCreate=user.getUserid().equals(task.getCreateUserid());
 				if(isMyCreate){
@@ -936,22 +956,157 @@ public class XmTaskController {
 				}
 
 			}
+			List<String> msgs=new ArrayList<>();
 			if(allowTasks.size()>0){
-				xmTaskService.batchRelTasksWithMenu(allowTasks);
-				for (XmTask t : allowTasks) {
-					xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量更新任务", "将任务"+t.getName()+"与需求【"+t.getMenuId()+"-"+t.getMenuName()+"】关联",JSON.toJSONString(t),null);
-
-				}
-				if(noAllowTasks.size()>0){
-					tips.setOkMsg(allowTasks.size()+"个任务成功关联用户需求，另外有"+noAllowTasks.size()+"个任务无权操作，只有任务负责人、项目经理、组长可以批量将任务与用户需求进行关联");
-				}
-
+				BatchRelTasksWithPhase tasksWithPhase=new BatchRelTasksWithPhase();
+				tasksWithPhase.setProjectPhaseId(projectPhaseId);
+				tasksWithPhase.setTaskIds(allowTasks.stream().map(i->i.getId()).collect(Collectors.toList()));
+				xmTaskService.batchRelTasksWithPhase(tasksWithPhase);
+			}
+			msgs.add("成功将"+allowTasks.size()+"个任务与计划关联。");
+			for (XmTask t : allowTasks) {
+				xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量更新任务", "将任务"+t.getName()+"与计划【"+xmProjectPhaseDb.getId()+"-"+xmProjectPhaseDb.getPhaseName()+"】关联",null,null);
+			}
+			if(ntype1Tasks.size()>0){
+				msgs.add("以下"+ntype1Tasks.size()+"个任务属于任务集，无需关联计划。【"+ntype1Tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+			}
+			if(noAllowTasks.size()>0){
+				msgs.add("以下"+noAllowTasks.size()+"个任务无权操作，只有任务负责人、项目经理、组长可以批量将任务与项目计划进行关联,【"+noAllowTasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+			}
+			if(allowTasks.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}else{
-				if(noAllowTasks.size()>0){
-					tips.setFailureMsg(allowTasks.size()+"个任务成功关联用户需求，另外有"+noAllowTasks.size()+"个任务无权操作，只有任务负责人、项目经理、组长可以批量将任务与用户需求进行关联");
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
+			}
+
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
+	@ApiOperation( value = "批量将多个任务与一个用户需求关联",notes="")
+	@ApiResponses({
+		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@HasQx(value = "xm_core_xmTask_batchRelTasksWithMenu",name = "批量将任务与一个用户需求关联",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/batchRelTasksWithMenu",method=RequestMethod.POST)
+	public Map<String,Object> batchRelTasksWithMenu(@RequestBody BatchRelTasksWithMenu tasksMenu) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功将任务与用户需求关联");
+		try{
+			User user=LoginUtils.getCurrentUserInfo();
+
+			if(tasksMenu==null||tasksMenu.getTaskIds()==null||tasksMenu.getTaskIds().size()==0 ){
+				return ResponseHelper.failed("tasks-0","任务列表不能为空");
+			};
+			if(!StringUtils.hasText(tasksMenu.getMenuId()) ){
+				return ResponseHelper.failed("menuId-0","需求编号不能为空");
+			};
+			XmMenu xmMenuDb=this.xmMenusService.selectOneObject(new XmMenu(tasksMenu.getMenuId()));
+			if(xmMenuDb==null){
+				return ResponseHelper.failed("menu-0","需求已不存在");
+			}
+
+			if("8".equals(xmMenuDb.getStatus())){
+				return ResponseHelper.failed("menu-status-8","需求已下线");
+			}
+
+			if("9".equals(xmMenuDb.getStatus())){
+				return ResponseHelper.failed("menu-status-8","需求已删除");
+			}
+
+			XmProduct xmProductDb=xmProductService.getProductFromCache(xmMenuDb.getProductId());
+			boolean hasMenuQx=true;
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if(!isPm){
+				List<XmProjectGroupVo> pgroups=groupService.getProductGroupVoList(xmMenuDb.getProductId());
+				if(StringUtils.hasText(xmMenuDb.getMmUserid()) ){
+					if(!user.getUserid().equals(xmMenuDb.getMmUserid())){
+
+						if(pgroups==null || pgroups.size()==0){
+							hasMenuQx=false;
+						} else if(!groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,xmMenuDb.getMmUserid(),user.getUserid())){
+							hasMenuQx=false;
+						}
+					}
+				}else{
+					if(!groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),user.getUserid())){
+						hasMenuQx=false;
+					}
 				}
 			}
 
+			List<XmTask> allowTasks=new ArrayList<>();
+
+			List<XmTask> ntype1Tasks=new ArrayList<>();
+			List<XmTask> noAllowTasks=new ArrayList<>();
+			List<XmTask> tasksDb=this.xmTaskService.selectTaskListByIds(tasksMenu.getTaskIds());
+			if(hasMenuQx==false){
+				Map<String,List<XmTask>> projectTasksMap=new HashMap<>();
+				for (XmTask xmTask : tasksDb) {
+					if("1".equals(xmTask.getNtype())){
+						ntype1Tasks.add(xmTask);
+						continue;
+					}
+					 List<XmTask> projectTasks=projectTasksMap.get(xmTask.getProjectId());
+					 if(projectTasks==null){
+						projectTasks=new ArrayList<>();
+						projectTasksMap.put(xmTask.getProjectId(),projectTasks);
+					 }
+					projectTasks.add(xmTask);
+				}
+
+				for (Map.Entry<String, List<XmTask>> pt : projectTasksMap.entrySet()) {
+					XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(pt.getKey());
+					boolean isProjectAdm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
+					List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectDb.getId());
+					if(isProjectAdm==false){
+						if(groupVoList==null){
+							noAllowTasks.addAll(pt.getValue());
+						}else{
+							for (XmTask xmTask : pt.getValue()) {
+								if(!user.getUserid().equals(xmTask.getCreateUserid()) && !user.getUserid().equals(xmTask.getExecutorUserid())){
+									if(!groupService.checkUserIsOtherUserTeamHeadOrAss(groupVoList,xmTask.getCreateUserid(),user.getUserid())){
+										if(!groupService.checkUserIsOtherUserTeamHeadOrAss(groupVoList,xmTask.getExecutorUserid(),user.getUserid())){
+											noAllowTasks.add(xmTask);
+										}
+									}
+								}
+							}
+						}
+
+					}
+				}
+			}
+
+			allowTasks=tasksDb.stream().filter(i->!noAllowTasks.stream().filter(k->k.getId().equals(i.getId())).findAny().isPresent()).collect(Collectors.toList());
+			List<String> msgs=new ArrayList<>();
+			if(allowTasks.size()>0){
+				BatchRelTasksWithMenu tasksWithMenu=new BatchRelTasksWithMenu();
+				tasksWithMenu.setMenuId(xmMenuDb.getMenuId());
+				tasksWithMenu.setTaskIds(allowTasks.stream().map(i->i.getId()).collect(Collectors.toList()));
+				xmTaskService.batchRelTasksWithMenu(tasksWithMenu);
+			}
+			msgs.add("成功将"+allowTasks.size()+"个任务与需求关联。");
+			for (XmTask t : allowTasks) {
+				xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量更新任务", "将任务"+t.getName()+"与需求【"+xmMenuDb.getMenuId()+"-"+xmMenuDb.getMenuName()+"】关联",null,null);
+			}
+			if(ntype1Tasks.size()>0){
+				msgs.add("以下"+ntype1Tasks.size()+"个任务属于任务集，无需关联需求。【"+ntype1Tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+			}
+			if(noAllowTasks.size()>0){
+				msgs.add("以下"+noAllowTasks.size()+"个任务无权操作，只有任务负责人、项目经理、组长、产品组组长、需求管理组人员可以批量将任务与需求进行关联,【"+noAllowTasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+			}
+			if(allowTasks.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
+			}else{
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
+			}
 			
 		}catch (BizException e) { 
 			tips=e.getTips();

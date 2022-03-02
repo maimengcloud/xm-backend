@@ -12,6 +12,8 @@ import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskSkill;
+import com.xm.core.vo.BatchRelTasksWithMenu;
+import com.xm.core.vo.BatchRelTasksWithPhase;
 import com.xm.core.vo.XmTaskVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -392,10 +394,8 @@ public class XmTaskService extends BaseService {
 	 * @param xmTasks
 	 */
 	@Transactional
-	public void batchRelTasksWithMenu(List<XmTask> xmTasks) {
-		for (XmTask xmTask : xmTasks) {
-			this.update("relTaskWithMenu", xmTask);
-		}
+	public void batchRelTasksWithMenu(BatchRelTasksWithMenu tasksWithMenu) {
+		 super.update("batchRelTasksWithMenu",tasksWithMenu);
 	}
 
 	@Transactional
@@ -658,6 +658,10 @@ public class XmTaskService extends BaseService {
 		}
 		return true;
 
+	}
+
+	public void batchRelTasksWithPhase(BatchRelTasksWithPhase tasksPhase) {
+		super.update("batchRelTasksWithPhase",tasksPhase);
 	}
 }
 

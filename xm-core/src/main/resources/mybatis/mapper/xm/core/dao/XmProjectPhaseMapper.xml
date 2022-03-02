@@ -232,6 +232,15 @@
 			#{item}
 		</foreach>
 	</select>
+
+
+	<select id="batchRelTasksWithPhase" parameterType="com.xm.core.vo.BatchRelTasksWithPhase">
+		update xm_task res set res.project_phase_id = #{projectPhaseId} where res.id in
+		<foreach collection="taskIds" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+		and res.ntype='0'
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 
