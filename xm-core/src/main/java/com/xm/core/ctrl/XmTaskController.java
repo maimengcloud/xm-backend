@@ -67,7 +67,7 @@ public class XmTaskController {
 	
 	@Autowired
 	private XmPushMsgService xmPushMsgService;
-
+	@Autowired
 	private XmProjectService xmProjectService;
 	@Autowired
 	XmProjectPhaseService xmProjectPhaseService;

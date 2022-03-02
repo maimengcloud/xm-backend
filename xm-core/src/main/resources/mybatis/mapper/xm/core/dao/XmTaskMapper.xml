@@ -104,19 +104,19 @@
 		</foreach>
 	</update>
 	<update id="batchRelTasksWithMenu" parameterType="HashMap">
-		update xm_task res set res.menu_id=${menuId},res.menu_name =${menuName} res.product_id=#{productId}
+		update xm_task res set res.menu_id=#{menuId},res.menu_name =#{menuName}, res.product_id=#{productId}
 		where res.id in
 		<foreach collection="taskIds" item="item" index="index" open="(" separator="," close=")" >
-			( #{item})
+			#{item}
 		</foreach>
 		and res.ntype='0'
 	</update>
 
 	<update id="batchRelTasksWithPhase" parameterType="com.xm.core.vo.BatchRelTasksWithPhase">
-		update xm_task res set res.project_phase_id=${projectPhaseId}
+		update xm_task res set res.project_phase_id=#{projectPhaseId}
 		where res.id in
 		<foreach collection="taskIds" item="item" index="index" open="(" separator="," close=")" >
-			( #{item})
+			#{item}
 		</foreach>
 		and res.ntype='0'
 	</update>

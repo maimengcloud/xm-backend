@@ -396,7 +396,7 @@ public class XmTaskService extends BaseService {
 	@Transactional
 	public void batchRelTasksWithMenu(BatchRelTasksWithMenu tasksWithMenu,XmMenu xmMenuDb) {
 		Map<String,Object> map=map("menuId",tasksWithMenu.getMenuId(),"menuName",xmMenuDb.getMenuName(),"productId",xmMenuDb.getProductId(),"taskIds",tasksWithMenu.getTaskIds());
-		 super.update("batchRelTasksWithMenu",tasksWithMenu);
+		 super.update("batchRelTasksWithMenu",map);
 	}
 
 	@Transactional
