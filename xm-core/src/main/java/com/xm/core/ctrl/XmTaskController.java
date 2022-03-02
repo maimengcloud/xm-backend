@@ -1090,7 +1090,7 @@ public class XmTaskController {
 				BatchRelTasksWithMenu tasksWithMenu=new BatchRelTasksWithMenu();
 				tasksWithMenu.setMenuId(xmMenuDb.getMenuId());
 				tasksWithMenu.setTaskIds(allowTasks.stream().map(i->i.getId()).collect(Collectors.toList()));
-				xmTaskService.batchRelTasksWithMenu(tasksWithMenu);
+				xmTaskService.batchRelTasksWithMenu(tasksWithMenu,xmMenuDb);
 			}
 			msgs.add("成功将"+allowTasks.size()+"个任务与需求关联。");
 			for (XmTask t : allowTasks) {

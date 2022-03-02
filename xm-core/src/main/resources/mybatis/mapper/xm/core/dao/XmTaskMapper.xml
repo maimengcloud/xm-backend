@@ -103,7 +103,14 @@
 			( #{item})
 		</foreach>
 	</update>
-
+	<update id="batchRelTasksWithPhase" parameterType="HashMap">
+		update xm_task res set res.menu_id=${menuId},res.menu_name =${menuName} res.product_id=#{productId}
+		where res.id in
+		<foreach collection="taskIds" item="item" index="index" open="(" separator="," close=")" >
+			( #{item})
+		</foreach>
+		and res.ntype='0'
+	</update>
 
 	<!-- 插入流程审批表数据 -->
 	<insert id="insertProcessApprova"

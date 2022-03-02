@@ -391,10 +391,11 @@ public class XmTaskService extends BaseService {
 	
 	/**
 	 * 批量更新任务的需求为新的需求或者更新为空
-	 * @param xmTasks
+	 * @param tasksWithMenu
 	 */
 	@Transactional
-	public void batchRelTasksWithMenu(BatchRelTasksWithMenu tasksWithMenu) {
+	public void batchRelTasksWithMenu(BatchRelTasksWithMenu tasksWithMenu,XmMenu xmMenuDb) {
+		Map<String,Object> map=map("menuId",tasksWithMenu.getMenuId(),"menuName",xmMenuDb.getMenuName(),"productId",xmMenuDb.getProductId(),"taskIds",tasksWithMenu.getTaskIds());
 		 super.update("batchRelTasksWithMenu",tasksWithMenu);
 	}
 
