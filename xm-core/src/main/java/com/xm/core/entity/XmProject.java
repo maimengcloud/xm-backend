@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProject所有属性名: <br>
- *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planInnerUserAt,planOutUserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planInnerUserPrice,planOutUserPrice,planOutUserCnt,planInnerUserCnt,planWorkingHours,taxRate,planInnerUserWorkload,planOutUserWorkload,fromTplId,budgetCtrl,deptid,showOut,isTpl,pmUserid,pmUsername,assUserid,assUsername,admUserid,admUsername,phaseBudgetCtrl,phaseActCtrl;<br>
+ *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planInnerUserAt,planOutUserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planInnerUserPrice,planOutUserPrice,planOutUserCnt,planInnerUserCnt,planWorkingHours,taxRate,planInnerUserWorkload,planOutUserWorkload,fromTplId,budgetCtrl,deptid,showOut,isTpl,pmUserid,pmUsername,assUserid,assUsername,admUserid,admUsername,phaseBudgetCtrl,phaseActCtrl,del,ltime;<br>
  * 表 xm_project xm_project的所有字段名: <br>
- *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl;<br>
+ *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl,del,ltime;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -125,7 +125,7 @@ public class XmProject  implements java.io.Serializable {
 	@ApiModelProperty(notes="预计工作小时数目",allowEmptyValue=true,example="",allowableValues="")
 	Integer planWorkingHours;
 	
-	@ApiModelProperty(notes="税率",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="税率0-100之间",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal taxRate;
 	
 	@ApiModelProperty(notes="内部人力总工作量-应该大于或等于阶段计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
@@ -172,6 +172,12 @@ public class XmProject  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="计划是否进行实际金额控制，实际金额不能大于预算金额",allowEmptyValue=true,example="",allowableValues="")
 	String phaseActCtrl;
+	
+	@ApiModelProperty(notes="是否已删除0否1是",allowEmptyValue=true,example="",allowableValues="")
+	String del;
+	
+	@ApiModelProperty(notes="最后更新时间",allowEmptyValue=true,example="",allowableValues="")
+	Date ltime;
 
 	/**项目编号**/
 	public XmProject(String id) {
@@ -393,7 +399,7 @@ public class XmProject  implements java.io.Serializable {
 		this.planWorkingHours = planWorkingHours;
 	}
 	/**
-	 * 税率
+	 * 税率0-100之间
 	 **/
 	public void setTaxRate(BigDecimal taxRate) {
 		this.taxRate = taxRate;
@@ -487,6 +493,18 @@ public class XmProject  implements java.io.Serializable {
 	 **/
 	public void setPhaseActCtrl(String phaseActCtrl) {
 		this.phaseActCtrl = phaseActCtrl;
+	}
+	/**
+	 * 是否已删除0否1是
+	 **/
+	public void setDel(String del) {
+		this.del = del;
+	}
+	/**
+	 * 最后更新时间
+	 **/
+	public void setLtime(Date ltime) {
+		this.ltime = ltime;
 	}
 	
 	/**
@@ -700,7 +718,7 @@ public class XmProject  implements java.io.Serializable {
 		return this.planWorkingHours;
 	}
 	/**
-	 * 税率
+	 * 税率0-100之间
 	 **/
 	public BigDecimal getTaxRate() {
 		return this.taxRate;
@@ -794,6 +812,18 @@ public class XmProject  implements java.io.Serializable {
 	 **/
 	public String getPhaseActCtrl() {
 		return this.phaseActCtrl;
+	}
+	/**
+	 * 是否已删除0否1是
+	 **/
+	public String getDel() {
+		return this.del;
+	}
+	/**
+	 * 最后更新时间
+	 **/
+	public Date getLtime() {
+		return this.ltime;
 	}
 
 }
