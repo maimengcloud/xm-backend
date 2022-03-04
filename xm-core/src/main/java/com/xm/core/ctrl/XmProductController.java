@@ -291,9 +291,13 @@ public class XmProductController {
 				 }
 			 }
 			  **/
-			 xmProductService.doDeleteByPk(xmProduct);
+			 XmProduct xmProductDel=new XmProduct();
+			 xmProductDel.setId(xmProductDb.getId());
+			 xmProductDel.setDel("1");
+			 xmProductDb.setLtime(new Date());
+			 xmProductService.updateSomeFieldByPk(xmProductDb);
 			xmProductService.clearCache(xmProduct.getId());
-			xmRecordService.addXmProductRecord(xmProduct.getId(),"删除产品","删除产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】","",JSON.toJSONString(xmProductDb));
+			xmRecordService.addXmProductRecord(xmProduct.getId(),"删除产品",user.getUsername()+"删除产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】","",JSON.toJSONString(xmProductDb));
 
 		}catch (BizException e) { 
 			tips=e.getTips();
