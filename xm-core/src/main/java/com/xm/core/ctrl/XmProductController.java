@@ -248,6 +248,11 @@ public class XmProductController {
 			xmProduct.setId(this.xmProductService.createProductId(xmProduct.getCode()));
 			xmProduct.setCtime(new Date());
 			xmProduct.setLtime(new Date());
+			if(!StringUtils.hasText(xmProduct.getIsTpl())){
+				xmProduct.setIsTpl("0");
+			}
+			xmProduct.setBizFlowState("0");
+			xmProduct.setPstatus("0");
 			xmProduct.setDel("0");
 			xmProduct.setLocked("0");
 			xmProductService.insert(xmProduct);
