@@ -24,6 +24,9 @@
 			)
 		</if>
 		<if test="ctimeStart!=null and ctimeEnd!=null ">and ctime between #{ctimeStart} and #{ctimeEnd}</if>
+		<if test="del==null or del==''">
+			and res.del!='1'
+		</if>
     </sql>
 
 	<select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
