@@ -366,7 +366,7 @@ public class XmProductController {
 				return ResponseHelper.failed("product-0","产品已不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			if(groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
+			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
 				return ResponseHelper.failed("no-qx-0","您无权修改该产品");
 			}
 			xmProduct.setLtime(new Date());

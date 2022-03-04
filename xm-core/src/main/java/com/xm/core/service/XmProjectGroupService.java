@@ -651,8 +651,8 @@ public class XmProjectGroupService extends BaseService {
 
 		Map<String,String> proUsersMap=new HashMap<>();
 		proUsersMap.put(xmProductDb.getPmUserid(),xmProductDb.getPmUsername());
-		proUsersMap.put(xmProductDb.getAssUserid(),xmProductDb.getAssUserid());
-		proUsersMap.put(xmProductDb.getAdmUserid(),xmProductDb.getAdmUserid());
+		proUsersMap.put(xmProductDb.getAssUserid(),xmProductDb.getAssUsername());
+		proUsersMap.put(xmProductDb.getAdmUserid(),xmProductDb.getAdmUsername());
 		return proUsersMap;
 	}
 	public Tips checkHasProductEditQx(User user,XmProduct xmProductDb) {
