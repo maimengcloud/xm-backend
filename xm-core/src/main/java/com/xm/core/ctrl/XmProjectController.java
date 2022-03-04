@@ -143,11 +143,12 @@ public class XmProjectController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-
+			User user=LoginUtils.getCurrentUserInfo();
 	        if(StringUtils.isEmpty(xmProjectVo.getCode())) {
 	        	 tips.setFailureMsg("编号不能为空，请修改编号再提交"); 
 	        }else if(!StringUtils.hasText(xmProjectVo.getBranchId())){
-				tips.setFailureMsg("项目归属机构号不能为空");
+	        	xmProjectVo.setBranchId(user.getBranchId());
+				//tips.setFailureMsg("项目归属机构号不能为空");
 			}else {
 				xmProjectService.saveProject(xmProjectVo);
 				xmProjectService.clearProject(xmProjectVo.getId());
