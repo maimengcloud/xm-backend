@@ -318,8 +318,33 @@ public class XmProductController {
 		m.put("tips", tips);
 		return m;
 	}
-	 
-	
+
+	/***/
+	@ApiOperation( value = "创建产品代号",notes="createProductCode")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmProduct.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@HasQx(value = "xm_core_xmProduct_createProductCode",name = "创建产品代号",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/createProductCode",method=RequestMethod.POST)
+	public Map<String,Object> createProductCode() {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功创建产品代号");
+		try{
+			User user=LoginUtils.getCurrentUserInfo();
+			String data=this.xmProductService.createProductCode(user.getBranchId());
+			m.put("data",data);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
+
+
 	/***/
 	@ApiOperation( value = "根据主键修改一条产品表信息",notes="editXmProduct")
 	@ApiResponses({

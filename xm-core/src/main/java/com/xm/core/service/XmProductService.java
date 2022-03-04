@@ -89,6 +89,7 @@ public class XmProductService extends BaseService {
 	@Transactional
     public XmProduct copyTo(User user, XmProductCopyVo xmProduct) {
 		XmProduct pq=new XmProduct();
+		pq.setId(xmProduct.getId());
 		XmProduct xmProductDb=this.selectOneObject(pq);
 		if(xmProductDb==null){
 			throw new BizException("产品不存在");
