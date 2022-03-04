@@ -182,9 +182,11 @@ public class XmProjectController {
 			if(this.groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
 				XmProject xmProjectUpdate=new XmProject();
 				xmProjectUpdate.setId(xmProjectDb.getId());
+				xmProjectUpdate.setDel("1");
+				xmProjectUpdate.setLtime(new Date());
 				xmProjectService.updateSomeFieldByPk(xmProjectUpdate);
 				xmProjectService.clearProject(xmProject.getId());
-				xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-项目-删除",user.getUsername()+"删除项目【"+xmProjectDb.getName()+"】", null, JSON.toJSONString(xmProjectDb));
+				xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-删除",user.getUsername()+"删除项目【"+xmProjectDb.getName()+"】", null, JSON.toJSONString(xmProjectDb));
 
 			}else {
 				tips.setFailureMsg("您不是该项目管理人员，无权删除");
