@@ -168,6 +168,8 @@ public class XmProjectService extends BaseService {
 					node.setMenuName(null);
 					node.setProductId(null);
 					node.setProductName(null);
+					node.setExeUsernames(null);
+					node.setExeUserids(null);
 					node.setPreTaskid(newTaskIdMap.get(node.getPreTaskid()));
 				}
 				this.xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
@@ -216,6 +218,7 @@ public class XmProjectService extends BaseService {
 					node.setStatus("0");
 					node.setJoinTime(new Date());
 					node.setPgClass("0");
+					node.setProductId(null);
 				}
 				this.groupUserService.batchInsert(usersDb);
 			}
