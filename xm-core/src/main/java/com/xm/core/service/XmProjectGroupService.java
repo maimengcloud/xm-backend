@@ -911,10 +911,6 @@ public class XmProjectGroupService extends BaseService {
 		this.sumParents(groupDb);
 	}
 
-	public List<XmProjectGroup> selectListByIds(List<String> ids) {
-		return super.selectList("selectListByIds",ids);
-	}
-
 	@Transactional
 	public void doBatchDeleteProductGroups(List<XmProjectGroup> canDelNodes) {
 		super.batchDelete(canDelNodes);

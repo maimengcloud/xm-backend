@@ -264,10 +264,6 @@ public class XmMenuService extends BaseService {
 
 	}
 
-	public List<XmMenu> selectListByIds(List<String> ids) {
-		return super.selectList("selectListByIds",ids);
-	}
-
     public void batchUnIteration(XmIterationMenuVo xmIterationMenus) {
 		super.update("batchUnIteration",xmIterationMenus);
     }

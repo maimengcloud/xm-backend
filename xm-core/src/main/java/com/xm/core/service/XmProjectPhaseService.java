@@ -460,9 +460,6 @@ public class XmProjectPhaseService extends BaseService {
 		this.sumParents(xmProjectPhase);
 	}
 
-	public List<XmProjectPhase> selectListByIds(List<String> ids) {
-		return super.selectList("selectListByIds",ids);
-	}
 
 	/**
 	 * 判断新增预算是否超出产品总预算
