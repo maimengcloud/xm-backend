@@ -89,7 +89,6 @@ public class XmProductService extends BaseService {
 	@Transactional
     public XmProduct copyTo(User user, XmProductCopyVo xmProduct) {
 		XmProduct pq=new XmProduct();
-		pq.setId(xmProduct.getId());
 		XmProduct xmProductDb=this.selectOneObject(pq);
 		if(xmProductDb==null){
 			throw new BizException("产品不存在");
@@ -109,12 +108,12 @@ public class XmProductService extends BaseService {
 		String isTpl=xmProduct.getIsTpl();
 		XmProduct xmProductTo=new XmProduct();
 		BeanUtils.copyProperties(xmProductDb,xmProductTo);
-		xmProductTo.setId(this.createKey("id"));
 		xmProductTo.setProductName(xmProduct.getProductName());
 		xmProductTo.setCode(xmProduct.getCode());
 		if(!StringUtils.hasText(xmProduct.getCode())){
 			xmProductTo.setCode(createProductCode(user.getBranchId()));
 		}
+		xmProductTo.setId(this.createProductId(xmProductTo.getCode()));
 		xmProductTo.setBranchId(user.getBranchId());
 		xmProductTo.setDeptid(user.getDeptid());
 		xmProductTo.setDeptName(user.getDeptName());
@@ -129,6 +128,9 @@ public class XmProductService extends BaseService {
 		xmProductTo.setAssUsername(user.getUsername());
 		xmProductTo.setBizProcInstId(null);
 		xmProductTo.setBizFlowState("0");
+		xmProductTo.setLtime(new Date());
+		xmProductTo.setDel("0");
+		xmProductTo.setLocked("0");
 		if(xmProduct.getProductName().equals(xmProductDb.getProductName())){
 			xmProductTo.setProductName(xmProduct.getProductName()+"(复制)");
 		}
@@ -261,7 +263,18 @@ public class XmProductService extends BaseService {
 		return code;
 
 	}
+	public String createProductId(String code){
+		String id=sequenceService.getCommonNo(code+"-{rands:4}");
+		XmProduct xmProduct=new XmProduct(id);
+		long idcount=this.countByWhere(xmProduct);
+		while (idcount>0){
+			id=sequenceService.getCommonNo(code+"-{rands:4}");
+			xmProduct=new XmProduct(id);
+			idcount=this.countByWhere(xmProduct);
+		}
+		return id;
 
+	}
 	@Transactional
 	public void doDeleteByPk(XmProduct xmProduct) {
 		XmMenu xmMenu=new XmMenu();

@@ -65,7 +65,7 @@
 			and (res.branch_id in( #{platformBranchId},#{myBranchId}) and res.is_tpl='1')
 		</if>
 		<if test="del==null or del==''">
-			and res.del!='1'
+			and res.del!="1"
 		</if>
     </sql>
 	<insert id="insertProcessApprova"

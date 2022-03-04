@@ -225,22 +225,31 @@ public class XmProductController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-			if(StringUtils.isEmpty(xmProduct.getId())) {
-				xmProduct.setId(xmProductService.createKey("id"));
+			User user=LoginUtils.getCurrentUserInfo();
+			if(StringUtils.isEmpty(xmProduct.getCode())) {
+				return ResponseHelper.failed("code-0","","产品代号不能为空");
 			}else{
-				 XmProduct xmProductQuery = new  XmProduct(xmProduct.getId());
+				 XmProduct xmProductQuery = new  XmProduct();
+				xmProductQuery.setBranchId(user.getBranchId());
+				xmProductQuery.setCode(xmProduct.getCode());
 				if(xmProductService.countByWhere(xmProductQuery)>0){
-					tips.setFailureMsg("编号重复，请修改编号再提交");
+					tips.setFailureMsg("产品代号已存在，请修改再提交");
 					m.put("tips", tips);
 					return m;
 				}
 			}
-			User user=LoginUtils.getCurrentUserInfo();
+			if(!StringUtils.hasText(xmProduct.getProductName())){
+				return ResponseHelper.failed("productName-0","","产品名称不能为空");
+			}
 			if(StringUtils.isEmpty(xmProduct.getPmUserid())) {
 				xmProduct.setPmUserid(user.getUserid());
 				xmProduct.setPmUsername(user.getUsername());
 			}
+			xmProduct.setId(this.xmProductService.createProductId(xmProduct.getCode()));
 			xmProduct.setCtime(new Date());
+			xmProduct.setLtime(new Date());
+			xmProduct.setDel("0");
+			xmProduct.setLocked("0");
 			xmProductService.insert(xmProduct);
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"创建产品","创建产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】");
 
@@ -294,8 +303,8 @@ public class XmProductController {
 			 XmProduct xmProductDel=new XmProduct();
 			 xmProductDel.setId(xmProductDb.getId());
 			 xmProductDel.setDel("1");
-			 xmProductDb.setLtime(new Date());
-			 xmProductService.updateSomeFieldByPk(xmProductDb);
+			xmProductDel.setLtime(new Date());
+			 xmProductService.updateSomeFieldByPk(xmProductDel);
 			xmProductService.clearCache(xmProduct.getId());
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"删除产品",user.getUsername()+"删除产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】","",JSON.toJSONString(xmProductDb));
 
@@ -330,7 +339,8 @@ public class XmProductController {
 			if(groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
 				return ResponseHelper.failed("no-qx-0","您无权修改该产品");
 			}
-			xmProductService.updateByPk(xmProduct);
+			xmProduct.setLtime(new Date());
+			xmProductService.updateSomeFieldByPk(xmProduct);
 			xmProductService.clearCache(xmProduct.getId());
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"修改产品","修改产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】",JSON.toJSONString(xmProduct),JSON.toJSONString(xmProductDb));
 
@@ -349,7 +359,7 @@ public class XmProductController {
 	
 
 	
-	/***/
+	/**
 	@ApiOperation( value = "根据主键列表批量删除产品表信息",notes="batchDelXmProduct,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -396,7 +406,7 @@ public class XmProductController {
 				}
 			}
 			if(canDelList.size()>0) {
-				xmProductService.doBatchDelete(canDelList);
+				//xmProductService.doBatchDelete(canDelList);//不允许批量删除
 				for (XmProduct xmProduct : canDelList) {
 					xmProductService.clearCache(xmProduct.getId());
 					xmRecordService.addXmProductRecord(xmProduct.getId(),"批量删除产品","批量删除产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】","",JSON.toJSONString(xmProduct));
@@ -427,6 +437,7 @@ public class XmProductController {
 		}  
 		m.put("tips", tips);
 		return m;
-	} 
+	}
+	 */
 	
 }

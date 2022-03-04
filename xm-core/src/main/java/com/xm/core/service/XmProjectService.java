@@ -264,6 +264,7 @@ public class XmProjectService extends BaseService {
         if(StringUtils.isEmpty(xmProject.getCode())){
             xmProject.setCode(this.createKey("code"));
         }
+		xmProject.setLtime(new Date());
         this.updateByPk(xmProject);
         
         xmRecordService.addXmProjectRecord(xmProject.getId(),  "项目-修改项目基础信息", "更新项目"+xmProject.getName(),JSONObject.toJSONString(xmProject),JSONObject.toJSONString(oldValue));   
@@ -309,6 +310,9 @@ public class XmProjectService extends BaseService {
         if(!StringUtils.hasText(xmProjectVo.getIsTpl())){
         	xmProjectVo.setIsTpl("0");
 		}
+        xmProjectVo.setLocked("0");
+        xmProjectVo.setDel("0");
+        xmProjectVo.setLtime(new Date());
         XmProject projectDb=new XmProject();
         BeanUtils.copyProperties(xmProjectVo,projectDb); 
         this.insert(projectDb);
