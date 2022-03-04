@@ -625,6 +625,9 @@ public class XmTaskService extends BaseService {
 
 
 	public boolean checkExistsExecuser(XmTask node) {
+		if("1".equals(node.getNtype())){
+			return false;
+		}
 		String exec=node.getExeUserids();
 		if(!StringUtils.hasText(exec)){
 			return false;
