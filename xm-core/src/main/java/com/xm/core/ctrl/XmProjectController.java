@@ -179,11 +179,15 @@ public class XmProjectController {
 			if(!"0".equals(xmProjectDb.getStatus())&&!"9".equals(xmProjectDb.getStatus())){
 				return ResponseHelper.failed("status-not-0","该项目不属于初始或者已关闭状态，不允许删除");
 			}
-			if(user.getUserid().equals(xmProjectDb.getCreateUserid())){
-				xmProjectService.deleteByPk(xmProject);
+			if(this.groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
+				XmProject xmProjectUpdate=new XmProject();
+				xmProjectUpdate.setId(xmProjectDb.getId());
+				xmProjectService.updateSomeFieldByPk(xmProjectUpdate);
 				xmProjectService.clearProject(xmProject.getId());
+				xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-项目-删除",user.getUsername()+"删除项目【"+xmProjectDb.getName()+"】", null, JSON.toJSONString(xmProjectDb));
+
 			}else {
-				tips.setFailureMsg("您不是该项目创建人，无权删除");
+				tips.setFailureMsg("您不是该项目管理人员，无权删除");
 			}
 
 		}catch (BizException e) { 
