@@ -66,13 +66,10 @@ public class XmMenuService extends BaseService {
 	public void batchInsertOrUpdate(List<XmMenuVo> xmMenus) {
 		List<XmMenuVo> addList=new ArrayList<>();
 		List<XmMenuVo> editList=new ArrayList<>();
-		for (XmMenuVo vo : xmMenus) {
-			if("addSub".equals(vo.getOpType())||"add".equals(vo.getOpType())) {
-				addList.add(vo);
-			}else {
-				editList.add(vo);
-			}
-		}
+		List<XmMenu> xmMenusDb=this.selectListByIds(xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()));
+		editList=xmMenus.stream().filter(i->xmMenusDb.stream().filter(k->k.getMenuId().equals(i.getMenuId())).findAny().isPresent()).collect(Collectors.toList());
+		addList=xmMenus.stream().filter(i->!xmMenusDb.stream().filter(k->k.getMenuId().equals(i.getMenuId())).findAny().isPresent()).collect(Collectors.toList());
+
 		List<XmMenu> xmMenuList=new ArrayList<>();
 		if(addList.size()>0) {
 			xmMenuList.addAll(addList.stream().map(i->(XmMenu)i).collect(Collectors.toList()));
