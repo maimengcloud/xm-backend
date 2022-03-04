@@ -21,13 +21,14 @@
 
 	<!-- 适合没有交叉的，没用父子关系的一批任务的更新 -->
 	<update id="batchSumParents" parameterType="List">
-		update xm_menu_state s  inner join
+		update xm_menu_state s  left join
 		(select m.pmenu_id,
+		sum(1) as children_cnt,
 		sum(ss.plan_workload) as plan_workload ,
 		sum(ss.plan_cost_amount) as plan_cost_amount ,
 		sum(ss.act_workload) as act_workload ,
 		sum(ss.act_cost_amount) as act_cost_amount ,
-		sum(ifnull(ss.finish_rate,0) * ifnull(ss.plan_workload,0))/ifnull(sum(ifnull(ss.plan_workload,0.00001)),9999) as finish_rate ,
+		sum(ifnull(ss.finish_rate,0) * ifnull(ss.plan_workload,0)) as plan_workload_rate,
 		sum(ss.task_cnt) as task_cnt ,
 		sum(ss.finish_task_cnt) as finish_task_cnt ,
 		sum(ss.project_cnt) as project_cnt ,
@@ -46,27 +47,28 @@
 			#{item}
 		</foreach>
 
-		group by m.pmenu_id) s2 on s2.pmenu_id=s.menu_id
-		set s.plan_workload=s2.plan_workload,
-		s.plan_cost_amount=s2.plan_cost_amount,
-		s.act_workload=s2.act_workload,
-		s.act_cost_amount=s2.act_cost_amount,
-		s.finish_rate=s2.finish_rate,
-		s.task_cnt=s2.task_cnt,
-		s.finish_task_cnt=s2.finish_task_cnt,
-		s.project_cnt=s2.project_cnt,
-		s.iteration_cnt=s2.iteration_cnt,
+		group by m.pmenu_id) s2 on s2.pmenu_id=s.menu_id inner join xm_menu xm on xm.menu_id=s.menu_id
+		set s.plan_workload=ifnull(s2.plan_workload,0),
+		s.plan_cost_amount=ifnull(s2.plan_cost_amount,0),
+		s.act_workload=ifnull(s2.act_workload,0),
+		s.act_cost_amount=ifnull(s2.act_cost_amount,0),
+		s.finish_rate=if(s2.plan_workload is null or s2.plan_workload=0,0,s2.plan_workload_rate/s2.plan_workload),
+		s.task_cnt=ifnull(s2.task_cnt,0),
+		s.finish_task_cnt=ifnull(s2.finish_task_cnt,0),
+		s.project_cnt=ifnull(s2.project_cnt,0),
+		s.iteration_cnt=ifnull(s2.iteration_cnt,0),
 
-		s.test_cases=s2.test_cases,
-		s.exec_cases=s2.exec_cases,
-		s.design_cases=s2.design_cases,
-		s.finish_cases=s2.finish_cases,
+		s.test_cases=ifnull(s2.test_cases,0),
+		s.exec_cases=ifnull(s2.exec_cases,0),
+		s.design_cases=ifnull(s2.design_cases,0),
+		s.finish_cases=ifnull(s2.finish_cases,0),
 
-		s.bug_cnt=s2.bug_cnt,
-		s.active_bugs=s2.active_bugs,
-		s.confirmed_bugs=s2.confirmed_bugs,
-		s.resolved_bugs=s2.resolved_bugs,
-		s.closed_bugs=s2.closed_bugs
+		s.bug_cnt=ifnull(s2.bug_cnt,0),
+		s.active_bugs=ifnull(s2.active_bugs,0),
+		s.confirmed_bugs=ifnull(s2.confirmed_bugs,0),
+		s.resolved_bugs=ifnull(s2.resolved_bugs,0),
+		s.closed_bugs=ifnull(s2.closed_bugs,0),
+		xm.children_cnt=ifnull(s2.children_cnt,0)
 		where s.menu_id in
 		<foreach collection="list" index="index" item="item" open="(" close=")" separator=",">
 			#{item}
@@ -75,13 +77,14 @@
 	<!-- 适合父子关系的一批任务的更新 -->
 	<update id="sumParents" parameterType="List">
 		<foreach collection="list" item="item" index="index" open="" separator=";" close="" >
-			update xm_menu_state s  inner join
+			update xm_menu_state s  left join
 			(select m.pmenu_id,
+			sum(1) as children_cnt,
 			sum(ss.plan_workload) as plan_workload ,
 			sum(ss.plan_cost_amount) as plan_cost_amount ,
 			sum(ss.act_workload) as act_workload ,
 			sum(ss.act_cost_amount) as act_cost_amount ,
-			sum(ifnull(ss.finish_rate,0) * ifnull(ss.plan_workload,0))/ifnull(sum(ifnull(ss.plan_workload,0.00001)),9999) as finish_rate ,
+			sum(ifnull(ss.finish_rate,0) * ifnull(ss.plan_workload,0)) as  plan_workload_rate,
 			sum(ss.task_cnt) as task_cnt ,
 			sum(ss.finish_task_cnt) as finish_task_cnt ,
 			sum(ss.project_cnt) as project_cnt ,
@@ -97,27 +100,28 @@
 			sum(ss.closed_bugs) as closed_bugs
 			from xm_menu_state ss inner join xm_menu m on ss.menu_id=m.menu_id   where m.pmenu_id =#{item}
 
-			group by m.pmenu_id) s2 on s2.pmenu_id=s.menu_id
-			set s.plan_workload=s2.plan_workload,
-			s.plan_cost_amount=s2.plan_cost_amount,
-			s.act_workload=s2.act_workload,
-			s.act_cost_amount=s2.act_cost_amount,
-			s.finish_rate=s2.finish_rate,
-			s.task_cnt=s2.task_cnt,
-			s.finish_task_cnt=s2.finish_task_cnt,
-			s.project_cnt=s2.project_cnt,
-			s.iteration_cnt=s2.iteration_cnt,
+			group by m.pmenu_id) s2 on s2.pmenu_id=s.menu_id inner join xm_menu xm on s.menu_id=xm.menu_id
+			set s.plan_workload=ifnull(s2.plan_workload,0),
+			s.plan_cost_amount=ifnull(s2.plan_cost_amount,0),
+			s.act_workload=ifnull(s2.act_workload,0),
+			s.act_cost_amount=ifnull(s2.act_cost_amount,0),
+ 			s.finish_rate=if(s2.plan_workload is null or s2.plan_workload=0,0,s2.plan_workload_rate/s2.plan_workload),
+			s.task_cnt=ifnull(s2.task_cnt,0),
+			s.finish_task_cnt=ifnull(s2.finish_task_cnt,0),
+			s.project_cnt=ifnull(s2.project_cnt,0),
+			s.iteration_cnt=ifnull(s2.iteration_cnt,0),
 
-			s.test_cases=s2.test_cases,
-			s.exec_cases=s2.exec_cases,
-			s.design_cases=s2.design_cases,
-			s.finish_cases=s2.finish_cases,
+			s.test_cases=ifnull(s2.test_cases,0),
+			s.exec_cases=ifnull(s2.exec_cases,0),
+			s.design_cases=ifnull(s2.design_cases,0),
+			s.finish_cases=ifnull(s2.finish_cases,0),
 
-			s.bug_cnt=s2.bug_cnt,
-			s.active_bugs=s2.active_bugs,
-			s.confirmed_bugs=s2.confirmed_bugs,
-			s.resolved_bugs=s2.resolved_bugs,
-			s.closed_bugs=s2.closed_bugs
+			s.bug_cnt=ifnull(s2.bug_cnt,0),
+			s.active_bugs=ifnull(s2.active_bugs,0),
+			s.confirmed_bugs=ifnull(s2.confirmed_bugs,0),
+			s.resolved_bugs=ifnull(s2.resolved_bugs,0),
+			s.closed_bugs=ifnull(s2.closed_bugs,0),
+			xm.children_cnt=ifnull(s2.children_cnt,0)
 			where s.menu_id = #{item}
 		</foreach>
 	</update>

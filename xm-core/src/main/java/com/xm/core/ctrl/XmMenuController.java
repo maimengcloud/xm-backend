@@ -432,7 +432,8 @@ public class XmMenuController {
 	public Map<String,Object> batchDelXmMenu(@RequestBody List<XmMenu> xmMenus) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除"+xmMenus.size()+"条数据"); 
-		try{ 
+		try{
+			List<XmMenu> noExists=new ArrayList<>();
 			List<String> hasChildMenus=new ArrayList<>();
 			List<XmMenu> canDelList=new ArrayList<>();
 			List<XmMenu> xmMenusDb=this.xmMenuService.selectListByIds(xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()));
@@ -444,6 +445,7 @@ public class XmMenuController {
 					hasChildMenus.add(xmMenu.getMenuName());
 				}
 			}
+			noExists=noExists.stream().filter(i->!xmMenusDb.stream().filter(k->k.getMenuId().equals(i.getMenuId())).findAny().isPresent()).collect(Collectors.toList());
 			List<XmMenu> canDelResult=new ArrayList<>();
 			List<XmMenu> noQxResult=new ArrayList<>();
 			if(canDelList.size()>0) {
@@ -459,6 +461,9 @@ public class XmMenuController {
 			}
 			if(noQxResult.size()>0){
 				msg.add("无权限操作以下"+noQxResult.size()+"个需求.【"+noQxResult.stream().map(i->i.getMenuName()).collect(Collectors.joining(",")) +"】");
+			}
+			if(noExists.size()>0){
+				msg.add("以下"+noExists.size()+"个需求已不存在，【"+noExists.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
 			}
 			if(canDelResult.size()==0){
 				tips.setFailureMsg(msg.stream().collect(Collectors.joining(" ")));

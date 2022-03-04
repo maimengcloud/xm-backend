@@ -168,6 +168,7 @@ public class XmProjectService extends BaseService {
 					node.setMenuName(null);
 					node.setProductId(null);
 					node.setProductName(null);
+					node.setPreTaskid(newTaskIdMap.get(node.getPreTaskid()));
 				}
 				this.xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
 				this.xmTaskService.batchImportFromTemplate(xmTasks);
