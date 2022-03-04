@@ -106,7 +106,7 @@
 	</delete>
 
 	<select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmMenu">
-		select * from xm_menu res where res.menu_id in
+		select (select sum(1) from xm_menu m where m.pmenu_id=res.menu_id ) as children_cnt,res.* from xm_menu res where res.menu_id in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
 		</foreach>

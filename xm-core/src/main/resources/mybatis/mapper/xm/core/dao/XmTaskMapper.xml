@@ -220,7 +220,7 @@
 	</select>
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectTaskListByIds" parameterType="HashMap" resultType="com.xm.core.entity.XmTask">
-		select * from xm_task res
+		select (select sum(1) from xm_task t where t.parent_taskid=res.id) as children_cnt, res.* from xm_task res
 		where   res.id in
 		<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
