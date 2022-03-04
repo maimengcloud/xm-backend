@@ -143,18 +143,9 @@ public class XmProjectController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-			User user=LoginUtils.getCurrentUserInfo();
-	        if(StringUtils.isEmpty(xmProjectVo.getCode())) {
-	        	 tips.setFailureMsg("编号不能为空，请修改编号再提交"); 
-	        }else if(!StringUtils.hasText(xmProjectVo.getBranchId())){
-	        	xmProjectVo.setBranchId(user.getBranchId());
-				//tips.setFailureMsg("项目归属机构号不能为空");
-			}else {
 				xmProjectService.saveProject(xmProjectVo);
 				xmProjectService.clearProject(xmProjectVo.getId());
-
 				m.put("data",xmProjectVo);
-	        }
 			
 		}catch (BizException e) {
 			tips=e.getTips();
@@ -251,7 +242,29 @@ public class XmProjectController {
 		m.put("tips", tips);
 		return m;
 	}
-	
+	@ApiOperation( value = "创建项目代号",notes="createProjectCode")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@HasQx(value = "xm_core_xmProject_createProjectCode",name = "创建项目代号",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/createProjectCode",method=RequestMethod.POST)
+	public Map<String,Object> createProjectCode() {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("创建项目代号成功");
+		try{
+			User user= LoginUtils.getCurrentUserInfo();
+			String code=this.xmProjectService.createProjectCode(user.getBranchId());
+			m.put("data",code);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 	@ApiOperation( value = "根据主键修改一条xm_project信息",notes="editXmProject")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -415,7 +428,7 @@ public class XmProjectController {
 				pq.setCode(xmProject.getCode());
 				List<XmProject> xmProjectList=this.xmProjectService.selectListByWhere(pq);
 				if(xmProjectList!=null && xmProjectList.size()>0){
-					return ResponseHelper.failed("code-exists","项目编码【"+xmProject.getCode()+"】已存在，，请重新输入新的项目编码，如果为空，后台自动生成");
+					return ResponseHelper.failed("code-exists","项目代号【"+xmProject.getCode()+"】已存在，，请重新输入新的项目代号，如果为空，后台自动生成");
 				}
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());

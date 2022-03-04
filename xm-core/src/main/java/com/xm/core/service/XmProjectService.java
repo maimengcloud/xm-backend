@@ -263,8 +263,10 @@ public class XmProjectService extends BaseService {
     public XmProject saveProject(XmProjectVo xmProjectVo) {
         Tips tips = new Tips();
         User user = LoginUtils.getCurrentUserInfo();
+
+		xmProjectVo.setBranchId(user.getBranchId());
         if(!StringUtils.isEmpty(xmProjectVo.getId()) && xmProjectVo.getId().equals(xmProjectVo.getCode())) {
-        	  tips.setFailureMsg("id不能事先预设，如果必须事先预设，请保持与code相同");
+        	  tips.setFailureMsg("id不能事先预设");
               throw new BizException(tips);
         } 
         if(StringUtils.hasText(xmProjectVo.getCode())) {
@@ -272,20 +274,19 @@ public class XmProjectService extends BaseService {
             xmProjectQuery.setCode(xmProjectVo.getCode());
 			xmProjectQuery.setBranchId(user.getBranchId());
             if(this.countByWhere(xmProjectQuery)>0){
-                tips.setFailureMsg("编号重复，请修改编号再提交");
+                tips.setFailureMsg("项目代号重复，请修改代号再提交");
                 throw new BizException(tips);
             }
-            xmProjectVo.setId(this.createKey("id"));
+            xmProjectVo.setId(this.createProjectId(xmProjectVo.getCode()));
         }else {
         	xmProjectVo.setCode(this.createProjectCode(user.getBranchId()));
-        	xmProjectVo.setId(this.createKey("id"));
+        	xmProjectVo.setId(this.createProjectId(xmProjectVo.getCode()));
         }
         
         //获取当前登录用户信息
         xmProjectVo.setCreateUserid(user.getUserid());
         xmProjectVo.setCreateUsername(user.getUsername());
         xmProjectVo.setCreateTime(new Date());
-        xmProjectVo.setBranchId(user.getBranchId());
         xmProjectVo.setStatus("0");
         if(!StringUtils.hasText(xmProjectVo.getIsTpl())){
         	xmProjectVo.setIsTpl("0");
@@ -312,7 +313,18 @@ public class XmProjectService extends BaseService {
 		return code;
 
 	}
- 
+	public String createProjectId(String code){
+		String id=sequenceService.getCommonNo(code+"-{rands:4}");
+		XmProject xmProject=new XmProject(id);
+		long idcount=this.countByWhere(xmProject);
+		while (idcount>0){
+			id=sequenceService.getCommonNo(code+"-{rands:4}");
+			xmProject=new XmProject(id);
+			idcount=this.countByWhere(xmProject);
+		}
+		return id;
+
+	}
 	 
 	/**
 	 * 流程审批过程中回调该接口，更新业务数据
