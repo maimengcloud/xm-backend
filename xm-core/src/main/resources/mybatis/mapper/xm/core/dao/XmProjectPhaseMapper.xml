@@ -251,7 +251,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from xm_project_phase res
+		select (select sum(1) from xm_project_phase p where p.parent_phase_id = res.id) as children_cnt,res.* from xm_project_phase res
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
@@ -261,7 +261,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProjectPhase" resultType="com.xm.core.entity.XmProjectPhase">
-		select * from xm_project_phase res
+		select (select sum(1) from xm_project_phase p where p.parent_phase_id = res.id) as children_cnt,res.* from xm_project_phase res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -269,7 +269,7 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProjectPhase" resultType="com.xm.core.entity.XmProjectPhase">
-		select * from xm_project_phase res
+		select (select sum(1) from xm_project_phase p where p.parent_phase_id = res.id) as children_cnt,res.* from xm_project_phase res
 		where 
 			res.id = #{id}
 	</select>

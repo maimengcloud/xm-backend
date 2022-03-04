@@ -150,7 +150,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from xm_menu res left join xm_iteration i on res.iteration_id=i.id
+		select (select sum(1) from xm_menu m where m.pmenu_id=res.menu_id ) as children_cnt,res.* from xm_menu res left join xm_iteration i on res.iteration_id=i.id
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
@@ -159,7 +159,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmMenu" resultType="com.xm.core.entity.XmMenu">
-		select * from xm_menu res
+		select (select sum(1) from xm_menu m where m.pmenu_id=res.menu_id ) as children_cnt,res.* from xm_menu res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -167,7 +167,7 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmMenu" resultType="com.xm.core.entity.XmMenu">
-		select * from xm_menu res
+		select (select sum(1) from xm_menu m where m.pmenu_id=res.menu_id ) as children_cnt,res.* from xm_menu res
 		where 
 			res.menu_id = #{menuId}
 	</select>
