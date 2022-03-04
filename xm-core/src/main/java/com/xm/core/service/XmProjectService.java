@@ -108,6 +108,12 @@ public class XmProjectService extends BaseService {
 		xmProjectTo.setFromTplId(xmProjectDb.getId());
 		xmProjectTo.setBizFlowState("0");
 		xmProjectTo.setBizProcInstId(null);
+		xmProjectTo.setAdmUserid(user.getUserid());
+		xmProjectTo.setAdmUsername(user.getUsername());
+		xmProjectTo.setAssUserid(user.getUserid());
+		xmProjectTo.setAssUsername(user.getUsername());
+		xmProjectTo.setPmUserid(user.getUserid());
+		xmProjectTo.setPmUsername(user.getUsername());
 		this.saveProject(xmProjectTo);
 
 		XmProjectPhase phaseQuery=new XmProjectPhase();
@@ -136,6 +142,13 @@ public class XmProjectService extends BaseService {
 					node.setBranchId(user.getBranchId());
 					node.setBizFlowState("");
 					node.setBizProcInstId(null);
+					node.setActRate(BigDecimal.ZERO);
+					node.setActInnerUserAt(BigDecimal.ZERO);
+					node.setActNouserAt(BigDecimal.ZERO);
+					node.setActOutUserAt(BigDecimal.ZERO);
+					node.setPhaseActInnerUserWorkload(BigDecimal.ZERO);
+					node.setPhaseActOutUserWorkload(BigDecimal.ZERO);
+					node.setPhaseActWorkload(BigDecimal.ZERO);
 				}
 				this.xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases);
 				this.xmProjectPhaseService.doBatchInsert(xmProjectPhases);
@@ -163,6 +176,7 @@ public class XmProjectService extends BaseService {
 					node.setCreateUserid(user.getUserid());
 					node.setCreateTime(new Date());
 					node.setProjectPhaseId(newPhaseIdMap.get(node.getProjectPhaseId()));
+					node.setPreTaskid(newTaskIdMap.get(node.getPreTaskid()));
 					node.setIsTpl(isTpl);
 					node.setMenuId(null);
 					node.setMenuName(null);
@@ -170,7 +184,11 @@ public class XmProjectService extends BaseService {
 					node.setProductName(null);
 					node.setExeUsernames(null);
 					node.setExeUserids(null);
-					node.setPreTaskid(newTaskIdMap.get(node.getPreTaskid()));
+					node.setRate(BigDecimal.ZERO);
+					node.setActEndTime(null);
+					node.setActStartTime(null);
+					node.setExecutorUserid(null);
+					node.setExecutorUsername(null);
 				}
 				this.xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
 				this.xmTaskService.batchImportFromTemplate(xmTasks);
