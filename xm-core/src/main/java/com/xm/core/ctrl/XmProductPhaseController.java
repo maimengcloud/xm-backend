@@ -41,8 +41,8 @@ import static com.mdp.core.utils.BaseUtils.map;
  * 组织 com.qqkj  顶级模块 oa 大模块 xm 小模块 <br>
  * 实体 XmProjectPhase 表 XM.xm_project_phase 当前主键(包括多主键): id; 
  ***/
-@RestController("xm.core.xmProjectPhaseController")
-@RequestMapping(value="/**/xm/core/xmProjectPhase")
+@RestController("xm.core.xmProductPhaseController")
+@RequestMapping(value="/**/xm/core/xmProductPhase")
 @Api(tags={"项目计划模板操作接口"})
 public class XmProductPhaseController {
 
