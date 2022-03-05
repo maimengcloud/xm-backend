@@ -157,7 +157,50 @@ public class XmProjectController {
 		m.put("tips", tips);
 		return m;
 	}
+	@ApiOperation( value = "从回收站恢复项目",notes="unDelXmProject,仅需要上传主键字段")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
+	})
+	@RequestMapping(value="/unDel",method=RequestMethod.POST)
+	@HasQx(value = "xm_core_xmProject_unDel",name = "从回收站恢复项目",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	public Map<String,Object> unDelXmProject(@RequestBody XmProject xmProject){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功从回收站恢复项目");
+		try{
+			User user= LoginUtils.getCurrentUserInfo();
+			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
+			if(xmProjectDb==null){
+				tips.setFailureMsg("项目不存在");
+			}
+			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
+				return ResponseHelper.failed("branchId-not-right","该项目不属于您的组织，不允许您进行恢复");
+			}
+			if(!"1".equals(xmProjectDb.getDel())){
+				return ResponseHelper.failed("status-not-0","该项目不属于删除状态，不允许恢复");
+			}
+			if(this.groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
+				XmProject xmProjectUpdate=new XmProject();
+				xmProjectUpdate.setId(xmProjectDb.getId());
+				xmProjectUpdate.setDel("0");
+				xmProjectUpdate.setLtime(new Date());
+				xmProjectService.updateSomeFieldByPk(xmProjectUpdate);
+				xmProjectService.clearProject(xmProject.getId());
+				xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-从回收站恢复项目",user.getUsername()+"从回收站恢复项目【"+xmProjectDb.getName()+"】", null, JSON.toJSONString(xmProjectDb));
 
+			}else {
+				tips.setFailureMsg("您不是该项目管理人员，无权从回收站恢复项目");
+			}
+
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 	@ApiOperation( value = "删除一条xm_project信息",notes="delXmProject,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -175,9 +218,6 @@ public class XmProjectController {
 			}
 			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
 				return ResponseHelper.failed("branchId-not-right","该项目不属于您的组织，不允许您进行删除");
-			}
-			if(!"0".equals(xmProjectDb.getStatus())&&!"9".equals(xmProjectDb.getStatus())){
-				return ResponseHelper.failed("status-not-0","该项目不属于初始或者已关闭状态，不允许删除");
 			}
 			if(this.groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
 				XmProject xmProjectUpdate=new XmProject();
