@@ -6,6 +6,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.meta.client.service.ItemService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -55,6 +56,9 @@ public class XmTaskExecuserController {
 	 
 	@Autowired
     XmProjectGroupUserService xmProjectGroupUserService;
+
+	@Autowired
+	ItemService itemService;
 	
 
 	@Autowired

@@ -16,12 +16,6 @@
 				#{item} like concat(res.pid_paths,'%')
 			</foreach>
 		</if>
-		<if test='iterationId!=null and iterationId!="" '>
-			and exists( select 1 from xm_task t inner join xm_menu im on t.menu_id=im.menu_id where t.project_phase_id=res.id and im.iteration_id=#{iterationId})
-		</if>
-		<if test='productId!=null and productId!="" '>
-			and exists( select 1 from xm_task t where t.product_id=#{productId} and t.project_phase_id=res.id)
-		</if>
 		<if test=" taskFilterType !=null and taskFilterType!=''">
 			and  <if test="taskFilterType=='not-join'"> not </if>
 			exists( select 1 from xm_task t where  t.project_phase_id=res.id)
