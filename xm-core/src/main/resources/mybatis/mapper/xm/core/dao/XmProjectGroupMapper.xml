@@ -4,14 +4,17 @@
 	
 	
 	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
-
     <sql id="whereForMap">
          <if test=" ids != null">  and (res.id) in
              <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
                  ( #{item})
              </foreach>
          </if>
-        <if test="key != null and key !='' ">    and res.group_name like concat('%',#{key},'%')   </if>
+        <if test="groupNameKey != null and groupNameKey !='' ">    and res.group_name like concat('%',#{groupNameKey},'%')   </if>
+		<if test="mngUsernamekey != null and mngUsernamekey !='' ">    and (res.leader_username like concat('%',#{mngUsernamekey},'%') or res.ass_username like  like concat('%',#{mngUsernamekey},'%'))  </if>
+		<if test="groupUsernamekey != null and groupUsernamekey !='' ">    and
+			exists ( select 1 from xm_project_group_user gu where gu.group_id=res.id and  gu.username like concat('%',#{groupUsernamekey},'%'))
+		</if>
 		<if test="orCrowBranchId!=null and orCrowBranchId!=''"> and (res.branch_id=#{branchId} or res.crow_branch_id=#{orCrowBranchId})</if>
 		<if test="iterationId!=null and iterationId!=''"> and exists ( select 1 from xm_iteration_product_link ipl left join xm_product_project_link ppl on ipl.product_id=ppl.product_id and (ipl.product_id=res.product_id or ppl.project_id = res.project_id))</if>
     </sql>
