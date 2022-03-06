@@ -14,7 +14,7 @@
 
 		<if test="groupNameKey != null and groupNameKey !='' ">    and g.group_name like concat('%',#{groupNameKey},'%')   </if>
 		<if test="mngUsernamekey != null and mngUsernamekey !='' ">    and (g.leader_username like concat('%',#{mngUsernamekey},'%') or g.ass_username like  concat('%',#{mngUsernamekey},'%'))  </if>
-		<if test="groupUsernamekey != null and groupUsernamekey !='' ">    and res.username like concat('%',#{groupUsernamekey},'%') </if>
+		<if test="groupUsernameKey != null and groupUsernameKey !='' ">    and res.username like concat('%',#{groupUsernameKey},'%') </if>
     </sql>
 	<delete id="deleteByGroupId" parameterType="com.xm.core.entity.XmProjectGroupUser">
 		delete from xm_project_group_user where group_id = #{groupId}

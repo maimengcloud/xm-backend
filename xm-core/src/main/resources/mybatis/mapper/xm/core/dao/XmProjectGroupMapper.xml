@@ -12,8 +12,8 @@
          </if>
         <if test="groupNameKey != null and groupNameKey !='' ">    and res.group_name like concat('%',#{groupNameKey},'%')   </if>
 		<if test="mngUsernamekey != null and mngUsernamekey !='' ">    and (res.leader_username like concat('%',#{mngUsernamekey},'%') or res.ass_username  like concat('%',#{mngUsernamekey},'%'))  </if>
-		<if test="groupUsernamekey != null and groupUsernamekey !='' ">    and
-			exists ( select 1 from xm_project_group_user gu where gu.group_id=res.id and  gu.username like concat('%',#{groupUsernamekey},'%'))
+		<if test="groupUsernameKey != null and groupUsernameKey !='' ">    and
+			exists ( select 1 from xm_project_group_user gu where gu.group_id=res.id and  gu.username like concat('%',#{groupUsernameKey},'%'))
 		</if>
 		<if test="orCrowBranchId!=null and orCrowBranchId!=''"> and (res.branch_id=#{branchId} or res.crow_branch_id=#{orCrowBranchId})</if>
 		<if test="iterationId!=null and iterationId!=''"> and exists ( select 1 from xm_iteration_product_link ipl left join xm_product_project_link ppl on ipl.product_id=ppl.product_id and (ipl.product_id=res.product_id or ppl.project_id = res.project_id))</if>
