@@ -11,7 +11,7 @@
              </foreach>
          </if>
         <if test="groupNameKey != null and groupNameKey !='' ">    and res.group_name like concat('%',#{groupNameKey},'%')   </if>
-		<if test="mngUsernamekey != null and mngUsernamekey !='' ">    and (res.leader_username like concat('%',#{mngUsernamekey},'%') or res.ass_username like  like concat('%',#{mngUsernamekey},'%'))  </if>
+		<if test="mngUsernamekey != null and mngUsernamekey !='' ">    and (res.leader_username like concat('%',#{mngUsernamekey},'%') or res.ass_username  like concat('%',#{mngUsernamekey},'%'))  </if>
 		<if test="groupUsernamekey != null and groupUsernamekey !='' ">    and
 			exists ( select 1 from xm_project_group_user gu where gu.group_id=res.id and  gu.username like concat('%',#{groupUsernamekey},'%'))
 		</if>
