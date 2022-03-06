@@ -184,54 +184,7 @@ public class XmMenuController {
 	}
 	@RequestMapping(value="/listWithPlan",method=RequestMethod.GET)
 	public Map<String,Object> listWithPlan( @RequestParam Map<String,Object> xmMenu){
-		Map<String,Object> m = new HashMap<>();
-		RequestUtils.transformArray(xmMenu, "menuIds");
-		RequestUtils.transformArray(xmMenu, "tagIdList");
-		PageUtils.startPage(xmMenu);
-		Tips tips=new Tips("查询成功");
-		String menuId= (String) xmMenu.get("menuId");
-		Object menuIds=  xmMenu.get("menuIds");
-		String projectId= (String) xmMenu.get("projectId");
-		String mmUserid= (String) xmMenu.get("mmUserid");
-		String pmenuId= (String) xmMenu.get("pmenuId");
-		String productId= (String) xmMenu.get("productId");
-		String excludeIterationId= (String) xmMenu.get("excludeIterationId");
-
-		User user = LoginUtils.getCurrentUserInfo();
-
-		xmMenu.put("userid",user.getUserid());
-		if( !StringUtils.hasText(menuId) && !(StringUtils.hasText(projectId) || StringUtils.hasText(mmUserid)|| StringUtils.hasText(pmenuId)||menuIds!=null
-				|| StringUtils.hasText(productId) || StringUtils.hasText(excludeIterationId)  ) ){
-			xmMenu.put("compete",user.getUserid());
-		}
-		List<Map<String,Object>>	xmMenuList = xmMenuService.selectListMapByWhereWithPlan(xmMenu);	//列出XmMenu列表
-		PageUtils.responePage(m, xmMenuList);
-		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))&& xmMenuList.size()>0){
-			Set<String> pidPathsSet=new HashSet<>();
-			Set<String> idSet=new HashSet<>();
-			for (Map<String, Object> map : xmMenuList) {
-				String id= (String) map.get("menuId");
-				idSet.add(id);
-				String pidPaths= (String) map.get("pidPaths");
-				pidPaths=PubTool.getPidPaths(pidPaths,id);
-				if(pidPaths==null || pidPaths.length()<=2){
-					continue;
-				}
-				pidPathsSet.add(pidPaths);
-			}
-			if(pidPathsSet!=null && pidPathsSet.size()>0){
-				List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithPlan(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
-				parentList=parentList.stream().filter(i->!idSet.contains(i.get("menuId"))).collect(Collectors.toList());
-				if(parentList!=null && parentList.size()>0){
-					xmMenuList.addAll(parentList);
-					m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
-				}
-			}
-		}
-
-		m.put("data",xmMenuList);
-		m.put("tips", tips);
-		return m;
+		return this.listWithState(xmMenu);
 	}
 
 

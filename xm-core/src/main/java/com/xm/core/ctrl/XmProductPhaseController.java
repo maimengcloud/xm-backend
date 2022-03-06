@@ -734,12 +734,12 @@ public class XmProductPhaseController {
 		m.put("tips", tips);
 		return m;
 	}
-	@ApiOperation( value = "计算bug、task、测试案例、等数据",notes="loadTasksToXmProjectPhase")
+	@ApiOperation( value = "计算bug、task、测试案例、等数据",notes="loaMenusToXmProductPhase")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
 	@HasQx(value = "xm_core_xmProjectPhase_loadTasksToXmProjectPhase",name = "计算各个计划对应的bug、task、测试案例等数据",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
-	@RequestMapping(value="/loadTasksToXmProjectPhase",method=RequestMethod.POST)
+	@RequestMapping(value="/loaMenusToXmProductPhase",method=RequestMethod.POST)
 	public Map<String,Object> loadTasksToXmProjectPhase(@RequestBody Map<String,Object> params) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功修改数据");
@@ -760,7 +760,7 @@ public class XmProductPhaseController {
 				m.put("tips", tips);
 				return m;
 			}
-			int i= xmProjectPhaseService.loadTasksToXmProjectPhase(xmProduct.getId());
+			int i= xmProjectPhaseService.loaMenusToXmProductPhase(xmProduct.getId());
 			xmRecordService.addProductPhaseRecord(xmProduct.getId(), "", "产品-计划-汇总统计", "计算项目计划进度","",null);
 
 

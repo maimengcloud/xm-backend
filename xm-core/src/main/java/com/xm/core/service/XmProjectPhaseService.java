@@ -10,6 +10,7 @@ import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.entity.XmTask;
 import com.xm.core.vo.XmProjectGroupVo;
 import com.xm.core.vo.XmProjectPhaseVo;
+import org.apache.poi.sl.usermodel.FreeformShape;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -584,5 +585,8 @@ public class XmProjectPhaseService extends BaseService {
 		return tips;
 	}
 
+	public int loaMenusToXmProductPhase(String productId) {
+		return super.update("loaMenusToXmProductPhase",productId);
+	}
 }
 

@@ -116,6 +116,11 @@
 	<update id="loadTasksToXmProjectPhase" parameterType="String" statementType="CALLABLE">
 		{call load_tasks_to_xm_project_phase(#{projectId,mode=IN})}
 	</update>
+
+	<update id="loaMenusToXmProductPhase" parameterType="String" statementType="CALLABLE">
+		{call loaMenusToXmProductPhase(#{productId,mode=IN})}
+	</update>
+
 	<select id="checkExistsTask" parameterType="String" resultType="Long">
 		select count(1) from xm_task t where t.project_phase_id=#{phaseId}
 	</select>
