@@ -4,6 +4,8 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmBranchState;
 import com.xm.core.service.XmBranchStateService;
 import io.swagger.annotations.*;
@@ -133,7 +135,24 @@ public class XmBranchStateController {
 		m.put("tips", tips);
 		return m;
 	}
-	 
+
+	@ApiOperation( value = "查询前后两周每日任务变化数量",notes="listXmBranchState,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+
+	@ApiResponses({
+			@ApiResponse(code = 200,response= XmBranchState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/list/tasksSumDw",method=RequestMethod.GET)
+	public Map<String,Object> tasksSumDw(){
+		Map<String,Object> m = new HashMap<>();
+		User user= LoginUtils.getCurrentUserInfo();
+		List<Map<String,Object>>	xmBranchStateList = xmBranchStateService.tasksSumDw(user.getBranchId());	//列出XmBranchState列表
+		PageUtils.responePage(m, xmBranchStateList);
+		m.put("data",xmBranchStateList);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
+
 	@ApiOperation( value = "从项目汇总表汇总数据到机构汇总表",notes="")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")

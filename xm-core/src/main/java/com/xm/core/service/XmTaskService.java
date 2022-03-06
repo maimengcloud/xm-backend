@@ -265,6 +265,10 @@ public class XmTaskService extends BaseService {
 		XmTask xmTask2=new XmTask();
 		xmTask2.setId(xmTask.getId());
 		xmTask2.setRate(xmTask.getRate());
+		if(xmTaskDb.getBudgetWorkload()==null){
+			xmTaskDb.setBudgetWorkload(BigDecimal.ZERO);
+		}
+		xmTask2.setActWorkload(xmTaskDb.getBudgetWorkload().multiply(xmTask.getRate()).divide(BigDecimal.valueOf(100)));
 		this.updateSomeFieldByPk(xmTask);
 
 		if(StringUtils.hasText(xmTaskDb.getParentTaskid())){

@@ -70,6 +70,10 @@
 		 {call load_project_state_to_xm_branch_state(#{branchId,mode=IN})}
 	</update>
 
+	<select id="tasksSumDw" parameterType="String" resultType="HashMap">
+		select  from xm_task t where t.branch_id=#{branchId}
+
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 

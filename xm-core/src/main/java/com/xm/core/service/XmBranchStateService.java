@@ -23,6 +23,10 @@ public class XmBranchStateService extends BaseService {
 		return this.selectList("listPortalAllXmBranchSumState",xmBranchState);
     }
 
+    public List<Map<String, Object>> tasksSumDw(String branchId) {
+	    return super.selectList("tasksSumDw",branchId);
+    }
+
     /** 请在此类添加自定义函数 */
 
 }
