@@ -1,6 +1,6 @@
 package com.xm.core.service.cache;
 
-import com.xm.core.vo.XmProjectGroupVo;
+import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -46,16 +46,16 @@ public class XmProjectGroupCacheService {
  		return "xm_group";
 	}
 
-	public  List<XmProjectGroupVo>  getProjectGroups(String projectId){
+	public  List<XmGroupVo>  getProjectGroups(String projectId){
 		String key=this.getProjectKey(projectId);
-		return (List<XmProjectGroupVo>) redisTemplate.opsForHash().values(key);
+		return (List<XmGroupVo>) redisTemplate.opsForHash().values(key);
 
 	}
-	public  XmProjectGroupVo  getProjectGroup(String projectId,String groupId){
+	public XmGroupVo getProjectGroup(String projectId, String groupId){
 		String key=this.getProjectKey(projectId);
-		return (XmProjectGroupVo) redisTemplate.opsForHash().get(key,groupId);
+		return (XmGroupVo) redisTemplate.opsForHash().get(key,groupId);
 	}
-	public  void  putProjectGroup(XmProjectGroupVo group){
+	public  void  putProjectGroup(XmGroupVo group){
 		String key=this.getProjectKey(group.getProjectId());
 		redisTemplate.opsForHash().put(key, group.getId(), group);
 	}
@@ -68,13 +68,13 @@ public class XmProjectGroupCacheService {
 		String key=this.getProjectKey(projectId);
 		this.clearProjectGroups(projectId);
 	}
-	public void putProjectGroups(String projectId,List<XmProjectGroupVo> groups){
+	public void putProjectGroups(String projectId,List<XmGroupVo> groups){
 		String key=this.getProjectKey(projectId);
 		if(groups==null || groups.size()==0){
 			this.clearProjectGroups(projectId);
 			return;
 		}
-		for (XmProjectGroupVo group : groups) {
+		for (XmGroupVo group : groups) {
 			String hashKey= group.getId();
 			redisTemplate.opsForHash().put(key, hashKey, group);
 		}
@@ -87,16 +87,16 @@ public class XmProjectGroupCacheService {
 		}
 	}
 
-	public  List<XmProjectGroupVo>  getProductGroups(String productId){
+	public  List<XmGroupVo>  getProductGroups(String productId){
 		String key=this.getProductKey(productId);
-		return (List<XmProjectGroupVo>) redisTemplate.opsForHash().values(key);
+		return (List<XmGroupVo>) redisTemplate.opsForHash().values(key);
 
 	}
-	public  XmProjectGroupVo  getProductGroup(String productId,String groupId){
+	public XmGroupVo getProductGroup(String productId, String groupId){
 		String key=this.getProductKey(productId);
-		return (XmProjectGroupVo) redisTemplate.opsForHash().get(key,groupId);
+		return (XmGroupVo) redisTemplate.opsForHash().get(key,groupId);
 	}
-	public  void  putProductGroup(XmProjectGroupVo group){
+	public  void  putProductGroup(XmGroupVo group){
 		String key=this.getProductKey(group.getProductId());
 		redisTemplate.opsForHash().put(key, group.getId(), group);
 	}
@@ -104,13 +104,13 @@ public class XmProjectGroupCacheService {
 		String key=this.getProductKey(productId);
 		this.clearProductGroups(productId);
 	}
-	public void putProductGroups(String productId,List<XmProjectGroupVo> groups){
+	public void putProductGroups(String productId,List<XmGroupVo> groups){
 		String key=this.getProductKey(productId);
 		if(groups==null || groups.size()==0){
 			 this.clearProductGroups(productId);
 			return;
 		}
-		for (XmProjectGroupVo group : groups) {
+		for (XmGroupVo group : groups) {
 			String hashKey= group.getId();
 			redisTemplate.opsForHash().put(key, hashKey, group);
 		}

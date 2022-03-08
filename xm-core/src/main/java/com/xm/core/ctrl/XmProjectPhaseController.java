@@ -14,7 +14,7 @@ import com.xm.core.PubTool;
 import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.service.*;
-import com.xm.core.vo.XmProjectGroupVo;
+import com.xm.core.vo.XmGroupVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -163,7 +163,7 @@ public class XmProjectPhaseController {
 					return m;
 				}
 				XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhaseDb.getProjectId());
-				List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhaseDb.getProjectId());
+				List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhaseDb.getProjectId());
 				User user = LoginUtils.getCurrentUserInfo();
 				boolean meIsPm=groupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 				boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -228,7 +228,7 @@ public class XmProjectPhaseController {
 				xmProjectPhase.setMngUsername(user.getUsername());
 			}
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhase.getProjectId());
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
 
 			boolean meIsPm=groupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -298,7 +298,7 @@ public class XmProjectPhaseController {
 				return ResponseHelper.failed("data-0","该计划已不存在");
 			}
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhaseDb.getProjectId());
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhaseDb.getProjectId());
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhaseDb.getProjectId());
 			User user = LoginUtils.getCurrentUserInfo();
 			boolean meIsPm=groupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -359,7 +359,7 @@ public class XmProjectPhaseController {
 				return ResponseHelper.failed("data-0","该计划已不存在");
 			}
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhase.getProjectId());
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
 			User user = LoginUtils.getCurrentUserInfo();
 			boolean meIsPm=groupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -441,7 +441,7 @@ public class XmProjectPhaseController {
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhase.getProjectId());
 			List<String> existsTaskList=new ArrayList<>();
 			List<String> hasChildList=new ArrayList<>();
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
 			User user = LoginUtils.getCurrentUserInfo();
 			boolean meIsPm=groupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -534,7 +534,7 @@ public class XmProjectPhaseController {
 				return ResponseHelper.failed("projectId-0","请上送项目编号");
 			}
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhase.getProjectId());
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
 			User user = LoginUtils.getCurrentUserInfo();
 			boolean meIsPm=groupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHeadOrAss(groupVoList,user.getUserid(),user.getUserid());
@@ -644,7 +644,7 @@ public class XmProjectPhaseController {
 			}
 
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(xmProjectPhase.getProjectId());
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProjectId());
 			User user = LoginUtils.getCurrentUserInfo();
 			boolean meIsPm=groupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -747,7 +747,7 @@ public class XmProjectPhaseController {
 			if(!StringUtils.hasText(projectId)){
 				return ResponseHelper.failed("projectId-0","请上送项目编号");
 			}
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
 			User user = LoginUtils.getCurrentUserInfo();
 
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(projectId);
@@ -788,7 +788,7 @@ public class XmProjectPhaseController {
 			if(!StringUtils.hasText(projectId)){
 				return ResponseHelper.failed("projectId-0","请上送项目编号");
 			}
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
 			User user = LoginUtils.getCurrentUserInfo();
 
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(projectId);
@@ -826,7 +826,7 @@ public class XmProjectPhaseController {
 			if(!StringUtils.hasText(projectId)){
 				return ResponseHelper.failed("projectId-0","请上送项目编号");
 			}
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
 			User user = LoginUtils.getCurrentUserInfo();
 
 			XmProject xmProject=this.xmProjectService.getProjectFromCache(projectId);

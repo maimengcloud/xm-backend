@@ -14,7 +14,7 @@ import com.xm.core.entity.XmTaskExecuser;
 import com.xm.core.service.client.CashOperateServie;
 import com.xm.core.service.client.MkClient;
 import com.xm.core.service.push.XmPushMsgService;
-import com.xm.core.vo.XmProjectGroupVo;
+import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -133,9 +133,9 @@ public class XmTaskExecuserService extends BaseService {
 		List<String> usernames=new ArrayList<>();
 		
 		 User user=LoginUtils.getCurrentUserInfo();
-		 List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
+		 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
  		for (XmTaskExecuser xmTaskExecuser : xmTaskExecuserList) {
-			List<XmProjectGroupVo> userGroups=groupService.getUserGroups(pgroups, xmTaskExecuser.getUserid()); 
+			List<XmGroupVo> userGroups=groupService.getUserGroups(pgroups, xmTaskExecuser.getUserid());
 			XmTaskExecuser xmTaskExecuser2=new XmTaskExecuser();
 			xmTaskExecuser2.setId(xmTaskExecuser.getId());
 			xmTaskExecuser2.setStatus("7");
@@ -154,7 +154,7 @@ public class XmTaskExecuserService extends BaseService {
 			users.add(userMap);
 			String imMsg=xmTaskExecuser.getUsername()+"放弃任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】";
 
-			for (XmProjectGroupVo g : userGroups) {
+			for (XmGroupVo g : userGroups) {
 				this.pushMsgService.pushGroupMsg(user.getBranchId(), g.getId(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),  imMsg);
  				this.pushMsgService.pushLeaveChannelGroupMsg(user.getBranchId(), g.getId(), users); 
 			}
@@ -177,10 +177,10 @@ public class XmTaskExecuserService extends BaseService {
 	public void becomeExecute(XmTaskExecuser xmTaskExecuser){
 		String projectId=xmTaskExecuser.getProjectId();
 		String taskId=xmTaskExecuser.getTaskId();
- 		 List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
+ 		 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
 		 User user=LoginUtils.getCurrentUserInfo();
  
- 		List<XmProjectGroupVo> userGroups=groupService.getUserGroups(pgroups, xmTaskExecuser.getUserid()); 
+ 		List<XmGroupVo> userGroups=groupService.getUserGroups(pgroups, xmTaskExecuser.getUserid());
  		XmTaskExecuser query=new XmTaskExecuser(); 
  		query.setTaskId(taskId);
  		 List<XmTaskExecuser> xmTaskExecusersDb=this.selectListByWhere(query);
@@ -206,7 +206,7 @@ public class XmTaskExecuserService extends BaseService {
 			 * 下面为推送任务执行人变更im通知消息
 			 */
  			String imMsg=xmTaskExecuser.getUsername()+"变更为任务["+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"]执行人"; 
-			for (XmProjectGroupVo g : userGroups) { 
+			for (XmGroupVo g : userGroups) {
 				this.pushMsgService.pushGroupMsg(user.getBranchId(),g.getId(),  xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),imMsg );
 				this.pushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(),user.getUsername(),xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),imMsg);
 			}

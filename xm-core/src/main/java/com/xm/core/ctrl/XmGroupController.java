@@ -17,7 +17,7 @@ import com.xm.core.service.XmProjectService;
 import com.xm.core.service.XmRecordService;
 import com.xm.core.service.cache.XmProjectGroupCacheService;
 import com.xm.core.service.push.XmPushMsgService;
-import com.xm.core.vo.XmProjectGroupVo;
+import com.xm.core.vo.XmGroupVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -149,7 +149,7 @@ public class XmGroupController {
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(params, "ids");
 		PageUtils.startPage(params);
-		List<XmProjectGroupVo>	xmProjectGroupList=new ArrayList<>();
+		List<XmGroupVo>	xmProjectGroupList=new ArrayList<>();
 		String iterationId= (String) params.get("iterationId");
 		String projectId= (String) params.get("projectId");
 		String productId= (String) params.get("productId");

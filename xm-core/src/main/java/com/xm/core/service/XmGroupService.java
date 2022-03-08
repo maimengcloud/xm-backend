@@ -8,7 +8,7 @@ import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.*;
 import com.xm.core.service.cache.XmProjectGroupCacheService;
 import com.xm.core.service.push.XmPushMsgService;
-import com.xm.core.vo.XmProjectGroupVo;
+import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -91,7 +91,7 @@ public class XmGroupService extends BaseService {
 				noQxOpResult.addAll(menuList);
 			}else{
 				if(!this.checkUserIsProductAdm(xmProduct,user.getUserid())){
-					List<XmProjectGroupVo> groupVoList=this.getProductGroupVoList(xmProduct.getId());
+					List<XmGroupVo> groupVoList=this.getProductGroupVoList(xmProduct.getId());
 					for (XmMenu xmMenu : menuList) {
 						boolean canOp=false;
 						if(user.getUserid().equals(xmMenu.getMmUserid())){
@@ -122,9 +122,9 @@ public class XmGroupService extends BaseService {
 	}
 
 	/** 请在此类添加自定义函数 */
-	public List<XmProjectGroupVo> getProjectGroupVoList(String projectId) {
-		List<XmProjectGroupVo>	groupVoList=new ArrayList<>();
-		List<XmProjectGroupVo>	groupVoList2  = groupCacheService.getProjectGroups(projectId);
+	public List<XmGroupVo> getProjectGroupVoList(String projectId) {
+		List<XmGroupVo>	groupVoList=new ArrayList<>();
+		List<XmGroupVo>	groupVoList2  = groupCacheService.getProjectGroups(projectId);
 		if(groupVoList2==null||groupVoList2.size()==0) {
 			
 		    XmProjectGroup group = new XmProjectGroup();
@@ -140,7 +140,7 @@ public class XmGroupService extends BaseService {
 		    	 //return groupVoList;
 		    }
 		    groupList.forEach(g -> { 
-	            XmProjectGroupVo gvo = new XmProjectGroupVo();
+	            XmGroupVo gvo = new XmGroupVo();
 	            BeanUtils.copyProperties(g,gvo);
 	            List<XmProjectGroupUser> groupUsers=new ArrayList<>();
 	            groupUserList.forEach(gu -> {
@@ -202,9 +202,9 @@ public class XmGroupService extends BaseService {
 		}
 		return false;
 	}
-	public List<XmProjectGroupVo> getProductGroupVoList(String productId) {
-		List<XmProjectGroupVo>	groupVoList=new ArrayList<>();
-		List<XmProjectGroupVo>	groupVoList2  = groupCacheService.getProductGroups(productId);
+	public List<XmGroupVo> getProductGroupVoList(String productId) {
+		List<XmGroupVo>	groupVoList=new ArrayList<>();
+		List<XmGroupVo>	groupVoList2  = groupCacheService.getProductGroups(productId);
 		if(groupVoList2==null||groupVoList2.size()==0) {
 
 			XmProjectGroup group = new XmProjectGroup();
@@ -218,7 +218,7 @@ public class XmGroupService extends BaseService {
 			if(groupUserList==null || groupUserList.size()==0) {
 			}
 			groupList.forEach(g -> {
-				XmProjectGroupVo gvo = new XmProjectGroupVo();
+				XmGroupVo gvo = new XmGroupVo();
 				BeanUtils.copyProperties(g,gvo);
 				List<XmProjectGroupUser> groupUsers=new ArrayList<>();
 				groupUserList.forEach(gu -> {
@@ -242,10 +242,10 @@ public class XmGroupService extends BaseService {
 	 * @param xmProjectGroupVoList
 	 */
 	@Transactional
-	public void addGroups(String projectId,List<XmProjectGroupVo> xmProjectGroupVoList) {
+	public void addGroups(String projectId,List<XmGroupVo> xmProjectGroupVoList) {
 		List<XmProjectGroup> groups=new ArrayList<>();
 		List<XmProjectGroupUser> groupUsers=new ArrayList<>();
-		for (XmProjectGroupVo xmProjectGroupVo : xmProjectGroupVoList) {
+		for (XmGroupVo xmProjectGroupVo : xmProjectGroupVoList) {
 			XmProjectGroup group=new XmProjectGroup();
 			xmProjectGroupVo.setId(this.createKey("id"));
 			BeanUtils.copyProperties(xmProjectGroupVo, group);
@@ -267,7 +267,7 @@ public class XmGroupService extends BaseService {
 			this.batchInsert(groups);
 			User u=LoginUtils.getCurrentUserInfo();
 
-			for (XmProjectGroupVo group : xmProjectGroupVoList) {
+			for (XmGroupVo group : xmProjectGroupVoList) {
 				List<XmProjectGroupUser> users=group.getGroupUsers();
 				List<Map<String,Object>> umaps=new ArrayList<>();
 				for (XmProjectGroupUser xmProjectGroupUser : users) {
@@ -320,8 +320,8 @@ public class XmGroupService extends BaseService {
 	 * @param userid
 	 * @return
 	 */
-    public List<XmProjectGroupVo> getUserGroupsByProjectId(String projectId, String userid){
-    	List<XmProjectGroupVo> xmProjectGroupVoList=this.getProjectGroupVoList(projectId);
+    public List<XmGroupVo> getUserGroupsByProjectId(String projectId, String userid){
+    	List<XmGroupVo> xmProjectGroupVoList=this.getProjectGroupVoList(projectId);
     	return this.getUserGroups(xmProjectGroupVoList, userid);
     }
 	/**
@@ -330,8 +330,8 @@ public class XmGroupService extends BaseService {
 	 * @param userid
 	 * @return
 	 */
-	public List<XmProjectGroupVo> getUserGroupsByProductId(String productId, String userid){
-		List<XmProjectGroupVo> xmProjectGroupVoList=this.getProductGroupVoList(productId);
+	public List<XmGroupVo> getUserGroupsByProductId(String productId, String userid){
+		List<XmGroupVo> xmProjectGroupVoList=this.getProductGroupVoList(productId);
 		return this.getUserGroups(xmProjectGroupVoList, userid);
 	}
 
@@ -341,12 +341,12 @@ public class XmGroupService extends BaseService {
 	 * @param teamHeadUserid
 	 * @return
 	 */
-	public boolean  checkUserIsHeadInGroups( List<XmProjectGroupVo> xmProjectGroupVoList,String teamHeadUserid){
+	public boolean  checkUserIsHeadInGroups(List<XmGroupVo> xmProjectGroupVoList, String teamHeadUserid){
 		if(xmProjectGroupVoList==null || xmProjectGroupVoList.size()==0)return false;
 		if(!StringUtils.hasText(teamHeadUserid)){
 			return false;
 		}
-		for (XmProjectGroupVo xmProjectGroupVo : xmProjectGroupVoList) {
+		for (XmGroupVo xmProjectGroupVo : xmProjectGroupVoList) {
 			if(teamHeadUserid.equals(xmProjectGroupVo.getLeaderUserid())){
 				return true;
 			}
@@ -362,7 +362,7 @@ public class XmGroupService extends BaseService {
 	 * @param teamHeadUserid
 	 * @return
 	 */
-	public boolean  checkUserIsHeadInGroup( List<XmProjectGroupVo> xmProjectGroupVoList,String groupId,String teamHeadUserid){
+	public boolean  checkUserIsHeadInGroup(List<XmGroupVo> xmProjectGroupVoList, String groupId, String teamHeadUserid){
 		if(xmProjectGroupVoList==null || xmProjectGroupVoList.size()==0)return false;
 		if(!StringUtils.hasText(teamHeadUserid)){
 			return false;
@@ -371,7 +371,7 @@ public class XmGroupService extends BaseService {
 			return false;
 		}
 
-		for (XmProjectGroupVo xmProjectGroupVo : xmProjectGroupVoList) {
+		for (XmGroupVo xmProjectGroupVo : xmProjectGroupVoList) {
 			if(groupId.equals(xmProjectGroupVo.getId())){
 				 if(teamHeadUserid.equals(xmProjectGroupVo.getLeaderUserid())){
 				 	return true;
@@ -380,12 +380,12 @@ public class XmGroupService extends BaseService {
 		}
 		return false;
 	}
-    public List<XmProjectGroupVo> getUserGroups(List<XmProjectGroupVo> xmProjectGroupVoList, String userid){
-     	List<XmProjectGroupVo> userGroups=new ArrayList<>();
+    public List<XmGroupVo> getUserGroups(List<XmGroupVo> xmProjectGroupVoList, String userid){
+     	List<XmGroupVo> userGroups=new ArrayList<>();
      	if(xmProjectGroupVoList==null) {
      		return userGroups;
      	}
-		for (XmProjectGroupVo g : xmProjectGroupVoList) {
+		for (XmGroupVo g : xmProjectGroupVoList) {
 			if(userid.equals(g.getLeaderUserid())||userid.equals(g.getAssUserid())){
 				userGroups.add(g);
 			}else{
@@ -409,11 +409,11 @@ public class XmGroupService extends BaseService {
     	return userGroups;
     }
     public boolean  checkUserExistsGroup(String projectId,String userid){
-    	List<XmProjectGroupVo> userGroups= getUserGroupsByProjectId(projectId,userid);
+    	List<XmGroupVo> userGroups= getUserGroupsByProjectId(projectId,userid);
     	return userGroups!=null && userGroups.size()>0;
     }
-	public boolean  checkUserExistsGroup(List<XmProjectGroupVo> userGroups,String userid){
-		List<XmProjectGroupVo> userGroups2= this.getUserGroups(userGroups, userid);
+	public boolean  checkUserExistsGroup(List<XmGroupVo> userGroups, String userid){
+		List<XmGroupVo> userGroups2= this.getUserGroups(userGroups, userid);
 		return userGroups2!=null && userGroups2.size()>0;
 	}
 	/**
@@ -422,7 +422,7 @@ public class XmGroupService extends BaseService {
 	 * @param headUserid
 	 * @return
 	 */
-	public boolean checkUserIsTeamHead(XmProjectGroupVo xmProjectGroupVo, String headUserid){
+	public boolean checkUserIsTeamHead(XmGroupVo xmProjectGroupVo, String headUserid){
 		if(xmProjectGroupVo==null){
 			return false;
 		}
@@ -438,7 +438,7 @@ public class XmGroupService extends BaseService {
 	 * @param headUserid
 	 * @return
 	 */
-	public boolean checkUserIsTeamHeadOrAss(XmProjectGroupVo xmProjectGroupVo, String headUserid){
+	public boolean checkUserIsTeamHeadOrAss(XmGroupVo xmProjectGroupVo, String headUserid){
 		if(xmProjectGroupVo==null){
 			return false;
 		}
@@ -455,16 +455,16 @@ public class XmGroupService extends BaseService {
      * @param headUserid
      * @return
      */
-    public boolean checkUserIsOtherUserTeamHead(List<XmProjectGroupVo> xmProjectGroupVoList, String memUserid, String headUserid){
+    public boolean checkUserIsOtherUserTeamHead(List<XmGroupVo> xmProjectGroupVoList, String memUserid, String headUserid){
     	if(xmProjectGroupVoList==null || xmProjectGroupVoList.size()==0) {
     		return false;
     	}
     	
-    	List<XmProjectGroupVo> userGroups=this.getUserGroups(xmProjectGroupVoList, memUserid);
+    	List<XmGroupVo> userGroups=this.getUserGroups(xmProjectGroupVoList, memUserid);
     	if(userGroups==null || userGroups.size()==0) {
     		return false;
     	}
-    	for (XmProjectGroupVo ug : userGroups) {
+    	for (XmGroupVo ug : userGroups) {
     		if(headUserid.equals(ug.getLeaderUserid())){
     			return true;
 			}
@@ -479,24 +479,24 @@ public class XmGroupService extends BaseService {
 	 * @param headUserid
 	 * @return
 	 */
-	public boolean checkUserIsOtherUserTeamHeadOrAss(List<XmProjectGroupVo> xmProjectGroupVoList, String memUserid, String headUserid){
+	public boolean checkUserIsOtherUserTeamHeadOrAss(List<XmGroupVo> xmProjectGroupVoList, String memUserid, String headUserid){
 		if(xmProjectGroupVoList==null || xmProjectGroupVoList.size()==0) {
 			return false;
 		}
 
-		List<XmProjectGroupVo> userGroups=this.getUserGroups(xmProjectGroupVoList, memUserid);
+		List<XmGroupVo> userGroups=this.getUserGroups(xmProjectGroupVoList, memUserid);
 		if(userGroups==null || userGroups.size()==0) {
 			return false;
 		}
-		for (XmProjectGroupVo ug : userGroups) {
+		for (XmGroupVo ug : userGroups) {
 			if(headUserid.equals(ug.getLeaderUserid())||headUserid.equals(ug.getAssUserid())){
 				return true;
 			}
 		}
 		return false;
 	}
-  public  List<XmProjectGroupUser> getProjectManagers( List<XmProjectGroupVo> xmProjectGroupVoList){
-    	for (XmProjectGroupVo g : xmProjectGroupVoList) {
+  public  List<XmProjectGroupUser> getProjectManagers( List<XmGroupVo> xmProjectGroupVoList){
+    	for (XmGroupVo g : xmProjectGroupVoList) {
     		if("nbxmjl".equals(g.getPgTypeId())) {
     			return g.getGroupUsers();
     		}
@@ -514,7 +514,7 @@ public class XmGroupService extends BaseService {
 	 * @param pmUserid
 	 * @return
 	 */
-  public boolean checkUserIsProjectManager( List<XmProjectGroupVo> xmProjectGroupVoList ,String pmUserid) {
+  public boolean checkUserIsProjectManager(List<XmGroupVo> xmProjectGroupVoList , String pmUserid) {
 	  if(xmProjectGroupVoList==null || xmProjectGroupVoList.size()==0) {
 		  return false;
 	  }
@@ -532,13 +532,13 @@ public class XmGroupService extends BaseService {
   }
 
 
-	public List<XmProjectGroupVo> getProjectGroupVoListByIterationId(String iterationId) {
+	public List<XmGroupVo> getProjectGroupVoListByIterationId(String iterationId) {
 
 		List<XmProductProjectLink> list=this.xmProductProjectLinkService.selectListByIterationId(iterationId);
-		List<XmProjectGroupVo> datas=new ArrayList<>();
+		List<XmGroupVo> datas=new ArrayList<>();
 		if(list!=null && list.size()>0){
 			for (XmProductProjectLink productProjectLink : list) {
-				List<XmProjectGroupVo> data0=this.getProjectGroupVoList(productProjectLink.getProjectId());
+				List<XmGroupVo> data0=this.getProjectGroupVoList(productProjectLink.getProjectId());
 				if(data0!=null && data0.size()>0){
 					datas.addAll(data0);
 				}
@@ -552,8 +552,8 @@ public class XmGroupService extends BaseService {
 	 * @param productId
 	 * @return
 	 */
-	public List<XmProjectGroupVo> getProjectGroupVoListByProductId(String productId) {
-		List<XmProjectGroupVo> data0=this.getProductGroupVoList(productId);
+	public List<XmGroupVo> getProjectGroupVoListByProductId(String productId) {
+		List<XmGroupVo> data0=this.getProductGroupVoList(productId);
 		return data0;
 	}
 
@@ -923,8 +923,8 @@ public class XmGroupService extends BaseService {
 		batchSumParents(canDelNodes);
 	}
 
-	public XmProjectGroupVo getProductGroupFromCache(String productId, String groupId) {
-		XmProjectGroupVo groupVo=groupCacheService.getProductGroup(productId,groupId);
+	public XmGroupVo getProductGroupFromCache(String productId, String groupId) {
+		XmGroupVo groupVo=groupCacheService.getProductGroup(productId,groupId);
 		if(groupVo==null){
 			XmProjectGroup group=this.selectOneObject(new XmProjectGroup(groupId));
 			if(group==null){
@@ -933,7 +933,7 @@ public class XmGroupService extends BaseService {
 				XmProjectGroupUser xmProjectGroupUser=new XmProjectGroupUser();
 				xmProjectGroupUser.setGroupId(groupId);
 				List<XmProjectGroupUser> users=this.xmProjectGroupUserService.selectListByWhere(xmProjectGroupUser);
-				XmProjectGroupVo xmProjectGroupVo=new XmProjectGroupVo();
+				XmGroupVo xmProjectGroupVo=new XmGroupVo();
 				BeanUtils.copyProperties(group,xmProjectGroupVo);
 				xmProjectGroupVo.setGroupUsers(users);
 				this.groupCacheService.putProductGroup(xmProjectGroupVo);
@@ -943,8 +943,8 @@ public class XmGroupService extends BaseService {
 			return groupVo;
 		}
 	}
-	public XmProjectGroupVo getProjectGroupFromCache(String projectId, String groupId) {
-		XmProjectGroupVo groupVo=groupCacheService.getProjectGroup(projectId,groupId);
+	public XmGroupVo getProjectGroupFromCache(String projectId, String groupId) {
+		XmGroupVo groupVo=groupCacheService.getProjectGroup(projectId,groupId);
 		if(groupVo==null){
 			XmProjectGroup group=this.selectOneObject(new XmProjectGroup(groupId));
 			if(group==null){
@@ -953,7 +953,7 @@ public class XmGroupService extends BaseService {
 				XmProjectGroupUser xmProjectGroupUser=new XmProjectGroupUser();
 				xmProjectGroupUser.setGroupId(groupId);
 				List<XmProjectGroupUser> users=this.xmProjectGroupUserService.selectListByWhere(xmProjectGroupUser);
-				XmProjectGroupVo xmProjectGroupVo=new XmProjectGroupVo();
+				XmGroupVo xmProjectGroupVo=new XmGroupVo();
 				BeanUtils.copyProperties(group,xmProjectGroupVo);
 				xmProjectGroupVo.setGroupUsers(users);
 				this.groupCacheService.putProjectGroup(xmProjectGroupVo);

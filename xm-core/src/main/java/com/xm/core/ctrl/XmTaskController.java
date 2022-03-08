@@ -20,7 +20,7 @@ import com.xm.core.service.cache.XmTaskCacheService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.BatchRelTasksWithMenu;
 import com.xm.core.vo.BatchRelTasksWithPhase;
-import com.xm.core.vo.XmProjectGroupVo;
+import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmTaskVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
@@ -341,7 +341,7 @@ public class XmTaskController {
 			xmTaskVo.setCreateTime(new Date());
 			xmTaskVo.setCbranchId(user.getBranchId());
 			xmTaskVo.setCdeptid(user.getDeptid());
-			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskVo.getProjectId());
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskVo.getProjectId());
 			if(pgroups==null || pgroups.size()==0){
 				return ResponseHelper.failed("group-0","该项目还未建立项目团队，请先进行团队成员维护");
 			}
@@ -471,7 +471,7 @@ public class XmTaskController {
 				return m;
 			}
 
-			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(xmTask.getProjectId());
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTask.getProjectId());
 			if(pgroups==null || pgroups.size()==0){
 				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
 				m.put("tips", tips);
@@ -534,7 +534,7 @@ public class XmTaskController {
 				return m;
 			}
 
-			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskVo.getProjectId());
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskVo.getProjectId());
 			if(pgroups==null || pgroups.size()==0){
 				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
 				m.put("tips", tips);
@@ -598,7 +598,7 @@ public class XmTaskController {
 			if(xmTaskDb==null){
 				return ResponseHelper.failed("data-0","任务已不存在");
 			}
-			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskDb.getProjectId());
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskDb.getProjectId());
 			if(pgroups==null || pgroups.size()==0){
 				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
 				m.put("tips", tips);
@@ -640,9 +640,9 @@ public class XmTaskController {
 			if(tips.isOk()) {
 				xmTaskService.updateTask(xmTaskVo,xmTaskDb);
 				if(!StringUtils.isEmpty(xmTaskVo.getExecutorUserid())) {
-					List<XmProjectGroupVo> groups=groupService.getUserGroupsByProjectId(xmTaskVo.getProjectId(), xmTaskVo.getExecutorUserid());
+					List<XmGroupVo> groups=groupService.getUserGroupsByProjectId(xmTaskVo.getProjectId(), xmTaskVo.getExecutorUserid());
 					if(groups!=null && groups.size()>0) {
-						for (XmProjectGroupVo g : groups) {
+						for (XmGroupVo g : groups) {
 							xmPushMsgService.pushGroupMsg(user.getBranchId(), g.getId(), user.getUserid(), user.getUsername(), user.getUsername()+"修改了任务【"+xmTaskVo.getName()+"】信息");
 						}
 					}
@@ -681,7 +681,7 @@ public class XmTaskController {
 			if(xmTaskDb==null){
 				return ResponseHelper.failed("data-0","任务已不存在");
 			}
-			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskDb.getProjectId());
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskDb.getProjectId());
 			if(pgroups==null || pgroups.size()==0){
 				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
 				m.put("tips", tips);
@@ -731,7 +731,7 @@ public class XmTaskController {
 			if(xmTaskDb==null){
 				return ResponseHelper.failed("data-0","任务已不存在");
 			}
-			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskDb.getProjectId());
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskDb.getProjectId());
 			if(pgroups==null || pgroups.size()==0){
 				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
 				m.put("tips", tips);
@@ -749,9 +749,9 @@ public class XmTaskController {
 			}
 			xmTaskService.updateProgress(xmTask,xmTaskDb);
 			if(!StringUtils.isEmpty(xmTaskDb.getExecutorUserid())) {
-				List<XmProjectGroupVo> groupVoList=this.groupService.getUserGroups(pgroups,xmTaskDb.getExecutorUserid());
+				List<XmGroupVo> groupVoList=this.groupService.getUserGroups(pgroups,xmTaskDb.getExecutorUserid());
 				if(groupVoList!=null && groupVoList.size()>0) {
-					for (XmProjectGroupVo g : groupVoList) {
+					for (XmGroupVo g : groupVoList) {
 						xmPushMsgService.pushGroupMsg(g.getBranchId(), g.getId(), user.getUserid(), user.getUsername(), user.getUsername()+"将任务【"+xmTaskDb.getName()+"】进度更新为"+xmTask.getRate()+"%");
 					}
 				}
@@ -800,7 +800,7 @@ public class XmTaskController {
 				return m;
 			}
 
-			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
 			if(pgroups==null || pgroups.size()==0){
 				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
 				m.put("tips", tips);
@@ -930,7 +930,7 @@ public class XmTaskController {
 			if( "9".equals(xmProjectDb.getStatus())){
 				return ResponseHelper.failed("project-status-9","项目关闭,不能再修改");
 			}
-			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(xmProjectDb.getId());
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmProjectDb.getId());
 			if(pgroups==null || pgroups.size()==0){
 				return ResponseHelper.failed("group-0","该项目还未建立项目团队，请先进行团队成员维护");
 			}
@@ -1024,7 +1024,7 @@ public class XmTaskController {
 			boolean hasMenuQx=true;
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			if(!isPm){
-				List<XmProjectGroupVo> pgroups=groupService.getProductGroupVoList(xmMenuDb.getProductId());
+				List<XmGroupVo> pgroups=groupService.getProductGroupVoList(xmMenuDb.getProductId());
 				if(StringUtils.hasText(xmMenuDb.getMmUserid()) ){
 					if(!user.getUserid().equals(xmMenuDb.getMmUserid())){
 
@@ -1064,7 +1064,7 @@ public class XmTaskController {
 				for (Map.Entry<String, List<XmTask>> pt : projectTasksMap.entrySet()) {
 					XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(pt.getKey());
 					boolean isProjectAdm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
-					List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectDb.getId());
+					List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectDb.getId());
 					if(isProjectAdm==false){
 						if(groupVoList==null){
 							noAllowTasks.addAll(pt.getValue());
@@ -1146,7 +1146,7 @@ public class XmTaskController {
 				return m;
 			}
 
-			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
 			if(pgroups==null || pgroups.size()==0){
 				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
 				m.put("tips", tips);
@@ -1261,7 +1261,7 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
-			List<XmProjectGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
 			if(pgroups==null || pgroups.size()==0){
 				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
 				m.put("tips", tips);

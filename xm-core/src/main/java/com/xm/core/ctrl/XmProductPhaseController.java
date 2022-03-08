@@ -14,7 +14,7 @@ import com.xm.core.PubTool;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.service.*;
-import com.xm.core.vo.XmProjectGroupVo;
+import com.xm.core.vo.XmGroupVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -163,7 +163,7 @@ public class XmProductPhaseController {
 					return m;
 				}
 				XmProduct xmProduct=this.xmProductService.getProductFromCache(xmProjectPhaseDb.getProductId());
-				List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhaseDb.getProductId());
+				List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhaseDb.getProductId());
 				User user = LoginUtils.getCurrentUserInfo();
 				boolean meIsPm=groupService.checkUserIsProductAdm(xmProduct,user.getUserid());
 				boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -228,7 +228,7 @@ public class XmProductPhaseController {
 				xmProjectPhase.setMngUsername(user.getUsername());
 			}
 			XmProduct xmProduct=this.xmProductService.getProductFromCache(xmProjectPhase.getProductId());
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProductId());
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProductId());
 
 			boolean meIsPm=groupService.checkUserIsProductAdm(xmProduct,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -298,7 +298,7 @@ public class XmProductPhaseController {
 				return ResponseHelper.failed("data-0","该计划已不存在");
 			}
 			XmProduct xmProduct=this.xmProductService.getProductFromCache(xmProjectPhaseDb.getProductId());
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhaseDb.getProductId());
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhaseDb.getProductId());
 			User user = LoginUtils.getCurrentUserInfo();
 			boolean meIsPm=groupService.checkUserIsProductAdm(xmProduct,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -359,7 +359,7 @@ public class XmProductPhaseController {
 				return ResponseHelper.failed("data-0","该计划已不存在");
 			}
 			XmProduct xmProduct=this.xmProductService.getProductFromCache(xmProjectPhase.getProductId());
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProductId());
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProductId());
 			User user = LoginUtils.getCurrentUserInfo();
 			boolean meIsPm=groupService.checkUserIsProductAdm(xmProduct,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -441,7 +441,7 @@ public class XmProductPhaseController {
 			XmProduct xmProduct=this.xmProductService.getProductFromCache(xmProjectPhase.getProductId());
 			List<String> existsTaskList=new ArrayList<>();
 			List<String> hasChildList=new ArrayList<>();
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProductId());
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProductId());
 			User user = LoginUtils.getCurrentUserInfo();
 			boolean meIsPm=groupService.checkUserIsProductAdm(xmProduct,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -534,7 +534,7 @@ public class XmProductPhaseController {
 				return ResponseHelper.failed("productId-0","请上送项目编号");
 			}
 			XmProduct xmProduct=this.xmProductService.getProductFromCache(xmProjectPhase.getProductId());
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProductId());
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProductId());
 			User user = LoginUtils.getCurrentUserInfo();
 			boolean meIsPm=groupService.checkUserIsProductAdm(xmProduct,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHeadOrAss(groupVoList,user.getUserid(),user.getUserid());
@@ -644,7 +644,7 @@ public class XmProductPhaseController {
 			}
 
 			XmProduct xmProduct=this.xmProductService.getProductFromCache(xmProjectPhase.getProductId());
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProductId());
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectPhase.getProductId());
 			User user = LoginUtils.getCurrentUserInfo();
 			boolean meIsPm=groupService.checkUserIsProductAdm(xmProduct,user.getUserid());
 			boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
@@ -747,7 +747,7 @@ public class XmProductPhaseController {
 			if(!StringUtils.hasText(productId)){
 				return ResponseHelper.failed("productId-0","请上送项目编号");
 			}
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(productId);
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(productId);
 			User user = LoginUtils.getCurrentUserInfo();
 
 			XmProduct xmProduct=this.xmProductService.getProductFromCache(productId);
@@ -788,7 +788,7 @@ public class XmProductPhaseController {
 			if(!StringUtils.hasText(productId)){
 				return ResponseHelper.failed("productId-0","请上送项目编号");
 			}
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(productId);
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(productId);
 			User user = LoginUtils.getCurrentUserInfo();
 
 			XmProduct xmProduct=this.xmProductService.getProductFromCache(productId);
@@ -826,7 +826,7 @@ public class XmProductPhaseController {
 			if(!StringUtils.hasText(productId)){
 				return ResponseHelper.failed("productId-0","请上送项目编号");
 			}
-			List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(productId);
+			List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(productId);
 			User user = LoginUtils.getCurrentUserInfo();
 
 			XmProduct xmProduct=this.xmProductService.getProductFromCache(productId);

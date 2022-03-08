@@ -12,7 +12,7 @@ import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmProjectGroupUser;
 import com.xm.core.service.*;
 import com.xm.core.service.push.XmPushMsgService;
-import com.xm.core.vo.XmProjectGroupVo;
+import com.xm.core.vo.XmGroupVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -130,7 +130,7 @@ public class XmGroupUserController {
 					return ResponseHelper.failed("product-0","产品已不存在");
 				}
 				if(!xmProjectGroupService.checkUserIsProductAdm(xmProduct, user.getUserid())){
-					XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProduct.getId(),gu.getGroupId());
+					XmGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProduct.getId(),gu.getGroupId());
 					if(xmProjectGroupVo==null){
 						return ResponseHelper.failed("group-0","小组已不存在");
 					}
@@ -149,7 +149,7 @@ public class XmGroupUserController {
 					return ResponseHelper.failed("product-0","产品已不存在");
 				}
 				if(!xmProjectGroupService.checkUserIsProjectAdm(xmProject, user.getUserid())){
-					XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProject.getId(),gu.getGroupId());
+					XmGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProject.getId(),gu.getGroupId());
 					if(xmProjectGroupVo==null){
 						return ResponseHelper.failed("group-0","小组已不存在");
 					}
@@ -220,7 +220,7 @@ public class XmGroupUserController {
 					return ResponseHelper.failed("product-0","产品已不存在");
 				}
 				if(!xmProjectGroupService.checkUserIsProductAdm(xmProduct, user.getUserid())){
-					XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProduct.getId(),gu.getGroupId());
+					XmGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProduct.getId(),gu.getGroupId());
 					if(xmProjectGroupVo==null){
 						return ResponseHelper.failed("group-0","小组已不存在");
 					}
@@ -239,7 +239,7 @@ public class XmGroupUserController {
 					return ResponseHelper.failed("project-0","项目已不存在");
 				}
 				if(!xmProjectGroupService.checkUserIsProjectAdm(xmProject, user.getUserid())){
-					XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProject.getId(),gu.getGroupId());
+					XmGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProject.getId(),gu.getGroupId());
 					if(xmProjectGroupVo==null){
 						return ResponseHelper.failed("group-0","小组已不存在");
 					}
@@ -305,7 +305,7 @@ public class XmGroupUserController {
 					return ResponseHelper.failed("product-0","产品已不存在");
 				}
 				if(!xmProjectGroupService.checkUserIsProductAdm(xmProduct, user.getUserid())){
-					XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProduct.getId(),gu.getGroupId());
+					XmGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProduct.getId(),gu.getGroupId());
 					if(xmProjectGroupVo==null){
 						return ResponseHelper.failed("group-0","小组已不存在");
 					}
@@ -324,7 +324,7 @@ public class XmGroupUserController {
 					return ResponseHelper.failed("product-0","产品已不存在");
 				}
 				if(!xmProjectGroupService.checkUserIsProjectAdm(xmProject, user.getUserid())){
-					XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProject.getId(),gu.getGroupId());
+					XmGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProject.getId(),gu.getGroupId());
 					if(xmProjectGroupVo==null){
 						return ResponseHelper.failed("group-0","小组已不存在");
 					}
@@ -423,7 +423,7 @@ public class XmGroupUserController {
 				if("1".equals(pgClass)){
 					boolean isPm=xmProjectGroupService.checkUserIsProductAdm(xmProduct,user.getUserid());
 					if(!isPm){
-						XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProduct.getId(),groupId);
+						XmGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProduct.getId(),groupId);
 						if(xmProjectGroupVo==null){
 							continue;
 						}
@@ -435,7 +435,7 @@ public class XmGroupUserController {
 				}else {
 					boolean isPm=xmProjectGroupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 					if(!isPm){
-						XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProject.getId(),groupId);
+						XmGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProject.getId(),groupId);
 						if(xmProjectGroupVo==null){
 							continue;
 						}
@@ -540,7 +540,7 @@ public class XmGroupUserController {
 				if("1".equals(pgClass)){
 					boolean isPm=xmProjectGroupService.checkUserIsProductAdm(xmProduct,user.getUserid());
 					if(!isPm){
-						XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProduct.getId(),groupId);
+						XmGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProductGroupFromCache(xmProduct.getId(),groupId);
 						if(xmProjectGroupVo==null){
 							 continue;
 						}
@@ -552,7 +552,7 @@ public class XmGroupUserController {
 				}else {
 					boolean isPm=xmProjectGroupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 					if(!isPm){
-						XmProjectGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProject.getId(),groupId);
+						XmGroupVo xmProjectGroupVo=this.xmProjectGroupService.getProjectGroupFromCache(xmProject.getId(),groupId);
 						if(xmProjectGroupVo==null){
 							continue;
 						}

@@ -6,15 +6,15 @@ import java.util.List;
 
 public class XmProjectVo extends XmProject {
 	
-	List<XmProjectGroupVo> groups;
+	List<XmGroupVo> groups;
 	
 	
 
-	public List<XmProjectGroupVo> getGroups() {
+	public List<XmGroupVo> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(List<XmProjectGroupVo> groups) {
+	public void setGroups(List<XmGroupVo> groups) {
 		this.groups = groups;
 	}
 }

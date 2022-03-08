@@ -13,8 +13,8 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProject;
 import com.xm.core.service.*;
+import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmProjectCopyVo;
-import com.xm.core.vo.XmProjectGroupVo;
 import com.xm.core.vo.XmProjectVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
@@ -262,7 +262,7 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			List<XmProjectGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
+			List<XmGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isCreate && !isPm ) {
@@ -330,7 +330,7 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			List<XmProjectGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
+			List<XmGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isCreate && !isPm ) {
@@ -377,7 +377,7 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			List<XmProjectGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
+			List<XmGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isCreate && !isPm ) {
@@ -423,7 +423,7 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			List<XmProjectGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
+			List<XmGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isCreate && !isPm ) {

@@ -6,7 +6,7 @@ import com.mdp.core.utils.NumberUtil;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProjectPhase;
-import com.xm.core.vo.XmProjectGroupVo;
+import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,7 +42,7 @@ public class XmProjectPhaseService extends BaseService {
 	}
 	public Tips checkUserHasQxToOperProjectPhase(String projectId,String mngUserid,String mngUsername,String myUserid){
 		Tips tips = new Tips("成功");
-		List<XmProjectGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
+		List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(projectId);
 		User user = LoginUtils.getCurrentUserInfo();
 		boolean meIsPm=groupService.checkUserIsProjectManager(groupVoList,user.getUserid());
 		boolean meIsTeamHead=groupService.checkUserIsOtherUserTeamHead(groupVoList,user.getUserid(),user.getUserid());
