@@ -15,7 +15,7 @@ import java.math.BigDecimal;
  *	group_id;<br>
  */
 @ApiModel(description="功能状态表,无需前端维护，所有数据由汇总统计得出")
-public class XmProjectGroupState  implements java.io.Serializable {
+public class XmGroupState implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -126,12 +126,12 @@ public class XmProjectGroupState  implements java.io.Serializable {
 	String groupName;
 
 	/**团队编号**/
-	public XmProjectGroupState(String groupId) {
+	public XmGroupState(String groupId) {
 		this.groupId = groupId;
 	}
     
     /**功能状态表,无需前端维护，所有数据由汇总统计得出**/
-	public XmProjectGroupState() {
+	public XmGroupState() {
 	}
 	
 	/**

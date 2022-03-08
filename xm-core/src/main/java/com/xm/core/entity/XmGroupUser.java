@@ -14,7 +14,7 @@ import java.util.Date;
  *	group_id,userid;<br>
  */
 @ApiModel(description="xm_group_user")
-public class XmProjectGroupUser  implements java.io.Serializable {
+public class XmGroupUser implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -59,13 +59,13 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 	String obranchName;
 
 	/**团队编号,团队成员编号**/
-	public XmProjectGroupUser(String groupId,String userid) {
+	public XmGroupUser(String groupId, String userid) {
 		this.groupId = groupId;
 		this.userid = userid;
 	}
     
     /**xm_group_user**/
-	public XmProjectGroupUser() {
+	public XmGroupUser() {
 	}
 	
 	/**

@@ -198,17 +198,17 @@ public class XmProductService extends BaseService {
 			}
 		}
 
-		List<XmProjectGroup> groupsDb=new ArrayList<>();
+		List<XmGroup> groupsDb=new ArrayList<>();
 		Map<String, String> newGroupIdMap = new HashMap<>();
 		if( "1".equals(xmProduct.getCopyGroup())||"1".equals(xmProduct.getCopyGroupUser())) {
-			XmProjectGroup groupQ = new XmProjectGroup();
+			XmGroup groupQ = new XmGroup();
 			groupQ.setProductId(xmProductDb.getId());
 			groupsDb = this.groupService.selectListByWhere(groupQ);
 			if (groupsDb != null && groupsDb.size() > 0) {
-				for (XmProjectGroup group : groupsDb) {
+				for (XmGroup group : groupsDb) {
 					newGroupIdMap.put(group.getId(), this.groupService.createKey("id"));
 				}
-				for (XmProjectGroup node : groupsDb) {
+				for (XmGroup node : groupsDb) {
 					String oldId = node.getId();
 					String newId = newGroupIdMap.get(oldId);
 					node.setProductId(xmProductTo.getId());
@@ -229,11 +229,11 @@ public class XmProductService extends BaseService {
 			}
 		}
 		if(groupsDb.size()>0 && "1".equals(xmProduct.getCopyGroupUser())){
-			XmProjectGroupUser userQ=new XmProjectGroupUser();
+			XmGroupUser userQ=new XmGroupUser();
 			userQ.setProductId(xmProductDb.getId());
-			List<XmProjectGroupUser> usersDb=this.groupUserService.selectGroupUserListByProductId(xmProductDb.getId());
+			List<XmGroupUser> usersDb=this.groupUserService.selectGroupUserListByProductId(xmProductDb.getId());
 			if(usersDb!=null && usersDb.size()>0){
-				for (XmProjectGroupUser node : usersDb) {
+				for (XmGroupUser node : usersDb) {
 					node.setProjectId(null);
 					node.setProductId(xmProductTo.getId());
 					node.setGroupId(newGroupIdMap.get(node.getGroupId()));

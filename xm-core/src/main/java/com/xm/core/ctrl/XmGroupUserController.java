@@ -9,7 +9,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
-import com.xm.core.entity.XmProjectGroupUser;
+import com.xm.core.entity.XmGroupUser;
 import com.xm.core.service.*;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmGroupVo;
@@ -85,7 +85,7 @@ public class XmGroupUserController {
 		@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false) 
 	})
 	@ApiResponses({
-		@ApiResponse(code = 200,response= XmProjectGroupUser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+		@ApiResponse(code = 200,response= XmGroupUser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Map<String,Object> listXmProjectGroupUser( @RequestParam Map<String,Object> xmProjectGroupUser){
@@ -104,10 +104,10 @@ public class XmGroupUserController {
 
 	@ApiOperation( value = "新增一条xm_group_user信息",notes="addXmProjectGroupUser,主键如果为空，后台自动生成")
 	@ApiResponses({
-		@ApiResponse(code = 200,response=XmProjectGroupUser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+		@ApiResponse(code = 200,response= XmGroupUser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmProjectGroupUser(@RequestBody XmProjectGroupUser gu) {
+	public Map<String,Object> addXmProjectGroupUser(@RequestBody XmGroupUser gu) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
@@ -197,7 +197,7 @@ public class XmGroupUserController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmProjectGroupUser(@RequestBody XmProjectGroupUser gu){
+	public Map<String,Object> delXmProjectGroupUser(@RequestBody XmGroupUser gu){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
@@ -279,17 +279,17 @@ public class XmGroupUserController {
 
 	@ApiOperation( value = "根据主键修改一条xm_group_user信息",notes="editXmProjectGroupUser")
 	@ApiResponses({
-		@ApiResponse(code = 200,response=XmProjectGroupUser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+		@ApiResponse(code = 200,response= XmGroupUser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmProjectGroupUser(@RequestBody XmProjectGroupUser gu0) {
+	public Map<String,Object> editXmProjectGroupUser(@RequestBody XmGroupUser gu0) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			if(!StringUtils.hasText(gu0.getGroupId())||!StringUtils.hasText(gu0.getUserid())){
 				return ResponseHelper.failed("pk-0","请上送小组编号，用户编号groupId,userid");
 			}
-			XmProjectGroupUser gu=this.xmProjectGroupUserService.selectOneObject(gu0);
+			XmGroupUser gu=this.xmProjectGroupUserService.selectOneObject(gu0);
 			if(gu==null){
 				return ResponseHelper.failed("data-0","小组已不存在");
 			}
@@ -364,7 +364,7 @@ public class XmGroupUserController {
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
-	public Map<String,Object> batchAddXmProjectGroupUser(@RequestBody List<XmProjectGroupUser> gus) {
+	public Map<String,Object> batchAddXmProjectGroupUser(@RequestBody List<XmGroupUser> gus) {
 		Map<String,Object> m = new HashMap<>();
 		if(gus==null || gus.size()==0){
 			return ResponseHelper.failed("data-0","请上送要删除的小组成员");
@@ -374,7 +374,7 @@ public class XmGroupUserController {
 			if(gus.stream().filter(i->!StringUtils.hasText(i.getUserid())||!StringUtils.hasText(i.getGroupId())).findAny().isPresent()){
 				return ResponseHelper.failed("userid-or-groupId-0","请上送用户编号及小组编号");
 			}else{
-				for (XmProjectGroupUser gu : gus) {
+				for (XmGroupUser gu : gus) {
 					if(!"1".equals(gu.getPgClass())&&!StringUtils.hasText(gu.getProjectId())){
 						return ResponseHelper.failed("projectId-0","项目编号不能为空");
 					}else if("1".equals(gu.getPgClass())&&!StringUtils.hasText(gu.getProductId()))
@@ -382,18 +382,18 @@ public class XmGroupUserController {
 					}
 
 			}
-			List<XmProjectGroupUser> gusDb=this.xmProjectGroupUserService.selectListByIds(gus);
+			List<XmGroupUser> gusDb=this.xmProjectGroupUserService.selectListByIds(gus);
 			//过滤掉已经存在的
-			List<XmProjectGroupUser> gusNoExists=gus.stream().filter(i->!(gusDb.stream().filter(k->k.getGroupId().equals(i.getGroupId())&&k.getUserid().equals(i.getUserid()))).findAny().isPresent()).collect(Collectors.toList());
+			List<XmGroupUser> gusNoExists=gus.stream().filter(i->!(gusDb.stream().filter(k->k.getGroupId().equals(i.getGroupId())&&k.getUserid().equals(i.getUserid()))).findAny().isPresent()).collect(Collectors.toList());
 			if(gusNoExists.size()==0){
 				return ResponseHelper.failed("user-had-exists","成功添加0个组员。以下用户已在小组中，不用再添加。【"+gusDb.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"】");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			XmProjectGroupUser gu=gusNoExists.get(0);
+			XmGroupUser gu=gusNoExists.get(0);
 			String productId=gu.getProductId();
 			String projectId=gu.getProjectId();
 			String pgClass=gu.getPgClass();
-			List<XmProjectGroupUser> gus2=new ArrayList<>();
+			List<XmGroupUser> gus2=new ArrayList<>();
 			XmProduct xmProduct=null;
 			XmProject xmProject=null;
 			if("1".equals(pgClass)){
@@ -417,8 +417,8 @@ public class XmGroupUserController {
 			}
 
 			Set<String> groupIds=gusNoExists.stream().map(i->i.getGroupId()).collect(Collectors.toSet());
-			List<XmProjectGroupUser> canAddUsers=new ArrayList<>();
-			Map<String,List<XmProjectGroupUser>> groupUsersMap=new HashMap<>();
+			List<XmGroupUser> canAddUsers=new ArrayList<>();
+			Map<String,List<XmGroupUser>> groupUsersMap=new HashMap<>();
 			for (String groupId : groupIds) {
 				if("1".equals(pgClass)){
 					boolean isPm=xmProjectGroupService.checkUserIsProductAdm(xmProduct,user.getUserid());
@@ -445,7 +445,7 @@ public class XmGroupUserController {
 						}
 					}
 				}
-				List<XmProjectGroupUser> cdus=gus2.stream().filter(i->groupId.equals(i.getGroupId())).collect(Collectors.toList());
+				List<XmGroupUser> cdus=gus2.stream().filter(i->groupId.equals(i.getGroupId())).collect(Collectors.toList());
 				canAddUsers.addAll(cdus);
 				groupUsersMap.put(groupId,cdus);
 			}
@@ -494,23 +494,23 @@ public class XmGroupUserController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmProjectGroupUser(@RequestBody List<XmProjectGroupUser> gus) {
+	public Map<String,Object> batchDelXmProjectGroupUser(@RequestBody List<XmGroupUser> gus) {
 		Map<String,Object> m = new HashMap<>();
 		if(gus==null || gus.size()==0){
 			return ResponseHelper.failed("data-0","请上送要删除的小组成员");
 		}
 		Tips tips=new Tips("成功删除"+gus.size()+"条数据");
 		try{
-			List<XmProjectGroupUser> gusDb=this.xmProjectGroupUserService.selectListByIds(gus);
+			List<XmGroupUser> gusDb=this.xmProjectGroupUserService.selectListByIds(gus);
 			if(gusDb.size()==0){
 				return ResponseHelper.failed("data-0","要删除的数据已不存在。");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			XmProjectGroupUser gu=gusDb.get(0);
+			XmGroupUser gu=gusDb.get(0);
 			String productId=gu.getProductId();
 			String projectId=gu.getProjectId();
 			String pgClass=gu.getPgClass();
-			List<XmProjectGroupUser> gus2=new ArrayList<>();
+			List<XmGroupUser> gus2=new ArrayList<>();
 			XmProduct xmProduct=null;
 			XmProject xmProject=null;
 			if("1".equals(pgClass)){
@@ -534,8 +534,8 @@ public class XmGroupUserController {
 			}
 
 			Set<String> groupIds=gusDb.stream().map(i->i.getGroupId()).collect(Collectors.toSet());
-			List<XmProjectGroupUser> canDelUsers=new ArrayList<>();
-			Map<String,List<XmProjectGroupUser>> groupUsersMap=new HashMap<>();
+			List<XmGroupUser> canDelUsers=new ArrayList<>();
+			Map<String,List<XmGroupUser>> groupUsersMap=new HashMap<>();
 			for (String groupId : groupIds) {
 				if("1".equals(pgClass)){
 					boolean isPm=xmProjectGroupService.checkUserIsProductAdm(xmProduct,user.getUserid());
@@ -562,7 +562,7 @@ public class XmGroupUserController {
 						}
 					}
 				}
-				List<XmProjectGroupUser> cdus=gus2.stream().filter(i->groupId.equals(i.getGroupId())).collect(Collectors.toList());
+				List<XmGroupUser> cdus=gus2.stream().filter(i->groupId.equals(i.getGroupId())).collect(Collectors.toList());
 				canDelUsers.addAll(cdus);
 				groupUsersMap.put(groupId,cdus);
 			}
@@ -574,7 +574,7 @@ public class XmGroupUserController {
 			List<String> noDelUsers=new ArrayList<>();
 			if(canDelUsers.size()<gus.size()){
 
-				for (XmProjectGroupUser gu0 : gus) {
+				for (XmGroupUser gu0 : gus) {
 					if(!canDelUsers.stream().filter(i->i.getUserid().equals(gu0.getUserid())&&i.getGroupId().equals(gu0.getGroupId())).findAny().isPresent()){
 						noDelUsers.add(gu0.getUsername());
 					}

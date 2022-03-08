@@ -1,16 +1,16 @@
 package com.xm.core.vo;
 
-import com.xm.core.entity.XmProjectGroup;
-import com.xm.core.entity.XmProjectGroupUser;
+import com.xm.core.entity.XmGroup;
+import com.xm.core.entity.XmGroupUser;
 import io.swagger.annotations.ApiModel;
 
 import java.util.List;
 
 @ApiModel(description="xm_group")
-public class XmGroupVo extends XmProjectGroup {
-	List<XmProjectGroupUser> groupUsers;
+public class XmGroupVo extends XmGroup {
+	List<XmGroupUser> groupUsers;
 
-	public List<XmProjectGroupUser> getGroupUsers() { return groupUsers; }
+	public List<XmGroupUser> getGroupUsers() { return groupUsers; }
 
-	public void setGroupUsers(List<XmProjectGroupUser> groupUsers) { this.groupUsers = groupUsers; }
+	public void setGroupUsers(List<XmGroupUser> groupUsers) { this.groupUsers = groupUsers; }
 }

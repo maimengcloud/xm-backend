@@ -14,7 +14,7 @@ import java.util.Date;
  *	id;<br>
  */
 @ApiModel(description="xm_group")
-public class XmProjectGroup  implements java.io.Serializable {
+public class XmGroup implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -98,12 +98,12 @@ public class XmProjectGroup  implements java.io.Serializable {
 	String isCrow;
 
 	/**主键**/
-	public XmProjectGroup(String id) {
+	public XmGroup(String id) {
 		this.id = id;
 	}
     
     /**xm_group**/
-	public XmProjectGroup() {
+	public XmGroup() {
 	}
 	
 	/**

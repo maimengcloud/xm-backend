@@ -127,14 +127,14 @@ public class XmGroupService extends BaseService {
 		List<XmGroupVo>	groupVoList2  = groupCacheService.getProjectGroups(projectId);
 		if(groupVoList2==null||groupVoList2.size()==0) {
 			
-		    XmProjectGroup group = new XmProjectGroup();
+		    XmGroup group = new XmGroup();
 		    group.setProjectId(projectId);
-		    List<XmProjectGroup> groupList = this.selectListByWhere(group);
+		    List<XmGroup> groupList = this.selectListByWhere(group);
 		     if(groupList==null || groupList.size()==0) {
 		    	 groupCacheService.putProjectGroups(projectId, groupVoList);
 		    	 return groupVoList;
 		     }
-		    List<XmProjectGroupUser> groupUserList=this.xmProjectGroupUserService.selectGroupUserListByProjectId(projectId); 
+		    List<XmGroupUser> groupUserList=this.xmProjectGroupUserService.selectGroupUserListByProjectId(projectId);
 		    if(groupUserList==null || groupUserList.size()==0) {
 		    	 //groupCacheService.putProjectGroups(projectId, groupVoList);
 		    	 //return groupVoList;
@@ -142,7 +142,7 @@ public class XmGroupService extends BaseService {
 		    groupList.forEach(g -> { 
 	            XmGroupVo gvo = new XmGroupVo();
 	            BeanUtils.copyProperties(g,gvo);
-	            List<XmProjectGroupUser> groupUsers=new ArrayList<>();
+	            List<XmGroupUser> groupUsers=new ArrayList<>();
 	            groupUserList.forEach(gu -> {
 	            	if(g.getId().equals(gu.getGroupId())) {
 	            		groupUsers.add(gu);
@@ -207,20 +207,20 @@ public class XmGroupService extends BaseService {
 		List<XmGroupVo>	groupVoList2  = groupCacheService.getProductGroups(productId);
 		if(groupVoList2==null||groupVoList2.size()==0) {
 
-			XmProjectGroup group = new XmProjectGroup();
+			XmGroup group = new XmGroup();
 			group.setProductId(productId);
-			List<XmProjectGroup> groupList = this.selectListByWhere(group);
+			List<XmGroup> groupList = this.selectListByWhere(group);
 			if(groupList==null || groupList.size()==0) {
 				groupCacheService.putProductGroups(productId, groupVoList);
 				return groupVoList;
 			}
-			List<XmProjectGroupUser> groupUserList=this.xmProjectGroupUserService.selectGroupUserListByProductId(productId);
+			List<XmGroupUser> groupUserList=this.xmProjectGroupUserService.selectGroupUserListByProductId(productId);
 			if(groupUserList==null || groupUserList.size()==0) {
 			}
 			groupList.forEach(g -> {
 				XmGroupVo gvo = new XmGroupVo();
 				BeanUtils.copyProperties(g,gvo);
-				List<XmProjectGroupUser> groupUsers=new ArrayList<>();
+				List<XmGroupUser> groupUsers=new ArrayList<>();
 				groupUserList.forEach(gu -> {
 					if(g.getId().equals(gu.getGroupId())) {
 						groupUsers.add(gu);
@@ -243,18 +243,18 @@ public class XmGroupService extends BaseService {
 	 */
 	@Transactional
 	public void addGroups(String projectId,List<XmGroupVo> xmProjectGroupVoList) {
-		List<XmProjectGroup> groups=new ArrayList<>();
-		List<XmProjectGroupUser> groupUsers=new ArrayList<>();
+		List<XmGroup> groups=new ArrayList<>();
+		List<XmGroupUser> groupUsers=new ArrayList<>();
 		for (XmGroupVo xmProjectGroupVo : xmProjectGroupVoList) {
-			XmProjectGroup group=new XmProjectGroup();
+			XmGroup group=new XmGroup();
 			xmProjectGroupVo.setId(this.createKey("id"));
 			BeanUtils.copyProperties(xmProjectGroupVo, group);
 			groups.add(group);
-			List<XmProjectGroupUser> groupUsersTemp=xmProjectGroupVo.getGroupUsers();
+			List<XmGroupUser> groupUsersTemp=xmProjectGroupVo.getGroupUsers();
 			if(groupUsersTemp==null || groupUsersTemp.size()==0) {
 				continue;
 			}else {
-				for (XmProjectGroupUser xmProjectGroupUser : groupUsersTemp) {
+				for (XmGroupUser xmProjectGroupUser : groupUsersTemp) {
 					xmProjectGroupUser.setGroupId(group.getId());
 					xmProjectGroupUser.setJoinTime(new Date());
 					xmProjectGroupUser.setStatus("0");
@@ -268,9 +268,9 @@ public class XmGroupService extends BaseService {
 			User u=LoginUtils.getCurrentUserInfo();
 
 			for (XmGroupVo group : xmProjectGroupVoList) {
-				List<XmProjectGroupUser> users=group.getGroupUsers();
+				List<XmGroupUser> users=group.getGroupUsers();
 				List<Map<String,Object>> umaps=new ArrayList<>();
-				for (XmProjectGroupUser xmProjectGroupUser : users) {
+				for (XmGroupUser xmProjectGroupUser : users) {
 					Map<String,Object> u2=new HashMap<>();
 					u2.put("userid", xmProjectGroupUser.getUserid());
 					u2.put("username", xmProjectGroupUser.getUsername());
@@ -301,7 +301,7 @@ public class XmGroupService extends BaseService {
      * 4.项目管理者、创建人可以调整小组组长
      */
 	@Transactional
-	public Tips updateGroup(XmProjectGroup group,XmProjectGroup groupDb) {
+	public Tips updateGroup(XmGroup group, XmGroup groupDb) {
 		Tips tips=new Tips("成功");
 		super.updateSomeFieldByPk(group);
 		this.sumParents(group);
@@ -309,7 +309,7 @@ public class XmGroupService extends BaseService {
     }
 
 
-    public void pushMsg(User user,XmProjectGroup g,List<Map<String,Object>> users){
+    public void pushMsg(User user, XmGroup g, List<Map<String,Object>> users){
 		pushMsgService.pushChannelGroupCreateMsg(user.getBranchId(),g.getProjectId(),g.getId(), g.getId(), g.getGroupName(), user.getUserid(), user.getUsername(), users,"新增小组["+g.getGroupName()+"]及以下组员："+ users.stream().map(i->(String)i.get("username")).collect(Collectors.joining(",")));
 
 	}
@@ -389,12 +389,12 @@ public class XmGroupService extends BaseService {
 			if(userid.equals(g.getLeaderUserid())||userid.equals(g.getAssUserid())){
 				userGroups.add(g);
 			}else{
-				List<XmProjectGroupUser> gus=g.getGroupUsers();
+				List<XmGroupUser> gus=g.getGroupUsers();
 				boolean exists=false;
 				if(gus==null) {
 					continue;
 				}
-				for (XmProjectGroupUser gu : gus) {
+				for (XmGroupUser gu : gus) {
 					if(userid.equals(gu.getUserid())) {
 						exists=true;
 						break;
@@ -495,7 +495,7 @@ public class XmGroupService extends BaseService {
 		}
 		return false;
 	}
-  public  List<XmProjectGroupUser> getProjectManagers( List<XmGroupVo> xmProjectGroupVoList){
+  public  List<XmGroupUser> getProjectManagers(List<XmGroupVo> xmProjectGroupVoList){
     	for (XmGroupVo g : xmProjectGroupVoList) {
     		if("nbxmjl".equals(g.getPgTypeId())) {
     			return g.getGroupUsers();
@@ -518,11 +518,11 @@ public class XmGroupService extends BaseService {
 	  if(xmProjectGroupVoList==null || xmProjectGroupVoList.size()==0) {
 		  return false;
 	  }
-  	List<XmProjectGroupUser> getProjectManagers=this.getProjectManagers(xmProjectGroupVoList);
+  	List<XmGroupUser> getProjectManagers=this.getProjectManagers(xmProjectGroupVoList);
 	  if(getProjectManagers==null || getProjectManagers.size()==0) {
 		  return false;
 	  }
-  	for (XmProjectGroupUser user : getProjectManagers) {
+  	for (XmGroupUser user : getProjectManagers) {
 		if( user.getUserid().equals(pmUserid)) {
 			return true;
 		}
@@ -559,11 +559,11 @@ public class XmGroupService extends BaseService {
 
 
 
-	public List<XmProjectGroup> parentIdPathsCalcBeforeSave(List<XmProjectGroup> nodes) {
-		List<XmProjectGroup> noExistsList=nodes.stream().filter(i->!nodes.stream().filter(k->k.getId().equals(i.getPgroupId())).findAny().isPresent()).collect(Collectors.toList());
+	public List<XmGroup> parentIdPathsCalcBeforeSave(List<XmGroup> nodes) {
+		List<XmGroup> noExistsList=nodes.stream().filter(i->!nodes.stream().filter(k->k.getId().equals(i.getPgroupId())).findAny().isPresent()).collect(Collectors.toList());
 		noExistsList=noExistsList.stream().filter(i->StringUtils.hasText(i.getPgroupId())).collect(Collectors.toList());
 		Map<String,String> hadCalcMap=new HashMap<>();
-		for (XmProjectGroup node : noExistsList) {
+		for (XmGroup node : noExistsList) {
 			if(hadCalcMap.containsKey(node.getPgroupId())){
 				String idPaths=hadCalcMap.get(node.getPgroupId());
 				node.setPidPaths(idPaths+node.getId()+",");
@@ -574,7 +574,7 @@ public class XmGroupService extends BaseService {
 				hadCalcMap.put(node.getPgroupId(),idPaths);
 			}
 		}
-		for (XmProjectGroup node : nodes) {
+		for (XmGroup node : nodes) {
 			if(!StringUtils.hasText(node.getPgroupId())){
 				node.setPidPaths("0,"+node.getId()+",");
 				continue;
@@ -583,12 +583,12 @@ public class XmGroupService extends BaseService {
 				String idPaths=hadCalcMap.get(node.getPgroupId());
 				node.setPidPaths(idPaths+node.getId()+",");
 			}else{
-				List<XmProjectGroup> pnodeList=this.getParentList(node,nodes);
+				List<XmGroup> pnodeList=this.getParentList(node,nodes);
 				if(pnodeList==null ||pnodeList.size()==0){
 					node.setPidPaths("0,"+node.getPgroupId()+","+node.getId()+",");
 					continue;
 				}
-				XmProjectGroup topParent=pnodeList.get(pnodeList.size()-1);
+				XmGroup topParent=pnodeList.get(pnodeList.size()-1);
 				String idPath="0,";
 				if(hadCalcMap.containsKey(topParent.getPgroupId())){
 					idPath=hadCalcMap.get(topParent.getPgroupId());
@@ -599,7 +599,7 @@ public class XmGroupService extends BaseService {
 				node.setPidPaths(idPath+node.getId()+",");
 			}
 		}
-		for (XmProjectGroup node : nodes) {
+		for (XmGroup node : nodes) {
 			String idPaths=node.getPidPaths();
 			String[] idpss=idPaths.split(",");
 			node.setLvl(idpss.length-1);
@@ -664,7 +664,7 @@ public class XmGroupService extends BaseService {
 		return tips;
 	}
 
-	public Tips checkHasEditProdcutGroupQx(User user,XmProjectGroup group,XmProjectGroup groupDb,XmProduct xmProductDb){
+	public Tips checkHasEditProdcutGroupQx(User user, XmGroup group, XmGroup groupDb, XmProduct xmProductDb){
 		Tips tips = new Tips("成功");
 		if(groupDb==null){
 			tips.setFailureMsg("data-0","该小组已不存在");
@@ -698,7 +698,7 @@ public class XmGroupService extends BaseService {
 		pmUserMap.put(xmProject.getAssUserid(),xmProject.getAssUsername());
 		return pmUserMap;
 	}
-	public Tips checkHasEditProjectGroupQx(User user,XmProjectGroup group,XmProjectGroup groupDb,XmProject xmProject){
+	public Tips checkHasEditProjectGroupQx(User user, XmGroup group, XmGroup groupDb, XmProject xmProject){
 		Tips tips = new Tips("成功");
 		if(groupDb==null){
 			tips.setFailureMsg("data-0","该小组已不存在");
@@ -734,14 +734,14 @@ public class XmGroupService extends BaseService {
 		return tips;
 	}
 
-	public Tips parentIdPathsCalcBeforeSave(XmProjectGroup currNode) {
+	public Tips parentIdPathsCalcBeforeSave(XmGroup currNode) {
 		Tips tips = new Tips("成功");
 		if (!StringUtils.hasText(currNode.getPgroupId()) || "0".equals(currNode.getPgroupId())) {
 			currNode.setPidPaths("0," + currNode.getId() + ",");
 			currNode.setLvl(1);
 			return tips;
 		} else {
-			List<XmProjectGroup> parentList=this.getParentList(currNode);
+			List<XmGroup> parentList=this.getParentList(currNode);
 			if(parentList==null ||parentList.size()==0){
 				currNode.setPidPaths("0,"+currNode.getPgroupId()+","+currNode.getId()+",");
 				currNode.setLvl(2);
@@ -760,14 +760,14 @@ public class XmGroupService extends BaseService {
 		return tips;
 	}
 
-	private List<XmProjectGroup> getParentList(XmProjectGroup currNode){
-		List<XmProjectGroup> parentList=new ArrayList<>();
-		XmProjectGroup current=currNode;
+	private List<XmGroup> getParentList(XmGroup currNode){
+		List<XmGroup> parentList=new ArrayList<>();
+		XmGroup current=currNode;
 		while (true){
 			if(!StringUtils.hasText(current.getPgroupId()) || "0".equals(current.getPgroupId())){
 				return parentList;
 			}
-			XmProjectGroup query=new XmProjectGroup();
+			XmGroup query=new XmGroup();
 			query.setId(current.getPgroupId());
 			current=this.selectOneObject(query);
 			if(current==null){
@@ -777,16 +777,16 @@ public class XmGroupService extends BaseService {
 		}
 	}
 
-	private List<XmProjectGroup> getParentList(XmProjectGroup currNode,List<XmProjectGroup> nodes){
-		List<XmProjectGroup> parentList=new ArrayList<>();
-		XmProjectGroup current=currNode;
+	private List<XmGroup> getParentList(XmGroup currNode, List<XmGroup> nodes){
+		List<XmGroup> parentList=new ArrayList<>();
+		XmGroup current=currNode;
 		while (true){
 			if(!StringUtils.hasText(current.getPgroupId()) || "0".equals(current.getPgroupId())){
 				return parentList;
 			}
-			XmProjectGroup query=new XmProjectGroup();
+			XmGroup query=new XmGroup();
 			query.setId(current.getPgroupId());
-			Optional<XmProjectGroup> optional=nodes.stream().filter(i->i.getId().equals(query.getId())).findFirst();
+			Optional<XmGroup> optional=nodes.stream().filter(i->i.getId().equals(query.getId())).findFirst();
 			if(optional.isPresent()){
 				current=optional.get();
 				parentList.add(current);
@@ -799,7 +799,7 @@ public class XmGroupService extends BaseService {
 
 
 	@Transactional
-	public void sumParents(XmProjectGroup node){
+	public void sumParents(XmGroup node){
 		String id=node.getId();
 		String pidPaths=node.getPidPaths();
 		if(!StringUtils.hasText(pidPaths)){
@@ -828,9 +828,9 @@ public class XmGroupService extends BaseService {
 
 	}
 	@Transactional
-	public void batchSumParents(List<XmProjectGroup> xmTasks) {
+	public void batchSumParents(List<XmGroup> xmTasks) {
 		List<Set<String>> list=new ArrayList<>();
-		for (XmProjectGroup node : xmTasks) {
+		for (XmGroup node : xmTasks) {
 			String id=node.getId();
 			String pidPaths=node.getPidPaths();
 			if(!StringUtils.hasText(pidPaths)){
@@ -885,18 +885,18 @@ public class XmGroupService extends BaseService {
 	 * @param delNodes 本批量需要删除的全部节点
 	 * @return
 	 */
-	public boolean checkCanDelAllChild(XmProjectGroup delNode, List<XmProjectGroup> delNodes) {
+	public boolean checkCanDelAllChild(XmGroup delNode, List<XmGroup> delNodes) {
 		if(delNode==null){
 			return true;
 		}
 		if(delNode.getChildrenCnt()==null||delNode.getChildrenCnt()<=0){
 			return true;
 		}
-		List<XmProjectGroup> childList=delNodes.stream().filter(i->delNode.getId().equals(i.getPgroupId())).collect(Collectors.toList());
+		List<XmGroup> childList=delNodes.stream().filter(i->delNode.getId().equals(i.getPgroupId())).collect(Collectors.toList());
 		if(childList==null||childList.size()<delNode.getChildrenCnt()){
 			return false;
 		}
-		for (XmProjectGroup n : childList) {
+		for (XmGroup n : childList) {
 			if (!this.checkCanDelAllChild(n, delNodes)) {
 				return false;
 			}
@@ -906,19 +906,19 @@ public class XmGroupService extends BaseService {
 	}
 
 	@Transactional
-	public void doDeleteByPk(XmProjectGroup xmProjectGroup,XmProjectGroup groupDb) {
+	public void doDeleteByPk(XmGroup xmProjectGroup, XmGroup groupDb) {
 		super.deleteByPk(xmProjectGroup);
 		this.sumParents(groupDb);
 	}
 
 	@Transactional
-	public void doBatchDeleteProductGroups(List<XmProjectGroup> canDelNodes) {
+	public void doBatchDeleteProductGroups(List<XmGroup> canDelNodes) {
 		super.batchDelete(canDelNodes);
 		batchSumParents(canDelNodes);
 	}
 
 	@Transactional
-	public void doBatchDeleteProjectGroups(List<XmProjectGroup> canDelNodes) {
+	public void doBatchDeleteProjectGroups(List<XmGroup> canDelNodes) {
 		super.batchDelete(canDelNodes);
 		batchSumParents(canDelNodes);
 	}
@@ -926,13 +926,13 @@ public class XmGroupService extends BaseService {
 	public XmGroupVo getProductGroupFromCache(String productId, String groupId) {
 		XmGroupVo groupVo=groupCacheService.getProductGroup(productId,groupId);
 		if(groupVo==null){
-			XmProjectGroup group=this.selectOneObject(new XmProjectGroup(groupId));
+			XmGroup group=this.selectOneObject(new XmGroup(groupId));
 			if(group==null){
 				return null;
 			}else{
-				XmProjectGroupUser xmProjectGroupUser=new XmProjectGroupUser();
+				XmGroupUser xmProjectGroupUser=new XmGroupUser();
 				xmProjectGroupUser.setGroupId(groupId);
-				List<XmProjectGroupUser> users=this.xmProjectGroupUserService.selectListByWhere(xmProjectGroupUser);
+				List<XmGroupUser> users=this.xmProjectGroupUserService.selectListByWhere(xmProjectGroupUser);
 				XmGroupVo xmProjectGroupVo=new XmGroupVo();
 				BeanUtils.copyProperties(group,xmProjectGroupVo);
 				xmProjectGroupVo.setGroupUsers(users);
@@ -946,13 +946,13 @@ public class XmGroupService extends BaseService {
 	public XmGroupVo getProjectGroupFromCache(String projectId, String groupId) {
 		XmGroupVo groupVo=groupCacheService.getProjectGroup(projectId,groupId);
 		if(groupVo==null){
-			XmProjectGroup group=this.selectOneObject(new XmProjectGroup(groupId));
+			XmGroup group=this.selectOneObject(new XmGroup(groupId));
 			if(group==null){
 				return null;
 			}else{
-				XmProjectGroupUser xmProjectGroupUser=new XmProjectGroupUser();
+				XmGroupUser xmProjectGroupUser=new XmGroupUser();
 				xmProjectGroupUser.setGroupId(groupId);
-				List<XmProjectGroupUser> users=this.xmProjectGroupUserService.selectListByWhere(xmProjectGroupUser);
+				List<XmGroupUser> users=this.xmProjectGroupUserService.selectListByWhere(xmProjectGroupUser);
 				XmGroupVo xmProjectGroupVo=new XmGroupVo();
 				BeanUtils.copyProperties(group,xmProjectGroupVo);
 				xmProjectGroupVo.setGroupUsers(users);

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xm.core.entity.XmProjectGroupState">
+<mapper namespace="com.xm.core.entity.XmGroupState">
 	
 	
 	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
@@ -32,7 +32,7 @@
 	</select>
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
-	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProjectGroupState" resultType="com.xm.core.entity.XmProjectGroupState">
+	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmGroupState" resultType="com.xm.core.entity.XmGroupState">
 		select * from xm_group_state res
 		<where>
 			<include refid="where"/>
@@ -40,7 +40,7 @@
 	</select>
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
-	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProjectGroupState" resultType="com.xm.core.entity.XmProjectGroupState">
+	<select id="selectOneObject" parameterType="com.xm.core.entity.XmGroupState" resultType="com.xm.core.entity.XmGroupState">
 		select * from xm_group_state res
 		where 
 			res.group_id = #{groupId}
@@ -53,14 +53,14 @@
 			 res.group_id = #{groupId}
 	</select>
 	<!-- 获取数据条目 返回long -->
-	<select id="countByWhere" parameterType="com.xm.core.entity.XmProjectGroupState" resultType="long">
+	<select id="countByWhere" parameterType="com.xm.core.entity.XmGroupState" resultType="long">
 		select count(1) from xm_group_state res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键group_id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmProjectGroupState" useGeneratedKeys="false"   keyProperty="group_id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmGroupState" useGeneratedKeys="false" keyProperty="group_id">
 		insert into xm_group_state(
 			<include refid="columns"/>
 		) values (
@@ -69,7 +69,7 @@
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
-	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProjectGroupState">
+	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmGroupState">
 		delete from xm_group_state res
 		<where>  
 			<include refid="where"/>
@@ -77,13 +77,13 @@
 	</delete>
 	
 	<!-- 按主键删除一条记录-->
-	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProjectGroupState">
+	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmGroupState">
 		delete from xm_group_state
 		where group_id = #{groupId} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
-	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProjectGroupState">
+	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmGroupState">
 		update  xm_group_state
 		<set>
 			<include refid="someFieldSet"/>
@@ -92,7 +92,7 @@
 	</update>
 	
 		<!-- 根据主键修改一条记录 -->
-	<update id="updateByPk" parameterType="com.xm.core.entity.XmProjectGroupState">
+	<update id="updateByPk" parameterType="com.xm.core.entity.XmGroupState">
 		update  xm_group_state
 		<set>
 			<include refid="set"/>

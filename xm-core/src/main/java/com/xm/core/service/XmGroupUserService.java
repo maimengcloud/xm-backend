@@ -1,7 +1,7 @@
 package com.xm.core.service;
 
 import com.mdp.core.service.BaseService;
-import com.xm.core.entity.XmProjectGroupUser;
+import com.xm.core.entity.XmGroupUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,16 +18,16 @@ public class XmGroupUserService extends BaseService {
 	@Autowired
 	XmRecordService xmRecordService;
 	
-	public List<XmProjectGroupUser> selectGroupUserListByProjectId(String projectId) {
+	public List<XmGroupUser> selectGroupUserListByProjectId(String projectId) {
 		return this.selectList("selectGroupUserListByProjectId", projectId); 
 	}
 
-	public List<XmProjectGroupUser> selectGroupUserListByProductId(String productId) {
+	public List<XmGroupUser> selectGroupUserListByProductId(String productId) {
 		return this.selectList("selectGroupUserListByProductId", productId);
 	}
 
 
-	public void doBatchDelete(List<XmProjectGroupUser> canDelUsers) {
+	public void doBatchDelete(List<XmGroupUser> canDelUsers) {
 		super.batchDelete(canDelUsers);
 	}
 

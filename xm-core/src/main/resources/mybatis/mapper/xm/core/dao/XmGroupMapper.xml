@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xm.core.entity.XmProjectGroup">
+<mapper namespace="com.xm.core.entity.XmGroup">
 	
 	
 	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
@@ -18,7 +18,7 @@
 		<if test="orCrowBranchId!=null and orCrowBranchId!=''"> and (res.branch_id=#{branchId} or res.crow_branch_id=#{orCrowBranchId})</if>
 		<if test="iterationId!=null and iterationId!=''"> and exists ( select 1 from xm_iteration_product_link ipl left join xm_product_project_link ppl on ipl.product_id=ppl.product_id and (ipl.product_id=res.product_id or ppl.project_id = res.project_id))</if>
     </sql>
-	<delete id="deleteByProjectId" parameterType="com.xm.core.entity.XmProjectGroup">
+	<delete id="deleteByProjectId" parameterType="com.xm.core.entity.XmGroup">
 		delete from xm_group where project_id = #{projectId}
 	</delete>
 
@@ -37,7 +37,7 @@
 	</select>
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
-	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProjectGroup" resultType="com.xm.core.entity.XmProjectGroup">
+	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmGroup" resultType="com.xm.core.entity.XmGroup">
 		select * from xm_group res
 		<where>
 			<include refid="where"/>
@@ -45,7 +45,7 @@
 	</select>
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
-	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProjectGroup" resultType="com.xm.core.entity.XmProjectGroup">
+	<select id="selectOneObject" parameterType="com.xm.core.entity.XmGroup" resultType="com.xm.core.entity.XmGroup">
 		select * from xm_group res
 		where 
 			res.id = #{id}
@@ -58,14 +58,14 @@
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
-	<select id="countByWhere" parameterType="com.xm.core.entity.XmProjectGroup" resultType="long">
+	<select id="countByWhere" parameterType="com.xm.core.entity.XmGroup" resultType="long">
 		select count(1) from xm_group res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmProjectGroup" useGeneratedKeys="false"   keyProperty="id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmGroup" useGeneratedKeys="false" keyProperty="id">
 		insert into xm_group(
 			<include refid="columns"/>
 		) values (
@@ -74,7 +74,7 @@
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
-	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProjectGroup">
+	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmGroup">
 		delete from xm_group res
 		<where>  
 			<include refid="where"/>
@@ -82,13 +82,13 @@
 	</delete>
 	
 	<!-- 按主键删除一条记录-->
-	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProjectGroup">
+	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmGroup">
 		delete from xm_group
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
-	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProjectGroup">
+	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmGroup">
 		update  xm_group
 		<set>
 			<include refid="someFieldSet"/>
@@ -97,7 +97,7 @@
 	</update>
 	
 		<!-- 根据主键修改一条记录 -->
-	<update id="updateByPk" parameterType="com.xm.core.entity.XmProjectGroup">
+	<update id="updateByPk" parameterType="com.xm.core.entity.XmGroup">
 		update  xm_group
 		<set>
 			<include refid="set"/>

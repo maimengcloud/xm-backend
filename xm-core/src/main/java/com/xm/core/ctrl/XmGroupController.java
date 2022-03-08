@@ -8,9 +8,9 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmGroup;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
-import com.xm.core.entity.XmProjectGroup;
 import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmProjectService;
@@ -71,11 +71,11 @@ public class XmGroupController {
 
 	@ApiOperation( value = "删除旧团队，新增新团队",notes="")
 	@ApiResponses({
-			@ApiResponse(code = 200,response= XmProjectGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+			@ApiResponse(code = 200,response= XmGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@HasQx(value = "xm_core_xmProjectGroup_updateGroup",name = "批量更新修改项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> updateGroup(@RequestBody XmProjectGroup group) {
+	public Map<String,Object> updateGroup(@RequestBody XmGroup group) {
 
 		Tips tips=new Tips("小组更新成功");
 		Map<String,Object> m = new HashMap<>();
@@ -88,7 +88,7 @@ public class XmGroupController {
 			return ResponseHelper.failed("id-0","小组编号不能为空");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
-		XmProjectGroup groupDb=this.xmProjectGroupService.selectOneObject(new XmProjectGroup(group.getId()));
+		XmGroup groupDb=this.xmProjectGroupService.selectOneObject(new XmGroup(group.getId()));
 		if(groupDb==null){
 			return ResponseHelper.failed("data-0","小组已不存在。");
 		}
@@ -141,7 +141,7 @@ public class XmGroupController {
 			@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false)
 	})
 	@ApiResponses({
-			@ApiResponse(code = 200,response=XmProjectGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+			@ApiResponse(code = 200,response= XmGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@HasQx(value = "xm_core_xmProjectGroup_getGroups",name = "查找项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/getGroups",method=RequestMethod.GET)
@@ -184,7 +184,7 @@ public class XmGroupController {
 		@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false) 
 	})
 	@ApiResponses({
-		@ApiResponse(code = 200,response=XmProjectGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+		@ApiResponse(code = 200,response= XmGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Map<String,Object> listXmProjectGroup( @RequestParam Map<String,Object> xmProjectGroup){
@@ -209,11 +209,11 @@ public class XmGroupController {
 
 	@ApiOperation( value = "新增一条xm_group信息",notes="addXmProjectGroup,主键如果为空，后台自动生成")
 	@ApiResponses({
-		@ApiResponse(code = 200,response=XmProjectGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+		@ApiResponse(code = 200,response= XmGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@HasQx(value = "xm_core_xmProjectGroup_add",name = "新增项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmProjectGroup(@RequestBody XmProjectGroup xmProjectGroup) {
+	public Map<String,Object> addXmProjectGroup(@RequestBody XmGroup xmProjectGroup) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
@@ -261,7 +261,7 @@ public class XmGroupController {
 			if (StringUtils.isEmpty(xmProjectGroup.getId())) {
 				xmProjectGroup.setId(xmProjectGroupService.createKey("id"));
 			} else {
-				XmProjectGroup xmProjectGroupQuery = new XmProjectGroup(xmProjectGroup.getId());
+				XmGroup xmProjectGroupQuery = new XmGroup(xmProjectGroup.getId());
 				if (xmProjectGroupService.countByWhere(xmProjectGroupQuery) > 0) {
 					tips.setFailureMsg("编号重复，请修改编号再提交");
 					m.put("tips", tips);
@@ -298,7 +298,7 @@ public class XmGroupController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmProjectGroup(@RequestBody XmProjectGroup xmProjectGroup){
+	public Map<String,Object> delXmProjectGroup(@RequestBody XmGroup xmProjectGroup){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
@@ -306,7 +306,7 @@ public class XmGroupController {
 			if(!StringUtils.hasText(xmProjectGroup.getId())){
 				return ResponseHelper.failed("id-0","请上送小组编号");
 			}
-			XmProjectGroup groupDb=this.xmProjectGroupService.selectOneObject(xmProjectGroup);
+			XmGroup groupDb=this.xmProjectGroupService.selectOneObject(xmProjectGroup);
 			if(groupDb==null){
 				return ResponseHelper.failed("data-0","小组已不存在");
 			}
@@ -368,22 +368,22 @@ public class XmGroupController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmProjectGroup(@RequestBody List<XmProjectGroup> xmProjectGroups) {
+	public Map<String,Object> batchDelXmProjectGroup(@RequestBody List<XmGroup> xmProjectGroups) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除"+xmProjectGroups.size()+"条数据"); 
 		try{
-			List<XmProjectGroup> groupsDb=this.xmProjectGroupService.selectListByIds(xmProjectGroups.stream().map(i->i.getId()).collect(Collectors.toList()));
+			List<XmGroup> groupsDb=this.xmProjectGroupService.selectListByIds(xmProjectGroups.stream().map(i->i.getId()).collect(Collectors.toList()));
 			if(groupsDb==null || groupsDb.size()==0){
 				return ResponseHelper.failed("data-0","要删除的小组已不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			XmProjectGroup groupDb=groupsDb.get(0);
+			XmGroup groupDb=groupsDb.get(0);
 			String pgClass=groupDb.getPgClass();
 			String id=groupDb.getProductId();
 
-			List<XmProjectGroup> hasChildNodes=new ArrayList<>();
-			List<XmProjectGroup> noQxs=new ArrayList<>();
-			List<XmProjectGroup> canDelNodes=new ArrayList<>();
+			List<XmGroup> hasChildNodes=new ArrayList<>();
+			List<XmGroup> noQxs=new ArrayList<>();
+			List<XmGroup> canDelNodes=new ArrayList<>();
 			if("0".equals(pgClass)){
 				id=groupDb.getProjectId();
 				XmProject prject=this.xmProjectService.getProjectFromCache(id);
@@ -400,7 +400,7 @@ public class XmGroupController {
 				}
 			}
 			if(canDelNodes.size()>0){
-				for (XmProjectGroup canDelNode : canDelNodes) {
+				for (XmGroup canDelNode : canDelNodes) {
 					if(!xmProjectGroupService.checkCanDelAllChild(canDelNode,canDelNodes)){
 						hasChildNodes.add(canDelNode);
 					}else{
