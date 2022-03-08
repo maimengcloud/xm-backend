@@ -9,10 +9,8 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
-import com.xm.core.entity.XmProjectGroup;
 import com.xm.core.entity.XmProjectGroupUser;
 import com.xm.core.service.*;
-import com.xm.core.service.cache.XmProjectGroupCacheService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmProjectGroupVo;
 import io.swagger.annotations.*;
@@ -28,25 +26,25 @@ import java.util.stream.Collectors;
 import static com.mdp.core.utils.BaseUtils.map;
 
 /**
- * url编制采用rest风格,如对XM.xm_project_group_user xm_project_group_user的操作有增删改查,对应的url分别为:<br>
- *  新增: core/xmProjectGroupUser/add <br>
- *  查询: core/xmProjectGroupUser/list<br>
- *  模糊查询: core/xmProjectGroupUser/listKey<br>
- *  修改: core/xmProjectGroupUser/edit <br>
- *  删除: core/xmProjectGroupUser/del<br>
- *  批量删除: core/xmProjectGroupUser/batchDel<br>
+ * url编制采用rest风格,如对XM.xm_group_user xm_group_user的操作有增删改查,对应的url分别为:<br>
+ *  新增: core/xmGroupUser/add <br>
+ *  查询: core/xmGroupUser/list<br>
+ *  模糊查询: core/xmGroupUser/listKey<br>
+ *  修改: core/xmGroupUser/edit <br>
+ *  删除: core/xmGroupUser/del<br>
+ *  批量删除: core/xmGroupUser/batchDel<br>
  * 组织 com.qqkj  顶级模块 xm 大模块 core 小模块 <br>
- * 实体 XmProjectGroupUser 表 XM.xm_project_group_user 当前主键(包括多主键): id; 
+ * 实体 XmProjectGroupUser 表 XM.xm_group_user 当前主键(包括多主键): id; 
  ***/
-@RestController("xm.core.xmProjectGroupUserController")
-@RequestMapping(value="/**/core/xmProjectGroupUser")
-@Api(tags={"xm_project_group_user操作接口"})
-public class XmProjectGroupUserController {
+@RestController("xm.core.xmGroupUserController")
+@RequestMapping(value="/**/core/xmGroupUser")
+@Api(tags={"xm_group_user操作接口"})
+public class XmGroupUserController {
 	
-	static Log logger=LogFactory.getLog(XmProjectGroupUserController.class);
+	static Log logger=LogFactory.getLog(XmGroupUserController.class);
 	
 	@Autowired
-	private XmProjectGroupUserService xmProjectGroupUserService;
+	private XmGroupUserService xmProjectGroupUserService;
 
 
 	@Autowired
@@ -57,7 +55,7 @@ public class XmProjectGroupUserController {
 	private XmProductService xmProductService;
 
 	@Autowired
-	XmProjectGroupService xmProjectGroupService;
+	XmGroupService xmProjectGroupService;
 
 
 	@Autowired
@@ -67,7 +65,7 @@ public class XmProjectGroupUserController {
 	XmPushMsgService pushMsgService;
  
 	
-	@ApiOperation( value = "查询xm_project_group_user信息列表",notes="listXmProjectGroupUser,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiOperation( value = "查询xm_group_user信息列表",notes="listXmProjectGroupUser,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
 		@ApiImplicitParam(name="id",value="主键,主键",required=false),
 		@ApiImplicitParam(name="joinTime",value="加入时间",required=false),
@@ -104,7 +102,7 @@ public class XmProjectGroupUserController {
 	
  
 
-	@ApiOperation( value = "新增一条xm_project_group_user信息",notes="addXmProjectGroupUser,主键如果为空，后台自动生成")
+	@ApiOperation( value = "新增一条xm_group_user信息",notes="addXmProjectGroupUser,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProjectGroupUser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
@@ -194,7 +192,7 @@ public class XmProjectGroupUserController {
 		return m;
 	}
 
-	@ApiOperation( value = "删除一条xm_project_group_user信息",notes="delXmProjectGroupUser,仅需要上传主键字段")
+	@ApiOperation( value = "删除一条xm_group_user信息",notes="delXmProjectGroupUser,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
@@ -279,7 +277,7 @@ public class XmProjectGroupUserController {
 		return m;
 	}
 
-	@ApiOperation( value = "根据主键修改一条xm_project_group_user信息",notes="editXmProjectGroupUser")
+	@ApiOperation( value = "根据主键修改一条xm_group_user信息",notes="editXmProjectGroupUser")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProjectGroupUser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
@@ -361,7 +359,7 @@ public class XmProjectGroupUserController {
 	}
 
 
-	@ApiOperation( value = "根据主键列表批量新增xm_project_group_user信息",notes="batchAddXmProjectGroupUser,仅需要上传主键字段")
+	@ApiOperation( value = "根据主键列表批量新增xm_group_user信息",notes="batchAddXmProjectGroupUser,仅需要上传主键字段")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
@@ -491,7 +489,7 @@ public class XmProjectGroupUserController {
 	}
 
 
-	@ApiOperation( value = "根据主键列表批量删除xm_project_group_user信息",notes="batchDelXmProjectGroupUser,仅需要上传主键字段")
+	@ApiOperation( value = "根据主键列表批量删除xm_group_user信息",notes="batchDelXmProjectGroupUser,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 

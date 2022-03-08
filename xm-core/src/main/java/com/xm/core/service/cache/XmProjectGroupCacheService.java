@@ -43,7 +43,7 @@ public class XmProjectGroupCacheService {
 		}
 	}
 	String getCacheKey() {
- 		return "xm_project_group";
+ 		return "xm_group";
 	}
 
 	public  List<XmProjectGroupVo>  getProjectGroups(String projectId){

@@ -11,10 +11,8 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProductCopyVo;
-import com.xm.core.entity.XmProject;
 import com.xm.core.service.XmProductService;
-import com.xm.core.service.XmProjectGroupService;
-import com.xm.core.service.XmProjectService;
+import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmRecordService;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
@@ -25,7 +23,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * url编制采用rest风格,如对XM.xm_product 产品表的操作有增删改查,对应的url分别为:<br>
@@ -49,7 +46,7 @@ public class XmProductController {
 	private XmProductService xmProductService;
 
 	@Autowired
-	private XmProjectGroupService groupService;
+	private XmGroupService groupService;
 
 
 	@Autowired

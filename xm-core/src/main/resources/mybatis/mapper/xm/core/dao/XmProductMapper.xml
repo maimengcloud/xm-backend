@@ -18,7 +18,7 @@
 			)
 		</if>
 		<if test="compete !=null and compete!=''">
-			and ( exists ( select 1 from xm_project_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
+			and ( exists ( select 1 from xm_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
 			or res.pm_userid=#{compete}
 			or exists ( select 1 from xm_menu m where m.mm_userid=#{compete} and m.product_id=res.id)
 			)
@@ -48,7 +48,7 @@
 				and exists( select 1 from xm_iteration_product_link ipl where ipl.product_id =res.id and ipl.iteration_id=#{iterationId} )
 			</if>
 			<if test="compete !=null and compete!=''">
-				and ( exists ( select 1 from xm_project_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
+				and ( exists ( select 1 from xm_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
 				or res.pm_userid=#{compete}
 				or exists ( select 1 from xm_menu m where m.mm_userid=#{compete} and m.product_id=res.id)
 				)

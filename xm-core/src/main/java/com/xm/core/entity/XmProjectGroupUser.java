@@ -8,12 +8,12 @@ import java.util.Date;
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectGroupUser所有属性名: <br>
  *	joinTime,groupId,userid,username,outTime,status,obranchId,isPri,seqNo,projectId,productId,pgClass,obranchName;<br>
- * 表 xm_project_group_user xm_project_group_user的所有字段名: <br>
+ * 表 xm_group_user xm_group_user的所有字段名: <br>
  *	join_time,group_id,userid,username,out_time,status,obranch_id,is_pri,seq_no,project_id,product_id,pg_class,obranch_name;<br>
  * 当前主键(包括多主键):<br>
  *	group_id,userid;<br>
  */
-@ApiModel(description="xm_project_group_user")
+@ApiModel(description="xm_group_user")
 public class XmProjectGroupUser  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -64,7 +64,7 @@ public class XmProjectGroupUser  implements java.io.Serializable {
 		this.userid = userid;
 	}
     
-    /**xm_project_group_user**/
+    /**xm_group_user**/
 	public XmProjectGroupUser() {
 	}
 	

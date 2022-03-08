@@ -6,7 +6,7 @@ import io.swagger.annotations.ApiModel;
 
 import java.util.List;
 
-@ApiModel(description="xm_project_group")
+@ApiModel(description="xm_group")
 public class XmProjectGroupVo extends XmProjectGroup {
 	List<XmProjectGroupUser> groupUsers;
 

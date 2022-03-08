@@ -13,8 +13,8 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskExecuser;
-import com.xm.core.service.XmProjectGroupService;
-import com.xm.core.service.XmProjectGroupUserService;
+import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmGroupUserService;
 import com.xm.core.service.XmTaskExecuserService;
 import com.xm.core.service.XmTaskService;
 import com.xm.core.vo.XmProjectGroupVo;
@@ -55,14 +55,14 @@ public class XmTaskExecuserController {
 	private XmTaskService xmTaskService;
 	 
 	@Autowired
-    XmProjectGroupUserService xmProjectGroupUserService;
+	XmGroupUserService xmProjectGroupUserService;
 
 	@Autowired
 	ItemService itemService;
 	
 
 	@Autowired
-    XmProjectGroupService groupService;
+    XmGroupService groupService;
 	
 	@ApiOperation( value = "查询xm_task_execuser信息列表",notes="listXmTaskExecuser,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  

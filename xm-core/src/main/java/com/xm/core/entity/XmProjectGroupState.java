@@ -9,7 +9,7 @@ import java.math.BigDecimal;
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectGroupState所有属性名: <br>
  *	planStartTime,planEndTime,actStartTime,actEndTime,planWorkload,actWorkload,planCostAmount,actCostAmount,finishRate,demandRate,designRate,devRate,uatRate,sitRate,ctime,calcTime,planWorkhours,planWorkerCnt,closedBugs,activeBugs,confirmedBugs,resolvedBugs,testCases,execCases,designCases,finishCases,iterationCnt,taskCnt,finishTaskCnt,bizDate,bugCnt,groupId,projectId,projectName,groupName;<br>
- * 表 xm_project_group_state 功能状态表,无需前端维护，所有数据由汇总统计得出的所有字段名: <br>
+ * 表 xm_group_state 功能状态表,无需前端维护，所有数据由汇总统计得出的所有字段名: <br>
  *	plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,ctime,calc_time,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,task_cnt,finish_task_cnt,biz_date,bug_cnt,group_id,project_id,project_name,group_name;<br>
  * 当前主键(包括多主键):<br>
  *	group_id;<br>

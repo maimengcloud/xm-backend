@@ -8,12 +8,12 @@ import java.util.Date;
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectGroup所有属性名: <br>
  *	id,groupName,projectId,pgTypeId,pgTypeName,leaderUserid,leaderUsername,ctime,ltime,productId,branchId,pgClass,pgroupId,lvl,pidPaths,isTpl,assUserid,assUsername,childrenCnt,userCnt,qxCode,calcWorkload,ntype,crowBranchId,crowBranchName,isCrow;<br>
- * 表 xm_project_group xm_project_group的所有字段名: <br>
+ * 表 xm_group xm_group的所有字段名: <br>
  *	id,group_name,project_id,pg_type_id,pg_type_name,leader_userid,leader_username,ctime,ltime,product_id,branch_id,pg_class,pgroup_id,lvl,pid_paths,is_tpl,ass_userid,ass_username,children_cnt,user_cnt,qx_code,calc_workload,ntype,crow_branch_id,crow_branch_name,is_crow;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
-@ApiModel(description="xm_project_group")
+@ApiModel(description="xm_group")
 public class XmProjectGroup  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -102,7 +102,7 @@ public class XmProjectGroup  implements java.io.Serializable {
 		this.id = id;
 	}
     
-    /**xm_project_group**/
+    /**xm_group**/
 	public XmProjectGroup() {
 	}
 	

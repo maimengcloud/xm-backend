@@ -60,10 +60,10 @@ public class XmProjectService extends BaseService {
 	XmProjectPhaseService xmProjectPhaseService;
 
 	@Autowired
-	XmProjectGroupService groupService;
+    XmGroupService groupService;
 
 	@Autowired
-	XmProjectGroupUserService groupUserService;
+	XmGroupUserService groupUserService;
     
     
     public XmProject getProjectFromCache(String projectId) {

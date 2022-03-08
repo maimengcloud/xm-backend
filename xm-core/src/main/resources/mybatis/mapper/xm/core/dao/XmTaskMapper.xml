@@ -45,7 +45,7 @@
 			)
 		</if>
 		<if test="compete !=null and compete!=''">
-			and ( exists ( select 1 from xm_project_group_user gu where gu.userid=#{compete} and gu.project_id=res.project_id )
+			and ( exists ( select 1 from xm_group_user gu where gu.userid=#{compete} and gu.project_id=res.project_id )
 			or  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.project_id and exe.userid=#{compete})
 			)
 

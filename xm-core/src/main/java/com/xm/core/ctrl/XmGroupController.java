@@ -1,6 +1,5 @@
 package com.xm.core.ctrl;
 
-import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
@@ -12,9 +11,8 @@ import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmProjectGroup;
-import com.xm.core.entity.XmProjectGroupUser;
 import com.xm.core.service.XmProductService;
-import com.xm.core.service.XmProjectGroupService;
+import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmProjectService;
 import com.xm.core.service.XmRecordService;
 import com.xm.core.service.cache.XmProjectGroupCacheService;
@@ -34,7 +32,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
- * url编制采用rest风格,如对XM.xm_project_group xm_project_group的操作有增删改查,对应的url分别为:<br>
+ * url编制采用rest风格,如对XM.xm_group xm_group的操作有增删改查,对应的url分别为:<br>
  *  新增: xm/xmProjectGroup/add <br>
  *  查询: xm/xmProjectGroup/list<br>
  *  模糊查询: xm/xmProjectGroup/listKey<br>
@@ -42,17 +40,17 @@ import java.util.stream.Collectors;
  *  删除: xm/xmProjectGroup/del<br>
  *  批量删除: xm/xmProjectGroup/batchDel<br>
  * 组织 com.qqkj  顶级模块 oa 大模块 xm 小模块 <br>
- * 实体 XmProjectGroup 表 XM.xm_project_group 当前主键(包括多主键): id; 
+ * 实体 XmProjectGroup 表 XM.xm_group 当前主键(包括多主键): id; 
  ***/
-@RestController("xm.core.xmProjectGroupController")
-@RequestMapping(value="/**/xm/core/xmProjectGroup")
-@Api(tags={"xm_project_group操作接口"})
-public class XmProjectGroupController {
+@RestController("xm.core.xmGroupController")
+@RequestMapping(value="/**/xm/core/xmGroup")
+@Api(tags={"xm_group操作接口"})
+public class XmGroupController {
 	
-	static Log logger=LogFactory.getLog(XmProjectGroupController.class);
+	static Log logger=LogFactory.getLog(XmGroupController.class);
 	
 	@Autowired
-	private XmProjectGroupService xmProjectGroupService;
+	private XmGroupService xmProjectGroupService;
 
 
 	@Autowired
@@ -174,7 +172,7 @@ public class XmProjectGroupController {
 		
  
 	
-	@ApiOperation( value = "查询xm_project_group信息列表",notes="listXmProjectGroup,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiOperation( value = "查询xm_group信息列表",notes="listXmProjectGroup,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
 		@ApiImplicitParam(name="id",value="主键,主键",required=false),
 		@ApiImplicitParam(name="groupName",value="团队名称",required=false),
@@ -209,7 +207,7 @@ public class XmProjectGroupController {
 		return m;
 	}
 
-	@ApiOperation( value = "新增一条xm_project_group信息",notes="addXmProjectGroup,主键如果为空，后台自动生成")
+	@ApiOperation( value = "新增一条xm_group信息",notes="addXmProjectGroup,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProjectGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
@@ -295,7 +293,7 @@ public class XmProjectGroupController {
 		return m;
 	}
 
-	@ApiOperation( value = "删除一条xm_project_group信息",notes="delXmProjectGroup,仅需要上传主键字段")
+	@ApiOperation( value = "删除一条xm_group信息",notes="delXmProjectGroup,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
@@ -365,7 +363,7 @@ public class XmProjectGroupController {
 	
 
 
-	@ApiOperation( value = "根据主键列表批量删除xm_project_group信息",notes="batchDelXmProjectGroup,仅需要上传主键字段")
+	@ApiOperation( value = "根据主键列表批量删除xm_group信息",notes="batchDelXmProjectGroup,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 

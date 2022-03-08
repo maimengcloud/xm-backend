@@ -12,10 +12,9 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.PubTool;
 import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmMenuService;
-import com.xm.core.service.XmProjectGroupService;
+import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmRecordService;
 import com.xm.core.service.XmTaskService;
 import com.xm.core.vo.XmMenuVo;
@@ -61,7 +60,7 @@ public class XmMenuController {
 	private XmRecordService xmRecordService;
 
 	@Autowired
-	private XmProjectGroupService groupService;
+	private XmGroupService groupService;
 	
 	@ApiOperation( value = "查询项目菜单表信息列表",notes="listXmMenu,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  

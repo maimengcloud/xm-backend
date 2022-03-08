@@ -12,11 +12,9 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.PubTool;
 import com.xm.core.entity.XmProduct;
-import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmProjectPhase;
 import com.xm.core.service.*;
 import com.xm.core.vo.XmProjectGroupVo;
-import com.xm.core.vo.XmProjectPhaseVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -52,7 +50,7 @@ public class XmProductPhaseController {
 	private XmProjectPhaseService xmProjectPhaseService;
 
 	@Autowired
-	private XmProjectGroupService groupService;
+	private XmGroupService groupService;
 
 	@Autowired
 	private XmProductService xmProductService;

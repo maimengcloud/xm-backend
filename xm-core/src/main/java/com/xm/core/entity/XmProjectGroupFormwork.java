@@ -7,12 +7,12 @@ import io.swagger.annotations.ApiModelProperty;
  * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 
  * 实体 XmProjectGroupFormwork所有属性名: <br>
  *	id,branchId,groupName,isPub,pgTypeId,pgTypeName;<br>
- * 表 XM.xm_project_group_formwork xm_project_group_formwork的所有字段名: <br>
+ * 表 XM.xm_group_formwork xm_group_formwork的所有字段名: <br>
  *	id,branch_id,group_name,is_pub,pg_type_id,pg_type_name;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
-@ApiModel(description="xm_project_group_formwork")
+@ApiModel(description="xm_group_formwork")
 public class XmProjectGroupFormwork  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -41,7 +41,7 @@ public class XmProjectGroupFormwork  implements java.io.Serializable {
 		this.id = id;
 	}
     
-    /**xm_project_group_formwork**/
+    /**xm_group_formwork**/
 	public XmProjectGroupFormwork() {
 	}
 	

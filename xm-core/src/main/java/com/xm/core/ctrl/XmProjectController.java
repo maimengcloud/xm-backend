@@ -12,8 +12,6 @@ import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProject;
-import com.xm.core.entity.XmProjectPhase;
-import com.xm.core.entity.XmTask;
 import com.xm.core.service.*;
 import com.xm.core.vo.XmProjectCopyVo;
 import com.xm.core.vo.XmProjectGroupVo;
@@ -21,14 +19,12 @@ import com.xm.core.vo.XmProjectVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * url编制采用rest风格,如对XM.xm_project xm_project的操作有增删改查,对应的url分别为:<br>
@@ -51,7 +47,7 @@ public class XmProjectController {
 	@Autowired
 	private XmProjectService xmProjectService;
 	@Autowired
-	private XmProjectGroupService groupService;
+	private XmGroupService groupService;
 
 
 	@Autowired

@@ -44,7 +44,7 @@
 				</foreach>
 			</if>
 			<if test="compete !=null and compete!=''">
-				and exists ( select 1 from xm_project_group_user gu where gu.userid=#{compete} and gu.project_id=res.project_id )
+				and exists ( select 1 from xm_group_user gu where gu.userid=#{compete} and gu.project_id=res.project_id )
 			</if>
 			<if test="productId != null and productId !='' ">    and exists( select 1 from xm_menu m where m.menu_id =res.menu_id and m.product_id=#{productId})  </if>
 			<if test="key != null and key !='' ">    and res.case_name like #{key}   </if>

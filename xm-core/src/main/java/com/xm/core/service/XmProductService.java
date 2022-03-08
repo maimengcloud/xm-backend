@@ -38,10 +38,10 @@ public class XmProductService extends BaseService {
 
 
 	@Autowired
-	XmProjectGroupService groupService;
+    XmGroupService groupService;
 
 	@Autowired
-	XmProjectGroupUserService groupUserService;
+	XmGroupUserService groupUserService;
 
 
 	@Autowired

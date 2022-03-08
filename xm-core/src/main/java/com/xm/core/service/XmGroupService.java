@@ -21,20 +21,20 @@ import java.util.stream.Collectors;
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
  * 组织 com.qqkj  顶级模块 oa 大模块 xm 小模块 <br>
- * 实体 XmProjectGroup 表 XM.xm_project_group 当前主键(包括多主键): id; 
+ * 实体 XmProjectGroup 表 XM.xm_group 当前主键(包括多主键): id; 
  ***/
-@Service("xm.core.xmProjectGroupService")
-public class XmProjectGroupService extends BaseService {
+@Service("xm.core.xmGroupService")
+public class XmGroupService extends BaseService {
 
 
 	@Autowired
 	XmRecordService xmRecordService;
 	
     @Autowired
-    XmProjectGroupService xmProjectGroupService;
+	XmGroupService xmProjectGroupService;
 
     @Autowired
-    XmProjectGroupUserService xmProjectGroupUserService;
+	XmGroupUserService xmProjectGroupUserService;
     
     @Autowired
     XmProjectGroupCacheService groupCacheService;

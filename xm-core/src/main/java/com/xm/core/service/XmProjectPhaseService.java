@@ -6,11 +6,7 @@ import com.mdp.core.utils.NumberUtil;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProjectPhase;
-import com.xm.core.entity.XmProjectPhase;
-import com.xm.core.entity.XmTask;
 import com.xm.core.vo.XmProjectGroupVo;
-import com.xm.core.vo.XmProjectPhaseVo;
-import org.apache.poi.sl.usermodel.FreeformShape;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,7 +30,7 @@ public class XmProjectPhaseService extends BaseService {
 	XmRecordService xmRecordService;
 
 	@Autowired
-	XmProjectGroupService groupService;
+    XmGroupService groupService;
 	/**
 	 * 查询项目及计划总预算，用于判断是否超出预算 
 	 */

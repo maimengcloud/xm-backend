@@ -23,14 +23,14 @@
 		</if>
 		<!-- 我参与的  包括我创建的，我监控的，我审核的-->
 		<if test=" compete !=null and compete !='' ">
-			and (    exists ( select 1 from xm_project_group g,XM.xm_project_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id )
+			and (    exists ( select 1 from xm_group g,XM.xm_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id )
 			or  res.create_userid=#{compete}
 			or  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{compete} )
 			)
 		</if>
 		<!-- 按参与角色查询等-->
 		<if test="pgTypeIds != null ">
-			and  exists ( select 1 from xm_project_group g,XM.xm_project_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id
+			and  exists ( select 1 from xm_group g,XM.xm_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id
 			and   g.pg_type_id in
 			<foreach collection="pgTypeIds" item="item" index="index" open="(" separator="," close=")" >
 				#{item}

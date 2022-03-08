@@ -60,7 +60,7 @@ public class XmTaskController {
 	private XmTaskService xmTaskService;
 	
 	@Autowired
-    XmProjectGroupService groupService;
+	XmGroupService groupService;
 	
 	@Autowired
 	private XmRecordService xmRecordService;

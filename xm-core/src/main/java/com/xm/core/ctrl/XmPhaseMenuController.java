@@ -3,19 +3,13 @@ package com.xm.core.ctrl;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.ResponseHelper;
-import com.mdp.safe.client.entity.User;
-import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmProduct;
-import com.xm.core.entity.XmProjectGroup;
 import com.xm.core.service.XmMenuService;
 import com.xm.core.service.XmProductService;
-import com.xm.core.service.XmProjectGroupService;
+import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmRecordService;
 import com.xm.core.service.push.XmMenuPushMsgService;
 import com.xm.core.vo.XmPhaseMenusVo;
-import com.xm.core.vo.XmPhaseMenusVo;
-import com.xm.core.vo.XmProjectGroupVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -59,7 +53,7 @@ public class XmPhaseMenuController {
 	XmMenuController xmMenuController;
 
 	@Autowired
-	XmProjectGroupService groupService;
+    XmGroupService groupService;
 
 
 	@Autowired

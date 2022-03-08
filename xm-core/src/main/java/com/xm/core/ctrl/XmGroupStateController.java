@@ -5,7 +5,7 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.xm.core.entity.XmProjectGroupState;
-import com.xm.core.service.XmProjectGroupStateService;
+import com.xm.core.service.XmGroupStateService;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -17,25 +17,25 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * url编制采用rest风格,如对XM.xm_project_group_state 功能状态表,无需前端维护，所有数据由汇总统计得出的操作有增删改查,对应的url分别为:<br>
- *  新增: core/xmProjectGroupState/add <br>
- *  查询: core/xmProjectGroupState/list<br>
- *  模糊查询: core/xmProjectGroupState/listKey<br>
- *  修改: core/xmProjectGroupState/edit <br>
- *  删除: core/xmProjectGroupState/del<br>
- *  批量删除: core/xmProjectGroupState/batchDel<br>
+ * url编制采用rest风格,如对XM.xm_group_state 功能状态表,无需前端维护，所有数据由汇总统计得出的操作有增删改查,对应的url分别为:<br>
+ *  新增: core/xmGroupState/add <br>
+ *  查询: core/xmGroupState/list<br>
+ *  模糊查询: core/xmGroupState/listKey<br>
+ *  修改: core/xmGroupState/edit <br>
+ *  删除: core/xmGroupState/del<br>
+ *  批量删除: core/xmGroupState/batchDel<br>
  * 组织 com.qqkj  顶级模块 xm 大模块 core 小模块 <br>
- * 实体 XmProjectGroupState 表 XM.xm_project_group_state 当前主键(包括多主键): id; 
+ * 实体 XmProjectGroupState 表 XM.xm_group_state 当前主键(包括多主键): id; 
  ***/
-@RestController("xm.core.xmProjectGroupStateController")
-@RequestMapping(value="/**/core/xmProjectGroupState")
+@RestController("xm.core.xmGroupStateController")
+@RequestMapping(value="/**/core/xmGroupState")
 @Api(tags={"功能状态表,无需前端维护，所有数据由汇总统计得出操作接口"})
-public class XmProjectGroupStateController {
+public class XmGroupStateController {
 	
-	static Log logger=LogFactory.getLog(XmProjectGroupStateController.class);
+	static Log logger=LogFactory.getLog(XmGroupStateController.class);
 	
 	@Autowired
-	private XmProjectGroupStateService xmProjectGroupStateService;
+	private XmGroupStateService xmProjectGroupStateService;
 	 
 		
  

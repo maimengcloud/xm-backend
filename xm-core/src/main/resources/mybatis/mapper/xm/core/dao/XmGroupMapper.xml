@@ -13,13 +13,13 @@
         <if test="groupNameKey != null and groupNameKey !='' ">    and res.group_name like concat('%',#{groupNameKey},'%')   </if>
 		<if test="mngUsernamekey != null and mngUsernamekey !='' ">    and (res.leader_username like concat('%',#{mngUsernamekey},'%') or res.ass_username  like concat('%',#{mngUsernamekey},'%'))  </if>
 		<if test="groupUsernameKey != null and groupUsernameKey !='' ">    and
-			exists ( select 1 from xm_project_group_user gu where gu.group_id=res.id and  gu.username like concat('%',#{groupUsernameKey},'%'))
+			exists ( select 1 from xm_group_user gu where gu.group_id=res.id and  gu.username like concat('%',#{groupUsernameKey},'%'))
 		</if>
 		<if test="orCrowBranchId!=null and orCrowBranchId!=''"> and (res.branch_id=#{branchId} or res.crow_branch_id=#{orCrowBranchId})</if>
 		<if test="iterationId!=null and iterationId!=''"> and exists ( select 1 from xm_iteration_product_link ipl left join xm_product_project_link ppl on ipl.product_id=ppl.product_id and (ipl.product_id=res.product_id or ppl.project_id = res.project_id))</if>
     </sql>
 	<delete id="deleteByProjectId" parameterType="com.xm.core.entity.XmProjectGroup">
-		delete from xm_project_group where project_id = #{projectId}
+		delete from xm_group where project_id = #{projectId}
 	</delete>
 
 
@@ -29,7 +29,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from xm_project_group res
+		select * from xm_group res
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
@@ -38,7 +38,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProjectGroup" resultType="com.xm.core.entity.XmProjectGroup">
-		select * from xm_project_group res
+		select * from xm_group res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -46,27 +46,27 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProjectGroup" resultType="com.xm.core.entity.XmProjectGroup">
-		select * from xm_project_group res
+		select * from xm_group res
 		where 
 			res.id = #{id}
 	</select>
 	
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from xm_project_group res
+		select * from xm_group res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProjectGroup" resultType="long">
-		select count(1) from xm_project_group res
+		select count(1) from xm_group res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmProjectGroup" useGeneratedKeys="false"   keyProperty="id">
-		insert into xm_project_group(
+		insert into xm_group(
 			<include refid="columns"/>
 		) values (
 		#{id},#{groupName},#{projectId},#{pgTypeId},#{pgTypeName},#{leaderUserid},#{leaderUsername},#{ctime},#{ltime},#{productId},#{branchId},#{pgClass},#{pgroupId},#{lvl},#{pidPaths},#{isTpl},#{assUserid},#{assUsername},#{childrenCnt},#{userCnt},#{qxCode},#{calcWorkload},#{ntype},#{crowBranchId},#{crowBranchName},#{isCrow}
@@ -75,7 +75,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProjectGroup">
-		delete from xm_project_group res
+		delete from xm_group res
 		<where>  
 			<include refid="where"/>
 		</where>
@@ -83,13 +83,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProjectGroup">
-		delete from xm_project_group 
+		delete from xm_group
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProjectGroup">
-		update  xm_project_group 
+		update  xm_group
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -98,7 +98,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProjectGroup">
-		update  xm_project_group 
+		update  xm_group
 		<set>
 			<include refid="set"/>
 		</set>
@@ -113,7 +113,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_project_group 
+   		update  xm_group
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -121,7 +121,7 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_project_group 
+		delete from xm_group
 			where
 			(id) in
                 <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
