@@ -130,7 +130,6 @@ public class XmTaskController {
 		String taskOut= (String) xmTask.get("taskOut");
 		if(!"1".equals(taskOut)){
 			String projectId= (String) xmTask.get("projectId");
-			String projectPhaseId= (String) xmTask.get("projectPhaseId");
 			String myExecuserStatus= (String) xmTask.get("myExecuserStatus");
 			String isMy= (String) xmTask.get("isMy");
 			String myFocus= (String) xmTask.get("myFocus");
@@ -141,7 +140,7 @@ public class XmTaskController {
 			String iterationId= (String) xmTask.get("iterationId");
 			User user = LoginUtils.getCurrentUserInfo();
 			xmTask.put("userid",user.getUserid());
-			if( !(StringUtils.hasText(projectId) || StringUtils.hasText(projectPhaseId)
+			if( !(StringUtils.hasText(projectId)
 					|| StringUtils.hasText(myExecuserStatus)|| StringUtils.hasText(isMy)|| StringUtils.hasText(myFocus)|| StringUtils.hasText(createUserid)
 					|| StringUtils.hasText(executorUserid) || StringUtils.hasText(menuId) || StringUtils.hasText(productId)|| StringUtils.hasText(iterationId)) ){
 
@@ -329,10 +328,11 @@ public class XmTaskController {
 			if(!StringUtils.hasText(xmTaskVo.getProjectId())){
 				return ResponseHelper.failed("projectId-0","项目编号不能为空");
 			}
-
+			/**
 			if(!StringUtils.hasText(xmTaskVo.getProjectPhaseId())){
 				return ResponseHelper.failed("ProjectPhaseId-0","项目计划编号不能为空");
 			}
+			 **/
 			User user=LoginUtils.getCurrentUserInfo();
 			xmTaskVo.setCreateUserid(user.getUserid());
 			xmTaskVo.setCreateUsername(user.getUsername());
@@ -352,16 +352,15 @@ public class XmTaskController {
 			xmTaskVo.setRate(BigDecimal.ZERO);
 			if( !StringUtils.hasText(xmTaskVo.getMilestone()) ){
 				xmTaskVo.setMilestone("0");
-			} 
-			String projectPhaseId=xmTaskVo.getProjectPhaseId();
+			}
 			if(xmTaskVo.getBudgetCost()==null){
 				xmTaskVo.setBudgetCost(BigDecimal.ZERO);
 			}
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTaskVo);
 			if(xmTaskVo.getBudgetCost()!=null  && xmTaskVo.getBudgetCost().compareTo(BigDecimal.ZERO)>0){
 				if(xmTaskVo.getLvl()<=1){
-					tips=xmTaskService.judgetPhaseBudget(projectPhaseId, xmTaskVo.getBudgetCost(),null,null,null,null);
-				}else{
+					xmTaskService.judgetProjectBudget(xmTaskVo.getProjectId(),xmTaskVo.getBudgetCost(),null);
+ 				}else{
 					tips=xmTaskService.judgetTaskBudget(xmTaskVo.getParentTaskid(), xmTaskVo.getBudgetCost(),null,null,null,null);
 				}
 			}
@@ -434,9 +433,8 @@ public class XmTaskController {
 		String taskOut= (String) xmTask.get("taskOut");
 		if(!"1".equals(taskOut)){
 			String projectId= (String) xmTask.get("projectId");
-			String projectPhaseId= (String) xmTask.get("projectPhaseId");
 			String userid= (String) xmTask.get("userid");
-			if( !(StringUtils.hasText(projectId) || StringUtils.hasText(projectPhaseId)|| StringUtils.hasText(userid) ) ){
+			if( !(StringUtils.hasText(projectId) || StringUtils.hasText(userid) ) ){
 				User user = LoginUtils.getCurrentUserInfo();
 				xmTask.put("cbranchId",user.getBranchId());
 			}
@@ -623,7 +621,6 @@ public class XmTaskController {
 				}
 			}
 
-			String projectPhaseId=xmTaskDb.getProjectPhaseId();
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTaskVo);
 			if(xmTaskVo.getBudgetCost()==null)xmTaskVo.setBudgetCost(BigDecimal.ZERO);
 			if(xmTaskDb.getBudgetCost()==null)xmTaskDb.setBudgetCost(BigDecimal.ZERO);
@@ -631,7 +628,7 @@ public class XmTaskController {
 			excludeIds.add(xmTaskDb.getId());
 			if( xmTaskDb.getBudgetCost().compareTo(xmTaskVo.getBudgetCost())!=0){
 				if(xmTaskVo.getLvl()<=1){
-					tips=xmTaskService.judgetPhaseBudget(projectPhaseId, xmTaskVo.getBudgetCost(),null,null,null,excludeIds);
+					tips=xmTaskService.judgetProjectBudget(xmTaskDb.getProjectId(), xmTaskVo.getBudgetCost(),excludeIds);
 				}else{
 					tips=xmTaskService.judgetTaskBudget(xmTaskDb.getParentTaskid(), xmTaskVo.getBudgetCost(),null,null,null,excludeIds);
 				}
@@ -787,15 +784,9 @@ public class XmTaskController {
 				return m;
 			}
 			XmTask xmTask=xmTasks.get(0);
-			String projectPhaseId=xmTask.getProjectPhaseId();
 			String projectId=xmTask.getProjectId();
 			if( !StringUtils.hasText(projectId) ){
 				tips.setFailureMsg("项目编号不能为空");
-				m.put("tips", tips);
-				return m;
-			}
-			if( !StringUtils.hasText(projectPhaseId) ){
-				tips.setFailureMsg("计划编号不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -813,11 +804,6 @@ public class XmTaskController {
 				return m;
 			}
  			for (XmTask g : xmTasks) {
-				if(!projectPhaseId.equals(g.getProjectPhaseId())){
-					tips.setFailureMsg("只能在同一个计划下批量导入任务");
-					m.put("tips", tips);
-					return m;
-				}
 				if(!projectId.equals(g.getProjectId())){
 					tips.setFailureMsg("只能在同一个项目下批量导入任务");
 					m.put("tips", tips);
@@ -841,7 +827,7 @@ public class XmTaskController {
 					totalTaskBudgetCost=totalTaskBudgetCost.add(task.getBudgetCost());
 				}
 				if(totalTaskBudgetCost.compareTo(BigDecimal.ZERO)>0){
-					tips=xmTaskService.judgetPhaseBudget(projectPhaseId,totalTaskBudgetCost,null,null,null,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
+					tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetCost,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
 					if(!tips.isOk()){
 						tips.setFailureMsg(tips.getMsg()+"相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 						return ResponseHelper.failed(tips);
@@ -890,7 +876,8 @@ public class XmTaskController {
 		return m;
 	}
 
-
+	/**
+	 *
 	@ApiOperation( value = "批量将任务与一个项目计划关联",notes="")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -989,6 +976,7 @@ public class XmTaskController {
 		m.put("tips", tips);
 		return m;
 	}
+	 **/
 	@ApiOperation( value = "批量将多个任务与一个用户需求关联",notes="")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -1250,14 +1238,8 @@ public class XmTaskController {
 			}
 			XmTask xmTask=xmTasks.get(0);
 			String projectId=xmTask.getProjectId();
-			String projectPhaseId=xmTask.getProjectPhaseId();
 			if( !StringUtils.hasText(projectId) ){
 				tips.setFailureMsg("项目编号不能为空");
-				m.put("tips", tips);
-				return m;
-			}
-			if( !StringUtils.hasText(projectPhaseId) ){
-				tips.setFailureMsg("计划编号不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -1278,11 +1260,6 @@ public class XmTaskController {
 			for (XmTask task : xmTasks) {
 				if( !projectId.equals(task.getProjectId()) ){
 					tips.setFailureMsg("所有任务必须同属于一个项目");
-					m.put("tips", tips);
-					return m;
-				}
-				if(!projectPhaseId.equals(task.getProjectPhaseId())){
-					tips.setFailureMsg("只能在同一个计划下批量修改任务");
 					m.put("tips", tips);
 					return m;
 				}
@@ -1310,11 +1287,6 @@ public class XmTaskController {
 					m.put("tips", tips);
 					return m;
 				}
-				if(!projectPhaseId.equals(task.getProjectPhaseId())){
-					tips.setFailureMsg("只能在同一个计划下批量修改任务");
-					m.put("tips", tips);
-					return m;
-				}
 					boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,task.getCreateUserid(),user.getUserid());
 					if(!isHead){
 						noAllowTasksDbMap.put(task.getId(),task);
@@ -1333,7 +1305,7 @@ public class XmTaskController {
 					totalTaskBudgetCost=totalTaskBudgetCost.add(task.getBudgetCost());
 				}
 				if(totalTaskBudgetCost.compareTo(BigDecimal.ZERO)>0){
-					tips=xmTaskService.judgetPhaseBudget(projectPhaseId,totalTaskBudgetCost,null,null,null,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
+					tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetCost,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
 					if(!tips.isOk()){
 						tips.setFailureMsg(tips.getMsg()+"相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 						return ResponseHelper.failed(tips);

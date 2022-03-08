@@ -671,5 +671,30 @@ public class XmTaskService extends BaseService {
 	public void batchRelTasksWithPhase(BatchRelTasksWithPhase tasksPhase) {
 		super.update("batchRelTasksWithPhase",tasksPhase);
 	}
+
+	public Map<String,Object> calcProjectAndTaskBudget(String projectId,List<String> excludeTaskIds){
+		Map<String,Object> map=new HashMap<>();
+		if(excludeTaskIds!=null){
+			map.put("excludeTaskIds",excludeTaskIds);
+		}
+		map.put("projectId",projectId);
+		return super.selectOne("calcProjectAndTaskBudget",map);
+	}
+	public Tips judgetProjectBudget(String projectId, BigDecimal addBudgetCost, List<String> excludeTaskIds) {
+		Tips tips=new Tips("成功");
+		Map<String,Object> data=this.calcProjectAndTaskBudget(projectId,excludeTaskIds);
+		if(data==null || data.isEmpty()){
+			tips.setFailureMsg("项目不存在");
+			return tips;
+		}
+		BigDecimal planTotalCost=NumberUtil.getBigDecimal(map().get("planTotalCost"),BigDecimal.ZERO);
+		BigDecimal taskBudgetCost=NumberUtil.getBigDecimal(map().get("budgetCost"),BigDecimal.ZERO);
+		BigDecimal chaochu=taskBudgetCost.add(addBudgetCost).subtract(planTotalCost);
+		if(chaochu.compareTo(BigDecimal.ZERO)>0){
+			tips.setFailureMsg("超出项目总预算"+chaochu+"元");
+			return tips;
+		}
+		return tips;
+	}
 }
 

@@ -302,6 +302,16 @@
 		and res.ntype='1'
 		</foreach>
 	</update>
+
+
+	<select id="calcProjectAndTaskBudget" resultType="HashMap" parameterType="HashMap">
+		select p.id,p.name,p.plan_total_cost,sum(budget_cost) as budget_cost from xm_project p left join xm_task t on t.project_id=p.id
+		where p.id=#{projectId} and task.lvl=1 and t.id not in
+		<foreach collection="excludeTaskIds" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+		group by p.id
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 
