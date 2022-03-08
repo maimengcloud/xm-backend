@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class XmProjectGroupCacheService {
+public class XmGroupCacheService {
 	
 	@Autowired
 	RedisTemplate redisTemplate;

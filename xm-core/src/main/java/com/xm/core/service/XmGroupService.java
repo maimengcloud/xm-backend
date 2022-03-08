@@ -6,7 +6,7 @@ import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.*;
-import com.xm.core.service.cache.XmProjectGroupCacheService;
+import com.xm.core.service.cache.XmGroupCacheService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.BeanUtils;
@@ -37,7 +37,7 @@ public class XmGroupService extends BaseService {
 	XmGroupUserService xmProjectGroupUserService;
     
     @Autowired
-    XmProjectGroupCacheService groupCacheService;
+	XmGroupCacheService groupCacheService;
 
 	@Autowired
     XmIterationProductLinkService xmIterationProductLinkService;

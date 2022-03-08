@@ -15,7 +15,7 @@ import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmProjectService;
 import com.xm.core.service.XmRecordService;
-import com.xm.core.service.cache.XmProjectGroupCacheService;
+import com.xm.core.service.cache.XmGroupCacheService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmGroupVo;
 import io.swagger.annotations.*;
@@ -54,7 +54,7 @@ public class XmGroupController {
 
 
 	@Autowired
-	private XmProjectGroupCacheService xmProjectGroupCacheService;
+	private XmGroupCacheService xmProjectGroupCacheService;
 	
 	@Autowired
 	private XmProjectService xmProjectService;
