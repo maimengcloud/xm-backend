@@ -14,7 +14,7 @@
         <if test="key != null and key !='' ">       </if>
     </sql>
 	<update id="loadTasksToXmProjectGroupState" parameterType="String" statementType="CALLABLE">
-		{call load_tasks_to_xm_group_state(#{projectId,mode=IN})}
+		{call load_tasks_to_xm_project_group_state(#{projectId,mode=IN})}
 	</update>
 
 
