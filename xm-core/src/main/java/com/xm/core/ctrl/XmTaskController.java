@@ -614,7 +614,7 @@ public class XmTaskController {
 						XmTask xmTaskParentDb=this.xmTaskService.selectOneObject(new XmTask(xmTaskDb.getParentTaskid()));
 						if(xmTaskParentDb!=null){
 							if(!"1".equals(xmTaskParentDb.getNtype())){
-								ResponseHelper.failed("ptask-ntype-0","上级任务"+xmTaskParentDb.getName()+"不是任务集,不能下挂任务集");
+								ResponseHelper.failed("ptask-ntype-0","上级任务"+xmTaskParentDb.getName()+"不是计划项,不能下挂计划项");
 							}
 						}
 					}
@@ -955,7 +955,7 @@ public class XmTaskController {
 				xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量更新任务", "将任务"+t.getName()+"与计划【"+xmProjectPhaseDb.getId()+"-"+xmProjectPhaseDb.getPhaseName()+"】关联",null,null);
 			}
 			if(ntype1Tasks.size()>0){
-				msgs.add("以下"+ntype1Tasks.size()+"个任务属于任务集，无需关联计划。【"+ntype1Tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+				msgs.add("以下"+ntype1Tasks.size()+"个任务属于计划项，无需关联计划。【"+ntype1Tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			if(noAllowTasks.size()>0){
 				msgs.add("以下"+noAllowTasks.size()+"个任务无权操作，只有任务负责人、项目经理、组长可以批量将任务与项目计划进行关联,【"+noAllowTasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
@@ -1034,13 +1034,15 @@ public class XmTaskController {
 			List<XmTask> ntype1Tasks=new ArrayList<>();
 			List<XmTask> noAllowTasks=new ArrayList<>();
 			List<XmTask> tasksDb=this.xmTaskService.selectTaskListByIds(tasksMenu.getTaskIds());
+			for (XmTask xmTask : tasksDb) {
+				if("1".equals(xmTask.getNtype())){
+					ntype1Tasks.add(xmTask);
+					continue;
+				}
+			}
 			if(hasMenuQx==false){
 				Map<String,List<XmTask>> projectTasksMap=new HashMap<>();
 				for (XmTask xmTask : tasksDb) {
-					if("1".equals(xmTask.getNtype())){
-						ntype1Tasks.add(xmTask);
-						continue;
-					}
 					 List<XmTask> projectTasks=projectTasksMap.get(xmTask.getProjectId());
 					 if(projectTasks==null){
 						projectTasks=new ArrayList<>();
@@ -1073,6 +1075,8 @@ public class XmTaskController {
 			}
 
 			allowTasks=tasksDb.stream().filter(i->!noAllowTasks.stream().filter(k->k.getId().equals(i.getId())).findAny().isPresent()).collect(Collectors.toList());
+			allowTasks=allowTasks.stream().filter(i->!ntype1Tasks.stream().filter(k->k.getId().equals(i.getId())).findAny().isPresent()).collect(Collectors.toList());
+
 			List<String> msgs=new ArrayList<>();
 			if(allowTasks.size()>0){
 				BatchRelTasksWithMenu tasksWithMenu=new BatchRelTasksWithMenu();
@@ -1085,7 +1089,7 @@ public class XmTaskController {
 				xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量更新任务", "将任务"+t.getName()+"与需求【"+xmMenuDb.getMenuId()+"-"+xmMenuDb.getMenuName()+"】关联",null,null);
 			}
 			if(ntype1Tasks.size()>0){
-				msgs.add("以下"+ntype1Tasks.size()+"个任务属于任务集，无需关联需求。【"+ntype1Tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+				msgs.add("以下"+ntype1Tasks.size()+"个任务属于计划项，无需关联需求。【"+ntype1Tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			if(noAllowTasks.size()>0){
 				msgs.add("以下"+noAllowTasks.size()+"个任务无权操作，只有任务负责人、项目经理、组长、产品组组长、需求管理组人员可以批量将任务与需求进行关联,【"+noAllowTasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");

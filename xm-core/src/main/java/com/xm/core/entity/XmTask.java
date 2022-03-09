@@ -170,7 +170,7 @@ public class XmTask  implements java.io.Serializable {
 	@ApiModelProperty(notes="标签名称，逗号分割",allowEmptyValue=true,example="",allowableValues="")
 	String tagNames;
 	
-	@ApiModelProperty(notes="节点类型0-任务，1-任务集。任务集下建任务，任务下不允许建立任何子节点",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="节点类型0-任务，1-计划项。计划项下建任务，任务下不允许建立任何子节点",allowEmptyValue=true,example="",allowableValues="")
 	String ntype;
 	
 	@ApiModelProperty(notes="儿子节点个数",allowEmptyValue=true,example="",allowableValues="")
@@ -498,7 +498,7 @@ public class XmTask  implements java.io.Serializable {
 		this.tagNames = tagNames;
 	}
 	/**
-	 * 节点类型0-任务，1-任务集。任务集下建任务，任务下不允许建立任何子节点
+	 * 节点类型0-任务，1-计划项。计划项下建任务，任务下不允许建立任何子节点
 	 **/
 	public void setNtype(String ntype) {
 		this.ntype = ntype;
@@ -835,7 +835,7 @@ public class XmTask  implements java.io.Serializable {
 		return this.tagNames;
 	}
 	/**
-	 * 节点类型0-任务，1-任务集。任务集下建任务，任务下不允许建立任何子节点
+	 * 节点类型0-任务，1-计划项。计划项下建任务，任务下不允许建立任何子节点
 	 **/
 	public String getNtype() {
 		return this.ntype;
