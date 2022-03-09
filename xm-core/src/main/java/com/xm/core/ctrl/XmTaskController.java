@@ -829,7 +829,7 @@ public class XmTaskController {
 				if(totalTaskBudgetCost.compareTo(BigDecimal.ZERO)>0){
 					tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetCost,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
 					if(!tips.isOk()){
-						tips.setFailureMsg(tips.getMsg()+"相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+						tips.setFailureMsg(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 						return ResponseHelper.failed(tips);
 					}
 				}
@@ -1311,7 +1311,7 @@ public class XmTaskController {
 				if(totalTaskBudgetCost.compareTo(BigDecimal.ZERO)>0){
 					tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetCost,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
 					if(!tips.isOk()){
-						tips.setFailureMsg(tips.getMsg()+"相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+						tips.setFailureMsg(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 						return ResponseHelper.failed(tips);
 					}
 				}
