@@ -175,13 +175,6 @@
 		where 
 			res.menu_id = #{menuId}
 	</select>
-    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmMenu">
-        select * from xm_menu res
-        where  (res.menu_id) in
-             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
-                 ( #{item})
-             </foreach>
-    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_menu res

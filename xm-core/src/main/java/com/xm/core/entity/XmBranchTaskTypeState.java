@@ -8,9 +8,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmBranchTaskTypeState所有属性名: <br>
- *	taskType,planWorkload,planAmount,actWorkload,actAmount,branchId,bizDate,calcTime,planOuserAt,planIuserAt,actOuserAt,actIuserAt,planOuserWorkload,planIuserWorkload,actOuserWorkload,actIuserWorkload,planNouserAt,actNouserAt,id,branchName;<br>
+ *	taskType,planWorkload,planAmount,actWorkload,actAmount,branchId,bizDate,calcTime,planOuserAt,planIuserAt,actOutUserAt,actInnerUserAt,planOuserWorkload,planIuserWorkload,actOuserWorkload,actIuserWorkload,planNouserAt,actNouserAt,id,branchName;<br>
  * 表 xm_branch_task_type_state 按机构编号任务类型汇总的所有字段名: <br>
- *	task_type,plan_workload,plan_amount,act_workload,act_amount,branch_id,biz_date,calc_time,plan_out_user_at,plan_inner_user_at,act_out_user_at,act_inner_user_at,plan_out_user_workload,plan_inner_user_workload,act_out_user_workload,act_inner_user_workload,plan_nouser_at,act_nouser_at,id,branch_name;<br>
+ *	task_type,plan_workload,plan_amount,act_workload,act_amount,branch_id,biz_date,calc_time,plan_ouser_at,plan_iuser_at,act_out_user_at,act_inner_user_at,plan_ouser_workload,plan_iuser_workload,act_ouser_workload,act_iuser_workload,plan_nouser_at,act_nouser_at,id,branch_name;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -54,10 +54,10 @@ public class XmBranchTaskTypeState  implements java.io.Serializable {
 	BigDecimal planIuserAt;
 	
 	@ApiModelProperty(notes="实际外购成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal actOuserAt;
+	BigDecimal actOutUserAt;
 	
 	@ApiModelProperty(notes="实际内购成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal actIuserAt;
+	BigDecimal actInnerUserAt;
 	
 	@ApiModelProperty(notes="计划外购工作量",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planOuserWorkload;
@@ -152,14 +152,14 @@ public class XmBranchTaskTypeState  implements java.io.Serializable {
 	/**
 	 * 实际外购成本
 	 **/
-	public void setActOuserAt(BigDecimal actOuserAt) {
-		this.actOuserAt = actOuserAt;
+	public void setActOutUserAt(BigDecimal actOutUserAt) {
+		this.actOutUserAt = actOutUserAt;
 	}
 	/**
 	 * 实际内购成本
 	 **/
-	public void setActIuserAt(BigDecimal actIuserAt) {
-		this.actIuserAt = actIuserAt;
+	public void setActInnerUserAt(BigDecimal actInnerUserAt) {
+		this.actInnerUserAt = actInnerUserAt;
 	}
 	/**
 	 * 计划外购工作量
@@ -273,14 +273,14 @@ public class XmBranchTaskTypeState  implements java.io.Serializable {
 	/**
 	 * 实际外购成本
 	 **/
-	public BigDecimal getActOuserAt() {
-		return this.actOuserAt;
+	public BigDecimal getActOutUserAt() {
+		return this.actOutUserAt;
 	}
 	/**
 	 * 实际内购成本
 	 **/
-	public BigDecimal getActIuserAt() {
-		return this.actIuserAt;
+	public BigDecimal getActInnerUserAt() {
+		return this.actInnerUserAt;
 	}
 	/**
 	 * 计划外购工作量

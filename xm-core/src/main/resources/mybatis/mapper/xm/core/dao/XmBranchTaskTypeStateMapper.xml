@@ -71,7 +71,7 @@
 		insert into xm_branch_task_type_state(
 			<include refid="columns"/>
 		) values (
-		#{taskType},#{planWorkload},#{planAmount},#{actWorkload},#{actAmount},#{branchId},#{bizDate},#{calcTime},#{planOuserAt},#{planIuserAt},#{actOuserAt},#{actIuserAt},#{planOuserWorkload},#{planIuserWorkload},#{actOuserWorkload},#{actIuserWorkload},#{planNouserAt},#{actNouserAt},#{id},#{branchName}
+		#{taskType},#{planWorkload},#{planAmount},#{actWorkload},#{actAmount},#{branchId},#{bizDate},#{calcTime},#{planOuserAt},#{planIuserAt},#{actOutUserAt},#{actInnerUserAt},#{planOuserWorkload},#{planIuserWorkload},#{actOuserWorkload},#{actIuserWorkload},#{planNouserAt},#{actNouserAt},#{id},#{branchName}
 		)
 	</insert>
 	
@@ -134,7 +134,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		task_type,plan_workload,plan_amount,act_workload,act_amount,branch_id,biz_date,calc_time,plan_out_user_at,plan_inner_user_at,act_out_user_at,act_inner_user_at,plan_out_user_workload,plan_inner_user_workload,act_out_user_workload,act_inner_user_workload,plan_nouser_at,act_nouser_at,id,branch_name
+		task_type,plan_workload,plan_amount,act_workload,act_amount,branch_id,biz_date,calc_time,plan_ouser_at,plan_iuser_at,act_out_user_at,act_inner_user_at,plan_ouser_workload,plan_iuser_workload,act_ouser_workload,act_iuser_workload,plan_nouser_at,act_nouser_at,id,branch_name
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -147,14 +147,14 @@
 		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
 		<if test="bizDate != null and bizDate != ''">      and res.biz_date = #{bizDate}     </if>
 		<if test="calcTime != null">      and date_format(res.calc_time,'%Y-%m-%d') = date_format(#{calcTime},'%Y-%m-%d')     </if>
-		<if test="planOuserAt != null and planOuserAt != ''">      and res.plan_out_user_at = #{planOuserAt}     </if>
-		<if test="planIuserAt != null and planIuserAt != ''">      and res.plan_inner_user_at = #{planIuserAt}     </if>
-		<if test="actOuserAt != null and actOuserAt != ''">      and res.act_out_user_at = #{actOuserAt}     </if>
-		<if test="actIuserAt != null and actIuserAt != ''">      and res.act_inner_user_at = #{actIuserAt}     </if>
-		<if test="planOuserWorkload != null and planOuserWorkload != ''">      and res.plan_out_user_workload = #{planOuserWorkload}     </if>
-		<if test="planIuserWorkload != null and planIuserWorkload != ''">      and res.plan_inner_user_workload = #{planIuserWorkload}     </if>
-		<if test="actOuserWorkload != null and actOuserWorkload != ''">      and res.act_out_user_workload = #{actOuserWorkload}     </if>
-		<if test="actIuserWorkload != null and actIuserWorkload != ''">      and res.act_inner_user_workload = #{actIuserWorkload}     </if>
+		<if test="planOuserAt != null and planOuserAt != ''">      and res.plan_ouser_at = #{planOuserAt}     </if>
+		<if test="planIuserAt != null and planIuserAt != ''">      and res.plan_iuser_at = #{planIuserAt}     </if>
+		<if test="actOutUserAt != null and actOutUserAt != ''">      and res.act_out_user_at = #{actOutUserAt}     </if>
+		<if test="actInnerUserAt != null and actInnerUserAt != ''">      and res.act_inner_user_at = #{actInnerUserAt}     </if>
+		<if test="planOuserWorkload != null and planOuserWorkload != ''">      and res.plan_ouser_workload = #{planOuserWorkload}     </if>
+		<if test="planIuserWorkload != null and planIuserWorkload != ''">      and res.plan_iuser_workload = #{planIuserWorkload}     </if>
+		<if test="actOuserWorkload != null and actOuserWorkload != ''">      and res.act_ouser_workload = #{actOuserWorkload}     </if>
+		<if test="actIuserWorkload != null and actIuserWorkload != ''">      and res.act_iuser_workload = #{actIuserWorkload}     </if>
 		<if test="planNouserAt != null and planNouserAt != ''">      and res.plan_nouser_at = #{planNouserAt}     </if>
 		<if test="actNouserAt != null and actNouserAt != ''">      and res.act_nouser_at = #{actNouserAt}     </if>
 		<if test="id != null and id != ''">      and res.id = #{id}     </if>
@@ -170,14 +170,14 @@
 		branch_id = #{branchId},
 		biz_date = #{bizDate},
 		calc_time = #{calcTime},
-		plan_out_user_at = #{planOuserAt},
-		plan_inner_user_at = #{planIuserAt},
-		act_out_user_at = #{actOuserAt},
-		act_inner_user_at = #{actIuserAt},
-		plan_out_user_workload = #{planOuserWorkload},
-		plan_inner_user_workload = #{planIuserWorkload},
-		act_out_user_workload = #{actOuserWorkload},
-		act_inner_user_workload = #{actIuserWorkload},
+		plan_ouser_at = #{planOuserAt},
+		plan_iuser_at = #{planIuserAt},
+		act_out_user_at = #{actOutUserAt},
+		act_inner_user_at = #{actInnerUserAt},
+		plan_ouser_workload = #{planOuserWorkload},
+		plan_iuser_workload = #{planIuserWorkload},
+		act_ouser_workload = #{actOuserWorkload},
+		act_iuser_workload = #{actIuserWorkload},
 		plan_nouser_at = #{planNouserAt},
 		act_nouser_at = #{actNouserAt},
 		branch_name = #{branchName}
@@ -191,14 +191,14 @@
 		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
 		<if test="bizDate != null and bizDate != ''"> biz_date = #{bizDate},     </if>
 		<if test="calcTime != null"> calc_time = #{calcTime},     </if>
-		<if test="planOuserAt != null and planOuserAt != ''"> plan_out_user_at = #{planOuserAt},     </if>
-		<if test="planIuserAt != null and planIuserAt != ''"> plan_inner_user_at = #{planIuserAt},     </if>
-		<if test="actOuserAt != null and actOuserAt != ''"> act_out_user_at = #{actOuserAt},     </if>
-		<if test="actIuserAt != null and actIuserAt != ''"> act_inner_user_at = #{actIuserAt},     </if>
-		<if test="planOuserWorkload != null and planOuserWorkload != ''"> plan_out_user_workload = #{planOuserWorkload},     </if>
-		<if test="planIuserWorkload != null and planIuserWorkload != ''"> plan_inner_user_workload = #{planIuserWorkload},     </if>
-		<if test="actOuserWorkload != null and actOuserWorkload != ''"> act_out_user_workload = #{actOuserWorkload},     </if>
-		<if test="actIuserWorkload != null and actIuserWorkload != ''"> act_inner_user_workload = #{actIuserWorkload},     </if>
+		<if test="planOuserAt != null and planOuserAt != ''"> plan_ouser_at = #{planOuserAt},     </if>
+		<if test="planIuserAt != null and planIuserAt != ''"> plan_iuser_at = #{planIuserAt},     </if>
+		<if test="actOutUserAt != null and actOutUserAt != ''"> act_out_user_at = #{actOutUserAt},     </if>
+		<if test="actInnerUserAt != null and actInnerUserAt != ''"> act_inner_user_at = #{actInnerUserAt},     </if>
+		<if test="planOuserWorkload != null and planOuserWorkload != ''"> plan_ouser_workload = #{planOuserWorkload},     </if>
+		<if test="planIuserWorkload != null and planIuserWorkload != ''"> plan_iuser_workload = #{planIuserWorkload},     </if>
+		<if test="actOuserWorkload != null and actOuserWorkload != ''"> act_ouser_workload = #{actOuserWorkload},     </if>
+		<if test="actIuserWorkload != null and actIuserWorkload != ''"> act_iuser_workload = #{actIuserWorkload},     </if>
 		<if test="planNouserAt != null and planNouserAt != ''"> plan_nouser_at = #{planNouserAt},     </if>
 		<if test="actNouserAt != null and actNouserAt != ''"> act_nouser_at = #{actNouserAt},     </if>
 		<if test="branchName != null and branchName != ''"> branch_name = #{branchName},     </if>
@@ -213,14 +213,14 @@
 			branch_id = #{item.branchId},
 			biz_date = #{item.bizDate},
 			calc_time = #{item.calcTime},
-			plan_out_user_at = #{item.planOuserAt},
-			plan_inner_user_at = #{item.planIuserAt},
-			act_out_user_at = #{item.actOuserAt},
-			act_inner_user_at = #{item.actIuserAt},
-			plan_out_user_workload = #{item.planOuserWorkload},
-			plan_inner_user_workload = #{item.planIuserWorkload},
-			act_out_user_workload = #{item.actOuserWorkload},
-			act_inner_user_workload = #{item.actIuserWorkload},
+			plan_ouser_at = #{item.planOuserAt},
+			plan_iuser_at = #{item.planIuserAt},
+			act_out_user_at = #{item.actOutUserAt},
+			act_inner_user_at = #{item.actInnerUserAt},
+			plan_ouser_workload = #{item.planOuserWorkload},
+			plan_iuser_workload = #{item.planIuserWorkload},
+			act_ouser_workload = #{item.actOuserWorkload},
+			act_iuser_workload = #{item.actIuserWorkload},
 			plan_nouser_at = #{item.planNouserAt},
 			act_nouser_at = #{item.actNouserAt},
 			branch_name = #{item.branchName}
