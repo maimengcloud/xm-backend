@@ -60,7 +60,7 @@
 		insert into xm_project_state_his(
 			<include refid="columns"/>
 		) values (
-		#{projectId},#{bizDate},#{totalFileCnt},#{totalBugCnt},#{totalTaskCnt},#{totalBudgetNouserAmount},#{projectName},#{id},#{totalStaffCnt},#{calcTime},#{calcStatus},#{totalCostNouserAmount},#{totalClosedBugCnt},#{totalResolvedBugCnt},#{totalCompleteTaskCnt},#{totalPhaseCnt},#{totalCompletePhaseCnt},#{totalNeedPayAmount},#{totalFinishPayAmount},#{totalNeedColAmount},#{totalFinishColAmount},#{totalCostUserAmount},#{totalBudgetInnerUserAmount},#{totalPlanWorkload},#{totalRiskCnt},#{totalCompleteRiskCnt},#{branchId},#{branchName},#{totalBudgetOutUserAmount},#{totalCompleteWorkload},#{totalCostInnerUserAmount},#{totalCostOutUserAmount},#{totalProgress},#{totalActiveBugCnt},#{totalConfirmedBugCnt},#{projectStatus},#{totalActWorkload},#{totalActOutWorkload},#{totalActInnerWorkload},#{totalTaskBudgetCostAt},#{totalTaskOutCnt},#{totalNeedPayCnt},#{totalFinishPayCnt},#{totalFinishPayUserCnt},#{totalNeedPayUserCnt},#{totalPlanInnerUserWorkload},#{totalPlanOutUserWorkload},#{testCases},#{execCases},#{designCases},#{finishCases},#{iterationCnt},#{productCnt},#{menuCnt}
+		#{projectId},#{bizDate},#{totalFileCnt},#{totalBugCnt},#{totalTaskCnt},#{totalBudgetNouserAmount},#{projectName},#{id},#{totalStaffCnt},#{calcTime},#{calcStatus},#{totalCostNouserAmount},#{totalClosedBugCnt},#{totalResolvedBugCnt},#{totalCompleteTaskCnt},#{totalPhaseCnt},#{totalCompletePhaseCnt},#{totalNeedPayAmount},#{totalFinishPayAmount},#{totalNeedColAmount},#{totalFinishColAmount},#{totalCostUserAmount},#{totalBudgetIuserAmount},#{totalPlanWorkload},#{totalRiskCnt},#{totalCompleteRiskCnt},#{branchId},#{branchName},#{totalBudgetOuserAmount},#{totalCompleteWorkload},#{totalCostIuserAmount},#{totalCostOuserAmount},#{totalProgress},#{totalActiveBugCnt},#{totalConfirmedBugCnt},#{projectStatus},#{totalActWorkload},#{totalActOutWorkload},#{totalActInnerWorkload},#{totalTaskBudgetCostAt},#{totalTaskOutCnt},#{totalNeedPayCnt},#{totalFinishPayCnt},#{totalFinishPayUserCnt},#{totalNeedPayUserCnt},#{totalPlanIuserWorkload},#{totalPlanOuserWorkload},#{testCases},#{execCases},#{designCases},#{finishCases},#{iterationCnt},#{productCnt},#{menuCnt}
 		)
 	</insert>
 	
@@ -149,16 +149,16 @@
 		<if test="totalNeedColAmount != null and totalNeedColAmount != ''">      and res.total_need_col_amount = #{totalNeedColAmount}     </if>
 		<if test="totalFinishColAmount != null and totalFinishColAmount != ''">      and res.total_finish_col_amount = #{totalFinishColAmount}     </if>
 		<if test="totalCostUserAmount != null and totalCostUserAmount != ''">      and res.total_cost_user_amount = #{totalCostUserAmount}     </if>
-		<if test="totalBudgetInnerUserAmount != null and totalBudgetInnerUserAmount != ''">      and res.total_budget_inner_user_amount = #{totalBudgetInnerUserAmount}     </if>
+		<if test="totalBudgetIuserAmount != null and totalBudgetIuserAmount != ''">      and res.total_budget_inner_user_amount = #{totalBudgetIuserAmount}     </if>
 		<if test="totalPlanWorkload != null and totalPlanWorkload != ''">      and res.total_plan_workload = #{totalPlanWorkload}     </if>
 		<if test="totalRiskCnt != null and totalRiskCnt != ''">      and res.total_risk_cnt = #{totalRiskCnt}     </if>
 		<if test="totalCompleteRiskCnt != null and totalCompleteRiskCnt != ''">      and res.total_complete_risk_cnt = #{totalCompleteRiskCnt}     </if>
 		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
 		<if test="branchName != null and branchName != ''">      and res.branch_name = #{branchName}     </if>
-		<if test="totalBudgetOutUserAmount != null and totalBudgetOutUserAmount != ''">      and res.total_budget_out_user_amount = #{totalBudgetOutUserAmount}     </if>
+		<if test="totalBudgetOuserAmount != null and totalBudgetOuserAmount != ''">      and res.total_budget_out_user_amount = #{totalBudgetOuserAmount}     </if>
 		<if test="totalCompleteWorkload != null and totalCompleteWorkload != ''">      and res.total_complete_workload = #{totalCompleteWorkload}     </if>
-		<if test="totalCostInnerUserAmount != null and totalCostInnerUserAmount != ''">      and res.total_cost_inner_user_amount = #{totalCostInnerUserAmount}     </if>
-		<if test="totalCostOutUserAmount != null and totalCostOutUserAmount != ''">      and res.total_cost_out_user_amount = #{totalCostOutUserAmount}     </if>
+		<if test="totalCostIuserAmount != null and totalCostIuserAmount != ''">      and res.total_cost_inner_user_amount = #{totalCostIuserAmount}     </if>
+		<if test="totalCostOuserAmount != null and totalCostOuserAmount != ''">      and res.total_cost_out_user_amount = #{totalCostOuserAmount}     </if>
 		<if test="totalProgress != null and totalProgress != ''">      and res.total_progress = #{totalProgress}     </if>
 		<if test="totalActiveBugCnt != null and totalActiveBugCnt != ''">      and res.total_active_bug_cnt = #{totalActiveBugCnt}     </if>
 		<if test="totalConfirmedBugCnt != null and totalConfirmedBugCnt != ''">      and res.total_confirmed_bug_cnt = #{totalConfirmedBugCnt}     </if>
@@ -172,8 +172,8 @@
 		<if test="totalFinishPayCnt != null and totalFinishPayCnt != ''">      and res.total_finish_pay_cnt = #{totalFinishPayCnt}     </if>
 		<if test="totalFinishPayUserCnt != null and totalFinishPayUserCnt != ''">      and res.total_finish_pay_user_cnt = #{totalFinishPayUserCnt}     </if>
 		<if test="totalNeedPayUserCnt != null and totalNeedPayUserCnt != ''">      and res.total_need_pay_user_cnt = #{totalNeedPayUserCnt}     </if>
-		<if test="totalPlanInnerUserWorkload != null and totalPlanInnerUserWorkload != ''">      and res.total_plan_inner_user_workload = #{totalPlanInnerUserWorkload}     </if>
-		<if test="totalPlanOutUserWorkload != null and totalPlanOutUserWorkload != ''">      and res.total_plan_out_user_workload = #{totalPlanOutUserWorkload}     </if>
+		<if test="totalPlanIuserWorkload != null and totalPlanIuserWorkload != ''">      and res.total_plan_inner_user_workload = #{totalPlanIuserWorkload}     </if>
+		<if test="totalPlanOuserWorkload != null and totalPlanOuserWorkload != ''">      and res.total_plan_out_user_workload = #{totalPlanOuserWorkload}     </if>
 		<if test="testCases != null and testCases != ''">      and res.test_cases = #{testCases}     </if>
 		<if test="execCases != null and execCases != ''">      and res.exec_cases = #{execCases}     </if>
 		<if test="designCases != null and designCases != ''">      and res.design_cases = #{designCases}     </if>
@@ -205,16 +205,16 @@
 		total_need_col_amount = #{totalNeedColAmount},
 		total_finish_col_amount = #{totalFinishColAmount},
 		total_cost_user_amount = #{totalCostUserAmount},
-		total_budget_inner_user_amount = #{totalBudgetInnerUserAmount},
+		total_budget_inner_user_amount = #{totalBudgetIuserAmount},
 		total_plan_workload = #{totalPlanWorkload},
 		total_risk_cnt = #{totalRiskCnt},
 		total_complete_risk_cnt = #{totalCompleteRiskCnt},
 		branch_id = #{branchId},
 		branch_name = #{branchName},
-		total_budget_out_user_amount = #{totalBudgetOutUserAmount},
+		total_budget_out_user_amount = #{totalBudgetOuserAmount},
 		total_complete_workload = #{totalCompleteWorkload},
-		total_cost_inner_user_amount = #{totalCostInnerUserAmount},
-		total_cost_out_user_amount = #{totalCostOutUserAmount},
+		total_cost_inner_user_amount = #{totalCostIuserAmount},
+		total_cost_out_user_amount = #{totalCostOuserAmount},
 		total_progress = #{totalProgress},
 		total_active_bug_cnt = #{totalActiveBugCnt},
 		total_confirmed_bug_cnt = #{totalConfirmedBugCnt},
@@ -228,8 +228,8 @@
 		total_finish_pay_cnt = #{totalFinishPayCnt},
 		total_finish_pay_user_cnt = #{totalFinishPayUserCnt},
 		total_need_pay_user_cnt = #{totalNeedPayUserCnt},
-		total_plan_inner_user_workload = #{totalPlanInnerUserWorkload},
-		total_plan_out_user_workload = #{totalPlanOutUserWorkload},
+		total_plan_inner_user_workload = #{totalPlanIuserWorkload},
+		total_plan_out_user_workload = #{totalPlanOuserWorkload},
 		test_cases = #{testCases},
 		exec_cases = #{execCases},
 		design_cases = #{designCases},
@@ -260,16 +260,16 @@
 		<if test="totalNeedColAmount != null and totalNeedColAmount != ''"> total_need_col_amount = #{totalNeedColAmount},     </if>
 		<if test="totalFinishColAmount != null and totalFinishColAmount != ''"> total_finish_col_amount = #{totalFinishColAmount},     </if>
 		<if test="totalCostUserAmount != null and totalCostUserAmount != ''"> total_cost_user_amount = #{totalCostUserAmount},     </if>
-		<if test="totalBudgetInnerUserAmount != null and totalBudgetInnerUserAmount != ''"> total_budget_inner_user_amount = #{totalBudgetInnerUserAmount},     </if>
+		<if test="totalBudgetIuserAmount != null and totalBudgetIuserAmount != ''"> total_budget_inner_user_amount = #{totalBudgetIuserAmount},     </if>
 		<if test="totalPlanWorkload != null and totalPlanWorkload != ''"> total_plan_workload = #{totalPlanWorkload},     </if>
 		<if test="totalRiskCnt != null and totalRiskCnt != ''"> total_risk_cnt = #{totalRiskCnt},     </if>
 		<if test="totalCompleteRiskCnt != null and totalCompleteRiskCnt != ''"> total_complete_risk_cnt = #{totalCompleteRiskCnt},     </if>
 		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
 		<if test="branchName != null and branchName != ''"> branch_name = #{branchName},     </if>
-		<if test="totalBudgetOutUserAmount != null and totalBudgetOutUserAmount != ''"> total_budget_out_user_amount = #{totalBudgetOutUserAmount},     </if>
+		<if test="totalBudgetOuserAmount != null and totalBudgetOuserAmount != ''"> total_budget_out_user_amount = #{totalBudgetOuserAmount},     </if>
 		<if test="totalCompleteWorkload != null and totalCompleteWorkload != ''"> total_complete_workload = #{totalCompleteWorkload},     </if>
-		<if test="totalCostInnerUserAmount != null and totalCostInnerUserAmount != ''"> total_cost_inner_user_amount = #{totalCostInnerUserAmount},     </if>
-		<if test="totalCostOutUserAmount != null and totalCostOutUserAmount != ''"> total_cost_out_user_amount = #{totalCostOutUserAmount},     </if>
+		<if test="totalCostIuserAmount != null and totalCostIuserAmount != ''"> total_cost_inner_user_amount = #{totalCostIuserAmount},     </if>
+		<if test="totalCostOuserAmount != null and totalCostOuserAmount != ''"> total_cost_out_user_amount = #{totalCostOuserAmount},     </if>
 		<if test="totalProgress != null and totalProgress != ''"> total_progress = #{totalProgress},     </if>
 		<if test="totalActiveBugCnt != null and totalActiveBugCnt != ''"> total_active_bug_cnt = #{totalActiveBugCnt},     </if>
 		<if test="totalConfirmedBugCnt != null and totalConfirmedBugCnt != ''"> total_confirmed_bug_cnt = #{totalConfirmedBugCnt},     </if>
@@ -283,8 +283,8 @@
 		<if test="totalFinishPayCnt != null and totalFinishPayCnt != ''"> total_finish_pay_cnt = #{totalFinishPayCnt},     </if>
 		<if test="totalFinishPayUserCnt != null and totalFinishPayUserCnt != ''"> total_finish_pay_user_cnt = #{totalFinishPayUserCnt},     </if>
 		<if test="totalNeedPayUserCnt != null and totalNeedPayUserCnt != ''"> total_need_pay_user_cnt = #{totalNeedPayUserCnt},     </if>
-		<if test="totalPlanInnerUserWorkload != null and totalPlanInnerUserWorkload != ''"> total_plan_inner_user_workload = #{totalPlanInnerUserWorkload},     </if>
-		<if test="totalPlanOutUserWorkload != null and totalPlanOutUserWorkload != ''"> total_plan_out_user_workload = #{totalPlanOutUserWorkload},     </if>
+		<if test="totalPlanIuserWorkload != null and totalPlanIuserWorkload != ''"> total_plan_inner_user_workload = #{totalPlanIuserWorkload},     </if>
+		<if test="totalPlanOuserWorkload != null and totalPlanOuserWorkload != ''"> total_plan_out_user_workload = #{totalPlanOuserWorkload},     </if>
 		<if test="testCases != null and testCases != ''"> test_cases = #{testCases},     </if>
 		<if test="execCases != null and execCases != ''"> exec_cases = #{execCases},     </if>
 		<if test="designCases != null and designCases != ''"> design_cases = #{designCases},     </if>
@@ -316,16 +316,16 @@
 			total_need_col_amount = #{item.totalNeedColAmount},
 			total_finish_col_amount = #{item.totalFinishColAmount},
 			total_cost_user_amount = #{item.totalCostUserAmount},
-			total_budget_inner_user_amount = #{item.totalBudgetInnerUserAmount},
+			total_budget_inner_user_amount = #{item.totalBudgetIuserAmount},
 			total_plan_workload = #{item.totalPlanWorkload},
 			total_risk_cnt = #{item.totalRiskCnt},
 			total_complete_risk_cnt = #{item.totalCompleteRiskCnt},
 			branch_id = #{item.branchId},
 			branch_name = #{item.branchName},
-			total_budget_out_user_amount = #{item.totalBudgetOutUserAmount},
+			total_budget_out_user_amount = #{item.totalBudgetOuserAmount},
 			total_complete_workload = #{item.totalCompleteWorkload},
-			total_cost_inner_user_amount = #{item.totalCostInnerUserAmount},
-			total_cost_out_user_amount = #{item.totalCostOutUserAmount},
+			total_cost_inner_user_amount = #{item.totalCostIuserAmount},
+			total_cost_out_user_amount = #{item.totalCostOuserAmount},
 			total_progress = #{item.totalProgress},
 			total_active_bug_cnt = #{item.totalActiveBugCnt},
 			total_confirmed_bug_cnt = #{item.totalConfirmedBugCnt},
@@ -339,8 +339,8 @@
 			total_finish_pay_cnt = #{item.totalFinishPayCnt},
 			total_finish_pay_user_cnt = #{item.totalFinishPayUserCnt},
 			total_need_pay_user_cnt = #{item.totalNeedPayUserCnt},
-			total_plan_inner_user_workload = #{item.totalPlanInnerUserWorkload},
-			total_plan_out_user_workload = #{item.totalPlanOutUserWorkload},
+			total_plan_inner_user_workload = #{item.totalPlanIuserWorkload},
+			total_plan_out_user_workload = #{item.totalPlanOuserWorkload},
 			test_cases = #{item.testCases},
 			exec_cases = #{item.execCases},
 			design_cases = #{item.designCases},

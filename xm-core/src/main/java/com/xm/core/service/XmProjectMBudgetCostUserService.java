@@ -43,30 +43,30 @@ public class XmProjectMBudgetCostUserService extends BaseService {
 	 * @param excludePhaseId
 	 * @return
 	 */
-	public Tips judgetBudget(String projectId,BigDecimal addTotalBudgetCost,BigDecimal addBudgetCostInnerUserAt,BigDecimal addBudgetCostOutUserAt,List<String> excludeIds){
+	public Tips judgetBudget(String projectId,BigDecimal addTotalBudgetCost,BigDecimal addBudgetCostIuserAt,BigDecimal addBudgetCostOuserAt,List<String> excludeIds){
 		Tips tips=new Tips("检查预算成功");
 		Map<String,Object> g=this.selectTotalProjectAndUserBudgetCost(projectId,excludeIds);
 		BigDecimal totalBudgetCost=BigDecimal.ZERO; 
 		BigDecimal zero=BigDecimal.ZERO; 
 		
 		addTotalBudgetCost=NumberUtil.getBigDecimal(addTotalBudgetCost,zero);  
-		addBudgetCostInnerUserAt=NumberUtil.getBigDecimal(addBudgetCostInnerUserAt,zero);  
-		addBudgetCostOutUserAt=NumberUtil.getBigDecimal(addBudgetCostOutUserAt,zero); 
+		addBudgetCostIuserAt=NumberUtil.getBigDecimal(addBudgetCostIuserAt,zero);  
+		addBudgetCostOuserAt=NumberUtil.getBigDecimal(addBudgetCostOuserAt,zero); 
 		
 		BigDecimal budgetCost=NumberUtil.getBigDecimal(g.get("budgetCost"),zero); 
-		BigDecimal budgetCostInnerUserAt=NumberUtil.getBigDecimal(g.get("budgetCostInnerUserAt"),zero); 
-		BigDecimal budgetCostOutUserAt=NumberUtil.getBigDecimal(g.get("budgetCostOutUserAt"),zero); 
+		BigDecimal budgetCostIuserAt=NumberUtil.getBigDecimal(g.get("budgetCostIuserAt"),zero); 
+		BigDecimal budgetCostOuserAt=NumberUtil.getBigDecimal(g.get("budgetCostOuserAt"),zero); 
 		
 		
-		BigDecimal planInnerUserAt=NumberUtil.getBigDecimal(g.get("planInnerUserAt"),zero);
-		BigDecimal planOutUserAt=NumberUtil.getBigDecimal(g.get("planOutUserAt"),zero);  
-		BigDecimal planUserAt=totalBudgetCost.add(planInnerUserAt).add(planOutUserAt);  
+		BigDecimal planIuserAt=NumberUtil.getBigDecimal(g.get("planIuserAt"),zero);
+		BigDecimal planOuserAt=NumberUtil.getBigDecimal(g.get("planOuserAt"),zero);  
+		BigDecimal planUserAt=totalBudgetCost.add(planIuserAt).add(planOuserAt);  
 		
-		if(budgetCostInnerUserAt.add(addBudgetCostInnerUserAt).compareTo(planInnerUserAt)>0) {
+		if(budgetCostIuserAt.add(addBudgetCostIuserAt).compareTo(planIuserAt)>0) {
 			tips.setFailureMsg("内部人力预算超出项目内部人力预算");
 			return tips;
 		}
-		if(budgetCostOutUserAt.add(addBudgetCostOutUserAt).compareTo(planOutUserAt)>0) {
+		if(budgetCostOuserAt.add(addBudgetCostOuserAt).compareTo(planOuserAt)>0) {
 			tips.setFailureMsg("外购人力预算超出项目总外购人力预算");
 			return tips;
 		}

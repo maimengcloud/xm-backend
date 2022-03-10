@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmPhase所有属性名: <br>
- *	id,name,remark,parentId,branchId,projectId,beginDate,endDate,budgetHours,budgetStaffNu,ctime,budgetNouserAt,budgetIuserAt,budgetOuserAt,baselineId,bizProcInstId,bizFlowState,budgetWorkload,actWorkload,actIuserWorkload,actOuserWorkload,taskType,planType,seqNo,budgetIuserWorkload,budgetOuserWorkload,actNouserAt,actIuserAt,budgetIuserPrice,budgetOuserPrice,budgetOuserCnt,budgetIuserCnt,actRate,pstatus,actOutUserAt,taskCnt,finishTaskCnt,iterationCnt,calcTime,taskBudgetWorkload,taskBudgetAt,mngUserid,mngUsername,milestone,pleaf,tagIds,tagNames,ntype,childrenCnt,ltime,isKeyPath,pidPaths,lvl,isTpl,phaseClass,productId,budgetAt,calcType,actAt;<br>
+ *	id,name,remark,parentId,branchId,projectId,beginDate,endDate,budgetHours,budgetStaffNu,ctime,budgetNouserAt,budgetIuserAt,budgetOuserAt,baselineId,bizProcInstId,bizFlowState,budgetWorkload,actWorkload,actIuserWorkload,actOuserWorkload,taskType,planType,seqNo,budgetIuserWorkload,budgetOuserWorkload,actNouserAt,actIuserAt,budgetIuserPrice,budgetOuserPrice,budgetOuserCnt,budgetIuserCnt,actRate,pstatus,actOuserAt,taskCnt,finishTaskCnt,iterationCnt,calcTime,taskBudgetWorkload,taskBudgetAt,mngUserid,mngUsername,milestone,pleaf,tagIds,tagNames,ntype,childrenCnt,ltime,isKeyPath,pidPaths,lvl,isTpl,phaseClass,productId,budgetAt,calcType,actAt;<br>
  * 表 xm_phase 项目、产品计划表（将计划并入任务表，暂时作废），合并进任务表了的所有字段名: <br>
  *	id,name,remark,parent_id,branch_id,project_id,begin_date,end_date,budget_hours,budget_staff_nu,ctime,budget_nouser_at,budget_iuser_at,budget_ouser_at,baseline_id,biz_proc_inst_id,biz_flow_state,budget_workload,act_workload,act_iuser_workload,act_ouser_workload,task_type,plan_type,seq_no,budget_iuser_workload,budget_ouser_workload,act_nouser_at,act_iuser_at,budget_iuser_price,budget_ouser_price,budget_ouser_cnt,budget_iuser_cnt,act_rate,pstatus,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf,tag_ids,tag_names,ntype,children_cnt,ltime,is_key_path,pid_paths,lvl,is_tpl,phase_class,product_id,budget_at,calc_type,act_at;<br>
  * 当前主键(包括多主键):<br>
@@ -123,7 +123,7 @@ public class XmPhase  implements java.io.Serializable {
 	String pstatus;
 	
 	@ApiModelProperty(notes="实际外部人力成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal actOutUserAt;
+	BigDecimal actOuserAt;
 	
 	@ApiModelProperty(notes="任务数",allowEmptyValue=true,example="",allowableValues="")
 	Integer taskCnt;
@@ -413,8 +413,8 @@ public class XmPhase  implements java.io.Serializable {
 	/**
 	 * 实际外部人力成本
 	 **/
-	public void setActOutUserAt(BigDecimal actOutUserAt) {
-		this.actOutUserAt = actOutUserAt;
+	public void setActOuserAt(BigDecimal actOuserAt) {
+		this.actOuserAt = actOuserAt;
 	}
 	/**
 	 * 任务数
@@ -768,8 +768,8 @@ public class XmPhase  implements java.io.Serializable {
 	/**
 	 * 实际外部人力成本
 	 **/
-	public BigDecimal getActOutUserAt() {
-		return this.actOutUserAt;
+	public BigDecimal getActOuserAt() {
+		return this.actOuserAt;
 	}
 	/**
 	 * 任务数

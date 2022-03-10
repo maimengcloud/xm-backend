@@ -233,7 +233,7 @@ public class XmProjectMCostUserController {
 			 
 			BigDecimal budgetCostUser=BigDecimal.ZERO;
 			BigDecimal budgetCostInserUser=BigDecimal.ZERO;
-			BigDecimal budgetCostUserOutUser=BigDecimal.ZERO;
+			BigDecimal budgetCostUserOuser=BigDecimal.ZERO;
 			String projectId=null;
 			BigDecimal zero=BigDecimal.ZERO;  
 			List<String> excludeIds=new ArrayList<>();
@@ -245,10 +245,10 @@ public class XmProjectMCostUserController {
 				if("1".equals(costUser.getCostType())) {
 					budgetCostInserUser=budgetCostInserUser.add(add);
 				}else {
-					budgetCostUserOutUser=budgetCostUserOutUser.add(add);
+					budgetCostUserOuser=budgetCostUserOuser.add(add);
 				}
 			}
-			Tips judgetTips=xmProjectMCostUserService.judgetBudget(projectId, budgetCostUser,budgetCostInserUser,budgetCostUserOutUser,excludeIds);
+			Tips judgetTips=xmProjectMCostUserService.judgetBudget(projectId, budgetCostUser,budgetCostInserUser,budgetCostUserOuser,excludeIds);
 			if(judgetTips.isOk()) {    
 				xmProjectMCostUserService.batchUpdate(xmProjectMCostUsers);
 
@@ -285,7 +285,7 @@ public class XmProjectMCostUserController {
 			});
 			BigDecimal budgetCostUser=BigDecimal.ZERO;
 			BigDecimal budgetCostInserUser=BigDecimal.ZERO;
-			BigDecimal budgetCostUserOutUser=BigDecimal.ZERO;
+			BigDecimal budgetCostUserOuser=BigDecimal.ZERO;
 			String projectId=null;
 			BigDecimal zero=BigDecimal.ZERO;  
 			for (XmProjectMCostUser costUser : xmProjectMCostUsers) {
@@ -295,10 +295,10 @@ public class XmProjectMCostUserController {
 				if("1".equals(costUser.getCostType())) {
 					budgetCostInserUser=budgetCostInserUser.add(add);
 				}else {
-					budgetCostUserOutUser=budgetCostUserOutUser.add(add);
+					budgetCostUserOuser=budgetCostUserOuser.add(add);
 				}
 			}
-			Tips judgetTips=xmProjectMCostUserService.judgetBudget(projectId, budgetCostUser,budgetCostInserUser,budgetCostUserOutUser,null);
+			Tips judgetTips=xmProjectMCostUserService.judgetBudget(projectId, budgetCostUser,budgetCostInserUser,budgetCostUserOuser,null);
 			if(judgetTips.isOk()) {    
 				xmProjectMCostUserService.batchInsert(xmProjectMCostUsers);
 

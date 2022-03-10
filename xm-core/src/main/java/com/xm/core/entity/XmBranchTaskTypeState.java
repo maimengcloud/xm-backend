@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmBranchTaskTypeState所有属性名: <br>
- *	taskType,planWorkload,planAmount,actWorkload,actAmount,branchId,bizDate,calcTime,planOutUserAt,planInnerUserAt,actOutUserAt,actInnerUserAt,planOutUserWorkload,planInnerUserWorkload,actOutUserWorkload,actInnerUserWorkload,planNouserAt,actNouserAt,id,branchName;<br>
+ *	taskType,planWorkload,planAmount,actWorkload,actAmount,branchId,bizDate,calcTime,planOuserAt,planIuserAt,actOuserAt,actIuserAt,planOuserWorkload,planIuserWorkload,actOuserWorkload,actIuserWorkload,planNouserAt,actNouserAt,id,branchName;<br>
  * 表 xm_branch_task_type_state 按机构编号任务类型汇总的所有字段名: <br>
  *	task_type,plan_workload,plan_amount,act_workload,act_amount,branch_id,biz_date,calc_time,plan_out_user_at,plan_inner_user_at,act_out_user_at,act_inner_user_at,plan_out_user_workload,plan_inner_user_workload,act_out_user_workload,act_inner_user_workload,plan_nouser_at,act_nouser_at,id,branch_name;<br>
  * 当前主键(包括多主键):<br>
@@ -48,28 +48,28 @@ public class XmBranchTaskTypeState  implements java.io.Serializable {
 	Date calcTime;
 	
 	@ApiModelProperty(notes="外购资金预算",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planOutUserAt;
+	BigDecimal planOuserAt;
 	
 	@ApiModelProperty(notes="内购资金预算",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planInnerUserAt;
+	BigDecimal planIuserAt;
 	
 	@ApiModelProperty(notes="实际外购成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal actOutUserAt;
+	BigDecimal actOuserAt;
 	
 	@ApiModelProperty(notes="实际内购成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal actInnerUserAt;
+	BigDecimal actIuserAt;
 	
 	@ApiModelProperty(notes="计划外购工作量",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planOutUserWorkload;
+	BigDecimal planOuserWorkload;
 	
 	@ApiModelProperty(notes="计划内购工作量",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planInnerUserWorkload;
+	BigDecimal planIuserWorkload;
 	
 	@ApiModelProperty(notes="实际外购工作量",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal actOutUserWorkload;
+	BigDecimal actOuserWorkload;
 	
 	@ApiModelProperty(notes="实际内购工作量",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal actInnerUserWorkload;
+	BigDecimal actIuserWorkload;
 	
 	@ApiModelProperty(notes="计划非人力成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal planNouserAt;
@@ -140,50 +140,50 @@ public class XmBranchTaskTypeState  implements java.io.Serializable {
 	/**
 	 * 外购资金预算
 	 **/
-	public void setPlanOutUserAt(BigDecimal planOutUserAt) {
-		this.planOutUserAt = planOutUserAt;
+	public void setPlanOuserAt(BigDecimal planOuserAt) {
+		this.planOuserAt = planOuserAt;
 	}
 	/**
 	 * 内购资金预算
 	 **/
-	public void setPlanInnerUserAt(BigDecimal planInnerUserAt) {
-		this.planInnerUserAt = planInnerUserAt;
+	public void setPlanIuserAt(BigDecimal planIuserAt) {
+		this.planIuserAt = planIuserAt;
 	}
 	/**
 	 * 实际外购成本
 	 **/
-	public void setActOutUserAt(BigDecimal actOutUserAt) {
-		this.actOutUserAt = actOutUserAt;
+	public void setActOuserAt(BigDecimal actOuserAt) {
+		this.actOuserAt = actOuserAt;
 	}
 	/**
 	 * 实际内购成本
 	 **/
-	public void setActInnerUserAt(BigDecimal actInnerUserAt) {
-		this.actInnerUserAt = actInnerUserAt;
+	public void setActIuserAt(BigDecimal actIuserAt) {
+		this.actIuserAt = actIuserAt;
 	}
 	/**
 	 * 计划外购工作量
 	 **/
-	public void setPlanOutUserWorkload(BigDecimal planOutUserWorkload) {
-		this.planOutUserWorkload = planOutUserWorkload;
+	public void setPlanOuserWorkload(BigDecimal planOuserWorkload) {
+		this.planOuserWorkload = planOuserWorkload;
 	}
 	/**
 	 * 计划内购工作量
 	 **/
-	public void setPlanInnerUserWorkload(BigDecimal planInnerUserWorkload) {
-		this.planInnerUserWorkload = planInnerUserWorkload;
+	public void setPlanIuserWorkload(BigDecimal planIuserWorkload) {
+		this.planIuserWorkload = planIuserWorkload;
 	}
 	/**
 	 * 实际外购工作量
 	 **/
-	public void setActOutUserWorkload(BigDecimal actOutUserWorkload) {
-		this.actOutUserWorkload = actOutUserWorkload;
+	public void setActOuserWorkload(BigDecimal actOuserWorkload) {
+		this.actOuserWorkload = actOuserWorkload;
 	}
 	/**
 	 * 实际内购工作量
 	 **/
-	public void setActInnerUserWorkload(BigDecimal actInnerUserWorkload) {
-		this.actInnerUserWorkload = actInnerUserWorkload;
+	public void setActIuserWorkload(BigDecimal actIuserWorkload) {
+		this.actIuserWorkload = actIuserWorkload;
 	}
 	/**
 	 * 计划非人力成本
@@ -261,50 +261,50 @@ public class XmBranchTaskTypeState  implements java.io.Serializable {
 	/**
 	 * 外购资金预算
 	 **/
-	public BigDecimal getPlanOutUserAt() {
-		return this.planOutUserAt;
+	public BigDecimal getPlanOuserAt() {
+		return this.planOuserAt;
 	}
 	/**
 	 * 内购资金预算
 	 **/
-	public BigDecimal getPlanInnerUserAt() {
-		return this.planInnerUserAt;
+	public BigDecimal getPlanIuserAt() {
+		return this.planIuserAt;
 	}
 	/**
 	 * 实际外购成本
 	 **/
-	public BigDecimal getActOutUserAt() {
-		return this.actOutUserAt;
+	public BigDecimal getActOuserAt() {
+		return this.actOuserAt;
 	}
 	/**
 	 * 实际内购成本
 	 **/
-	public BigDecimal getActInnerUserAt() {
-		return this.actInnerUserAt;
+	public BigDecimal getActIuserAt() {
+		return this.actIuserAt;
 	}
 	/**
 	 * 计划外购工作量
 	 **/
-	public BigDecimal getPlanOutUserWorkload() {
-		return this.planOutUserWorkload;
+	public BigDecimal getPlanOuserWorkload() {
+		return this.planOuserWorkload;
 	}
 	/**
 	 * 计划内购工作量
 	 **/
-	public BigDecimal getPlanInnerUserWorkload() {
-		return this.planInnerUserWorkload;
+	public BigDecimal getPlanIuserWorkload() {
+		return this.planIuserWorkload;
 	}
 	/**
 	 * 实际外购工作量
 	 **/
-	public BigDecimal getActOutUserWorkload() {
-		return this.actOutUserWorkload;
+	public BigDecimal getActOuserWorkload() {
+		return this.actOuserWorkload;
 	}
 	/**
 	 * 实际内购工作量
 	 **/
-	public BigDecimal getActInnerUserWorkload() {
-		return this.actInnerUserWorkload;
+	public BigDecimal getActIuserWorkload() {
+		return this.actIuserWorkload;
 	}
 	/**
 	 * 计划非人力成本

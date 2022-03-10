@@ -115,14 +115,14 @@ public class XmProjectMBudgetCostUserController {
 			BigDecimal zero=BigDecimal.ZERO;  
 			BigDecimal budgetCostUser=NumberUtil.getBigDecimal(xmProjectMBudgetCostUser.getBudgetCost(),zero); 
 
-		    BigDecimal addBudgetCostInnerUserAt=BigDecimal.ZERO;
-		    BigDecimal addBudgetCostOutUserAt=BigDecimal.ZERO;
+		    BigDecimal addBudgetCostIuserAt=BigDecimal.ZERO;
+		    BigDecimal addBudgetCostOuserAt=BigDecimal.ZERO;
 			if("1".equals(xmProjectMBudgetCostUser.getCostType())) {
-				addBudgetCostInnerUserAt=budgetCostUser;
+				addBudgetCostIuserAt=budgetCostUser;
 			}else {
-				addBudgetCostOutUserAt=budgetCostUser;
+				addBudgetCostOuserAt=budgetCostUser;
 			}
-			Tips judgetTips=xmProjectMBudgetCostUserService.judgetBudget(projectId,budgetCostUser, addBudgetCostInnerUserAt, addBudgetCostOutUserAt,null);
+			Tips judgetTips=xmProjectMBudgetCostUserService.judgetBudget(projectId,budgetCostUser, addBudgetCostIuserAt, addBudgetCostOuserAt,null);
 			if(judgetTips.isOk()) {  
 				xmProjectMBudgetCostUserService.insert(xmProjectMBudgetCostUser);
 				xmRecordService.addXmBudgetRecord(projectId, xmProjectMBudgetCostUser.getId(), "项目-预算-人力-增加", "增加预算"+xmProjectMBudgetCostUser.getBudgetCost(),JSON.toJSONString(xmProjectMBudgetCostUser),null);
@@ -179,17 +179,17 @@ public class XmProjectMBudgetCostUserController {
 			BigDecimal zero=BigDecimal.ZERO;  
 			BigDecimal budgetCostUser=NumberUtil.getBigDecimal(xmProjectMBudgetCostUser.getBudgetCost(),zero); 
 
-		    BigDecimal addBudgetCostInnerUserAt=BigDecimal.ZERO;
-		    BigDecimal addBudgetCostOutUserAt=BigDecimal.ZERO;
+		    BigDecimal addBudgetCostIuserAt=BigDecimal.ZERO;
+		    BigDecimal addBudgetCostOuserAt=BigDecimal.ZERO;
 		    
 		    List<String> excludeIds=new ArrayList<>();
 		    excludeIds.add(xmProjectMBudgetCostUser.getId());
 			if("1".equals(xmProjectMBudgetCostUser.getCostType())) {
-				addBudgetCostInnerUserAt=budgetCostUser;
+				addBudgetCostIuserAt=budgetCostUser;
 			}else {
-				addBudgetCostOutUserAt=budgetCostUser;
+				addBudgetCostOuserAt=budgetCostUser;
 			} 
-			Tips judgetTips=xmProjectMBudgetCostUserService.judgetBudget(projectId, budgetCostUser,addBudgetCostInnerUserAt,addBudgetCostOutUserAt,excludeIds);
+			Tips judgetTips=xmProjectMBudgetCostUserService.judgetBudget(projectId, budgetCostUser,addBudgetCostIuserAt,addBudgetCostOuserAt,excludeIds);
 			if(judgetTips.isOk()) {   
 				xmProjectMBudgetCostUserService.updateByPk(xmProjectMBudgetCostUser);
 				xmRecordService.addXmBudgetRecord(xmProjectMBudgetCostUser.getProjectId(), xmProjectMBudgetCostUser.getId(), "项目-预算-人力-修改", "修改预算为"+xmProjectMBudgetCostUser.getBudgetCost(),JSON.toJSONString(xmProjectMBudgetCostUser),null);
@@ -250,7 +250,7 @@ public class XmProjectMBudgetCostUserController {
 			 
 			BigDecimal budgetCostUser=BigDecimal.ZERO;
 			BigDecimal budgetCostInserUser=BigDecimal.ZERO;
-			BigDecimal budgetCostUserOutUser=BigDecimal.ZERO;
+			BigDecimal budgetCostUserOuser=BigDecimal.ZERO;
 			String projectId=null;
 			BigDecimal zero=BigDecimal.ZERO;  
 			List<String> excludeIds=new ArrayList<>();
@@ -262,10 +262,10 @@ public class XmProjectMBudgetCostUserController {
 				if("1".equals(costUser.getCostType())) {
 					budgetCostInserUser=budgetCostInserUser.add(add);
 				}else {
-					budgetCostUserOutUser=budgetCostUserOutUser.add(add);
+					budgetCostUserOuser=budgetCostUserOuser.add(add);
 				}
 			}
-			Tips judgetTips=xmProjectMBudgetCostUserService.judgetBudget(projectId, budgetCostUser,budgetCostInserUser,budgetCostUserOutUser,excludeIds);
+			Tips judgetTips=xmProjectMBudgetCostUserService.judgetBudget(projectId, budgetCostUser,budgetCostInserUser,budgetCostUserOuser,excludeIds);
 			if(judgetTips.isOk()) {    
 				xmProjectMBudgetCostUserService.batchUpdate(xmProjectMBudgetCostUsers);
 
@@ -302,7 +302,7 @@ public class XmProjectMBudgetCostUserController {
 			});
 			BigDecimal budgetCostUser=BigDecimal.ZERO;
 			BigDecimal budgetCostInserUser=BigDecimal.ZERO;
-			BigDecimal budgetCostUserOutUser=BigDecimal.ZERO;
+			BigDecimal budgetCostUserOuser=BigDecimal.ZERO;
 			String projectId=null;
 			BigDecimal zero=BigDecimal.ZERO;  
 			for (XmProjectMBudgetCostUser costUser : xmProjectMBudgetCostUsers) {
@@ -312,10 +312,10 @@ public class XmProjectMBudgetCostUserController {
 				if("1".equals(costUser.getCostType())) {
 					budgetCostInserUser=budgetCostInserUser.add(add);
 				}else {
-					budgetCostUserOutUser=budgetCostUserOutUser.add(add);
+					budgetCostUserOuser=budgetCostUserOuser.add(add);
 				}
 			}
-			Tips judgetTips=xmProjectMBudgetCostUserService.judgetBudget(projectId, budgetCostUser,budgetCostInserUser,budgetCostUserOutUser,null);
+			Tips judgetTips=xmProjectMBudgetCostUserService.judgetBudget(projectId, budgetCostUser,budgetCostInserUser,budgetCostUserOuser,null);
 			if(judgetTips.isOk()) {    
 				xmProjectMBudgetCostUserService.batchInsert(xmProjectMBudgetCostUsers);
 

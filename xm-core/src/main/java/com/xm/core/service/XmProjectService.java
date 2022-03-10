@@ -145,7 +145,7 @@ public class XmProjectService extends BaseService {
 					node.setActRate(BigDecimal.ZERO);
 					node.setActIuserAt(BigDecimal.ZERO);
 					node.setActNouserAt(BigDecimal.ZERO);
-					node.setActOutUserAt(BigDecimal.ZERO);
+					node.setActOuserAt(BigDecimal.ZERO);
 					node.setActIuserWorkload(BigDecimal.ZERO);
 					node.setActOuserWorkload(BigDecimal.ZERO);
 					node.setActWorkload(BigDecimal.ZERO);
@@ -549,25 +549,25 @@ public class XmProjectService extends BaseService {
 		//todo 同步预算数据到财务系统
 
 		BigDecimal planTotalCost=xmProject.getPlanTotalCost();
-		BigDecimal planInnerUserAt=xmProject.getPlanInnerUserAt();
-		BigDecimal planOutUserAt=xmProject.getPlanOutUserAt();
+		BigDecimal planIuserAt=xmProject.getPlanIuserAt();
+		BigDecimal planOuserAt=xmProject.getPlanOuserAt();
 		BigDecimal planNouserAt=xmProject.getPlanNouserAt();
 		XmProject xmProject2=new XmProject();
-		xmProject2.setPlanInnerUserAt(planInnerUserAt);
-		xmProject2.setPlanOutUserAt(planOutUserAt);
+		xmProject2.setPlanIuserAt(planIuserAt);
+		xmProject2.setPlanOuserAt(planOuserAt);
 		xmProject2.setPlanNouserAt(planNouserAt);
 		xmProject2.setId(xmProject.getId());
-		xmProject2.setPlanTotalCost(planInnerUserAt.add(planOutUserAt).add(planNouserAt));
+		xmProject2.setPlanTotalCost(planIuserAt.add(planOuserAt).add(planNouserAt));
 		xmProject.setPlanTotalCost(xmProject2.getPlanTotalCost());
 		xmProject2.setBudgetMarginRate(xmProject.getBudgetMarginRate());
 		xmProject2.setTotalReceivables(xmProject.getTotalReceivables());
 		xmProject2.setTaxRate(xmProject.getTaxRate());
-		xmProject2.setPlanInnerUserCnt(xmProject.getPlanInnerUserCnt());
-		xmProject2.setPlanOutUserCnt(xmProject.getPlanOutUserCnt());
-		xmProject2.setPlanInnerUserWorkload(xmProject.getPlanInnerUserWorkload());
-		xmProject2.setPlanOutUserWorkload(xmProject.getPlanOutUserWorkload());
-		xmProject2.setPlanInnerUserPrice(xmProject.getPlanInnerUserPrice());
-		xmProject2.setPlanOutUserPrice(xmProject.getPlanOutUserPrice());
+		xmProject2.setPlanIuserCnt(xmProject.getPlanIuserCnt());
+		xmProject2.setPlanOuserCnt(xmProject.getPlanOuserCnt());
+		xmProject2.setPlanIuserWorkload(xmProject.getPlanIuserWorkload());
+		xmProject2.setPlanOuserWorkload(xmProject.getPlanOuserWorkload());
+		xmProject2.setPlanIuserPrice(xmProject.getPlanIuserPrice());
+		xmProject2.setPlanOuserPrice(xmProject.getPlanOuserPrice());
 		xmProject2.setPlanWorkingHours(xmProject.getPlanWorkingHours());
 		xmProject2.setPlanWorkload(xmProject.getPlanWorkload());
 		xmProject2.setContractAmt(xmProject.getContractAmt());

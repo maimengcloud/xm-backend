@@ -69,7 +69,7 @@ public class XmTaskService extends BaseService {
 	 * @param addTaskBudgetCost
 	 * @return
 	 */
-	public Tips judgetPhaseBudget(String projectPhaseId, BigDecimal addTaskBudgetCost, BigDecimal addTaskBudgetInnerUserAt, BigDecimal addTaskBudgetOutUserAt, BigDecimal addTaskBudgetNouserAt, List<String> excludeTaskIds){
+	public Tips judgetPhaseBudget(String projectPhaseId, BigDecimal addTaskBudgetCost, BigDecimal addTaskBudgetIuserAt, BigDecimal addTaskBudgetOuserAt, BigDecimal addTaskBudgetNouserAt, List<String> excludeTaskIds){
 		Tips tips=new Tips("成功");
 		if(!StringUtils.hasText(projectPhaseId)){
 			tips.setFailureMsg("projectPhaseId参数不能为空");
@@ -85,31 +85,31 @@ public class XmTaskService extends BaseService {
 		if(addTaskBudgetCost==null) {
 			addTaskBudgetCost=BigDecimal.ZERO;
 		}
-		if(addTaskBudgetInnerUserAt==null) {
-			addTaskBudgetInnerUserAt=BigDecimal.ZERO;
+		if(addTaskBudgetIuserAt==null) {
+			addTaskBudgetIuserAt=BigDecimal.ZERO;
 		}
-		if(addTaskBudgetOutUserAt==null) {
-			addTaskBudgetOutUserAt=BigDecimal.ZERO;
+		if(addTaskBudgetOuserAt==null) {
+			addTaskBudgetOuserAt=BigDecimal.ZERO;
 		}
 		if(addTaskBudgetNouserAt==null) {
 			addTaskBudgetNouserAt=BigDecimal.ZERO;
 		}
 		BigDecimal phaseBudgetAt=NumberUtil.getBigDecimal(g.get("phaseBudgetAt"),zero);
-		BigDecimal phaseBudgetInnerUserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetInnerUserAt"),zero);
-		BigDecimal phaseBudgetOutUserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetOutUserAt"),zero); 
+		BigDecimal phaseBudgetIuserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetIuserAt"),zero);
+		BigDecimal phaseBudgetOuserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetOuserAt"),zero); 
 		BigDecimal phaseBudgetNouserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetNouserAt"),zero); 
 		
-		BigDecimal taskBudgetInnerUserAt=NumberUtil.getBigDecimal(g.get("taskBudgetInnerUserAt"),zero);
-		BigDecimal taskBudgetOutUserAt=NumberUtil.getBigDecimal(g.get("taskBudgetOutUserAt"),zero); 
+		BigDecimal taskBudgetIuserAt=NumberUtil.getBigDecimal(g.get("taskBudgetIuserAt"),zero);
+		BigDecimal taskBudgetOuserAt=NumberUtil.getBigDecimal(g.get("taskBudgetOuserAt"),zero); 
 		BigDecimal taskBudgetNouserAt=NumberUtil.getBigDecimal(g.get("taskBudgetNouserAt"),zero); 
 		BigDecimal taskBudgetTotalCost=NumberUtil.getBigDecimal(g.get("budgetCost"),zero);  
 		
 		/**
-		if(addTaskBudgetInnerUserAt.add(taskBudgetInnerUserAt).compareTo(phaseBudgetInnerUserAt)>0) {
+		if(addTaskBudgetIuserAt.add(taskBudgetIuserAt).compareTo(phaseBudgetIuserAt)>0) {
 			tips.setFailureMsg("内部人力预算超出项目内部人力预算");
 			return tips;
 		}
-		if(addTaskBudgetOutUserAt.add(taskBudgetOutUserAt).compareTo(phaseBudgetOutUserAt)>0) {
+		if(addTaskBudgetOuserAt.add(taskBudgetOuserAt).compareTo(phaseBudgetOuserAt)>0) {
 			tips.setFailureMsg("外部人力预算超出项目外部人力预算");
 			return tips;
 		}		
@@ -138,7 +138,7 @@ public class XmTaskService extends BaseService {
 	 * @param addTaskBudgetCost
 	 * @return
 	 */
-	public Tips judgetTaskBudget(String parentTaskid, BigDecimal addTaskBudgetCost, BigDecimal addTaskBudgetInnerUserAt, BigDecimal addTaskBudgetOutUserAt, BigDecimal addTaskBudgetNouserAt, List<String> excludeTaskIds){
+	public Tips judgetTaskBudget(String parentTaskid, BigDecimal addTaskBudgetCost, BigDecimal addTaskBudgetIuserAt, BigDecimal addTaskBudgetOuserAt, BigDecimal addTaskBudgetNouserAt, List<String> excludeTaskIds){
 		Tips tips=new Tips("成功");
 		if(!StringUtils.hasText(parentTaskid)){
 			tips.setFailureMsg("parentTaskid参数不能为空");

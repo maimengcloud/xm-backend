@@ -108,21 +108,21 @@ public class XmPhaseService extends BaseService {
 		if(g==null || g.isEmpty()){
 
 		}
-		BigDecimal phaseBudgetInnerUserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetInnerUserAt"),zero);
-		BigDecimal phaseBudgetOutUserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetOutUserAt"),zero); 
+		BigDecimal phaseBudgetIuserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetIuserAt"),zero);
+		BigDecimal phaseBudgetOuserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetOuserAt"),zero); 
 		BigDecimal phaseBudgetNouserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetNouserAt"),zero); 
 		
-		BigDecimal planInnerUserAt=NumberUtil.getBigDecimal(g.get("planInnerUserAt"),zero);
-		BigDecimal planOutUserAt=NumberUtil.getBigDecimal(g.get("planOutUserAt"),zero); 
+		BigDecimal planIuserAt=NumberUtil.getBigDecimal(g.get("planIuserAt"),zero);
+		BigDecimal planOuserAt=NumberUtil.getBigDecimal(g.get("planOuserAt"),zero); 
 		BigDecimal planNouserAt=NumberUtil.getBigDecimal(g.get("planNouserAt"),zero); 
 		BigDecimal planTotalCost=NumberUtil.getBigDecimal(g.get("planTotalCost"),zero);
 
-		if(addBudgetIuserAt.add(phaseBudgetInnerUserAt).compareTo(planInnerUserAt)>0) {
-			tips.setFailureMsg("内部人力预算超出项目内部人力预算"+addBudgetIuserAt.add(phaseBudgetInnerUserAt).subtract(planInnerUserAt)+"元");
+		if(addBudgetIuserAt.add(phaseBudgetIuserAt).compareTo(planIuserAt)>0) {
+			tips.setFailureMsg("内部人力预算超出项目内部人力预算"+addBudgetIuserAt.add(phaseBudgetIuserAt).subtract(planIuserAt)+"元");
 			return tips;
 		}
-		if(addBudgetOuserAt.add(phaseBudgetOutUserAt).compareTo(planOutUserAt)>0) {
-			tips.setFailureMsg("外部人力预算超出项目外部人力预算"+addBudgetOuserAt.add(phaseBudgetOutUserAt).subtract(planOutUserAt)+"元");
+		if(addBudgetOuserAt.add(phaseBudgetOuserAt).compareTo(planOuserAt)>0) {
+			tips.setFailureMsg("外部人力预算超出项目外部人力预算"+addBudgetOuserAt.add(phaseBudgetOuserAt).subtract(planOuserAt)+"元");
 			return tips;
 		}		
 		if(addBudgetNouserAt.add(phaseBudgetNouserAt).compareTo(planNouserAt)>0) {
@@ -130,7 +130,7 @@ public class XmPhaseService extends BaseService {
 			return tips;
 		}
 		
-		BigDecimal phaseBudgetAt=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);  
+		BigDecimal phaseBudgetAt=phaseBudgetCost.add(phaseBudgetIuserAt).add(phaseBudgetOuserAt).add(phaseBudgetNouserAt);  
 		phaseBudgetAt=phaseBudgetAt.add(addPhaseBudgetCost);
 		if(phaseBudgetAt.compareTo(planTotalCost)>0) {
 			tips.setFailureMsg("计划总体预算超出项目总预算"+phaseBudgetAt.subtract(planTotalCost)+"元");
@@ -149,10 +149,10 @@ public class XmPhaseService extends BaseService {
 
 	public XmPhase autoCalcWorkload(XmPhase phase) {
 		BigDecimal phaseBudgetHours=NumberUtil.getBigDecimal(phase.getBudgetHours(),BigDecimal.ZERO);
-		BigDecimal phaseBudgetInnerUserCnt=NumberUtil.getBigDecimal(phase.getBudgetIuserCnt(),BigDecimal.ZERO);
-		BigDecimal phaseBudgetOutUserCnt=NumberUtil.getBigDecimal(phase.getBudgetOuserCnt(),BigDecimal.ZERO);
-		phase.setBudgetIuserWorkload(phaseBudgetInnerUserCnt.multiply(phaseBudgetHours));
-		phase.setBudgetOuserWorkload(phaseBudgetOutUserCnt.multiply(phaseBudgetHours));
+		BigDecimal phaseBudgetIuserCnt=NumberUtil.getBigDecimal(phase.getBudgetIuserCnt(),BigDecimal.ZERO);
+		BigDecimal phaseBudgetOuserCnt=NumberUtil.getBigDecimal(phase.getBudgetOuserCnt(),BigDecimal.ZERO);
+		phase.setBudgetIuserWorkload(phaseBudgetIuserCnt.multiply(phaseBudgetHours));
+		phase.setBudgetOuserWorkload(phaseBudgetOuserCnt.multiply(phaseBudgetHours));
 		phase.setBudgetWorkload(phase.getBudgetIuserWorkload().add(phase.getBudgetOuserWorkload()));
 		return phase;
 		
@@ -486,8 +486,8 @@ public class XmPhaseService extends BaseService {
 		if(addBudgetNouserAt==null) {
 			addBudgetNouserAt=BigDecimal.ZERO;
 		}
-		BigDecimal phaseBudgetInnerUserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetInnerUserAt"),zero);
-		BigDecimal phaseBudgetOutUserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetOutUserAt"),zero);
+		BigDecimal phaseBudgetIuserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetIuserAt"),zero);
+		BigDecimal phaseBudgetOuserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetOuserAt"),zero);
 		BigDecimal phaseBudgetNouserAt=NumberUtil.getBigDecimal(g.get("phaseBudgetNouserAt"),zero);
 
 		/**
@@ -501,7 +501,7 @@ public class XmPhaseService extends BaseService {
 		BigDecimal planTotalCost=NumberUtil.getBigDecimal(g.get("pbudgetAmount"),zero);
 
 
-		BigDecimal phaseBudgetAt=phaseBudgetCost.add(phaseBudgetInnerUserAt).add(phaseBudgetOutUserAt).add(phaseBudgetNouserAt);
+		BigDecimal phaseBudgetAt=phaseBudgetCost.add(phaseBudgetIuserAt).add(phaseBudgetOuserAt).add(phaseBudgetNouserAt);
 		phaseBudgetAt=phaseBudgetAt.add(addPhaseBudgetCost);
 		if(phaseBudgetAt.compareTo(planTotalCost)>0) {
 			tips.setFailureMsg("计划总体预算超出产品总预算"+phaseBudgetAt.subtract(planTotalCost)+"元");
@@ -558,13 +558,13 @@ public class XmPhaseService extends BaseService {
 	 * 		res0.child_phase_budget_at
 	 * @param parentPhaseId
 	 * @param phaseBudgetCost
-	 * @param phaseBudgetInnerUserAt
-	 * @param phaseBudgetOutUserAt
+	 * @param phaseBudgetIuserAt
+	 * @param phaseBudgetOuserAt
 	 * @param phaseBudgetNouserAt
 	 * @param excludePhaseIds
 	 * @return
 	 */
-	public Tips judgetPhaseBudget(String parentPhaseId, BigDecimal phaseBudgetCost, BigDecimal phaseBudgetInnerUserAt, BigDecimal phaseBudgetOutUserAt, BigDecimal phaseBudgetNouserAt, List<String> excludePhaseIds) {
+	public Tips judgetPhaseBudget(String parentPhaseId, BigDecimal phaseBudgetCost, BigDecimal phaseBudgetIuserAt, BigDecimal phaseBudgetOuserAt, BigDecimal phaseBudgetNouserAt, List<String> excludePhaseIds) {
 		Tips tips= new Tips("检查通过");
 		Map<String,Object> phaseBudget=this.selectPhaseBudgetCost(parentPhaseId,excludePhaseIds);
 		if(phaseBudget==null || phaseBudget.isEmpty()){
