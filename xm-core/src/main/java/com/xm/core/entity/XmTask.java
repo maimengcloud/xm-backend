@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTask所有属性名: <br>
- *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,projectPhaseId,projectPhaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,productName,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime,pidPaths,lvl,isTpl;<br>
+ *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,projectPhaseId,projectPhaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,productName,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime,pidPaths,lvl,isTpl,keyPath,uniInnerPrice,uniOutPrice,calcType,ptype;<br>
  * 表 xm_task xm_task的所有字段名: <br>
- *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl;<br>
+ *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -89,7 +89,7 @@ public class XmTask  implements java.io.Serializable {
 	@ApiModelProperty(notes="预算工时（不包括下一级）",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal budgetWorkload;
 	
-	@ApiModelProperty(notes="当前任务实际费用金额（包括所有成本，不包括下一级）",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="当前任务实际费用金额（包括所有成本，不包括下一级）待结算金额",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal actCost;
 	
 	@ApiModelProperty(notes="实际工时（不包括下一级）",allowEmptyValue=true,example="",allowableValues="")
@@ -119,10 +119,10 @@ public class XmTask  implements java.io.Serializable {
 	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
 	String bizFlowState;
 	
-	@ApiModelProperty(notes="项目计划编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目阶段编号(作废)",allowEmptyValue=true,example="",allowableValues="")
 	String projectPhaseId;
 	
-	@ApiModelProperty(notes="项目计划名称",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="项目阶段名称(作废)",allowEmptyValue=true,example="",allowableValues="")
 	String projectPhaseName;
 	
 	@ApiModelProperty(notes="技能列表,逗号分隔",allowEmptyValue=true,example="",allowableValues="")
@@ -152,10 +152,10 @@ public class XmTask  implements java.io.Serializable {
 	@ApiModelProperty(notes="归属功能名称",allowEmptyValue=true,example="",allowableValues="")
 	String menuName;
 	
-	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="产品编号根据功能变化带进",allowEmptyValue=true,example="",allowableValues="")
 	String productId;
 	
-	@ApiModelProperty(notes="产品名称",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="产品名称(作废)",allowEmptyValue=true,example="",allowableValues="")
 	String productName;
 	
 	@ApiModelProperty(notes="创建机构",allowEmptyValue=true,example="",allowableValues="")
@@ -170,7 +170,7 @@ public class XmTask  implements java.io.Serializable {
 	@ApiModelProperty(notes="标签名称，逗号分割",allowEmptyValue=true,example="",allowableValues="")
 	String tagNames;
 	
-	@ApiModelProperty(notes="节点类型0-任务，1-计划项。计划项下建任务，任务下不允许建立任何子节点",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="节点类型0-任务，1-计划。计划下可建立计划和任务，任务下不允许再扩展。也就是非叶子节点都是计划，叶子节点有可能是计划或者任务",allowEmptyValue=true,example="",allowableValues="")
 	String ntype;
 	
 	@ApiModelProperty(notes="儿子节点个数",allowEmptyValue=true,example="",allowableValues="")
@@ -187,6 +187,21 @@ public class XmTask  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="是否为模板",allowEmptyValue=true,example="",allowableValues="")
 	String isTpl;
+	
+	@ApiModelProperty(notes="是否为关键路径上的节点",allowEmptyValue=true,example="",allowableValues="")
+	String keyPath;
+	
+	@ApiModelProperty(notes="内部单位工时单价",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal uniInnerPrice;
+	
+	@ApiModelProperty(notes="外部单位工时单价",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal uniOutPrice;
+	
+	@ApiModelProperty(notes="实际工作量及金额计算方式0-手工填写，1-根据进度*预算计算，2-其它",allowEmptyValue=true,example="",allowableValues="")
+	String calcType;
+	
+	@ApiModelProperty(notes="计划分类0-项目，1产品",allowEmptyValue=true,example="",allowableValues="")
+	String ptype;
 
 	/**任务编号**/
 	public XmTask(String id) {
@@ -336,7 +351,7 @@ public class XmTask  implements java.io.Serializable {
 		this.budgetWorkload = budgetWorkload;
 	}
 	/**
-	 * 当前任务实际费用金额（包括所有成本，不包括下一级）
+	 * 当前任务实际费用金额（包括所有成本，不包括下一级）待结算金额
 	 **/
 	public void setActCost(BigDecimal actCost) {
 		this.actCost = actCost;
@@ -396,13 +411,13 @@ public class XmTask  implements java.io.Serializable {
 		this.bizFlowState = bizFlowState;
 	}
 	/**
-	 * 项目计划编号
+	 * 项目阶段编号(作废)
 	 **/
 	public void setProjectPhaseId(String projectPhaseId) {
 		this.projectPhaseId = projectPhaseId;
 	}
 	/**
-	 * 项目计划名称
+	 * 项目阶段名称(作废)
 	 **/
 	public void setProjectPhaseName(String projectPhaseName) {
 		this.projectPhaseName = projectPhaseName;
@@ -462,13 +477,13 @@ public class XmTask  implements java.io.Serializable {
 		this.menuName = menuName;
 	}
 	/**
-	 * 产品编号
+	 * 产品编号根据功能变化带进
 	 **/
 	public void setProductId(String productId) {
 		this.productId = productId;
 	}
 	/**
-	 * 产品名称
+	 * 产品名称(作废)
 	 **/
 	public void setProductName(String productName) {
 		this.productName = productName;
@@ -498,7 +513,7 @@ public class XmTask  implements java.io.Serializable {
 		this.tagNames = tagNames;
 	}
 	/**
-	 * 节点类型0-任务，1-计划项。计划项下建任务，任务下不允许建立任何子节点
+	 * 节点类型0-任务，1-计划。计划下可建立计划和任务，任务下不允许再扩展。也就是非叶子节点都是计划，叶子节点有可能是计划或者任务
 	 **/
 	public void setNtype(String ntype) {
 		this.ntype = ntype;
@@ -532,6 +547,36 @@ public class XmTask  implements java.io.Serializable {
 	 **/
 	public void setIsTpl(String isTpl) {
 		this.isTpl = isTpl;
+	}
+	/**
+	 * 是否为关键路径上的节点
+	 **/
+	public void setKeyPath(String keyPath) {
+		this.keyPath = keyPath;
+	}
+	/**
+	 * 内部单位工时单价
+	 **/
+	public void setUniInnerPrice(BigDecimal uniInnerPrice) {
+		this.uniInnerPrice = uniInnerPrice;
+	}
+	/**
+	 * 外部单位工时单价
+	 **/
+	public void setUniOutPrice(BigDecimal uniOutPrice) {
+		this.uniOutPrice = uniOutPrice;
+	}
+	/**
+	 * 实际工作量及金额计算方式0-手工填写，1-根据进度*预算计算，2-其它
+	 **/
+	public void setCalcType(String calcType) {
+		this.calcType = calcType;
+	}
+	/**
+	 * 计划分类0-项目，1产品
+	 **/
+	public void setPtype(String ptype) {
+		this.ptype = ptype;
 	}
 	
 	/**
@@ -673,7 +718,7 @@ public class XmTask  implements java.io.Serializable {
 		return this.budgetWorkload;
 	}
 	/**
-	 * 当前任务实际费用金额（包括所有成本，不包括下一级）
+	 * 当前任务实际费用金额（包括所有成本，不包括下一级）待结算金额
 	 **/
 	public BigDecimal getActCost() {
 		return this.actCost;
@@ -733,13 +778,13 @@ public class XmTask  implements java.io.Serializable {
 		return this.bizFlowState;
 	}
 	/**
-	 * 项目计划编号
+	 * 项目阶段编号(作废)
 	 **/
 	public String getProjectPhaseId() {
 		return this.projectPhaseId;
 	}
 	/**
-	 * 项目计划名称
+	 * 项目阶段名称(作废)
 	 **/
 	public String getProjectPhaseName() {
 		return this.projectPhaseName;
@@ -799,13 +844,13 @@ public class XmTask  implements java.io.Serializable {
 		return this.menuName;
 	}
 	/**
-	 * 产品编号
+	 * 产品编号根据功能变化带进
 	 **/
 	public String getProductId() {
 		return this.productId;
 	}
 	/**
-	 * 产品名称
+	 * 产品名称(作废)
 	 **/
 	public String getProductName() {
 		return this.productName;
@@ -835,7 +880,7 @@ public class XmTask  implements java.io.Serializable {
 		return this.tagNames;
 	}
 	/**
-	 * 节点类型0-任务，1-计划项。计划项下建任务，任务下不允许建立任何子节点
+	 * 节点类型0-任务，1-计划。计划下可建立计划和任务，任务下不允许再扩展。也就是非叶子节点都是计划，叶子节点有可能是计划或者任务
 	 **/
 	public String getNtype() {
 		return this.ntype;
@@ -869,6 +914,36 @@ public class XmTask  implements java.io.Serializable {
 	 **/
 	public String getIsTpl() {
 		return this.isTpl;
+	}
+	/**
+	 * 是否为关键路径上的节点
+	 **/
+	public String getKeyPath() {
+		return this.keyPath;
+	}
+	/**
+	 * 内部单位工时单价
+	 **/
+	public BigDecimal getUniInnerPrice() {
+		return this.uniInnerPrice;
+	}
+	/**
+	 * 外部单位工时单价
+	 **/
+	public BigDecimal getUniOutPrice() {
+		return this.uniOutPrice;
+	}
+	/**
+	 * 实际工作量及金额计算方式0-手工填写，1-根据进度*预算计算，2-其它
+	 **/
+	public String getCalcType() {
+		return this.calcType;
+	}
+	/**
+	 * 计划分类0-项目，1产品
+	 **/
+	public String getPtype() {
+		return this.ptype;
 	}
 
 }

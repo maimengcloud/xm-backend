@@ -343,7 +343,7 @@
 		where 
 			res.id = #{id}
 	</select>
-	
+
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_task res
@@ -362,7 +362,7 @@
 		insert into xm_task(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{projectPhaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{productName},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl}
+		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{projectPhaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{productName},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype}
 		)
 	</insert>
 	
@@ -425,7 +425,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl
+		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -486,6 +486,11 @@
 		<if test="pidPaths != null and pidPaths != ''">      and res.pid_paths = #{pidPaths}     </if>
 		<if test="lvl != null and lvl != ''">      and res.lvl = #{lvl}     </if>
 		<if test="isTpl != null and isTpl != ''">      and res.is_tpl = #{isTpl}     </if>
+		<if test="keyPath != null and keyPath != ''">      and res.key_path = #{keyPath}     </if>
+		<if test="uniInnerPrice != null and uniInnerPrice != ''">      and res.uni_inner_price = #{uniInnerPrice}     </if>
+		<if test="uniOutPrice != null and uniOutPrice != ''">      and res.uni_out_price = #{uniOutPrice}     </if>
+		<if test="calcType != null and calcType != ''">      and res.calc_type = #{calcType}     </if>
+		<if test="ptype != null and ptype != ''">      and res.ptype = #{ptype}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -543,7 +548,12 @@
 		ltime = #{ltime},
 		pid_paths = #{pidPaths},
 		lvl = #{lvl},
-		is_tpl = #{isTpl}
+		is_tpl = #{isTpl},
+		key_path = #{keyPath},
+		uni_inner_price = #{uniInnerPrice},
+		uni_out_price = #{uniOutPrice},
+		calc_type = #{calcType},
+		ptype = #{ptype}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -601,6 +611,11 @@
 		<if test="pidPaths != null and pidPaths != ''"> pid_paths = #{pidPaths},     </if>
 		<if test="lvl != null and lvl != ''"> lvl = #{lvl},     </if>
 		<if test="isTpl != null and isTpl != ''"> is_tpl = #{isTpl},     </if>
+		<if test="keyPath != null and keyPath != ''"> key_path = #{keyPath},     </if>
+		<if test="uniInnerPrice != null and uniInnerPrice != ''"> uni_inner_price = #{uniInnerPrice},     </if>
+		<if test="uniOutPrice != null and uniOutPrice != ''"> uni_out_price = #{uniOutPrice},     </if>
+		<if test="calcType != null and calcType != ''"> calc_type = #{calcType},     </if>
+		<if test="ptype != null and ptype != ''"> ptype = #{ptype},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -658,6 +673,11 @@
 			ltime = #{item.ltime},
 			pid_paths = #{item.pidPaths},
 			lvl = #{item.lvl},
-			is_tpl = #{item.isTpl}
+			is_tpl = #{item.isTpl},
+			key_path = #{item.keyPath},
+			uni_inner_price = #{item.uniInnerPrice},
+			uni_out_price = #{item.uniOutPrice},
+			calc_type = #{item.calcType},
+			ptype = #{item.ptype}
 	</sql>
 </mapper>

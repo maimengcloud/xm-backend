@@ -7,15 +7,15 @@ import java.math.BigDecimal;
 
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
- * 实体 XmProjectPhase所有属性名: <br>
- *	id,phaseName,remark,parentPhaseId,branchId,projectId,beginDate,endDate,phaseBudgetHours,phaseBudgetStaffNu,ctime,phaseBudgetNouserAt,phaseBudgetInnerUserAt,phaseBudgetOutUserAt,projectBaselineId,bizProcInstId,bizFlowState,phaseBudgetWorkload,phaseActWorkload,phaseActInnerUserWorkload,phaseActOutUserWorkload,taskType,planType,seqNo,phaseBudgetInnerUserWorkload,phaseBudgetOutUserWorkload,actNouserAt,actInnerUserAt,phaseBudgetInnerUserPrice,phaseBudgetOutUserPrice,phaseBudgetOutUserCnt,phaseBudgetInnerUserCnt,actRate,phaseStatus,actOutUserAt,taskCnt,finishTaskCnt,iterationCnt,calcTime,taskBudgetWorkload,taskBudgetAt,mngUserid,mngUsername,milestone,pleaf,tagIds,tagNames,ntype,childrenCnt,ltime,isKeyPath,pidPaths,lvl,isTpl,phaseClass,productId,phaseBudgetAt,calcType;<br>
- * 表 xm_project_phase 项目阶段模板的所有字段名: <br>
- *	id,phase_name,remark,parent_phase_id,branch_id,project_id,begin_date,end_date,phase_budget_hours,phase_budget_staff_nu,ctime,phase_budget_nouser_at,phase_budget_inner_user_at,phase_budget_out_user_at,project_baseline_id,biz_proc_inst_id,biz_flow_state,phase_budget_workload,phase_act_workload,phase_act_inner_user_workload,phase_act_out_user_workload,task_type,plan_type,seq_no,phase_budget_inner_user_workload,phase_budget_out_user_workload,act_nouser_at,act_inner_user_at,phase_budget_inner_user_price,phase_budget_out_user_price,phase_budget_out_user_cnt,phase_budget_inner_user_cnt,act_rate,phase_status,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf,tag_ids,tag_names,ntype,children_cnt,ltime,is_key_path,pid_paths,lvl,is_tpl,phase_class,product_id,phase_budget_at,calc_type;<br>
+ * 实体 XmPhase所有属性名: <br>
+ *	id,name,remark,parentId,branchId,projectId,beginDate,endDate,budgetHours,budgetStaffNu,ctime,budgetNouserAt,budgetIuserAt,budgetOuserAt,baselineId,bizProcInstId,bizFlowState,budgetWorkload,actWorkload,actIuserWorkload,actOuserWorkload,taskType,planType,seqNo,udgetIuserWorkload,budgetOuserWorkload,actNouserAt,actIuserAt,budgetIuserPrice,budgetOuserPrice,budgetOuserCnt,budgetIuserCnt,actRate,pstatus,actOutUserAt,taskCnt,finishTaskCnt,iterationCnt,calcTime,taskBudgetWorkload,taskBudgetAt,mngUserid,mngUsername,milestone,pleaf,tagIds,tagNames,ntype,childrenCnt,ltime,isKeyPath,pidPaths,lvl,isTpl,phaseClass,productId,budgetAt,calcType,actAt;<br>
+ * 表 xm_phase 项目、产品计划表（将计划并入任务表，暂时作废），合并进任务表了的所有字段名: <br>
+ *	id,name,remark,parent_id,branch_id,project_id,begin_date,end_date,budget_hours,budget_staff_nu,ctime,budget_nouser_at,budget_iuser_at,budget_ouser_at,baseline_id,biz_proc_inst_id,biz_flow_state,budget_workload,act_workload,act_iuser_workload,act_ouser_workload,task_type,plan_type,seq_no,udget_iuser_workload,budget_ouser_workload,act_nouser_at,act_iuser_at,budget_iuser_price,budget_ouser_price,budget_ouser_cnt,budget_iuser_cnt,act_rate,pstatus,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf,tag_ids,tag_names,ntype,children_cnt,ltime,is_key_path,pid_paths,lvl,is_tpl,phase_class,product_id,budget_at,calc_type,act_at;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
-@ApiModel(description="项目阶段模板")
-public class XmPhase implements java.io.Serializable {
+@ApiModel(description="项目、产品计划表（将计划并入任务表，暂时作废），合并进任务表了")
+public class XmPhase  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -24,13 +24,13 @@ public class XmPhase implements java.io.Serializable {
   	
 	
 	@ApiModelProperty(notes="阶段名称",allowEmptyValue=true,example="",allowableValues="")
-	String phaseName;
+	String name;
 	
 	@ApiModelProperty(notes="备注",allowEmptyValue=true,example="",allowableValues="")
 	String remark;
 	
 	@ApiModelProperty(notes="上级阶段编号",allowEmptyValue=true,example="",allowableValues="")
-	String parentPhaseId;
+	String parentId;
 	
 	@ApiModelProperty(notes="机构编号",allowEmptyValue=true,example="",allowableValues="")
 	String branchId;
@@ -45,25 +45,25 @@ public class XmPhase implements java.io.Serializable {
 	Date endDate;
 	
 	@ApiModelProperty(notes="工时(上到下控制大于儿子总数)-应该大于或等于task中总工时",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseBudgetHours;
+	BigDecimal budgetHours;
 	
 	@ApiModelProperty(notes="投入人员数(上到下控制大于儿子总数)-应该大于或等于task中总人数",allowEmptyValue=true,example="",allowableValues="")
-	Integer phaseBudgetStaffNu;
+	Integer budgetStaffNu;
 	
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
 	Date ctime;
 	
 	@ApiModelProperty(notes="非人力成本总预算(上到下控制大于儿子总数)-应该大于或等于task中非人力总成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseBudgetNouserAt;
+	BigDecimal budgetNouserAt;
 	
 	@ApiModelProperty(notes="内部人力成本总预算(上到下控制大于儿子总数)-应该大于或等于task中内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseBudgetInnerUserAt;
+	BigDecimal budgetIuserAt;
 	
 	@ApiModelProperty(notes="外购人力成本总预算(上到下控制大于儿子总数)-应该大于或等于task中外购总成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseBudgetOutUserAt;
+	BigDecimal budgetOuserAt;
 	
 	@ApiModelProperty(notes="项目级基线",allowEmptyValue=true,example="",allowableValues="")
-	String projectBaselineId;
+	String baselineId;
 	
 	@ApiModelProperty(notes="当前流程实例编号",allowEmptyValue=true,example="",allowableValues="")
 	String bizProcInstId;
@@ -72,16 +72,16 @@ public class XmPhase implements java.io.Serializable {
 	String bizFlowState;
 	
 	@ApiModelProperty(notes="总工作量单位人时上到下控制大于儿子总数-应该大于或者等于task中的预算总工作量",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseBudgetWorkload;
+	BigDecimal budgetWorkload;
 	
 	@ApiModelProperty(notes="已完成工作量单位人时-从task中的实际工作量算出",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseActWorkload;
+	BigDecimal actWorkload;
 	
 	@ApiModelProperty(notes="实际内部人力工作量-来自任务表合计",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseActInnerUserWorkload;
+	BigDecimal actIuserWorkload;
 	
 	@ApiModelProperty(notes="实际外购人力工作量-来自任务表合计",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseActOutUserWorkload;
+	BigDecimal actOuserWorkload;
 	
 	@ApiModelProperty(notes="0售前方案1投标2需求3设计4开发5测试6验收7部署8运维--来自基础数据表taskType",allowEmptyValue=true,example="",allowableValues="")
 	String taskType;
@@ -93,34 +93,34 @@ public class XmPhase implements java.io.Serializable {
 	String seqNo;
 	
 	@ApiModelProperty(notes="内部人力工作量总预算(上到下控制大于儿子总数)-应该大于或等于task中内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseBudgetInnerUserWorkload;
+	BigDecimal udgetIuserWorkload;
 	
 	@ApiModelProperty(notes="外购人力工作量总预算(上到下控制大于儿子总数)-应该大于或等于task中外购总成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseBudgetOutUserWorkload;
+	BigDecimal budgetOuserWorkload;
 	
 	@ApiModelProperty(notes="实际非人力成本-来自任务表合计",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal actNouserAt;
 	
 	@ApiModelProperty(notes="实际内部人力成本-来自任务表合计",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal actInnerUserAt;
+	BigDecimal actIuserAt;
 	
 	@ApiModelProperty(notes="内部人力成本单价元/人时",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseBudgetInnerUserPrice;
+	BigDecimal budgetIuserPrice;
 	
 	@ApiModelProperty(notes="外购人力成本单价元/人时",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseBudgetOutUserPrice;
+	BigDecimal budgetOuserPrice;
 	
 	@ApiModelProperty(notes="外购人数",allowEmptyValue=true,example="",allowableValues="")
-	Integer phaseBudgetOutUserCnt;
+	Integer budgetOuserCnt;
 	
 	@ApiModelProperty(notes="内部人数",allowEmptyValue=true,example="",allowableValues="")
-	Integer phaseBudgetInnerUserCnt;
+	Integer budgetIuserCnt;
 	
 	@ApiModelProperty(notes="实际进度0-100",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal actRate;
 	
 	@ApiModelProperty(notes="阶段状态0初始1执行中2完工3关闭4删除中5已删除6暂停",allowEmptyValue=true,example="",allowableValues="")
-	String phaseStatus;
+	String pstatus;
 	
 	@ApiModelProperty(notes="实际外部人力成本",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal actOutUserAt;
@@ -161,7 +161,7 @@ public class XmPhase implements java.io.Serializable {
 	@ApiModelProperty(notes="标签名称，逗号分割",allowEmptyValue=true,example="",allowableValues="")
 	String tagNames;
 	
-	@ApiModelProperty(notes="节点类型0-任务，1-计划项。计划项下建任务，任务下不允许建立任何子节点",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="节点类型0-任务，1-任务集。任务集下建任务，任务下不允许建立任何子节点",allowEmptyValue=true,example="",allowableValues="")
 	String ntype;
 	
 	@ApiModelProperty(notes="儿子节点个数",allowEmptyValue=true,example="",allowableValues="")
@@ -189,17 +189,20 @@ public class XmPhase implements java.io.Serializable {
 	String productId;
 	
 	@ApiModelProperty(notes="预算金额",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal phaseBudgetAt;
+	BigDecimal budgetAt;
 	
 	@ApiModelProperty(notes="叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报",allowEmptyValue=true,example="",allowableValues="")
 	String calcType;
+	
+	@ApiModelProperty(notes="实际金额，如手工填写，则为填写金额，否则为汇总金额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal actAt;
 
 	/**阶段主键**/
 	public XmPhase(String id) {
 		this.id = id;
 	}
     
-    /**项目阶段模板**/
+    /**项目、产品计划表（将计划并入任务表，暂时作废），合并进任务表了**/
 	public XmPhase() {
 	}
 	
@@ -212,8 +215,8 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 阶段名称
 	 **/
-	public void setPhaseName(String phaseName) {
-		this.phaseName = phaseName;
+	public void setName(String name) {
+		this.name = name;
 	}
 	/**
 	 * 备注
@@ -224,8 +227,8 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 上级阶段编号
 	 **/
-	public void setParentPhaseId(String parentPhaseId) {
-		this.parentPhaseId = parentPhaseId;
+	public void setParentId(String parentId) {
+		this.parentId = parentId;
 	}
 	/**
 	 * 机构编号
@@ -254,14 +257,14 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 工时(上到下控制大于儿子总数)-应该大于或等于task中总工时
 	 **/
-	public void setPhaseBudgetHours(BigDecimal phaseBudgetHours) {
-		this.phaseBudgetHours = phaseBudgetHours;
+	public void setBudgetHours(BigDecimal budgetHours) {
+		this.budgetHours = budgetHours;
 	}
 	/**
 	 * 投入人员数(上到下控制大于儿子总数)-应该大于或等于task中总人数
 	 **/
-	public void setPhaseBudgetStaffNu(Integer phaseBudgetStaffNu) {
-		this.phaseBudgetStaffNu = phaseBudgetStaffNu;
+	public void setBudgetStaffNu(Integer budgetStaffNu) {
+		this.budgetStaffNu = budgetStaffNu;
 	}
 	/**
 	 * 创建时间
@@ -272,26 +275,26 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 非人力成本总预算(上到下控制大于儿子总数)-应该大于或等于task中非人力总成本
 	 **/
-	public void setPhaseBudgetNouserAt(BigDecimal phaseBudgetNouserAt) {
-		this.phaseBudgetNouserAt = phaseBudgetNouserAt;
+	public void setBudgetNouserAt(BigDecimal budgetNouserAt) {
+		this.budgetNouserAt = budgetNouserAt;
 	}
 	/**
 	 * 内部人力成本总预算(上到下控制大于儿子总数)-应该大于或等于task中内部人力总成本
 	 **/
-	public void setPhaseBudgetInnerUserAt(BigDecimal phaseBudgetInnerUserAt) {
-		this.phaseBudgetInnerUserAt = phaseBudgetInnerUserAt;
+	public void setBudgetIuserAt(BigDecimal budgetIuserAt) {
+		this.budgetIuserAt = budgetIuserAt;
 	}
 	/**
 	 * 外购人力成本总预算(上到下控制大于儿子总数)-应该大于或等于task中外购总成本
 	 **/
-	public void setPhaseBudgetOutUserAt(BigDecimal phaseBudgetOutUserAt) {
-		this.phaseBudgetOutUserAt = phaseBudgetOutUserAt;
+	public void setBudgetOuserAt(BigDecimal budgetOuserAt) {
+		this.budgetOuserAt = budgetOuserAt;
 	}
 	/**
 	 * 项目级基线
 	 **/
-	public void setProjectBaselineId(String projectBaselineId) {
-		this.projectBaselineId = projectBaselineId;
+	public void setBaselineId(String baselineId) {
+		this.baselineId = baselineId;
 	}
 	/**
 	 * 当前流程实例编号
@@ -308,26 +311,26 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 总工作量单位人时上到下控制大于儿子总数-应该大于或者等于task中的预算总工作量
 	 **/
-	public void setPhaseBudgetWorkload(BigDecimal phaseBudgetWorkload) {
-		this.phaseBudgetWorkload = phaseBudgetWorkload;
+	public void setBudgetWorkload(BigDecimal budgetWorkload) {
+		this.budgetWorkload = budgetWorkload;
 	}
 	/**
 	 * 已完成工作量单位人时-从task中的实际工作量算出
 	 **/
-	public void setPhaseActWorkload(BigDecimal phaseActWorkload) {
-		this.phaseActWorkload = phaseActWorkload;
+	public void setActWorkload(BigDecimal actWorkload) {
+		this.actWorkload = actWorkload;
 	}
 	/**
 	 * 实际内部人力工作量-来自任务表合计
 	 **/
-	public void setPhaseActInnerUserWorkload(BigDecimal phaseActInnerUserWorkload) {
-		this.phaseActInnerUserWorkload = phaseActInnerUserWorkload;
+	public void setActIuserWorkload(BigDecimal actIuserWorkload) {
+		this.actIuserWorkload = actIuserWorkload;
 	}
 	/**
 	 * 实际外购人力工作量-来自任务表合计
 	 **/
-	public void setPhaseActOutUserWorkload(BigDecimal phaseActOutUserWorkload) {
-		this.phaseActOutUserWorkload = phaseActOutUserWorkload;
+	public void setActOuserWorkload(BigDecimal actOuserWorkload) {
+		this.actOuserWorkload = actOuserWorkload;
 	}
 	/**
 	 * 0售前方案1投标2需求3设计4开发5测试6验收7部署8运维--来自基础数据表taskType
@@ -350,14 +353,14 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 内部人力工作量总预算(上到下控制大于儿子总数)-应该大于或等于task中内部人力总成本
 	 **/
-	public void setPhaseBudgetInnerUserWorkload(BigDecimal phaseBudgetInnerUserWorkload) {
-		this.phaseBudgetInnerUserWorkload = phaseBudgetInnerUserWorkload;
+	public void setUdgetIuserWorkload(BigDecimal udgetIuserWorkload) {
+		this.udgetIuserWorkload = udgetIuserWorkload;
 	}
 	/**
 	 * 外购人力工作量总预算(上到下控制大于儿子总数)-应该大于或等于task中外购总成本
 	 **/
-	public void setPhaseBudgetOutUserWorkload(BigDecimal phaseBudgetOutUserWorkload) {
-		this.phaseBudgetOutUserWorkload = phaseBudgetOutUserWorkload;
+	public void setBudgetOuserWorkload(BigDecimal budgetOuserWorkload) {
+		this.budgetOuserWorkload = budgetOuserWorkload;
 	}
 	/**
 	 * 实际非人力成本-来自任务表合计
@@ -368,32 +371,32 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 实际内部人力成本-来自任务表合计
 	 **/
-	public void setActInnerUserAt(BigDecimal actInnerUserAt) {
-		this.actInnerUserAt = actInnerUserAt;
+	public void setActIuserAt(BigDecimal actIuserAt) {
+		this.actIuserAt = actIuserAt;
 	}
 	/**
 	 * 内部人力成本单价元/人时
 	 **/
-	public void setPhaseBudgetInnerUserPrice(BigDecimal phaseBudgetInnerUserPrice) {
-		this.phaseBudgetInnerUserPrice = phaseBudgetInnerUserPrice;
+	public void setBudgetIuserPrice(BigDecimal budgetIuserPrice) {
+		this.budgetIuserPrice = budgetIuserPrice;
 	}
 	/**
 	 * 外购人力成本单价元/人时
 	 **/
-	public void setPhaseBudgetOutUserPrice(BigDecimal phaseBudgetOutUserPrice) {
-		this.phaseBudgetOutUserPrice = phaseBudgetOutUserPrice;
+	public void setBudgetOuserPrice(BigDecimal budgetOuserPrice) {
+		this.budgetOuserPrice = budgetOuserPrice;
 	}
 	/**
 	 * 外购人数
 	 **/
-	public void setPhaseBudgetOutUserCnt(Integer phaseBudgetOutUserCnt) {
-		this.phaseBudgetOutUserCnt = phaseBudgetOutUserCnt;
+	public void setBudgetOuserCnt(Integer budgetOuserCnt) {
+		this.budgetOuserCnt = budgetOuserCnt;
 	}
 	/**
 	 * 内部人数
 	 **/
-	public void setPhaseBudgetInnerUserCnt(Integer phaseBudgetInnerUserCnt) {
-		this.phaseBudgetInnerUserCnt = phaseBudgetInnerUserCnt;
+	public void setBudgetIuserCnt(Integer budgetIuserCnt) {
+		this.budgetIuserCnt = budgetIuserCnt;
 	}
 	/**
 	 * 实际进度0-100
@@ -404,8 +407,8 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 阶段状态0初始1执行中2完工3关闭4删除中5已删除6暂停
 	 **/
-	public void setPhaseStatus(String phaseStatus) {
-		this.phaseStatus = phaseStatus;
+	public void setPstatus(String pstatus) {
+		this.pstatus = pstatus;
 	}
 	/**
 	 * 实际外部人力成本
@@ -486,7 +489,7 @@ public class XmPhase implements java.io.Serializable {
 		this.tagNames = tagNames;
 	}
 	/**
-	 * 节点类型0-任务，1-计划项。计划项下建任务，任务下不允许建立任何子节点
+	 * 节点类型0-任务，1-任务集。任务集下建任务，任务下不允许建立任何子节点
 	 **/
 	public void setNtype(String ntype) {
 		this.ntype = ntype;
@@ -542,14 +545,20 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 预算金额
 	 **/
-	public void setPhaseBudgetAt(BigDecimal phaseBudgetAt) {
-		this.phaseBudgetAt = phaseBudgetAt;
+	public void setBudgetAt(BigDecimal budgetAt) {
+		this.budgetAt = budgetAt;
 	}
 	/**
 	 * 叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报
 	 **/
 	public void setCalcType(String calcType) {
 		this.calcType = calcType;
+	}
+	/**
+	 * 实际金额，如手工填写，则为填写金额，否则为汇总金额
+	 **/
+	public void setActAt(BigDecimal actAt) {
+		this.actAt = actAt;
 	}
 	
 	/**
@@ -561,8 +570,8 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 阶段名称
 	 **/
-	public String getPhaseName() {
-		return this.phaseName;
+	public String getName() {
+		return this.name;
 	}
 	/**
 	 * 备注
@@ -573,8 +582,8 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 上级阶段编号
 	 **/
-	public String getParentPhaseId() {
-		return this.parentPhaseId;
+	public String getParentId() {
+		return this.parentId;
 	}
 	/**
 	 * 机构编号
@@ -603,14 +612,14 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 工时(上到下控制大于儿子总数)-应该大于或等于task中总工时
 	 **/
-	public BigDecimal getPhaseBudgetHours() {
-		return this.phaseBudgetHours;
+	public BigDecimal getBudgetHours() {
+		return this.budgetHours;
 	}
 	/**
 	 * 投入人员数(上到下控制大于儿子总数)-应该大于或等于task中总人数
 	 **/
-	public Integer getPhaseBudgetStaffNu() {
-		return this.phaseBudgetStaffNu;
+	public Integer getBudgetStaffNu() {
+		return this.budgetStaffNu;
 	}
 	/**
 	 * 创建时间
@@ -621,26 +630,26 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 非人力成本总预算(上到下控制大于儿子总数)-应该大于或等于task中非人力总成本
 	 **/
-	public BigDecimal getPhaseBudgetNouserAt() {
-		return this.phaseBudgetNouserAt;
+	public BigDecimal getBudgetNouserAt() {
+		return this.budgetNouserAt;
 	}
 	/**
 	 * 内部人力成本总预算(上到下控制大于儿子总数)-应该大于或等于task中内部人力总成本
 	 **/
-	public BigDecimal getPhaseBudgetInnerUserAt() {
-		return this.phaseBudgetInnerUserAt;
+	public BigDecimal getBudgetIuserAt() {
+		return this.budgetIuserAt;
 	}
 	/**
 	 * 外购人力成本总预算(上到下控制大于儿子总数)-应该大于或等于task中外购总成本
 	 **/
-	public BigDecimal getPhaseBudgetOutUserAt() {
-		return this.phaseBudgetOutUserAt;
+	public BigDecimal getBudgetOuserAt() {
+		return this.budgetOuserAt;
 	}
 	/**
 	 * 项目级基线
 	 **/
-	public String getProjectBaselineId() {
-		return this.projectBaselineId;
+	public String getBaselineId() {
+		return this.baselineId;
 	}
 	/**
 	 * 当前流程实例编号
@@ -657,26 +666,26 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 总工作量单位人时上到下控制大于儿子总数-应该大于或者等于task中的预算总工作量
 	 **/
-	public BigDecimal getPhaseBudgetWorkload() {
-		return this.phaseBudgetWorkload;
+	public BigDecimal getBudgetWorkload() {
+		return this.budgetWorkload;
 	}
 	/**
 	 * 已完成工作量单位人时-从task中的实际工作量算出
 	 **/
-	public BigDecimal getPhaseActWorkload() {
-		return this.phaseActWorkload;
+	public BigDecimal getActWorkload() {
+		return this.actWorkload;
 	}
 	/**
 	 * 实际内部人力工作量-来自任务表合计
 	 **/
-	public BigDecimal getPhaseActInnerUserWorkload() {
-		return this.phaseActInnerUserWorkload;
+	public BigDecimal getActIuserWorkload() {
+		return this.actIuserWorkload;
 	}
 	/**
 	 * 实际外购人力工作量-来自任务表合计
 	 **/
-	public BigDecimal getPhaseActOutUserWorkload() {
-		return this.phaseActOutUserWorkload;
+	public BigDecimal getActOuserWorkload() {
+		return this.actOuserWorkload;
 	}
 	/**
 	 * 0售前方案1投标2需求3设计4开发5测试6验收7部署8运维--来自基础数据表taskType
@@ -699,14 +708,14 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 内部人力工作量总预算(上到下控制大于儿子总数)-应该大于或等于task中内部人力总成本
 	 **/
-	public BigDecimal getPhaseBudgetInnerUserWorkload() {
-		return this.phaseBudgetInnerUserWorkload;
+	public BigDecimal getUdgetIuserWorkload() {
+		return this.udgetIuserWorkload;
 	}
 	/**
 	 * 外购人力工作量总预算(上到下控制大于儿子总数)-应该大于或等于task中外购总成本
 	 **/
-	public BigDecimal getPhaseBudgetOutUserWorkload() {
-		return this.phaseBudgetOutUserWorkload;
+	public BigDecimal getBudgetOuserWorkload() {
+		return this.budgetOuserWorkload;
 	}
 	/**
 	 * 实际非人力成本-来自任务表合计
@@ -717,32 +726,32 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 实际内部人力成本-来自任务表合计
 	 **/
-	public BigDecimal getActInnerUserAt() {
-		return this.actInnerUserAt;
+	public BigDecimal getActIuserAt() {
+		return this.actIuserAt;
 	}
 	/**
 	 * 内部人力成本单价元/人时
 	 **/
-	public BigDecimal getPhaseBudgetInnerUserPrice() {
-		return this.phaseBudgetInnerUserPrice;
+	public BigDecimal getBudgetIuserPrice() {
+		return this.budgetIuserPrice;
 	}
 	/**
 	 * 外购人力成本单价元/人时
 	 **/
-	public BigDecimal getPhaseBudgetOutUserPrice() {
-		return this.phaseBudgetOutUserPrice;
+	public BigDecimal getBudgetOuserPrice() {
+		return this.budgetOuserPrice;
 	}
 	/**
 	 * 外购人数
 	 **/
-	public Integer getPhaseBudgetOutUserCnt() {
-		return this.phaseBudgetOutUserCnt;
+	public Integer getBudgetOuserCnt() {
+		return this.budgetOuserCnt;
 	}
 	/**
 	 * 内部人数
 	 **/
-	public Integer getPhaseBudgetInnerUserCnt() {
-		return this.phaseBudgetInnerUserCnt;
+	public Integer getBudgetIuserCnt() {
+		return this.budgetIuserCnt;
 	}
 	/**
 	 * 实际进度0-100
@@ -753,8 +762,8 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 阶段状态0初始1执行中2完工3关闭4删除中5已删除6暂停
 	 **/
-	public String getPhaseStatus() {
-		return this.phaseStatus;
+	public String getPstatus() {
+		return this.pstatus;
 	}
 	/**
 	 * 实际外部人力成本
@@ -835,7 +844,7 @@ public class XmPhase implements java.io.Serializable {
 		return this.tagNames;
 	}
 	/**
-	 * 节点类型0-任务，1-计划项。计划项下建任务，任务下不允许建立任何子节点
+	 * 节点类型0-任务，1-任务集。任务集下建任务，任务下不允许建立任何子节点
 	 **/
 	public String getNtype() {
 		return this.ntype;
@@ -891,14 +900,20 @@ public class XmPhase implements java.io.Serializable {
 	/**
 	 * 预算金额
 	 **/
-	public BigDecimal getPhaseBudgetAt() {
-		return this.phaseBudgetAt;
+	public BigDecimal getBudgetAt() {
+		return this.budgetAt;
 	}
 	/**
 	 * 叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报
 	 **/
 	public String getCalcType() {
 		return this.calcType;
+	}
+	/**
+	 * 实际金额，如手工填写，则为填写金额，否则为汇总金额
+	 **/
+	public BigDecimal getActAt() {
+		return this.actAt;
 	}
 
 }
