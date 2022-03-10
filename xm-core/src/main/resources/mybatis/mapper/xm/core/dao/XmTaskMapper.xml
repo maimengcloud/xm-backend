@@ -343,7 +343,13 @@
 		where 
 			res.id = #{id}
 	</select>
-
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmTask">
+        select * from xm_task res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_task res
@@ -362,7 +368,7 @@
 		insert into xm_task(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{projectName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{productName},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype}
+		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{productName},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype}
 		)
 	</insert>
 	
@@ -425,7 +431,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype
+		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -463,8 +469,8 @@
 		<if test="actEndTime != null">      and date_format(res.act_end_time,'%Y-%m-%d') = date_format(#{actEndTime},'%Y-%m-%d')     </if>
 		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
 		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
-		<if test="projectPhaseId != null and projectPhaseId != ''">      and res.project_phase_id = #{projectPhaseId}     </if>
-		<if test="projectName != null and projectName != ''">      and res.project_phase_name = #{projectName}     </if>
+		<if test="phaseId != null and phaseId != ''">      and res.phase_id = #{phaseId}     </if>
+		<if test="phaseName != null and phaseName != ''">      and res.phase_name = #{phaseName}     </if>
 		<if test="taskSkillNames != null and taskSkillNames != ''">      and res.task_skill_names = #{taskSkillNames}     </if>
 		<if test="exeUsernames != null and exeUsernames != ''">      and res.exe_usernames = #{exeUsernames}     </if>
 		<if test="taskSkillIds != null and taskSkillIds != ''">      and res.task_skill_ids = #{taskSkillIds}     </if>
@@ -526,8 +532,8 @@
 		act_end_time = #{actEndTime},
 		biz_proc_inst_id = #{bizProcInstId},
 		biz_flow_state = #{bizFlowState},
-		project_phase_id = #{projectPhaseId},
-		project_phase_name = #{projectName},
+		phase_id = #{phaseId},
+		phase_name = #{phaseName},
 		task_skill_names = #{taskSkillNames},
 		exe_usernames = #{exeUsernames},
 		task_skill_ids = #{taskSkillIds},
@@ -588,8 +594,8 @@
 		<if test="actEndTime != null"> act_end_time = #{actEndTime},     </if>
 		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
 		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
-		<if test="projectPhaseId != null and projectPhaseId != ''"> project_phase_id = #{projectPhaseId},     </if>
-		<if test="projectName != null and projectName != ''"> project_phase_name = #{projectName},     </if>
+		<if test="phaseId != null and phaseId != ''"> phase_id = #{phaseId},     </if>
+		<if test="phaseName != null and phaseName != ''"> phase_name = #{phaseName},     </if>
 		<if test="taskSkillNames != null and taskSkillNames != ''"> task_skill_names = #{taskSkillNames},     </if>
 		<if test="exeUsernames != null and exeUsernames != ''"> exe_usernames = #{exeUsernames},     </if>
 		<if test="taskSkillIds != null and taskSkillIds != ''"> task_skill_ids = #{taskSkillIds},     </if>
@@ -651,8 +657,8 @@
 			act_end_time = #{item.actEndTime},
 			biz_proc_inst_id = #{item.bizProcInstId},
 			biz_flow_state = #{item.bizFlowState},
-			project_phase_id = #{item.projectPhaseId},
-			project_phase_name = #{item.projectName},
+			phase_id = #{item.phaseId},
+			phase_name = #{item.phaseName},
 			task_skill_names = #{item.taskSkillNames},
 			exe_usernames = #{item.exeUsernames},
 			task_skill_ids = #{item.taskSkillIds},

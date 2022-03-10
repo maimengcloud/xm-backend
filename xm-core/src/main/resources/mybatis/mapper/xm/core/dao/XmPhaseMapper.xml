@@ -272,7 +272,13 @@
 		where 
 			res.id = #{id}
 	</select>
-
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmPhase">
+        select * from xm_phase res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_phase res
@@ -291,7 +297,7 @@
 		insert into xm_phase(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{remark},#{parentId},#{branchId},#{projectId},#{beginDate},#{endDate},#{budgetHours},#{budgetStaffNu},#{ctime},#{budgetNouserAt},#{budgetIuserAt},#{budgetOuserAt},#{baselineId},#{bizProcInstId},#{bizFlowState},#{budgetWorkload},#{actWorkload},#{actIuserWorkload},#{actOuserWorkload},#{taskType},#{planType},#{seqNo},#{udgetIuserWorkload},#{budgetOuserWorkload},#{actNouserAt},#{actIuserAt},#{budgetIuserPrice},#{budgetOuserPrice},#{budgetOuserCnt},#{budgetIuserCnt},#{actRate},#{pstatus},#{actOutUserAt},#{taskCnt},#{finishTaskCnt},#{iterationCnt},#{calcTime},#{taskBudgetWorkload},#{taskBudgetAt},#{mngUserid},#{mngUsername},#{milestone},#{pleaf},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{isKeyPath},#{pidPaths},#{lvl},#{isTpl},#{phaseClass},#{productId},#{budgetAt},#{calcType},#{actAt}
+		#{id},#{name},#{remark},#{parentId},#{branchId},#{projectId},#{beginDate},#{endDate},#{budgetHours},#{budgetStaffNu},#{ctime},#{budgetNouserAt},#{budgetIuserAt},#{budgetOuserAt},#{baselineId},#{bizProcInstId},#{bizFlowState},#{budgetWorkload},#{actWorkload},#{actIuserWorkload},#{actOuserWorkload},#{taskType},#{planType},#{seqNo},#{budgetIuserWorkload},#{budgetOuserWorkload},#{actNouserAt},#{actIuserAt},#{budgetIuserPrice},#{budgetOuserPrice},#{budgetOuserCnt},#{budgetIuserCnt},#{actRate},#{pstatus},#{actOutUserAt},#{taskCnt},#{finishTaskCnt},#{iterationCnt},#{calcTime},#{taskBudgetWorkload},#{taskBudgetAt},#{mngUserid},#{mngUsername},#{milestone},#{pleaf},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{isKeyPath},#{pidPaths},#{lvl},#{isTpl},#{phaseClass},#{productId},#{budgetAt},#{calcType},#{actAt}
 		)
 	</insert>
 	
@@ -354,7 +360,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,remark,parent_id,branch_id,project_id,begin_date,end_date,budget_hours,budget_staff_nu,ctime,budget_nouser_at,budget_iuser_at,budget_ouser_at,baseline_id,biz_proc_inst_id,biz_flow_state,budget_workload,act_workload,act_iuser_workload,act_ouser_workload,task_type,plan_type,seq_no,udget_iuser_workload,budget_ouser_workload,act_nouser_at,act_iuser_at,budget_iuser_price,budget_ouser_price,budget_ouser_cnt,budget_iuser_cnt,act_rate,pstatus,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf,tag_ids,tag_names,ntype,children_cnt,ltime,is_key_path,pid_paths,lvl,is_tpl,phase_class,product_id,budget_at,calc_type,act_at
+		id,name,remark,parent_id,branch_id,project_id,begin_date,end_date,budget_hours,budget_staff_nu,ctime,budget_nouser_at,budget_iuser_at,budget_ouser_at,baseline_id,biz_proc_inst_id,biz_flow_state,budget_workload,act_workload,act_iuser_workload,act_ouser_workload,task_type,plan_type,seq_no,budget_iuser_workload,budget_ouser_workload,act_nouser_at,act_iuser_at,budget_iuser_price,budget_ouser_price,budget_ouser_cnt,budget_iuser_cnt,act_rate,pstatus,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf,tag_ids,tag_names,ntype,children_cnt,ltime,is_key_path,pid_paths,lvl,is_tpl,phase_class,product_id,budget_at,calc_type,act_at
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -383,7 +389,7 @@
 		<if test="taskType != null and taskType != ''">      and res.task_type = #{taskType}     </if>
 		<if test="planType != null and planType != ''">      and res.plan_type = #{planType}     </if>
 		<if test="seqNo != null and seqNo != ''">      and res.seq_no = #{seqNo}     </if>
-		<if test="udgetIuserWorkload != null and udgetIuserWorkload != ''">      and res.udget_iuser_workload = #{udgetIuserWorkload}     </if>
+		<if test="budgetIuserWorkload != null and budgetIuserWorkload != ''">      and res.budget_iuser_workload = #{budgetIuserWorkload}     </if>
 		<if test="budgetOuserWorkload != null and budgetOuserWorkload != ''">      and res.budget_ouser_workload = #{budgetOuserWorkload}     </if>
 		<if test="actNouserAt != null and actNouserAt != ''">      and res.act_nouser_at = #{actNouserAt}     </if>
 		<if test="actIuserAt != null and actIuserAt != ''">      and res.act_iuser_at = #{actIuserAt}     </if>
@@ -444,7 +450,7 @@
 		task_type = #{taskType},
 		plan_type = #{planType},
 		seq_no = #{seqNo},
-		udget_iuser_workload = #{udgetIuserWorkload},
+		budget_iuser_workload = #{budgetIuserWorkload},
 		budget_ouser_workload = #{budgetOuserWorkload},
 		act_nouser_at = #{actNouserAt},
 		act_iuser_at = #{actIuserAt},
@@ -504,7 +510,7 @@
 		<if test="taskType != null and taskType != ''"> task_type = #{taskType},     </if>
 		<if test="planType != null and planType != ''"> plan_type = #{planType},     </if>
 		<if test="seqNo != null and seqNo != ''"> seq_no = #{seqNo},     </if>
-		<if test="udgetIuserWorkload != null and udgetIuserWorkload != ''"> udget_iuser_workload = #{udgetIuserWorkload},     </if>
+		<if test="budgetIuserWorkload != null and budgetIuserWorkload != ''"> budget_iuser_workload = #{budgetIuserWorkload},     </if>
 		<if test="budgetOuserWorkload != null and budgetOuserWorkload != ''"> budget_ouser_workload = #{budgetOuserWorkload},     </if>
 		<if test="actNouserAt != null and actNouserAt != ''"> act_nouser_at = #{actNouserAt},     </if>
 		<if test="actIuserAt != null and actIuserAt != ''"> act_iuser_at = #{actIuserAt},     </if>
@@ -565,7 +571,7 @@
 			task_type = #{item.taskType},
 			plan_type = #{item.planType},
 			seq_no = #{item.seqNo},
-			udget_iuser_workload = #{item.udgetIuserWorkload},
+			budget_iuser_workload = #{item.budgetIuserWorkload},
 			budget_ouser_workload = #{item.budgetOuserWorkload},
 			act_nouser_at = #{item.actNouserAt},
 			act_iuser_at = #{item.actIuserAt},
