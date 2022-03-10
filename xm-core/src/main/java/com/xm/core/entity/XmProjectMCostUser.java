@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 
  * 实体 XmProjectMCostUser所有属性名: <br>
- *	subjectId,projectId,userid,createTime,sendCostTime,username,projectName,remark,id,taskId,taskName,actWorkload,bizzStartDate,bizzEndDate,bizProcInstId,bizFlowState,projectPhaseId,actCostAmount,costType,bizMonth,bizDate,subjectName,projectPhaseName,execuserProcInstId,execuserStatus,payStatus,payOpUserid,payOpUsername;<br>
+ *	subjectId,projectId,userid,createTime,sendCostTime,username,projectName,remark,id,taskId,taskName,actWorkload,bizzStartDate,bizzEndDate,bizProcInstId,bizFlowState,projectPhaseId,actCostAmount,costType,bizMonth,bizDate,subjectName,projectName,execuserProcInstId,execuserStatus,payStatus,payOpUserid,payOpUsername;<br>
  * 表 XM.xm_project_m_cost_user 项目实际人工成本费用的所有字段名: <br>
  *	subject_id,project_id,userid,create_time,send_cost_time,username,project_name,remark,id,task_id,task_name,act_workload,bizz_start_date,bizz_end_date,biz_proc_inst_id,biz_flow_state,project_phase_id,act_cost_amount,cost_type,biz_month,biz_date,subject_name,project_phase_name,execuser_proc_inst_id,execuser_status,pay_status,pay_op_userid,pay_op_username;<br>
  * 当前主键(包括多主键):<br>
@@ -88,7 +88,7 @@ public class XmProjectMCostUser  implements java.io.Serializable {
 	String subjectName;
 	
 	@ApiModelProperty(notes="计划名称",allowEmptyValue=true,example="",allowableValues="")
-	String projectPhaseName;
+	String projectName;
 	
 	@ApiModelProperty(notes="执行人申请结算时的流程编号",allowEmptyValue=true,example="",allowableValues="")
 	String execuserProcInstId;
@@ -249,8 +249,8 @@ public class XmProjectMCostUser  implements java.io.Serializable {
 	/**
 	 * 计划名称
 	 **/
-	public void setProjectPhaseName(String projectPhaseName) {
-		this.projectPhaseName = projectPhaseName;
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
 	/**
 	 * 执行人申请结算时的流程编号
@@ -418,8 +418,8 @@ public class XmProjectMCostUser  implements java.io.Serializable {
 	/**
 	 * 计划名称
 	 **/
-	public String getProjectPhaseName() {
-		return this.projectPhaseName;
+	public String getProjectName() {
+		return this.projectName;
 	}
 	/**
 	 * 执行人申请结算时的流程编号

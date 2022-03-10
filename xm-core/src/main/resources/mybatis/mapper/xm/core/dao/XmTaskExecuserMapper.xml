@@ -172,7 +172,7 @@
 		insert into xm_task_execuser(
 			<include refid="columns"/>
 		) values (
-		#{createTime},#{id},#{taskId},#{userid},#{startTime},#{endTime},#{status},#{remarks},#{settleAmount},#{settleWorkload},#{settleStatus},#{settleTime},#{createUserid},#{createUsername},#{username},#{matchScore},#{quoteWeekday},#{quoteAmount},#{quoteTime},#{bizProcInstId},#{bizFlowState},#{projectId},#{projectPhaseId},#{skillRemark},#{quoteWorkload},#{quoteStartTime},#{quoteEndTime},#{branchId},#{projectPhaseName},#{taskName},#{isLeader},#{distUserid},#{distUsername}
+		#{createTime},#{id},#{taskId},#{userid},#{startTime},#{endTime},#{status},#{remarks},#{settleAmount},#{settleWorkload},#{settleStatus},#{settleTime},#{createUserid},#{createUsername},#{username},#{matchScore},#{quoteWeekday},#{quoteAmount},#{quoteTime},#{bizProcInstId},#{bizFlowState},#{projectId},#{projectPhaseId},#{skillRemark},#{quoteWorkload},#{quoteStartTime},#{quoteEndTime},#{branchId},#{projectName},#{taskName},#{isLeader},#{distUserid},#{distUsername}
 		)
 	</insert>
 	
@@ -270,7 +270,7 @@
 		<if test="quoteStartTime != null">      and date_format(res.quote_start_time,'%Y-%m-%d') = date_format(#{quoteStartTime},'%Y-%m-%d')     </if>
 		<if test="quoteEndTime != null">      and date_format(res.quote_end_time,'%Y-%m-%d') = date_format(#{quoteEndTime},'%Y-%m-%d')     </if>
 		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
-		<if test="projectPhaseName != null and projectPhaseName != ''">      and res.project_phase_name = #{projectPhaseName}     </if>
+		<if test="projectName != null and projectName != ''">      and res.project_phase_name = #{projectName}     </if>
 		<if test="taskName != null and taskName != ''">      and res.task_name = #{taskName}     </if>
 		<if test="isLeader != null and isLeader != ''">      and res.is_leader = #{isLeader}     </if>
 		<if test="distUserid != null and distUserid != ''">      and res.dist_userid = #{distUserid}     </if>
@@ -305,7 +305,7 @@
 		quote_start_time = #{quoteStartTime},
 		quote_end_time = #{quoteEndTime},
 		branch_id = #{branchId},
-		project_phase_name = #{projectPhaseName},
+		project_phase_name = #{projectName},
 		task_name = #{taskName},
 		is_leader = #{isLeader},
 		dist_userid = #{distUserid},
@@ -339,7 +339,7 @@
 		<if test="quoteStartTime != null"> quote_start_time = #{quoteStartTime},     </if>
 		<if test="quoteEndTime != null"> quote_end_time = #{quoteEndTime},     </if>
 		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
-		<if test="projectPhaseName != null and projectPhaseName != ''"> project_phase_name = #{projectPhaseName},     </if>
+		<if test="projectName != null and projectName != ''"> project_phase_name = #{projectName},     </if>
 		<if test="taskName != null and taskName != ''"> task_name = #{taskName},     </if>
 		<if test="isLeader != null and isLeader != ''"> is_leader = #{isLeader},     </if>
 		<if test="distUserid != null and distUserid != ''"> dist_userid = #{distUserid},     </if>
@@ -374,7 +374,7 @@
 			quote_start_time = #{item.quoteStartTime},
 			quote_end_time = #{item.quoteEndTime},
 			branch_id = #{item.branchId},
-			project_phase_name = #{item.projectPhaseName},
+			project_phase_name = #{item.projectName},
 			task_name = #{item.taskName},
 			is_leader = #{item.isLeader},
 			dist_userid = #{item.distUserid},

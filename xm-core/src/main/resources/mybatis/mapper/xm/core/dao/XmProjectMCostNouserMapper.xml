@@ -142,7 +142,7 @@
 		insert into xm_project_m_cost_nouser(
 			<include refid="columns"/>
 		) values (
-		#{projectId},#{userid},#{createTime},#{sendCostTime},#{username},#{projectName},#{remark},#{id},#{taskId},#{taskName},#{subjectId},#{bizzStartDate},#{bizzEndDate},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{actCostAmount},#{costType},#{bizMonth},#{bizDate},#{subjectName},#{projectPhaseName}
+		#{projectId},#{userid},#{createTime},#{sendCostTime},#{username},#{projectName},#{remark},#{id},#{taskId},#{taskName},#{subjectId},#{bizzStartDate},#{bizzEndDate},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{actCostAmount},#{costType},#{bizMonth},#{bizDate},#{subjectName},#{projectName}
 		)
 	</insert>
 	
@@ -230,7 +230,7 @@
 		<if test="bizMonth != null and bizMonth != ''">      and res.biz_month = #{bizMonth}     </if>
 		<if test="bizDate != null and bizDate != ''">      and res.biz_date = #{bizDate}     </if>
 		<if test="subjectName != null and subjectName != ''">      and res.subject_name = #{subjectName}     </if>
-		<if test="projectPhaseName != null and projectPhaseName != ''">      and res.project_phase_name = #{projectPhaseName}     </if>
+		<if test="projectName != null and projectName != ''">      and res.project_phase_name = #{projectName}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -254,7 +254,7 @@
 		biz_month = #{bizMonth},
 		biz_date = #{bizDate},
 		subject_name = #{subjectName},
-		project_phase_name = #{projectPhaseName}
+		project_phase_name = #{projectName}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
@@ -277,7 +277,7 @@
 		<if test="bizMonth != null and bizMonth != ''"> biz_month = #{bizMonth},     </if>
 		<if test="bizDate != null and bizDate != ''"> biz_date = #{bizDate},     </if>
 		<if test="subjectName != null and subjectName != ''"> subject_name = #{subjectName},     </if>
-		<if test="projectPhaseName != null and projectPhaseName != ''"> project_phase_name = #{projectPhaseName},     </if>
+		<if test="projectName != null and projectName != ''"> project_phase_name = #{projectName},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -301,6 +301,6 @@
 			biz_month = #{item.bizMonth},
 			biz_date = #{item.bizDate},
 			subject_name = #{item.subjectName},
-			project_phase_name = #{item.projectPhaseName}
+			project_phase_name = #{item.projectName}
 	</sql>
 </mapper>

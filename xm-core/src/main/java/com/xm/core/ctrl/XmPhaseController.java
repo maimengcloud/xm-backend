@@ -249,25 +249,25 @@ public class XmPhaseController {
 			xmPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhase);
 			if(xmProjectPhase.getLvl()==1){
 				if("1".equals(xmProduct.getBudgetCtrl())){
-					tips= xmPhaseService.judgetProductBudget(xmProduct.getId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
+					tips= xmPhaseService.judgetProductBudget(xmProduct.getId(),xmProjectPhase.getBudgetAt(),null,null,null,excludePhaseIds);
 				}
 			}else {
 				if("1".equals(xmProduct.getPhaseBudgetCtrl())) {
-					tips = xmPhaseService.judgetPhaseBudget(xmProjectPhase.getParentPhaseId(), xmProjectPhase.getPhaseBudgetAt(), null, null, null, excludePhaseIds);
+					tips = xmPhaseService.judgetPhaseBudget(xmProjectPhase.getParentId(), xmProjectPhase.getBudgetAt(), null, null, null, excludePhaseIds);
 				}
 			}
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
-			XmPhase parentDb= xmPhaseService.selectOneObject(new XmPhase(xmProjectPhase.getParentPhaseId()));
+			XmPhase parentDb= xmPhaseService.selectOneObject(new XmPhase(xmProjectPhase.getParentId()));
 			if(parentDb==null){
 				return ResponseHelper.failed("p-no-exists","上级计划不存在");
 			}
 			if(!"1".equals(parentDb.getNtype())){
-				return ResponseHelper.failed("p-ntype-no-1","上级【"+parentDb.getPhaseName()+"】不是计划集，不能在其之下建立子计划");
+				return ResponseHelper.failed("p-ntype-no-1","上级【"+parentDb.getName()+"】不是计划集，不能在其之下建立子计划");
 			}
 			xmPhaseService.insert(xmProjectPhase);
-			xmRecordService.addProductPhaseRecord(xmProduct.getId(), xmProjectPhase.getId(), "产品-计划-新增计划", "新增计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
+			xmRecordService.addProductPhaseRecord(xmProduct.getId(), xmProjectPhase.getId(), "产品-计划-新增计划", "新增计划"+xmProjectPhase.getName(),JSON.toJSONString(xmProjectPhase),null);
 			m.put("data",xmProjectPhase);
 		}catch (BizException e) {
 			tips=e.getTips();
@@ -323,7 +323,7 @@ public class XmPhaseController {
 					tips.setFailureMsg("存在"+xmProjectPhaseDb.getChildrenCnt()+"条子计划,不允许删除");
 				} else {
 					xmPhaseService.deleteByPk(xmProjectPhaseDb);
-					xmRecordService.addProductPhaseRecord(xmProjectPhaseDb.getProductId(), xmProjectPhaseDb.getId(), "产品-计划-删除计划", "删除计划"+xmProjectPhaseDb.getPhaseName(),"",JSON.toJSONString(xmProjectPhaseDb));
+					xmRecordService.addProductPhaseRecord(xmProjectPhaseDb.getProductId(), xmProjectPhaseDb.getId(), "产品-计划-删除计划", "删除计划"+xmProjectPhaseDb.getName(),"",JSON.toJSONString(xmProjectPhaseDb));
 				}
 			}
 
@@ -384,14 +384,14 @@ public class XmPhaseController {
 			excludePhaseIds.add(xmProjectPhase.getId());
 
 			//如果修改了预算数据，才进行预算判断
-			if(xmProjectPhaseDb.getPhaseBudgetAt()!=null && xmProjectPhaseDb.getPhaseBudgetAt().compareTo(xmProjectPhase.getPhaseBudgetAt())!=0){
+			if(xmProjectPhaseDb.getBudgetAt()!=null && xmProjectPhaseDb.getBudgetAt().compareTo(xmProjectPhase.getBudgetAt())!=0){
 				if(xmProjectPhase.getLvl()==1){
 					if("1".equals(xmProduct.getBudgetCtrl())){
-						tips=this.xmPhaseService.judgetProductBudget(xmProduct.getId(),xmProjectPhase.getPhaseBudgetAt(),null,null,null,excludePhaseIds);
+						tips=this.xmPhaseService.judgetProductBudget(xmProduct.getId(),xmProjectPhase.getBudgetAt(),null,null,null,excludePhaseIds);
 					}
 				}else{
 					if("1".equals(xmProduct.getPhaseBudgetCtrl())) {
-						tips = this.xmPhaseService.judgetPhaseBudget(xmProjectPhase.getParentPhaseId(), xmProjectPhase.getPhaseBudgetAt(), null, null, null, excludePhaseIds);
+						tips = this.xmPhaseService.judgetPhaseBudget(xmProjectPhase.getParentId(), xmProjectPhase.getBudgetAt(), null, null, null, excludePhaseIds);
 					}
 				}
 
@@ -400,7 +400,7 @@ public class XmPhaseController {
 				return ResponseHelper.failed(tips);
 			}
 			xmPhaseService.editByPk(xmProjectPhase);
-			xmRecordService.addProductPhaseRecord(xmProjectPhase.getProductId(), xmProjectPhase.getId(), "产品-计划-修改计划", "修改计划"+xmProjectPhase.getPhaseName(),JSON.toJSONString(xmProjectPhase),null);
+			xmRecordService.addProductPhaseRecord(xmProjectPhase.getProductId(), xmProjectPhase.getId(), "产品-计划-修改计划", "修改计划"+xmProjectPhase.getName(),JSON.toJSONString(xmProjectPhase),null);
 
 			m.put("data",xmProjectPhase);
 		}catch (BizException e) {
@@ -462,7 +462,7 @@ public class XmPhaseController {
 				//检查是否由关联的任务，有则不允许删除
 				Long exists=this.xmPhaseService.checkExistsTask(phase.getId());
 				if(exists>0) {
-					existsTaskList.add(phase.getPhaseName());
+					existsTaskList.add(phase.getName());
 				}else {
 					delPhases.add(phase);
 				}
@@ -472,14 +472,14 @@ public class XmPhaseController {
 
 				boolean canDelAllChild = xmPhaseService.checkCanDelAllChild(phase,delPhases);
 				if(!canDelAllChild) {
-					hasChildList.add(phase.getPhaseName());
+					hasChildList.add(phase.getName());
 				}else {
 					canDelNodes.add(phase);
 				}
 			}
 			if(canDelNodes.size()>0){
 				this.xmPhaseService.doBatchDelete(canDelNodes);
-				xmRecordService.addProductPhaseRecord(xmProjectPhase.getProductId(), "", "产品-计划-批量删除计划", "批量删除计划"+canDelNodes.stream().map(i->i.getPhaseName()).collect(Collectors.joining(",")),"",JSON.toJSONString(canDelNodes));
+				xmRecordService.addProductPhaseRecord(xmProjectPhase.getProductId(), "", "产品-计划-批量删除计划", "批量删除计划"+canDelNodes.stream().map(i->i.getName()).collect(Collectors.joining(",")),"",JSON.toJSONString(canDelNodes));
 
 			}
 			List<String> msgs=new ArrayList<>();
@@ -556,14 +556,14 @@ public class XmPhaseController {
 			List<XmPhase> l1Phases=xmProjectPhases.stream().filter(i->1==i.getLvl()).collect(Collectors.toList());
 			if(l1Phases==null ||l1Phases.size()==0){//如果是导入到某个计划之下，
 				//找到导入的树中最上面的节点
-				List<XmPhase> noExists=xmProjectPhases.stream().filter(i->!xmProjectPhases.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
+				List<XmPhase> noExists=xmProjectPhases.stream().filter(i->!xmProjectPhases.stream().filter(k->k.getId().equals(i.getParentId())).findAny().isPresent()).collect(Collectors.toList());
 				//根据同一个父亲归类
 				Map<String,List<XmPhase>> map=new HashMap<>();
 				for (XmPhase noExist : noExists) {
-					List<XmPhase> phases=map.get(noExist.getParentPhaseId());
+					List<XmPhase> phases=map.get(noExist.getParentId());
 					if(phases==null){
 						phases=new ArrayList<>();
-						map.put(noExist.getParentPhaseId(),phases);
+						map.put(noExist.getParentId(),phases);
 					}
 					phases.add(noExist);
 				}
@@ -573,12 +573,12 @@ public class XmPhaseController {
 					BigDecimal phaseTotalBudgetAt=BigDecimal.ZERO;
 					List<String> excludeIds=children.stream().map(i->i.getId()).collect(Collectors.toList());
 					for (XmPhase child : children) {
-						phaseTotalBudgetAt=phaseTotalBudgetAt.add(child.getPhaseBudgetAt());
+						phaseTotalBudgetAt=phaseTotalBudgetAt.add(child.getBudgetAt());
 					}
 					if("1".equals(xmProduct.getPhaseBudgetCtrl())){
 						Tips tips2= xmPhaseService.judgetPhaseBudget(parentId,phaseTotalBudgetAt,null,null,null,excludeIds);
 						if(!tips2.isOk()){
-							tips2.setFailureMsg(tips2.getMsg()+" 相关计划为【"+children.stream().map(i->i.getPhaseName()).collect(Collectors.joining(","))+"】");
+							tips2.setFailureMsg(tips2.getMsg()+" 相关计划为【"+children.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 							return ResponseHelper.failed(tips2);
 						}
 					}
@@ -587,8 +587,8 @@ public class XmPhaseController {
 				BigDecimal phaseTotalBudgetWorkload=BigDecimal.ZERO;
 				BigDecimal phaseTotalBudgetAt=BigDecimal.ZERO;
 				for (XmPhase l1Phase : l1Phases) {
-					phaseTotalBudgetWorkload=phaseTotalBudgetWorkload.add(l1Phase.getPhaseBudgetWorkload());
-					phaseTotalBudgetAt=phaseTotalBudgetAt.add(l1Phase.getPhaseBudgetAt());
+					phaseTotalBudgetWorkload=phaseTotalBudgetWorkload.add(l1Phase.getBudgetWorkload());
+					phaseTotalBudgetAt=phaseTotalBudgetAt.add(l1Phase.getBudgetAt());
 				}
 				if("1".equals(xmProduct.getBudgetCtrl())) {
 					tips = xmPhaseService.judgetProductBudget(productId, phaseTotalBudgetAt, null, null, null, l1Phases.stream().map(i -> i.getId()).collect(Collectors.toList()));
@@ -607,7 +607,7 @@ public class XmPhaseController {
 				xmPhaseService.doBatchInsert(xmProjectPhases);
 
 				for (XmPhase phase : xmProjectPhases) {
-					xmRecordService.addProductPhaseRecord(phase.getProductId(), phase.getId(), "产品-计划-新增计划", "新增计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
+					xmRecordService.addProductPhaseRecord(phase.getProductId(), phase.getId(), "产品-计划-新增计划", "新增计划"+phase.getName(),JSON.toJSONString(phase),null);
 
 				}
 			}
@@ -665,8 +665,8 @@ public class XmPhaseController {
 				BigDecimal phaseTotalBudgetWorkload=BigDecimal.ZERO;
 				BigDecimal phaseTotalBudgetAt=BigDecimal.ZERO;
 				for (XmPhase l1Phase : l1Phases) {
-					phaseTotalBudgetWorkload=phaseTotalBudgetWorkload.add(l1Phase.getPhaseBudgetWorkload());
-					phaseTotalBudgetAt=phaseTotalBudgetAt.add(l1Phase.getPhaseBudgetAt());
+					phaseTotalBudgetWorkload=phaseTotalBudgetWorkload.add(l1Phase.getBudgetWorkload());
+					phaseTotalBudgetAt=phaseTotalBudgetAt.add(l1Phase.getBudgetAt());
 				}
 				if("1".equals(xmProduct.getBudgetCtrl())){
 					tips= xmPhaseService.judgetProductBudget(productId,phaseTotalBudgetAt,null,null,null,l1Phases.stream().map(i->i.getId()).collect(Collectors.toList()));
@@ -676,14 +676,14 @@ public class XmPhaseController {
 				}
 			}
 			//找到导入的树中最上面的节点
-			List<XmPhase> parentNoNulls=  xmProjectPhases.stream().filter(i->StringUtils.hasText(i.getParentPhaseId())&&!"0".equals(i.getParentPhaseId())).collect(Collectors.toList());
+			List<XmPhase> parentNoNulls=  xmProjectPhases.stream().filter(i->StringUtils.hasText(i.getParentId())&&!"0".equals(i.getParentId())).collect(Collectors.toList());
 			//根据同一个父亲归类
 			Map<String,List<XmPhase>> map=new HashMap<>();
 			for (XmPhase phase : parentNoNulls) {
-				List<XmPhase> phases=map.get(phase.getParentPhaseId());
+				List<XmPhase> phases=map.get(phase.getParentId());
 				if(phases==null){
 					phases=new ArrayList<>();
-					map.put(phase.getParentPhaseId(),phases);
+					map.put(phase.getParentId(),phases);
 				}
 				phases.add(phase);
 			}
@@ -693,12 +693,12 @@ public class XmPhaseController {
 				BigDecimal phaseTotalBudgetAt=BigDecimal.ZERO;
 				List<String> excludeIds=children.stream().map(i->i.getId()).collect(Collectors.toList());
 				for (XmPhase child : children) {
-					phaseTotalBudgetAt=phaseTotalBudgetAt.add(child.getPhaseBudgetAt());
+					phaseTotalBudgetAt=phaseTotalBudgetAt.add(child.getBudgetAt());
 				}
 				if("1".equals(xmProduct.getPhaseBudgetCtrl())) {
 					Tips tips2 = xmPhaseService.judgetPhaseBudget(parentId, phaseTotalBudgetAt, null, null, null, excludeIds);
 					if (!tips2.isOk()) {
-						tips2.setFailureMsg(tips2.getMsg() + " 相关计划为【" + children.stream().map(i -> i.getPhaseName()).collect(Collectors.joining(",")) + "】");
+						tips2.setFailureMsg(tips2.getMsg() + " 相关计划为【" + children.stream().map(i -> i.getName()).collect(Collectors.joining(",")) + "】");
 						return ResponseHelper.failed(tips2);
 					}
 				}
@@ -706,7 +706,7 @@ public class XmPhaseController {
 
 
 			for (XmPhase projectPhase : xmProjectPhases) {
-				int childrenCnt=Integer.valueOf(xmProjectPhases.stream().filter(i->projectPhase.getId().equals(i.getParentPhaseId())).count()+"");
+				int childrenCnt=Integer.valueOf(xmProjectPhases.stream().filter(i->projectPhase.getId().equals(i.getParentId())).count()+"");
 				if(childrenCnt>0){
 					projectPhase.setChildrenCnt(childrenCnt);
 					projectPhase.setNtype("1");
@@ -718,7 +718,7 @@ public class XmPhaseController {
 			List<XmPhase> updates=xmProjectPhases.stream().filter(i->xmProjectPhaseListDb.stream().filter(k->k.getId().equals(i.getId())).findAny().isPresent()).collect(Collectors.toList());
 			xmPhaseService.batchInsertOrUpdate(inserts,updates);
 			for (XmPhase phase : xmProjectPhases) {
-				xmRecordService.addProductPhaseRecord(phase.getProductId(), phase.getId(), "产品-计划-修改计划预算", "修改计划"+phase.getPhaseName(),JSON.toJSONString(phase),null);
+				xmRecordService.addProductPhaseRecord(phase.getProductId(), phase.getId(), "产品-计划-修改计划预算", "修改计划"+phase.getName(),JSON.toJSONString(phase),null);
 
 			}
 

@@ -181,7 +181,7 @@
 		insert into xm_project_m_cost_user(
 			<include refid="columns"/>
 		) values (
-		#{subjectId},#{projectId},#{userid},#{createTime},#{sendCostTime},#{username},#{projectName},#{remark},#{id},#{taskId},#{taskName},#{actWorkload},#{bizzStartDate},#{bizzEndDate},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{actCostAmount},#{costType},#{bizMonth},#{bizDate},#{subjectName},#{projectPhaseName},#{execuserProcInstId},#{execuserStatus},#{payStatus},#{payOpUserid},#{payOpUsername}
+		#{subjectId},#{projectId},#{userid},#{createTime},#{sendCostTime},#{username},#{projectName},#{remark},#{id},#{taskId},#{taskName},#{actWorkload},#{bizzStartDate},#{bizzEndDate},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{actCostAmount},#{costType},#{bizMonth},#{bizDate},#{subjectName},#{projectName},#{execuserProcInstId},#{execuserStatus},#{payStatus},#{payOpUserid},#{payOpUsername}
 		)
 	</insert>
 	
@@ -270,7 +270,7 @@
 		<if test="bizMonth != null and bizMonth != ''">      and res.biz_month = #{bizMonth}     </if>
 		<if test="bizDate != null and bizDate != ''">      and res.biz_date = #{bizDate}     </if>
 		<if test="subjectName != null and subjectName != ''">      and res.subject_name = #{subjectName}     </if>
-		<if test="projectPhaseName != null and projectPhaseName != ''">      and res.project_phase_name = #{projectPhaseName}     </if>
+		<if test="projectName != null and projectName != ''">      and res.project_phase_name = #{projectName}     </if>
 		<if test="execuserProcInstId != null and execuserProcInstId != ''">      and res.execuser_proc_inst_id = #{execuserProcInstId}     </if>
 		<if test="execuserStatus != null and execuserStatus != ''">      and res.execuser_status = #{execuserStatus}     </if>
 		<if test="payStatus != null and payStatus != ''">      and res.pay_status = #{payStatus}     </if>
@@ -300,7 +300,7 @@
 		biz_month = #{bizMonth},
 		biz_date = #{bizDate},
 		subject_name = #{subjectName},
-		project_phase_name = #{projectPhaseName},
+		project_phase_name = #{projectName},
 		execuser_proc_inst_id = #{execuserProcInstId},
 		execuser_status = #{execuserStatus},
 		pay_status = #{payStatus},
@@ -329,7 +329,7 @@
 		<if test="bizMonth != null and bizMonth != ''"> biz_month = #{bizMonth},     </if>
 		<if test="bizDate != null and bizDate != ''"> biz_date = #{bizDate},     </if>
 		<if test="subjectName != null and subjectName != ''"> subject_name = #{subjectName},     </if>
-		<if test="projectPhaseName != null and projectPhaseName != ''"> project_phase_name = #{projectPhaseName},     </if>
+		<if test="projectName != null and projectName != ''"> project_phase_name = #{projectName},     </if>
 		<if test="execuserProcInstId != null and execuserProcInstId != ''"> execuser_proc_inst_id = #{execuserProcInstId},     </if>
 		<if test="execuserStatus != null and execuserStatus != ''"> execuser_status = #{execuserStatus},     </if>
 		<if test="payStatus != null and payStatus != ''"> pay_status = #{payStatus},     </if>
@@ -359,7 +359,7 @@
 			biz_month = #{item.bizMonth},
 			biz_date = #{item.bizDate},
 			subject_name = #{item.subjectName},
-			project_phase_name = #{item.projectPhaseName},
+			project_phase_name = #{item.projectName},
 			execuser_proc_inst_id = #{item.execuserProcInstId},
 			execuser_status = #{item.execuserStatus},
 			pay_status = #{item.payStatus},

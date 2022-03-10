@@ -131,8 +131,8 @@ public class XmProjectService extends BaseService {
 					String newId=newPhaseIdMap.get(oldId);
 					node.setProjectId(xmProjectTo.getId());
 					node.setId(newId);
-					if(StringUtils.hasText(node.getParentPhaseId())){
-						node.setParentPhaseId(newPhaseIdMap.get(node.getParentPhaseId()));
+					if(StringUtils.hasText(node.getParentId())){
+						node.setParentId(newPhaseIdMap.get(node.getParentId()));
 					}
 
 					node.setCtime(new Date());

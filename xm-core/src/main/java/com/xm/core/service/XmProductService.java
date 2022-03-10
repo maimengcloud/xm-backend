@@ -154,8 +154,8 @@ public class XmProductService extends BaseService {
 					node.setProjectId(null);
 					node.setProductId(xmProductTo.getId());
 					node.setId(newId);
-					if(StringUtils.hasText(node.getParentPhaseId())){
-						node.setParentPhaseId(newPhaseIdMap.get(node.getParentPhaseId()));
+					if(StringUtils.hasText(node.getParentId())){
+						node.setParentId(newPhaseIdMap.get(node.getParentId()));
 					}
 
 					node.setCtime(new Date());

@@ -9,7 +9,7 @@ import java.util.Date;
 /**
  * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 
  * 实体 XmProjectMCostNouser所有属性名: <br>
- *	projectId,userid,createTime,sendCostTime,username,projectName,remark,id,taskId,taskName,subjectId,bizzStartDate,bizzEndDate,bizProcInstId,bizFlowState,projectPhaseId,actCostAmount,costType,bizMonth,bizDate,subjectName,projectPhaseName;<br>
+ *	projectId,userid,createTime,sendCostTime,username,projectName,remark,id,taskId,taskName,subjectId,bizzStartDate,bizzEndDate,bizProcInstId,bizFlowState,projectPhaseId,actCostAmount,costType,bizMonth,bizDate,subjectName,projectName;<br>
  * 表 XM.xm_project_m_cost_nouser xm_project_m_cost_nouser的所有字段名: <br>
  *	project_id,userid,create_time,send_cost_time,username,project_name,remark,id,task_id,task_name,subject_id,bizz_start_date,bizz_end_date,biz_proc_inst_id,biz_flow_state,project_phase_id,act_cost_amount,cost_type,biz_month,biz_date,subject_name,project_phase_name;<br>
  * 当前主键(包括多主键):<br>
@@ -85,7 +85,7 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 	String subjectName;
 	
 	@ApiModelProperty(notes="计划名称",allowEmptyValue=true,example="",allowableValues="")
-	String projectPhaseName;
+	String projectName;
 
 	/**主键**/
 	public XmProjectMCostNouser(String id) {
@@ -225,8 +225,8 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 	/**
 	 * 计划名称
 	 **/
-	public void setProjectPhaseName(String projectPhaseName) {
-		this.projectPhaseName = projectPhaseName;
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
 	
 	/**
@@ -358,8 +358,8 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 	/**
 	 * 计划名称
 	 **/
-	public String getProjectPhaseName() {
-		return this.projectPhaseName;
+	public String getProjectName() {
+		return this.projectName;
 	}
 
 }

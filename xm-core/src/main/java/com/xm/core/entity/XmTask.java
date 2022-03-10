@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTask所有属性名: <br>
- *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,projectPhaseId,projectPhaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,productName,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime,pidPaths,lvl,isTpl,keyPath,uniInnerPrice,uniOutPrice,calcType,ptype;<br>
+ *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,projectPhaseId,projectName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,productName,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime,pidPaths,lvl,isTpl,keyPath,uniInnerPrice,uniOutPrice,calcType,ptype;<br>
  * 表 xm_task xm_task的所有字段名: <br>
  *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,project_phase_id,project_phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype;<br>
  * 当前主键(包括多主键):<br>
@@ -123,7 +123,7 @@ public class XmTask  implements java.io.Serializable {
 	String projectPhaseId;
 	
 	@ApiModelProperty(notes="项目阶段名称(作废)",allowEmptyValue=true,example="",allowableValues="")
-	String projectPhaseName;
+	String projectName;
 	
 	@ApiModelProperty(notes="技能列表,逗号分隔",allowEmptyValue=true,example="",allowableValues="")
 	String taskSkillNames;
@@ -419,8 +419,8 @@ public class XmTask  implements java.io.Serializable {
 	/**
 	 * 项目阶段名称(作废)
 	 **/
-	public void setProjectPhaseName(String projectPhaseName) {
-		this.projectPhaseName = projectPhaseName;
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
 	/**
 	 * 技能列表,逗号分隔
@@ -786,8 +786,8 @@ public class XmTask  implements java.io.Serializable {
 	/**
 	 * 项目阶段名称(作废)
 	 **/
-	public String getProjectPhaseName() {
-		return this.projectPhaseName;
+	public String getProjectName() {
+		return this.projectName;
 	}
 	/**
 	 * 技能列表,逗号分隔

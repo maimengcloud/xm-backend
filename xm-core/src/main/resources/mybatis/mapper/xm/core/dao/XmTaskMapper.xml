@@ -362,7 +362,7 @@
 		insert into xm_task(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{projectPhaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{productName},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype}
+		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{projectName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{productName},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype}
 		)
 	</insert>
 	
@@ -464,7 +464,7 @@
 		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
 		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
 		<if test="projectPhaseId != null and projectPhaseId != ''">      and res.project_phase_id = #{projectPhaseId}     </if>
-		<if test="projectPhaseName != null and projectPhaseName != ''">      and res.project_phase_name = #{projectPhaseName}     </if>
+		<if test="projectName != null and projectName != ''">      and res.project_phase_name = #{projectName}     </if>
 		<if test="taskSkillNames != null and taskSkillNames != ''">      and res.task_skill_names = #{taskSkillNames}     </if>
 		<if test="exeUsernames != null and exeUsernames != ''">      and res.exe_usernames = #{exeUsernames}     </if>
 		<if test="taskSkillIds != null and taskSkillIds != ''">      and res.task_skill_ids = #{taskSkillIds}     </if>
@@ -527,7 +527,7 @@
 		biz_proc_inst_id = #{bizProcInstId},
 		biz_flow_state = #{bizFlowState},
 		project_phase_id = #{projectPhaseId},
-		project_phase_name = #{projectPhaseName},
+		project_phase_name = #{projectName},
 		task_skill_names = #{taskSkillNames},
 		exe_usernames = #{exeUsernames},
 		task_skill_ids = #{taskSkillIds},
@@ -589,7 +589,7 @@
 		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
 		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
 		<if test="projectPhaseId != null and projectPhaseId != ''"> project_phase_id = #{projectPhaseId},     </if>
-		<if test="projectPhaseName != null and projectPhaseName != ''"> project_phase_name = #{projectPhaseName},     </if>
+		<if test="projectName != null and projectName != ''"> project_phase_name = #{projectName},     </if>
 		<if test="taskSkillNames != null and taskSkillNames != ''"> task_skill_names = #{taskSkillNames},     </if>
 		<if test="exeUsernames != null and exeUsernames != ''"> exe_usernames = #{exeUsernames},     </if>
 		<if test="taskSkillIds != null and taskSkillIds != ''"> task_skill_ids = #{taskSkillIds},     </if>
@@ -652,7 +652,7 @@
 			biz_proc_inst_id = #{item.bizProcInstId},
 			biz_flow_state = #{item.bizFlowState},
 			project_phase_id = #{item.projectPhaseId},
-			project_phase_name = #{item.projectPhaseName},
+			project_phase_name = #{item.projectName},
 			task_skill_names = #{item.taskSkillNames},
 			exe_usernames = #{item.exeUsernames},
 			task_skill_ids = #{item.taskSkillIds},

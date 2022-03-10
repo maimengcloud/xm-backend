@@ -901,10 +901,10 @@ public class XmTaskController {
 
 
 			if(xmProjectPhaseDb==null){
-				return ResponseHelper.failed("phase-0","计划【"+xmProjectPhaseDb.getPhaseName()+"】已不存在");
+				return ResponseHelper.failed("phase-0","计划【"+xmProjectPhaseDb.getName()+"】已不存在");
 			}
 			if("1".equals(xmProjectPhaseDb.getNtype())){
-				return ResponseHelper.failed("phase-ntype-1","【"+xmProjectPhaseDb.getPhaseName()+"】属于计划集，无需关联任务。");
+				return ResponseHelper.failed("phase-ntype-1","【"+xmProjectPhaseDb.getName()+"】属于计划集，无需关联任务。");
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProjectPhaseDb.getProjectId());
 			if(xmProjectDb==null){
@@ -951,7 +951,7 @@ public class XmTaskController {
 			}
 			msgs.add("成功将"+allowTasks.size()+"个任务与计划关联。");
 			for (XmTask t : allowTasks) {
-				xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量更新任务", "将任务"+t.getName()+"与计划【"+xmProjectPhaseDb.getId()+"-"+xmProjectPhaseDb.getPhaseName()+"】关联",null,null);
+				xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量更新任务", "将任务"+t.getName()+"与计划【"+xmProjectPhaseDb.getId()+"-"+xmProjectPhaseDb.getName()+"】关联",null,null);
 			}
 			if(ntype1Tasks.size()>0){
 				msgs.add("以下"+ntype1Tasks.size()+"个任务属于计划项，无需关联计划。【"+ntype1Tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");

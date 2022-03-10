@@ -8,7 +8,7 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskExecuser所有属性名: <br>
- *	createTime,id,taskId,userid,startTime,endTime,status,remarks,settleAmount,settleWorkload,settleStatus,settleTime,createUserid,createUsername,username,matchScore,quoteWeekday,quoteAmount,quoteTime,bizProcInstId,bizFlowState,projectId,projectPhaseId,skillRemark,quoteWorkload,quoteStartTime,quoteEndTime,branchId,projectPhaseName,taskName,isLeader,distUserid,distUsername;<br>
+ *	createTime,id,taskId,userid,startTime,endTime,status,remarks,settleAmount,settleWorkload,settleStatus,settleTime,createUserid,createUsername,username,matchScore,quoteWeekday,quoteAmount,quoteTime,bizProcInstId,bizFlowState,projectId,projectPhaseId,skillRemark,quoteWorkload,quoteStartTime,quoteEndTime,branchId,projectName,taskName,isLeader,distUserid,distUsername;<br>
  * 表 XM.xm_task_execuser xm_task_execuser的所有字段名: <br>
  *	create_time,id,task_id,userid,start_time,end_time,status,remarks,settle_amount,settle_workload,settle_status,settle_time,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,biz_proc_inst_id,biz_flow_state,project_id,project_phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,project_phase_name,task_name,is_leader,dist_userid,dist_username;<br>
  * 当前主键(包括多主键):<br>
@@ -105,7 +105,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	String branchId;
 	
 	@ApiModelProperty(notes="计划名称",allowEmptyValue=true,example="",allowableValues="")
-	String projectPhaseName;
+	String projectName;
 	
 	@ApiModelProperty(notes="任务名称",allowEmptyValue=true,example="",allowableValues="")
 	String taskName;
@@ -299,8 +299,8 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	/**
 	 * 计划名称
 	 **/
-	public void setProjectPhaseName(String projectPhaseName) {
-		this.projectPhaseName = projectPhaseName;
+	public void setProjectName(String projectName) {
+		this.projectName = projectName;
 	}
 	/**
 	 * 任务名称
@@ -498,8 +498,8 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	/**
 	 * 计划名称
 	 **/
-	public String getProjectPhaseName() {
-		return this.projectPhaseName;
+	public String getProjectName() {
+		return this.projectName;
 	}
 	/**
 	 * 任务名称
