@@ -3,109 +3,108 @@
 <mapper namespace="com.xm.core.entity.XmProjectMCostNouser">
 	
 	
-	<!--开始 自定sql函数区域 -->
-		<!--请在此区域添加自定义函数-->
-		
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
 
-		<!-- 插入流程审批表数据 -->
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
+
 	<insert id="insertProcessApprova"
-		parameterType="HashMap"
-		useGeneratedKeys="false" keyProperty="id">
+			parameterType="HashMap"
+			useGeneratedKeys="false" keyProperty="id">
 		insert into xm_project_m_cost_nouser_process_approva (
-		 id,cost_id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
+		id,cost_id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
 		) values (
-			#{id},#{costId},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
+		#{id},#{costId},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
 		)
 	</insert>
-	
-		<!-- 同时修改业务表及流程审批表数据状态 -->
+
+	<!-- 同时修改业务表及流程审批表数据状态 -->
 	<update id="updateProcessApprova"
-		parameterType="HashMap">
+			parameterType="HashMap">
 		update xm_project_m_cost_nouser  b ,XM.xm_project_m_cost_nouser_process_approva pa
-			<set>
-				<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
-				<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
-				<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>  
-				<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if> 
-				<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
-				<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
-				 pa.flow_last_time = now(),
-				<if test=' eventName != null and eventName !="" '> pa.event_name = #{eventName},</if>
-				<if test=' flowState != null and flowState !="" '> pa.flow_state=#{flowState},</if>
-				<if test=' bizFlowState != null and bizFlowState !="" '> b.biz_flow_state=#{bizFlowState},</if>
-				<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
-			</set>
+		<set>
+			<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
+			<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
+			<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>
+			<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if>
+			<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
+			<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
+			pa.flow_last_time = now(),
+			<if test=' eventName != null and eventName !="" '> pa.event_name = #{eventName},</if>
+			<if test=' flowState != null and flowState !="" '> pa.flow_state=#{flowState},</if>
+			<if test=' bizFlowState != null and bizFlowState !="" '> b.biz_flow_state=#{bizFlowState},</if>
+			<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
+		</set>
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
-		      and b.id=pa.cost_id 
-	</update>	
-	
+		and b.id=pa.cost_id
+	</update>
+
 	<update id="updateFlowStateByProcInstForDeleteSuccess"
-		parameterType="HashMap">
+			parameterType="HashMap">
 		update xm_project_m_cost_nouser_process_approva pa set pa.flow_state='2'
 		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
-	</update>	
-	
+	</update>
+
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByProcInstId" parameterType="HashMap">
 		delete from xm_project_m_cost_nouser
-		 where biz_proc_inst_id=#{procInstId}
+		where biz_proc_inst_id=#{procInstId}
 	</delete>
-<!-- 查询非人力的支出及对应的项目的预算，非人力支出不能大于项目非人力总预算 -->
+	<!-- 查询非人力的支出及对应的项目的预算，非人力支出不能大于项目非人力总预算 -->
 	<select id="selectTotalProjectAndNouserActCost" parameterType="HashMap" resultType="HashMap">
-		SELECT 
-			sum(  ifnull(res.act_cost_amount,0)   ) AS act_cost_nouser_amount, 
-			p.plan_nouser_at,
-			p.plan_inner_user_at,
-			p.plan_out_user_at,
-			p.locked,
-			p.plan_workload,
-			p.total_receivables,
-			p.budget_margin_rate,
-			p.contract_amt,
-			p.plan_inner_user_price,
-			p.plan_out_user_price,
-			p.plan_out_user_cnt,
-			p.plan_inner_user_cnt,
-			p.plan_working_hours 
+		SELECT
+		sum(  ifnull(res.act_cost_amount,0)   ) AS act_cost_nouser_amount,
+		p.plan_nouser_at,
+		p.plan_inner_user_at,
+		p.plan_out_user_at,
+		p.locked,
+		p.plan_workload,
+		p.total_receivables,
+		p.budget_margin_rate,
+		p.contract_amt,
+		p.plan_inner_user_price,
+		p.plan_out_user_price,
+		p.plan_out_user_cnt,
+		p.plan_inner_user_cnt,
+		p.plan_working_hours
 		FROM
-			XM.xm_project p
-			LEFT JOIN xm_project_m_cost_nouser res ON p.id = res.project_id
+		XM.xm_project p
+		LEFT JOIN xm_project_m_cost_nouser res ON p.id = res.project_id
 		<where>
 			p.id = #{projectId}
-		  <if test=" excludeIds !=null "> and res.id not in
-				    <foreach collection="excludeIds" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
-		  </if>
-		  </where>
+			<if test=" excludeIds !=null "> and res.id not in
+				<foreach collection="excludeIds" item="item" index="index" open="(" separator="," close=")" >
+					#{item}
+				</foreach>
+			</if>
+		</where>
 	</select>
-					<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="listSum" parameterType="HashMap" resultType="HashMap">
 		select res.project_id,res.subject_id,res.subject_name,biz_month,sum(res.act_cost_amount) as act_cost_amount from  xm_project_m_cost_nouser res
-		<where> 
-			 and res.project_id=#{projectId} 
-			 <if test="subjectId != null and subjectId !='' ">     and res.subject_id =#{subjectId} </if> 
-			 <if test="costType != null and costType !='' ">     and res.cost_type =#{costType} </if>  
+		<where>
+			and res.project_id=#{projectId}
+			<if test="subjectId != null and subjectId !='' ">     and res.subject_id =#{subjectId} </if>
+			<if test="costType != null and costType !='' ">     and res.cost_type =#{costType} </if>
 		</where>
- 		group by res.project_id ,res.subject_id,res.subject_name,res.biz_month
+		group by res.project_id ,res.subject_id,res.subject_name,res.biz_month
 	</select>
-	<!--结束 自定义sql函数区域--> 
+	<!--结束 自定义sql函数区域-->
 	
 
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
 		select res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from xm_project_m_cost_nouser res   left join  xm_project_m_cost_nouser_process_approva pa on res.id=pa.cost_id and res.biz_proc_inst_id=pa.proc_inst_id
-		
-		<where> 
-			<if test="ids != null">  and     
-				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
-			 </if>
+		<where>
+		    <include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">       </if> 
 		</where>
 	</select>
 	
@@ -123,7 +122,13 @@
 		where 
 			res.id = #{id}
 	</select>
-	
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmProjectMCostNouser">
+        select * from xm_project_m_cost_nouser res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_project_m_cost_nouser res
@@ -138,11 +143,11 @@
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmProjectMCostNouser" useGeneratedKeys="false" keyProperty="id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmProjectMCostNouser" useGeneratedKeys="false"   keyProperty="id">
 		insert into xm_project_m_cost_nouser(
 			<include refid="columns"/>
 		) values (
-		#{projectId},#{userid},#{createTime},#{sendCostTime},#{username},#{projectName},#{remark},#{id},#{taskId},#{taskName},#{subjectId},#{bizzStartDate},#{bizzEndDate},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{actCostAmount},#{costType},#{bizMonth},#{bizDate},#{subjectName},#{projectName}
+		#{projectId},#{userid},#{createTime},#{sendCostTime},#{username},#{projectName},#{remark},#{id},#{taskId},#{taskName},#{subjectId},#{bizzStartDate},#{bizzEndDate},#{bizProcInstId},#{bizFlowState},#{phaseId},#{actCostAmount},#{costType},#{bizMonth},#{bizDate},#{subjectName},#{phaseName}
 		)
 	</insert>
 	
@@ -156,13 +161,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProjectMCostNouser">
-		delete from xm_project_m_cost_nouser
+		delete from xm_project_m_cost_nouser 
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProjectMCostNouser">
-		update  xm_project_m_cost_nouser
+		update  xm_project_m_cost_nouser 
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -171,7 +176,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProjectMCostNouser">
-		update  xm_project_m_cost_nouser
+		update  xm_project_m_cost_nouser 
 		<set>
 			<include refid="set"/>
 		</set>
@@ -186,7 +191,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_project_m_cost_nouser
+   		update  xm_project_m_cost_nouser 
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -194,25 +199,26 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_project_m_cost_nouser
-			where id in
-			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
-			        #{item.id }  
-			    </foreach>  
+		delete from xm_project_m_cost_nouser 
+			where
+			(id) in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    (  #{item.id} )
+                </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		project_id,userid,create_time,send_cost_time,username,project_name,remark,id,task_id,task_name,subject_id,bizz_start_date,bizz_end_date,biz_proc_inst_id,biz_flow_state,project_phase_id,act_cost_amount,cost_type,biz_month,biz_date,subject_name,project_phase_name
+		project_id,userid,create_time,send_cost_time,username,project_name,remark,id,task_id,task_name,subject_id,bizz_start_date,bizz_end_date,biz_proc_inst_id,biz_flow_state,phase_id,act_cost_amount,cost_type,biz_month,biz_date,subject_name,phase_name
 	</sql>
-	
+
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
 	<sql id="where">
 		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
 		<if test="userid != null and userid != ''">      and res.userid = #{userid}     </if>
-		<if test="createTime != null">      and TO_CHAR(res.create_time,'YYYY-MM-DD') = TO_CHAR(#{createTime},'YYYY-MM-DD')     </if>
-		<if test="sendCostTime != null">      and TO_CHAR(res.send_cost_time,'YYYY-MM-DD') = TO_CHAR(#{sendCostTime},'YYYY-MM-DD')     </if>
+		<if test="createTime != null">      and date_format(res.create_time,'%Y-%m-%d') = date_format(#{createTime},'%Y-%m-%d')     </if>
+		<if test="sendCostTime != null">      and date_format(res.send_cost_time,'%Y-%m-%d') = date_format(#{sendCostTime},'%Y-%m-%d')     </if>
 		<if test="username != null and username != ''">      and res.username = #{username}     </if>
 		<if test="projectName != null and projectName != ''">      and res.project_name = #{projectName}     </if>
 		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
@@ -220,17 +226,17 @@
 		<if test="taskId != null and taskId != ''">      and res.task_id = #{taskId}     </if>
 		<if test="taskName != null and taskName != ''">      and res.task_name = #{taskName}     </if>
 		<if test="subjectId != null and subjectId != ''">      and res.subject_id = #{subjectId}     </if>
-		<if test="bizzStartDate != null">      and TO_CHAR(res.bizz_start_date,'YYYY-MM-DD') = TO_CHAR(#{bizzStartDate},'YYYY-MM-DD')     </if>
-		<if test="bizzEndDate != null">      and TO_CHAR(res.bizz_end_date,'YYYY-MM-DD') = TO_CHAR(#{bizzEndDate},'YYYY-MM-DD')     </if>
+		<if test="bizzStartDate != null">      and date_format(res.bizz_start_date,'%Y-%m-%d') = date_format(#{bizzStartDate},'%Y-%m-%d')     </if>
+		<if test="bizzEndDate != null">      and date_format(res.bizz_end_date,'%Y-%m-%d') = date_format(#{bizzEndDate},'%Y-%m-%d')     </if>
 		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
 		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
-		<if test="projectPhaseId != null and projectPhaseId != ''">      and res.project_phase_id = #{projectPhaseId}     </if>
+		<if test="phaseId != null and phaseId != ''">      and res.phase_id = #{phaseId}     </if>
 		<if test="actCostAmount != null and actCostAmount != ''">      and res.act_cost_amount = #{actCostAmount}     </if>
 		<if test="costType != null and costType != ''">      and res.cost_type = #{costType}     </if>
 		<if test="bizMonth != null and bizMonth != ''">      and res.biz_month = #{bizMonth}     </if>
 		<if test="bizDate != null and bizDate != ''">      and res.biz_date = #{bizDate}     </if>
 		<if test="subjectName != null and subjectName != ''">      and res.subject_name = #{subjectName}     </if>
-		<if test="projectName != null and projectName != ''">      and res.project_phase_name = #{projectName}     </if>
+		<if test="phaseName != null and phaseName != ''">      and res.phase_name = #{phaseName}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -248,13 +254,13 @@
 		bizz_end_date = #{bizzEndDate},
 		biz_proc_inst_id = #{bizProcInstId},
 		biz_flow_state = #{bizFlowState},
-		project_phase_id = #{projectPhaseId},
+		phase_id = #{phaseId},
 		act_cost_amount = #{actCostAmount},
 		cost_type = #{costType},
 		biz_month = #{bizMonth},
 		biz_date = #{bizDate},
 		subject_name = #{subjectName},
-		project_phase_name = #{projectName}
+		phase_name = #{phaseName}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
@@ -271,13 +277,13 @@
 		<if test="bizzEndDate != null"> bizz_end_date = #{bizzEndDate},     </if>
 		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
 		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
-		<if test="projectPhaseId != null and projectPhaseId != ''"> project_phase_id = #{projectPhaseId},     </if>
+		<if test="phaseId != null and phaseId != ''"> phase_id = #{phaseId},     </if>
 		<if test="actCostAmount != null and actCostAmount != ''"> act_cost_amount = #{actCostAmount},     </if>
 		<if test="costType != null and costType != ''"> cost_type = #{costType},     </if>
 		<if test="bizMonth != null and bizMonth != ''"> biz_month = #{bizMonth},     </if>
 		<if test="bizDate != null and bizDate != ''"> biz_date = #{bizDate},     </if>
 		<if test="subjectName != null and subjectName != ''"> subject_name = #{subjectName},     </if>
-		<if test="projectName != null and projectName != ''"> project_phase_name = #{projectName},     </if>
+		<if test="phaseName != null and phaseName != ''"> phase_name = #{phaseName},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -295,12 +301,12 @@
 			bizz_end_date = #{item.bizzEndDate},
 			biz_proc_inst_id = #{item.bizProcInstId},
 			biz_flow_state = #{item.bizFlowState},
-			project_phase_id = #{item.projectPhaseId},
+			phase_id = #{item.phaseId},
 			act_cost_amount = #{item.actCostAmount},
 			cost_type = #{item.costType},
 			biz_month = #{item.bizMonth},
 			biz_date = #{item.bizDate},
 			subject_name = #{item.subjectName},
-			project_phase_name = #{item.projectName}
+			phase_name = #{item.phaseName}
 	</sql>
 </mapper>

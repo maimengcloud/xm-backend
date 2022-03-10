@@ -175,7 +175,13 @@
 		where 
 			res.menu_id = #{menuId}
 	</select>
-	
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmMenu">
+        select * from xm_menu res
+        where  (res.menu_id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_menu res
@@ -194,7 +200,7 @@
 		insert into xm_menu(
 			<include refid="columns"/>
 		) values (
-		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{budgetHours},#{budgetStaffNu},#{budgetWorkload},#{budgetAmount},#{phaseId},#{iterationId},#{calcType}
+		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{budgetHours},#{budgetStaffNu},#{budgetWorkload},#{budgetAmount},#{phaseId},#{iterationId},#{calcType},#{mactWorkload},#{mactAmount},#{mactRate}
 		)
 	</insert>
 	
@@ -257,7 +263,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type
+		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -295,6 +301,9 @@
 		<if test="phaseId != null and phaseId != ''">      and res.phase_id = #{phaseId}     </if>
 		<if test="iterationId != null and iterationId != ''">      and res.iteration_id = #{iterationId}     </if>
 		<if test="calcType != null and calcType != ''">      and res.calc_type = #{calcType}     </if>
+		<if test="mactWorkload != null and mactWorkload != ''">      and res.mact_workload = #{mactWorkload}     </if>
+		<if test="mactAmount != null and mactAmount != ''">      and res.mact_amount = #{mactAmount}     </if>
+		<if test="mactRate != null and mactRate != ''">      and res.mact_rate = #{mactRate}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -329,7 +338,10 @@
 		budget_amount = #{budgetAmount},
 		phase_id = #{phaseId},
 		iteration_id = #{iterationId},
-		calc_type = #{calcType}
+		calc_type = #{calcType},
+		mact_workload = #{mactWorkload},
+		mact_amount = #{mactAmount},
+		mact_rate = #{mactRate}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="menuName != null and menuName != ''"> menu_name = #{menuName},     </if>
@@ -364,6 +376,9 @@
 		<if test="phaseId != null and phaseId != ''"> phase_id = #{phaseId},     </if>
 		<if test="iterationId != null and iterationId != ''"> iteration_id = #{iterationId},     </if>
 		<if test="calcType != null and calcType != ''"> calc_type = #{calcType},     </if>
+		<if test="mactWorkload != null and mactWorkload != ''"> mact_workload = #{mactWorkload},     </if>
+		<if test="mactAmount != null and mactAmount != ''"> mact_amount = #{mactAmount},     </if>
+		<if test="mactRate != null and mactRate != ''"> mact_rate = #{mactRate},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -398,6 +413,9 @@
 			budget_amount = #{item.budgetAmount},
 			phase_id = #{item.phaseId},
 			iteration_id = #{item.iterationId},
-			calc_type = #{item.calcType}
+			calc_type = #{item.calcType},
+			mact_workload = #{item.mactWorkload},
+			mact_amount = #{item.mactAmount},
+			mact_rate = #{item.mactRate}
 	</sql>
 </mapper>

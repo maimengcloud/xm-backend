@@ -45,7 +45,13 @@
 		where 
 			res.iteration_id = #{iterationId}
 	</select>
-	
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmIterationState">
+        select * from xm_iteration_state res
+        where  (res.iteration_id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_iteration_state res

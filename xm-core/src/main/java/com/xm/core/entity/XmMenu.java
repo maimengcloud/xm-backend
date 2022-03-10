@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId,iterationId,calcType;<br>
+ *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId,iterationId,calcType,mactWorkload,mactAmount,mactRate;<br>
  * 表 xm_menu 功能表的所有字段名: <br>
- *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type;<br>
+ *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -118,6 +118,15 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报",allowEmptyValue=true,example="",allowableValues="")
 	String calcType;
+	
+	@ApiModelProperty(notes="手工填报的情况下填报的工作量，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal mactWorkload;
+	
+	@ApiModelProperty(notes="手工填报情况下填报的费用总额，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
+	String mactAmount;
+	
+	@ApiModelProperty(notes="手工填报下的进度",allowEmptyValue=true,example="",allowableValues="")
+	Integer mactRate;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -326,6 +335,24 @@ public class XmMenu  implements java.io.Serializable {
 	public void setCalcType(String calcType) {
 		this.calcType = calcType;
 	}
+	/**
+	 * 手工填报的情况下填报的工作量，其余为下级往上汇总数据
+	 **/
+	public void setMactWorkload(BigDecimal mactWorkload) {
+		this.mactWorkload = mactWorkload;
+	}
+	/**
+	 * 手工填报情况下填报的费用总额，其余为下级往上汇总数据
+	 **/
+	public void setMactAmount(String mactAmount) {
+		this.mactAmount = mactAmount;
+	}
+	/**
+	 * 手工填报下的进度
+	 **/
+	public void setMactRate(Integer mactRate) {
+		this.mactRate = mactRate;
+	}
 	
 	/**
 	 * 功能编号
@@ -524,6 +551,24 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public String getCalcType() {
 		return this.calcType;
+	}
+	/**
+	 * 手工填报的情况下填报的工作量，其余为下级往上汇总数据
+	 **/
+	public BigDecimal getMactWorkload() {
+		return this.mactWorkload;
+	}
+	/**
+	 * 手工填报情况下填报的费用总额，其余为下级往上汇总数据
+	 **/
+	public String getMactAmount() {
+		return this.mactAmount;
+	}
+	/**
+	 * 手工填报下的进度
+	 **/
+	public Integer getMactRate() {
+		return this.mactRate;
 	}
 
 }

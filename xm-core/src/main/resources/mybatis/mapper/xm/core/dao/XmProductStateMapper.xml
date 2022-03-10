@@ -13,9 +13,6 @@
          </if>
         <if test="key != null and key !='' ">       </if>
     </sql>
-	<update id="loadTasksToXmProductState" parameterType="String" statementType="CALLABLE">
-		{call load_tasks_to_xm_product_state(#{productId,mode=IN})}
-	</update>
 
 
 	<!--结束 自定义sql函数区域-->
@@ -45,7 +42,13 @@
 		where 
 			res.product_id = #{productId}
 	</select>
-	
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmProductState">
+        select * from xm_product_state res
+        where  (res.product_id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_product_state res

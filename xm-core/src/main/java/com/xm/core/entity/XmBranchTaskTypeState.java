@@ -1,16 +1,15 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 组织 com.qqkj  顶级模块 xm 大模块 core  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmBranchTaskTypeState所有属性名: <br>
  *	taskType,planWorkload,planAmount,actWorkload,actAmount,branchId,bizDate,calcTime,planOutUserAt,planInnerUserAt,actOutUserAt,actInnerUserAt,planOutUserWorkload,planInnerUserWorkload,actOutUserWorkload,actInnerUserWorkload,planNouserAt,actNouserAt,id,branchName;<br>
- * 表 XM.xm_branch_task_type_state 按机构编号任务类型汇总的所有字段名: <br>
+ * 表 xm_branch_task_type_state 按机构编号任务类型汇总的所有字段名: <br>
  *	task_type,plan_workload,plan_amount,act_workload,act_amount,branch_id,biz_date,calc_time,plan_out_user_at,plan_inner_user_at,act_out_user_at,act_inner_user_at,plan_out_user_workload,plan_inner_user_workload,act_out_user_workload,act_inner_user_workload,plan_nouser_at,act_nouser_at,id,branch_name;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
@@ -159,7 +158,7 @@ public class XmBranchTaskTypeState  implements java.io.Serializable {
 	/**
 	 * 实际内购成本
 	 **/
-	public void setActIuserAt(BigDecimal actInnerUserAt) {
+	public void setActInnerUserAt(BigDecimal actInnerUserAt) {
 		this.actInnerUserAt = actInnerUserAt;
 	}
 	/**
@@ -183,7 +182,7 @@ public class XmBranchTaskTypeState  implements java.io.Serializable {
 	/**
 	 * 实际内购工作量
 	 **/
-	public void setActIuserWorkload(BigDecimal actInnerUserWorkload) {
+	public void setActInnerUserWorkload(BigDecimal actInnerUserWorkload) {
 		this.actInnerUserWorkload = actInnerUserWorkload;
 	}
 	/**
@@ -280,7 +279,7 @@ public class XmBranchTaskTypeState  implements java.io.Serializable {
 	/**
 	 * 实际内购成本
 	 **/
-	public BigDecimal getActIuserAt() {
+	public BigDecimal getActInnerUserAt() {
 		return this.actInnerUserAt;
 	}
 	/**
@@ -304,7 +303,7 @@ public class XmBranchTaskTypeState  implements java.io.Serializable {
 	/**
 	 * 实际内购工作量
 	 **/
-	public BigDecimal getActIuserWorkload() {
+	public BigDecimal getActInnerUserWorkload() {
 		return this.actInnerUserWorkload;
 	}
 	/**

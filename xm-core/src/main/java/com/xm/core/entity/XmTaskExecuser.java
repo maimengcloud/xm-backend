@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskExecuser所有属性名: <br>
- *	createTime,id,taskId,userid,startTime,endTime,status,remarks,settleAmount,settleWorkload,settleStatus,settleTime,createUserid,createUsername,username,matchScore,quoteWeekday,quoteAmount,quoteTime,bizProcInstId,bizFlowState,projectId,projectPhaseId,skillRemark,quoteWorkload,quoteStartTime,quoteEndTime,branchId,projectName,taskName,isLeader,distUserid,distUsername;<br>
- * 表 XM.xm_task_execuser xm_task_execuser的所有字段名: <br>
- *	create_time,id,task_id,userid,start_time,end_time,status,remarks,settle_amount,settle_workload,settle_status,settle_time,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,biz_proc_inst_id,biz_flow_state,project_id,project_phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,project_phase_name,task_name,is_leader,dist_userid,dist_username;<br>
+ *	createTime,id,taskId,userid,startTime,endTime,status,remarks,settleAmount,settleWorkload,settleStatus,settleTime,createUserid,createUsername,username,matchScore,quoteWeekday,quoteAmount,quoteTime,bizProcInstId,bizFlowState,projectId,phaseId,skillRemark,quoteWorkload,quoteStartTime,quoteEndTime,branchId,phaseName,taskName,isLeader,distUserid,distUsername,execUserBranchid,shareKey;<br>
+ * 表 xm_task_execuser xm_task_execuser的所有字段名: <br>
+ *	create_time,id,task_id,userid,start_time,end_time,status,remarks,settle_amount,settle_workload,settle_status,settle_time,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,biz_proc_inst_id,biz_flow_state,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,is_leader,dist_userid,dist_username,exec_user_branchid,share_key;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -50,7 +50,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	@ApiModelProperty(notes="已结算工作量",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal settleWorkload;
 	
-	@ApiModelProperty(notes="结算状态0未结算1已部分结算2无需结算4已申请结算5结算失败6已全部结算",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="结算状态0未结算4已申请结算5结算失败6已全部结算",allowEmptyValue=true,example="",allowableValues="")
 	String settleStatus;
 	
 	@ApiModelProperty(notes="上次结算时间",allowEmptyValue=true,example="",allowableValues="")
@@ -86,8 +86,8 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	@ApiModelProperty(notes="项目编号",allowEmptyValue=true,example="",allowableValues="")
 	String projectId;
 	
-	@ApiModelProperty(notes="计划编号",allowEmptyValue=true,example="",allowableValues="")
-	String projectPhaseId;
+	@ApiModelProperty(notes="阶段计划编号",allowEmptyValue=true,example="",allowableValues="")
+	String phaseId;
 	
 	@ApiModelProperty(notes="技能说明",allowEmptyValue=true,example="",allowableValues="")
 	String skillRemark;
@@ -104,8 +104,8 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	@ApiModelProperty(notes="项目所属机构",allowEmptyValue=true,example="",allowableValues="")
 	String branchId;
 	
-	@ApiModelProperty(notes="计划名称",allowEmptyValue=true,example="",allowableValues="")
-	String projectName;
+	@ApiModelProperty(notes="阶段计划名称",allowEmptyValue=true,example="",allowableValues="")
+	String phaseName;
 	
 	@ApiModelProperty(notes="任务名称",allowEmptyValue=true,example="",allowableValues="")
 	String taskName;
@@ -118,6 +118,12 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="推荐人姓名",allowEmptyValue=true,example="",allowableValues="")
 	String distUsername;
+	
+	@ApiModelProperty(notes="执行人归属公司",allowEmptyValue=true,example="",allowableValues="")
+	String execUserBranchid;
+	
+	@ApiModelProperty(notes="分享码",allowEmptyValue=true,example="",allowableValues="")
+	String shareKey;
 
 	/**编号**/
 	public XmTaskExecuser(String id) {
@@ -189,7 +195,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		this.settleWorkload = settleWorkload;
 	}
 	/**
-	 * 结算状态0未结算1已部分结算2无需结算4已申请结算5结算失败6已全部结算
+	 * 结算状态0未结算4已申请结算5结算失败6已全部结算
 	 **/
 	public void setSettleStatus(String settleStatus) {
 		this.settleStatus = settleStatus;
@@ -261,10 +267,10 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		this.projectId = projectId;
 	}
 	/**
-	 * 计划编号
+	 * 阶段计划编号
 	 **/
-	public void setPhaseId(String projectPhaseId) {
-		this.projectPhaseId = projectPhaseId;
+	public void setPhaseId(String phaseId) {
+		this.phaseId = phaseId;
 	}
 	/**
 	 * 技能说明
@@ -297,10 +303,10 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		this.branchId = branchId;
 	}
 	/**
-	 * 计划名称
+	 * 阶段计划名称
 	 **/
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
+	public void setPhaseName(String phaseName) {
+		this.phaseName = phaseName;
 	}
 	/**
 	 * 任务名称
@@ -325,6 +331,18 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	 **/
 	public void setDistUsername(String distUsername) {
 		this.distUsername = distUsername;
+	}
+	/**
+	 * 执行人归属公司
+	 **/
+	public void setExecUserBranchid(String execUserBranchid) {
+		this.execUserBranchid = execUserBranchid;
+	}
+	/**
+	 * 分享码
+	 **/
+	public void setShareKey(String shareKey) {
+		this.shareKey = shareKey;
 	}
 	
 	/**
@@ -388,7 +406,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		return this.settleWorkload;
 	}
 	/**
-	 * 结算状态0未结算1已部分结算2无需结算4已申请结算5结算失败6已全部结算
+	 * 结算状态0未结算4已申请结算5结算失败6已全部结算
 	 **/
 	public String getSettleStatus() {
 		return this.settleStatus;
@@ -460,10 +478,10 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		return this.projectId;
 	}
 	/**
-	 * 计划编号
+	 * 阶段计划编号
 	 **/
 	public String getPhaseId() {
-		return this.projectPhaseId;
+		return this.phaseId;
 	}
 	/**
 	 * 技能说明
@@ -496,10 +514,10 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		return this.branchId;
 	}
 	/**
-	 * 计划名称
+	 * 阶段计划名称
 	 **/
-	public String getProjectName() {
-		return this.projectName;
+	public String getPhaseName() {
+		return this.phaseName;
 	}
 	/**
 	 * 任务名称
@@ -524,6 +542,18 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	 **/
 	public String getDistUsername() {
 		return this.distUsername;
+	}
+	/**
+	 * 执行人归属公司
+	 **/
+	public String getExecUserBranchid() {
+		return this.execUserBranchid;
+	}
+	/**
+	 * 分享码
+	 **/
+	public String getShareKey() {
+		return this.shareKey;
 	}
 
 }

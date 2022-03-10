@@ -1,21 +1,20 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectMBudgetCostNouser所有属性名: <br>
- *	projectId,budgetCost,id,remark,subjectId,bizzStartDate,bizzEndDate,bizProcInstId,bizFlowState,projectPhaseId,costType,bizzMonth;<br>
- * 表 XM.xm_project_m_budget_cost_nouser xm_project_m_budget_cost_nouser的所有字段名: <br>
- *	project_id,budget_cost,id,remark,subject_id,bizz_start_date,bizz_end_date,biz_proc_inst_id,biz_flow_state,project_phase_id,cost_type,bizz_month;<br>
+ *	projectId,budgetCost,id,remark,subjectId,bizzStartDate,bizzEndDate,bizProcInstId,bizFlowState,phaseId,costType,bizzMonth,subjectName;<br>
+ * 表 xm_project_m_budget_cost_nouser 项目人力成本预算的所有字段名: <br>
+ *	project_id,budget_cost,id,remark,subject_id,bizz_start_date,bizz_end_date,biz_proc_inst_id,biz_flow_state,phase_id,cost_type,bizz_month,subject_name;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
-@ApiModel(description="xm_project_m_budget_cost_nouser")
+@ApiModel(description="项目人力成本预算")
 public class XmProjectMBudgetCostNouser  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -48,21 +47,24 @@ public class XmProjectMBudgetCostNouser  implements java.io.Serializable {
 	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
 	String bizFlowState;
 	
-	@ApiModelProperty(notes="计划",allowEmptyValue=true,example="",allowableValues="")
-	String projectPhaseId;
+	@ApiModelProperty(notes="阶段计划编号",allowEmptyValue=true,example="",allowableValues="")
+	String phaseId;
 	
 	@ApiModelProperty(notes="成本类型0非人力1内部人力2外购人力",allowEmptyValue=true,example="",allowableValues="")
 	String costType;
 	
 	@ApiModelProperty(notes="费用归属月份yyyy-mm",allowEmptyValue=true,example="",allowableValues="")
 	String bizzMonth;
+	
+	@ApiModelProperty(notes="科目名称",allowEmptyValue=true,example="",allowableValues="")
+	String subjectName;
 
 	/**主键**/
 	public XmProjectMBudgetCostNouser(String id) {
 		this.id = id;
 	}
     
-    /**xm_project_m_budget_cost_nouser**/
+    /**项目人力成本预算**/
 	public XmProjectMBudgetCostNouser() {
 	}
 	
@@ -121,10 +123,10 @@ public class XmProjectMBudgetCostNouser  implements java.io.Serializable {
 		this.bizFlowState = bizFlowState;
 	}
 	/**
-	 * 计划
+	 * 阶段计划编号
 	 **/
-	public void setPhaseId(String projectPhaseId) {
-		this.projectPhaseId = projectPhaseId;
+	public void setPhaseId(String phaseId) {
+		this.phaseId = phaseId;
 	}
 	/**
 	 * 成本类型0非人力1内部人力2外购人力
@@ -137,6 +139,12 @@ public class XmProjectMBudgetCostNouser  implements java.io.Serializable {
 	 **/
 	public void setBizzMonth(String bizzMonth) {
 		this.bizzMonth = bizzMonth;
+	}
+	/**
+	 * 科目名称
+	 **/
+	public void setSubjectName(String subjectName) {
+		this.subjectName = subjectName;
 	}
 	
 	/**
@@ -194,10 +202,10 @@ public class XmProjectMBudgetCostNouser  implements java.io.Serializable {
 		return this.bizFlowState;
 	}
 	/**
-	 * 计划
+	 * 阶段计划编号
 	 **/
 	public String getPhaseId() {
-		return this.projectPhaseId;
+		return this.phaseId;
 	}
 	/**
 	 * 成本类型0非人力1内部人力2外购人力
@@ -210,6 +218,12 @@ public class XmProjectMBudgetCostNouser  implements java.io.Serializable {
 	 **/
 	public String getBizzMonth() {
 		return this.bizzMonth;
+	}
+	/**
+	 * 科目名称
+	 **/
+	public String getSubjectName() {
+		return this.subjectName;
 	}
 
 }

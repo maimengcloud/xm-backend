@@ -1,21 +1,20 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.math.BigDecimal;
 import java.util.Date;
 
 /**
- * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectMBudgetCostUser所有属性名: <br>
- *	projectId,userid,budgetCost,id,remark,username,subjectId,bizzStartDate,bizzEndDate,bizzMonth,bizProcInstId,bizFlowState,projectPhaseId,costType;<br>
- * 表 XM.xm_project_m_budget_cost_user xm_project_m_budget_cost_user的所有字段名: <br>
- *	project_id,userid,budget_cost,id,remark,username,subject_id,bizz_start_date,bizz_end_date,bizz_month,biz_proc_inst_id,biz_flow_state,project_phase_id,cost_type;<br>
+ *	projectId,userid,budgetCost,id,remark,username,subjectId,bizzStartDate,bizzEndDate,bizzMonth,bizProcInstId,bizFlowState,phaseId,costType,subjectName;<br>
+ * 表 xm_project_m_budget_cost_user 项目人力成本预算的所有字段名: <br>
+ *	project_id,userid,budget_cost,id,remark,username,subject_id,bizz_start_date,bizz_end_date,bizz_month,biz_proc_inst_id,biz_flow_state,phase_id,cost_type,subject_name;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
-@ApiModel(description="xm_project_m_budget_cost_user")
+@ApiModel(description="项目人力成本预算")
 public class XmProjectMBudgetCostUser  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -57,18 +56,21 @@ public class XmProjectMBudgetCostUser  implements java.io.Serializable {
 	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
 	String bizFlowState;
 	
-	@ApiModelProperty(notes="项目计划",allowEmptyValue=true,example="",allowableValues="")
-	String projectPhaseId;
+	@ApiModelProperty(notes="项目阶段",allowEmptyValue=true,example="",allowableValues="")
+	String phaseId;
 	
 	@ApiModelProperty(notes="成本类型0非人力1内部人力2外购人力",allowEmptyValue=true,example="",allowableValues="")
 	String costType;
+	
+	@ApiModelProperty(notes="科目名称",allowEmptyValue=true,example="",allowableValues="")
+	String subjectName;
 
 	/**主键**/
 	public XmProjectMBudgetCostUser(String id) {
 		this.id = id;
 	}
     
-    /**xm_project_m_budget_cost_user**/
+    /**项目人力成本预算**/
 	public XmProjectMBudgetCostUser() {
 	}
 	
@@ -145,16 +147,22 @@ public class XmProjectMBudgetCostUser  implements java.io.Serializable {
 		this.bizFlowState = bizFlowState;
 	}
 	/**
-	 * 项目计划
+	 * 项目阶段
 	 **/
-	public void setPhaseId(String projectPhaseId) {
-		this.projectPhaseId = projectPhaseId;
+	public void setPhaseId(String phaseId) {
+		this.phaseId = phaseId;
 	}
 	/**
 	 * 成本类型0非人力1内部人力2外购人力
 	 **/
 	public void setCostType(String costType) {
 		this.costType = costType;
+	}
+	/**
+	 * 科目名称
+	 **/
+	public void setSubjectName(String subjectName) {
+		this.subjectName = subjectName;
 	}
 	
 	/**
@@ -230,16 +238,22 @@ public class XmProjectMBudgetCostUser  implements java.io.Serializable {
 		return this.bizFlowState;
 	}
 	/**
-	 * 项目计划
+	 * 项目阶段
 	 **/
 	public String getPhaseId() {
-		return this.projectPhaseId;
+		return this.phaseId;
 	}
 	/**
 	 * 成本类型0非人力1内部人力2外购人力
 	 **/
 	public String getCostType() {
 		return this.costType;
+	}
+	/**
+	 * 科目名称
+	 **/
+	public String getSubjectName() {
+		return this.subjectName;
 	}
 
 }

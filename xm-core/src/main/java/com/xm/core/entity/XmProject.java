@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProject所有属性名: <br>
- *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planInnerUserAt,planOutUserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planInnerUserPrice,planOutUserPrice,planOutUserCnt,planInnerUserCnt,planWorkingHours,taxRate,planInnerUserWorkload,planOutUserWorkload,fromTplId,budgetCtrl,deptid,showOut,isTpl,pmUserid,pmUsername,assUserid,assUsername,admUserid,admUsername,phaseBudgetCtrl,phaseActCtrl,del,ltime;<br>
+ *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planIuserAt,planOuserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planIuserPrice,planOuserPrice,planOuserCnt,planIuserCnt,planWorkingHours,taxRate,planIuserWorkload,planOuserWorkload,fromTplId,budgetCtrl,deptid,showOut,isTpl,pmUserid,pmUsername,assUserid,assUsername,admUserid,admUsername,phaseBudgetCtrl,phaseActCtrl,del,ltime;<br>
  * 表 xm_project xm_project的所有字段名: <br>
- *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl,del,ltime;<br>
+ *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_iuser_at,plan_ouser_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_iuser_price,plan_ouser_price,plan_ouser_cnt,plan_iuser_cnt,plan_working_hours,tax_rate,plan_iuser_workload,plan_ouser_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl,del,ltime;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -81,10 +81,10 @@ public class XmProject  implements java.io.Serializable {
 	BigDecimal planNouserAt;
 	
 	@ApiModelProperty(notes="内部人力成本总预算-应该大于或等于阶段计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planInnerUserAt;
+	BigDecimal planIuserAt;
 	
 	@ApiModelProperty(notes="外购人力成本总预算-应该大于或等于阶段计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planOutUserAt;
+	BigDecimal planOuserAt;
 	
 	@ApiModelProperty(notes="是否锁定整个项目不允许变化0否1是",allowEmptyValue=true,example="",allowableValues="")
 	String locked;
@@ -111,16 +111,16 @@ public class XmProject  implements java.io.Serializable {
 	BigDecimal contractAmt;
 	
 	@ApiModelProperty(notes="内部人力成本单价元/人时",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planInnerUserPrice;
+	BigDecimal planIuserPrice;
 	
 	@ApiModelProperty(notes="外购人力成本单价元/人时",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planOutUserPrice;
+	BigDecimal planOuserPrice;
 	
 	@ApiModelProperty(notes="外购人数",allowEmptyValue=true,example="",allowableValues="")
-	Integer planOutUserCnt;
+	Integer planOuserCnt;
 	
 	@ApiModelProperty(notes="内部人数",allowEmptyValue=true,example="",allowableValues="")
-	Integer planInnerUserCnt;
+	Integer planIuserCnt;
 	
 	@ApiModelProperty(notes="预计工作小时数目",allowEmptyValue=true,example="",allowableValues="")
 	Integer planWorkingHours;
@@ -129,10 +129,10 @@ public class XmProject  implements java.io.Serializable {
 	BigDecimal taxRate;
 	
 	@ApiModelProperty(notes="内部人力总工作量-应该大于或等于阶段计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planInnerUserWorkload;
+	BigDecimal planIuserWorkload;
 	
 	@ApiModelProperty(notes="外购人力总工作量-应该大于或等于阶段计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planOutUserWorkload;
+	BigDecimal planOuserWorkload;
 	
 	@ApiModelProperty(notes="关联模板编号",allowEmptyValue=true,example="",allowableValues="")
 	String fromTplId;
@@ -311,14 +311,14 @@ public class XmProject  implements java.io.Serializable {
 	/**
 	 * 内部人力成本总预算-应该大于或等于阶段计划内部人力总成本
 	 **/
-	public void setPlanInnerUserAt(BigDecimal planInnerUserAt) {
-		this.planInnerUserAt = planInnerUserAt;
+	public void setPlanIuserAt(BigDecimal planIuserAt) {
+		this.planIuserAt = planIuserAt;
 	}
 	/**
 	 * 外购人力成本总预算-应该大于或等于阶段计划外购人力总成本
 	 **/
-	public void setPlanOutUserAt(BigDecimal planOutUserAt) {
-		this.planOutUserAt = planOutUserAt;
+	public void setPlanOuserAt(BigDecimal planOuserAt) {
+		this.planOuserAt = planOuserAt;
 	}
 	/**
 	 * 是否锁定整个项目不允许变化0否1是
@@ -371,26 +371,26 @@ public class XmProject  implements java.io.Serializable {
 	/**
 	 * 内部人力成本单价元/人时
 	 **/
-	public void setPlanInnerUserPrice(BigDecimal planInnerUserPrice) {
-		this.planInnerUserPrice = planInnerUserPrice;
+	public void setPlanIuserPrice(BigDecimal planIuserPrice) {
+		this.planIuserPrice = planIuserPrice;
 	}
 	/**
 	 * 外购人力成本单价元/人时
 	 **/
-	public void setPlanOutUserPrice(BigDecimal planOutUserPrice) {
-		this.planOutUserPrice = planOutUserPrice;
+	public void setPlanOuserPrice(BigDecimal planOuserPrice) {
+		this.planOuserPrice = planOuserPrice;
 	}
 	/**
 	 * 外购人数
 	 **/
-	public void setPlanOutUserCnt(Integer planOutUserCnt) {
-		this.planOutUserCnt = planOutUserCnt;
+	public void setPlanOuserCnt(Integer planOuserCnt) {
+		this.planOuserCnt = planOuserCnt;
 	}
 	/**
 	 * 内部人数
 	 **/
-	public void setPlanInnerUserCnt(Integer planInnerUserCnt) {
-		this.planInnerUserCnt = planInnerUserCnt;
+	public void setPlanIuserCnt(Integer planIuserCnt) {
+		this.planIuserCnt = planIuserCnt;
 	}
 	/**
 	 * 预计工作小时数目
@@ -407,14 +407,14 @@ public class XmProject  implements java.io.Serializable {
 	/**
 	 * 内部人力总工作量-应该大于或等于阶段计划内部人力总成本
 	 **/
-	public void setPlanInnerUserWorkload(BigDecimal planInnerUserWorkload) {
-		this.planInnerUserWorkload = planInnerUserWorkload;
+	public void setPlanIuserWorkload(BigDecimal planIuserWorkload) {
+		this.planIuserWorkload = planIuserWorkload;
 	}
 	/**
 	 * 外购人力总工作量-应该大于或等于阶段计划外购人力总成本
 	 **/
-	public void setPlanOutUserWorkload(BigDecimal planOutUserWorkload) {
-		this.planOutUserWorkload = planOutUserWorkload;
+	public void setPlanOuserWorkload(BigDecimal planOuserWorkload) {
+		this.planOuserWorkload = planOuserWorkload;
 	}
 	/**
 	 * 关联模板编号
@@ -630,14 +630,14 @@ public class XmProject  implements java.io.Serializable {
 	/**
 	 * 内部人力成本总预算-应该大于或等于阶段计划内部人力总成本
 	 **/
-	public BigDecimal getPlanInnerUserAt() {
-		return this.planInnerUserAt;
+	public BigDecimal getPlanIuserAt() {
+		return this.planIuserAt;
 	}
 	/**
 	 * 外购人力成本总预算-应该大于或等于阶段计划外购人力总成本
 	 **/
-	public BigDecimal getPlanOutUserAt() {
-		return this.planOutUserAt;
+	public BigDecimal getPlanOuserAt() {
+		return this.planOuserAt;
 	}
 	/**
 	 * 是否锁定整个项目不允许变化0否1是
@@ -690,26 +690,26 @@ public class XmProject  implements java.io.Serializable {
 	/**
 	 * 内部人力成本单价元/人时
 	 **/
-	public BigDecimal getPlanInnerUserPrice() {
-		return this.planInnerUserPrice;
+	public BigDecimal getPlanIuserPrice() {
+		return this.planIuserPrice;
 	}
 	/**
 	 * 外购人力成本单价元/人时
 	 **/
-	public BigDecimal getPlanOutUserPrice() {
-		return this.planOutUserPrice;
+	public BigDecimal getPlanOuserPrice() {
+		return this.planOuserPrice;
 	}
 	/**
 	 * 外购人数
 	 **/
-	public Integer getPlanOutUserCnt() {
-		return this.planOutUserCnt;
+	public Integer getPlanOuserCnt() {
+		return this.planOuserCnt;
 	}
 	/**
 	 * 内部人数
 	 **/
-	public Integer getPlanInnerUserCnt() {
-		return this.planInnerUserCnt;
+	public Integer getPlanIuserCnt() {
+		return this.planIuserCnt;
 	}
 	/**
 	 * 预计工作小时数目
@@ -726,14 +726,14 @@ public class XmProject  implements java.io.Serializable {
 	/**
 	 * 内部人力总工作量-应该大于或等于阶段计划内部人力总成本
 	 **/
-	public BigDecimal getPlanInnerUserWorkload() {
-		return this.planInnerUserWorkload;
+	public BigDecimal getPlanIuserWorkload() {
+		return this.planIuserWorkload;
 	}
 	/**
 	 * 外购人力总工作量-应该大于或等于阶段计划外购人力总成本
 	 **/
-	public BigDecimal getPlanOutUserWorkload() {
-		return this.planOutUserWorkload;
+	public BigDecimal getPlanOuserWorkload() {
+		return this.planOuserWorkload;
 	}
 	/**
 	 * 关联模板编号

@@ -172,7 +172,7 @@
 		insert into xm_project(
 			<include refid="columns"/>
 		) values (
-		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planInnerUserAt},#{planOutUserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planInnerUserPrice},#{planOutUserPrice},#{planOutUserCnt},#{planInnerUserCnt},#{planWorkingHours},#{taxRate},#{planInnerUserWorkload},#{planOutUserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut},#{isTpl},#{pmUserid},#{pmUsername},#{assUserid},#{assUsername},#{admUserid},#{admUsername},#{phaseBudgetCtrl},#{phaseActCtrl},#{del},#{ltime}
+		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planIuserAt},#{planOuserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planIuserPrice},#{planOuserPrice},#{planOuserCnt},#{planIuserCnt},#{planWorkingHours},#{taxRate},#{planIuserWorkload},#{planOuserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut},#{isTpl},#{pmUserid},#{pmUsername},#{assUserid},#{assUsername},#{admUserid},#{admUsername},#{phaseBudgetCtrl},#{phaseActCtrl},#{del},#{ltime}
 		)
 	</insert>
 	
@@ -235,7 +235,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_inner_user_at,plan_out_user_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_inner_user_price,plan_out_user_price,plan_out_user_cnt,plan_inner_user_cnt,plan_working_hours,tax_rate,plan_inner_user_workload,plan_out_user_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl,del,ltime
+		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_iuser_at,plan_ouser_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_iuser_price,plan_ouser_price,plan_ouser_cnt,plan_iuser_cnt,plan_working_hours,tax_rate,plan_iuser_workload,plan_ouser_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl,del,ltime
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -260,8 +260,8 @@
 		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
 		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
 		<if test="planNouserAt != null and planNouserAt != ''">      and res.plan_nouser_at = #{planNouserAt}     </if>
-		<if test="planInnerUserAt != null and planInnerUserAt != ''">      and res.plan_inner_user_at = #{planInnerUserAt}     </if>
-		<if test="planOutUserAt != null and planOutUserAt != ''">      and res.plan_out_user_at = #{planOutUserAt}     </if>
+		<if test="planIuserAt != null and planIuserAt != ''">      and res.plan_iuser_at = #{planIuserAt}     </if>
+		<if test="planOuserAt != null and planOuserAt != ''">      and res.plan_ouser_at = #{planOuserAt}     </if>
 		<if test="locked != null and locked != ''">      and res.locked = #{locked}     </if>
 		<if test="baseTime != null">      and date_format(res.base_time,'%Y-%m-%d') = date_format(#{baseTime},'%Y-%m-%d')     </if>
 		<if test="baseRemark != null and baseRemark != ''">      and res.base_remark = #{baseRemark}     </if>
@@ -270,14 +270,14 @@
 		<if test="totalReceivables != null and totalReceivables != ''">      and res.total_receivables = #{totalReceivables}     </if>
 		<if test="budgetMarginRate != null and budgetMarginRate != ''">      and res.budget_margin_rate = #{budgetMarginRate}     </if>
 		<if test="contractAmt != null and contractAmt != ''">      and res.contract_amt = #{contractAmt}     </if>
-		<if test="planInnerUserPrice != null and planInnerUserPrice != ''">      and res.plan_inner_user_price = #{planInnerUserPrice}     </if>
-		<if test="planOutUserPrice != null and planOutUserPrice != ''">      and res.plan_out_user_price = #{planOutUserPrice}     </if>
-		<if test="planOutUserCnt != null and planOutUserCnt != ''">      and res.plan_out_user_cnt = #{planOutUserCnt}     </if>
-		<if test="planInnerUserCnt != null and planInnerUserCnt != ''">      and res.plan_inner_user_cnt = #{planInnerUserCnt}     </if>
+		<if test="planIuserPrice != null and planIuserPrice != ''">      and res.plan_iuser_price = #{planIuserPrice}     </if>
+		<if test="planOuserPrice != null and planOuserPrice != ''">      and res.plan_ouser_price = #{planOuserPrice}     </if>
+		<if test="planOuserCnt != null and planOuserCnt != ''">      and res.plan_ouser_cnt = #{planOuserCnt}     </if>
+		<if test="planIuserCnt != null and planIuserCnt != ''">      and res.plan_iuser_cnt = #{planIuserCnt}     </if>
 		<if test="planWorkingHours != null and planWorkingHours != ''">      and res.plan_working_hours = #{planWorkingHours}     </if>
 		<if test="taxRate != null and taxRate != ''">      and res.tax_rate = #{taxRate}     </if>
-		<if test="planInnerUserWorkload != null and planInnerUserWorkload != ''">      and res.plan_inner_user_workload = #{planInnerUserWorkload}     </if>
-		<if test="planOutUserWorkload != null and planOutUserWorkload != ''">      and res.plan_out_user_workload = #{planOutUserWorkload}     </if>
+		<if test="planIuserWorkload != null and planIuserWorkload != ''">      and res.plan_iuser_workload = #{planIuserWorkload}     </if>
+		<if test="planOuserWorkload != null and planOuserWorkload != ''">      and res.plan_ouser_workload = #{planOuserWorkload}     </if>
 		<if test="fromTplId != null and fromTplId != ''">      and res.from_tpl_id = #{fromTplId}     </if>
 		<if test="budgetCtrl != null and budgetCtrl != ''">      and res.budget_ctrl = #{budgetCtrl}     </if>
 		<if test="deptid != null and deptid != ''">      and res.deptid = #{deptid}     </if>
@@ -315,8 +315,8 @@
 		biz_proc_inst_id = #{bizProcInstId},
 		biz_flow_state = #{bizFlowState},
 		plan_nouser_at = #{planNouserAt},
-		plan_inner_user_at = #{planInnerUserAt},
-		plan_out_user_at = #{planOutUserAt},
+		plan_iuser_at = #{planIuserAt},
+		plan_ouser_at = #{planOuserAt},
 		locked = #{locked},
 		base_time = #{baseTime},
 		base_remark = #{baseRemark},
@@ -325,14 +325,14 @@
 		total_receivables = #{totalReceivables},
 		budget_margin_rate = #{budgetMarginRate},
 		contract_amt = #{contractAmt},
-		plan_inner_user_price = #{planInnerUserPrice},
-		plan_out_user_price = #{planOutUserPrice},
-		plan_out_user_cnt = #{planOutUserCnt},
-		plan_inner_user_cnt = #{planInnerUserCnt},
+		plan_iuser_price = #{planIuserPrice},
+		plan_ouser_price = #{planOuserPrice},
+		plan_ouser_cnt = #{planOuserCnt},
+		plan_iuser_cnt = #{planIuserCnt},
 		plan_working_hours = #{planWorkingHours},
 		tax_rate = #{taxRate},
-		plan_inner_user_workload = #{planInnerUserWorkload},
-		plan_out_user_workload = #{planOutUserWorkload},
+		plan_iuser_workload = #{planIuserWorkload},
+		plan_ouser_workload = #{planOuserWorkload},
 		from_tpl_id = #{fromTplId},
 		budget_ctrl = #{budgetCtrl},
 		deptid = #{deptid},
@@ -369,8 +369,8 @@
 		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
 		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
 		<if test="planNouserAt != null and planNouserAt != ''"> plan_nouser_at = #{planNouserAt},     </if>
-		<if test="planInnerUserAt != null and planInnerUserAt != ''"> plan_inner_user_at = #{planInnerUserAt},     </if>
-		<if test="planOutUserAt != null and planOutUserAt != ''"> plan_out_user_at = #{planOutUserAt},     </if>
+		<if test="planIuserAt != null and planIuserAt != ''"> plan_iuser_at = #{planIuserAt},     </if>
+		<if test="planOuserAt != null and planOuserAt != ''"> plan_ouser_at = #{planOuserAt},     </if>
 		<if test="locked != null and locked != ''"> locked = #{locked},     </if>
 		<if test="baseTime != null"> base_time = #{baseTime},     </if>
 		<if test="baseRemark != null and baseRemark != ''"> base_remark = #{baseRemark},     </if>
@@ -379,14 +379,14 @@
 		<if test="totalReceivables != null and totalReceivables != ''"> total_receivables = #{totalReceivables},     </if>
 		<if test="budgetMarginRate != null and budgetMarginRate != ''"> budget_margin_rate = #{budgetMarginRate},     </if>
 		<if test="contractAmt != null and contractAmt != ''"> contract_amt = #{contractAmt},     </if>
-		<if test="planInnerUserPrice != null and planInnerUserPrice != ''"> plan_inner_user_price = #{planInnerUserPrice},     </if>
-		<if test="planOutUserPrice != null and planOutUserPrice != ''"> plan_out_user_price = #{planOutUserPrice},     </if>
-		<if test="planOutUserCnt != null and planOutUserCnt != ''"> plan_out_user_cnt = #{planOutUserCnt},     </if>
-		<if test="planInnerUserCnt != null and planInnerUserCnt != ''"> plan_inner_user_cnt = #{planInnerUserCnt},     </if>
+		<if test="planIuserPrice != null and planIuserPrice != ''"> plan_iuser_price = #{planIuserPrice},     </if>
+		<if test="planOuserPrice != null and planOuserPrice != ''"> plan_ouser_price = #{planOuserPrice},     </if>
+		<if test="planOuserCnt != null and planOuserCnt != ''"> plan_ouser_cnt = #{planOuserCnt},     </if>
+		<if test="planIuserCnt != null and planIuserCnt != ''"> plan_iuser_cnt = #{planIuserCnt},     </if>
 		<if test="planWorkingHours != null and planWorkingHours != ''"> plan_working_hours = #{planWorkingHours},     </if>
 		<if test="taxRate != null and taxRate != ''"> tax_rate = #{taxRate},     </if>
-		<if test="planInnerUserWorkload != null and planInnerUserWorkload != ''"> plan_inner_user_workload = #{planInnerUserWorkload},     </if>
-		<if test="planOutUserWorkload != null and planOutUserWorkload != ''"> plan_out_user_workload = #{planOutUserWorkload},     </if>
+		<if test="planIuserWorkload != null and planIuserWorkload != ''"> plan_iuser_workload = #{planIuserWorkload},     </if>
+		<if test="planOuserWorkload != null and planOuserWorkload != ''"> plan_ouser_workload = #{planOuserWorkload},     </if>
 		<if test="fromTplId != null and fromTplId != ''"> from_tpl_id = #{fromTplId},     </if>
 		<if test="budgetCtrl != null and budgetCtrl != ''"> budget_ctrl = #{budgetCtrl},     </if>
 		<if test="deptid != null and deptid != ''"> deptid = #{deptid},     </if>
@@ -424,8 +424,8 @@
 			biz_proc_inst_id = #{item.bizProcInstId},
 			biz_flow_state = #{item.bizFlowState},
 			plan_nouser_at = #{item.planNouserAt},
-			plan_inner_user_at = #{item.planInnerUserAt},
-			plan_out_user_at = #{item.planOutUserAt},
+			plan_iuser_at = #{item.planIuserAt},
+			plan_ouser_at = #{item.planOuserAt},
 			locked = #{item.locked},
 			base_time = #{item.baseTime},
 			base_remark = #{item.baseRemark},
@@ -434,14 +434,14 @@
 			total_receivables = #{item.totalReceivables},
 			budget_margin_rate = #{item.budgetMarginRate},
 			contract_amt = #{item.contractAmt},
-			plan_inner_user_price = #{item.planInnerUserPrice},
-			plan_out_user_price = #{item.planOutUserPrice},
-			plan_out_user_cnt = #{item.planOutUserCnt},
-			plan_inner_user_cnt = #{item.planInnerUserCnt},
+			plan_iuser_price = #{item.planIuserPrice},
+			plan_ouser_price = #{item.planOuserPrice},
+			plan_ouser_cnt = #{item.planOuserCnt},
+			plan_iuser_cnt = #{item.planIuserCnt},
 			plan_working_hours = #{item.planWorkingHours},
 			tax_rate = #{item.taxRate},
-			plan_inner_user_workload = #{item.planInnerUserWorkload},
-			plan_out_user_workload = #{item.planOutUserWorkload},
+			plan_iuser_workload = #{item.planIuserWorkload},
+			plan_ouser_workload = #{item.planOuserWorkload},
 			from_tpl_id = #{item.fromTplId},
 			budget_ctrl = #{item.budgetCtrl},
 			deptid = #{item.deptid},

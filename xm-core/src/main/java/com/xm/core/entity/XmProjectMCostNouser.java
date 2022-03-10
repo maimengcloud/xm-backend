@@ -1,21 +1,20 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
- * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectMCostNouser所有属性名: <br>
- *	projectId,userid,createTime,sendCostTime,username,projectName,remark,id,taskId,taskName,subjectId,bizzStartDate,bizzEndDate,bizProcInstId,bizFlowState,projectPhaseId,actCostAmount,costType,bizMonth,bizDate,subjectName,projectName;<br>
- * 表 XM.xm_project_m_cost_nouser xm_project_m_cost_nouser的所有字段名: <br>
- *	project_id,userid,create_time,send_cost_time,username,project_name,remark,id,task_id,task_name,subject_id,bizz_start_date,bizz_end_date,biz_proc_inst_id,biz_flow_state,project_phase_id,act_cost_amount,cost_type,biz_month,biz_date,subject_name,project_phase_name;<br>
+ *	projectId,userid,createTime,sendCostTime,username,projectName,remark,id,taskId,taskName,subjectId,bizzStartDate,bizzEndDate,bizProcInstId,bizFlowState,phaseId,actCostAmount,costType,bizMonth,bizDate,subjectName,phaseName;<br>
+ * 表 xm_project_m_cost_nouser 项目实际人工成本费用的所有字段名: <br>
+ *	project_id,userid,create_time,send_cost_time,username,project_name,remark,id,task_id,task_name,subject_id,bizz_start_date,bizz_end_date,biz_proc_inst_id,biz_flow_state,phase_id,act_cost_amount,cost_type,biz_month,biz_date,subject_name,phase_name;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
-@ApiModel(description="xm_project_m_cost_nouser")
+@ApiModel(description="项目实际人工成本费用")
 public class XmProjectMCostNouser  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -66,8 +65,8 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
 	String bizFlowState;
 	
-	@ApiModelProperty(notes="项目计划计划编号",allowEmptyValue=true,example="",allowableValues="")
-	String projectPhaseId;
+	@ApiModelProperty(notes="项目计划阶段编号",allowEmptyValue=true,example="",allowableValues="")
+	String phaseId;
 	
 	@ApiModelProperty(notes="实际成本金额",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal actCostAmount;
@@ -84,15 +83,15 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 	@ApiModelProperty(notes="科目名称",allowEmptyValue=true,example="",allowableValues="")
 	String subjectName;
 	
-	@ApiModelProperty(notes="计划名称",allowEmptyValue=true,example="",allowableValues="")
-	String projectName;
+	@ApiModelProperty(notes="阶段名称",allowEmptyValue=true,example="",allowableValues="")
+	String phaseName;
 
 	/**主键**/
 	public XmProjectMCostNouser(String id) {
 		this.id = id;
 	}
     
-    /**xm_project_m_cost_nouser**/
+    /**项目实际人工成本费用**/
 	public XmProjectMCostNouser() {
 	}
 	
@@ -187,10 +186,10 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 		this.bizFlowState = bizFlowState;
 	}
 	/**
-	 * 项目计划计划编号
+	 * 项目计划阶段编号
 	 **/
-	public void setPhaseId(String projectPhaseId) {
-		this.projectPhaseId = projectPhaseId;
+	public void setPhaseId(String phaseId) {
+		this.phaseId = phaseId;
 	}
 	/**
 	 * 实际成本金额
@@ -223,10 +222,10 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 		this.subjectName = subjectName;
 	}
 	/**
-	 * 计划名称
+	 * 阶段名称
 	 **/
-	public void setProjectName(String projectName) {
-		this.projectName = projectName;
+	public void setPhaseName(String phaseName) {
+		this.phaseName = phaseName;
 	}
 	
 	/**
@@ -320,10 +319,10 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 		return this.bizFlowState;
 	}
 	/**
-	 * 项目计划计划编号
+	 * 项目计划阶段编号
 	 **/
 	public String getPhaseId() {
-		return this.projectPhaseId;
+		return this.phaseId;
 	}
 	/**
 	 * 实际成本金额
@@ -356,10 +355,10 @@ public class XmProjectMCostNouser  implements java.io.Serializable {
 		return this.subjectName;
 	}
 	/**
-	 * 计划名称
+	 * 阶段名称
 	 **/
-	public String getProjectName() {
-		return this.projectName;
+	public String getPhaseName() {
+		return this.phaseName;
 	}
 
 }
