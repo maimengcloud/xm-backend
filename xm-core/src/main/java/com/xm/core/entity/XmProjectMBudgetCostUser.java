@@ -147,7 +147,7 @@ public class XmProjectMBudgetCostUser  implements java.io.Serializable {
 	/**
 	 * 项目计划
 	 **/
-	public void setProjectPhaseId(String projectPhaseId) {
+	public void setPhaseId(String projectPhaseId) {
 		this.projectPhaseId = projectPhaseId;
 	}
 	/**
@@ -232,7 +232,7 @@ public class XmProjectMBudgetCostUser  implements java.io.Serializable {
 	/**
 	 * 项目计划
 	 **/
-	public String getProjectPhaseId() {
+	public String getPhaseId() {
 		return this.projectPhaseId;
 	}
 	/**

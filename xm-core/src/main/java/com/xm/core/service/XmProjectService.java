@@ -143,12 +143,12 @@ public class XmProjectService extends BaseService {
 					node.setBizFlowState("");
 					node.setBizProcInstId(null);
 					node.setActRate(BigDecimal.ZERO);
-					node.setActInnerUserAt(BigDecimal.ZERO);
+					node.setActIuserAt(BigDecimal.ZERO);
 					node.setActNouserAt(BigDecimal.ZERO);
 					node.setActOutUserAt(BigDecimal.ZERO);
-					node.setPhaseActInnerUserWorkload(BigDecimal.ZERO);
-					node.setPhaseActOutUserWorkload(BigDecimal.ZERO);
-					node.setPhaseActWorkload(BigDecimal.ZERO);
+					node.setActIuserWorkload(BigDecimal.ZERO);
+					node.setActOuserWorkload(BigDecimal.ZERO);
+					node.setActWorkload(BigDecimal.ZERO);
 				}
 				this.xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases);
 				this.xmProjectPhaseService.doBatchInsert(xmProjectPhases);
@@ -175,7 +175,7 @@ public class XmProjectService extends BaseService {
 					node.setCreateUsername(user.getUsername());
 					node.setCreateUserid(user.getUserid());
 					node.setCreateTime(new Date());
-					node.setProjectPhaseId(newPhaseIdMap.get(node.getProjectPhaseId()));
+					node.setPhaseId(newPhaseIdMap.get(node.getPhaseId()));
 					node.setPreTaskid(newTaskIdMap.get(node.getPreTaskid()));
 					node.setIsTpl(isTpl);
 					node.setMenuId(null);

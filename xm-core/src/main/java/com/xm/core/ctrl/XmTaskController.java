@@ -328,8 +328,8 @@ public class XmTaskController {
 				return ResponseHelper.failed("projectId-0","项目编号不能为空");
 			}
 			/**
-			if(!StringUtils.hasText(xmTaskVo.getProjectPhaseId())){
-				return ResponseHelper.failed("ProjectPhaseId-0","项目计划编号不能为空");
+			if(!StringUtils.hasText(xmTaskVo.getPhaseId())){
+				return ResponseHelper.failed("PhaseId-0","项目计划编号不能为空");
 			}
 			 **/
 			User user=LoginUtils.getCurrentUserInfo();
@@ -644,7 +644,7 @@ public class XmTaskController {
 					}
 				}
 				//改为服务处记录
-				//xmRecordService.addXmTaskRecord(xmTaskVo.getProjectPhaseId(), xmTaskVo.getId(), "项目-任务-修改任务", "修改任务"+xmTaskVo.getName(),JSON.toJSONString(xmTaskVo),null);
+				//xmRecordService.addXmTaskRecord(xmTaskVo.getPhaseId(), xmTaskVo.getId(), "项目-任务-修改任务", "修改任务"+xmTaskVo.getName(),JSON.toJSONString(xmTaskVo),null);
 			}
 			m.put("data",xmTaskVo);
 		}catch (BizException e) {
@@ -893,7 +893,7 @@ public class XmTaskController {
 				return ResponseHelper.failed("params-0","参数不能为空");
 			}
 
-			String projectPhaseId=tasksPhase.getProjectPhaseId();
+			String projectPhaseId=tasksPhase.getPhaseId();
 			if( !StringUtils.hasText(projectPhaseId) ){
 				return ResponseHelper.failed("projectPhaseId-0","项目计划编号不能为空");
 			}
@@ -945,7 +945,7 @@ public class XmTaskController {
 			List<String> msgs=new ArrayList<>();
 			if(allowTasks.size()>0){
 				BatchRelTasksWithPhase tasksWithPhase=new BatchRelTasksWithPhase();
-				tasksWithPhase.setProjectPhaseId(projectPhaseId);
+				tasksWithPhase.setPhaseId(projectPhaseId);
 				tasksWithPhase.setTaskIds(allowTasks.stream().map(i->i.getId()).collect(Collectors.toList()));
 				xmTaskService.batchRelTasksWithPhase(tasksWithPhase);
 			}

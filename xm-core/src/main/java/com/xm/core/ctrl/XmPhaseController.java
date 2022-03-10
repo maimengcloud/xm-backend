@@ -80,7 +80,7 @@ public class XmPhaseController {
 			@ApiImplicitParam(name="bizFlowState",value="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",required=false),
 			@ApiImplicitParam(name="phaseBudgetWorkload",value="总工作量单位人时-应该大于或者等于task中的预算总工作量",required=false),
 			@ApiImplicitParam(name="phaseActWorkload",value="已完成工作量单位人时-从task中的实际工作量算出",required=false),
-			@ApiImplicitParam(name="phaseActInnerUserWorkload",value="实际内部人力工作量-来自任务表合计",required=false),
+			@ApiImplicitParam(name="phaseActIuserWorkload",value="实际内部人力工作量-来自任务表合计",required=false),
 			@ApiImplicitParam(name="phaseActOutUserWorkload",value="实际外购人力工作量-来自任务表合计",required=false),
 			@ApiImplicitParam(name="taskType",value="0售前方案1投标2需求3设计4开发5测试6验收7部署8运维--来自基础数据表taskType",required=false),
 			@ApiImplicitParam(name="planType",value="计划类型w1-周,w2-2周,w3-3周,m1-1月,m2-2月,q1-季,q2-半年，y1-年",required=false),

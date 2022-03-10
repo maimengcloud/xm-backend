@@ -263,7 +263,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	/**
 	 * 计划编号
 	 **/
-	public void setProjectPhaseId(String projectPhaseId) {
+	public void setPhaseId(String projectPhaseId) {
 		this.projectPhaseId = projectPhaseId;
 	}
 	/**
@@ -462,7 +462,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	/**
 	 * 计划编号
 	 **/
-	public String getProjectPhaseId() {
+	public String getPhaseId() {
 		return this.projectPhaseId;
 	}
 	/**

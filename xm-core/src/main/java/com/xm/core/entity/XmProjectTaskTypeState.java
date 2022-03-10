@@ -174,7 +174,7 @@ public class XmProjectTaskTypeState  implements java.io.Serializable {
 	/**
 	 * 实际内购成本
 	 **/
-	public void setActInnerUserAt(BigDecimal actInnerUserAt) {
+	public void setActIuserAt(BigDecimal actInnerUserAt) {
 		this.actInnerUserAt = actInnerUserAt;
 	}
 	/**
@@ -198,7 +198,7 @@ public class XmProjectTaskTypeState  implements java.io.Serializable {
 	/**
 	 * 实际内购工作量
 	 **/
-	public void setActInnerUserWorkload(BigDecimal actInnerUserWorkload) {
+	public void setActIuserWorkload(BigDecimal actInnerUserWorkload) {
 		this.actInnerUserWorkload = actInnerUserWorkload;
 	}
 	/**
@@ -301,7 +301,7 @@ public class XmProjectTaskTypeState  implements java.io.Serializable {
 	/**
 	 * 实际内购成本
 	 **/
-	public BigDecimal getActInnerUserAt() {
+	public BigDecimal getActIuserAt() {
 		return this.actInnerUserAt;
 	}
 	/**
@@ -325,7 +325,7 @@ public class XmProjectTaskTypeState  implements java.io.Serializable {
 	/**
 	 * 实际内购工作量
 	 **/
-	public BigDecimal getActInnerUserWorkload() {
+	public BigDecimal getActIuserWorkload() {
 		return this.actInnerUserWorkload;
 	}
 	/**

@@ -8,11 +8,11 @@ public class BatchRelTasksWithPhase {
 
     List<String> taskIds;
 
-    public String getProjectPhaseId() {
+    public String getPhaseId() {
         return projectPhaseId;
     }
 
-    public void setProjectPhaseId(String projectPhaseId) {
+    public void setPhaseId(String projectPhaseId) {
         this.projectPhaseId = projectPhaseId;
     }
 

@@ -335,8 +335,7 @@ public class XmTaskExecuserService extends BaseService {
 			costUser.setCreateTime(new Date());
 			costUser.setProjectId(xmTaskExecuser.getProjectId());
 			costUser.setProjectName(projectName);
-			costUser.setProjectName(task.getProjectName());
-			costUser.setProjectPhaseId(task.getProjectName());
+			costUser.setPhaseId(xmTaskExecuser.getPhaseId());
 			costUser.setId(this.xmProjectMCostUserService.createKey("id"));
 			costUser.setExecuserProcInstId(execuserProcInstId);
 			costUser.setExecuserStatus("0");
