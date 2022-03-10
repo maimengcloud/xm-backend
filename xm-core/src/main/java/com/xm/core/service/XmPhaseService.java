@@ -5,7 +5,7 @@ import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.XmProjectPhase;
+import com.xm.core.entity.XmPhase;
 import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * 实体 XmProjectPhase 表 XM.xm_project_phase 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmProjectPhaseService")
-public class XmProjectPhaseService extends BaseService {
+public class XmPhaseService extends BaseService {
 	
 	/** 请在此类添加自定义函数 */
 
@@ -58,7 +58,7 @@ public class XmProjectPhaseService extends BaseService {
 		return tips;
 	}
 	@Transactional
-	public int insert(XmProjectPhase parameter) {
+	public int insert(XmPhase parameter) {
 		int i= super.insert(parameter);
 		if(StringUtils.hasText(parameter.getParentPhaseId())){
  			sumParents(parameter);
@@ -69,7 +69,7 @@ public class XmProjectPhaseService extends BaseService {
 
 
 	@Transactional
-	public  int deleteByPk(XmProjectPhase parameter) {
+	public  int deleteByPk(XmPhase parameter) {
 		int i= super.deleteByPk(parameter);
 		if(StringUtils.hasText(parameter.getParentPhaseId())){
 			sumParents(parameter);
@@ -141,13 +141,13 @@ public class XmProjectPhaseService extends BaseService {
 		
 	}
 	@Transactional
-	public  int[] doBatchDelete(List<XmProjectPhase> batchValues) {
+	public  int[] doBatchDelete(List<XmPhase> batchValues) {
 		int[] result= super.batchDelete(batchValues);
 			batchSumParents(batchValues);
 			return result;
 	}
 
-	public XmProjectPhase autoCalcWorkload(XmProjectPhase phase) {
+	public XmPhase autoCalcWorkload(XmPhase phase) {
 		BigDecimal phaseBudgetHours=NumberUtil.getBigDecimal(phase.getPhaseBudgetHours(),BigDecimal.ZERO);
 		BigDecimal phaseBudgetInnerUserCnt=NumberUtil.getBigDecimal(phase.getPhaseBudgetInnerUserCnt(),BigDecimal.ZERO);
 		BigDecimal phaseBudgetOutUserCnt=NumberUtil.getBigDecimal(phase.getPhaseBudgetOutUserCnt(),BigDecimal.ZERO);
@@ -199,18 +199,18 @@ public class XmProjectPhaseService extends BaseService {
 	 * @param delNodes 本批量需要删除的全部节点
 	 * @return
 	 */
-	public boolean checkCanDelAllChild(XmProjectPhase delNode, List<XmProjectPhase> delNodes) {
+	public boolean checkCanDelAllChild(XmPhase delNode, List<XmPhase> delNodes) {
 		if(delNode==null){
 			return true;
 		}
 		if(delNode.getChildrenCnt()==null||delNode.getChildrenCnt()<=0){
 			return true;
 		}
-		List<XmProjectPhase> childList=delNodes.stream().filter(i->delNode.getId().equals(i.getParentPhaseId())).collect(Collectors.toList());
+		List<XmPhase> childList=delNodes.stream().filter(i->delNode.getId().equals(i.getParentPhaseId())).collect(Collectors.toList());
 		if(childList==null||childList.size()<delNode.getChildrenCnt()){
 			return false;
 		}
-		for (XmProjectPhase n : childList) {
+		for (XmPhase n : childList) {
 			if (!this.checkCanDelAllChild(n, delNodes)) {
 				return false;
 			}
@@ -219,10 +219,10 @@ public class XmProjectPhaseService extends BaseService {
 
 	}
 	@Transactional
-	public void batchInsertOrUpdate(List<XmProjectPhase> inserts,List<XmProjectPhase> updates) {
-		List<XmProjectPhase> addList=inserts;
-		List<XmProjectPhase> editList=updates;
-		List<XmProjectPhase> all=new ArrayList<>();
+	public void batchInsertOrUpdate(List<XmPhase> inserts, List<XmPhase> updates) {
+		List<XmPhase> addList=inserts;
+		List<XmPhase> editList=updates;
+		List<XmPhase> all=new ArrayList<>();
 		if(addList.size()>0) {
 			all.addAll(addList);
 			this.batchInsert(addList);
@@ -240,8 +240,8 @@ public class XmProjectPhaseService extends BaseService {
     }
 
     @Transactional
-	public void doBatchInsert(List<XmProjectPhase> xmProjectPhases) {
-		for (XmProjectPhase xmProjectPhase : xmProjectPhases) {
+	public void doBatchInsert(List<XmPhase> xmProjectPhases) {
+		for (XmPhase xmProjectPhase : xmProjectPhases) {
 			long childrenCnt=xmProjectPhases.stream().filter(i->xmProjectPhase.getId().equals(i.getParentPhaseId())).count();
 			xmProjectPhase.setChildrenCnt(Integer.valueOf(childrenCnt+""));
 			if(childrenCnt>0){
@@ -253,11 +253,11 @@ public class XmProjectPhaseService extends BaseService {
 	}
 
 
-	public List<XmProjectPhase> parentIdPathsCalcBeforeSave(List<XmProjectPhase> nodes) {
-		List<XmProjectPhase> noExistsList=nodes.stream().filter(i->!nodes.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
+	public List<XmPhase> parentIdPathsCalcBeforeSave(List<XmPhase> nodes) {
+		List<XmPhase> noExistsList=nodes.stream().filter(i->!nodes.stream().filter(k->k.getId().equals(i.getParentPhaseId())).findAny().isPresent()).collect(Collectors.toList());
 		noExistsList=noExistsList.stream().filter(i->StringUtils.hasText(i.getParentPhaseId())).collect(Collectors.toList());
 		Map<String,String> hadCalcMap=new HashMap<>();
-		for (XmProjectPhase node : noExistsList) {
+		for (XmPhase node : noExistsList) {
 			if(hadCalcMap.containsKey(node.getParentPhaseId())){
 				String idPaths=hadCalcMap.get(node.getParentPhaseId());
 				node.setPidPaths(idPaths+node.getId()+",");
@@ -268,7 +268,7 @@ public class XmProjectPhaseService extends BaseService {
 				hadCalcMap.put(node.getParentPhaseId(),idPaths);
 			}
 		}
-		for (XmProjectPhase node : nodes) {
+		for (XmPhase node : nodes) {
 			if(!StringUtils.hasText(node.getParentPhaseId())){
 				node.setPidPaths("0,"+node.getId()+",");
 				continue;
@@ -277,12 +277,12 @@ public class XmProjectPhaseService extends BaseService {
 				String idPaths=hadCalcMap.get(node.getParentPhaseId());
 				node.setPidPaths(idPaths+node.getId()+",");
 			}else{
-				List<XmProjectPhase> pnodeList=this.getParentList(node,nodes);
+				List<XmPhase> pnodeList=this.getParentList(node,nodes);
 				if(pnodeList==null ||pnodeList.size()==0){
 					node.setPidPaths("0,"+node.getParentPhaseId()+","+node.getId()+",");
 					continue;
 				}
-				XmProjectPhase topParent=pnodeList.get(pnodeList.size()-1);
+				XmPhase topParent=pnodeList.get(pnodeList.size()-1);
 				String idPath="0,";
 				if(hadCalcMap.containsKey(topParent.getParentPhaseId())){
 					idPath=hadCalcMap.get(topParent.getParentPhaseId());
@@ -293,7 +293,7 @@ public class XmProjectPhaseService extends BaseService {
 				node.setPidPaths(idPath+node.getId()+",");
 			}
 		}
-		for (XmProjectPhase node : nodes) {
+		for (XmPhase node : nodes) {
 			String idPaths=node.getPidPaths();
 			String[] idpss=idPaths.split(",");
 			node.setLvl(idpss.length-1);
@@ -308,14 +308,14 @@ public class XmProjectPhaseService extends BaseService {
 
 	}
 
-	public Tips parentIdPathsCalcBeforeSave(XmProjectPhase currNode) {
+	public Tips parentIdPathsCalcBeforeSave(XmPhase currNode) {
 		Tips tips = new Tips("成功");
 		if (!StringUtils.hasText(currNode.getParentPhaseId()) || "0".equals(currNode.getParentPhaseId())) {
 			currNode.setPidPaths("0," + currNode.getId() + ",");
 			currNode.setLvl(1);
 			return tips;
 		} else {
-			List<XmProjectPhase> parentList=this.getParentList(currNode);
+			List<XmPhase> parentList=this.getParentList(currNode);
 			if(parentList==null ||parentList.size()==0){
 				currNode.setPidPaths("0,"+currNode.getParentPhaseId()+","+currNode.getId()+",");
 				currNode.setLvl(2);
@@ -334,14 +334,14 @@ public class XmProjectPhaseService extends BaseService {
 		return tips;
 	}
 
-	private List<XmProjectPhase> getParentList(XmProjectPhase currNode){
-		List<XmProjectPhase> parentList=new ArrayList<>();
-		XmProjectPhase current=currNode;
+	private List<XmPhase> getParentList(XmPhase currNode){
+		List<XmPhase> parentList=new ArrayList<>();
+		XmPhase current=currNode;
 		while (true){
 			if(!StringUtils.hasText(current.getParentPhaseId()) || "0".equals(current.getParentPhaseId())){
 				return parentList;
 			}
-			XmProjectPhase query=new XmProjectPhase();
+			XmPhase query=new XmPhase();
 			query.setId(current.getParentPhaseId());
 			current=this.selectOneObject(query);
 			if(current==null){
@@ -351,16 +351,16 @@ public class XmProjectPhaseService extends BaseService {
 		}
 	}
 
-	private List<XmProjectPhase> getParentList(XmProjectPhase currNode,List<XmProjectPhase> nodes){
-		List<XmProjectPhase> parentList=new ArrayList<>();
-		XmProjectPhase current=currNode;
+	private List<XmPhase> getParentList(XmPhase currNode, List<XmPhase> nodes){
+		List<XmPhase> parentList=new ArrayList<>();
+		XmPhase current=currNode;
 		while (true){
 			if(!StringUtils.hasText(current.getParentPhaseId()) || "0".equals(current.getParentPhaseId())){
 				return parentList;
 			}
-			XmProjectPhase query=new XmProjectPhase();
+			XmPhase query=new XmPhase();
 			query.setId(current.getParentPhaseId());
-			Optional<XmProjectPhase> optional=nodes.stream().filter(i->i.getId().equals(query.getId())).findFirst();
+			Optional<XmPhase> optional=nodes.stream().filter(i->i.getId().equals(query.getId())).findFirst();
 			if(!optional.isPresent()){
 				current=optional.get();
 				parentList.add(current);
@@ -372,7 +372,7 @@ public class XmProjectPhaseService extends BaseService {
 
 
 	@Transactional
-	public void sumParents(XmProjectPhase node){
+	public void sumParents(XmPhase node){
 		String id=node.getId();
 		String pidPaths=node.getPidPaths();
 		if(!StringUtils.hasText(pidPaths)){
@@ -401,9 +401,9 @@ public class XmProjectPhaseService extends BaseService {
 
 	}
 	@Transactional
-	public void batchSumParents(List<XmProjectPhase> xmProjectPhases) {
+	public void batchSumParents(List<XmPhase> xmProjectPhases) {
 		List<Set<String>> list=new ArrayList<>();
-		for (XmProjectPhase node : xmProjectPhases) {
+		for (XmPhase node : xmProjectPhases) {
 			String id=node.getId();
 			String pidPaths=node.getPidPaths();
 			if(!StringUtils.hasText(pidPaths)){
@@ -452,7 +452,7 @@ public class XmProjectPhaseService extends BaseService {
 	}
 
 	@Transactional
-	public void editByPk(XmProjectPhase xmProjectPhase) {
+	public void editByPk(XmPhase xmProjectPhase) {
 		super.updateByPk(xmProjectPhase);
 		this.sumParents(xmProjectPhase);
 	}
@@ -528,7 +528,7 @@ public class XmProjectPhaseService extends BaseService {
 		return this.selectOne("selectPhaseBudgetCost", p);
 	}
 
-	public void calcPhaseBudgetAmount(XmProjectPhase phase){
+	public void calcPhaseBudgetAmount(XmPhase phase){
 		if(phase.getPhaseBudgetInnerUserAt()==null){
 			phase.setPhaseBudgetInnerUserAt(BigDecimal.ZERO);
 		}

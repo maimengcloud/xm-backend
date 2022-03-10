@@ -45,7 +45,7 @@ public class XmProductService extends BaseService {
 
 
 	@Autowired
-	XmProjectPhaseService xmProjectPhaseService;
+    XmPhaseService xmProjectPhaseService;
 
 
 	
@@ -140,15 +140,15 @@ public class XmProductService extends BaseService {
 
 		Map<String,String> newPhaseIdMap=new HashMap<>();
 		if("1".equals(xmProduct.getCopyPhase())){
-			XmProjectPhase phaseQuery=new XmProjectPhase();
+			XmPhase phaseQuery=new XmPhase();
 			phaseQuery.setProductId(xmProductDb.getId());
-			List<XmProjectPhase> xmProjectPhases=this.xmProjectPhaseService.selectListByWhere(phaseQuery);
+			List<XmPhase> xmProjectPhases=this.xmProjectPhaseService.selectListByWhere(phaseQuery);
 			if(xmProjectPhases!=null && xmProjectPhases.size()>0){
-				for (XmProjectPhase node : xmProjectPhases) {
+				for (XmPhase node : xmProjectPhases) {
 					String id=this.xmProjectPhaseService.createKey("id");
 					newPhaseIdMap.put(node.getId(),id);
 				}
-				for (XmProjectPhase node : xmProjectPhases) {
+				for (XmPhase node : xmProjectPhases) {
 					String oldId=node.getId();
 					String newId=newPhaseIdMap.get(oldId);
 					node.setProjectId(null);

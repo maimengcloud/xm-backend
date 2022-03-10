@@ -1,8 +1,8 @@
 package com.xm.core.vo;
 
-import com.xm.core.entity.XmProjectPhase;
+import com.xm.core.entity.XmPhase;
 
-public class XmProjectPhaseVo extends XmProjectPhase {
+public class XmPhaseVo extends XmPhase {
 	private static final long serialVersionUID = 1534268338972176747L;
 	
 	/**

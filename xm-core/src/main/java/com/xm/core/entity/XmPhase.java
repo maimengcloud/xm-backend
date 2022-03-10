@@ -15,7 +15,7 @@ import java.math.BigDecimal;
  *	id;<br>
  */
 @ApiModel(description="项目阶段模板")
-public class XmProjectPhase  implements java.io.Serializable {
+public class XmPhase implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -195,12 +195,12 @@ public class XmProjectPhase  implements java.io.Serializable {
 	String calcType;
 
 	/**阶段主键**/
-	public XmProjectPhase(String id) {
+	public XmPhase(String id) {
 		this.id = id;
 	}
     
     /**项目阶段模板**/
-	public XmProjectPhase() {
+	public XmPhase() {
 	}
 	
 	/**

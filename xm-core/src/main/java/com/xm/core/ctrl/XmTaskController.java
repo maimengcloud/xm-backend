@@ -19,7 +19,6 @@ import com.xm.core.service.*;
 import com.xm.core.service.cache.XmTaskCacheService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.BatchRelTasksWithMenu;
-import com.xm.core.vo.BatchRelTasksWithPhase;
 import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmTaskVo;
 import io.swagger.annotations.*;
@@ -70,7 +69,7 @@ public class XmTaskController {
 	@Autowired
 	private XmProjectService xmProjectService;
 	@Autowired
-	XmProjectPhaseService xmProjectPhaseService;
+	XmPhaseService xmProjectPhaseService;
 
 	@Autowired
 	XmMenuService xmMenusService;
