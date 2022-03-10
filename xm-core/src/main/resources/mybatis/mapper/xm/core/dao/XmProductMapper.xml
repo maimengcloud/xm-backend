@@ -17,6 +17,11 @@
 			where ppl.project_id=#{projectId}  and ppl.product_id=res.id
 			)
 		</if>
+		<if test=" iterationId !=null and iterationId!=''">
+			and exists( select 1 from  xm_iteration_product_link ppl
+			where ppl.iteration_id=#{iterationId}  and ppl.product_id=res.id
+			)
+		</if>
 		<if test="compete !=null and compete!=''">
 			and ( exists ( select 1 from xm_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
 			or res.pm_userid=#{compete}
