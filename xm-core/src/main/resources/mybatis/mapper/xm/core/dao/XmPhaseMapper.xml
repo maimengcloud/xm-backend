@@ -18,37 +18,37 @@
 		</if>
 		<if test=" taskFilterType !=null and taskFilterType!=''">
 			and  <if test="taskFilterType=='not-join'"> not </if>
-			exists( select 1 from xm_task t where  t.project_phase_id=res.id)
+			exists( select 1 from xm_task t where  t.phase_id=res.id)
 		</if>
 		<if test="key != null and key !='' ">       </if>
 		<if test="isTop!=null and isTop!=''">
-			and (res.parent_phase_id is null or res.parent_phase_id='')
+			and (res.parent_id is null or res.parent_id='')
 		</if>
     </sql>
 	<select id="selectTotalProjectAndPhaseBudgetCost" parameterType="HashMap" resultType="HashMap">
 		SELECT
-		sum( ifnull(res.phase_budget_workload,0) ) AS phase_budget_workload,
-		sum( ifnull(res.phase_budget_nouser_at,0) ) AS phase_budget_nouser_at,
-		sum( ifnull(res.phase_budget_inner_user_at,0) ) AS phase_budget_inner_user_at,
-		sum( ifnull(res.phase_budget_out_user_at,0) ) AS phase_budget_out_user_at,
-		sum( ifnull(res.phase_budget_at,0) ) AS phase_budget_at,
+		sum( ifnull(res.budget_workload,0) ) AS budget_workload,
+		sum( ifnull(res.budget_nouser_at,0) ) AS budget_nouser_at,
+		sum( ifnull(res.budget_iuser_at,0) ) AS budget_iuser_at,
+		sum( ifnull(res.budget_ouser_at,0) ) AS budget_ouser_at,
+		sum( ifnull(res.budget_at,0) ) AS budget_at,
 		p.plan_nouser_at,
-		p.plan_inner_user_at,
-		p.plan_out_user_at,
+		p.plan_iuser_at,
+		p.plan_ouser_at,
 		p.locked,
 		p.plan_workload,
 		p.total_receivables,
 		p.budget_margin_rate,
 		p.contract_amt,
-		p.plan_inner_user_price,
-		p.plan_out_user_price,
-		p.plan_out_user_cnt,
-		p.plan_inner_user_cnt,
+		p.plan_iuser_price,
+		p.plan_ouser_price,
+		p.plan_ouser_cnt,
+		p.plan_iuser_cnt,
 		p.plan_working_hours,
 		p.plan_total_cost
 		FROM
 		XM.xm_project p
-		LEFT JOIN 	XM.xm_project_phase res
+		LEFT JOIN 	XM.xm_phase res
 		ON p.id = res.project_id and res.lvl=1
 		<if test=" excludePhaseIds !=null "> and res.id not  in
 			<foreach collection="excludePhaseIds" item="item" index="index" open="(" separator="," close=")" >
@@ -60,11 +60,11 @@
 
 	<select id="selectTotalProductAndPhaseBudgetCost" parameterType="HashMap" resultType="HashMap">
 		SELECT
-		sum( ifnull(res.phase_budget_workload,0) ) AS phase_budget_workload,
-		sum( ifnull(res.phase_budget_nouser_at,0) ) AS phase_budget_nouser_at,
-		sum( ifnull(res.phase_budget_inner_user_at,0) ) AS phase_budget_inner_user_at,
-		sum( ifnull(res.phase_budget_out_user_at,0) ) AS phase_budget_out_user_at,
-		sum( ifnull(res.phase_budget_at,0) ) AS phase_budget_at,
+		sum( ifnull(res.budget_workload,0) ) AS budget_workload,
+		sum( ifnull(res.budget_nouser_at,0) ) AS budget_nouser_at,
+		sum( ifnull(res.budget_iuser_at,0) ) AS budget_iuser_at,
+		sum( ifnull(res.budget_ouser_at,0) ) AS budget_ouser_at,
+		sum( ifnull(res.budget_at,0) ) AS budget_at,
 
 		p.pbudget_workload,
 		p.pbudget_amount,
@@ -72,7 +72,7 @@
 		p.pmenu_budget_amount
 		FROM
 		XM.xm_product p
-		LEFT JOIN 	XM.xm_project_phase res
+		LEFT JOIN 	XM.xm_phase res
 		ON p.id = res.product_id and res.lvl=1
 		<if test=" excludePhaseIds !=null "> and res.id not  in
 			<foreach collection="excludePhaseIds" item="item" index="index" open="(" separator="," close=")" >
@@ -84,37 +84,37 @@
 	<select id="selectPhaseBudgetCost" parameterType="HashMap" resultType="HashMap">
 		select
 		res2.id,
-		res2.phase_budget_workload,
-		res2.phase_budget_nouser_at,
-		res2.phase_budget_inner_user_at,
-		res2.phase_budget_out_user_at,
-		res2.phase_budget_at,
-		res0.child_phase_budget_workload,
-		res0.child_phase_budget_nouser_at,
-		res0.child_phase_budget_inner_user_at,
-		res0.child_phase_budget_out_user_at,
-		res0.child_phase_budget_at
-		from xm_project_phase res2 left join
+		res2.budget_workload,
+		res2.budget_nouser_at,
+		res2.budget_iuser_at,
+		res2.budget_ouser_at,
+		res2.budget_at,
+		res0.child_budget_workload,
+		res0.child_budget_nouser_at,
+		res0.child_budget_iuser_at,
+		res0.child_budget_ouser_at,
+		res0.child_budget_at
+		from xm_phase res2 left join
 		(
 		SELECT
-		res.parent_phase_id,
-		sum( ifnull(res.phase_budget_workload,0) ) AS child_phase_budget_workload,
-		sum( ifnull(res.phase_budget_nouser_at,0) ) AS child_phase_budget_nouser_at,
-		sum( ifnull(res.phase_budget_inner_user_at,0) ) AS child_phase_budget_inner_user_at,
-		sum( ifnull(res.phase_budget_out_user_at,0) ) AS child_phase_budget_out_user_at,
-		sum( ifnull(res.phase_budget_at,0) ) AS child_phase_budget_at
-		FROM  	xm_project_phase res  where res.parent_phase_id=#{id}
+		res.parent_id,
+		sum( ifnull(res.budget_workload,0) ) AS child_budget_workload,
+		sum( ifnull(res.budget_nouser_at,0) ) AS child_budget_nouser_at,
+		sum( ifnull(res.budget_iuser_at,0) ) AS child_budget_iuser_at,
+		sum( ifnull(res.budget_ouser_at,0) ) AS child_budget_ouser_at,
+		sum( ifnull(res.budget_at,0) ) AS child_budget_at
+		FROM  	xm_phase res  where res.parent_id=#{id}
 		<if test=" excludePhaseIds !=null "> and res.id not  in
 			<foreach collection="excludePhaseIds" item="item" index="index" open="(" separator="," close=")" >
 				#{item}
 			</foreach>
 		</if>
-		group by res.parent_phase_id
-		) as res0 on res0.parent_phase_id=res2.id
+		group by res.parent_id
+		) as res0 on res0.parent_id=res2.id
 		where res2.id=#{id}
 	</select>
 	<update id="loadTasksToXmProjectPhase" parameterType="String" statementType="CALLABLE">
-		{call load_tasks_to_xm_project_phase(#{projectId,mode=IN})}
+		{call load_tasks_to_xm_phase(#{projectId,mode=IN})}
 	</update>
 
 	<update id="loaMenusToXmProductPhase" parameterType="String" statementType="CALLABLE">
@@ -122,29 +122,29 @@
 	</update>
 
 	<select id="checkExistsTask" parameterType="String" resultType="Long">
-		select count(1) from xm_task t where t.project_phase_id=#{phaseId}
+		select count(1) from xm_task t where t.phase_id=#{phaseId}
 	</select>
 
 	<select id="checkExistsChildren" parameterType="String" resultType="Long" >
-		select count(1) from xm_project_phase res where res.parent_phase_id = #{id}
+		select count(1) from xm_phase res where res.parent_id = #{id}
 	</select>
 
 	<update id="updatePhaseChildrenCntByPhaseId" parameterType="String">
-		UPDATE xm_project_phase t
-		LEFT JOIN ( SELECT count( 1 ) AS children_cnt, tt.parent_phase_id AS id FROM xm_project_phase tt WHERE tt.parent_phase_id = #{id} ) t2 ON t2.id = t.id
+		UPDATE xm_phase t
+		LEFT JOIN ( SELECT count( 1 ) AS children_cnt, tt.parent_id AS id FROM xm_phase tt WHERE tt.parent_id = #{id} ) t2 ON t2.id = t.id
 		SET t.children_cnt = ifnull( t2.children_cnt, 0 )
 		WHERE
 		t.id = #{id}
 	</update>
 
 	<update id="updateChildrenCntByIds" parameterType="List">
-		UPDATE xm_project_phase t
-		LEFT JOIN ( SELECT count( 1 ) AS children_cnt, tt.parent_phase_id AS id FROM xm_project_phase tt  WHERE
-		(tt.parent_phase_id) in
+		UPDATE xm_phase t
+		LEFT JOIN ( SELECT count( 1 ) AS children_cnt, tt.parent_id AS id FROM xm_phase tt  WHERE
+		(tt.parent_id) in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
 			( #{item})
 		</foreach>
-		group by tt.parent_phase_id ) t2 ON t2.id = t.id
+		group by tt.parent_id ) t2 ON t2.id = t.id
 		SET t.children_cnt = ifnull( t2.children_cnt, 0 )
 		WHERE  (t.id) in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
@@ -154,32 +154,32 @@
 
 	<update id="sumParents" parameterType="List">
 		<foreach collection="list" item="item" index="index" separator=";" >
-		UPDATE XM.xm_project_phase res
+		UPDATE XM.xm_phase res
 		LEFT JOIN (
 		SELECT
 		t.project_id,
-		t.parent_phase_id,
+		t.parent_id,
 		count(1) as children_cnt,
-		sum(t.phase_act_inner_user_workload) as phase_act_inner_user_workload,
-		sum(t.phase_act_out_user_workload) as phase_act_out_user_workload,
-		sum(t.phase_act_workload) as phase_act_workload,
-		sum(t.act_inner_user_at) as act_inner_user_at,
-		sum(t.act_out_user_at) as act_out_user_at,
+		sum(t.act_iuser_workload) as act_iuser_workload,
+		sum(t.act_ouser_workload) as act_ouser_workload,
+		sum(t.act_workload) as act_workload,
+		sum(t.act_iuser_at) as act_iuser_at,
+		sum(t.act_ouser_at) as act_ouser_at,
 		sum(ifnull(t.act_rate,0)*ifnull(t.task_budget_workload,0)) as task_budget_workload_act_rate,
 		sum(t.task_budget_workload) as task_budget_workload,
 		sum(t.task_budget_at) as task_budget_at
-		FROM xm_project_phase t
+		FROM xm_phase t
 		WHERE
-		t.parent_phase_id=#{item}
+		t.parent_id=#{item}
 		GROUP BY
 		t.project_id,
-		t.parent_phase_id
-		) AS tc ON res.project_id = tc.project_id and res.id=tc.parent_phase_id
-		SET res.phase_act_inner_user_workload = tc.phase_act_inner_user_workload,
-		res.phase_act_out_user_workload = tc.phase_act_out_user_workload,
-		res.phase_act_workload = tc.phase_act_workload,
-		res.act_inner_user_at = tc.act_inner_user_at,
-		res.act_out_user_at = tc.act_out_user_at,
+		t.parent_id
+		) AS tc ON res.project_id = tc.project_id and res.id=tc.parent_id
+		SET res.act_iuser_workload = tc.act_iuser_workload,
+		res.act_ouser_workload = tc.act_ouser_workload,
+		res.act_workload = tc.act_workload,
+		res.act_iuser_at = tc.act_iuser_at,
+		res.act_ouser_at = tc.act_ouser_at,
 		res.act_rate= case when tc.task_budget_workload_act_rate=0 then 0 else  tc.task_budget_workload_act_rate / tc.task_budget_workload end,
 		res.task_budget_workload=tc.task_budget_workload,
 		res.task_budget_at=tc.task_budget_at,
@@ -189,35 +189,35 @@
 		</foreach>
 	</update>
 	<update id="batchSumParents" parameterType="List">
-			UPDATE XM.xm_project_phase res
+			UPDATE XM.xm_phase res
 			LEFT JOIN (
 			SELECT
 			t.project_id,
-			t.parent_phase_id,
+			t.parent_id,
 			count(1) as children_cnt,
-			sum(t.phase_act_inner_user_workload) as phase_act_inner_user_workload,
-			sum(t.phase_act_out_user_workload) as phase_act_out_user_workload,
-			sum(t.phase_act_workload) as phase_act_workload,
-			sum(t.act_inner_user_at) as act_inner_user_at,
-			sum(t.act_out_user_at) as act_out_user_at,
+			sum(t.act_iuser_workload) as act_iuser_workload,
+			sum(t.act_ouser_workload) as act_ouser_workload,
+			sum(t.act_workload) as act_workload,
+			sum(t.act_iuser_at) as act_iuser_at,
+			sum(t.act_ouser_at) as act_ouser_at,
 			sum(ifnull(t.act_rate,0)*ifnull(t.task_budget_workload,0))  as task_budget_workload_act_rate,
 			sum(t.task_budget_workload) as task_budget_workload,
 			sum(t.task_budget_at) as task_budget_at
-			FROM xm_project_phase t
+			FROM xm_phase t
 			WHERE
-			t.parent_phase_id in
+			t.parent_id in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
 		</foreach>
 			GROUP BY
 			t.project_id,
-			t.parent_phase_id
-			) AS tc ON res.project_id = tc.project_id and res.id=tc.parent_phase_id
-			SET res.phase_act_inner_user_workload = tc.phase_act_inner_user_workload,
-			res.phase_act_out_user_workload = tc.phase_act_out_user_workload,
-			res.phase_act_workload = tc.phase_act_workload,
-			res.act_inner_user_at = tc.act_inner_user_at,
-			res.act_out_user_at = tc.act_out_user_at,
+			t.parent_id
+			) AS tc ON res.project_id = tc.project_id and res.id=tc.parent_id
+			SET res.act_iuser_workload = tc.act_iuser_workload,
+			res.act_ouser_workload = tc.act_ouser_workload,
+			res.act_workload = tc.act_workload,
+			res.act_iuser_at = tc.act_iuser_at,
+			res.act_ouser_at = tc.act_ouser_at,
 			res.act_rate= case when tc.task_budget_workload_act_rate=0 then 0 else  tc.task_budget_workload_act_rate / tc.task_budget_workload end,
 			res.task_budget_workload=tc.task_budget_workload,
 			res.task_budget_at=tc.task_budget_at,
@@ -230,7 +230,7 @@
 		and res.ntype='1'
 	</update>
 	<select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmPhase">
-		select (select sum(1) from xm_project_phase p where p.parent_phase_id = res.id) as children_cnt,res.* from xm_project_phase res where res.id in
+		select (select sum(1) from xm_phase p where p.parent_id = res.id) as children_cnt,res.* from xm_phase res where res.id in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
 		</foreach>
@@ -238,7 +238,7 @@
 
 
 	<select id="batchRelTasksWithPhase" parameterType="com.xm.core.vo.BatchRelTasksWithPhase">
-		update xm_task res set res.project_phase_id = #{projectPhaseId} where res.id in
+		update xm_task res set res.phase_id = #{phaseId} where res.id in
 		<foreach collection="taskIds" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
 		</foreach>
@@ -250,7 +250,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select (select sum(1) from xm_project_phase p where p.parent_phase_id = res.id) as children_cnt,res.* from xm_project_phase res
+		select (select sum(1) from xm_phase p where p.parent_id = res.id) as children_cnt,res.* from xm_phase res
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
@@ -260,7 +260,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmPhase" resultType="com.xm.core.entity.XmPhase">
-		select (select sum(1) from xm_project_phase p where p.parent_phase_id = res.id) as children_cnt,res.* from xm_project_phase res
+		select (select sum(1) from xm_phase p where p.parent_id = res.id) as children_cnt,res.* from xm_phase res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -268,7 +268,7 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmPhase" resultType="com.xm.core.entity.XmPhase">
-		select (select sum(1) from xm_project_phase p where p.parent_phase_id = res.id) as children_cnt,res.* from xm_project_phase res
+		select (select sum(1) from xm_phase p where p.parent_id = res.id) as children_cnt,res.* from xm_phase res
 		where 
 			res.id = #{id}
 	</select>
@@ -353,7 +353,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,remark,parent_id,branch_id,project_id,begin_date,end_date,budget_hours,budget_staff_nu,ctime,budget_nouser_at,budget_iuser_at,budget_ouser_at,baseline_id,biz_proc_inst_id,biz_flow_state,budget_workload,act_workload,act_iuser_workload,act_ouser_workload,task_type,plan_type,seq_no,budget_iuser_workload,budget_ouser_workload,act_nouser_at,act_iuser_at,budget_iuser_price,budget_ouser_price,budget_ouser_cnt,budget_iuser_cnt,act_rate,pstatus,act_out_user_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf,tag_ids,tag_names,ntype,children_cnt,ltime,is_key_path,pid_paths,lvl,is_tpl,phase_class,product_id,budget_at,calc_type,act_at
+		id,name,remark,parent_id,branch_id,project_id,begin_date,end_date,budget_hours,budget_staff_nu,ctime,budget_nouser_at,budget_iuser_at,budget_ouser_at,baseline_id,biz_proc_inst_id,biz_flow_state,budget_workload,act_workload,act_iuser_workload,act_ouser_workload,task_type,plan_type,seq_no,budget_iuser_workload,budget_ouser_workload,act_nouser_at,act_iuser_at,budget_iuser_price,budget_ouser_price,budget_ouser_cnt,budget_iuser_cnt,act_rate,pstatus,act_ouser_at,task_cnt,finish_task_cnt,iteration_cnt,calc_time,task_budget_workload,task_budget_at,mng_userid,mng_username,milestone,pleaf,tag_ids,tag_names,ntype,children_cnt,ltime,is_key_path,pid_paths,lvl,is_tpl,phase_class,product_id,budget_at,calc_type,act_at
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -392,7 +392,7 @@
 		<if test="budgetIuserCnt != null and budgetIuserCnt != ''">      and res.budget_iuser_cnt = #{budgetIuserCnt}     </if>
 		<if test="actRate != null and actRate != ''">      and res.act_rate = #{actRate}     </if>
 		<if test="pstatus != null and pstatus != ''">      and res.pstatus = #{pstatus}     </if>
-		<if test="actOuserAt != null and actOuserAt != ''">      and res.act_out_user_at = #{actOuserAt}     </if>
+		<if test="actOuserAt != null and actOuserAt != ''">      and res.act_ouser_at = #{actOuserAt}     </if>
 		<if test="taskCnt != null and taskCnt != ''">      and res.task_cnt = #{taskCnt}     </if>
 		<if test="finishTaskCnt != null and finishTaskCnt != ''">      and res.finish_task_cnt = #{finishTaskCnt}     </if>
 		<if test="iterationCnt != null and iterationCnt != ''">      and res.iteration_cnt = #{iterationCnt}     </if>
@@ -453,7 +453,7 @@
 		budget_iuser_cnt = #{budgetIuserCnt},
 		act_rate = #{actRate},
 		pstatus = #{pstatus},
-		act_out_user_at = #{actOuserAt},
+		act_ouser_at = #{actOuserAt},
 		task_cnt = #{taskCnt},
 		finish_task_cnt = #{finishTaskCnt},
 		iteration_cnt = #{iterationCnt},
@@ -513,7 +513,7 @@
 		<if test="budgetIuserCnt != null and budgetIuserCnt != ''"> budget_iuser_cnt = #{budgetIuserCnt},     </if>
 		<if test="actRate != null and actRate != ''"> act_rate = #{actRate},     </if>
 		<if test="pstatus != null and pstatus != ''"> pstatus = #{pstatus},     </if>
-		<if test="actOuserAt != null and actOuserAt != ''"> act_out_user_at = #{actOuserAt},     </if>
+		<if test="actOuserAt != null and actOuserAt != ''"> act_ouser_at = #{actOuserAt},     </if>
 		<if test="taskCnt != null and taskCnt != ''"> task_cnt = #{taskCnt},     </if>
 		<if test="finishTaskCnt != null and finishTaskCnt != ''"> finish_task_cnt = #{finishTaskCnt},     </if>
 		<if test="iterationCnt != null and iterationCnt != ''"> iteration_cnt = #{iterationCnt},     </if>
@@ -574,7 +574,7 @@
 			budget_iuser_cnt = #{item.budgetIuserCnt},
 			act_rate = #{item.actRate},
 			pstatus = #{item.pstatus},
-			act_out_user_at = #{item.actOuserAt},
+			act_ouser_at = #{item.actOuserAt},
 			task_cnt = #{item.taskCnt},
 			finish_task_cnt = #{item.finishTaskCnt},
 			iteration_cnt = #{item.iterationCnt},

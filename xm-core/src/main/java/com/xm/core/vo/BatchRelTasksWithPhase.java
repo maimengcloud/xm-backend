@@ -4,16 +4,16 @@ import java.util.List;
 
 public class BatchRelTasksWithPhase {
 
-    String projectPhaseId;
+    String phaseId;
 
     List<String> taskIds;
 
     public String getPhaseId() {
-        return projectPhaseId;
+        return phaseId;
     }
 
-    public void setPhaseId(String projectPhaseId) {
-        this.projectPhaseId = projectPhaseId;
+    public void setPhaseId(String phaseId) {
+        this.phaseId = phaseId;
     }
 
     public List<String> getTaskIds() {

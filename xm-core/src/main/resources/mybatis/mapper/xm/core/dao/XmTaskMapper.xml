@@ -113,7 +113,7 @@
 	</update>
 
 	<update id="batchRelTasksWithPhase" parameterType="com.xm.core.vo.BatchRelTasksWithPhase">
-		update xm_task res set res.project_phase_id=#{projectPhaseId}
+		update xm_task res set res.phase_id=#{phaseId}
 		where res.id in
 		<foreach collection="taskIds" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
@@ -190,32 +190,32 @@
 	<!-- 查询任务总的预算及对应的计划的预算，任务总预算不能大于计划总预算 -->
 	<select id="selectTotalPhaseAndTaskBudgetCost" parameterType="HashMap" resultType="HashMap">
 		SELECT
-		p.phase_budget_nouser_at,
-		p.phase_budget_inner_user_at,
-		p.phase_budget_out_user_at,
-		p.phase_budget_at,
-		p.phase_budget_workload,
-		p.phase_budget_hours,
-		p.phase_budget_staff_nu,
+		p.budget_nouser_at,
+		p.budget_iuser_at,
+		p.budget_ouser_at,
+		p.budget_at,
+		p.budget_workload,
+		p.budget_hours,
+		p.budget_staff_nu,
 		tc.*
-		FROM xm_project_phase p	LEFT JOIN
+		FROM xm_phase p	LEFT JOIN
 			(select
-		res.project_phase_id,
+		res.phase_id,
 		sum( ifnull(res.budget_cost,0) ) AS budget_cost,
-		sum( case when res.task_out='1' then ifnull(res.budget_cost,0) else 0 end ) AS task_budget_out_user_at,
-		sum( case when res.task_out='1' then 0 else ifnull(res.budget_cost,0)  end ) AS task_budget_inner_user_at,
+		sum( case when res.task_out='1' then ifnull(res.budget_cost,0) else 0 end ) AS task_budget_ouser_at,
+		sum( case when res.task_out='1' then 0 else ifnull(res.budget_cost,0)  end ) AS task_budget_iuser_at,
 		sum(0) AS task_budget_nouser_at,
 		sum( res.budget_workload ) AS budget_workload
 		from
-		xm_task res where res.project_phase_id=#{projectPhaseId} and res.lvl=1
+		xm_task res where res.phase_id=#{phaseId} and res.lvl=1
 			<if test=" excludeTaskIds !=null "> and res.id not in
 				<foreach collection="excludeTaskIds" item="item" index="index" open="(" separator="," close=")" >
 					#{item}
 				</foreach>
 			</if>
-		) as tc ON p.id = tc.project_phase_id
+		) as tc ON p.id = tc.phase_id
 		WHERE
-		p.id = #{projectPhaseId}
+		p.id = #{phaseId}
 
 	</select>
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->

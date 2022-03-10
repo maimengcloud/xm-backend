@@ -10,7 +10,7 @@ import java.util.Date;
  * 实体 XmProjectTaskTypeState所有属性名: <br>
  *	projectId,projectName,taskType,planWorkload,planAmount,actWorkload,actAmount,branchId,bizDate,calcTime,planOuserAt,planIuserAt,actOutUserAt,actInnerUserAt,planOuserWorkload,planIuserWorkload,actOuserWorkload,actIuserWorkload,planNouserAt,actNouserAt,id;<br>
  * 表 xm_project_task_type_state 按任务类型汇总的所有字段名: <br>
- *	project_id,project_name,task_type,plan_workload,plan_amount,act_workload,act_amount,branch_id,biz_date,calc_time,plan_ouser_at,plan_iuser_at,act_out_user_at,act_inner_user_at,plan_ouser_workload,plan_iuser_workload,act_ouser_workload,act_iuser_workload,plan_nouser_at,act_nouser_at,id;<br>
+ *	project_id,project_name,task_type,plan_workload,plan_amount,act_workload,act_amount,branch_id,biz_date,calc_time,plan_ouser_at,plan_iuser_at,act_ouser_at,act_iuser_at,plan_ouser_workload,plan_iuser_workload,act_ouser_workload,act_iuser_workload,plan_nouser_at,act_nouser_at,id;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */

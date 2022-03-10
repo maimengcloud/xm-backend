@@ -61,17 +61,17 @@
 		SELECT
 		sum(  ifnull(res.act_cost_amount,0)   ) AS act_cost_nouser_amount,
 		p.plan_nouser_at,
-		p.plan_inner_user_at,
-		p.plan_out_user_at,
+		p.plan_iuser_at,
+		p.plan_ouser_at,
 		p.locked,
 		p.plan_workload,
 		p.total_receivables,
 		p.budget_margin_rate,
 		p.contract_amt,
-		p.plan_inner_user_price,
-		p.plan_out_user_price,
-		p.plan_out_user_cnt,
-		p.plan_inner_user_cnt,
+		p.plan_iuser_price,
+		p.plan_ouser_price,
+		p.plan_ouser_cnt,
+		p.plan_iuser_cnt,
 		p.plan_working_hours
 		FROM
 		XM.xm_project p

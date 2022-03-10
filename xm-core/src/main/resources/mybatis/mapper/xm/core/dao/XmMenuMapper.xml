@@ -69,7 +69,7 @@
 
 
 	<select id="selectListMapByWhereWithPhase" parameterType="HashMap" resultType="HashMap">
-		select res.*,p.phase_name from xm_menu res left join xm_project_phase p on res.phase_id=p.id and res.product_id=p.product_id
+		select res.*,p.phase_name from xm_menu res left join xm_phase p on res.phase_id=p.id and res.product_id=p.product_id
 		<where>
 			<include refid="whereForMap"/>
 			<include refid="where"/>

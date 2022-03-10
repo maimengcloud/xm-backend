@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 import static com.mdp.core.utils.BaseUtils.map;
 
 /**
- * url编制采用rest风格,如对XM.xm_project_phase 项目计划模板的操作有增删改查,对应的url分别为:<br>
+ * url编制采用rest风格,如对XM.xm_phase 项目计划模板的操作有增删改查,对应的url分别为:<br>
  *  新增: xm/xmProjectPhase/add <br>
  *  查询: xm/xmProjectPhase/list<br>
  *  模糊查询: xm/xmProjectPhase/listKey<br>
@@ -37,7 +37,7 @@ import static com.mdp.core.utils.BaseUtils.map;
  *  删除: xm/xmProjectPhase/del<br>
  *  批量删除: xm/xmProjectPhase/batchDel<br>
  * 组织 com.qqkj  顶级模块 oa 大模块 xm 小模块 <br>
- * 实体 XmProjectPhase 表 XM.xm_project_phase 当前主键(包括多主键): id; 
+ * 实体 XmProjectPhase 表 XM.xm_phase 当前主键(包括多主键): id; 
  ***/
 @RestController("xm.core.xmPhaseController")
 @RequestMapping(value="/**/xm/core/xmPhase")
@@ -199,7 +199,7 @@ public class XmPhaseController {
 		return m;
 	}
 
-	@ApiOperation( value = "新增一条xm_project_phase信息",notes="addXmProjectPhase,主键如果为空，后台自动生成")
+	@ApiOperation( value = "新增一条xm_phase信息",notes="addXmProjectPhase,主键如果为空，后台自动生成")
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmPhase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
@@ -280,7 +280,7 @@ public class XmPhaseController {
 		return m;
 	}
 	/***/
-	@ApiOperation( value = "删除一条xm_project_phase信息",notes="delXmProjectPhase,仅需要上传主键字段")
+	@ApiOperation( value = "删除一条xm_phase信息",notes="delXmProjectPhase,仅需要上传主键字段")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
@@ -341,7 +341,7 @@ public class XmPhaseController {
 
 
 	/***/
-	@ApiOperation( value = "根据主键修改一条xm_project_phase信息",notes="editXmProjectPhase")
+	@ApiOperation( value = "根据主键修改一条xm_phase信息",notes="editXmProjectPhase")
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmPhase.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
@@ -417,7 +417,7 @@ public class XmPhaseController {
 
 
 	/***/
-	@ApiOperation( value = "根据主键列表批量删除xm_project_phase信息",notes="batchDelXmProjectPhase,仅需要上传主键字段")
+	@ApiOperation( value = "根据主键列表批量删除xm_phase信息",notes="batchDelXmProjectPhase,仅需要上传主键字段")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
@@ -513,7 +513,7 @@ public class XmPhaseController {
 		return m;
 	}
 	/***/
-	@ApiOperation( value = "根据主键列表批量删除xm_project_phase信息",notes="batchDelXmProjectPhase,仅需要上传主键字段")
+	@ApiOperation( value = "根据主键列表批量删除xm_phase信息",notes="batchDelXmProjectPhase,仅需要上传主键字段")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})

@@ -119,11 +119,11 @@
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
 		select res.*,s.project_id,s.biz_date,s.total_file_cnt,s.total_bug_cnt,s.total_task_cnt,s.total_budget_nouser_amount,s.project_name,s.total_staff_cnt,s.calc_time,s.calc_status,
 		s.total_cost_nouser_amount,s.total_closed_bug_cnt,s.total_resolved_bug_cnt,s.total_complete_task_cnt,s.total_phase_cnt,s.total_complete_phase_cnt,s.total_need_pay_amount,
-		s.total_finish_pay_amount,s.total_need_col_amount,s.total_finish_col_amount,s.total_cost_user_amount,s.total_budget_inner_user_amount,s.total_plan_workload,
-		s.total_risk_cnt,s.total_complete_risk_cnt,s.branch_name,s.total_budget_out_user_amount,s.total_complete_workload,s.total_cost_inner_user_amount,s.total_cost_out_user_amount,
+		s.total_finish_pay_amount,s.total_need_col_amount,s.total_finish_col_amount,s.total_cost_user_amount,s.total_budget_iuser_amount,s.total_plan_workload,
+		s.total_risk_cnt,s.total_complete_risk_cnt,s.branch_name,s.total_budget_ouser_amount,s.total_complete_workload,s.total_cost_iuser_amount,s.total_cost_ouser_amount,
 		s.total_progress,s.total_active_bug_cnt,s.total_confirmed_bug_cnt,s.project_status,s.total_act_workload,s.total_act_out_workload,s.total_act_inner_workload,
-		s.total_task_budget_cost_at,s.total_task_out_cnt,s.total_need_pay_cnt,s.total_finish_pay_cnt,s.total_finish_pay_user_cnt,s.total_need_pay_user_cnt,s.total_plan_inner_user_workload,
-		s.total_plan_out_user_workload,s.test_cases,s.exec_cases,s.design_cases,s.finish_cases,s.iteration_cnt,s.product_cnt,s.menu_cnt,
+		s.total_task_budget_cost_at,s.total_task_out_cnt,s.total_need_pay_cnt,s.total_finish_pay_cnt,s.total_finish_pay_user_cnt,s.total_need_pay_user_cnt,s.total_plan_iuser_workload,
+		s.total_plan_ouser_workload,s.test_cases,s.exec_cases,s.design_cases,s.finish_cases,s.iteration_cnt,s.product_cnt,s.menu_cnt,
 		pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state from xm_project res
 		left join xm_project_state s on s.project_id=res.id
 		left join  xm_project_process_approva pa on res.id=pa.project_id and res.biz_proc_inst_id=pa.proc_inst_id

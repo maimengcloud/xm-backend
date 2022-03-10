@@ -58,9 +58,9 @@ public class XmTaskService extends BaseService {
 		return i2;
 	}
 
-	public Map<String,Object> selectTotalPhaseAndTaskBudgetCost(String projectPhaseId, List<String> excludeTaskIds){
+	public Map<String,Object> selectTotalPhaseAndTaskBudgetCost(String phaseId, List<String> excludeTaskIds){
 		Map<String,Object> p=new HashMap<>();
-		p.put("projectPhaseId", projectPhaseId); 
+		p.put("phaseId", phaseId); 
 		p.put("excludeTaskIds", excludeTaskIds);
 		return this.selectOne("selectTotalPhaseAndTaskBudgetCost", p);
 	} 
@@ -69,13 +69,13 @@ public class XmTaskService extends BaseService {
 	 * @param addTaskBudgetCost
 	 * @return
 	 */
-	public Tips judgetPhaseBudget(String projectPhaseId, BigDecimal addTaskBudgetCost, BigDecimal addTaskBudgetIuserAt, BigDecimal addTaskBudgetOuserAt, BigDecimal addTaskBudgetNouserAt, List<String> excludeTaskIds){
+	public Tips judgetPhaseBudget(String phaseId, BigDecimal addTaskBudgetCost, BigDecimal addTaskBudgetIuserAt, BigDecimal addTaskBudgetOuserAt, BigDecimal addTaskBudgetNouserAt, List<String> excludeTaskIds){
 		Tips tips=new Tips("成功");
-		if(!StringUtils.hasText(projectPhaseId)){
-			tips.setFailureMsg("projectPhaseId参数不能为空");
+		if(!StringUtils.hasText(phaseId)){
+			tips.setFailureMsg("phaseId参数不能为空");
 			return tips;
 		}
-		Map<String,Object> g=this.selectTotalPhaseAndTaskBudgetCost(projectPhaseId,excludeTaskIds);
+		Map<String,Object> g=this.selectTotalPhaseAndTaskBudgetCost(phaseId,excludeTaskIds);
 		if(g==null || g.isEmpty()){
 			return tips;
 		}

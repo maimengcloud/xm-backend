@@ -71,21 +71,21 @@
 	<!-- 查询人力的总支出及对应的项目的总预算，人力总支出不能大于项目人力总预算 -->
 	<select id="selectTotalProjectAndUserActCost" parameterType="HashMap" resultType="HashMap">
 		SELECT
-		sum( case when res.cost_type='1' then ifnull(res.act_cost_amount,0) else 0 end ) AS act_cost_inner_user_amount,
-		sum( case when res.cost_type='2' then ifnull(res.act_cost_amount,0) else 0 end ) AS act_cost_out_user_amount,
+		sum( case when res.cost_type='1' then ifnull(res.act_cost_amount,0) else 0 end ) AS act_cost_iuser_amount,
+		sum( case when res.cost_type='2' then ifnull(res.act_cost_amount,0) else 0 end ) AS act_cost_ouser_amount,
 		sum(  ifnull(res.act_cost_amount,0)   ) AS act_cost_user_amount,
 		p.plan_nouser_at,
-		p.plan_inner_user_at,
-		p.plan_out_user_at,
+		p.plan_iuser_at,
+		p.plan_ouser_at,
 		p.locked,
 		p.plan_workload,
 		p.total_receivables,
 		p.budget_margin_rate,
 		p.contract_amt,
-		p.plan_inner_user_price,
-		p.plan_out_user_price,
-		p.plan_out_user_cnt,
-		p.plan_inner_user_cnt,
+		p.plan_iuser_price,
+		p.plan_ouser_price,
+		p.plan_ouser_cnt,
+		p.plan_iuser_cnt,
 		p.plan_working_hours
 		FROM
 		XM.xm_project p

@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
  * 组织 com.qqkj  顶级模块 oa 大模块 xm 小模块 <br>
- * 实体 XmProjectPhase 表 XM.xm_project_phase 当前主键(包括多主键): id; 
+ * 实体 XmProjectPhase 表 XM.xm_phase 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmProjectPhaseService")
 public class XmPhaseService extends BaseService {
@@ -548,13 +548,13 @@ public class XmPhaseService extends BaseService {
 	 * 		res2.id,
 	 * 		res2.phase_budget_workload,
 	 * 		res2.phase_budget_nouser_at,
-	 * 		res2.phase_budget_inner_user_at,
-	 * 		res2.phase_budget_out_user_at,
+	 * 		res2.phase_budget_iuser_at,
+	 * 		res2.phase_budget_ouser_at,
 	 * 		res2.phase_budget_at,
 	 * 		res0.child_phase_budget_workload,
 	 * 		res0.child_phase_budget_nouser_at,
-	 * 		res0.child_phase_budget_inner_user_at,
-	 * 		res0.child_phase_budget_out_user_at,
+	 * 		res0.child_phase_budget_iuser_at,
+	 * 		res0.child_phase_budget_ouser_at,
 	 * 		res0.child_phase_budget_at
 	 * @param parentPhaseId
 	 * @param phaseBudgetCost

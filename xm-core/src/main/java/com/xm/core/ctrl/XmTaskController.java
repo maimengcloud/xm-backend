@@ -893,11 +893,11 @@ public class XmTaskController {
 				return ResponseHelper.failed("params-0","参数不能为空");
 			}
 
-			String projectPhaseId=tasksPhase.getPhaseId();
-			if( !StringUtils.hasText(projectPhaseId) ){
-				return ResponseHelper.failed("projectPhaseId-0","项目计划编号不能为空");
+			String phaseId=tasksPhase.getPhaseId();
+			if( !StringUtils.hasText(phaseId) ){
+				return ResponseHelper.failed("phaseId-0","项目计划编号不能为空");
 			}
-			XmProjectPhase xmProjectPhaseDb=this.xmProjectPhaseService.selectOneObject(new XmProjectPhase(projectPhaseId));
+			XmProjectPhase xmProjectPhaseDb=this.xmProjectPhaseService.selectOneObject(new XmProjectPhase(phaseId));
 
 
 			if(xmProjectPhaseDb==null){
@@ -945,7 +945,7 @@ public class XmTaskController {
 			List<String> msgs=new ArrayList<>();
 			if(allowTasks.size()>0){
 				BatchRelTasksWithPhase tasksWithPhase=new BatchRelTasksWithPhase();
-				tasksWithPhase.setPhaseId(projectPhaseId);
+				tasksWithPhase.setPhaseId(phaseId);
 				tasksWithPhase.setTaskIds(allowTasks.stream().map(i->i.getId()).collect(Collectors.toList()));
 				xmTaskService.batchRelTasksWithPhase(tasksWithPhase);
 			}
