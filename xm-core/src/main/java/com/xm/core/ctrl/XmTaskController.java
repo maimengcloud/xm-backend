@@ -69,7 +69,7 @@ public class XmTaskController {
 	@Autowired
 	private XmProjectService xmProjectService;
 	@Autowired
-	XmPhaseService xmProjectPhaseService;
+	XmPhaseService xmPhaseService;
 
 	@Autowired
 	XmMenuService xmMenusService;
