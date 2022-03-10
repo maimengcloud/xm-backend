@@ -58,6 +58,9 @@
 		<if test="isTop!=null and isTop!=''">
 			and (res.parent_taskid is null or res.parent_taskid='')
 		</if>
+		<if test="linkProductId!=null and linkProductId!=''">
+			and exists( select 1 from xm_product_project_link link where and link.product_id=#{linkProductId} and link.project_id=res.project_id)
+		</if>
     </sql>
 	<select id="getAvgRate" parameterType="String" resultType="long" >
 		select avg(res.rate) from xm_task res where res.parent_taskid = #{parentTaskid}
