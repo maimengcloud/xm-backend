@@ -15,6 +15,22 @@
     </sql>
 
 
+	<select id="listWithProjectInfo" parameterType="HashMap" resultType="HashMap">
+		select res.*,p.name as project_name,p.p.id as project_id,i.iteration_name from xm_iteration_link res left join xm_product p on res.pro_id=p.id
+		inner join xm_iteration i on i.id=res.iteration_id
+		<where>
+			<include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+	</select>
+	<select id="listWithProductInfo" parameterType="HashMap" resultType="HashMap">
+		select res.*,p.product_name,p.id as product_id,i.iteration_name from xm_iteration_link res left join xm_product p on res.pro_id=p.id
+		inner join xm_iteration i on i.id=res.iteration_id
+		<where>
+			<include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 

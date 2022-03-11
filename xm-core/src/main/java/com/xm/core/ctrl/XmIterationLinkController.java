@@ -67,8 +67,38 @@ public class XmIterationLinkController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
+	@ApiOperation( value = "查询迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息列表",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response= XmIterationLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/listWithProductInfo",method=RequestMethod.GET)
+	public Map<String,Object> listWithProductInfo( @RequestParam Map<String,Object> xmIterationLink){
+		Map<String,Object> m = new HashMap<>();
+		RequestUtils.transformArray(xmIterationLink, "iterationIdsproductIds");
+		PageUtils.startPage(xmIterationLink);
+		List<Map<String,Object>>	xmIterationLinkList = xmIterationLinkService.listWithProductInfo(xmIterationLink);	//列出XmIterationLink列表
+		PageUtils.responePage(m, xmIterationLinkList);
+		m.put("data",xmIterationLinkList);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
+	@ApiOperation( value = "查询迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息列表",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response= XmIterationLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/listWithProjectInfo",method=RequestMethod.GET)
+	public Map<String,Object> listWithProjectInfo( @RequestParam Map<String,Object> xmIterationLink){
+		Map<String,Object> m = new HashMap<>();
+		RequestUtils.transformArray(xmIterationLink, "iterationIdsproductIds");
+		PageUtils.startPage(xmIterationLink);
+		List<Map<String,Object>>	xmIterationLinkList = xmIterationLinkService.listWithProjectInfo(xmIterationLink);	//列出XmIterationLink列表
+		PageUtils.responePage(m, xmIterationLinkList);
+		m.put("data",xmIterationLinkList);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
 	
 
 	@ApiOperation( value = "新增一条迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息",notes=" ")
