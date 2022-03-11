@@ -159,15 +159,13 @@ public class XmIterationController {
 		try{
 			if(StringUtils.isEmpty(xmIteration.getId())) {
 				xmIteration.setId(xmIterationService.createKey("id"));
-			}else{
-				 XmIteration xmIterationQuery = new  XmIteration(xmIteration.getId());
-				if(xmIterationService.countByWhere(xmIterationQuery)>0){
-					tips.setFailureMsg("编号重复，请修改编号再提交");
-					m.put("tips", tips);
-					return m;
-				}
 			}
+			XmIteration q=new XmIteration();
 			User user= LoginUtils.getCurrentUserInfo();
+
+			q.setBranchId(user.getBranchId());
+			Long count=this.xmIterationService.countByWhere(q);
+			xmIteration.setSeqNo(Long.toString(count+1));
 			xmIteration.setCtime(new Date());
 			xmIteration.setCuserid(user.getUserid());
 			xmIteration.setCusername(user.getUsername());

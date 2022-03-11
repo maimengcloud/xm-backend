@@ -91,6 +91,7 @@
 			</if>
 			<if test="key != null and key !='' ">   and res.iteration_name like #{key}    </if>
 		</where>
+		order by res.seq_no desc
 	</select>
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
