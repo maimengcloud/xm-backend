@@ -28,14 +28,17 @@ public class XmMenuService extends BaseService {
 
 	/**
 	 * 连同功能关联的项目需求计划数据一起带出
+	 *
 	 * @param xmMenu
 	 * @return
 	 */
 	public List<Map<String, Object>> selectListMapByWhereWithPlan(Map<String, Object> xmMenu) {
 		return this.selectList("selectListMapByWhereWithPlan", xmMenu);
 	}
+
 	/**
 	 * 连同功能关联的状态数据一起带出
+	 *
 	 * @param xmMenu
 	 * @return
 	 */
@@ -46,6 +49,7 @@ public class XmMenuService extends BaseService {
 
 	/**
 	 * 连同功能关联的产品计划一并带出
+	 *
 	 * @param xmMenu
 	 * @return
 	 */
@@ -55,89 +59,91 @@ public class XmMenuService extends BaseService {
 	}
 
 
+	public void updateMenuChildrenCntByMenuId(String menuId) {
+		super.update("updateMenuChildrenCntByMenuId", menuId);
+	}
 
-	public void updateMenuChildrenCntByMenuId(String menuId){
-		super.update("updateMenuChildrenCntByMenuId",menuId);
-	}
 	public void updateChildrenCntByIds(List<String> ids) {
-		super.update("updateChildrenCntByIds",ids);
+		super.update("updateChildrenCntByIds", ids);
 	}
+
 	@Transactional
 	public void batchInsertOrUpdate(List<XmMenuVo> xmMenus) {
-		List<XmMenuVo> addList=new ArrayList<>();
-		List<XmMenuVo> editList=new ArrayList<>();
-		List<XmMenu> xmMenusDb=this.selectListByIds(xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()));
-		editList=xmMenus.stream().filter(i->xmMenusDb.stream().filter(k->k.getMenuId().equals(i.getMenuId())).findAny().isPresent()).collect(Collectors.toList());
-		addList=xmMenus.stream().filter(i->!xmMenusDb.stream().filter(k->k.getMenuId().equals(i.getMenuId())).findAny().isPresent()).collect(Collectors.toList());
+		List<XmMenuVo> addList = new ArrayList<>();
+		List<XmMenuVo> editList = new ArrayList<>();
+		List<XmMenu> xmMenusDb = this.selectListByIds(xmMenus.stream().map(i -> i.getMenuId()).collect(Collectors.toList()));
+		editList = xmMenus.stream().filter(i -> xmMenusDb.stream().filter(k -> k.getMenuId().equals(i.getMenuId())).findAny().isPresent()).collect(Collectors.toList());
+		addList = xmMenus.stream().filter(i -> !xmMenusDb.stream().filter(k -> k.getMenuId().equals(i.getMenuId())).findAny().isPresent()).collect(Collectors.toList());
 
-		List<XmMenu> xmMenuList=new ArrayList<>();
-		if(addList.size()>0) {
-			xmMenuList.addAll(addList.stream().map(i->(XmMenu)i).collect(Collectors.toList()));
+		List<XmMenu> xmMenuList = new ArrayList<>();
+		if (addList.size() > 0) {
+			xmMenuList.addAll(addList.stream().map(i -> (XmMenu) i).collect(Collectors.toList()));
 			this.batchInsert(addList);
- 			this.xmMenuStateService.batchLoadXmMenuToState(xmMenus.get(0).getProductId());
+			this.xmMenuStateService.batchLoadXmMenuToState(xmMenus.get(0).getProductId());
 		}
-		if(editList.size()>0) {
-			xmMenuList.addAll(editList.stream().map(i->(XmMenu)i).collect(Collectors.toList()));
+		if (editList.size() > 0) {
+			xmMenuList.addAll(editList.stream().map(i -> (XmMenu) i).collect(Collectors.toList()));
 			this.batchUpdate(editList);
 		}
-		if(xmMenuList.size()>0){
+		if (xmMenuList.size() > 0) {
 			this.xmMenuStateService.batchSumParents(xmMenuList);
 		}
 	}
-	public List< Map<String, Object>> queryTaskUsersByMenuId(String menuId) {
- 		return this.selectList("queryTaskUsersByMenuId", menuId);
+
+	public List<Map<String, Object>> queryTaskUsersByMenuId(String menuId) {
+		return this.selectList("queryTaskUsersByMenuId", menuId);
 	}
 
-    public List<XmMenu> selectExistIterationMenus(List<String> menuIds) {
+	public List<XmMenu> selectExistIterationMenus(List<String> menuIds) {
 
-		return this.selectList("selectExistIterationMenus",map("menuIds",menuIds));
-    }
+		return this.selectList("selectExistIterationMenus", map("menuIds", menuIds));
+	}
 
 	public List<XmMenu> parentIdPathsCalcBeforeSave(List<XmMenu> nodes) {
- 		List<XmMenu> noExistsList=nodes.stream().filter(i->!nodes.stream().filter(k->k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
-		noExistsList=noExistsList.stream().filter(i->StringUtils.hasText(i.getPmenuId())).collect(Collectors.toList());
- 		Map<String,String> hadCalcMap=new HashMap<>();
+		List<XmMenu> noExistsList = nodes.stream().filter(i -> !nodes.stream().filter(k -> k.getMenuId().equals(i.getPmenuId())).findAny().isPresent()).collect(Collectors.toList());
+		noExistsList = noExistsList.stream().filter(i -> StringUtils.hasText(i.getPmenuId())).collect(Collectors.toList());
+		Map<String, String> hadCalcMap = new HashMap<>();
 		for (XmMenu node : noExistsList) {
-			if(hadCalcMap.containsKey(node.getPmenuId())){
-				String idPaths=hadCalcMap.get(node.getPmenuId());
-				node.setPidPaths(idPaths+node.getMenuId()+",");
-			}else{
+			if (hadCalcMap.containsKey(node.getPmenuId())) {
+				String idPaths = hadCalcMap.get(node.getPmenuId());
+				node.setPidPaths(idPaths + node.getMenuId() + ",");
+			} else {
 				this.parentIdPathsCalcBeforeSave(node);
-				String idPaths=node.getPidPaths();
-				idPaths=idPaths.substring(0,idPaths.length()-node.getMenuId().length()-1);
-				hadCalcMap.put(node.getPmenuId(),idPaths);
+				String idPaths = node.getPidPaths();
+				idPaths = idPaths.substring(0, idPaths.length() - node.getMenuId().length() - 1);
+				hadCalcMap.put(node.getPmenuId(), idPaths);
 			}
 		}
 		for (XmMenu node : nodes) {
-			if(!StringUtils.hasText(node.getPmenuId())){
-				node.setPidPaths("0,"+node.getMenuId()+",");
+			if (!StringUtils.hasText(node.getPmenuId())) {
+				node.setPidPaths("0," + node.getMenuId() + ",");
 				continue;
 			}
-			if(hadCalcMap.containsKey(node.getPmenuId())){
-				String idPaths=hadCalcMap.get(node.getPmenuId());
-				node.setPidPaths(idPaths+node.getMenuId()+",");
-			}else{
-				List<XmMenu> pnodeList=this.getParentList(node,nodes);
-				if(pnodeList==null ||pnodeList.size()==0){
-					node.setPidPaths("0,"+node.getMenuId()+",");
+			if (hadCalcMap.containsKey(node.getPmenuId())) {
+				String idPaths = hadCalcMap.get(node.getPmenuId());
+				node.setPidPaths(idPaths + node.getMenuId() + ",");
+			} else {
+				List<XmMenu> pnodeList = this.getParentList(node, nodes);
+				if (pnodeList == null || pnodeList.size() == 0) {
+					node.setPidPaths("0," + node.getMenuId() + ",");
 					node.setPmenuId(null);
 					continue;
 				}
-				XmMenu topParent=pnodeList.get(pnodeList.size()-1);
-				String idPath="0,";
-				if(hadCalcMap.containsKey(topParent.getPmenuId())){
-					idPath=hadCalcMap.get(topParent.getPmenuId());
+				XmMenu topParent = pnodeList.get(pnodeList.size() - 1);
+				String idPath = "0,";
+				if (hadCalcMap.containsKey(topParent.getPmenuId())) {
+					idPath = hadCalcMap.get(topParent.getPmenuId());
 				}
 				for (int i = pnodeList.size() - 1; i >= 0; i--) {
-					idPath=idPath+pnodeList.get(i).getMenuId()+",";
+					idPath = idPath + pnodeList.get(i).getMenuId() + ",";
 				}
-				node.setPidPaths(idPath+node.getMenuId()+",");
+				node.setPidPaths(idPath + node.getMenuId() + ",");
 			}
 		}
 		for (XmMenu node : nodes) {
-			String idPaths=node.getPidPaths();
-			String[] idpss=idPaths.split(",");
-			node.setLvl(idpss.length-1);
+			String idPaths = node.getPidPaths();
+			String[] idpss = idPaths.split(",");
+			node.setLvl(idpss.length - 1);
 		}
 		return nodes;
 	}
@@ -149,73 +155,73 @@ public class XmMenuService extends BaseService {
 			currNode.setLvl(1);
 			return tips;
 		} else {
-			List<XmMenu> parentList=this.getParentList(currNode);
-			if(parentList==null || parentList.size()==0){
-				currNode.setPidPaths("0,"+currNode.getMenuId()+",");
+			List<XmMenu> parentList = this.getParentList(currNode);
+			if (parentList == null || parentList.size() == 0) {
+				currNode.setPidPaths("0," + currNode.getMenuId() + ",");
 				currNode.setPmenuId(null);
 				currNode.setLvl(1);
 				return tips;
 			}
-			String idPath="0,";
+			String idPath = "0,";
 			for (int i = parentList.size() - 1; i >= 0; i--) {
-				idPath=idPath+parentList.get(i).getMenuId()+",";
+				idPath = idPath + parentList.get(i).getMenuId() + ",";
 			}
-			currNode.setPidPaths(idPath+currNode.getMenuId()+",");
+			currNode.setPidPaths(idPath + currNode.getMenuId() + ",");
 
-			String idPaths=currNode.getPidPaths();
-			String[] idpss=idPaths.split(",");
-			currNode.setLvl(idpss.length-1);
+			String idPaths = currNode.getPidPaths();
+			String[] idpss = idPaths.split(",");
+			currNode.setLvl(idpss.length - 1);
 		}
 		return tips;
 	}
 
-	private List<XmMenu> getParentList(XmMenu currNode){
-		List<XmMenu> parentList=new ArrayList<>();
-		XmMenu current=currNode;
-		while (true){
-			if(!StringUtils.hasText(current.getPmenuId()) || "0".equals(current.getPmenuId())||current.getMenuId().equals(current.getPmenuId())){
- 				return parentList;
+	private List<XmMenu> getParentList(XmMenu currNode) {
+		List<XmMenu> parentList = new ArrayList<>();
+		XmMenu current = currNode;
+		while (true) {
+			if (!StringUtils.hasText(current.getPmenuId()) || "0".equals(current.getPmenuId()) || current.getMenuId().equals(current.getPmenuId())) {
+				return parentList;
 			}
-			XmMenu query=new XmMenu();
+			XmMenu query = new XmMenu();
 			query.setMenuId(current.getPmenuId());
-			current=this.selectOneObject(query);
-			if(current==null){
+			current = this.selectOneObject(query);
+			if (current == null) {
 				return parentList;
 			}
 			parentList.add(current);
 		}
 	}
 
-	private List<XmMenu> getParentList(XmMenu currNode,List<XmMenu> nodes){
-		List<XmMenu> parentList=new ArrayList<>();
-		XmMenu current=currNode;
-		while (true){
-			if(!StringUtils.hasText(current.getPmenuId()) || "0".equals(current.getPmenuId())||current.getMenuId().equals(current.getPmenuId())){
+	private List<XmMenu> getParentList(XmMenu currNode, List<XmMenu> nodes) {
+		List<XmMenu> parentList = new ArrayList<>();
+		XmMenu current = currNode;
+		while (true) {
+			if (!StringUtils.hasText(current.getPmenuId()) || "0".equals(current.getPmenuId()) || current.getMenuId().equals(current.getPmenuId())) {
 				return parentList;
 			}
-			XmMenu query=new XmMenu();
+			XmMenu query = new XmMenu();
 			query.setMenuId(current.getPmenuId());
-			Optional<XmMenu> optional=nodes.stream().filter(i->i.getMenuId().equals(query.getMenuId())).findFirst();
-			if(optional.isPresent()){
-				current=optional.get();
+			Optional<XmMenu> optional = nodes.stream().filter(i -> i.getMenuId().equals(query.getMenuId())).findFirst();
+			if (optional.isPresent()) {
+				current = optional.get();
 				parentList.add(current);
-			}else{
+			} else {
 				return parentList;
 			}
 		}
 	}
 
-    @Transactional
-	public   int insert(XmMenu xmMenu) {
-		int i= super.insert(xmMenu);
+	@Transactional
+	public int insert(XmMenu xmMenu) {
+		int i = super.insert(xmMenu);
 		xmMenuStateService.batchLoadXmMenuToState(xmMenu.getProductId());
 		xmMenuStateService.sumParents(xmMenu);
 		return i;
 	}
 
 	@Transactional
-	public   int updateByPk(XmMenu xmMenu) {
-		int i= super.updateByPk(xmMenu);
+	public int updateByPk(XmMenu xmMenu) {
+		int i = super.updateByPk(xmMenu);
 		return i;
 	}
 
@@ -232,27 +238,29 @@ public class XmMenuService extends BaseService {
 		super.batchDelete(canDelList);
 		this.xmMenuStateService.batchSumParents(canDelList);
 	}
+
 	@Transactional
 	public void doBatchDeleteByProductIds(List<String> productIds) {
-		super.delete("doBatchDeleteByProductIds",productIds);
+		super.delete("doBatchDeleteByProductIds", productIds);
 	}
 
 
 	/**
 	 * 检查是否能删除干净所有儿子孙子节点。
-	 * @param delNode 当前删除节点
+	 *
+	 * @param delNode  当前删除节点
 	 * @param delNodes 本批量需要删除的全部节点
 	 * @return
 	 */
 	public boolean checkCanDelAllChild(XmMenu delNode, List<XmMenu> delNodes) {
-		if(delNode==null){
+		if (delNode == null) {
 			return true;
 		}
-		if(delNode.getChildrenCnt()==null||delNode.getChildrenCnt()<=0){
+		if (delNode.getChildrenCnt() == null || delNode.getChildrenCnt() <= 0) {
 			return true;
 		}
-		List<XmMenu> childList=delNodes.stream().filter(i->delNode.getMenuId().equals(i.getPmenuId())).collect(Collectors.toList());
-		if(childList==null||childList.size()<delNode.getChildrenCnt()){
+		List<XmMenu> childList = delNodes.stream().filter(i -> delNode.getMenuId().equals(i.getPmenuId())).collect(Collectors.toList());
+		if (childList == null || childList.size() < delNode.getChildrenCnt()) {
 			return false;
 		}
 		for (XmMenu n : childList) {
@@ -264,26 +272,27 @@ public class XmMenuService extends BaseService {
 
 	}
 
-    public void batchUnIteration(XmIterationMenuVo xmIterationMenus) {
-		super.update("batchUnIteration",xmIterationMenus);
-    }
+	public void batchUnIteration(XmIterationMenuVo xmIterationMenus) {
+		super.update("batchUnIteration", xmIterationMenus);
+	}
 
 	public void batchIteration(XmIterationMenuVo xmIterationMenus) {
-		super.update("batchIteration",xmIterationMenus);
+		super.update("batchIteration", xmIterationMenus);
 	}
 
 
 	public void batchUnProductPhase(XmPhaseMenusVo xmPhaseMenusVo) {
-		super.update("batchUnProductPhase",xmPhaseMenusVo);
+		super.update("batchUnProductPhase", xmPhaseMenusVo);
 	}
 
 	public void batchProductPhase(XmPhaseMenusVo xmPhaseMenusVo) {
-		super.update("batchProductPhase",xmPhaseMenusVo);
+		super.update("batchProductPhase", xmPhaseMenusVo);
 	}
 
-    public List<XmMenu> listTenMenuByIterationId(String iterationId) {
+	public List<XmMenu> listTenMenuByProductIdAndIterationId(String productId, String iterationId) {
 
-		return super.selectList("listTenMenuByIterationId",iterationId);
-    }
+		return super.selectList("listTenMenuByProductIdAndIterationId", map("productId", productId, "iterationId", iterationId));
+	}
+
 }
 

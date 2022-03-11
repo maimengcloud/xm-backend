@@ -316,14 +316,14 @@
 		group by p.id
 	</select>
 
-	<select id="listTenTaskByIterationId" parameterType="String" resultType="com.xm.core.entity.XmTask">
-		select name from xm_task res where exists(select 1 from xm_menu m where m.menu_id=res.menu_id and m.iteration_id=#{iterationId} and m.ntype='0')
+	<select id="listTenTaskByProjectIdAndIterationId" parameterType="HashMap" resultType="com.xm.core.entity.XmTask">
+		select name from xm_task res where res.project_id=#{projectId} and exists(select 1 from xm_menu m where m.menu_id=res.menu_id and m.iteration_id=#{iterationId} and m.ntype='0')
 		and res.ntype='0'
 		limit 10
 	</select>
 
-	<select id="listTenTaskByProductId" parameterType="String" resultType="com.xm.core.entity.XmTask">
-		select name from xm_task res where exists(select 1 from xm_menu m where m.menu_id=res.menu_id and m.product_id=#{productId} and m.ntype='0')
+	<select id="listTenTaskByProjectIdAndProductId" parameterType="HashMap" resultType="com.xm.core.entity.XmTask">
+		select name from xm_task res where res.project_id=#{projectId} and  exists(select 1 from xm_menu m where m.menu_id=res.menu_id and m.product_id=#{productId} and m.ntype='0')
 		and res.ntype='0'
 		limit 10
 	</select>

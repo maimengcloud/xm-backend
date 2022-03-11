@@ -151,8 +151,8 @@
 			#{item}
 		</foreach>
 	</update>
-	<select id="listTenMenuByIterationId" parameterType="String" resultType="com.xm.core.entity.XmMenu">
-		select menu_name from xm_menu res where  res.iteration_id=#{iterationId}
+	<select id="listTenMenuByProductIdAndIterationId" parameterType="String" resultType="com.xm.core.entity.XmMenu">
+		select menu_name from xm_menu res where res.product_id=#{productId} and res.iteration_id=#{iterationId}
 		limit 10
 	</select>
 	<!--结束 自定义sql函数区域-->
