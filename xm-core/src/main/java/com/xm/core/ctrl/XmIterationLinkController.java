@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.mdp.core.utils.ResponseHelper;
 import com.xm.core.entity.XmIterationLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,28 +25,28 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
-import com.xm.core.service.XmIterationProductLinkService;
+import com.xm.core.service.XmIterationLinkService;
 
 /**
  * url编制采用rest风格,如对XM.xm_iteration_product_link 迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表的操作有增删改查,对应的url分别为:<br>
- *  新增: core/xmIterationProductLink/add <br>
- *  查询: core/xmIterationProductLink/list<br>
- *  模糊查询: core/xmIterationProductLink/listKey<br>
- *  修改: core/xmIterationProductLink/edit <br>
- *  删除: core/xmIterationProductLink/del<br>
- *  批量删除: core/xmIterationProductLink/batchDel<br>
+ *  新增: core/xmIterationLink/add <br>
+ *  查询: core/xmIterationLink/list<br>
+ *  模糊查询: core/xmIterationLink/listKey<br>
+ *  修改: core/xmIterationLink/edit <br>
+ *  删除: core/xmIterationLink/del<br>
+ *  批量删除: core/xmIterationLink/batchDel<br>
  * 组织 com  顶级模块 xm 大模块 core 小模块 <br>
- * 实体 XmIterationProductLink 表 XM.xm_iteration_product_link 当前主键(包括多主键): iteration_id,product_id; 
+ * 实体 XmIterationLink 表 XM.xm_iteration_product_link 当前主键(包括多主键): iteration_id,product_id; 
  ***/
-@RestController("xm.core.xmIterationProductLinkController")
-@RequestMapping(value="/**/core/xmIterationProductLink")
+@RestController("xm.core.xmIterationLinkController")
+@RequestMapping(value="/**/core/xmIterationLink")
 @Api(tags={"迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表操作接口"})
 public class XmIterationLinkController {
 	
 	static Logger logger =LoggerFactory.getLogger(XmIterationLinkController.class);
 	
 	@Autowired
-	private XmIterationProductLinkService xmIterationProductLinkService;
+	private XmIterationLinkService xmIterationLinkService;
 	 
 		
  
@@ -55,13 +56,13 @@ public class XmIterationLinkController {
 		@ApiResponse(code = 200,response= XmIterationLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmIterationProductLink( @RequestParam Map<String,Object> xmIterationProductLink){
+	public Map<String,Object> listXmIterationLink( @RequestParam Map<String,Object> xmIterationLink){
 		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmIterationProductLink, "iterationIdsproductIds");
-		PageUtils.startPage(xmIterationProductLink);
-		List<Map<String,Object>>	xmIterationProductLinkList = xmIterationProductLinkService.selectListMapByWhere(xmIterationProductLink);	//列出XmIterationProductLink列表
-		PageUtils.responePage(m, xmIterationProductLinkList);
-		m.put("data",xmIterationProductLinkList);
+		RequestUtils.transformArray(xmIterationLink, "iterationIdsproductIds");
+		PageUtils.startPage(xmIterationLink);
+		List<Map<String,Object>>	xmIterationLinkList = xmIterationLinkService.selectListMapByWhere(xmIterationLink);	//列出XmIterationLink列表
+		PageUtils.responePage(m, xmIterationLinkList);
+		m.put("data",xmIterationLinkList);
 		Tips tips=new Tips("查询成功");
 		m.put("tips", tips);
 		return m;
@@ -75,28 +76,27 @@ public class XmIterationLinkController {
 		@ApiResponse(code = 200,response= XmIterationLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmIterationProductLink(@RequestBody XmIterationLink xmIterationProductLink) {
+	public Map<String,Object> addXmIterationLink(@RequestBody XmIterationLink xmIterationLink) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-		    boolean createPk=false;
-			if(StringUtils.isEmpty(xmIterationProductLink.getIterationId())) {
-			    createPk=true;
-				xmIterationProductLink.setIterationId(xmIterationProductLinkService.createKey("iterationId"));
+			if(StringUtils.isEmpty(xmIterationLink.getIterationId())) {
+			     return ResponseHelper.failed("iterationId-0","请上送迭代编号");
 			}
-			if(StringUtils.isEmpty(xmIterationProductLink.getProductId())) {
-			    createPk=true;
-				xmIterationProductLink.setProductId(xmIterationProductLinkService.createKey("productId"));
+			if(StringUtils.isEmpty(xmIterationLink.getProId())) {
+				return ResponseHelper.failed("proId-0","请上送产品编号或项目编号");
 			}
-			if(createPk==false){
-                 if(xmIterationProductLinkService.selectOneObject(xmIterationProductLink) !=null ){
-                    tips.setFailureMsg("该产品已经在迭代中，无需再添加");
-                    m.put("tips", tips);
-                    return m;
-                }
-            }
-			xmIterationProductLinkService.insert(xmIterationProductLink);
-			m.put("data",xmIterationProductLink);
+
+			if(StringUtils.isEmpty(xmIterationLink.getLtype())) {
+				return ResponseHelper.failed("ltype-0","请上送关联类型");
+			}
+			if(xmIterationLinkService.selectOneObject(xmIterationLink) !=null ){
+				tips.setFailureMsg("该产品或者项目已经在迭代中，无需再添加");
+				m.put("tips", tips);
+				return m;
+			}
+			xmIterationLinkService.insert(xmIterationLink);
+			m.put("data",xmIterationLink);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -113,11 +113,17 @@ public class XmIterationLinkController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmIterationProductLink(@RequestBody XmIterationLink xmIterationProductLink){
+	public Map<String,Object> delXmIterationLink(@RequestBody XmIterationLink xmIterationLink){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
-			xmIterationProductLinkService.deleteByPk(xmIterationProductLink);
+			if(StringUtils.isEmpty(xmIterationLink.getIterationId())) {
+				return ResponseHelper.failed("iterationId-0","请上送迭代编号");
+			}
+			if(StringUtils.isEmpty(xmIterationLink.getProId())) {
+				return ResponseHelper.failed("proId-0","请上送产品编号或项目编号");
+			}
+			xmIterationLinkService.deleteByPk(xmIterationLink);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -132,15 +138,15 @@ public class XmIterationLinkController {
 	/**
 	@ApiOperation( value = "根据主键修改一条迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息",notes=" ")
 	@ApiResponses({
-		@ApiResponse(code = 200,response=XmIterationProductLink.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+		@ApiResponse(code = 200,response=XmIterationLink.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmIterationProductLink(@RequestBody XmIterationProductLink xmIterationProductLink) {
+	public Map<String,Object> editXmIterationLink(@RequestBody XmIterationLink xmIterationLink) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
-			xmIterationProductLinkService.updateByPk(xmIterationProductLink);
-			m.put("data",xmIterationProductLink);
+			xmIterationLinkService.updateByPk(xmIterationLink);
+			m.put("data",xmIterationLink);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -161,11 +167,11 @@ public class XmIterationLinkController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmIterationProductLink(@RequestBody List<XmIterationProductLink> xmIterationProductLinks) {
+	public Map<String,Object> batchDelXmIterationLink(@RequestBody List<XmIterationLink> xmIterationLinks) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功删除"+xmIterationProductLinks.size()+"条数据"); 
+		Tips tips=new Tips("成功删除"+xmIterationLinks.size()+"条数据"); 
 		try{ 
-			xmIterationProductLinkService.batchDelete(xmIterationProductLinks);
+			xmIterationLinkService.batchDelete(xmIterationLinks);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
