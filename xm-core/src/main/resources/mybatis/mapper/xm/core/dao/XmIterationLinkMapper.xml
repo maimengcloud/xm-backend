@@ -16,7 +16,7 @@
 
 
 	<select id="listWithProjectInfo" parameterType="HashMap" resultType="HashMap">
-		select res.*,p.name as project_name,p.id as project_id,i.iteration_name from xm_iteration_link res left join xm_project p on res.pro_id=p.id
+		select res.*,p.name as project_name,p.id as project_id,i.iteration_name from xm_iteration_link res inner join xm_project p on res.pro_id=p.id
 		inner join xm_iteration i on i.id=res.iteration_id
 		<where>
 			<include refid="whereForMap"/>
@@ -24,7 +24,7 @@
 		</where>
 	</select>
 	<select id="listWithProductInfo" parameterType="HashMap" resultType="HashMap">
-		select res.*,p.product_name,p.id as product_id,i.iteration_name from xm_iteration_link res left join xm_product p on res.pro_id=p.id
+		select res.*,p.product_name,p.id as product_id,i.iteration_name from xm_iteration_link res inner join xm_product p on res.pro_id=p.id
 		inner join xm_iteration i on i.id=res.iteration_id
 		<where>
 			<include refid="whereForMap"/>
