@@ -699,7 +699,7 @@ public class XmTaskService extends BaseService {
 
 	public List<XmTask> listTenTaskByProjectIdAndProductId(String projectId,String productId) {
 
-		return super.selectList("listTenTaskByProductId",map("projectId", projectId, "productId", productId));
+		return super.selectList("listTenTaskByProjectIdAndProductId",map("projectId", projectId, "productId", productId));
 	}
 
 
