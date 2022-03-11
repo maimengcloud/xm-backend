@@ -55,8 +55,8 @@
 			)
 		</if>
 		<if test="iterationId!=null and iterationId!=''">
-			and exists( select 1 from xm_iteration_product_link ipl inner join xm_product_project_link ppl
-			on ipl.product_id=ppl.product_id
+			and exists( select 1 from xm_iteration_link ipl inner join xm_product_project_link ppl
+			on ipl.pro_id=ppl.product_id
 			where ppl.project_id =res.id and ipl.iteration_id=#{iterationId}
 			)
 		</if>

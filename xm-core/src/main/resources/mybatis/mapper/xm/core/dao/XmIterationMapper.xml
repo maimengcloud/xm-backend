@@ -31,15 +31,15 @@
 		    </if>
 
 			<if test="( productId != null and productId !='') and ( menuId == null or menuId =='') and (  projectId ==null or projectId=='' ) ">
-				and exists ( select 1 from xm_iteration_product_link ipl
-				where  ipl.iteration_id=res.id  and ipl.product_id=#{productId}
+				and exists ( select 1 from xm_iteration_link ipl
+				where  ipl.iteration_id=res.id  and ipl.pro_id=#{productId}
 				)
 			</if>
 			<if test=" projectId !=null and projectId!=''">
-				and exists( select 1 from xm_iteration_product_link ipl inner join xm_product_project_link ppl
-				            on ipl.product_id=ppl.product_id
+				and exists( select 1 from xm_iteration_link ipl inner join xm_product_project_link ppl
+				            on ipl.pro_id=ppl.product_id
 							where ppl.project_id=#{projectId} and ipl.iteration_id =res.id
-							<if test="  productId != null and productId !='' "> and ipl.product_id=#{productId}</if>
+							<if test="  productId != null and productId !='' "> and ipl.pro_id=#{productId}</if>
 				)
 			</if>
 			<if test="compete !=null and compete!=''">
@@ -77,15 +77,15 @@
 			</if>
 
 			<if test="( productId != null and productId !='') and ( menuId == null or menuId =='') and (  projectId ==null or projectId=='' ) ">
-				and exists ( select 1 from xm_iteration_product_link ipl
-				where  ipl.iteration_id=res.id  and ipl.product_id=#{productId}
+				and exists ( select 1 from xm_iteration_link ipl
+				where  ipl.iteration_id=res.id  and ipl.pro_id=#{productId}
 				)
 			</if>
 			<if test=" projectId !=null and projectId!=''">
-				and exists( select 1 from xm_iteration_product_link ipl inner join xm_product_project_link ppl
-				on ipl.product_id=ppl.product_id
+				and exists( select 1 from xm_iteration_link ipl inner join xm_product_project_link ppl
+				on ipl.pro_id=ppl.product_id
 				where ppl.project_id=#{projectId} and ipl.iteration_id =res.id
-				<if test="  productId != null and productId !='' "> and ipl.product_id=#{productId}</if>
+				<if test="  productId != null and productId !='' "> and ipl.pro_id=#{productId}</if>
 				)
 			</if>
 			<if test="compete !=null and compete!=''">
