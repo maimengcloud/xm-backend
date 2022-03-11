@@ -146,7 +146,7 @@ public class XmProductProjectLinkController {
 					return ResponseHelper.failed("not-pm","您不是项目管理人员、也不是产品管理人员，无权取消关联");
 				}
 			};
-			List<XmTask> tasks=xmTaskService.listTenTaskByProductId(xmProductProjectLink.getProductId());
+			List<XmTask> tasks=xmTaskService.listTenTaskByProjectIdAndProductId(xmProductProjectLink.getProjectId(),xmProductProjectLink.getProductId());
 			if(tasks!=null && tasks.size()>0){
 				return ResponseHelper.failed("tasks-not-0","存在至少"+tasks.size()+"个任务与产品关联，不能移出.关联任务【"+tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
