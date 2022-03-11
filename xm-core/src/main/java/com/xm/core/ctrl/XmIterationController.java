@@ -11,6 +11,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.entity.XmIterationLink;
+import com.xm.core.service.XmIterationLinkService;
 import com.xm.core.service.XmIterationService;
 import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmRecordService;
@@ -46,6 +47,10 @@ public class XmIterationController {
 	
 	@Autowired
 	private XmIterationService xmIterationService;
+
+
+	@Autowired
+	private XmIterationLinkService xmIterationLinkService;
 
 	@Autowired
 	private XmProductService xmProductService;
@@ -219,8 +224,14 @@ public class XmIterationController {
 				return ResponseHelper.failed("data-0","迭代不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			if(!user.getUserid().equals(iterationDb.getAdminUserid()) && user.getUserid().equals(iterationDb.getAdminUserid())){
+			if(!user.getUserid().equals(iterationDb.getAdminUserid()) && !user.getUserid().equals(iterationDb.getCuserid())){
 				return ResponseHelper.failed("no-qx","您无权删除，迭代创建人、负责人可以删除");
+			}
+
+			XmIterationLink linkQ=new XmIterationLink();
+			linkQ.setIterationId(iterationDb.getId());
+			if(xmIterationLinkService.countByWhere(linkQ)>0){
+				return ResponseHelper.failed("links-no-0","该迭代具有产品或者项目关联，请先移除关联关系");
 			}
 			xmIterationService.deleteByPk(xmIteration);
 			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-删除","删除迭代"+iterationDb.getIterationName(),"", JSON.toJSONString(iterationDb));

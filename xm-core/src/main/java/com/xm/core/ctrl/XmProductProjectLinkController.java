@@ -1,9 +1,11 @@
 package com.xm.core.ctrl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+
+import com.mdp.core.utils.ResponseHelper;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
+import org.aspectj.weaver.ResolvedPointcutDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -81,20 +83,24 @@ public class XmProductProjectLinkController {
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmProductProjectLink(@RequestBody XmProductProjectLink xmProductProjectLink) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功新增一条数据");
+		Tips tips=new Tips("成功加入");
 		try{
-		    boolean createPk=false;
-			if(StringUtils.isEmpty(xmProductProjectLink.getProjectId())) {
-			    createPk=true;
-				xmProductProjectLink.setProjectId(xmProductProjectLinkService.createKey("projectId"));
+			User user = LoginUtils.getCurrentUserInfo();
+			if(!StringUtils.hasText(xmProductProjectLink.getProductId())){
+				return ResponseHelper.failed("productId-0","产品编号不能为空");
 			}
-			if(createPk==false){
-                 if(xmProductProjectLinkService.selectOneObject(xmProductProjectLink) !=null ){
-                    tips.setFailureMsg("编号重复，请修改编号再提交");
-                    m.put("tips", tips);
-                    return m;
-                }
-            }
+			if(!StringUtils.hasText(xmProductProjectLink.getProjectId())){
+				return ResponseHelper.failed("projectId-0","项目编号不能为空");
+			}
+			 if(xmProductProjectLinkService.selectOneObject(xmProductProjectLink) !=null ){
+				tips.setFailureMsg("已加入，无需再添加");
+				m.put("tips", tips);
+				return m;
+			}
+			xmProductProjectLink.setCtime(new Date());
+			xmProductProjectLink.setLinkStatus("1");
+			xmProductProjectLink.setCuserid(user.getUserid());
+			xmProductProjectLink.setCusername(user.getUsername());
 			xmProductProjectLinkService.insert(xmProductProjectLink);
 			m.put("data",xmProductProjectLink);
 		}catch (BizException e) { 
@@ -117,6 +123,13 @@ public class XmProductProjectLinkController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
+
+			if(!StringUtils.hasText(xmProductProjectLink.getProductId())){
+				return ResponseHelper.failed("productId-0","产品编号不能为空");
+			}
+			if(!StringUtils.hasText(xmProductProjectLink.getProjectId())){
+				return ResponseHelper.failed("projectId-0","项目编号不能为空");
+			}
 			xmProductProjectLinkService.deleteByPk(xmProductProjectLink);
 		}catch (BizException e) { 
 			tips=e.getTips();
