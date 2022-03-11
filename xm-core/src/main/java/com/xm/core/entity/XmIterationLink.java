@@ -6,23 +6,23 @@ import java.util.Date;
 
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
- * 实体 XmIterationProductLink所有属性名: <br>
- *	iterationId,productId,ctime,cuserid,cusername,linkStatus;<br>
- * 表 XM.xm_iteration_product_link 迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表的所有字段名: <br>
- *	iteration_id,product_id,ctime,cuserid,cusername,link_status;<br>
+ * 实体 XmIterationLink所有属性名: <br>
+ *	iterationId,proId,ctime,cuserid,cusername,linkStatus,ltype;<br>
+ * 表 xm_iteration_link 迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表的所有字段名: <br>
+ *	iteration_id,pro_id,ctime,cuserid,cusername,link_status,ltype;<br>
  * 当前主键(包括多主键):<br>
- *	iteration_id,product_id;<br>
+ *	iteration_id,pro_id;<br>
  */
 @ApiModel(description="迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表")
-public class XmIterationLink implements java.io.Serializable {
+public class XmIterationLink  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
 	@ApiModelProperty(notes="迭代表主键,主键",allowEmptyValue=true,example="",allowableValues="")
 	String iterationId;
 	
-	@ApiModelProperty(notes="产品表主键,主键",allowEmptyValue=true,example="",allowableValues="")
-	String productId;
+	@ApiModelProperty(notes="产品/或者项目表主键,主键",allowEmptyValue=true,example="",allowableValues="")
+	String proId;
   	
 	
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
@@ -36,11 +36,14 @@ public class XmIterationLink implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="关联状态1关联0取消关联",allowEmptyValue=true,example="",allowableValues="")
 	String linkStatus;
+	
+	@ApiModelProperty(notes="关联类型0-项目，1-产品",allowEmptyValue=true,example="",allowableValues="")
+	String ltype;
 
-	/**迭代表主键,产品表主键**/
-	public XmIterationLink(String iterationId, String productId) {
+	/**迭代表主键,产品或者项目表主键**/
+	public XmIterationLink(String iterationId,String proId) {
 		this.iterationId = iterationId;
-		this.productId = productId;
+		this.proId = proId;
 	}
     
     /**迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表**/
@@ -54,10 +57,10 @@ public class XmIterationLink implements java.io.Serializable {
 		this.iterationId = iterationId;
 	}
 	/**
-	 * 产品表主键
+	 * 产品\或者项目表主键
 	 **/
-	public void setProductId(String productId) {
-		this.productId = productId;
+	public void setProId(String proId) {
+		this.proId = proId;
 	}
 	/**
 	 * 创建时间
@@ -83,6 +86,12 @@ public class XmIterationLink implements java.io.Serializable {
 	public void setLinkStatus(String linkStatus) {
 		this.linkStatus = linkStatus;
 	}
+	/**
+	 * 关联类型0-项目，1-产品
+	 **/
+	public void setLtype(String ltype) {
+		this.ltype = ltype;
+	}
 	
 	/**
 	 * 迭代表主键
@@ -91,10 +100,10 @@ public class XmIterationLink implements java.io.Serializable {
 		return this.iterationId;
 	}
 	/**
-	 * 产品表主键
+	 * 产品或者项目表主键
 	 **/
-	public String getProductId() {
-		return this.productId;
+	public String getProId() {
+		return this.proId;
 	}
 	/**
 	 * 创建时间
@@ -119,6 +128,12 @@ public class XmIterationLink implements java.io.Serializable {
 	 **/
 	public String getLinkStatus() {
 		return this.linkStatus;
+	}
+	/**
+	 * 关联类型0-项目，1-产品
+	 **/
+	public String getLtype() {
+		return this.ltype;
 	}
 
 }

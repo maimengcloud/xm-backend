@@ -3,40 +3,34 @@
 <mapper namespace="com.xm.core.entity.XmIterationLink">
 	
 	
-	<!--开始 自定sql函数区域 -->
-		<!--请在此区域添加自定义函数-->
-		
-		
-		
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" pkList != null">  and (res.iteration_id, res.pro_id) in
+             <foreach collection="pkList" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item.iterationId},  #{item.proId})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
+
+
 	<!--结束 自定义sql函数区域-->
 	
 
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		SELECT
-			res.*,
-			i.iteration_name,
-			pro.product_name
-		FROM
-		XM.xm_iteration_product_link res
-		INNER JOIN xm_iteration i ON res.iteration_id = i.id
-		INNER JOIN xm_product pro ON res.product_id = pro.id
-		<where> 
-			<if test="ids != null">  and     
-				iteration_id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
-			 </if>
+		select * from xm_iteration_link res
+		<where>
+		    <include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">       </if> 
 		</where>
 	</select>
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmIterationLink" resultType="com.xm.core.entity.XmIterationLink">
-		select * from xm_iteration_product_link res
+		select * from xm_iteration_link res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -44,65 +38,71 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmIterationLink" resultType="com.xm.core.entity.XmIterationLink">
-		select * from xm_iteration_product_link res
+		select * from xm_iteration_link res
 		where 
 			res.iteration_id = #{iterationId}
-			and res.product_id = #{productId}
+			and res.pro_id = #{proId}
 	</select>
-	
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmIterationLink">
+        select * from xm_iteration_link res
+        where  (res.iteration_id, res.pro_id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item.iterationId},  #{item.proId})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from xm_iteration_product_link res
+		select * from xm_iteration_link res
 		where 
 			 res.iteration_id = #{iterationId}
-			and  res.product_id = #{productId}
+			and  res.pro_id = #{proId}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmIterationLink" resultType="long">
-		select count(1) from xm_iteration_product_link res
+		select count(1) from xm_iteration_link res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
-	<!-- 新增一条记录  主键iteration_id,product_id,-->
+	<!-- 新增一条记录  主键iteration_id,pro_id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmIterationLink" useGeneratedKeys="false"  >
-		insert into xm_iteration_product_link(
+		insert into xm_iteration_link(
 			<include refid="columns"/>
 		) values (
-		#{iterationId},#{productId},#{ctime},#{cuserid},#{cusername},#{linkStatus}
+		#{iterationId},#{proId},#{ctime},#{cuserid},#{cusername},#{linkStatus},#{ltype}
 		)
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmIterationLink">
-		delete from xm_iteration_product_link
+		delete from xm_iteration_link res
 		<where>  
-			1=2
+			<include refid="where"/>
 		</where>
 	</delete>
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmIterationLink">
-		delete from xm_iteration_product_link
-		where iteration_id = #{iterationId} and product_id = #{productId} 
+		delete from xm_iteration_link 
+		where iteration_id = #{iterationId} and pro_id = #{proId} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmIterationLink">
-		update  xm_iteration_product_link
+		update  xm_iteration_link 
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
-		where iteration_id = #{iterationId} and product_id = #{productId} 
+		where iteration_id = #{iterationId} and pro_id = #{proId} 
 	</update>
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmIterationLink">
-		update  xm_iteration_product_link
+		update  xm_iteration_link 
 		<set>
 			<include refid="set"/>
 		</set>
-		where iteration_id = #{iterationId} and product_id = #{productId} 
+		where iteration_id = #{iterationId} and pro_id = #{proId} 
 	</update>
 
 	<!-- 批量新增  批量插入 借用insert 循环插入实现
@@ -113,57 +113,59 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_iteration_product_link
+   		update  xm_iteration_link 
 		set 
 			<include refid="batchSet"/>
-			where iteration_id = #{item.iterationId} and product_id = #{item.productId}  
+			where iteration_id = #{item.iterationId} and pro_id = #{item.proId}  
 		</foreach> 
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_iteration_product_link
+		delete from xm_iteration_link 
 			where
-			(iteration_id, product_id)
-			    in
+			(iteration_id, pro_id) in
                 <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
-                    ( #{item.iterationId},  #{item.productId}
-                    )
+                    (  #{item.iterationId},  #{item.proId} )
                 </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		iteration_id,product_id,ctime,cuserid,cusername,link_status
+		iteration_id,pro_id,ctime,cuserid,cusername,link_status,ltype
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
 	<sql id="where">
 		<if test="iterationId != null and iterationId != ''">      and res.iteration_id = #{iterationId}     </if>
-		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
+		<if test="proId != null and proId != ''">      and res.pro_id = #{proId}     </if>
 		<if test="ctime != null">      and date_format(res.ctime,'%Y-%m-%d') = date_format(#{ctime},'%Y-%m-%d')     </if>
 		<if test="cuserid != null and cuserid != ''">      and res.cuserid = #{cuserid}     </if>
 		<if test="cusername != null and cusername != ''">      and res.cusername = #{cusername}     </if>
 		<if test="linkStatus != null and linkStatus != ''">      and res.link_status = #{linkStatus}     </if>
+		<if test="ltype != null and ltype != ''">      and res.ltype = #{ltype}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
 		ctime = #{ctime},
 		cuserid = #{cuserid},
 		cusername = #{cusername},
-		link_status = #{linkStatus}
+		link_status = #{linkStatus},
+		ltype = #{ltype}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="ctime != null"> ctime = #{ctime},     </if>
 		<if test="cuserid != null and cuserid != ''"> cuserid = #{cuserid},     </if>
 		<if test="cusername != null and cusername != ''"> cusername = #{cusername},     </if>
 		<if test="linkStatus != null and linkStatus != ''"> link_status = #{linkStatus},     </if>
+		<if test="ltype != null and ltype != ''"> ltype = #{ltype},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
 			ctime = #{item.ctime},
 			cuserid = #{item.cuserid},
 			cusername = #{item.cusername},
-			link_status = #{item.linkStatus}
+			link_status = #{item.linkStatus},
+			ltype = #{item.ltype}
 	</sql>
 </mapper>
