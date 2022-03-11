@@ -1,7 +1,10 @@
 package com.xm.core.service;
 
+import com.mdp.core.entity.Tips;
+import com.xm.core.entity.XmIteration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.mdp.core.service.BaseService;
 
@@ -15,6 +18,10 @@ import java.util.Map;
  ***/
 @Service("xm.core.xmIterationLinkService")
 public class XmIterationLinkService extends BaseService {
+
+
+
+
 	static Logger logger =LoggerFactory.getLogger(XmIterationLinkService.class);
 
 	public List<Map<String, Object>> listWithProductInfo(Map<String, Object> xmIterationLink) {
@@ -25,6 +32,8 @@ public class XmIterationLinkService extends BaseService {
 		return super.selectList("listWithProjectInfo",xmIterationLink);
 	}
 	/** 请在此类添加自定义函数 */
+
+
 
 }
 

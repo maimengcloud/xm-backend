@@ -11,10 +11,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.entity.XmIterationLink;
-import com.xm.core.service.XmIterationLinkService;
-import com.xm.core.service.XmIterationService;
-import com.xm.core.service.XmProductService;
-import com.xm.core.service.XmRecordService;
+import com.xm.core.service.*;
 import com.xm.core.vo.XmIterationVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
@@ -58,6 +55,10 @@ public class XmIterationController {
 
 	@Autowired
 	private XmRecordService  xmRecordService;
+
+
+	@Autowired
+	XmGroupService xmGroupService;
 
 	@ApiOperation( value = "查询迭代定义信息列表",notes="listXmIteration,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
@@ -187,6 +188,18 @@ public class XmIterationController {
 					link.setCusername(user.getUsername());
 					if(!StringUtils.hasText(link.getLtype())){
 						return ResponseHelper.failed("ltype-0","关联类型不能为空");
+					}
+
+					if("1".equals(link.getLtype())){
+						if(!xmGroupService.checkUserIsProductAdm(link.getProId(),user.getUserid())){
+							return ResponseHelper.failed("no-product-qx","您不是产品管理人员，无权将该产品与迭代关联");
+						};
+					}else if("0".equals(link.getLtype())){
+						if(!xmGroupService.checkUserIsProjectAdm(link.getProId(),user.getUserid())){
+							return ResponseHelper.failed("no-project-qx","您不是项目管理人员，无权将该项目与迭代关联");
+						};
+					}else{
+						return ResponseHelper.failed("ltype-not-0|1","请上送正确的关联类型");
 					}
 				}
 			}

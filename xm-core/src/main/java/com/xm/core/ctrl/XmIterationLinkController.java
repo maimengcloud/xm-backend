@@ -9,6 +9,9 @@ import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmIterationLink;
+import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmProductService;
+import com.xm.core.service.XmProjectService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,9 +53,10 @@ public class XmIterationLinkController {
 	
 	@Autowired
 	private XmIterationLinkService xmIterationLinkService;
-	 
-		
- 
+
+	@Autowired
+	XmGroupService xmGroupService;
+
 	
 	@ApiOperation( value = "查询迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息列表",notes=" ") 
 	@ApiResponses({
@@ -130,6 +134,18 @@ public class XmIterationLinkController {
 				return m;
 			}
 			User user= LoginUtils.getCurrentUserInfo();
+			if("1".equals(xmIterationLink.getLtype())){
+				if(!xmGroupService.checkUserIsProductAdm(xmIterationLink.getProId(),user.getUserid())){
+					return ResponseHelper.failed("no-product-qx","您不是产品管理人员，无权将该产品与迭代关联");
+				};
+			}else if("0".equals(xmIterationLink.getLtype())){
+				if(!xmGroupService.checkUserIsProjectAdm(xmIterationLink.getProId(),user.getUserid())){
+					return ResponseHelper.failed("no-project-qx","您不是项目管理人员，无权将该项目与迭代关联");
+				};
+			}else{
+				return ResponseHelper.failed("ltype-not-0|1","请上送正确的关联类型");
+			}
+
 			xmIterationLink.setCuserid(user.getUserid());
 			xmIterationLink.setCusername(user.getUsername());
 			xmIterationLink.setCtime(new Date());
@@ -161,6 +177,22 @@ public class XmIterationLinkController {
 			}
 			if(StringUtils.isEmpty(xmIterationLink.getProId())) {
 				return ResponseHelper.failed("proId-0","请上送产品编号或项目编号");
+			}
+			xmIterationLink=this.xmIterationLinkService.selectOneObject(xmIterationLink);
+			if(xmIterationLink==null){
+				return ResponseHelper.failed("data-0","该关联关系已不存在");
+			}
+			User user= LoginUtils.getCurrentUserInfo();
+			if("1".equals(xmIterationLink.getLtype())){
+				if(!xmGroupService.checkUserIsProductAdm(xmIterationLink.getProId(),user.getUserid())){
+					return ResponseHelper.failed("no-product-qx","您不是产品管理人员，无权将该产品移出迭代");
+				};
+			}else if("0".equals(xmIterationLink.getLtype())){
+				if(!xmGroupService.checkUserIsProjectAdm(xmIterationLink.getProId(),user.getUserid())){
+					return ResponseHelper.failed("no-project-qx","您不是项目管理人员，无权将该项目移出迭代");
+				};
+			}else{
+				return ResponseHelper.failed("ltype-not-0|1","请上送正确的关联类型");
 			}
 			xmIterationLinkService.deleteByPk(xmIterationLink);
 		}catch (BizException e) { 
