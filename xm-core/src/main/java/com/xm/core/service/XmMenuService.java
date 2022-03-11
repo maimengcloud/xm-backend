@@ -280,5 +280,10 @@ public class XmMenuService extends BaseService {
 	public void batchProductPhase(XmPhaseMenusVo xmPhaseMenusVo) {
 		super.update("batchProductPhase",xmPhaseMenusVo);
 	}
+
+    public List<XmMenu> listTenMenuByIteration(String iterationId) {
+
+		return super.selectList("listTenMenuByIteration",iterationId);
+    }
 }
 

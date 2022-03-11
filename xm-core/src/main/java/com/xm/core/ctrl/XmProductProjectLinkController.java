@@ -5,6 +5,7 @@ import java.util.*;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.service.XmGroupService;
 import org.aspectj.weaver.ResolvedPointcutDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +54,8 @@ public class XmProductProjectLinkController {
 	
 	@Autowired
 	private XmProductProjectLinkService xmProductProjectLinkService;
-	 
+	@Autowired
+	XmGroupService xmGroupService;
 		
  
 	
@@ -97,6 +99,11 @@ public class XmProductProjectLinkController {
 				m.put("tips", tips);
 				return m;
 			}
+			if(!xmGroupService.checkUserIsProductAdm(xmProductProjectLink.getProductId(),user.getUserid())){
+				if(!xmGroupService.checkUserIsProjectAdm(xmProductProjectLink.getProjectId(),user.getUserid())){
+					return ResponseHelper.failed("not-pm","您不是项目管理人员、也不是产品管理人员，无权关联");
+				}
+			};
 			xmProductProjectLink.setCtime(new Date());
 			xmProductProjectLink.setLinkStatus("1");
 			xmProductProjectLink.setCuserid(user.getUserid());
@@ -123,13 +130,18 @@ public class XmProductProjectLinkController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
-
+			User user = LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmProductProjectLink.getProductId())){
 				return ResponseHelper.failed("productId-0","产品编号不能为空");
 			}
 			if(!StringUtils.hasText(xmProductProjectLink.getProjectId())){
 				return ResponseHelper.failed("projectId-0","项目编号不能为空");
 			}
+			if(!xmGroupService.checkUserIsProductAdm(xmProductProjectLink.getProductId(),user.getUserid())){
+				if(!xmGroupService.checkUserIsProjectAdm(xmProductProjectLink.getProjectId(),user.getUserid())){
+					return ResponseHelper.failed("not-pm","您不是项目管理人员、也不是产品管理人员，无权取消关联");
+				}
+			};
 			xmProductProjectLinkService.deleteByPk(xmProductProjectLink);
 		}catch (BizException e) { 
 			tips=e.getTips();

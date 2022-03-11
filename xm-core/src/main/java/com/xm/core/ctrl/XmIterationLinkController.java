@@ -4,14 +4,15 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmIterationLink;
-import com.xm.core.service.XmGroupService;
-import com.xm.core.service.XmProductService;
-import com.xm.core.service.XmProjectService;
+import com.xm.core.entity.XmMenu;
+import com.xm.core.entity.XmTask;
+import com.xm.core.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +32,6 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
-import com.xm.core.service.XmIterationLinkService;
 
 /**
  * url编制采用rest风格,如对XM.xm_iteration_product_link 迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表的操作有增删改查,对应的url分别为:<br>
@@ -53,6 +53,17 @@ public class XmIterationLinkController {
 	
 	@Autowired
 	private XmIterationLinkService xmIterationLinkService;
+
+	@Autowired
+	private XmIterationService xmIterationService;
+
+
+	@Autowired
+	private XmTaskService xmTaskService;
+
+
+	@Autowired
+	private XmMenuService xmMenuService;
 
 	@Autowired
 	XmGroupService xmGroupService;
@@ -187,13 +198,25 @@ public class XmIterationLinkController {
 				if(!xmGroupService.checkUserIsProductAdm(xmIterationLink.getProId(),user.getUserid())){
 					return ResponseHelper.failed("no-product-qx","您不是产品管理人员，无权将该产品移出迭代");
 				};
+				//检查是否有需求关联这个迭代，如果有，不允许删除
+				List<XmMenu> menus= xmMenuService.listTenMenuByIteration(xmIterationLink.getIterationId());
+				if(menus!=null && menus.size()>0){
+					return ResponseHelper.failed("menus-not-0","存在至少"+menus.size()+"个需求与迭代关联，不能移出.关联需求【"+menus.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
+				}
 			}else if("0".equals(xmIterationLink.getLtype())){
 				if(!xmGroupService.checkUserIsProjectAdm(xmIterationLink.getProId(),user.getUserid())){
 					return ResponseHelper.failed("no-project-qx","您不是项目管理人员，无权将该项目移出迭代");
 				};
+				//检查是否有任务关联这个迭代，如果有，不允许删除
+				List<XmTask> tasks= xmTaskService.listTenTaskByIteration(xmIterationLink.getIterationId());
+				if(tasks!=null && tasks.size()>0){
+					return ResponseHelper.failed("tasks-not-0","存在至少"+tasks.size()+"个任务与迭代关联，不能移出.关联任务【"+tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+				}
 			}else{
 				return ResponseHelper.failed("ltype-not-0|1","请上送正确的关联类型");
 			}
+
+
 			xmIterationLinkService.deleteByPk(xmIterationLink);
 		}catch (BizException e) { 
 			tips=e.getTips();

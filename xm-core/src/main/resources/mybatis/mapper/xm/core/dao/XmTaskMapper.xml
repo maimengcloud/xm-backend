@@ -315,6 +315,12 @@
 		</foreach>
 		group by p.id
 	</select>
+
+	<select id="listTenTaskByIteration" parameterType="String" resultType="com.xm.core.entity.XmTask">
+		select name from xm_task res where exists(select 1 from xm_menu m where m.menu_id=res.menu_id and m.iteration_id=#{iterationId} and m.ntype='0')
+		and res.ntype='0'
+		limit 10
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 
