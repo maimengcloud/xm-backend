@@ -8,7 +8,7 @@
 
 	<select id="selectListByIterationId" parameterType="String" resultType="com.xm.core.entity.XmProductProjectLink">
 		select * from xm_product_project_link res
-		where exists (select 1 from xm_iteration_link ipl where ipl.iteration_id=#{iterationId} and ipl.pro_id=res.product_id)
+		where exists (select 1 from xm_iteration_link ipl where ipl.iteration_id=#{iterationId} and ipl.pro_id=res.product_id and ipl.ltype='1')
 	</select>
 		
 	<!--结束 自定义sql函数区域-->

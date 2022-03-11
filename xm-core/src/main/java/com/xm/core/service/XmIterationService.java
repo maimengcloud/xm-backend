@@ -1,7 +1,10 @@
 package com.xm.core.service;
 
 import com.mdp.core.service.BaseService;
+import com.xm.core.vo.XmIterationVo;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Map;
@@ -13,8 +16,9 @@ import java.util.Map;
  ***/
 @Service("xm.core.xmIterationService")
 public class XmIterationService extends BaseService {
-	
-	/** 请在此类添加自定义函数 */
+
+	@Autowired
+	XmIterationLinkService xmIterationLinkService;
 	
 	/**
 	 * 调用存储过程计算指定迭代的任务预算数据
@@ -26,12 +30,19 @@ public class XmIterationService extends BaseService {
 
 	/**
 	 * 连同功能关联的状态数据一起带出
-	 * @param xmMenu
+	 * @param iterationMap
 	 * @return
 	 */
 	public List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> iterationMap) {
 		// TODO Auto-generated method stub
 		return this.selectList("selectListMapByWhereWithState", iterationMap);
 	}
+
+	@Transactional
+    public void addIteration(XmIterationVo xmIteration) {
+		super.insert(xmIteration);
+		this.xmIterationLinkService.batchInsert(xmIteration.getLinks());
+
+    }
 }
 

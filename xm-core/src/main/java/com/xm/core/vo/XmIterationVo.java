@@ -1,21 +1,21 @@
 package com.xm.core.vo;
 
 import com.xm.core.entity.XmIteration;
+import com.xm.core.entity.XmIterationLink;
+
+import java.util.List;
 
 public class XmIterationVo extends XmIteration {
-	private static final long serialVersionUID = 1534268338972176747L;
-	
-	/**
-	 * addSub,edit,delete
-	 */
-	String opType="";
 
-	public String getOpType() {
-		return opType;
+
+
+	List<XmIterationLink> links;
+
+	public List<XmIterationLink> getLinks() {
+		return links;
 	}
 
-	public void setOpType(String opType) {
-		this.opType = opType;
+	public void setLinks(List<XmIterationLink> links) {
+		this.links = links;
 	}
-
 }

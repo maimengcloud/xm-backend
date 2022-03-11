@@ -10,9 +10,11 @@ import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmIteration;
+import com.xm.core.entity.XmIterationLink;
 import com.xm.core.service.XmIterationService;
 import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmRecordService;
+import com.xm.core.vo.XmIterationVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -151,7 +153,7 @@ public class XmIterationController {
 	})
 	@HasQx(value = "xm_core_xmIteration_add",name = "新增迭代计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmIteration(@RequestBody XmIteration xmIteration) {
+	public Map<String,Object> addXmIteration(@RequestBody XmIterationVo xmIteration) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
@@ -171,7 +173,21 @@ public class XmIterationController {
 			xmIteration.setCusername(user.getUsername());
 			xmIteration.setBranchId(user.getBranchId());
 			xmIteration.setIstatus("0");
-			xmIterationService.insert(xmIteration);
+			xmIteration.setAdminUserid(user.getUserid());
+			xmIteration.setAdminUsername(user.getUsername());
+			if(xmIteration.getLinks()!=null && xmIteration.getLinks().size()>0){
+				for (XmIterationLink link : xmIteration.getLinks()) {
+					link.setIterationId(xmIteration.getId());
+					link.setCtime(new Date());
+					link.setLinkStatus("1");
+					link.setCuserid(user.getUserid());
+					link.setCusername(user.getUsername());
+					if(!StringUtils.hasText(link.getLtype())){
+						return ResponseHelper.failed("ltype-0","关联类型不能为空");
+					}
+				}
+			}
+			xmIterationService.addIteration(xmIteration);
 			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-新增","新增迭代"+xmIteration.getIterationName());
 			m.put("data",xmIteration);
 		}catch (BizException e) { 

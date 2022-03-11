@@ -36,10 +36,8 @@
 				)
 			</if>
 			<if test=" projectId !=null and projectId!=''">
-				and exists( select 1 from xm_iteration_link ipl inner join xm_product_project_link ppl
-				            on ipl.pro_id=ppl.product_id
-							where ppl.project_id=#{projectId} and ipl.iteration_id =res.id
-							<if test="  productId != null and productId !='' "> and ipl.pro_id=#{productId}</if>
+				and exists( select 1 from xm_iteration_link ipl
+							where ipl.pro_id=#{projectId} and ipl.iteration_id =res.id
 				)
 			</if>
 			<if test="compete !=null and compete!=''">
@@ -78,14 +76,12 @@
 
 			<if test="( productId != null and productId !='') and ( menuId == null or menuId =='') and (  projectId ==null or projectId=='' ) ">
 				and exists ( select 1 from xm_iteration_link ipl
-				where  ipl.iteration_id=res.id  and ipl.pro_id=#{productId}
+				where  ipl.iteration_id=res.id  and ipl.pro_id=#{productId} and ipl.ltype='1'
 				)
 			</if>
 			<if test=" projectId !=null and projectId!=''">
-				and exists( select 1 from xm_iteration_link ipl inner join xm_product_project_link ppl
-				on ipl.pro_id=ppl.product_id
-				where ppl.project_id=#{projectId} and ipl.iteration_id =res.id
-				<if test="  productId != null and productId !='' "> and ipl.pro_id=#{productId}</if>
+				and exists( select 1 from xm_iteration_link ipl
+				where ipl.pro_id=#{projectId} and ipl.iteration_id =res.id and ipl.ltype='0'
 				)
 			</if>
 			<if test="compete !=null and compete!=''">
