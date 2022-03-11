@@ -1,11 +1,14 @@
 package com.xm.core.ctrl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmTaskService;
 import org.aspectj.weaver.ResolvedPointcutDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,8 +59,9 @@ public class XmProductProjectLinkController {
 	private XmProductProjectLinkService xmProductProjectLinkService;
 	@Autowired
 	XmGroupService xmGroupService;
-		
- 
+
+	@Autowired
+	XmTaskService xmTaskService;
 	
 	@ApiOperation( value = "查询产品与项目的关联关系表，一般由产品经理挂接项目到产品上信息列表",notes=" ") 
 	@ApiResponses({
@@ -142,6 +146,10 @@ public class XmProductProjectLinkController {
 					return ResponseHelper.failed("not-pm","您不是项目管理人员、也不是产品管理人员，无权取消关联");
 				}
 			};
+			List<XmTask> tasks=xmTaskService.listTenTaskByProductId(xmProductProjectLink.getProductId());
+			if(tasks!=null && tasks.size()>0){
+				return ResponseHelper.failed("tasks-not-0","存在至少"+tasks.size()+"个任务与产品关联，不能移出.关联任务【"+tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+			}
 			xmProductProjectLinkService.deleteByPk(xmProductProjectLink);
 		}catch (BizException e) { 
 			tips=e.getTips();

@@ -697,8 +697,12 @@ public class XmTaskService extends BaseService {
 		return tips;
 	}
 
-	public List<XmTask> listTenTaskByIteration(String iterationId) {
-		return super.selectList("listTenTaskByIteration",iterationId);
+	public List<XmTask> listTenTaskByIterationId(String iterationId) {
+		return super.selectList("listTenTaskByIterationId",iterationId);
+	}
+
+	public List<XmTask> listTenTaskByProductId(String productId) {
+		return super.selectList("listTenTaskByProductId",productId);
 	}
 }
 
