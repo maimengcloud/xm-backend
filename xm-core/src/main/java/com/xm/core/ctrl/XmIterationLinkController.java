@@ -1,10 +1,13 @@
 package com.xm.core.ctrl;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmIterationLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -110,6 +113,7 @@ public class XmIterationLinkController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
+
 			if(StringUtils.isEmpty(xmIterationLink.getIterationId())) {
 			     return ResponseHelper.failed("iterationId-0","请上送迭代编号");
 			}
@@ -125,6 +129,11 @@ public class XmIterationLinkController {
 				m.put("tips", tips);
 				return m;
 			}
+			User user= LoginUtils.getCurrentUserInfo();
+			xmIterationLink.setCuserid(user.getUserid());
+			xmIterationLink.setCusername(user.getUsername());
+			xmIterationLink.setCtime(new Date());
+			xmIterationLink.setLinkStatus("1");
 			xmIterationLinkService.insert(xmIterationLink);
 			m.put("data",xmIterationLink);
 		}catch (BizException e) { 
