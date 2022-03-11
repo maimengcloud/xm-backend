@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.xm.core.entity.XmIterationProductLink">
+<mapper namespace="com.xm.core.entity.XmIterationLink">
 	
 	
 	<!--开始 自定sql函数区域 -->
@@ -35,7 +35,7 @@
 	</select>
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
-	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmIterationProductLink" resultType="com.xm.core.entity.XmIterationProductLink">
+	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmIterationLink" resultType="com.xm.core.entity.XmIterationLink">
 		select * from xm_iteration_product_link res
 		<where>
 			<include refid="where"/>
@@ -43,7 +43,7 @@
 	</select>
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
-	<select id="selectOneObject" parameterType="com.xm.core.entity.XmIterationProductLink" resultType="com.xm.core.entity.XmIterationProductLink">
+	<select id="selectOneObject" parameterType="com.xm.core.entity.XmIterationLink" resultType="com.xm.core.entity.XmIterationLink">
 		select * from xm_iteration_product_link res
 		where 
 			res.iteration_id = #{iterationId}
@@ -58,14 +58,14 @@
 			and  res.product_id = #{productId}
 	</select>
 	<!-- 获取数据条目 返回long -->
-	<select id="countByWhere" parameterType="com.xm.core.entity.XmIterationProductLink" resultType="long">
+	<select id="countByWhere" parameterType="com.xm.core.entity.XmIterationLink" resultType="long">
 		select count(1) from xm_iteration_product_link res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键iteration_id,product_id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmIterationProductLink" useGeneratedKeys="false"  >
+	<insert id="insert" parameterType="com.xm.core.entity.XmIterationLink" useGeneratedKeys="false"  >
 		insert into xm_iteration_product_link(
 			<include refid="columns"/>
 		) values (
@@ -74,7 +74,7 @@
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
-	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmIterationProductLink">
+	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmIterationLink">
 		delete from xm_iteration_product_link
 		<where>  
 			1=2
@@ -82,13 +82,13 @@
 	</delete>
 	
 	<!-- 按主键删除一条记录-->
-	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmIterationProductLink">
+	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmIterationLink">
 		delete from xm_iteration_product_link
 		where iteration_id = #{iterationId} and product_id = #{productId} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
-	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmIterationProductLink">
+	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmIterationLink">
 		update  xm_iteration_product_link
 		<set>
 			<include refid="someFieldSet"/>
@@ -97,7 +97,7 @@
 	</update>
 	
 		<!-- 根据主键修改一条记录 -->
-	<update id="updateByPk" parameterType="com.xm.core.entity.XmIterationProductLink">
+	<update id="updateByPk" parameterType="com.xm.core.entity.XmIterationLink">
 		update  xm_iteration_product_link
 		<set>
 			<include refid="set"/>

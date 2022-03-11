@@ -1,25 +1,21 @@
 package com.xm.core.ctrl;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.xm.core.entity.XmIterationLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.stereotype.Controller;
 
 import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -27,10 +23,9 @@ import io.swagger.annotations.ApiResponses;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
-import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.xm.core.service.XmIterationProductLinkService;
-import com.xm.core.entity.XmIterationProductLink;
+
 /**
  * url编制采用rest风格,如对XM.xm_iteration_product_link 迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表的操作有增删改查,对应的url分别为:<br>
  *  新增: core/xmIterationProductLink/add <br>
@@ -45,9 +40,9 @@ import com.xm.core.entity.XmIterationProductLink;
 @RestController("xm.core.xmIterationProductLinkController")
 @RequestMapping(value="/**/core/xmIterationProductLink")
 @Api(tags={"迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表操作接口"})
-public class XmIterationProductLinkController {
+public class XmIterationLinkController {
 	
-	static Logger logger =LoggerFactory.getLogger(XmIterationProductLinkController.class);
+	static Logger logger =LoggerFactory.getLogger(XmIterationLinkController.class);
 	
 	@Autowired
 	private XmIterationProductLinkService xmIterationProductLinkService;
@@ -57,7 +52,7 @@ public class XmIterationProductLinkController {
 	
 	@ApiOperation( value = "查询迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息列表",notes=" ") 
 	@ApiResponses({
-		@ApiResponse(code = 200,response=XmIterationProductLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+		@ApiResponse(code = 200,response= XmIterationLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Map<String,Object> listXmIterationProductLink( @RequestParam Map<String,Object> xmIterationProductLink){
@@ -77,10 +72,10 @@ public class XmIterationProductLinkController {
 
 	@ApiOperation( value = "新增一条迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息",notes=" ")
 	@ApiResponses({
-		@ApiResponse(code = 200,response=XmIterationProductLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+		@ApiResponse(code = 200,response= XmIterationLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmIterationProductLink(@RequestBody XmIterationProductLink xmIterationProductLink) {
+	public Map<String,Object> addXmIterationProductLink(@RequestBody XmIterationLink xmIterationProductLink) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
@@ -118,7 +113,7 @@ public class XmIterationProductLinkController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmIterationProductLink(@RequestBody XmIterationProductLink xmIterationProductLink){
+	public Map<String,Object> delXmIterationProductLink(@RequestBody XmIterationLink xmIterationProductLink){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{

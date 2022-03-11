@@ -14,7 +14,7 @@ import java.util.Date;
  *	iteration_id,product_id;<br>
  */
 @ApiModel(description="迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表")
-public class XmIterationProductLink  implements java.io.Serializable {
+public class XmIterationLink implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -38,13 +38,13 @@ public class XmIterationProductLink  implements java.io.Serializable {
 	String linkStatus;
 
 	/**迭代表主键,产品表主键**/
-	public XmIterationProductLink(String iterationId,String productId) {
+	public XmIterationLink(String iterationId, String productId) {
 		this.iterationId = iterationId;
 		this.productId = productId;
 	}
     
     /**迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表**/
-	public XmIterationProductLink() {
+	public XmIterationLink() {
 	}
 	
 	/**
