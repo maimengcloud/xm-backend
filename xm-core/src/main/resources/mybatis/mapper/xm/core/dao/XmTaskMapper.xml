@@ -241,6 +241,7 @@
 			sum( ifnull( t.act_cost, 0 ) ) AS act_cost,
 			sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
 			sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) )   AS budget_workload_rate,
+			sum( ifnull(t.rate,0)) as total_rate,
 			min( t.start_time ) AS start_time,
 			max( t.end_time ) AS end_time,
 			min( t.act_start_time ) AS act_start_time,
@@ -257,7 +258,7 @@
 			SET
 			res.act_cost = t2.act_cost,
 			res.act_workload = t2.act_workload,
-		    res.rate = case when t2.budget_workload=0 then 0 else t2.budget_workload_rate / t2.budget_workload end,
+		    res.rate = case when t2.budget_workload=0  or t2.budget_workload is null then if(t2.children_cnt=0 or t2.children_cnt is null,t2.total_rate,t2.total_rate/t2.children_cnt) else t2.budget_workload_rate / t2.budget_workload end,
 			res.start_time = ifnull(res.start_time,t2.start_time),
 			res.end_time = ifnull(t2.end_time,t2.end_time),
 			res.act_start_time = t2.act_start_time,
@@ -282,6 +283,7 @@
 		sum( ifnull( t.act_cost, 0 ) ) AS act_cost,
 		sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
 		sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) ) as budget_workload_rate,
+			sum( ifnull(t.rate,0)) as total_rate,
 			sum( ifnull( t.budget_workload, 0 )) as budget_workload,
 			min( t.act_start_time ) AS act_start_time,
 			max( t.act_end_time ) AS act_end_time,
@@ -295,7 +297,7 @@
 		SET
 		res.act_cost = t2.act_cost,
 		res.act_workload = t2.act_workload,
-		res.rate = case when t2.budget_workload=0 then 0 else t2.budget_workload_rate / t2.budget_workload end,
+		res.rate = case when t2.budget_workload=0 or t2.budget_workload is null then if(t2.children_cnt=0 or t2.children_cnt is null,t2.total_rate,t2.total_rate/t2.children_cnt) else t2.budget_workload_rate / t2.budget_workload end,
 		res.start_time = ifnull(res.start_time,t2.start_time),
 		res.end_time = ifnull(t2.end_time,t2.end_time),
 		res.act_start_time = t2.act_start_time,
