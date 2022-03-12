@@ -263,7 +263,7 @@
 			res.act_start_time = t2.act_start_time,
 			res.act_end_time = t2.act_end_time,
 			res.children_cnt = ifnull( t2.children_cnt, 0 ),
-			res.ntype=if(t2.children_cnt>0,"1","0")
+		    res.ntype=if(t2.children_cnt>0,"1",res.ntype)
 			WHERE
 			res.id in
 			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
@@ -275,7 +275,7 @@
 	<update id="sumParents" parameterType="List">
 		<foreach collection="list" item="item" index="index" open="" separator=";" close="" >
 		UPDATE xm_task res
-		LEFT JOIN (
+		left JOIN (
 		SELECT
 		t.parent_taskid,
 		count(1) as children_cnt,
@@ -301,7 +301,7 @@
 		res.act_start_time = t2.act_start_time,
 		res.act_end_time = t2.act_end_time ,
 		res.children_cnt = ifnull( t2.children_cnt, 0 ),
-		res.ntype=if(t2.children_cnt>0,"1","0")
+		res.ntype=if(t2.children_cnt>0,"1",res.ntype)
 		WHERE
 		res.id  = #{item}
 		and res.ntype='1'

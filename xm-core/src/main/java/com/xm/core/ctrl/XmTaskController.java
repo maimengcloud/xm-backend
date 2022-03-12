@@ -356,6 +356,15 @@ public class XmTaskController {
 			if(xmTaskVo.getBudgetCost()==null){
 				xmTaskVo.setBudgetCost(BigDecimal.ZERO);
 			}
+			if(StringUtils.isEmpty(xmTaskVo.getId())) {
+				xmTaskVo.setId(this.xmTaskService.createKey("id"));
+			}else{
+				XmTask xmTaskQuery = new  XmTask(xmTaskVo.getId());
+				if(this.xmTaskService.countByWhere(xmTaskQuery)>0){
+					tips.setFailureMsg("编号重复，请修改编号再提交");
+					throw new BizException(tips);
+				}
+			}
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTaskVo);
 			if(xmTaskVo.getBudgetCost()!=null  && xmTaskVo.getBudgetCost().compareTo(BigDecimal.ZERO)>0){
 				if(xmTaskVo.getLvl()<=1){
@@ -1404,6 +1413,9 @@ public class XmTaskController {
 				return ResponseHelper.failed("parentTask-0", "上级不存在");
 			}
 			XmTask parentTask=optional.get();
+			if("1".equals(parentTask.getNtype())){
+				return ResponseHelper.failed("parentTask-ntype-not-1", "【"+parentTask.getName()+"】为任务，不能作为上级节点。请另选上级或者变更其为计划节点");
+			}
 			xmTasks=xmTasks.stream().filter(i->!i.getId().equals(parentTask.getId())).collect(Collectors.toList());
 			xmTasks=xmTasks.stream().filter(i->!parentTask.getId().equals(i.getParentTaskid())).collect(Collectors.toList());
 

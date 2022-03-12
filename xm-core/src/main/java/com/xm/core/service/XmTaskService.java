@@ -176,15 +176,7 @@ public class XmTaskService extends BaseService {
 	@Transactional
 	public XmTaskVo addTask(XmTaskVo xmTaskVo){
 		Tips tips = new Tips();
-		if(StringUtils.isEmpty(xmTaskVo.getId())) {
-			xmTaskVo.setId(this.createKey("id"));
-		}else{
-			XmTask xmTaskQuery = new  XmTask(xmTaskVo.getId());
-			if(this.countByWhere(xmTaskQuery)>0){
-				tips.setFailureMsg("编号重复，请修改编号再提交");
-				throw new BizException(tips);
-			}
-		}
+
 		User user = LoginUtils.getCurrentUserInfo();
 		xmTaskVo.setCreateUserid(user.getUserid());
 		xmTaskVo.setCreateUsername(user.getUsername());
