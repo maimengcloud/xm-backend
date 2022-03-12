@@ -605,6 +605,15 @@ public class XmTaskController {
 			if(xmTaskDb==null){
 				return ResponseHelper.failed("data-0","任务已不存在");
 			}
+			if("1".equals(xmTaskDb.getNtype())){
+				 if("0".equals(xmTaskVo.getNtype()) && xmTaskDb.getChildrenCnt()!=null && xmTaskDb.getChildrenCnt()>0){
+					 return ResponseHelper.failed("ntype-not-right","当前为计划节点，并且具有"+xmTaskDb.getChildrenCnt()+"个子节点，不能变更为任务节点");
+				 }
+			}else{
+				if(xmTaskDb.getChildrenCnt()!=null && xmTaskDb.getChildrenCnt()>0){
+					xmTaskVo.setNtype("1");
+				}
+			}
 			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskDb.getProjectId());
 			if(pgroups==null || pgroups.size()==0){
 				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
@@ -616,18 +625,6 @@ public class XmTaskController {
 				tips.setFailureMsg("您无权修改该任务基础信息！项目经理、组长、助理可以修改任务的基础信息。");
 				m.put("tips", tips);
 				return m;
-			}
-			if(StringUtils.hasText(xmTaskDb.getNtype())&&StringUtils.hasText(xmTaskVo.getNtype())&&StringUtils.hasText(xmTaskDb.getParentTaskid())){
-				if(!xmTaskDb.getNtype().equals(xmTaskVo.getNtype())){
-					if(xmTaskVo.getNtype().equals("1")){
-						XmTask xmTaskParentDb=this.xmTaskService.selectOneObject(new XmTask(xmTaskDb.getParentTaskid()));
-						if(xmTaskParentDb!=null){
-							if(!"1".equals(xmTaskParentDb.getNtype())){
-								ResponseHelper.failed("ptask-ntype-0","上级任务"+xmTaskParentDb.getName()+"不是计划项,不能下挂计划项");
-							}
-						}
-					}
-				}
 			}
 
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTaskVo);
@@ -1413,7 +1410,7 @@ public class XmTaskController {
 				return ResponseHelper.failed("parentTask-0", "上级不存在");
 			}
 			XmTask parentTask=optional.get();
-			if("1".equals(parentTask.getNtype())){
+			if(!"1".equals(parentTask.getNtype())){
 				return ResponseHelper.failed("parentTask-ntype-not-1", "【"+parentTask.getName()+"】为任务，不能作为上级节点。请另选上级或者变更其为计划节点");
 			}
 			xmTasks=xmTasks.stream().filter(i->!i.getId().equals(parentTask.getId())).collect(Collectors.toList());
