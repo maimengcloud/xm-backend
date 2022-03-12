@@ -11,9 +11,11 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProductCopyVo;
+import com.xm.core.entity.XmProductProjectLink;
 import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmRecordService;
+import com.xm.core.vo.XmProductAddVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -218,7 +220,7 @@ public class XmProductController {
 	})
 	@HasQx(value = "xm_core_xmProduct_add",name = "创建产品/战略规划等",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmProduct(@RequestBody XmProduct xmProduct) {
+	public Map<String,Object> addXmProduct(@RequestBody XmProductAddVo xmProduct) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
@@ -233,6 +235,13 @@ public class XmProductController {
 					tips.setFailureMsg("产品代号已存在，请修改再提交");
 					m.put("tips", tips);
 					return m;
+				}
+			}
+			if(xmProduct.getLinks()!=null && xmProduct.getLinks().size()>0){
+				for (XmProductProjectLink link : xmProduct.getLinks()) {
+					if(!StringUtils.hasText(link.getProjectId())) {
+						return ResponseHelper.failed("projectId-0", "", "关联项目编号不能为空");
+					}
 				}
 			}
 			if(!StringUtils.hasText(xmProduct.getProductName())){
@@ -252,7 +261,16 @@ public class XmProductController {
 			xmProduct.setPstatus("0");
 			xmProduct.setDel("0");
 			xmProduct.setLocked("0");
-			xmProductService.insert(xmProduct);
+			if(xmProduct.getLinks()!=null && xmProduct.getLinks().size()>0){
+				for (XmProductProjectLink link : xmProduct.getLinks()) {
+					 link.setProductId(xmProduct.getId());
+					 link.setCusername(user.getUsername());
+					 link.setCuserid(user.getUserid());
+					 link.setLinkStatus("1");
+					 link.setCtime(new Date());
+				}
+			}
+			xmProductService.addProduct(xmProduct);
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"创建产品","创建产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】");
 
 			m.put("data",xmProduct);

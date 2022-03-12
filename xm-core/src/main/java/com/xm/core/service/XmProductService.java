@@ -5,6 +5,7 @@ import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
 import com.xm.core.entity.*;
 import com.xm.core.service.cache.XmProductCacheService;
+import com.xm.core.vo.XmProductAddVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,6 +47,9 @@ public class XmProductService extends BaseService {
 
 	@Autowired
     XmPhaseService xmProjectPhaseService;
+
+	@Autowired
+	XmProductProjectLinkService linkService;
 
 
 	
@@ -288,5 +292,13 @@ public class XmProductService extends BaseService {
 		this.xmMenuService.doBatchDeleteByProductIds(canDelList.stream().map(i->i.getId()).collect(Collectors.toList()));
 		super.batchDelete(canDelList);
 	}
+
+	@Transactional
+    public void addProduct(XmProductAddVo xmProduct) {
+		super.insert(xmProduct);
+		if(xmProduct.getLinks()!=null && xmProduct.getLinks().size()>0){
+			linkService.batchInsert(xmProduct.getLinks());
+		}
+    }
 }
 
