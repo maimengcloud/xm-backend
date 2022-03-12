@@ -34,7 +34,9 @@ public class XmProjectService extends BaseService {
 
 	@Value("${mdp.platform-branch-id:platform-branch-001}")
 	String platformBranchId="platform-branch-001";
-      
+
+	@Autowired
+	XmProductProjectLinkService linkService;
 
     @Autowired
     XmTaskService xmTaskService;
@@ -102,7 +104,6 @@ public class XmProjectService extends BaseService {
 		if(StringUtils.hasText(xmProject.getName()) && xmProject.getName().equals(xmProjectDb.getName())){
 			xmProjectTo.setName(xmProject.getName()+"(复制)");
 		}
-		xmProjectTo.setGroups(null);
 		xmProjectTo.setIsTpl(isTpl);
 		xmProjectTo.setStatus("0");
 		xmProjectTo.setFromTplId(xmProjectDb.getId());
@@ -314,7 +315,19 @@ public class XmProjectService extends BaseService {
         xmProjectVo.setDel("0");
         xmProjectVo.setLtime(new Date());
         XmProject projectDb=new XmProject();
-        BeanUtils.copyProperties(xmProjectVo,projectDb); 
+        BeanUtils.copyProperties(xmProjectVo,projectDb);
+
+
+        if(xmProjectVo.getLinks()!=null && xmProjectVo.getLinks().size()>0){
+			for (XmProductProjectLink link : xmProjectVo.getLinks()) {
+				link.setProjectId(xmProjectVo.getId());
+				link.setCtime(new Date());
+				link.setLinkStatus("1");
+				link.setCuserid(user.getUserid());
+				link.setCusername(user.getUsername());
+			}
+			this.linkService.batchInsert(xmProjectVo.getLinks());
+		}
         this.insert(projectDb);
         xmRecordService.addXmProjectRecord(xmProjectVo.getId(),  "项目-新增项目", "新建项目"+xmProjectVo.getName(), JSONObject.toJSONString(xmProjectVo),null);    
         return xmProjectVo;

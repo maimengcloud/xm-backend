@@ -11,6 +11,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmProductProjectLink;
 import com.xm.core.entity.XmProject;
 import com.xm.core.service.*;
 import com.xm.core.vo.XmGroupVo;
@@ -139,6 +140,16 @@ public class XmProjectController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
+			if(!StringUtils.hasText(xmProjectVo.getName())){
+				return ResponseHelper.failed("name-0","项目名称不能为空");
+			}
+			if(xmProjectVo.getLinks()!=null && xmProjectVo.getLinks().size()>0){
+				for (XmProductProjectLink link : xmProjectVo.getLinks()) {
+					if(!StringUtils.hasText(link.getProductId())){
+						return ResponseHelper.failed("productId-0","关联的产品编号不能为空");
+					}
+				}
+			}
 				xmProjectService.saveProject(xmProjectVo);
 				xmProjectService.clearProject(xmProjectVo.getId());
 				m.put("data",xmProjectVo);
