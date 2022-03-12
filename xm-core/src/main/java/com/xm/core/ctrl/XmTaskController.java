@@ -18,6 +18,7 @@ import com.xm.core.entity.*;
 import com.xm.core.service.*;
 import com.xm.core.service.cache.XmTaskCacheService;
 import com.xm.core.service.push.XmPushMsgService;
+import com.xm.core.vo.BatchChangeParentTaskVo;
 import com.xm.core.vo.BatchRelTasksWithMenu;
 import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmTaskVo;
@@ -1218,8 +1219,8 @@ public class XmTaskController {
 		}  
 		m.put("tips", tips);
 		return m;
-	} 
-	
+	}
+
 
 	/***/
 	@ApiOperation( value = "批量修改预算",notes="batchSaveBudget,仅需要上传主键字段")
@@ -1372,8 +1373,111 @@ public class XmTaskController {
 		}  
 		m.put("tips", tips);
 		return m;
-	} 
+	}
+	/***/
+	@ApiOperation( value = "批量修改任务的上级",notes="batchChangeParentTask,仅需要上传主键字段")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@HasQx(value = "xm_core_xmTask_batchChangeParentTask",name = "批量修改任务的上级",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/batchChangeParentTask",method=RequestMethod.POST)
+	public Map<String,Object> batchChangeParentTask(@RequestBody BatchChangeParentTaskVo xmTasksVo) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功修改");
+		try{
+			User user=LoginUtils.getCurrentUserInfo();
 
+			if(xmTasksVo.getTaskIds()==null || xmTasksVo.getTaskIds().size()==0){
+				tips.setFailureMsg("任务列表不能为空");
+				m.put("tips", tips);
+				return m;
+			}
+			if(!StringUtils.hasText(xmTasksVo.getParentTaskid())){
+				return ResponseHelper.failed("parentTaskid-0", "上级编号不能为空");
+			}
+			List<String> ids=xmTasksVo.getTaskIds().stream().map(i->i).collect(Collectors.toList());
+			ids.add(xmTasksVo.getParentTaskid());
+			ids=ids.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
+			List<XmTask> xmTasks=this.xmTaskService.selectTaskListByIds(ids);
+			Optional<XmTask> optional=xmTasks.stream().filter(i->i.getId().equals(xmTasksVo.getParentTaskid())).findAny();
+			if(!optional.isPresent()){
+				return ResponseHelper.failed("parentTask-0", "上级不存在");
+			}
+			XmTask parentTask=optional.get();
+			xmTasks=xmTasks.stream().filter(i->!i.getId().equals(parentTask.getId())).collect(Collectors.toList());
+			xmTasks=xmTasks.stream().filter(i->!parentTask.getId().equals(i.getParentTaskid())).collect(Collectors.toList());
+
+			if(xmTasks.stream().filter(i->!i.getProjectId().equals(parentTask.getProjectId())).findAny().isPresent()){
+				return ResponseHelper.failed("projectId-not-same", "所有任务或计划必须都是同一个项目之下");
+			}
+			String projectId=parentTask.getProjectId();
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
+			if(pgroups==null || pgroups.size()==0){
+				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
+				m.put("tips", tips);
+				return m;
+			}
+
+			Map<String,XmTask> allowTasksDbMap=new HashMap<>();
+			Map<String,XmTask>  noAllowTasksDbMap=new HashMap<>();
+			if(!groupService.checkUserIsProjectAdm(projectId,user.getUserid())){
+				for (XmTask task : xmTasks) {
+					boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,task.getCreateUserid(),user.getUserid());
+					if(!isHead){
+						noAllowTasksDbMap.put(task.getId(),task);
+					}else {
+						allowTasksDbMap.put(task.getId(),task);
+					}
+				}
+			}else{
+				for (XmTask task : xmTasks) {
+						allowTasksDbMap.put(task.getId(),task);
+				}
+			}
+			Map<String,XmTask> allowTasksDbMap2=new HashMap<>();
+			for (XmTask t : allowTasksDbMap.values()) {
+				if(!allowTasksDbMap.containsKey(t.getParentTaskid())){
+					allowTasksDbMap2.put(t.getId(),t);
+				}
+			}
+			Map<String,XmTask> allowTasksDbMap3=new HashMap<>();
+			for (XmTask t : allowTasksDbMap2.values()) {
+				boolean hasChildren=false;
+				for (XmTask t2 : allowTasksDbMap2.values()) {
+					if(!t2.getId().equals(t.getId()) && t2.getPidPaths().indexOf(t.getPidPaths())>=0 ){
+						hasChildren=true;
+						break;
+					}
+				}
+				if(hasChildren==false){
+					allowTasksDbMap3.put(t.getId(),t);
+				}
+			}
+			if(allowTasksDbMap3.size()>0){
+				this.xmTaskService.batchChangeParent(allowTasksDbMap3.values().stream().collect(Collectors.toList()),parentTask);
+			}
+			this.xmRecordService.addXmTaskRecord(projectId,parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
+			List<String> msgs=new ArrayList<>();
+			msgs.add("成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
+			if(noAllowTasksDbMap.size()>0){
+				msgs.add("以下"+noAllowTasksDbMap.size()+"个计划任务无权限操作，【"+noAllowTasksDbMap.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+			}
+			if(allowTasksDbMap3.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
+			}else{
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
+			}
+
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 	/**
 	 * 流程审批过程中回调该接口，更新业务数据
 	 * 如果发起流程时上送了restUrl，则无论流程中是否配置了监听器都会在流程发生以下事件时推送数据过来

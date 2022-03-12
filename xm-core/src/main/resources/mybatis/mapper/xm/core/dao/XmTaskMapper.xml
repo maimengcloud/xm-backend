@@ -327,6 +327,20 @@
 		and res.ntype='0'
 		limit 10
 	</select>
+	
+	<update id="batchChangeParent" parameterType="HashMap">
+		update   xm_task res inner join (
+		select t.id,pid_paths,parent_taskid from xm_task t where t.id in
+			<foreach collection="taskIds" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+		) as t1 on res.pid_paths like concat(t1.pid_paths,'%')
+
+		set res.pid_paths = replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.id,',')),
+		res.parent_taskid=if(res.id=t1.id,#{parentTaskid},res.parent_taskid),
+		res.lvl= LENGTH(replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.id,',')))-LENGTH(REPLACE(replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.id,',')),',',''))-1
+		
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

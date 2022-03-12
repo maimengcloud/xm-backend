@@ -707,5 +707,11 @@ public class XmTaskService extends BaseService {
 
 		return super.selectList("listTenTaskByProjectIdAndIterationId", map("projectId", projectId, "iterationId", iterationId));
 	}
+
+	@Transactional
+	public void batchChangeParent(List<XmTask> xmTasks,XmTask parentTask) {
+		super.update("batchChangeParent",map("taskIds",xmTasks.stream().map(i->i.getId()).collect(Collectors.toList()),"parentTaskid",parentTask.getId(),"parentPidPaths",parentTask.getPidPaths()));
+		this.sumParents(parentTask);
+	}
 }
 
