@@ -262,7 +262,8 @@
 			res.end_time = ifnull(t2.end_time,t2.end_time),
 			res.act_start_time = t2.act_start_time,
 			res.act_end_time = t2.act_end_time,
-			res.children_cnt = ifnull( t2.children_cnt, 0 )
+			res.children_cnt = ifnull( t2.children_cnt, 0 ),
+			res.ntype=if(t2.children_cnt>0,"1","0")
 			WHERE
 			res.id in
 			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
@@ -299,7 +300,8 @@
 		res.end_time = ifnull(t2.end_time,t2.end_time),
 		res.act_start_time = t2.act_start_time,
 		res.act_end_time = t2.act_end_time ,
-		res.children_cnt = ifnull( t2.children_cnt, 0 )
+		res.children_cnt = ifnull( t2.children_cnt, 0 ),
+		res.ntype=if(t2.children_cnt>0,"1","0")
 		WHERE
 		res.id  = #{item}
 		and res.ntype='1'
