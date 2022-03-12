@@ -1414,9 +1414,12 @@ public class XmTaskController {
 				return ResponseHelper.failed("parentTask-ntype-not-1", "【"+parentTask.getName()+"】为任务，不能作为上级节点。请另选上级或者变更其为计划节点");
 			}
 			xmTasks=xmTasks.stream().filter(i->!i.getId().equals(parentTask.getId())).collect(Collectors.toList());
-			xmTasks=xmTasks.stream().filter(i->!parentTask.getId().equals(i.getParentTaskid())).collect(Collectors.toList());
-
-			if(xmTasks.stream().filter(i->!i.getProjectId().equals(parentTask.getProjectId())).findAny().isPresent()){
+			List<XmTask> canOpxmTasks=xmTasks.stream().filter(i->!parentTask.getId().equals(i.getParentTaskid())).collect(Collectors.toList());
+			List<XmTask> sameParentTasks=xmTasks.stream().filter(i->parentTask.getId().equals(i.getParentTaskid())).collect(Collectors.toList());
+			if(canOpxmTasks.size()==0){
+				return ResponseHelper.failed("same-parent","所有任务均属于【"+parentTask.getName()+"】,无需再变更");
+			}
+			if(canOpxmTasks.stream().filter(i->!i.getProjectId().equals(parentTask.getProjectId())).findAny().isPresent()){
 				return ResponseHelper.failed("projectId-not-same", "所有任务或计划必须都是同一个项目之下");
 			}
 			String projectId=parentTask.getProjectId();
@@ -1430,7 +1433,7 @@ public class XmTaskController {
 			Map<String,XmTask> allowTasksDbMap=new HashMap<>();
 			Map<String,XmTask>  noAllowTasksDbMap=new HashMap<>();
 			if(!groupService.checkUserIsProjectAdm(projectId,user.getUserid())){
-				for (XmTask task : xmTasks) {
+				for (XmTask task : canOpxmTasks) {
 					boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,task.getCreateUserid(),user.getUserid());
 					if(!isHead){
 						noAllowTasksDbMap.put(task.getId(),task);
@@ -1439,7 +1442,7 @@ public class XmTaskController {
 					}
 				}
 			}else{
-				for (XmTask task : xmTasks) {
+				for (XmTask task : canOpxmTasks) {
 						allowTasksDbMap.put(task.getId(),task);
 				}
 			}
@@ -1464,12 +1467,18 @@ public class XmTaskController {
 			}
 			if(allowTasksDbMap3.size()>0){
 				this.xmTaskService.batchChangeParent(allowTasksDbMap3.values().stream().collect(Collectors.toList()),parentTask);
+				this.xmRecordService.addXmTaskRecord(projectId,parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
 			}
-			this.xmRecordService.addXmTaskRecord(projectId,parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
+
 			List<String> msgs=new ArrayList<>();
-			msgs.add("成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
+			if(allowTasksDbMap3.size()>0){
+				msgs.add("成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上");
+			}
 			if(noAllowTasksDbMap.size()>0){
 				msgs.add("以下"+noAllowTasksDbMap.size()+"个计划任务无权限操作，【"+noAllowTasksDbMap.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+			}
+			if(sameParentTasks.size()>0){
+				msgs.add("以下"+sameParentTasks.size()+"个计划任务已属于【"+parentTask.getName()+"】之下，无需变更，【"+sameParentTasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			if(allowTasksDbMap3.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
