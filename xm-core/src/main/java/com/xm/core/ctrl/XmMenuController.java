@@ -17,6 +17,9 @@ import com.xm.core.service.XmMenuService;
 import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmRecordService;
 import com.xm.core.service.XmTaskService;
+import com.xm.core.vo.BatchChangeParentMenuVo;
+import com.xm.core.vo.BatchChangeParentTaskVo;
+import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmMenuVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
@@ -496,5 +499,122 @@ public class XmMenuController {
 		}  
 		m.put("tips", tips);
 		return m;
-	} 
+	}
+
+
+	@ApiOperation( value = "批量修改需求的上级",notes="batchChangeParentMenu,仅需要上传主键字段")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@HasQx(value = "xm_core_xmMenu_batchChangeParentMenu",name = "批量修改需求的上级",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/batchChangeParentMenu",method=RequestMethod.POST)
+	public Map<String,Object> batchChangeParentMenu(@RequestBody BatchChangeParentMenuVo parentMenuVo) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功修改");
+		try{
+			User user=LoginUtils.getCurrentUserInfo();
+
+			if(parentMenuVo.getMenuIds()==null || parentMenuVo.getMenuIds().size()==0){
+				tips.setFailureMsg("需求列表不能为空");
+				m.put("tips", tips);
+				return m;
+			}
+			if(!StringUtils.hasText(parentMenuVo.getPmenuId())){
+				return ResponseHelper.failed("parentMenuid-0", "上级编号不能为空");
+			}
+			List<String> ids=parentMenuVo.getMenuIds().stream().collect(Collectors.toList());
+			ids.add(parentMenuVo.getPmenuId());
+			ids=ids.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
+			List<XmMenu> xmMenus=this.xmMenuService.selectListByIds(ids);
+			Optional<XmMenu> optional=xmMenus.stream().filter(i->i.getMenuId().equals(parentMenuVo.getPmenuId())).findAny();
+			if(!optional.isPresent()){
+				return ResponseHelper.failed("parentMenu-0", "上级不存在");
+			}
+			XmMenu parentMenu=optional.get();
+			if(!"1".equals(parentMenu.getNtype())){
+				return ResponseHelper.failed("parentMenu-ntype-not-1", "【"+parentMenu.getMenuName()+"】为需求，不能作为上级节点。请另选上级或者变更其为计划节点");
+			}
+			Tips tips2=this.groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),"1",parentMenu.getProductId(),null);
+			if(!tips2.isOk()){
+				return ResponseHelper.failed(tips2);
+			}
+			xmMenus=xmMenus.stream().filter(i->!i.getMenuId().equals(parentMenu.getMenuId())).collect(Collectors.toList());
+			List<XmMenu> canOpxmMenus=xmMenus.stream().filter(i->!parentMenu.getMenuId().equals(i.getPmenuId())).collect(Collectors.toList());
+			List<XmMenu> sameParentMenus=xmMenus.stream().filter(i->parentMenu.getMenuId().equals(i.getPmenuId())).collect(Collectors.toList());
+			if(canOpxmMenus.size()==0){
+				return ResponseHelper.failed("same-parent","所有需求均属于【"+parentMenu.getMenuName()+"】,无需再变更");
+			}
+			if(canOpxmMenus.stream().filter(i->!i.getProductId().equals(parentMenu.getProductId())).findAny().isPresent()){
+				return ResponseHelper.failed("productId-not-same", "所有需求必须都是同一个产品之下");
+			}
+
+			Map<String,XmMenu> allowMenusDbMap=new HashMap<>();
+			Map<String,XmMenu>  noAllowMenusDbMap=new HashMap<>();
+			List<XmGroupVo> pgroups=groupService.getProductGroupVoList(parentMenu.getProductId());
+			boolean isAdm=groupService.checkUserIsPmOrAssByPtype(user.getUserid(),"1",null,parentMenu.getProductId());
+			if(!isAdm){
+				for (XmMenu menu : canOpxmMenus) {
+					boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,menu.getMmUserid(),user.getUserid());
+					if(!isHead){
+						noAllowMenusDbMap.put(menu.getMenuId(),menu);
+					}else {
+						allowMenusDbMap.put(menu.getMenuId(),menu);
+					}
+				}
+			}else{
+				for (XmMenu task : canOpxmMenus) {
+					allowMenusDbMap.put(task.getMenuId(),task);
+				}
+			}
+			Map<String,XmMenu> allowMenusDbMap2=new HashMap<>();
+			for (XmMenu t : allowMenusDbMap.values()) {
+				if(!allowMenusDbMap.containsKey(t.getPmenuId())){
+					allowMenusDbMap2.put(t.getMenuId(),t);
+				}
+			}
+			Map<String,XmMenu> allowMenusDbMap3=new HashMap<>();
+			for (XmMenu t : allowMenusDbMap2.values()) {
+				boolean hasChildren=false;
+				for (XmMenu t2 : allowMenusDbMap2.values()) {
+					if(!t2.getMenuId().equals(t.getMenuId()) && t2.getPidPaths().indexOf(t.getPidPaths())>=0 ){
+						hasChildren=true;
+						break;
+					}
+				}
+				if(hasChildren==false){
+					allowMenusDbMap3.put(t.getMenuId(),t);
+				}
+			}
+			if(allowMenusDbMap3.size()>0){
+				this.xmMenuService.batchChangeParent(allowMenusDbMap3.values().stream().collect(Collectors.toList()),parentMenu);
+ 				this.xmRecordService.addXmMenuRecord(parentMenu.getProductId(),parentMenu.getMenuId(),"批量挂接子节点","成功将以下"+allowMenusDbMap3.size()+"个需求及其所有子项挂接到【"+parentMenu.getMenuName()+"】上,【"+allowMenusDbMap3.values().stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】;");
+
+			}
+
+			List<String> msgs=new ArrayList<>();
+			if(allowMenusDbMap3.size()>0){
+				msgs.add("成功将以下"+allowMenusDbMap3.size()+"个需求及其所有子项挂接到【"+parentMenu.getMenuName()+"】上");
+			}
+			if(noAllowMenusDbMap.size()>0){
+				msgs.add("以下"+noAllowMenusDbMap.size()+"个需求无权限操作，【"+noAllowMenusDbMap.values().stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
+			}
+			if(sameParentMenus.size()>0){
+				msgs.add("以下"+sameParentMenus.size()+"个需求已属于【"+parentMenu.getMenuName()+"】之下，无需变更，【"+sameParentMenus.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
+			}
+			if(allowMenusDbMap3.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
+			}else{
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
+			}
+
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 }

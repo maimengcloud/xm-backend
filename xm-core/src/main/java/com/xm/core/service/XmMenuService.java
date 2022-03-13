@@ -294,5 +294,12 @@ public class XmMenuService extends BaseService {
 		return super.selectList("listTenMenuByProductIdAndIterationId", map("productId", productId, "iterationId", iterationId));
 	}
 
+
+
+	@Transactional
+	public void batchChangeParent(List<XmMenu> xmMenus,XmMenu parentMenu) {
+		super.update("batchChangeParent",map("menuIds",xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()),"pmenuId",parentMenu.getMenuId(),"parentPidPaths",parentMenu.getPidPaths()));
+		xmMenuStateService.sumParents(parentMenu);
+	}
 }
 
