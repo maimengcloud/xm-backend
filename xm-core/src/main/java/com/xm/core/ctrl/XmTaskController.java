@@ -580,25 +580,15 @@ public class XmTaskController {
 			List<String> excludeIds=new ArrayList<>();
 			excludeIds.add(xmTaskDb.getId());
 			if( xmTaskDb.getBudgetCost().compareTo(xmTaskVo.getBudgetCost())!=0){
-				if(xmTaskVo.getLvl()<=1){
+				if("0".equals(xmTaskDb.getPtype()) && xmTaskVo.getLvl()<=1){
 					tips=xmTaskService.judgetProjectBudget(xmTaskDb.getProjectId(), xmTaskVo.getBudgetCost(),excludeIds);
-				}else{
+				}else if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
 					tips=xmTaskService.judgetTaskBudget(xmTaskDb.getParentTaskid(), xmTaskVo.getBudgetCost(),null,null,null,excludeIds);
 				}
 			}
 
 			if(tips.isOk()) {
 				xmTaskService.updateTask(xmTaskVo,xmTaskDb);
-				if(!StringUtils.isEmpty(xmTaskVo.getExecutorUserid())) {
-					List<XmGroupVo> groups=groupService.getUserGroupsByProjectId(xmTaskVo.getProjectId(), xmTaskVo.getExecutorUserid());
-					if(groups!=null && groups.size()>0) {
-						for (XmGroupVo g : groups) {
-							xmPushMsgService.pushGroupMsg(user.getBranchId(), g.getId(), user.getUserid(), user.getUsername(), user.getUsername()+"修改了任务【"+xmTaskVo.getName()+"】信息");
-						}
-					}
-				}
-				//改为服务处记录
-				//xmRecordService.addXmTaskRecord(xmTaskVo.getPhaseId(), xmTaskVo.getId(), "项目-任务-修改任务", "修改任务"+xmTaskVo.getName(),JSON.toJSONString(xmTaskVo),null);
 			}
 			m.put("data",xmTaskVo);
 		}catch (BizException e) {
@@ -1212,7 +1202,7 @@ public class XmTaskController {
 
 					totalTaskBudgetCost=totalTaskBudgetCost.add(task.getBudgetCost());
 				}
-				if(totalTaskBudgetCost.compareTo(BigDecimal.ZERO)>0){
+				if("0".equals(xmTask.getPtype()) && totalTaskBudgetCost.compareTo(BigDecimal.ZERO)>0){
 					tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetCost,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
 					if(!tips.isOk()){
 						tips.setFailureMsg(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
