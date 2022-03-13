@@ -2,6 +2,7 @@ package com.xm.core.service;
 
 import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
@@ -71,6 +72,50 @@ public class XmGroupService extends BaseService {
 		calcCanOpMenus(menuList,can,no);
 		return can.size()>0;
 	}
+
+
+	public Tips checkIsAdmOrTeamHeadOrAssByPtype(User user,String tardgetUserid,String ptype,String productId,String projectId){
+    	Tips tips = new Tips("成功");
+		if(!"0".equals(ptype) && !"1".equals(ptype)){
+			throw new BizException( new Tips(false,"ptype-not-0|1","类型不正确"));
+		}
+		if("0".equals(ptype) && !StringUtils.hasText(projectId)){
+			throw new BizException( new Tips(false,"projectId-0","项目编号不能为空"));
+		}
+
+		if("1".equals(ptype) && !StringUtils.hasText(productId)){
+			throw new BizException( new Tips(false,"productId-0","产品编号不能为空"));
+		}
+		List<XmGroupVo> pgroups=new ArrayList<>();
+		boolean isAdm=false;
+		if("1".equals(ptype)){
+			isAdm=this.checkUserIsProductAdm(productId, user.getUserid());
+			if(!isAdm){
+				pgroups=this.getProductGroupVoList(productId);
+				if(pgroups==null || pgroups.size()==0){
+					return new Tips(false,"group-0","该项目还未建立项目团队，请先进行团队成员维护");
+				}
+				boolean isHead=this.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),tardgetUserid);
+				if(!isHead){
+					return new Tips(false,"not-head","您无权操作！项目经理、组长可以。");
+				}
+			}
+		}else if("0".equals(ptype)){
+			isAdm=this.checkUserIsProjectAdm(projectId, user.getUserid());
+			if(!isAdm){
+				pgroups=this.getProjectGroupVoList(projectId);
+				if(pgroups==null || pgroups.size()==0){
+					return new Tips(false,"group-0","该产品还未建立产品团队，请先进行团队成员维护");
+				}
+				boolean isHead=this.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),tardgetUserid);
+				if(!isHead){
+					return new Tips(false,"not-head","您无权操作！产品经理、组长可以操作。");
+				}
+			}
+		}
+		return tips;
+	}
+	
     public void calcCanOpMenus(List<XmMenu> menus,List<XmMenu> canOpResult,List<XmMenu> noQxOpResult ){
 		Tips tips=new Tips("成功");
 		//按产品分组检查权限
@@ -408,11 +453,18 @@ public class XmGroupService extends BaseService {
 		}
     	return userGroups;
     }
-    public boolean  checkUserExistsGroup(String projectId,String userid){
-    	List<XmGroupVo> userGroups= getUserGroupsByProjectId(projectId,userid);
-    	return userGroups!=null && userGroups.size()>0;
+    public boolean checkUserExistsGroupByPtype(String ptype,String projectId,String productId, String userid){
+		if("1".equals(ptype)){
+			List<XmGroupVo> userGroups= getUserGroupsByProductId(productId,userid);
+			return userGroups!=null && userGroups.size()>0;
+		}else {
+			List<XmGroupVo> userGroups= getUserGroupsByProjectId(projectId,userid);
+			return userGroups!=null && userGroups.size()>0;
+		}
+
     }
-	public boolean  checkUserExistsGroup(List<XmGroupVo> userGroups, String userid){
+
+	public boolean checkUserExistsGroup(List<XmGroupVo> userGroups, String userid){
 		List<XmGroupVo> userGroups2= this.getUserGroups(userGroups, userid);
 		return userGroups2!=null && userGroups2.size()>0;
 	}
@@ -961,6 +1013,26 @@ public class XmGroupService extends BaseService {
 			}
 		}else {
 			return groupVo;
+		}
+	}
+
+	public boolean checkUserIsPmOrAssByPtype(String userid, String ptype, String projectId, String productId) {
+		Tips tips = new Tips("成功");
+		if(!"0".equals(ptype) && !"1".equals(ptype)){
+			throw new BizException( new Tips(false,"ptype-not-0|1","类型不正确"));
+		}
+		if("0".equals(ptype) && !StringUtils.hasText(projectId)){
+			throw new BizException( new Tips(false,"projectId-0","项目编号不能为空"));
+		}
+
+		if("1".equals(ptype) && !StringUtils.hasText(productId)){
+			throw new BizException( new Tips(false,"productId-0","产品编号不能为空"));
+		}
+
+		if("0".equals(ptype)){
+			return this.checkUserIsProjectAdm(projectId,userid);
+		}else{
+			return this.checkUserIsProductAdm(productId,userid);
 		}
 	}
 }

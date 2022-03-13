@@ -325,15 +325,11 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
-			if(!StringUtils.hasText(xmTaskVo.getProjectId())){
-				return ResponseHelper.failed("projectId-0","项目编号不能为空");
-			}
-			/**
-			if(!StringUtils.hasText(xmTaskVo.getPhaseId())){
-				return ResponseHelper.failed("PhaseId-0","项目计划编号不能为空");
-			}
-			 **/
 			User user=LoginUtils.getCurrentUserInfo();
+			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskVo.getPtype(),xmTaskVo.getProductId(),xmTaskVo.getProjectId());
+			if(!tips.isOk()){
+				 return ResponseHelper.failed(tips);
+			}
 			xmTaskVo.setCreateUserid(user.getUserid());
 			xmTaskVo.setCreateUsername(user.getUsername());
 			xmTaskVo.setExecutorUserid(user.getUserid());
@@ -341,14 +337,8 @@ public class XmTaskController {
 			xmTaskVo.setCreateTime(new Date());
 			xmTaskVo.setCbranchId(user.getBranchId());
 			xmTaskVo.setCdeptid(user.getDeptid());
-			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskVo.getProjectId());
-			if(pgroups==null || pgroups.size()==0){
-				return ResponseHelper.failed("group-0","该项目还未建立项目团队，请先进行团队成员维护");
-			}
-			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),user.getUserid());
-			if(!isHead){
-				return ResponseHelper.failed("group-0","您无权新建任务！项目经理、组长、组长助理可以新建任务。");
-			}
+
+
 			xmTaskVo.setRate(BigDecimal.ZERO);
 			if( !StringUtils.hasText(xmTaskVo.getMilestone()) ){
 				xmTaskVo.setMilestone("0");
@@ -367,7 +357,7 @@ public class XmTaskController {
 			}
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTaskVo);
 			if(xmTaskVo.getBudgetCost()!=null  && xmTaskVo.getBudgetCost().compareTo(BigDecimal.ZERO)>0){
-				if(xmTaskVo.getLvl()<=1){
+				if("0".equals(xmTaskVo.getPtype()) && xmTaskVo.getLvl()<=1){
 					xmTaskService.judgetProjectBudget(xmTaskVo.getProjectId(),xmTaskVo.getBudgetCost(),null);
  				}else{
 					tips=xmTaskService.judgetTaskBudget(xmTaskVo.getParentTaskid(), xmTaskVo.getBudgetCost(),null,null,null,null);
@@ -467,45 +457,28 @@ public class XmTaskController {
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
-			if(!StringUtils.hasText(xmTask.getProjectId())){
-				tips.setFailureMsg("项目编号不能为空");
-				m.put("tips", tips);
-				return m;
-			}
 			if(!StringUtils.hasText(xmTask.getId())){
 				tips.setFailureMsg("任务编号不能为空");
 				m.put("tips", tips);
 				return m;
 			}
-
-			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTask.getProjectId());
-			if(pgroups==null || pgroups.size()==0){
-				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
-				m.put("tips", tips);
-				return m;
-			}
-			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),user.getUserid());
-			if(!isHead){
-				tips.setFailureMsg("您无权删除该任务！项目经理、组长可以删除任务。");
-				m.put("tips", tips);
-				return m;
-			}
 			XmTask xmTaskDb=this.xmTaskService.selectOneObject(xmTask);
 			if(xmTaskDb==null){
-				tips.setFailureMsg("该任务不存在");
-				m.put("tips", tips);
-				return m;
-			}
-			if(!xmTask.getProjectId().equals(xmTaskDb.getProjectId())){
-				return ResponseHelper.failed("projectId-err","请上送正确的项目编号[projectId]");
+				return ResponseHelper.failed("data-0","数据已不存在");
 			}
 			if(xmTaskDb.getChildrenCnt()!=null && xmTaskDb.getChildrenCnt()>0){
-				return ResponseHelper.failed("childrenCnt-no-0","有子任务不能删除");
+				return ResponseHelper.failed("childrenCnt-no-0","有子计划任务不能删除");
 			}
+
 			if(xmTaskService.checkExistsExecuser(xmTaskDb)){
 				return ResponseHelper.failed("existsExecuser","有待验收、待结算的执行人，不能删除");
 			};
-			xmTaskService.deleteTask(xmTask);
+
+			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+			if(!tips.isOk()){
+				return ResponseHelper.failed(tips);
+			}
+			xmTaskService.deleteTask(xmTaskDb);
 			xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(), xmTaskDb.getId(), "项目-任务-删除任务", "删除任务"+xmTaskDb.getName());
 
 		}catch (BizException e) {
@@ -530,20 +503,8 @@ public class XmTaskController {
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
-			if(!StringUtils.hasText(xmTaskVo.getProjectId())){
-				tips.setFailureMsg("项目编号不能为空");
-				m.put("tips", tips);
-				return m;
-			}
 			if(!StringUtils.hasText(xmTaskVo.getId())){
 				tips.setFailureMsg("任务编号不能为空");
-				m.put("tips", tips);
-				return m;
-			}
-
-			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskVo.getProjectId());
-			if(pgroups==null || pgroups.size()==0){
-				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
 				m.put("tips", tips);
 				return m;
 			}
@@ -553,20 +514,14 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
-			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
-			if(!isHead){
-				boolean isPm=groupService.checkUserIsProjectAdm(xmTaskDb.getProjectId(),user.getUserid());
-				if(!isPm){
-					tips.setFailureMsg("您无权修改该该任务的责任人！项目管理者、组长可以修改任务的责任人。");
-					m.put("tips", tips);
-					return m;
-				}
+
+			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+			if(!tips.isOk()){
+				return ResponseHelper.failed(tips);
 			}
-			boolean existsGrouop=groupService.checkUserExistsGroup(pgroups,xmTaskVo.getCreateUserid());
+			boolean existsGrouop=groupService.checkUserExistsGroupByPtype(xmTaskDb.getPtype(),xmTaskDb.getProjectId(),xmTaskDb.getProductId(),xmTaskVo.getCreateUserid());
 			if(!existsGrouop){
-				tips.setFailureMsg(xmTaskVo.getCreateUsername()+"不是项目组成员，不能作为任务责任人");
-				m.put("tips", tips);
-				return m;
+				return ResponseHelper.failed("not-member",xmTaskVo.getCreateUsername()+"不是项目组成员，不能作为任务责任人");
 			}
 			XmTask xmTask=new XmTask(xmTaskVo.getId());
 			xmTask.setCreateUserid(xmTaskVo.getCreateUserid());
@@ -614,17 +569,9 @@ public class XmTaskController {
 					xmTaskVo.setNtype("1");
 				}
 			}
-			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskDb.getProjectId());
-			if(pgroups==null || pgroups.size()==0){
-				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
-				m.put("tips", tips);
-				return m;
-			}
-			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
-			if(!isHead){
-				tips.setFailureMsg("您无权修改该任务基础信息！项目经理、组长、助理可以修改任务的基础信息。");
-				m.put("tips", tips);
-				return m;
+			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+			if(!tips.isOk()){
+				return ResponseHelper.failed(tips);
 			}
 
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTaskVo);
@@ -684,21 +631,12 @@ public class XmTaskController {
 			if(xmTaskDb==null){
 				return ResponseHelper.failed("data-0","任务已不存在");
 			}
-			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskDb.getProjectId());
-			if(pgroups==null || pgroups.size()==0){
-				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
-				m.put("tips", tips);
-				return m;
-			}
-
-			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
-			if(!isHead){
+			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+			if(!tips.isOk()){
 				boolean isCreateUser=user.getUserid().equals(xmTaskDb.getCreateUserid());
 				boolean isExecUser=user.getUserid().equals(xmTaskDb.getExecutorUserid());
 				if( !isCreateUser && !isExecUser ){
-					tips.setFailureMsg("您无权修改该任务的计划时间！只有任务执行人、任务负责人、组长、项目经理可以修改任务的进度。");
-					m.put("tips", tips);
-					return m;
+					return ResponseHelper.failed("no-qx-op","您无权修改该任务的计划时间！只有任务执行人、任务负责人、组长、项目经理可以修改任务的进度。");
 				}
 			}
 			xmTaskService.updateTime(xmTask,xmTaskDb);
@@ -734,32 +672,16 @@ public class XmTaskController {
 			if(xmTaskDb==null){
 				return ResponseHelper.failed("data-0","任务已不存在");
 			}
-			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmTaskDb.getProjectId());
-			if(pgroups==null || pgroups.size()==0){
-				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
-				m.put("tips", tips);
-				return m;
-			}
-			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,xmTaskDb.getCreateUserid(),user.getUserid());
-			if(!isHead){
+
+			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+			if(!tips.isOk()){
 				boolean isCreateUser=user.getUserid().equals(xmTaskDb.getCreateUserid());
 				boolean isExecUser=user.getUserid().equals(xmTaskDb.getExecutorUserid());
 				if( !isCreateUser && !isExecUser ){
-					tips.setFailureMsg("您无权修改该任务的进度！只有任务执行人、任务负责人、组长、项目经理可以修改任务的进度。");
-					m.put("tips", tips);
-					return m;
+					return ResponseHelper.failed("no-qx-op","您无权修改该任务的进度！只有任务执行人、任务负责人、组长、项目经理可以修改任务的进度。");
 				}
 			}
 			xmTaskService.updateProgress(xmTask,xmTaskDb);
-			if(!StringUtils.isEmpty(xmTaskDb.getExecutorUserid())) {
-				List<XmGroupVo> groupVoList=this.groupService.getUserGroups(pgroups,xmTaskDb.getExecutorUserid());
-				if(groupVoList!=null && groupVoList.size()>0) {
-					for (XmGroupVo g : groupVoList) {
-						xmPushMsgService.pushGroupMsg(g.getBranchId(), g.getId(), user.getUserid(), user.getUsername(), user.getUsername()+"将任务【"+xmTaskDb.getName()+"】进度更新为"+xmTask.getRate()+"%");
-					}
-				}
-			}
-			
 			m.put("data",xmTask);
 		}catch (BizException e) {
 			tips=e.getTips();
@@ -791,30 +713,20 @@ public class XmTaskController {
 			}
 			XmTask xmTask=xmTasks.get(0);
 			String projectId=xmTask.getProjectId();
-			if( !StringUtils.hasText(projectId) ){
-				tips.setFailureMsg("项目编号不能为空");
-				m.put("tips", tips);
-				return m;
-			}
-
-			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-			if(pgroups==null || pgroups.size()==0){
-				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
-				m.put("tips", tips);
-				return m;
-			}
-			boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),user.getUserid());
-			if(!isHead){
-				tips.setFailureMsg("您无权批量导入任务！项目经理、组长可以批量导入任务。");
-				m.put("tips", tips);
-				return m;
+			String productId=xmTask.getProductId();
+			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTask.getPtype(),xmTask.getProductId(),xmTask.getProjectId());
+			if(!tips.isOk()){
+				return ResponseHelper.failed(tips);
 			}
  			for (XmTask g : xmTasks) {
-				if(!projectId.equals(g.getProjectId())){
-					tips.setFailureMsg("只能在同一个项目下批量导入任务");
-					m.put("tips", tips);
-					return m;
+				if("0".equals(xmTask.getPtype()) && !projectId.equals(g.getProjectId())){
+					return ResponseHelper.failed("no-same-project","只能在同一个项目下批量导入任务");
+				}else{
+					if("1".equals(xmTask.getPtype()) && !productId.equals(g.getProductId())){
+						return ResponseHelper.failed("no-same-productId","只能在同一个产品下批量导入任务");
+					}
 				}
+
 				g.setCreateUserid(user.getUserid());
 				g.setCreateUsername(user.getUsername());
 				g.setExecutorUserid(user.getUserid());
@@ -832,7 +744,7 @@ public class XmTaskController {
 				for (XmTask task : tasksLvl1) {
 					totalTaskBudgetCost=totalTaskBudgetCost.add(task.getBudgetCost());
 				}
-				if(totalTaskBudgetCost.compareTo(BigDecimal.ZERO)>0){
+				if("0".equals(xmTask.getPtype())&&totalTaskBudgetCost.compareTo(BigDecimal.ZERO)>0){
 					tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetCost,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
 					if(!tips.isOk()){
 						tips.setFailureMsg(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
@@ -1016,25 +928,10 @@ public class XmTaskController {
 
 			XmProduct xmProductDb=xmProductService.getProductFromCache(xmMenuDb.getProductId());
 			boolean hasMenuQx=true;
-			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
-			if(!isPm){
-				List<XmGroupVo> pgroups=groupService.getProductGroupVoList(xmMenuDb.getProductId());
-				if(StringUtils.hasText(xmMenuDb.getMmUserid()) ){
-					if(!user.getUserid().equals(xmMenuDb.getMmUserid())){
-
-						if(pgroups==null || pgroups.size()==0){
-							hasMenuQx=false;
-						} else if(!groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,xmMenuDb.getMmUserid(),user.getUserid())){
-							hasMenuQx=false;
-						}
-					}
-				}else{
-					if(!groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),user.getUserid())){
-						hasMenuQx=false;
-					}
-				}
+			Tips tips2=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),"1",xmProductDb.getId(),null);
+			if(!tips2.isOk()){
+				hasMenuQx=false;
 			}
-
 			List<XmTask> allowTasks=new ArrayList<>();
 
 			List<XmTask> ntype1Tasks=new ArrayList<>();
@@ -1137,27 +1034,28 @@ public class XmTaskController {
 				return m;
 			}
 			XmTask xmTask=xmTasks.get(0);
-			String projectId=xmTask.getProjectId();
-			if( !StringUtils.hasText(projectId) ){
-				tips.setFailureMsg("项目编号不能为空");
-				m.put("tips", tips);
-				return m;
+			if(!StringUtils.hasText(xmTask.getId())){
+				return ResponseHelper.failed("id-0","任务编号不能为空");
 			}
-
-			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-			if(pgroups==null || pgroups.size()==0){
-				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
-				m.put("tips", tips);
-				return m;
+			XmTask xmTaskDb=this.xmTaskService.selectOneObject(xmTask);
+			if(xmTaskDb==null){
+				return ResponseHelper.failed("data-0","计划任务已不存在");
+			}
+			String projectId=xmTaskDb.getProjectId();
+			String productId=xmTaskDb.getProductId();
+			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+			if(!tips.isOk()){
+				return ResponseHelper.failed(tips);
 			}
 			List<XmTask> allowDelNodes=new ArrayList<>();
 			List<XmTask> noAllowNodes=new ArrayList<>();
 			Map<String,XmTask> delNodesDbMap=this.xmTaskService.selectTasksMapByTasks(xmTasks);
+			List<XmGroupVo> pgroups="0".equals(xmTaskDb.getPtype())? groupService.getProjectGroupVoList(projectId) : groupService.getProductGroupVoList(productId);
 			for (XmTask node : delNodesDbMap.values()) {
-				if( !projectId.equals(node.getProjectId()) ){
-					tips.setFailureMsg("所有任务必须同属于一个项目");
-					m.put("tips", tips);
-					return m;
+				if("0".equals(xmTaskDb.getPtype()) && !projectId.equals(node.getProjectId()) ){
+					return ResponseHelper.failed("not-same-project","所有任务必须同属于一个项目");
+				}else if("1".equals(xmTaskDb.getPtype()) && !productId.equals(node.getProductId()) ){
+					return ResponseHelper.failed("not-same-productId","所有任务必须同属于一个产品");
 				}
 				boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,node.getCreateUserid(),user.getUserid());
 
@@ -1413,6 +1311,10 @@ public class XmTaskController {
 			if(!"1".equals(parentTask.getNtype())){
 				return ResponseHelper.failed("parentTask-ntype-not-1", "【"+parentTask.getName()+"】为任务，不能作为上级节点。请另选上级或者变更其为计划节点");
 			}
+			Tips tips2=this.groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),parentTask.getPtype(),parentTask.getProductId(),parentTask.getProjectId());
+			if(!tips2.isOk()){
+				return ResponseHelper.failed(tips2);
+			}
 			xmTasks=xmTasks.stream().filter(i->!i.getId().equals(parentTask.getId())).collect(Collectors.toList());
 			List<XmTask> canOpxmTasks=xmTasks.stream().filter(i->!parentTask.getId().equals(i.getParentTaskid())).collect(Collectors.toList());
 			List<XmTask> sameParentTasks=xmTasks.stream().filter(i->parentTask.getId().equals(i.getParentTaskid())).collect(Collectors.toList());
@@ -1428,33 +1330,11 @@ public class XmTaskController {
 					return ResponseHelper.failed("productId-not-same", "所有任务或计划必须都是同一个产品之下");
 				}
 			}
-			List<XmGroupVo> pgroups =new ArrayList<>();
-			String projectId=parentTask.getProjectId();
-			String productId=parentTask.getProductId();
-			boolean isAdm=false;
-			if(!"1".equals(parentTask.getPtype())){
-				isAdm=groupService.checkUserIsProductAdm(projectId,user.getUserid());
-				pgroups=groupService.getProjectGroupVoList(projectId);
-				if( !isAdm && (pgroups==null || pgroups.size()==0)){
-					tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
-					m.put("tips", tips);
-					return m;
-				}
-
-			}else {
-				isAdm=groupService.checkUserIsProjectAdm(projectId,user.getUserid());
-				pgroups=groupService.getProductGroupVoList(productId);
-				if( !isAdm && ( pgroups==null || pgroups.size()==0 )){
-					tips.setFailureMsg("该产品还未建立产品团队，请先进行团队成员维护");
-					m.put("tips", tips);
-					return m;
-				}
-
-			}
-
 
 			Map<String,XmTask> allowTasksDbMap=new HashMap<>();
 			Map<String,XmTask>  noAllowTasksDbMap=new HashMap<>();
+			List<XmGroupVo> pgroups="0".equals(parentTask.getPtype())? groupService.getProjectGroupVoList(parentTask.getProjectId()) : groupService.getProductGroupVoList(parentTask.getProductId());
+			boolean isAdm=groupService.checkUserIsPmOrAssByPtype(user.getUserid(),parentTask.getPtype(),parentTask.getProjectId(),parentTask.getProductId());
 			if(!isAdm){
 				for (XmTask task : canOpxmTasks) {
 					boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,task.getCreateUserid(),user.getUserid());
@@ -1491,9 +1371,9 @@ public class XmTaskController {
 			if(allowTasksDbMap3.size()>0){
 				this.xmTaskService.batchChangeParent(allowTasksDbMap3.values().stream().collect(Collectors.toList()),parentTask);
 				if("1".equals(parentTask.getPtype())){
-					this.xmRecordService.addProductXmTaskRecord(productId,parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
+					this.xmRecordService.addProductXmTaskRecord(parentTask.getProductId(),parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
 				}else {
-					this.xmRecordService.addXmTaskRecord(projectId,parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
+					this.xmRecordService.addXmTaskRecord(parentTask.getProjectId(),parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
 				}
 
 			}

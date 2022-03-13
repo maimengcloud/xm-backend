@@ -7,6 +7,7 @@ import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.NumberUtil;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
@@ -14,6 +15,7 @@ import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskSkill;
 import com.xm.core.vo.BatchRelTasksWithMenu;
 import com.xm.core.vo.BatchRelTasksWithPhase;
+import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmTaskVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,6 +53,10 @@ public class XmTaskService extends BaseService {
 	@Autowired
     XmTaskSkillService xmTaskSkillService;
 
+
+	@Autowired
+	XmGroupService groupService;
+
 	@Transactional
 	public   int[] doBatchDelete(List<XmTask> batchValues) {
 		int[] i2= super.batchDelete(batchValues);
@@ -64,6 +70,8 @@ public class XmTaskService extends BaseService {
 		p.put("excludeTaskIds", excludeTaskIds);
 		return this.selectOne("selectTotalPhaseAndTaskBudgetCost", p);
 	} 
+	
+
 	/**
 	 * 判断新增预算是否超出项目总预算
 	 * @param addTaskBudgetCost
