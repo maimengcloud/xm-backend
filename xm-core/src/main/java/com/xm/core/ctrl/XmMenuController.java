@@ -532,7 +532,7 @@ public class XmMenuController {
 			}
 			XmMenu parentMenu=optional.get();
 			if(!"1".equals(parentMenu.getNtype())){
-				return ResponseHelper.failed("parentMenu-ntype-not-1", "【"+parentMenu.getMenuName()+"】为需求，不能作为上级节点。请另选上级或者变更其为计划节点");
+				return ResponseHelper.failed("parentMenu-ntype-not-1", "【"+parentMenu.getMenuName()+"】为需求，不能作为上级节点。请另选上级或者变更其为需求集节点");
 			}
 			Tips tips2=this.groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),"1",parentMenu.getProductId(),null);
 			if(!tips2.isOk()){
