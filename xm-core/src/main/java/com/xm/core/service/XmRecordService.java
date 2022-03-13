@@ -155,14 +155,30 @@ public class XmRecordService extends BaseService {
 	@Async
 	public void addXmTaskRecord(String projectId,String taskId,String action,String remarks) {
 		XmRecord record=this.initXmRecord();
-		record.setProjectId(projectId); 
+		record.setProjectId(projectId);
 		record.setBizId(taskId);
 		record.setAction(action);
 		record.setRemarks(remarks); 
 		record.setObjType("task"); 
 		this.insert(record);
 	}
-
+	/**
+	 * 针对项目下的任务的所有操作用此方法
+	 * @param productId 产品编号
+	 * @param taskId 任务编号
+	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
+	 * @param remarks 人性化语言描述
+	 */
+	@Async
+	public void addProductXmTaskRecord(String productId,String taskId,String action,String remarks) {
+		XmRecord record=this.initXmRecord();
+		record.setProductId(productId);
+		record.setBizId(taskId);
+		record.setAction(action);
+		record.setRemarks(remarks);
+		record.setObjType("task");
+		this.insert(record);
+	}
 	/**
 	 * 针对项目下的任务的所有操作用此方法
 	 * @param projectId 项目编号

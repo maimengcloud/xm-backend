@@ -1419,20 +1419,43 @@ public class XmTaskController {
 			if(canOpxmTasks.size()==0){
 				return ResponseHelper.failed("same-parent","所有任务均属于【"+parentTask.getName()+"】,无需再变更");
 			}
-			if(canOpxmTasks.stream().filter(i->!i.getProjectId().equals(parentTask.getProjectId())).findAny().isPresent()){
-				return ResponseHelper.failed("projectId-not-same", "所有任务或计划必须都是同一个项目之下");
+			if(!"1".equals(parentTask.getPtype())){
+				if(canOpxmTasks.stream().filter(i->!i.getProjectId().equals(parentTask.getProjectId())).findAny().isPresent()){
+					return ResponseHelper.failed("projectId-not-same", "所有任务或计划必须都是同一个项目之下");
+				}
+			}else {
+				if(canOpxmTasks.stream().filter(i->!i.getProductId().equals(parentTask.getProductId())).findAny().isPresent()){
+					return ResponseHelper.failed("productId-not-same", "所有任务或计划必须都是同一个产品之下");
+				}
 			}
+			List<XmGroupVo> pgroups =new ArrayList<>();
 			String projectId=parentTask.getProjectId();
-			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-			if(pgroups==null || pgroups.size()==0){
-				tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
-				m.put("tips", tips);
-				return m;
+			String productId=parentTask.getProductId();
+			boolean isAdm=false;
+			if(!"1".equals(parentTask.getPtype())){
+				isAdm=groupService.checkUserIsProductAdm(projectId,user.getUserid());
+				pgroups=groupService.getProjectGroupVoList(projectId);
+				if( !isAdm && (pgroups==null || pgroups.size()==0)){
+					tips.setFailureMsg("该项目还未建立项目团队，请先进行团队成员维护");
+					m.put("tips", tips);
+					return m;
+				}
+
+			}else {
+				isAdm=groupService.checkUserIsProjectAdm(projectId,user.getUserid());
+				pgroups=groupService.getProductGroupVoList(productId);
+				if( !isAdm && ( pgroups==null || pgroups.size()==0 )){
+					tips.setFailureMsg("该产品还未建立产品团队，请先进行团队成员维护");
+					m.put("tips", tips);
+					return m;
+				}
+
 			}
+
 
 			Map<String,XmTask> allowTasksDbMap=new HashMap<>();
 			Map<String,XmTask>  noAllowTasksDbMap=new HashMap<>();
-			if(!groupService.checkUserIsProjectAdm(projectId,user.getUserid())){
+			if(!isAdm){
 				for (XmTask task : canOpxmTasks) {
 					boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,task.getCreateUserid(),user.getUserid());
 					if(!isHead){
@@ -1467,7 +1490,12 @@ public class XmTaskController {
 			}
 			if(allowTasksDbMap3.size()>0){
 				this.xmTaskService.batchChangeParent(allowTasksDbMap3.values().stream().collect(Collectors.toList()),parentTask);
-				this.xmRecordService.addXmTaskRecord(projectId,parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
+				if("1".equals(parentTask.getPtype())){
+					this.xmRecordService.addProductXmTaskRecord(productId,parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
+				}else {
+					this.xmRecordService.addXmTaskRecord(projectId,parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
+				}
+
 			}
 
 			List<String> msgs=new ArrayList<>();
