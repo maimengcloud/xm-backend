@@ -306,7 +306,7 @@ public class XmMenuController {
 			}else {
 					xmMenu=this.xmMenuService.selectOneObject(xmMenu);
 					if(xmMenu.getChildrenCnt()!=null && xmMenu.getChildrenCnt()>0){
-						return ResponseHelper.failed("hadChild","该需求集有子需求，不能删除");
+						return ResponseHelper.failed("hadChild","该需求池有子需求，不能删除");
 					}
 					if(!groupService.calcCanOpMenus(xmMenu)){
 						return ResponseHelper.failed("noqx","您无权删除此需求。");
@@ -354,7 +354,7 @@ public class XmMenuController {
 						XmMenu xmMenuParentDb=this.xmMenuService.selectOneObject(new XmMenu(xmMenuDb.getPmenuId()));
 						if(xmMenuParentDb!=null){
 							if(!"1".equals(xmMenuParentDb.getNtype())){
-								ResponseHelper.failed("pmenu-ntype-0","上级需求"+xmMenuParentDb.getMenuName()+"不是需求集,不能下挂需求集");
+								ResponseHelper.failed("pmenu-ntype-0","上级需求"+xmMenuParentDb.getMenuName()+"不是需求池,不能下挂需求池");
 							}
 						}
 					}
@@ -533,7 +533,7 @@ public class XmMenuController {
 			}
 			XmMenu parentMenu=optional.get();
 			if(!"1".equals(parentMenu.getNtype())){
-				return ResponseHelper.failed("parentMenu-ntype-not-1", "【"+parentMenu.getMenuName()+"】为需求，不能作为上级节点。请另选上级或者变更其为需求集节点");
+				return ResponseHelper.failed("parentMenu-ntype-not-1", "【"+parentMenu.getMenuName()+"】为需求，不能作为上级节点。请另选上级或者变更其为需求池节点");
 			}
 			Tips tips2=this.groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),"1",parentMenu.getProductId(),null);
 			if(!tips2.isOk()){

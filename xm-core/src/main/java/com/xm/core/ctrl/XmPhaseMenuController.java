@@ -220,7 +220,7 @@ public class XmPhaseMenuController {
 				msgs.add("有"+hadJoin.size()+"个需求已加入计划，不能重复加入。【"+hadJoin.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
 			}
 			if(ntype1.size()>0){
-				msgs.add("有"+ntype1.size()+"个需求为需求集，不用加入计划。【"+ntype1.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
+				msgs.add("有"+ntype1.size()+"个需求为需求池，不用加入计划。【"+ntype1.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
 			}
 			if(canAdds.size()==0){
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
