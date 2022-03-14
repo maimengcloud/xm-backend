@@ -227,7 +227,7 @@
 		insert into xm_menu(
 			<include refid="columns"/>
 		) values (
-		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{budgetHours},#{budgetStaffNu},#{budgetWorkload},#{budgetAmount},#{phaseId},#{iterationId},#{calcType},#{mactWorkload},#{mactAmount},#{mactRate}
+		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{budgetHours},#{budgetStaffNu},#{budgetWorkload},#{budgetAmount},#{phaseId},#{iterationId},#{calcType},#{mactWorkload},#{mactAmount},#{mactRate},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority}
 		)
 	</insert>
 	
@@ -290,7 +290,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate
+		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -331,6 +331,12 @@
 		<if test="mactWorkload != null and mactWorkload != ''">      and res.mact_workload = #{mactWorkload}     </if>
 		<if test="mactAmount != null and mactAmount != ''">      and res.mact_amount = #{mactAmount}     </if>
 		<if test="mactRate != null and mactRate != ''">      and res.mact_rate = #{mactRate}     </if>
+		<if test="source != null and source != ''">      and res.source = #{source}     </if>
+		<if test="proposerId != null and proposerId != ''">      and res.proposer_id = #{proposerId}     </if>
+		<if test="proposerName != null and proposerName != ''">      and res.proposer_name = #{proposerName}     </if>
+		<if test="dlvl != null and dlvl != ''">      and res.dlvl = #{dlvl}     </if>
+		<if test="dtype != null and dtype != ''">      and res.dtype = #{dtype}     </if>
+		<if test="priority != null and priority != ''">      and res.priority = #{priority}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -368,7 +374,13 @@
 		calc_type = #{calcType},
 		mact_workload = #{mactWorkload},
 		mact_amount = #{mactAmount},
-		mact_rate = #{mactRate}
+		mact_rate = #{mactRate},
+		source = #{source},
+		proposer_id = #{proposerId},
+		proposer_name = #{proposerName},
+		dlvl = #{dlvl},
+		dtype = #{dtype},
+		priority = #{priority}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="menuName != null and menuName != ''"> menu_name = #{menuName},     </if>
@@ -406,6 +418,12 @@
 		<if test="mactWorkload != null and mactWorkload != ''"> mact_workload = #{mactWorkload},     </if>
 		<if test="mactAmount != null and mactAmount != ''"> mact_amount = #{mactAmount},     </if>
 		<if test="mactRate != null and mactRate != ''"> mact_rate = #{mactRate},     </if>
+		<if test="source != null and source != ''"> source = #{source},     </if>
+		<if test="proposerId != null and proposerId != ''"> proposer_id = #{proposerId},     </if>
+		<if test="proposerName != null and proposerName != ''"> proposer_name = #{proposerName},     </if>
+		<if test="dlvl != null and dlvl != ''"> dlvl = #{dlvl},     </if>
+		<if test="dtype != null and dtype != ''"> dtype = #{dtype},     </if>
+		<if test="priority != null and priority != ''"> priority = #{priority},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -443,6 +461,12 @@
 			calc_type = #{item.calcType},
 			mact_workload = #{item.mactWorkload},
 			mact_amount = #{item.mactAmount},
-			mact_rate = #{item.mactRate}
+			mact_rate = #{item.mactRate},
+			source = #{item.source},
+			proposer_id = #{item.proposerId},
+			proposer_name = #{item.proposerName},
+			dlvl = #{item.dlvl},
+			dtype = #{item.dtype},
+			priority = #{item.priority}
 	</sql>
 </mapper>
