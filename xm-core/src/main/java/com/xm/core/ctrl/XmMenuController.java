@@ -271,6 +271,7 @@ public class XmMenuController {
 				return ResponseHelper.failed("noqx","您无权新增需求。");
 			}
 			xmMenuService.parentIdPathsCalcBeforeSave(xmMenu);
+			xmMenu.setStatus("0");
 			xmMenuService.insert(xmMenu);
 			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"新增产品需求","新增需求"+xmMenu.getMenuName());
 			m.put("data",xmMenu);
