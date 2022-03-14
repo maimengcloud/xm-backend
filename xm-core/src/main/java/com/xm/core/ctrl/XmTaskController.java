@@ -492,7 +492,7 @@ public class XmTaskController {
 		return m;
 	}
 
-	@ApiOperation( value = "根据主键修改一条xm_task信息",notes="editXmTask")
+	@ApiOperation( value = "根据主键修改一条xm_task信息",notes="setTaskCreateUser")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})

@@ -348,16 +348,14 @@ public class XmMenuController {
 			if(!groupService.calcCanOpMenus(xmMenuDb)){
 				return ResponseHelper.failed("noqx","您无权修改此需求。");
 			}
-			if(StringUtils.hasText(xmMenu.getNtype())&&StringUtils.hasText(xmMenu.getNtype())&&StringUtils.hasText(xmMenuDb.getPmenuId())){
-				if(!xmMenuDb.getNtype().equals(xmMenu.getNtype())){
-					if(xmMenu.getNtype().equals("1")){
-						XmMenu xmMenuParentDb=this.xmMenuService.selectOneObject(new XmMenu(xmMenuDb.getPmenuId()));
-						if(xmMenuParentDb!=null){
-							if(!"1".equals(xmMenuParentDb.getNtype())){
-								ResponseHelper.failed("pmenu-ntype-0","上级需求"+xmMenuParentDb.getMenuName()+"不是需求池,不能下挂需求池");
-							}
-						}
-					}
+
+			if("1".equals(xmMenuDb.getNtype())){
+				if("0".equals(xmMenu.getNtype()) && xmMenuDb.getChildrenCnt()!=null && xmMenuDb.getChildrenCnt()>0){
+					return ResponseHelper.failed("ntype-not-right","当前为需求池，并且具有"+xmMenuDb.getChildrenCnt()+"个子需求池或子需求，不能变更为需求");
+				}
+			}else{
+				if(xmMenuDb.getChildrenCnt()!=null && xmMenuDb.getChildrenCnt()>0){
+					xmMenu.setNtype("1");
 				}
 			}
 			xmMenuService.updateByPk(xmMenu);
