@@ -351,9 +351,8 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select  (select sum(1) from xm_task t where t.parent_taskid=res.id) as children_cnt, res.*,pa.proc_inst_id,pa.assignee,pa.assignee_name,pa.main_title,pa.flow_branch_id,pa.task_name,pa.agree,pa.flow_last_time,pa.comment_msg,pa.proc_def_id,pa.flow_state
-		from xm_task res   left join  xm_task_process_approva pa on res.id=pa.xm_task_id and res.biz_proc_inst_id=pa.proc_inst_id
-		left join xm_project p on p.id=res.project_id
+		select  (select sum(1) from xm_task t where t.parent_taskid=res.id) as children_cnt, res.*
+		from xm_task res
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
