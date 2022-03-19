@@ -549,7 +549,7 @@ public class XmProjectService extends BaseService {
 	public void createBaseline(String projectId,String remark) {
 		XmProject p=new XmProject();
 		p.setId(projectId);
-		XmProject p2=this.selectOneObject(p);
+		//XmProject p2=this.selectOneObject(p);
 	}
 }
 
