@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,8 +52,10 @@ public class XmProductService extends BaseService {
 	@Autowired
 	XmProductProjectLinkService linkService;
 
+	@Autowired
+	private XmTaskService xmTaskService;
 
-	
+
 	/**
 	 * 产品不直接根项目关联，此函数作废了
 	 * @param productId
@@ -166,6 +169,41 @@ public class XmProductService extends BaseService {
 			}
 		}
 
+		if("1".equals(xmProduct.getCopyPhase())){
+			XmTask taskQ=new XmTask();
+			taskQ.setProductId(xmProduct.getId());
+			List<XmTask> xmTasks=this.xmTaskService.selectListByWhere(taskQ);
+			Map<String,String> newTaskIdMap=new HashMap<>();
+			if(xmTasks!=null && xmTasks.size()>0){
+				for (XmTask node : xmTasks) {
+					newTaskIdMap.put(node.getId(),this.xmTaskService.createKey("id"));
+				}
+				for (XmTask node : xmTasks) {
+					String oldId=node.getId();
+					String newId=newTaskIdMap.get(oldId);
+					node.setProductId(xmProduct.getId());
+					node.setId(newId);
+					node.setParentTaskid(newTaskIdMap.get(node.getParentTaskid()));
+					node.setCbranchId(user.getBranchId());
+					node.setCdeptid(user.getDeptid());
+					node.setCreateUsername(user.getUsername());
+					node.setCreateUserid(user.getUserid());
+					node.setCreateTime(new Date());
+					node.setPreTaskid(newTaskIdMap.get(node.getPreTaskid()));
+					node.setIsTpl(isTpl);
+					node.setMenuId(newMenuIdMap.get(node.getMenuId()));
+					node.setExeUsernames(null);
+					node.setExeUserids(null);
+					node.setRate(BigDecimal.ZERO);
+					node.setActEndTime(null);
+					node.setActStartTime(null);
+					node.setExecutorUserid(null);
+					node.setExecutorUsername(null);
+				}
+				this.xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
+				this.xmTaskService.batchImportFromTemplate(xmTasks);
+			}
+		}
 		List<XmGroup> groupsDb=new ArrayList<>();
 		Map<String, String> newGroupIdMap = new HashMap<>();
 		if( "1".equals(xmProduct.getCopyGroup())||"1".equals(xmProduct.getCopyGroupUser())) {
