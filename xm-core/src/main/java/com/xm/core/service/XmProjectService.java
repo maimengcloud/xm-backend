@@ -476,12 +476,11 @@ public class XmProjectService extends BaseService {
 						//project.setCode(project.getCode());
 						this.updateSomeFieldByPk(project);
 				        xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-基本信息", "修改基本信息" );  
-				        this.createBaseline(bizProject.getId(),"项目修改基本信息");
-				        
+
 					}else if("xm_project_start_approva".equals(bizKey)) {//立项 立项通过需要把预算数据同步到财务系统，把项目数据同步到财务系统
 						XmProject project=new XmProject();
 						project.setId(bizProject.getId());
-						project.setStatus("ssz");
+						project.setStatus("3");
 						//todo 立项通过需要把预算数据同步到财务系统，把项目数据同步到财务系统
 
 						this.updateSomeFieldByPk(project);
@@ -497,15 +496,14 @@ public class XmProjectService extends BaseService {
 					}else if("xm_project_over_approva".equals(bizKey) ) { //结项
 						XmProject project=new XmProject();
 						project.setId(bizProject.getId());
-						project.setStatus("yjx");
+						project.setStatus("6");
 						this.updateSomeFieldByPk(project);
 						this.createBaseline(bizProject.getId(),"项目结项申请通过审批");
 						 xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-结项", "项目结项申请通过审批" );   
 					}else if("xm_project_budget_change_approva".equals(bizKey) ) { //总预算调整，需要同步预算到财务系统
 						
  
-						this.editBudget(bizProject); 
-						this.createBaseline(bizProject.getId(),"项目预算调整申请通过审批");
+						this.editBudget(bizProject);
 						xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-预算调整", "项目预算调整申请通过审批" );   
 					}else if("xm_project_restart_approva".equals(bizKey) ) { //重新启动
 						XmProject project=new XmProject();
@@ -516,7 +514,7 @@ public class XmProjectService extends BaseService {
 					}else if("xm_project_pause_approva".equals(bizKey) ) { //暂停
 						XmProject project=new XmProject();
 						project.setId(bizProject.getId());
-						project.setStatus("ztz");
+						project.setLocked("0");
 						this.updateSomeFieldByPk(project);
 						xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-暂停", "项目暂停申请通过审批" );   
 					}

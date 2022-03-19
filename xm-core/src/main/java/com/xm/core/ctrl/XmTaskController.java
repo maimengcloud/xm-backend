@@ -18,10 +18,7 @@ import com.xm.core.entity.*;
 import com.xm.core.service.*;
 import com.xm.core.service.cache.XmTaskCacheService;
 import com.xm.core.service.push.XmPushMsgService;
-import com.xm.core.vo.BatchChangeParentTaskVo;
-import com.xm.core.vo.BatchRelTasksWithMenu;
-import com.xm.core.vo.XmGroupVo;
-import com.xm.core.vo.XmTaskVo;
+import com.xm.core.vo.*;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -690,33 +687,53 @@ public class XmTaskController {
 	})
 	@HasQx(value = "xm_core_xmTask_batchImportFromTemplate",name = "从模板导入任务",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchImportFromTemplate",method=RequestMethod.POST)
-	public Map<String,Object> batchImportFromTemplate(@RequestBody List<XmTask> xmTasks) {
+	public Map<String,Object> batchImportFromTemplate(@RequestBody BatchImportVo batchImportVo) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功导入"+xmTasks.size()+"条数据"); 
+		Tips tips=new Tips("成功导入");
 		try{
-
+			List<XmTask> xmTasks=batchImportVo.getXmTasks();
 			User user=LoginUtils.getCurrentUserInfo();
  			if(xmTasks==null || xmTasks.size()==0){
 				tips.setFailureMsg("任务列表不能为空");
 				m.put("tips", tips);
 				return m;
 			}
-			XmTask xmTask=xmTasks.get(0);
-			String projectId=xmTask.getProjectId();
-			String productId=xmTask.getProductId();
-			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTask.getPtype(),xmTask.getProductId(),xmTask.getProjectId());
+			if(!StringUtils.hasText(batchImportVo.getPtype())){
+				return ResponseHelper.failed("ptype-0","请上送ptype,0代表项目计划（任务），1代表产品计划（任务）");
+			}
+			if("0".equals(batchImportVo.getPtype()) && !StringUtils.hasText(batchImportVo.getProjectId())){
+				return ResponseHelper.failed("projectId-0","请上送项目编号");
+			} else if("1".equals(batchImportVo.getPtype()) && !StringUtils.hasText(batchImportVo.getProductId())){
+				return ResponseHelper.failed("productId-0","请上送产品编号");
+			}else if(!"0".equals(batchImportVo.getPtype()) && !"1".equals(batchImportVo.getPtype())){
+				return ResponseHelper.failed("ptype-0","请上送ptype,0代表项目计划（任务），1代表产品计划（任务）");
+			}
+			String projectId=batchImportVo.getProjectId();
+			String productId=batchImportVo.getProductId();
+			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),batchImportVo.getPtype(),batchImportVo.getProductId(),batchImportVo.getProjectId());
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
+			Map<String,String> newIdMap=new HashMap<>();
+			if(!StringUtils.hasText(batchImportVo.getParentTaskid())){
+				newIdMap.put(batchImportVo.getParentTaskid(),batchImportVo.getParentTaskid());
+			}
+			for (XmTask xmTask : xmTasks) {
+				newIdMap.put(xmTask.getId(),this.xmTaskService.createKey("id"));
+			}
  			for (XmTask g : xmTasks) {
-				if("0".equals(xmTask.getPtype()) && !projectId.equals(g.getProjectId())){
-					return ResponseHelper.failed("no-same-project","只能在同一个项目下批量导入任务");
-				}else{
-					if("1".equals(xmTask.getPtype()) && !productId.equals(g.getProductId())){
-						return ResponseHelper.failed("no-same-productId","只能在同一个产品下批量导入任务");
+ 				g.setId(newIdMap.get(g.getId()));
+ 				if(StringUtils.hasText(g.getParentTaskid())){
+ 					if(newIdMap.containsKey(g.getParentTaskid())){
+ 						g.setParentTaskid(newIdMap.get(g.getParentTaskid()));
+					}else{
+ 						if(StringUtils.hasText(batchImportVo.getParentTaskid())){
+							g.setParentTaskid(batchImportVo.getParentTaskid());
+						}else{
+ 							g.setParentTaskid(null);
+						}
 					}
 				}
-
 				g.setCreateUserid(user.getUserid());
 				g.setCreateUsername(user.getUsername());
 				g.setExecutorUserid(user.getUserid());
@@ -725,6 +742,9 @@ public class XmTaskController {
 				g.setExeUserids(null);
 				g.setExeUsernames(null);
 				g.setCdeptid(user.getDeptid());
+				g.setPtype(batchImportVo.getPtype());
+				g.setProjectId(projectId);
+				g.setProductId(productId);
 				if(g.getBudgetCost()==null)g.setBudgetCost(BigDecimal.ZERO);
 			}
 			xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
@@ -734,7 +754,7 @@ public class XmTaskController {
 				for (XmTask task : tasksLvl1) {
 					totalTaskBudgetCost=totalTaskBudgetCost.add(task.getBudgetCost());
 				}
-				if("0".equals(xmTask.getPtype())&&totalTaskBudgetCost.compareTo(BigDecimal.ZERO)>0){
+				if("0".equals(batchImportVo.getPtype())&&totalTaskBudgetCost.compareTo(BigDecimal.ZERO)>0){
 					tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetCost,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
 					if(!tips.isOk()){
 						tips.setFailureMsg(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");

@@ -165,7 +165,7 @@
 		insert into xm_project(
 			<include refid="columns"/>
 		) values (
-		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planIuserAt},#{planOuserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planIuserPrice},#{planOuserPrice},#{planOuserCnt},#{planIuserCnt},#{planWorkingHours},#{taxRate},#{planIuserWorkload},#{planOuserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut},#{isTpl},#{pmUserid},#{pmUsername},#{assUserid},#{assUsername},#{admUserid},#{admUsername},#{phaseBudgetCtrl},#{phaseActCtrl},#{del},#{ltime}
+		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planIuserAt},#{planOuserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planIuserPrice},#{planOuserPrice},#{planOuserCnt},#{planIuserCnt},#{planWorkingHours},#{taxRate},#{planIuserWorkload},#{planOuserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut},#{isTpl},#{pmUserid},#{pmUsername},#{assUserid},#{assUsername},#{admUserid},#{admUsername},#{phaseBudgetCtrl},#{phaseActCtrl},#{del},#{ltime},#{ostatus}
 		)
 	</insert>
 	
@@ -228,7 +228,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_iuser_at,plan_ouser_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_iuser_price,plan_ouser_price,plan_ouser_cnt,plan_iuser_cnt,plan_working_hours,tax_rate,plan_iuser_workload,plan_ouser_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl,del,ltime
+		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_iuser_at,plan_ouser_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_iuser_price,plan_ouser_price,plan_ouser_cnt,plan_iuser_cnt,plan_working_hours,tax_rate,plan_iuser_workload,plan_ouser_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl,del,ltime,ostatus
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -286,6 +286,7 @@
 		<if test="phaseActCtrl != null and phaseActCtrl != ''">      and res.phase_act_ctrl = #{phaseActCtrl}     </if>
 		<if test="del != null and del != ''">      and res.del = #{del}     </if>
 		<if test="ltime != null">      and date_format(res.ltime,'%Y-%m-%d') = date_format(#{ltime},'%Y-%m-%d')     </if>
+		<if test="ostatus != null and ostatus != ''">      and res.ostatus = #{ostatus}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -340,7 +341,8 @@
 		phase_budget_ctrl = #{phaseBudgetCtrl},
 		phase_act_ctrl = #{phaseActCtrl},
 		del = #{del},
-		ltime = #{ltime}
+		ltime = #{ltime},
+		ostatus = #{ostatus}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="code != null and code != ''"> code = #{code},     </if>
@@ -395,6 +397,7 @@
 		<if test="phaseActCtrl != null and phaseActCtrl != ''"> phase_act_ctrl = #{phaseActCtrl},     </if>
 		<if test="del != null and del != ''"> del = #{del},     </if>
 		<if test="ltime != null"> ltime = #{ltime},     </if>
+		<if test="ostatus != null and ostatus != ''"> ostatus = #{ostatus},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -449,6 +452,7 @@
 			phase_budget_ctrl = #{item.phaseBudgetCtrl},
 			phase_act_ctrl = #{item.phaseActCtrl},
 			del = #{item.del},
-			ltime = #{item.ltime}
+			ltime = #{item.ltime},
+			ostatus = #{item.ostatus}
 	</sql>
 </mapper>

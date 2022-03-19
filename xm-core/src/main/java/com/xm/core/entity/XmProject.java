@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProject所有属性名: <br>
- *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planIuserAt,planOuserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planIuserPrice,planOuserPrice,planOuserCnt,planIuserCnt,planWorkingHours,taxRate,planIuserWorkload,planOuserWorkload,fromTplId,budgetCtrl,deptid,showOut,isTpl,pmUserid,pmUsername,assUserid,assUsername,admUserid,admUsername,phaseBudgetCtrl,phaseActCtrl,del,ltime;<br>
+ *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planIuserAt,planOuserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planIuserPrice,planOuserPrice,planOuserCnt,planIuserCnt,planWorkingHours,taxRate,planIuserWorkload,planOuserWorkload,fromTplId,budgetCtrl,deptid,showOut,isTpl,pmUserid,pmUsername,assUserid,assUsername,admUserid,admUsername,phaseBudgetCtrl,phaseActCtrl,del,ltime,ostatus;<br>
  * 表 xm_project xm_project的所有字段名: <br>
- *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_iuser_at,plan_ouser_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_iuser_price,plan_ouser_price,plan_ouser_cnt,plan_iuser_cnt,plan_working_hours,tax_rate,plan_iuser_workload,plan_ouser_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl,del,ltime;<br>
+ *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_iuser_at,plan_ouser_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_iuser_price,plan_ouser_price,plan_ouser_cnt,plan_iuser_cnt,plan_working_hours,tax_rate,plan_iuser_workload,plan_ouser_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl,del,ltime,ostatus;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -62,7 +62,7 @@ public class XmProject  implements java.io.Serializable {
 	@ApiModelProperty(notes="考核备注",allowEmptyValue=true,example="",allowableValues="")
 	String assessRemarks;
 	
-	@ApiModelProperty(notes="0|初始",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="0|初始1|售前2|立项中3|实施中4|暂停中5|结项中6|已结项7|售后8|已完成9|已关闭",allowEmptyValue=true,example="",allowableValues="")
 	String status;
 	
 	@ApiModelProperty(notes="机构编号",allowEmptyValue=true,example="",allowableValues="")
@@ -178,6 +178,9 @@ public class XmProject  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="最后更新时间",allowEmptyValue=true,example="",allowableValues="")
 	Date ltime;
+	
+	@ApiModelProperty(notes="原状态，暂停时记录原状态，暂停恢复后把原状态恢复",allowEmptyValue=true,example="",allowableValues="")
+	String ostatus;
 
 	/**项目编号**/
 	public XmProject(String id) {
@@ -273,7 +276,7 @@ public class XmProject  implements java.io.Serializable {
 		this.assessRemarks = assessRemarks;
 	}
 	/**
-	 * 0|初始
+	 * 0|初始1|售前2|立项中3|实施中4|暂停中5|结项中6|已结项7|售后8|已完成9|已关闭
 	 **/
 	public void setStatus(String status) {
 		this.status = status;
@@ -506,6 +509,12 @@ public class XmProject  implements java.io.Serializable {
 	public void setLtime(Date ltime) {
 		this.ltime = ltime;
 	}
+	/**
+	 * 原状态，暂停时记录原状态，暂停恢复后把原状态恢复
+	 **/
+	public void setOstatus(String ostatus) {
+		this.ostatus = ostatus;
+	}
 	
 	/**
 	 * 项目编号
@@ -592,7 +601,7 @@ public class XmProject  implements java.io.Serializable {
 		return this.assessRemarks;
 	}
 	/**
-	 * 0|初始
+	 * 0|初始1|售前2|立项中3|实施中4|暂停中5|结项中6|已结项7|售后8|已完成9|已关闭
 	 **/
 	public String getStatus() {
 		return this.status;
@@ -824,6 +833,12 @@ public class XmProject  implements java.io.Serializable {
 	 **/
 	public Date getLtime() {
 		return this.ltime;
+	}
+	/**
+	 * 原状态，暂停时记录原状态，暂停恢复后把原状态恢复
+	 **/
+	public String getOstatus() {
+		return this.ostatus;
 	}
 
 }
