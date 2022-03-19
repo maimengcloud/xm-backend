@@ -140,41 +140,6 @@ public class XmProductService extends BaseService {
 			xmProductTo.setProductName(xmProduct.getProductName()+"(复制)");
 		}
 		this.insert(xmProductTo);
-
-
-		Map<String,String> newPhaseIdMap=new HashMap<>();
-		if("1".equals(xmProduct.getCopyPhase())){
-			XmPhase phaseQuery=new XmPhase();
-			phaseQuery.setProductId(xmProductDb.getId());
-			List<XmPhase> xmProjectPhases=this.xmProjectPhaseService.selectListByWhere(phaseQuery);
-			if(xmProjectPhases!=null && xmProjectPhases.size()>0){
-				for (XmPhase node : xmProjectPhases) {
-					String id=this.xmProjectPhaseService.createKey("id");
-					newPhaseIdMap.put(node.getId(),id);
-				}
-				for (XmPhase node : xmProjectPhases) {
-					String oldId=node.getId();
-					String newId=newPhaseIdMap.get(oldId);
-					node.setProjectId(null);
-					node.setProductId(xmProductTo.getId());
-					node.setId(newId);
-					if(StringUtils.hasText(node.getParentId())){
-						node.setParentId(newPhaseIdMap.get(node.getParentId()));
-					}
-
-					node.setCtime(new Date());
-					node.setMngUserid(user.getUserid());
-					node.setMngUsername(user.getUsername());
-					node.setIsTpl(isTpl);
-					node.setBranchId(user.getBranchId());
-					node.setBizFlowState("");
-					node.setBizProcInstId(null);
-				}
-				this.xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases);
-				this.xmProjectPhaseService.doBatchInsert(xmProjectPhases);
-			}
-
-		}
 		Map<String,String>	newMenuIdMap=new HashMap<>();
 		if("1".equals(xmProduct.getCopyMenu())){
 			XmMenu mq=new XmMenu();
@@ -191,7 +156,6 @@ public class XmProductService extends BaseService {
 					node.setMenuId(newId);
 					node.setProductId(xmProductTo.getId());
 					node.setPmenuId(newMenuIdMap.get(node.getPmenuId()));
-					node.setPhaseId(newPhaseIdMap.get(node.getPhaseId()));
 					node.setCtime(new Date());
 					node.setMmUserid(user.getUserid());
 					node.setMmUsername(user.getUsername());

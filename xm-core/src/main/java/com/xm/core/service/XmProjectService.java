@@ -117,46 +117,7 @@ public class XmProjectService extends BaseService {
 		xmProjectTo.setPmUsername(user.getUsername());
 		this.saveProject(xmProjectTo);
 
-		XmPhase phaseQuery=new XmPhase();
-		phaseQuery.setProjectId(xmProjectDb.getId());
-		Map<String,String> newPhaseIdMap=new HashMap<>();
-		if("1".equals(xmProject.getCopyPhase()) ||"1".equals(xmProject.getCopyTask())){
-			List<XmPhase> xmProjectPhases=this.xmProjectPhaseService.selectListByWhere(phaseQuery);
-			if(xmProjectPhases!=null && xmProjectPhases.size()>0){
-				for (XmPhase node : xmProjectPhases) {
-					String id=this.xmProjectPhaseService.createKey("id");
-					newPhaseIdMap.put(node.getId(),id);
-				}
-				for (XmPhase node : xmProjectPhases) {
-					String oldId=node.getId();
-					String newId=newPhaseIdMap.get(oldId);
-					node.setProjectId(xmProjectTo.getId());
-					node.setId(newId);
-					if(StringUtils.hasText(node.getParentId())){
-						node.setParentId(newPhaseIdMap.get(node.getParentId()));
-					}
-
-					node.setCtime(new Date());
-					node.setMngUserid(user.getUserid());
-					node.setMngUsername(user.getUsername());
-					node.setIsTpl(isTpl);
-					node.setBranchId(user.getBranchId());
-					node.setBizFlowState("");
-					node.setBizProcInstId(null);
-					node.setActRate(BigDecimal.ZERO);
-					node.setActIuserAt(BigDecimal.ZERO);
-					node.setActNouserAt(BigDecimal.ZERO);
-					node.setActOuserAt(BigDecimal.ZERO);
-					node.setActIuserWorkload(BigDecimal.ZERO);
-					node.setActOuserWorkload(BigDecimal.ZERO);
-					node.setActWorkload(BigDecimal.ZERO);
-				}
-				this.xmProjectPhaseService.parentIdPathsCalcBeforeSave(xmProjectPhases);
-				this.xmProjectPhaseService.doBatchInsert(xmProjectPhases);
-			}
-
-		}
-		if("1".equals(xmProject.getCopyTask()) && "1".equals(xmProject.getCopyPhase())){
+		if("1".equals(xmProject.getCopyTask())){
 			XmTask taskQ=new XmTask();
 			taskQ.setProjectId(xmProjectDb.getId());
 			List<XmTask> xmTasks=this.xmTaskService.selectListByWhere(taskQ);
@@ -176,7 +137,6 @@ public class XmProjectService extends BaseService {
 					node.setCreateUsername(user.getUsername());
 					node.setCreateUserid(user.getUserid());
 					node.setCreateTime(new Date());
-					node.setPhaseId(newPhaseIdMap.get(node.getPhaseId()));
 					node.setPreTaskid(newTaskIdMap.get(node.getPreTaskid()));
 					node.setIsTpl(isTpl);
 					node.setMenuId(null);
