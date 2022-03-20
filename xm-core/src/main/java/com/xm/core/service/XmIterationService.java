@@ -4,6 +4,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
 import com.xm.core.entity.XmIteration;
+import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
 import com.xm.core.vo.XmIterationVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,5 +52,18 @@ public class XmIterationService extends BaseService {
 		this.xmIterationLinkService.batchInsert(xmIteration.getLinks());
 
     }
+
+	public String createIterationId( Long count){
+		String seq=(count%10000+1)+"";
+		int preLength=4-seq.length();
+		if(preLength>0){
+			for (int i = 0; i < preLength; i++) {
+				seq="0"+seq;
+			}
+		}
+		String code=sequenceService.getCommonNo("IT{date:yyyy}-"+seq+"-{rands:4}");
+		return code;
+
+	}
 }
 

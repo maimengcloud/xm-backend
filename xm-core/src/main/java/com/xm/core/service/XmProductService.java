@@ -258,15 +258,15 @@ public class XmProductService extends BaseService {
 		XmProduct product=new XmProduct();
 		product.setBranchId(branchId);
 		long count=this.countByWhere(product);
-		String seq=(count+1)+"";
-		int preLength=6-seq.length();
+		String seq=(count%10000+1)+"";
+		int preLength=4-seq.length();
 
 		if(preLength>0){
 			for (int i = 0; i < preLength; i++) {
 				seq="0"+seq;
 			}
 		}
-		String code=sequenceService.getCommonNo("pro-{date:yyyyMMdd}-"+seq+"-{rand:2}");
+		String code=sequenceService.getCommonNo("PD{date:yyyy}-"+seq+"-{rands:2}");
 		return code;
 
 	}

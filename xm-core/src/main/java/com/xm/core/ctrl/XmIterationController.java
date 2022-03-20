@@ -163,14 +163,12 @@ public class XmIterationController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-			if(StringUtils.isEmpty(xmIteration.getId())) {
-				xmIteration.setId(xmIterationService.createKey("id"));
-			}
 			XmIteration q=new XmIteration();
 			User user= LoginUtils.getCurrentUserInfo();
 
 			q.setBranchId(user.getBranchId());
 			Long count=this.xmIterationService.countByWhere(q);
+			xmIteration.setId(this.xmIterationService.createIterationId(count));
 			xmIteration.setSeqNo(Long.toString(count+1));
 			xmIteration.setCtime(new Date());
 			xmIteration.setCuserid(user.getUserid());
