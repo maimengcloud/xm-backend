@@ -24,9 +24,8 @@
 	</insert>
 
 	<!-- 同时修改业务表及流程审批表数据状态 -->
-	<update id="updateProcessApprova"
-			parameterType="HashMap">
-		update xm_task_execuser  b ,XM.xm_task_execuser_process_approva pa
+	<update id="updateProcessApprova" parameterType="HashMap">
+		update xm_task_execuser  b left join xm_task_execuser_process_approva pa on b.id=pa.execuser_id
 		<set>
 			<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
 			<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
