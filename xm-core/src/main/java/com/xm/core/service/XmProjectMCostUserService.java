@@ -129,7 +129,6 @@ public class XmProjectMCostUserService extends BaseService {
 	 * 判断新增预算是否超出项目总预算
 	 * @param projectId
 	 * @param addTotalBudgetCost
-	 * @param excludePhaseId
 	 * @return
 	 */
 	public Tips judgetBudget(String projectId,BigDecimal addTotalBudgetCost,BigDecimal addBudgetCostIuserAt,BigDecimal addBudgetCostOuserAt,List<String> excludeIds){
@@ -172,14 +171,14 @@ public class XmProjectMCostUserService extends BaseService {
 
 	public int updateExecuserStatusByExecuserProcInstId(String execuserProcInstId,String execuserStatus) {
 			Map<String,Object> m=new HashMap<>();
-			m.put(execuserProcInstId, execuserProcInstId);
-			m.put(execuserStatus, execuserStatus);
+			m.put("execuserProcInstId", execuserProcInstId);
+			m.put("execuserStatus", execuserStatus);
 		 return this.update("updateExecuserStatusByExecuserProcInstId", m);
 	}
 	
 	public int deleteByExecuserProcInstId(String execuserProcInstId) {
 		Map<String,Object> m=new HashMap<>();
-		m.put(execuserProcInstId, execuserProcInstId); 
+		m.put("execuserProcInstId", execuserProcInstId);
 	 return this.update("deleteByExecuserProcInstId", m);
 	}
 }
