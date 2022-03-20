@@ -17,6 +17,7 @@ import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
@@ -233,14 +234,23 @@ public class XmTaskExecuserService extends BaseService {
 		String subjectId="rwcl";
 		String subjectName="任务酬劳";
 		Map<String,Object> params=new HashMap<>();
-		params.put("projectId", projectId); 
 		params.put("taskId", taskId);
-		XmTask task=xmTaskService.selectOneObject(new XmTask(taskId));
-		String projectName=task.getProjectName();
+		XmTask xmTaskDb=xmTaskService.selectOneObject(new XmTask(taskId));
+		if(xmTaskDb==null){
+			throw new BizException("任务已不存在，不允许申请结算");
+		}
+		if("3".equals(xmTaskDb.getTaskState())){
+			throw new BizException("任务状态为已结算，不能再申请结算");
+		} else if(!"2".equals(xmTaskDb.getTaskState())){
+			throw new BizException("任务状态必须是完工状态，才可以进行结算申请");
+		}
+
+
+		String projectName=xmTaskDb.getProjectName();
 		List<Map<String,Object>> actCostAmountList=xmProjectMCostUserService.listSumForSettleGroupByTaskIdAndUserid(params);
 		BigDecimal addSettleAmount=BigDecimal.ZERO;
 		BigDecimal allActCostAmount=BigDecimal.ZERO;
-		BigDecimal taskBudgetCost=NumberUtil.getBigDecimal(task.getBudgetCost(),BigDecimal.ZERO);
+		BigDecimal taskBudgetCost=NumberUtil.getBigDecimal(xmTaskDb.getBudgetCost(),BigDecimal.ZERO);
 		Map<String,Map<String,Object>> actCostAmountMap=new HashMap<>();
 		XmTaskExecuser execuserQuery=new XmTaskExecuser();
 		execuserQuery.setTaskId(taskId);
@@ -275,6 +285,10 @@ public class XmTaskExecuserService extends BaseService {
 			if("6".equals(xmTaskExecuserDB.getSettleStatus())) {
 				throw  new BizException(xmTaskExecuserDB.getUsername()+"已经结算完毕，不能再申请");
 			}
+
+			if("1".equals(xmTaskExecuserDB.getBizFlowState())) {
+				throw  new BizException(xmTaskExecuserDB.getUsername()+"已有申请在审判中，不能重复申请结算");
+			}
 			if( StringUtils.hasText(xmTaskExecuserDB.getSettleStatus()) && !"0".equals(xmTaskExecuserDB.getSettleStatus()) && !"1".equals(xmTaskExecuserDB.getSettleStatus()) && !"5".equals(xmTaskExecuserDB.getSettleStatus())) {
 				throw  new BizException(xmTaskExecuserDB.getUsername()+"暂时还不能申请结算");
 			}
@@ -296,7 +310,7 @@ public class XmTaskExecuserService extends BaseService {
 		}
 
 		if(allActCostAmount.add(addSettleAmount).compareTo(taskBudgetCost)>0) {
-			throw new BizException(task.getName()+"结算总金额已经超出任务预算");
+			throw new BizException(xmTaskDb.getName()+"结算总金额已经超出任务预算");
 		} 
 		for (XmTaskExecuser xmTaskExecuser : xmTaskExecuserList) {
 			
@@ -329,9 +343,9 @@ public class XmTaskExecuserService extends BaseService {
 			costUser.setBizzStartDate(xmTaskExecuser.getStartTime());
 			costUser.setBizzEndDate(xmTaskExecuser.getEndTime());
 			costUser.setBizFlowState("0");
-			costUser.setCostType("1".equals(task.getTaskOut())?"1":"2");
+			costUser.setCostType("1".equals(xmTaskDb.getTaskOut())?"1":"2");
 			costUser.setTaskId(xmTaskExecuser.getTaskId());
-			costUser.setTaskName(task.getName());
+			costUser.setTaskName(xmTaskDb.getName());
 			costUser.setCreateTime(new Date());
 			costUser.setProjectId(xmTaskExecuser.getProjectId());
 			costUser.setProjectName(projectName);
@@ -400,6 +414,7 @@ public class XmTaskExecuserService extends BaseService {
 	 * @param flowVars {flowBranchId,agree,procInstId,startUserid,assignee,actId,taskName,mainTitle,branchId,bizKey,commentMsg,eventName,modelKey} 等 
 	 * @return 如果tips.isOk==false，将影响流程提交
 	 **/
+	@Transactional
 	public void processApprova(Map<String, Object> flowVars) { 
 		String eventName=(String) flowVars.get("eventName"); 
 
@@ -432,7 +447,7 @@ public class XmTaskExecuserService extends BaseService {
 			} 
 			if(StringUtils.isEmpty(bizExecuser.getBranchId())) {
 				throw new BizException("机构编号不能为空");
-			} 
+			}
 			flowVars.put("execuserId", bizExecuser.getId());
 			flowVars.put("projectId", bizExecuser.getProjectId());
 		}else {
@@ -471,9 +486,11 @@ public class XmTaskExecuserService extends BaseService {
 					mkClient.pushActiExecOrder(bizExecuser.getTaskId(), bizExecuser.getUserid(), bizExecuser.getUsername(),bizExecuser.getBranchId(),bizExecuser.getTaskId(),new BigDecimal(1),bizExecuser.getSettleAmount(),bizExecuser.getSettleAmount(),bizExecuser.getSettleWorkload(),bizExecuser.getTaskName());
 					flowVars.put("settleStatus","6");
 					flowVars.put("status","6");
-					this.updateFlowStateByProcInst("2", flowVars); 
+					this.updateFlowStateByProcInst("2", flowVars);
 					//结算通过,更新费用表状态未1，申请通过
 					this.xmProjectMCostUserService.updateExecuserStatusByExecuserProcInstId(procInstId,"1");
+
+					this.xmTaskService.updateActCostAndActWorkloadAfterSettle(bizExecuser.getTaskId(),"3");
 					
 				}else { 
 					//结算申请不通过，需要删除成本表中相关数据，还原执行表中相关数据

@@ -100,7 +100,7 @@
 		WHEN e.STATUS = '4' THEN
 		'(验收不过)'
 		WHEN e.STATUS = '6' THEN
-		'(已付款)'
+		'(已结算)'
 		WHEN e.STATUS = '7' THEN
 		'(放弃任务)'
 		WHEN e.STATUS = '8' THEN

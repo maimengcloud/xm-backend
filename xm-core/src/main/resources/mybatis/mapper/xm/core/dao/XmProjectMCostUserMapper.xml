@@ -116,14 +116,14 @@
 		res.task_id,
 		res.userid,
 		max( res.username ) as username,
-		sum( res.act_cost_amount ) AS act_cost_amount,
-		max( t.budget_cost ) AS task_budget_cost,
+		sum( ifnull(res.act_cost_amount,0) ) AS act_cost_amount,
+		max( ifnull(t.budget_cost,0) ) AS task_budget_cost,
 		max( t.project_name ) AS project_name
 		FROM xm_task t
 		LEFT JOIN
 		XM.xm_project_m_cost_user res ON res.task_id = t.id AND res.project_id = t.project_id
 		<where>
-			t.project_id=#{projectId}
+			<if test="projectId != null and projectId !='' ">     and t.project_id =#{projectId} </if>
 			<if test="subjectId != null and subjectId !='' ">     and res.subject_id =#{subjectId} </if>
 			<if test="costType != null and costType !='' ">     and res.cost_type =#{costType} </if>
 			<if test="taskId != null and taskId !='' ">     and res.task_id =#{taskId} </if>

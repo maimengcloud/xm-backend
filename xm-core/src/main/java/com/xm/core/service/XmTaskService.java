@@ -713,5 +713,13 @@ public class XmTaskService extends BaseService {
 		super.update("batchChangeParent",map("taskIds",xmTasks.stream().map(i->i.getId()).collect(Collectors.toList()),"parentTaskid",parentTask.getId(),"parentPidPaths",parentTask.getPidPaths()));
 		this.sumParents(parentTask);
 	}
+
+	/**
+	 * 结算审批通过后，更新任务表数据
+	 * @param taskId
+	 */
+	public void updateActCostAndActWorkloadAfterSettle(String taskId,String toTaskState) {
+		super.update("updateActCostAndActWorkloadAfterSettle",map("id",taskId,"taskState",toTaskState));
+	}
 }
 

@@ -343,7 +343,17 @@
 		set res.pid_paths = replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.id,',')),
 		res.parent_taskid=if(res.id=t1.id,#{parentTaskid},res.parent_taskid),
 		res.lvl= LENGTH(replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.id,',')))-LENGTH(REPLACE(replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.id,',')),',',''))-1
-		
+
+	</update>
+	<update id="updateActCostAndActWorkloadAfterSettle" parameterType="HashMap">
+		update xm_task res left join (
+			select u.task_id, sum(u.act_cost_amount)  as act_cost_amount ,sum(u.act_workload) as act_workload from xm_project_m_cost_user u
+			where u.task_id=#{id}
+		group by u.task_id
+		) as cu on cu.task_id=res.id
+		set res.act_workload=ifnull(cu.act_workload,0),res.act_cost=ifnull(cu.act_cost_amount,0),
+		res.task_state=ifnull(#{taskState},res.task_state)
+		where id=#{id}
 	</update>
 	<!--结束 自定义sql函数区域-->
 	
