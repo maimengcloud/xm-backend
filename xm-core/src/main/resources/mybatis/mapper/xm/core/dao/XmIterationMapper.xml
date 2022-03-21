@@ -3,51 +3,62 @@
 <mapper namespace="com.xm.core.entity.XmIteration">
 	
 	
-	<!--开始 自定sql函数区域 -->
-		<!--请在此区域添加自定义函数-->
-		
-		
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+		<if test="ids != null">  and
+			id in
+			<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+		</if>
+		<if test=" createTimeStart !=null "> and res.ctime &gt; #{createTimeStart} </if>
+		<if test=" createTimeEnd !=null "> and res.ctime &lt; #{createTimeEnd} </if>
+		<if test=" onlineTimeStart !=null "> and res.online_time &gt; #{onlineTimeStart} </if>
+		<if test=" onlineTimeEnd !=null "> and res.online_time &lt; #{onlineTimeEnd} </if>
+		<include refid="where"/>
+		<if test=" ( menuId != null and menuId !='')">
+			and exists ( select 1 from xm_menu im where  im.iteration_id=res.id and  im.menu_id=#{menuId}
+			<if test="productId != null and productId !='' ">  and  im.product_id=#{productId}    </if>
+			)
+		</if>
+
+		<if test="( productId != null and productId !='') and ( menuId == null or menuId =='') and (  projectId ==null or projectId=='' ) ">
+			and exists ( select 1 from xm_iteration_link ipl
+			where  ipl.iteration_id=res.id  and ipl.pro_id=#{productId}
+			)
+		</if>
+		<if test=" projectId !=null and projectId!=''">
+			and exists( select 1 from xm_iteration_link ipl
+			where ipl.pro_id=#{projectId} and ipl.iteration_id =res.id
+			)
+		</if>
+		<if test="compete !=null and compete!=''">
+			and ( res.admin_userid=#{compete}
+			or exists (select 1 from  xm_menu m where m.mm_userid=#{compete} and m.iteration_id=res.id)
+			)
+		</if>
+
+		<if test="key != null and key !='' ">   and res.iteration_name like #{key}    </if>
+
+	</sql>
+
 	<update id="load_tasks_to_xm_iteration_state" parameterType="String" statementType="CALLABLE">
-		 {call load_tasks_to_xm_iteration_state(#{inIterationId,mode=IN})}
+		{call load_tasks_to_xm_iteration_state(#{inIterationId,mode=IN})}
 	</update>
+
 	<select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
 		select res.*, s.* from xm_iteration res left join xm_iteration_state s on res.id=s.iteration_id
 		<where>
-			<if test="ids != null">  and
-				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-				        #{item}
-				    </foreach>
-			 </if>
-			<if test=" createTimeStart !=null "> and res.ctime &gt; #{createTimeStart} </if>
-			<if test=" createTimeEnd !=null "> and res.ctime &lt; #{createTimeEnd} </if>
-			<if test=" onlineTimeStart !=null "> and res.online_time &gt; #{onlineTimeStart} </if>
-			<if test=" onlineTimeEnd !=null "> and res.online_time &lt; #{onlineTimeEnd} </if>
+			<include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test=" ( menuId != null and menuId !='')">
-			and exists ( select 1 from xm_menu im where  im.iteration_id=res.id and  im.menu_id=#{menuId}
-					<if test="productId != null and productId !='' ">  and  im.product_id=#{productId}    </if>
-			 )
-		    </if>
-
-			<if test="( productId != null and productId !='') and ( menuId == null or menuId =='') and (  projectId ==null or projectId=='' ) ">
-				and exists ( select 1 from xm_iteration_link ipl
-				where  ipl.iteration_id=res.id  and ipl.pro_id=#{productId}
-				)
-			</if>
-			<if test=" projectId !=null and projectId!=''">
-				and exists( select 1 from xm_iteration_link ipl
-							where ipl.pro_id=#{projectId} and ipl.iteration_id =res.id
-				)
-			</if>
-			<if test="compete !=null and compete!=''">
-				and ( res.admin_userid=#{compete}
-					  or exists (select 1 from  xm_menu m where m.mm_userid=#{compete} and m.iteration_id=res.id)
-				)
-			</if>
-
-			<if test="key != null and key !='' ">   and res.iteration_name like #{key}    </if>
 		</where>
+		order by res.seq_no desc
 	</select>
 	<!--结束 自定义sql函数区域-->
 	
@@ -56,40 +67,9 @@
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
 		select * from xm_iteration res
-		<where> 
-			<if test="ids != null">  and     
-				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
-			 </if>
-			<if test=" createTimeStart !=null "> and res.ctime &gt; #{createTimeStart} </if>
-			<if test=" createTimeEnd !=null "> and res.ctime &lt; #{createTimeEnd} </if>
-			<if test=" onlineTimeStart !=null "> and res.online_time &gt; #{onlineTimeStart} </if>
-			<if test=" onlineTimeEnd !=null "> and res.online_time &lt; #{onlineTimeEnd} </if>
+		<where>
+		    <include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test=" ( menuId != null and menuId !='')">
-				and exists ( select 1 from xm_menu im where  im.iteration_id=res.id and  im.menu_id=#{menuId}
-				<if test="productId != null and productId !='' ">  and  im.product_id=#{productId}    </if>
-				)
-			</if>
-
-			<if test="( productId != null and productId !='') and ( menuId == null or menuId =='') and (  projectId ==null or projectId=='' ) ">
-				and exists ( select 1 from xm_iteration_link ipl
-				where  ipl.iteration_id=res.id  and ipl.pro_id=#{productId} and ipl.ltype='1'
-				)
-			</if>
-			<if test=" projectId !=null and projectId!=''">
-				and exists( select 1 from xm_iteration_link ipl
-				where ipl.pro_id=#{projectId} and ipl.iteration_id =res.id and ipl.ltype='0'
-				)
-			</if>
-			<if test="compete !=null and compete!=''">
-				and ( res.admin_userid=#{compete}
-				or exists (select 1 from  xm_menu m where m.mm_userid=#{compete} and m.iteration_id=res.id)
-				)
-			</if>
-			<if test="key != null and key !='' ">   and res.iteration_name like #{key}    </if>
 		</where>
 		order by res.seq_no desc
 	</select>
@@ -108,7 +88,13 @@
 		where 
 			res.id = #{id}
 	</select>
-	
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmIteration">
+        select * from xm_iteration res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_iteration res
@@ -127,27 +113,27 @@
 		insert into xm_iteration(
 			<include refid="columns"/>
 		) values (
-		#{id},#{branchId},#{iterationName},#{startTime},#{endTime},#{onlineTime},#{pid},#{adminUserid},#{adminUsername},#{ctime},#{budgetCost},#{budgetWorkload},#{seqNo},#{istatus},#{cuserid},#{cusername},#{remark},#{iphase}
+		#{id},#{branchId},#{iterationName},#{startTime},#{endTime},#{onlineTime},#{pid},#{adminUserid},#{adminUsername},#{ctime},#{budgetCost},#{budgetWorkload},#{seqNo},#{istatus},#{cuserid},#{cusername},#{remark},#{iphase},#{isTpl},#{productId}
 		)
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmIteration">
-		delete from xm_iteration
+		delete from xm_iteration res
 		<where>  
-			1=2
+			<include refid="where"/>
 		</where>
 	</delete>
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmIteration">
-		delete from xm_iteration
+		delete from xm_iteration 
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmIteration">
-		update  xm_iteration
+		update  xm_iteration 
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -156,7 +142,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmIteration">
-		update  xm_iteration
+		update  xm_iteration 
 		<set>
 			<include refid="set"/>
 		</set>
@@ -171,7 +157,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_iteration
+   		update  xm_iteration 
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -179,20 +165,18 @@
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_iteration
+		delete from xm_iteration 
 			where
-			(id)
-			    in
+			(id) in
                 <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
-                    ( #{item.id}
-                    )
+                    (  #{item.id} )
                 </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,branch_id,iteration_name,start_time,end_time,online_time,pid,admin_userid,admin_username,ctime,budget_cost,budget_workload,seq_no,istatus,cuserid,cusername,remark,iphase
+		id,branch_id,iteration_name,start_time,end_time,online_time,pid,admin_userid,admin_username,ctime,budget_cost,budget_workload,seq_no,istatus,cuserid,cusername,remark,iphase,is_tpl,product_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -215,6 +199,8 @@
 		<if test="cusername != null and cusername != ''">      and res.cusername = #{cusername}     </if>
 		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
 		<if test="iphase != null and iphase != ''">      and res.iphase = #{iphase}     </if>
+		<if test="isTpl != null and isTpl != ''">      and res.is_tpl = #{isTpl}     </if>
+		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -234,7 +220,9 @@
 		cuserid = #{cuserid},
 		cusername = #{cusername},
 		remark = #{remark},
-		iphase = #{iphase}
+		iphase = #{iphase},
+		is_tpl = #{isTpl},
+		product_id = #{productId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
@@ -254,6 +242,8 @@
 		<if test="cusername != null and cusername != ''"> cusername = #{cusername},     </if>
 		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
 		<if test="iphase != null and iphase != ''"> iphase = #{iphase},     </if>
+		<if test="isTpl != null and isTpl != ''"> is_tpl = #{isTpl},     </if>
+		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -273,6 +263,8 @@
 			cuserid = #{item.cuserid},
 			cusername = #{item.cusername},
 			remark = #{item.remark},
-			iphase = #{item.iphase}
+			iphase = #{item.iphase},
+			is_tpl = #{item.isTpl},
+			product_id = #{item.productId}
 	</sql>
 </mapper>

@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmIteration所有属性名: <br>
- *	id,branchId,iterationName,startTime,endTime,onlineTime,pid,adminUserid,adminUsername,ctime,budgetCost,budgetWorkload,seqNo,istatus,cuserid,cusername,remark,iphase;<br>
- * 表 XM.xm_iteration 迭代定义的所有字段名: <br>
- *	id,branch_id,iteration_name,start_time,end_time,online_time,pid,admin_userid,admin_username,ctime,budget_cost,budget_workload,seq_no,istatus,cuserid,cusername,remark,iphase;<br>
+ *	id,branchId,iterationName,startTime,endTime,onlineTime,pid,adminUserid,adminUsername,ctime,budgetCost,budgetWorkload,seqNo,istatus,cuserid,cusername,remark,iphase,isTpl,productId;<br>
+ * 表 xm_iteration 迭代定义的所有字段名: <br>
+ *	id,branch_id,iteration_name,start_time,end_time,online_time,pid,admin_userid,admin_username,ctime,budget_cost,budget_workload,seq_no,istatus,cuserid,cusername,remark,iphase,is_tpl,product_id;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -38,7 +38,7 @@ public class XmIteration  implements java.io.Serializable {
 	@ApiModelProperty(notes="上线时间",allowEmptyValue=true,example="",allowableValues="")
 	Date onlineTime;
 	
-	@ApiModelProperty(notes="上级迭代",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="上级迭代-作废，不以树状结构",allowEmptyValue=true,example="",allowableValues="")
 	String pid;
 	
 	@ApiModelProperty(notes="负责人",allowEmptyValue=true,example="",allowableValues="")
@@ -71,8 +71,14 @@ public class XmIteration  implements java.io.Serializable {
 	@ApiModelProperty(notes="备注",allowEmptyValue=true,example="",allowableValues="")
 	String remark;
 	
-	@ApiModelProperty(notes="迭代计划:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成",allowEmptyValue=true,example="",allowableValues="")
 	String iphase;
+	
+	@ApiModelProperty(notes="是否为模板",allowEmptyValue=true,example="",allowableValues="")
+	String isTpl;
+	
+	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
+	String productId;
 
 	/**迭代编码**/
 	public XmIteration(String id) {
@@ -120,7 +126,7 @@ public class XmIteration  implements java.io.Serializable {
 		this.onlineTime = onlineTime;
 	}
 	/**
-	 * 上级迭代
+	 * 上级迭代-作废，不以树状结构
 	 **/
 	public void setPid(String pid) {
 		this.pid = pid;
@@ -186,10 +192,22 @@ public class XmIteration  implements java.io.Serializable {
 		this.remark = remark;
 	}
 	/**
-	 * 迭代计划:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成
+	 * 迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成
 	 **/
 	public void setIphase(String iphase) {
 		this.iphase = iphase;
+	}
+	/**
+	 * 是否为模板
+	 **/
+	public void setIsTpl(String isTpl) {
+		this.isTpl = isTpl;
+	}
+	/**
+	 * 产品编号
+	 **/
+	public void setProductId(String productId) {
+		this.productId = productId;
 	}
 	
 	/**
@@ -229,7 +247,7 @@ public class XmIteration  implements java.io.Serializable {
 		return this.onlineTime;
 	}
 	/**
-	 * 上级迭代
+	 * 上级迭代-作废，不以树状结构
 	 **/
 	public String getPid() {
 		return this.pid;
@@ -295,10 +313,22 @@ public class XmIteration  implements java.io.Serializable {
 		return this.remark;
 	}
 	/**
-	 * 迭代计划:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成
+	 * 迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成
 	 **/
 	public String getIphase() {
 		return this.iphase;
+	}
+	/**
+	 * 是否为模板
+	 **/
+	public String getIsTpl() {
+		return this.isTpl;
+	}
+	/**
+	 * 产品编号
+	 **/
+	public String getProductId() {
+		return this.productId;
 	}
 
 }
