@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * url编制采用rest风格,如对XM.xm_task_execuser xm_task_execuser的操作有增删改查,对应的url分别为:<br>
@@ -125,7 +126,7 @@ public class XmTaskExecuserController {
 			}
 
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改");
+				tips.setFailureMsg("该任务已经处于完工、结算状态，不允许再修改");
 				m.put("tips", tips);
 				return m;
 			}
@@ -171,35 +172,51 @@ public class XmTaskExecuserController {
 				m.put("tips", tips);
 				return m;
 			}
-			String projectId=xmTaskExecusers.get(0).getProjectId();
-			String taskId=xmTaskExecusers.get(0).getTaskId();
-			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(xmTaskExecusers.get(0).getTaskId()));
+			User user=LoginUtils.getCurrentUserInfo();
+			List<XmTaskExecuser> xmTaskExecuserListDb=this.xmTaskExecuserService.selectListByIds(xmTaskExecusers.stream().map(i->i.getId()).collect(Collectors.toList()));
+			if(xmTaskExecuserListDb==null || xmTaskExecuserListDb.size()==0){
+				return ResponseHelper.failed("data-0","执行人/候选人都已不存在");
+			}
+			String taskId=xmTaskExecuserListDb.get(0).getTaskId();
+			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(xmTaskExecuserListDb.get(0).getTaskId()));
 			if(xmTask==null ){
 				tips.setFailureMsg("任务已不存在");
 				m.put("tips", tips);
 				return m;
 			}
-			User user=LoginUtils.getCurrentUserInfo();
 			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
-
-			 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-			 List<String> noAllowUsers=new ArrayList<>();
-			 List<XmTaskExecuser> allowUsers=new ArrayList<>();
+			boolean isExe=user.getUserid().equals(xmTask.getExecutorUserid());
+			List<String> noAllowUsers=new ArrayList<>();
+			List<XmTaskExecuser> allowUsers=new ArrayList<>();
 			List<String> allowUserNames=new ArrayList<>();
-			for (XmTaskExecuser xmTaskExecuser : xmTaskExecusers) {
+			List<String> status5Names=new ArrayList<>();
+			List<String> flowState1Names=new ArrayList<>();
+			boolean isPm=groupService.checkUserIsPmOrAssByPtype(user.getUserid(),xmTask.getPtype(),xmTask.getProjectId(),xmTask.getProductId());
+
+			for (XmTaskExecuser xmTaskExecuser : xmTaskExecuserListDb) {
 				if(!taskId.equals(xmTaskExecuser.getTaskId())){
 					tips.setFailureMsg("批量操作只允许在同一个任务进行");
 					break;
 				}
+				if(("3".equals(xmTaskExecuser.getStatus())||"5".equals(xmTaskExecuser.getStatus()))&&"1".equals(xmTask.getTaskClass())){
+					status5Names.add(xmTaskExecuser.getUsername());
+					continue;
+				}
+				if("1".equals(xmTaskExecuser.getBizFlowState())){
+					flowState1Names.add(xmTaskExecuser.getUsername());
+					continue;
+				}
  				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {//只有组长、任务责任人可以请别人请离开任务
-					boolean isHead= groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
-					if(isHead || isTaskCreater ) {
+ 					if(isTaskCreater||isExe||isPm){
 						allowUsers.add(xmTaskExecuser);
 						allowUserNames.add(xmTaskExecuser.getUsername());
-					}else {
-						noAllowUsers.add(xmTaskExecuser.getUsername());
-						continue;
-					}
+					}else{
+						Tips tips2=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskExecuser.getUserid(),xmTask.getPtype(),xmTask.getProductId(),xmTask.getProjectId());
+						if(tips2.isOk()==false){
+							noAllowUsers.add(xmTaskExecuser.getUsername());
+							continue;
+						}
+ 					}
 				}else {//自己离开任务，可以的
 					allowUsers.add(xmTaskExecuser);
 					allowUserNames.add(xmTaskExecuser.getUsername());
@@ -207,20 +224,31 @@ public class XmTaskExecuserController {
 			} 
 			if(tips.isOk() && allowUsers.size()>0) {
 				xmTaskExecuserService.batchLeave(allowUsers);
-				if(noAllowUsers.size()>0){
-					String usernamestr=StringUtils.arrayToDelimitedString(noAllowUsers.toArray(), "、");
-					String allowUserNamesStr=StringUtils.arrayToDelimitedString(allowUserNames.toArray(), "、");
-					tips.setOkMsg("成功将【"+allowUserNamesStr+"】请离任务，另外您无权请【"+usernamestr+"】离开任务,只有任务责任人、组长可以请执行人离开任务");
-				}else{
-					String allowUserNamesStr=StringUtils.arrayToDelimitedString(allowUserNames.toArray(), "、");
-					tips.setOkMsg("成功将【"+allowUserNamesStr+"】请离任务");
-				}
 
-			}else {
-				if(tips.isOk()){
-					String usernamestr=StringUtils.arrayToDelimitedString(noAllowUsers.toArray(), "、");
-					tips.setFailureMsg("您无权请【"+usernamestr+"】离开任务,只有任务责任人、组长可以请执行人离开任务");
-				}
+			}
+			List<String> msgs=new ArrayList<>();
+			if(noAllowUsers.size()>0){
+				String allowUserNamesStr=StringUtils.arrayToDelimitedString(allowUserNames.toArray(), "、");
+				msgs.add("成功将【"+allowUserNamesStr+"】请离任务;");
+			}
+			if(noAllowUsers.size()>0){
+				String allowUserNamesStr=StringUtils.arrayToDelimitedString(noAllowUsers.toArray(), "、");
+				msgs.add("以下人员您无权操作，【"+allowUserNamesStr+"】;");
+			}
+			if(status5Names.size()>0){
+				msgs.add("以下人员为待结算状态，暂时不能离开，【"+status5Names.stream().collect(Collectors.joining(","))+"】;");
+			}
+			if(flowState1Names.size()>0){
+				msgs.add("以下人员为审核中状态，暂时不能离开，【"+flowState1Names.stream().collect(Collectors.joining(","))+"】;");
+			}
+			if(allowUserNames.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
+			}
+
+			if(allowUserNames.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
+			}else{
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}
 		}catch (BizException e) {
 			tips=e.getTips();
@@ -255,7 +283,7 @@ public class XmTaskExecuserController {
 			}
 
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改");
+				tips.setFailureMsg("该任务已经处于完工、结算状态，不允许再修改");
 				m.put("tips", tips);
 				return m;
 			}
@@ -322,7 +350,7 @@ public class XmTaskExecuserController {
 				return m;
 			}
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改");
+				tips.setFailureMsg("该任务已经处于完工、结算状态，不允许再修改");
 				m.put("tips", tips);
 				return m;
 			}
@@ -369,7 +397,7 @@ public class XmTaskExecuserController {
 			}
 
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改");
+				tips.setFailureMsg("该任务已经处于完工、结算状态，不允许再修改");
 				m.put("tips", tips);
 				return m;
 			}
@@ -413,10 +441,9 @@ public class XmTaskExecuserController {
 				tips.setFailureMsg("任务已不存在");
 				m.put("tips", tips);
 				return m;
-			}
-
+			} 
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改");
+				tips.setFailureMsg("该任务已经处于完工、结算状态，不需要提交测试");
 				m.put("tips", tips);
 				return m;
 			}
@@ -465,6 +492,9 @@ public class XmTaskExecuserController {
 				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改报价");
 				m.put("tips", tips);
 				return m;
+			}
+			if(!"0".equals(xmTask.getTaskState())){
+				return ResponseHelper.failed("taskState-not-0","当前任务状态不是候选、待领取状态，不能修改报价信息");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
