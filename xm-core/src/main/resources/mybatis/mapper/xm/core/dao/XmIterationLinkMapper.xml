@@ -16,16 +16,16 @@
 
 
 	<select id="listWithProjectInfo" parameterType="HashMap" resultType="HashMap">
-		select res.*,p.name as project_name,p.id as project_id,i.iteration_name,i.seq_no from xm_iteration_link res inner join xm_project p on res.pro_id=p.id
-		inner join xm_iteration i on i.id=res.iteration_id
+		select res.*,p.name as project_name,p.id as project_id from xm_iteration res inner join xm_product_project_link ppl on res.product_id=ppl.product_id
+ 		inner join xm_project p on p.id=ppl.project_id
 		<where>
 			<include refid="whereForMap"/>
 			<include refid="where"/>
 		</where>
-		order by i.seq_no desc
+		order by res.seq_no desc
 	</select>
 	<select id="listWithProductInfo" parameterType="HashMap" resultType="HashMap">
-		select res.*,p.product_name,p.id as product_id,i.iteration_name,i.seq_no from xm_iteration_link res inner join xm_product p on res.pro_id=p.id
+		select res.*,p.product_name,p.id as product_id,i.iteration_name,i.seq_no from xm_iteration i inner join xm_product p on res.pro_id=p.id
 		inner join xm_iteration i on i.id=res.iteration_id
 		<where>
 			<include refid="whereForMap"/>

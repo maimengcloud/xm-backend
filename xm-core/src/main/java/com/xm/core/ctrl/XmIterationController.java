@@ -177,30 +177,9 @@ public class XmIterationController {
 			xmIteration.setIstatus("0");
 			xmIteration.setAdminUserid(user.getUserid());
 			xmIteration.setAdminUsername(user.getUsername());
-			if(xmIteration.getLinks()!=null && xmIteration.getLinks().size()>0){
-				for (XmIterationLink link : xmIteration.getLinks()) {
-					link.setIterationId(xmIteration.getId());
-					link.setCtime(new Date());
-					link.setLinkStatus("1");
-					link.setCuserid(user.getUserid());
-					link.setCusername(user.getUsername());
-					if(!StringUtils.hasText(link.getLtype())){
-						return ResponseHelper.failed("ltype-0","关联类型不能为空");
-					}
-
-					if("1".equals(link.getLtype())){
-						if(!xmGroupService.checkUserIsProductAdm(link.getProId(),user.getUserid())){
-							return ResponseHelper.failed("no-product-qx","您不是产品管理人员，无权将该产品与迭代关联");
-						};
-					}else if("0".equals(link.getLtype())){
-						if(!xmGroupService.checkUserIsProjectAdm(link.getProId(),user.getUserid())){
-							return ResponseHelper.failed("no-project-qx","您不是项目管理人员，无权将该项目与迭代关联");
-						};
-					}else{
-						return ResponseHelper.failed("ltype-not-0|1","请上送正确的关联类型");
-					}
-				}
-			}
+			if(!xmGroupService.checkUserIsPmOrAssByPtype(user.getUserid(),"1",null,xmIteration.getProductId() )){
+				return ResponseHelper.failed("no-product-qx","您不是产品管理人员，无权将该产品与迭代关联");
+			};
 			xmIterationService.addIteration(xmIteration);
 			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-新增","新增迭代"+xmIteration.getIterationName());
 			m.put("data",xmIteration);

@@ -18,8 +18,8 @@
 			)
 		</if>
 		<if test=" iterationId !=null and iterationId!=''">
-			and exists( select 1 from  xm_iteration_link ppl
-			where ppl.iteration_id=#{iterationId}  and ppl.product_id=res.id
+			and exists( select 1 from  xm_iteration  ppl
+			where ppl.id=#{iterationId}  and ppl.product_id=res.id
 			)
 		</if>
 		<if test="compete !=null and compete!=''">
@@ -50,7 +50,7 @@
 				)
 			</if>
 			<if test="iterationId!=null and iterationId!=''">
-				and exists( select 1 from xm_iteration_link ipl where ipl.pro_id =res.id and ipl.iteration_id=#{iterationId} )
+				and exists( select 1 from xm_iteration  ipl where ipl.product_id =res.id and ipl.id=#{iterationId} )
 			</if>
 			<if test="compete !=null and compete!=''">
 				and ( exists ( select 1 from xm_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )

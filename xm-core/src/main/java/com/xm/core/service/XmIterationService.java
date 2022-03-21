@@ -49,7 +49,10 @@ public class XmIterationService extends BaseService {
 	@Transactional
     public void addIteration(XmIterationVo xmIteration) {
 		super.insert(xmIteration);
-		this.xmIterationLinkService.batchInsert(xmIteration.getLinks());
+		if(xmIteration.getLinks()!=null && xmIteration.getLinks().size()>0){
+
+			this.xmIterationLinkService.batchInsert(xmIteration.getLinks());
+		}
 
     }
 

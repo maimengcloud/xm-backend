@@ -55,8 +55,8 @@
 			)
 		</if>
 		<if test="iterationId!=null and iterationId!=''">
-			and exists( select 1 from xm_iteration_link ipl
-			where ipl.pro_id =res.id and ipl.iteration_id=#{iterationId} and ipl.ltype='0'
+			and exists( select 1 from xm_iteration ipl inner join xm_product_project_link l on ipl.product_id=l.product_id
+			where l.project_id =res.id and ipl.id=#{iterationId}
 			)
 		</if>
 		<if test="key != null and key !='' ">  and res.name like #{key}  </if>
