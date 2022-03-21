@@ -140,7 +140,7 @@ public class XmTaskExecuserService extends BaseService {
 			XmTaskExecuser xmTaskExecuser2=new XmTaskExecuser();
 			xmTaskExecuser2.setId(xmTaskExecuser.getId());
 			xmTaskExecuser2.setStatus("7");
-			this.updateSomeFieldByPk(xmTaskExecuser2);   
+			this.updateSomeFieldByPk(xmTaskExecuser2);
 			projectId=xmTaskExecuser.getProjectId();
 			taskId=xmTaskExecuser.getTaskId(); 
 			usernames.add(xmTaskExecuser.getUsername());

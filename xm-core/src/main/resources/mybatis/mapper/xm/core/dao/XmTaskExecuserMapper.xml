@@ -118,7 +118,8 @@
 		t.executor_userid = e1.executor_userid,
 		t.executor_username = e1.executor_username,
 		t.act_cost=e1.act_cost,
-		t.act_workload=e1.act_workload
+		t.act_workload=e1.act_workload,
+		t.task_state=case when el.executor_userid is null and t.task_state='1' then '0' when el.executor_userid is not null and t.task_state='0' then '1' else t.task_state
 		WHERE t.id = #{taskId}
 	</update>
 
