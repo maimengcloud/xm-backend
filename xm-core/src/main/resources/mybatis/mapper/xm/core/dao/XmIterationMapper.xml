@@ -27,15 +27,9 @@
 			<if test="productId != null and productId !='' ">  and  im.product_id=#{productId}    </if>
 			)
 		</if>
-
-		<if test="( productId != null and productId !='') and ( menuId == null or menuId =='') and (  projectId ==null or projectId=='' ) ">
-			and exists ( select 1 from xm_iteration_link ipl
-			where  ipl.iteration_id=res.id  and ipl.pro_id=#{productId}
-			)
-		</if>
 		<if test=" projectId !=null and projectId!=''">
-			and exists( select 1 from xm_iteration_link ipl
-			where ipl.pro_id=#{projectId} and ipl.iteration_id =res.id
+			and exists( select 1 from  xm_product_project_link ppl
+			where ppl.project_id=#{projectId} and ppl.product_id =res.product_id
 			)
 		</if>
 		<if test="compete !=null and compete!=''">

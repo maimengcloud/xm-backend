@@ -16,7 +16,7 @@
 			exists ( select 1 from xm_group_user gu where gu.group_id=res.id and  gu.username like concat('%',#{groupUsernameKey},'%'))
 		</if>
 		<if test="orCrowBranchId!=null and orCrowBranchId!=''"> and (res.branch_id=#{branchId} or res.crow_branch_id=#{orCrowBranchId})</if>
-		<if test="iterationId!=null and iterationId!=''"> and exists ( select 1 from xm_iteration_link ipl where (ipl.pro_id = res.product_id and ipl.ltype='1') or (ipl.pro_id=res.project_id and ipl.ltype='0'))</if>
+		<if test="iterationId!=null and iterationId!=''"> and exists ( select 1 from xm_iteration ipl inner join xm_product_project_link ppl on ipl.product_id=ppl.product_id  where (ipl.product_id = res.product_id or ppl.project_id=res.project_id)</if>
     </sql>
 	<delete id="deleteByProjectId" parameterType="com.xm.core.entity.XmGroup">
 		delete from xm_group where project_id = #{projectId}
