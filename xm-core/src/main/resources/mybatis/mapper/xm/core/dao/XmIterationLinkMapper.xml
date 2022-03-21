@@ -25,13 +25,13 @@
 		order by res.seq_no desc
 	</select>
 	<select id="listWithProductInfo" parameterType="HashMap" resultType="HashMap">
-		select res.*,p.product_name,p.id as product_id,i.iteration_name,i.seq_no from xm_iteration i inner join xm_product p on res.pro_id=p.id
-		inner join xm_iteration i on i.id=res.iteration_id
+		select res.*,p.product_name,p.id as product_id from   xm_product p
+		inner join xm_iteration res on res.product_id=p.id
 		<where>
 			<include refid="whereForMap"/>
 			<include refid="where"/>
 		</where>
-		order by i.seq_no desc
+		order by res.seq_no desc
 	</select>
 	<!--结束 自定义sql函数区域-->
 	
