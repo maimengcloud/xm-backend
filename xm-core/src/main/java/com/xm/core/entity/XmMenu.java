@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId,iterationId,calcType,mactWorkload,mactAmount,mactRate,source,proposerId,proposerName,dlvl,dtype,priority;<br>
+ *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId,iterationId,calcType,mactWorkload,mactAmount,mactRate,source,proposerId,proposerName,dlvl,dtype,priority,dclass;<br>
  * 表 xm_menu 功能表的所有字段名: <br>
- *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority;<br>
+ *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -71,7 +71,7 @@ public class XmMenu  implements java.io.Serializable {
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
 	Date ctime;
 	
-	@ApiModelProperty(notes="节点类型0-需求，1-需求池。需求池下建需求或者需求池，需求下不允许建立任何子节点",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="节点类型0-叶子节点，1非叶子节点",allowEmptyValue=true,example="",allowableValues="")
 	String ntype;
 	
 	@ApiModelProperty(notes="开始版本",allowEmptyValue=true,example="",allowableValues="")
@@ -145,6 +145,9 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="优先级;0-紧急重要；1-紧急不重要；2-不紧急重要；3-不紧急不重要",allowEmptyValue=true,example="",allowableValues="")
 	String priority;
+	
+	@ApiModelProperty(notes="需求分类1-史诗，2-特性，3-用户故事，4-任务，5-缺陷",allowEmptyValue=true,example="",allowableValues="")
+	String dclass;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -258,7 +261,7 @@ public class XmMenu  implements java.io.Serializable {
 		this.ctime = ctime;
 	}
 	/**
-	 * 节点类型0-需求，1-需求池。需求池下建需求或者需求池，需求下不允许建立任何子节点
+	 * 节点类型0-叶子节点，1非叶子节点
 	 **/
 	public void setNtype(String ntype) {
 		this.ntype = ntype;
@@ -407,6 +410,12 @@ public class XmMenu  implements java.io.Serializable {
 	public void setPriority(String priority) {
 		this.priority = priority;
 	}
+	/**
+	 * 需求分类1-史诗，2-特性，3-用户故事，4-任务，5-缺陷
+	 **/
+	public void setDclass(String dclass) {
+		this.dclass = dclass;
+	}
 	
 	/**
 	 * 功能编号
@@ -511,7 +520,7 @@ public class XmMenu  implements java.io.Serializable {
 		return this.ctime;
 	}
 	/**
-	 * 节点类型0-需求，1-需求池。需求池下建需求或者需求池，需求下不允许建立任何子节点
+	 * 节点类型0-叶子节点，1非叶子节点
 	 **/
 	public String getNtype() {
 		return this.ntype;
@@ -659,6 +668,12 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public String getPriority() {
 		return this.priority;
+	}
+	/**
+	 * 需求分类1-史诗，2-特性，3-用户故事，4-任务，5-缺陷
+	 **/
+	public String getDclass() {
+		return this.dclass;
 	}
 
 }

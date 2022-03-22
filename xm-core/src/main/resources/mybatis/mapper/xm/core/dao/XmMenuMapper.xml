@@ -185,7 +185,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select (select sum(1) from xm_menu m where m.pmenu_id=res.menu_id ) as children_cnt,res.*,i.iteration_name from xm_menu res left join xm_iteration i on res.iteration_id=i.id
+		select * from xm_menu res
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
@@ -206,6 +206,13 @@
 		where 
 			res.menu_id = #{menuId}
 	</select>
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmMenu">
+        select * from xm_menu res
+        where  (res.menu_id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_menu res
@@ -224,7 +231,7 @@
 		insert into xm_menu(
 			<include refid="columns"/>
 		) values (
-		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{budgetHours},#{budgetStaffNu},#{budgetWorkload},#{budgetAmount},#{phaseId},#{iterationId},#{calcType},#{mactWorkload},#{mactAmount},#{mactRate},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority}
+		#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{budgetHours},#{budgetStaffNu},#{budgetWorkload},#{budgetAmount},#{phaseId},#{iterationId},#{calcType},#{mactWorkload},#{mactAmount},#{mactRate},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority},#{dclass}
 		)
 	</insert>
 	
@@ -287,7 +294,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority
+		menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -334,6 +341,7 @@
 		<if test="dlvl != null and dlvl != ''">      and res.dlvl = #{dlvl}     </if>
 		<if test="dtype != null and dtype != ''">      and res.dtype = #{dtype}     </if>
 		<if test="priority != null and priority != ''">      and res.priority = #{priority}     </if>
+		<if test="dclass != null and dclass != ''">      and res.dclass = #{dclass}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -377,7 +385,8 @@
 		proposer_name = #{proposerName},
 		dlvl = #{dlvl},
 		dtype = #{dtype},
-		priority = #{priority}
+		priority = #{priority},
+		dclass = #{dclass}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="menuName != null and menuName != ''"> menu_name = #{menuName},     </if>
@@ -421,6 +430,7 @@
 		<if test="dlvl != null and dlvl != ''"> dlvl = #{dlvl},     </if>
 		<if test="dtype != null and dtype != ''"> dtype = #{dtype},     </if>
 		<if test="priority != null and priority != ''"> priority = #{priority},     </if>
+		<if test="dclass != null and dclass != ''"> dclass = #{dclass},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -464,6 +474,7 @@
 			proposer_name = #{item.proposerName},
 			dlvl = #{item.dlvl},
 			dtype = #{item.dtype},
-			priority = #{item.priority}
+			priority = #{item.priority},
+			dclass = #{item.dclass}
 	</sql>
 </mapper>
