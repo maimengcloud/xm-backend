@@ -121,7 +121,7 @@
 	</delete>
 
 	<update id="batchUnIteration" parameterType="com.xm.core.vo.XmIterationMenuVo">
-		update xm_menu res set res.iteration_id = null where res.menu_id in
+		update xm_menu res set res.iteration_id = null,res.iteration_name = null where res.menu_id in
 		<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
 		</foreach>
@@ -130,7 +130,7 @@
 		</if>
 	</update>
 	<update id="batchIteration" parameterType="com.xm.core.vo.XmIterationMenuVo">
-		update xm_menu res set res.iteration_id = #{iterationId} where res.menu_id in
+		update xm_menu res set res.iteration_id = #{iterationId},res.iteration_name=#{iterationName} where res.menu_id in
 		<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
 		</foreach>

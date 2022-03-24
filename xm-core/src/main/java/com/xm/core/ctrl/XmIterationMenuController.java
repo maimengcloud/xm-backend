@@ -3,7 +3,9 @@ package com.xm.core.ctrl;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.ResponseHelper;
+import com.xm.core.entity.XmIteration;
 import com.xm.core.entity.XmMenu;
+import com.xm.core.service.XmIterationService;
 import com.xm.core.service.XmMenuService;
 import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmRecordService;
@@ -44,6 +46,9 @@ public class XmIterationMenuController {
 
 	@Autowired
 	XmMenuService xmMenuService;
+
+	@Autowired
+	XmIterationService xmIterationService;
 
 
 	@Autowired
@@ -205,7 +210,15 @@ public class XmIterationMenuController {
 			}
 			List<String> msgs=new ArrayList<>();
 			if(canAdds.size()>0){
+				XmIteration xmIteration=xmIterationService.selectOneObject(new XmIteration(xmIterationMenus.getIterationId()));
+				if(xmIteration==null){
+					return ResponseHelper.failed("iteration-0","迭代不存在");
+				}
 				msgs.add("成功将"+canAdds.size()+"个需求加入迭代");
+				if("1".equals(xmIteration.getIstatus())||"7".equals(xmIteration.getIphase())){
+					return ResponseHelper.failed("istatus-1","迭代已关闭");
+				}
+				xmIterationMenus.setIterationName(xmIteration.getIterationName());
 				xmIterationMenus.setMenuIds(canAdds.stream().map(i->i.getMenuId()).collect(Collectors.toList()));
 				xmMenuService.batchIteration(xmIterationMenus);
 				xmRecordService.addXmMenuRecord(canAdds,"产品-迭代-需求加入迭代","将需求加入迭代.");

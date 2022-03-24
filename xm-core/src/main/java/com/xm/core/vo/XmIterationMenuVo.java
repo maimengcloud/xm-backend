@@ -6,6 +6,8 @@ public class XmIterationMenuVo {
 
     String iterationId;
 
+    String iterationName;
+
 
     List<String> menuIds;
 
@@ -23,5 +25,13 @@ public class XmIterationMenuVo {
 
     public void setMenuIds(List<String> menuIds) {
         this.menuIds = menuIds;
+    }
+
+    public String getIterationName() {
+        return iterationName;
+    }
+
+    public void setIterationName(String iterationName) {
+        this.iterationName = iterationName;
     }
 }
