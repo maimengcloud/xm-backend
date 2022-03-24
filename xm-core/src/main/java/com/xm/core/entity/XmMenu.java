@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId,iterationId,calcType,mactWorkload,mactAmount,mactRate,source,proposerId,proposerName,dlvl,dtype,priority,dclass;<br>
+ *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId,iterationId,calcType,mactWorkload,mactAmount,mactRate,source,proposerId,proposerName,dlvl,dtype,priority,dclass,iterationName;<br>
  * 表 xm_menu 功能表的所有字段名: <br>
- *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass;<br>
+ *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -148,6 +148,9 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="需求分类1-史诗，2-特性，3-用户故事，4-任务，5-缺陷",allowEmptyValue=true,example="",allowableValues="")
 	String dclass;
+	
+	@ApiModelProperty(notes="迭代名称",allowEmptyValue=true,example="",allowableValues="")
+	String iterationName;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -416,6 +419,12 @@ public class XmMenu  implements java.io.Serializable {
 	public void setDclass(String dclass) {
 		this.dclass = dclass;
 	}
+	/**
+	 * 迭代名称
+	 **/
+	public void setIterationName(String iterationName) {
+		this.iterationName = iterationName;
+	}
 	
 	/**
 	 * 功能编号
@@ -674,6 +683,12 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public String getDclass() {
 		return this.dclass;
+	}
+	/**
+	 * 迭代名称
+	 **/
+	public String getIterationName() {
+		return this.iterationName;
 	}
 
 }
