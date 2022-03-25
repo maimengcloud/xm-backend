@@ -27,9 +27,9 @@
 			<if test="productId != null and productId !='' ">  and  im.product_id=#{productId}    </if>
 			)
 		</if>
-		<if test=" projectId !=null and projectId!=''">
+		<if test=" linkProjectId !=null and linkProjectId!=''">
 			and exists( select 1 from  xm_product_project_link ppl
-			where ppl.project_id=#{projectId} and ppl.product_id =res.product_id
+			where ppl.project_id=#{linkProjectId} and ppl.product_id =res.product_id
 			)
 		</if>
 		<if test="compete !=null and compete!=''">

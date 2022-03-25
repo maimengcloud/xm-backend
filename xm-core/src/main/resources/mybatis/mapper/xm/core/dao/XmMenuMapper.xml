@@ -172,6 +172,18 @@
 		res.lvl= LENGTH(replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.menu_id,',')))-LENGTH(REPLACE(replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.menu_id,',')),',',''))-1
 
 	</update>
+
+
+	<update id="editSomeFields" parameterType="HashMap">
+		update  xm_menu
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where menu_id in
+		<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

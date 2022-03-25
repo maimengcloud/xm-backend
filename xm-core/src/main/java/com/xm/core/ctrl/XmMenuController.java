@@ -3,6 +3,7 @@ package com.xm.core.ctrl;
 import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
@@ -372,8 +373,57 @@ public class XmMenuController {
 		m.put("tips", tips);
 		return m;
 	}
-	
-	
+
+	/***/
+	@ApiOperation( value = "根据主键修改一条项目菜单表信息",notes="editXmMenu")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@HasQx(value = "xm_core_xmMenu_editSomeFields",name = "修改用户需求中的某些字段",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
+	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmMenuMap) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新一条数据");
+		try{
+			List<String> menuIds= (List<String>) xmMenuMap.get("menuIds");
+
+			if(menuIds==null || menuIds.size()==0){
+				ResponseHelper.failed("menuIds-0","menuIds不能为空");
+			}
+			XmMenu xmMenu= BaseUtils.fromMap(xmMenuMap,XmMenu.class);
+			List<XmMenu> xmMenusDb=xmMenuService.selectListByIds(menuIds);
+			if(xmMenusDb==null ||xmMenusDb.size()==0){
+				ResponseHelper.failed("menus-0","该需求已不存在");
+			}
+			List<XmMenu> can=new ArrayList<>();
+			List<XmMenu> no=new ArrayList<>();
+			groupService.calcCanOpMenus(xmMenusDb,can,no);
+			if(can.size()<=0){
+				return ResponseHelper.failed("noqx","您无权修改选中的需求。");
+			}
+			Set<String> fields=new HashSet<>();
+			fields.add("childrenCnt");
+			fields.add("ntype");
+			fields.add("pidPaths");
+			for (String fieldName : xmMenuMap.keySet()) {
+				if(fields.contains(fieldName)){
+					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+				}
+			}
+			xmMenuService.editSomeFields(xmMenuMap);
+			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"修改产品需求","修改产品需求"+xmMenu.getMenuName(),"", JSON.toJSONString(xmMenu));
+
+			//m.put("data",xmMenu);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 
 	
 	/***/

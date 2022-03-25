@@ -12,15 +12,13 @@
              </foreach>
          </if>
 		<if test="key != null and key !='' ">   and res.product_name like #{key}    </if>
-		<if test=" projectId !=null and projectId!=''">
+		<if test=" linkProjectId !=null and linkProjectId!=''">
 			and exists( select 1 from  xm_product_project_link ppl
-			where ppl.project_id=#{projectId}  and ppl.product_id=res.id
+			where ppl.project_id=#{linkProjectId}  and ppl.product_id=res.id
 			)
 		</if>
-		<if test=" iterationId !=null and iterationId!=''">
-			and exists( select 1 from  xm_iteration  ppl
-			where ppl.id=#{iterationId}  and ppl.product_id=res.id
-			)
+		<if test=" linkIterationId !=null and linkIterationId!=''">
+			and exists( select 1 from  xm_iteration  ppl where   ppl.product_id=res.id and ppl.id=#{linkIterationId} )
 		</if>
 		<if test="compete !=null and compete!=''">
 			and ( exists ( select 1 from xm_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
@@ -29,6 +27,9 @@
 			)
 		</if>
 		<if test="ctimeStart!=null and ctimeEnd!=null ">and ctime between #{ctimeStart} and #{ctimeEnd}</if>
+		<if test="isTpl!=null and isTpl=='1'">
+			and (res.branch_id in( #{platformBranchId},#{myBranchId}) and res.is_tpl='1')
+		</if>
 		<if test="del==null or del==''">
 			and res.del!="1"
 		</if>
@@ -37,36 +38,8 @@
 	<select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
 		select res.*,s.* from xm_product res left join xm_product_state s on res.id=s.product_id
 		<where>
-			<if test="ids != null">  and
-				id in
-				<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-					#{item}
-				</foreach>
-			</if>
+			<include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test=" projectId !=null and projectId!=''">
-				and exists( select 1 from  xm_product_project_link ppl
-				where ppl.project_id=#{projectId}  and ppl.product_id=res.id
-				)
-			</if>
-			<if test="iterationId!=null and iterationId!=''">
-				and exists( select 1 from xm_iteration  ipl where ipl.product_id =res.id and ipl.id=#{iterationId} )
-			</if>
-			<if test="compete !=null and compete!=''">
-				and ( exists ( select 1 from xm_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
-				or res.pm_userid=#{compete}
-				or exists ( select 1 from xm_menu m where m.mm_userid=#{compete} and m.product_id=res.id)
-				)
-			</if>
-			<if test="key != null and key !='' ">   and res.product_name like #{key}    </if>
-			<if test="ctimeStart!=null and ctimeEnd!=null ">and ctime between #{ctimeStart} and #{ctimeEnd}</if>
-
-			<if test="isTpl!=null and isTpl=='1'">
-				and (res.branch_id in( #{platformBranchId},#{myBranchId}) and res.is_tpl='1')
-			</if>
-			<if test="del==null or del==''">
-				and res.del!="1"
-			</if>
 		</where>
 	</select>
 

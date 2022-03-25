@@ -301,5 +301,9 @@ public class XmMenuService extends BaseService {
 		super.update("batchChangeParent",map("menuIds",xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()),"pmenuId",parentMenu.getMenuId(),"parentPidPaths",parentMenu.getPidPaths()));
 		xmMenuStateService.sumParents(parentMenu);
 	}
+
+	public void editSomeFields(Map<String, Object> xmMenuMap) {
+		super.update("editSomeFields",xmMenuMap);
+	}
 }
 
