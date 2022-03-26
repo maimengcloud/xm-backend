@@ -76,6 +76,16 @@
 		where biz_proc_inst_id=#{procInstId}
 	</delete>
 
+	<update id="editSomeFields" parameterType="HashMap">
+		update  xm_question
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id in
+		<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

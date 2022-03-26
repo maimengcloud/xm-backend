@@ -1,14 +1,18 @@
 package com.xm.core.ctrl;
 
+import com.alibaba.fastjson.JSON;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmQuestion;
 import com.xm.core.service.XmQuestionService;
 import com.xm.core.service.push.XmPushMsgService;
@@ -20,9 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * url编制采用rest风格,如对XM.xm_question xm_question的操作有增删改查,对应的url分别为:<br>
@@ -227,8 +229,47 @@ public class XmQuestionController {
 		m.put("tips", tips);
 		return m;
 	}
-	
-	
+
+
+	/***/
+	@ApiOperation( value = "根据主键修改一条项目菜单表信息",notes="editSomeFields")
+	@ApiResponses({
+			@ApiResponse(code = 200,response= XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@HasQx(value = "xm_core_xmQuestion_editSomeFields",name = "修改bug的某些字段",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
+	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmQuestionMap) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新一条数据");
+		try{
+			List<String> ids= (List<String>) xmQuestionMap.get("ids");
+
+			if(ids==null || ids.size()==0){
+				ResponseHelper.failed("ids-0","ids不能为空");
+			}
+ 			List<XmQuestion> xmQuestionsDb=xmQuestionService.selectListByIds(ids);
+			if(xmQuestionsDb==null ||xmQuestionsDb.size()==0){
+				ResponseHelper.failed("bugs-0","该bug已不存在");
+			}
+			Set<String> fields=new HashSet<>();
+			for (String fieldName : xmQuestionMap.keySet()) {
+				if(fields.contains(fieldName)){
+					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+				}
+			}
+			xmQuestionService.editSomeFields(xmQuestionMap);
+
+			//m.put("data",xmMenu);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 
 	
 	/**
@@ -293,4 +334,6 @@ public class XmQuestionController {
 		m.put("tips", tips);
 		return m;
 	}
+
+
 }
