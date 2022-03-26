@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmQuestion所有属性名: <br>
- *	id,name,projectId,projectName,caseId,caseName,endTime,askUserid,askUsername,handlerUserid,handlerUsername,priority,solution,description,createUserid,createUsername,createTime,bugStatus,bizProcInstId,bizFlowState,menuId,menuName,planWorkload,planCostAmount,totalActWorkload,totalActCostAmount,expectResult,opStep,currResult,refRequire,bugSeverity,bugType,tagIds,tagNames,urls,ltime,qtype,taskId,taskName,iterationId,iterationName,caseExecId,lremark,productId;<br>
+ *	id,name,projectId,projectName,caseId,caseName,endTime,askUserid,askUsername,handlerUserid,handlerUsername,priority,solution,description,createUserid,createUsername,createTime,bugStatus,bizProcInstId,bizFlowState,menuId,menuName,planWorkload,planCostAmount,totalActWorkload,totalActCostAmount,expectResult,opStep,currResult,refRequire,bugSeverity,bugType,tagIds,tagNames,urls,ltime,qtype,taskId,taskName,iterationId,iterationName,caseExecId,lremark,productId,repRate,verNum,vpath,pverNum;<br>
  * 表 xm_question xm_question的所有字段名: <br>
- *	id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,plan_workload,plan_cost_amount,total_act_workload,total_act_cost_amount,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,task_id,task_name,iteration_id,iteration_name,case_exec_id,lremark,product_id;<br>
+ *	id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,plan_workload,plan_cost_amount,total_act_workload,total_act_cost_amount,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,task_id,task_name,iteration_id,iteration_name,case_exec_id,lremark,product_id,rep_rate,ver_num,vpath,pver_num;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -71,7 +71,7 @@ public class XmQuestion  implements java.io.Serializable {
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
 	Date createTime;
 	
-	@ApiModelProperty(notes="create创建（active激活）–confirm确认（confirmed已确认）–solve解决（resolved已解决）–close关闭（closed已关闭）",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="bug状态1|新提交2|处理中3|已修复4|重新打开5|已发布6|已拒绝7|挂起",allowEmptyValue=true,example="",allowableValues="")
 	String bugStatus;
 	
 	@ApiModelProperty(notes="当前流程实例编号",allowEmptyValue=true,example="",allowableValues="")
@@ -151,6 +151,18 @@ public class XmQuestion  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
 	String productId;
+	
+	@ApiModelProperty(notes="复现频率1-必现，2-大概率复现，3-小概率复现，4-仅出现一次",allowEmptyValue=true,example="",allowableValues="")
+	String repRate;
+	
+	@ApiModelProperty(notes="版本号",allowEmptyValue=true,example="",allowableValues="")
+	String verNum;
+	
+	@ApiModelProperty(notes="访问路径/斜杠分割",allowEmptyValue=true,example="",allowableValues="")
+	String vpath;
+	
+	@ApiModelProperty(notes="发布版本",allowEmptyValue=true,example="",allowableValues="")
+	String pverNum;
 
 	/**问题编号**/
 	public XmQuestion(String id) {
@@ -264,7 +276,7 @@ public class XmQuestion  implements java.io.Serializable {
 		this.createTime = createTime;
 	}
 	/**
-	 * create创建（active激活）–confirm确认（confirmed已确认）–solve解决（resolved已解决）–close关闭（closed已关闭）
+	 * bug状态1|新提交2|处理中3|已修复4|重新打开5|已发布6|已拒绝7|挂起
 	 **/
 	public void setBugStatus(String bugStatus) {
 		this.bugStatus = bugStatus;
@@ -425,6 +437,30 @@ public class XmQuestion  implements java.io.Serializable {
 	public void setProductId(String productId) {
 		this.productId = productId;
 	}
+	/**
+	 * 复现频率1-必现，2-大概率复现，3-小概率复现，4-仅出现一次
+	 **/
+	public void setRepRate(String repRate) {
+		this.repRate = repRate;
+	}
+	/**
+	 * 版本号
+	 **/
+	public void setVerNum(String verNum) {
+		this.verNum = verNum;
+	}
+	/**
+	 * 访问路径/斜杠分割
+	 **/
+	public void setVpath(String vpath) {
+		this.vpath = vpath;
+	}
+	/**
+	 * 发布版本
+	 **/
+	public void setPverNum(String pverNum) {
+		this.pverNum = pverNum;
+	}
 	
 	/**
 	 * 问题编号
@@ -529,7 +565,7 @@ public class XmQuestion  implements java.io.Serializable {
 		return this.createTime;
 	}
 	/**
-	 * create创建（active激活）–confirm确认（confirmed已确认）–solve解决（resolved已解决）–close关闭（closed已关闭）
+	 * bug状态1|新提交2|处理中3|已修复4|重新打开5|已发布6|已拒绝7|挂起
 	 **/
 	public String getBugStatus() {
 		return this.bugStatus;
@@ -689,6 +725,30 @@ public class XmQuestion  implements java.io.Serializable {
 	 **/
 	public String getProductId() {
 		return this.productId;
+	}
+	/**
+	 * 复现频率1-必现，2-大概率复现，3-小概率复现，4-仅出现一次
+	 **/
+	public String getRepRate() {
+		return this.repRate;
+	}
+	/**
+	 * 版本号
+	 **/
+	public String getVerNum() {
+		return this.verNum;
+	}
+	/**
+	 * 访问路径/斜杠分割
+	 **/
+	public String getVpath() {
+		return this.vpath;
+	}
+	/**
+	 * 发布版本
+	 **/
+	public String getPverNum() {
+		return this.pverNum;
 	}
 
 }

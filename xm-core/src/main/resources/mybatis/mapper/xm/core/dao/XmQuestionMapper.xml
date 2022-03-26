@@ -113,7 +113,13 @@
 		where 
 			res.id = #{id}
 	</select>
-	
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmQuestion">
+        select * from xm_question res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_question res
@@ -132,7 +138,7 @@
 		insert into xm_question(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{projectId},#{projectName},#{caseId},#{caseName},#{endTime},#{askUserid},#{askUsername},#{handlerUserid},#{handlerUsername},#{priority},#{solution},#{description},#{createUserid},#{createUsername},#{createTime},#{bugStatus},#{bizProcInstId},#{bizFlowState},#{menuId},#{menuName},#{planWorkload},#{planCostAmount},#{totalActWorkload},#{totalActCostAmount},#{expectResult},#{opStep},#{currResult},#{refRequire},#{bugSeverity},#{bugType},#{tagIds},#{tagNames},#{urls},#{ltime},#{qtype},#{taskId},#{taskName},#{iterationId},#{iterationName},#{caseExecId},#{lremark},#{productId}
+		#{id},#{name},#{projectId},#{projectName},#{caseId},#{caseName},#{endTime},#{askUserid},#{askUsername},#{handlerUserid},#{handlerUsername},#{priority},#{solution},#{description},#{createUserid},#{createUsername},#{createTime},#{bugStatus},#{bizProcInstId},#{bizFlowState},#{menuId},#{menuName},#{planWorkload},#{planCostAmount},#{totalActWorkload},#{totalActCostAmount},#{expectResult},#{opStep},#{currResult},#{refRequire},#{bugSeverity},#{bugType},#{tagIds},#{tagNames},#{urls},#{ltime},#{qtype},#{taskId},#{taskName},#{iterationId},#{iterationName},#{caseExecId},#{lremark},#{productId},#{repRate},#{verNum},#{vpath},#{pverNum}
 		)
 	</insert>
 	
@@ -195,7 +201,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,plan_workload,plan_cost_amount,total_act_workload,total_act_cost_amount,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,task_id,task_name,iteration_id,iteration_name,case_exec_id,lremark,product_id
+		id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,plan_workload,plan_cost_amount,total_act_workload,total_act_cost_amount,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,task_id,task_name,iteration_id,iteration_name,case_exec_id,lremark,product_id,rep_rate,ver_num,vpath,pver_num
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -244,6 +250,10 @@
 		<if test="caseExecId != null and caseExecId != ''">      and res.case_exec_id = #{caseExecId}     </if>
 		<if test="lremark != null and lremark != ''">      and res.lremark = #{lremark}     </if>
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
+		<if test="repRate != null and repRate != ''">      and res.rep_rate = #{repRate}     </if>
+		<if test="verNum != null and verNum != ''">      and res.ver_num = #{verNum}     </if>
+		<if test="vpath != null and vpath != ''">      and res.vpath = #{vpath}     </if>
+		<if test="pverNum != null and pverNum != ''">      and res.pver_num = #{pverNum}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -289,7 +299,11 @@
 		iteration_name = #{iterationName},
 		case_exec_id = #{caseExecId},
 		lremark = #{lremark},
-		product_id = #{productId}
+		product_id = #{productId},
+		rep_rate = #{repRate},
+		ver_num = #{verNum},
+		vpath = #{vpath},
+		pver_num = #{pverNum}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -335,6 +349,10 @@
 		<if test="caseExecId != null and caseExecId != ''"> case_exec_id = #{caseExecId},     </if>
 		<if test="lremark != null and lremark != ''"> lremark = #{lremark},     </if>
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
+		<if test="repRate != null and repRate != ''"> rep_rate = #{repRate},     </if>
+		<if test="verNum != null and verNum != ''"> ver_num = #{verNum},     </if>
+		<if test="vpath != null and vpath != ''"> vpath = #{vpath},     </if>
+		<if test="pverNum != null and pverNum != ''"> pver_num = #{pverNum},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -380,6 +398,10 @@
 			iteration_name = #{item.iterationName},
 			case_exec_id = #{item.caseExecId},
 			lremark = #{item.lremark},
-			product_id = #{item.productId}
+			product_id = #{item.productId},
+			rep_rate = #{item.repRate},
+			ver_num = #{item.verNum},
+			vpath = #{item.vpath},
+			pver_num = #{item.pverNum}
 	</sql>
 </mapper>
