@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTask所有属性名: <br>
- *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,phaseId,phaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,productName,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime,pidPaths,lvl,isTpl,keyPath,uniInnerPrice,uniOutPrice,calcType,ptype;<br>
+ *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,phaseId,phaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,productName,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime,pidPaths,lvl,isTpl,keyPath,uniInnerPrice,uniOutPrice,calcType,ptype,wtype,bctrl;<br>
  * 表 xm_task xm_task的所有字段名: <br>
- *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype;<br>
+ *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -80,19 +80,19 @@ public class XmTask  implements java.io.Serializable {
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
 	Date createTime;
 	
-	@ApiModelProperty(notes="任务进度0-100",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="任务进度0-100（=实际工时/预算工时*100）",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal rate;
 	
-	@ApiModelProperty(notes="当前任务预算金额（包括所有成本，不包括下一级）",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="当前任务预算金额（calc_type=2时预算工时*单价，calc_type=1时下级汇总）",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal budgetCost;
 	
-	@ApiModelProperty(notes="预算工时（不包括下一级）",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="预算工时（calc_type=2时手工填写，calc_type=1时下级汇总）",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal budgetWorkload;
 	
-	@ApiModelProperty(notes="当前任务实际费用金额（包括所有成本，不包括下一级）待结算金额",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="当前任务实际费用金额（calc_type=2时，取实际工时*单价，calc_type=1时取下级汇总数据）待结算金额",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal actCost;
 	
-	@ApiModelProperty(notes="实际工时（不包括下一级）",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="实际工时(calc_type=2时，取工时表数据，calc_type=1时取下级汇总数据)",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal actWorkload;
 	
 	@ApiModelProperty(notes="任务状态0待领取1已领取执行中2已完工3已结算",allowEmptyValue=true,example="",allowableValues="")
@@ -197,11 +197,17 @@ public class XmTask  implements java.io.Serializable {
 	@ApiModelProperty(notes="外部单位工时单价",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal uniOutPrice;
 	
-	@ApiModelProperty(notes="实际工作量及金额计算方式0-手工填写，1-根据进度*预算计算，2-其它",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="数据统计方式",allowEmptyValue=true,example="",allowableValues="")
 	String calcType;
 	
-	@ApiModelProperty(notes="计划分类0-项目，1产品",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="计划分类0-项目，1产品,空为不区分",allowEmptyValue=true,example="",allowableValues="")
 	String ptype;
+	
+	@ApiModelProperty(notes="报工方式1-强制每日报工，2-工期内报工，0-无需报工",allowEmptyValue=true,example="",allowableValues="")
+	String wtype;
+	
+	@ApiModelProperty(notes="报工限制0-不限制，1-不得超出预估工时",allowEmptyValue=true,example="",allowableValues="")
+	String bctrl;
 
 	/**任务编号**/
 	public XmTask(String id) {
@@ -333,31 +339,31 @@ public class XmTask  implements java.io.Serializable {
 		this.createTime = createTime;
 	}
 	/**
-	 * 任务进度0-100
+	 * 任务进度0-100（=实际工时/预算工时*100）
 	 **/
 	public void setRate(BigDecimal rate) {
 		this.rate = rate;
 	}
 	/**
-	 * 当前任务预算金额（包括所有成本，不包括下一级）
+	 * 当前任务预算金额（calc_type=2时预算工时*单价，calc_type=1时下级汇总）
 	 **/
 	public void setBudgetCost(BigDecimal budgetCost) {
 		this.budgetCost = budgetCost;
 	}
 	/**
-	 * 预算工时（不包括下一级）
+	 * 预算工时（calc_type=2时手工填写，calc_type=1时下级汇总）
 	 **/
 	public void setBudgetWorkload(BigDecimal budgetWorkload) {
 		this.budgetWorkload = budgetWorkload;
 	}
 	/**
-	 * 当前任务实际费用金额（包括所有成本，不包括下一级）待结算金额
+	 * 当前任务实际费用金额（calc_type=2时，取实际工时*单价，calc_type=1时取下级汇总数据）待结算金额
 	 **/
 	public void setActCost(BigDecimal actCost) {
 		this.actCost = actCost;
 	}
 	/**
-	 * 实际工时（不包括下一级）
+	 * 实际工时(calc_type=2时，取工时表数据，calc_type=1时取下级汇总数据)
 	 **/
 	public void setActWorkload(BigDecimal actWorkload) {
 		this.actWorkload = actWorkload;
@@ -567,16 +573,28 @@ public class XmTask  implements java.io.Serializable {
 		this.uniOutPrice = uniOutPrice;
 	}
 	/**
-	 * 实际工作量及金额计算方式0-手工填写，1-根据进度*预算计算，2-其它
+	 * 数据统计方式
 	 **/
 	public void setCalcType(String calcType) {
 		this.calcType = calcType;
 	}
 	/**
-	 * 计划分类0-项目，1产品
+	 * 计划分类0-项目，1产品,空为不区分
 	 **/
 	public void setPtype(String ptype) {
 		this.ptype = ptype;
+	}
+	/**
+	 * 报工方式1-强制每日报工，2-工期内报工，0-无需报工
+	 **/
+	public void setWtype(String wtype) {
+		this.wtype = wtype;
+	}
+	/**
+	 * 报工限制0-不限制，1-不得超出预估工时
+	 **/
+	public void setBctrl(String bctrl) {
+		this.bctrl = bctrl;
 	}
 	
 	/**
@@ -700,31 +718,31 @@ public class XmTask  implements java.io.Serializable {
 		return this.createTime;
 	}
 	/**
-	 * 任务进度0-100
+	 * 任务进度0-100（=实际工时/预算工时*100）
 	 **/
 	public BigDecimal getRate() {
 		return this.rate;
 	}
 	/**
-	 * 当前任务预算金额（包括所有成本，不包括下一级）
+	 * 当前任务预算金额（calc_type=2时预算工时*单价，calc_type=1时下级汇总）
 	 **/
 	public BigDecimal getBudgetCost() {
 		return this.budgetCost;
 	}
 	/**
-	 * 预算工时（不包括下一级）
+	 * 预算工时（calc_type=2时手工填写，calc_type=1时下级汇总）
 	 **/
 	public BigDecimal getBudgetWorkload() {
 		return this.budgetWorkload;
 	}
 	/**
-	 * 当前任务实际费用金额（包括所有成本，不包括下一级）待结算金额
+	 * 当前任务实际费用金额（calc_type=2时，取实际工时*单价，calc_type=1时取下级汇总数据）待结算金额
 	 **/
 	public BigDecimal getActCost() {
 		return this.actCost;
 	}
 	/**
-	 * 实际工时（不包括下一级）
+	 * 实际工时(calc_type=2时，取工时表数据，calc_type=1时取下级汇总数据)
 	 **/
 	public BigDecimal getActWorkload() {
 		return this.actWorkload;
@@ -934,16 +952,28 @@ public class XmTask  implements java.io.Serializable {
 		return this.uniOutPrice;
 	}
 	/**
-	 * 实际工作量及金额计算方式0-手工填写，1-根据进度*预算计算，2-其它
+	 * 数据统计方式
 	 **/
 	public String getCalcType() {
 		return this.calcType;
 	}
 	/**
-	 * 计划分类0-项目，1产品
+	 * 计划分类0-项目，1产品,空为不区分
 	 **/
 	public String getPtype() {
 		return this.ptype;
+	}
+	/**
+	 * 报工方式1-强制每日报工，2-工期内报工，0-无需报工
+	 **/
+	public String getWtype() {
+		return this.wtype;
+	}
+	/**
+	 * 报工限制0-不限制，1-不得超出预估工时
+	 **/
+	public String getBctrl() {
+		return this.bctrl;
 	}
 
 }

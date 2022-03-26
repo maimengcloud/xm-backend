@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProject所有属性名: <br>
- *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planIuserAt,planOuserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planIuserPrice,planOuserPrice,planOuserCnt,planIuserCnt,planWorkingHours,taxRate,planIuserWorkload,planOuserWorkload,fromTplId,budgetCtrl,deptid,showOut,isTpl,pmUserid,pmUsername,assUserid,assUsername,admUserid,admUsername,phaseBudgetCtrl,phaseActCtrl,del,ltime,ostatus;<br>
+ *	id,code,name,xmType,startTime,endTime,urgent,priority,description,createUserid,createUsername,createTime,assess,assessRemarks,status,branchId,planTotalCost,bizProcInstId,bizFlowState,planNouserAt,planIuserAt,planOuserAt,locked,baseTime,baseRemark,baselineId,planWorkload,totalReceivables,budgetMarginRate,contractAmt,planIuserPrice,planOuserPrice,planOuserCnt,planIuserCnt,planWorkingHours,taxRate,planIuserWorkload,planOuserWorkload,fromTplId,budgetCtrl,deptid,showOut,isTpl,pmUserid,pmUsername,assUserid,assUsername,admUserid,admUsername,budgetEarly,phaseActCtrl,del,ltime,ostatus,workType,wtype,earlyAmt;<br>
  * 表 xm_project xm_project的所有字段名: <br>
- *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_iuser_at,plan_ouser_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_iuser_price,plan_ouser_price,plan_ouser_cnt,plan_iuser_cnt,plan_working_hours,tax_rate,plan_iuser_workload,plan_ouser_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,phase_budget_ctrl,phase_act_ctrl,del,ltime,ostatus;<br>
+ *	id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_iuser_at,plan_ouser_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_iuser_price,plan_ouser_price,plan_ouser_cnt,plan_iuser_cnt,plan_working_hours,tax_rate,plan_iuser_workload,plan_ouser_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,budget_early,phase_act_ctrl,del,ltime,ostatus,work_type,wtype,early_amt;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -137,13 +137,13 @@ public class XmProject  implements java.io.Serializable {
 	@ApiModelProperty(notes="关联模板编号",allowEmptyValue=true,example="",allowableValues="")
 	String fromTplId;
 	
-	@ApiModelProperty(notes="是否进行预算控制，计划中一级计划总预算不能大于项目预算",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="是否进行预算控制，计划中一级计划总预算大于项目预算则拒绝添加计划,一般用于瀑布型项目",allowEmptyValue=true,example="",allowableValues="")
 	String budgetCtrl;
 	
 	@ApiModelProperty(notes="部门编号",allowEmptyValue=true,example="",allowableValues="")
 	String deptid;
 	
-	@ApiModelProperty(notes="是否对外公开0否1是",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="是否对外公开0-完全不可见，1-仅本司人员可见，2-关联人员可见（众包-外包-招投标）",allowEmptyValue=true,example="",allowableValues="")
 	String showOut;
 	
 	@ApiModelProperty(notes="是否为模板",allowEmptyValue=true,example="",allowableValues="")
@@ -167,10 +167,10 @@ public class XmProject  implements java.io.Serializable {
 	@ApiModelProperty(notes="主管领导姓名",allowEmptyValue=true,example="",allowableValues="")
 	String admUsername;
 	
-	@ApiModelProperty(notes="是否进行计划明细预算控制，计划中下级预算不能大于上级预算",allowEmptyValue=true,example="",allowableValues="")
-	String phaseBudgetCtrl;
+	@ApiModelProperty(notes="是否进行计划预算预警，计划预算超出项目预算既定额度进行预警",allowEmptyValue=true,example="",allowableValues="")
+	String budgetEarly;
 	
-	@ApiModelProperty(notes="计划是否进行实际金额控制，实际金额不能大于预算金额",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="计划是否进行实际金额控制，实际金额不能大于预算金额（大于预算金额不得结算）",allowEmptyValue=true,example="",allowableValues="")
 	String phaseActCtrl;
 	
 	@ApiModelProperty(notes="是否已删除0否1是",allowEmptyValue=true,example="",allowableValues="")
@@ -181,6 +181,15 @@ public class XmProject  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="原状态，暂停时记录原状态，暂停恢复后把原状态恢复",allowEmptyValue=true,example="",allowableValues="")
 	String ostatus;
+	
+	@ApiModelProperty(notes="工作方式scrum、kanban",allowEmptyValue=true,example="",allowableValues="")
+	String workType;
+	
+	@ApiModelProperty(notes="报工方式0-无须报工，1-每日报工，2-工期内报工",allowEmptyValue=true,example="",allowableValues="")
+	String wtype;
+	
+	@ApiModelProperty(notes="超出预算金额多少金额进行预警，正数代表超出的额度，负数代表距离预算的额度",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal earlyAmt;
 
 	/**项目编号**/
 	public XmProject(String id) {
@@ -426,7 +435,7 @@ public class XmProject  implements java.io.Serializable {
 		this.fromTplId = fromTplId;
 	}
 	/**
-	 * 是否进行预算控制，计划中一级计划总预算不能大于项目预算
+	 * 是否进行预算控制，计划中一级计划总预算大于项目预算则拒绝添加计划,一般用于瀑布型项目
 	 **/
 	public void setBudgetCtrl(String budgetCtrl) {
 		this.budgetCtrl = budgetCtrl;
@@ -438,7 +447,7 @@ public class XmProject  implements java.io.Serializable {
 		this.deptid = deptid;
 	}
 	/**
-	 * 是否对外公开0否1是
+	 * 是否对外公开0-完全不可见，1-仅本司人员可见，2-关联人员可见（众包-外包-招投标）
 	 **/
 	public void setShowOut(String showOut) {
 		this.showOut = showOut;
@@ -486,13 +495,13 @@ public class XmProject  implements java.io.Serializable {
 		this.admUsername = admUsername;
 	}
 	/**
-	 * 是否进行计划明细预算控制，计划中下级预算不能大于上级预算
+	 * 是否进行计划预算预警，计划预算超出项目预算既定额度进行预警
 	 **/
-	public void setPhaseBudgetCtrl(String phaseBudgetCtrl) {
-		this.phaseBudgetCtrl = phaseBudgetCtrl;
+	public void setBudgetEarly(String budgetEarly) {
+		this.budgetEarly = budgetEarly;
 	}
 	/**
-	 * 计划是否进行实际金额控制，实际金额不能大于预算金额
+	 * 计划是否进行实际金额控制，实际金额不能大于预算金额（大于预算金额不得结算）
 	 **/
 	public void setPhaseActCtrl(String phaseActCtrl) {
 		this.phaseActCtrl = phaseActCtrl;
@@ -514,6 +523,24 @@ public class XmProject  implements java.io.Serializable {
 	 **/
 	public void setOstatus(String ostatus) {
 		this.ostatus = ostatus;
+	}
+	/**
+	 * 工作方式scrum、kanban
+	 **/
+	public void setWorkType(String workType) {
+		this.workType = workType;
+	}
+	/**
+	 * 报工方式0-无须报工，1-每日报工，2-工期内报工
+	 **/
+	public void setWtype(String wtype) {
+		this.wtype = wtype;
+	}
+	/**
+	 * 超出预算金额多少金额进行预警，正数代表超出的额度，负数代表距离预算的额度
+	 **/
+	public void setEarlyAmt(BigDecimal earlyAmt) {
+		this.earlyAmt = earlyAmt;
 	}
 	
 	/**
@@ -751,7 +778,7 @@ public class XmProject  implements java.io.Serializable {
 		return this.fromTplId;
 	}
 	/**
-	 * 是否进行预算控制，计划中一级计划总预算不能大于项目预算
+	 * 是否进行预算控制，计划中一级计划总预算大于项目预算则拒绝添加计划,一般用于瀑布型项目
 	 **/
 	public String getBudgetCtrl() {
 		return this.budgetCtrl;
@@ -763,7 +790,7 @@ public class XmProject  implements java.io.Serializable {
 		return this.deptid;
 	}
 	/**
-	 * 是否对外公开0否1是
+	 * 是否对外公开0-完全不可见，1-仅本司人员可见，2-关联人员可见（众包-外包-招投标）
 	 **/
 	public String getShowOut() {
 		return this.showOut;
@@ -811,13 +838,13 @@ public class XmProject  implements java.io.Serializable {
 		return this.admUsername;
 	}
 	/**
-	 * 是否进行计划明细预算控制，计划中下级预算不能大于上级预算
+	 * 是否进行计划预算预警，计划预算超出项目预算既定额度进行预警
 	 **/
-	public String getPhaseBudgetCtrl() {
-		return this.phaseBudgetCtrl;
+	public String getBudgetEarly() {
+		return this.budgetEarly;
 	}
 	/**
-	 * 计划是否进行实际金额控制，实际金额不能大于预算金额
+	 * 计划是否进行实际金额控制，实际金额不能大于预算金额（大于预算金额不得结算）
 	 **/
 	public String getPhaseActCtrl() {
 		return this.phaseActCtrl;
@@ -839,6 +866,24 @@ public class XmProject  implements java.io.Serializable {
 	 **/
 	public String getOstatus() {
 		return this.ostatus;
+	}
+	/**
+	 * 工作方式scrum、kanban
+	 **/
+	public String getWorkType() {
+		return this.workType;
+	}
+	/**
+	 * 报工方式0-无须报工，1-每日报工，2-工期内报工
+	 **/
+	public String getWtype() {
+		return this.wtype;
+	}
+	/**
+	 * 超出预算金额多少金额进行预警，正数代表超出的额度，负数代表距离预算的额度
+	 **/
+	public BigDecimal getEarlyAmt() {
+		return this.earlyAmt;
 	}
 
 }

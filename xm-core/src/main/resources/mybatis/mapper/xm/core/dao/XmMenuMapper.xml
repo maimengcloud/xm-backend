@@ -199,7 +199,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmMenu" resultType="com.xm.core.entity.XmMenu">
-		select res.* from xm_menu res
+		select * from xm_menu res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -207,7 +207,7 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmMenu" resultType="com.xm.core.entity.XmMenu">
-		select res.* from xm_menu res
+		select * from xm_menu res
 		where 
 			res.menu_id = #{menuId}
 	</select>
