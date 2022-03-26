@@ -1,0 +1,274 @@
+package com.xm.core.entity;
+
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.util.Date;
+import java.math.BigDecimal;
+
+/**
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
+ * 实体 XmTaskWorkload所有属性名: <br>
+ *	userid,username,ctime,taskId,cuserid,bizDate,wstatus,remark,ttype,id,sbillId,stime,sstatus,amt,samt,workload;<br>
+ * 表 xm_task_workload 工时登记表的所有字段名: <br>
+ *	userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,sbill_id,stime,sstatus,amt,samt,workload;<br>
+ * 当前主键(包括多主键):<br>
+ *	id;<br>
+ */
+@ApiModel(description="工时登记表")
+public class XmTaskWorkload  implements java.io.Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	
+	@ApiModelProperty(notes="主键,主键",allowEmptyValue=true,example="",allowableValues="")
+	Integer id;
+  	
+	
+	@ApiModelProperty(notes="员工编号",allowEmptyValue=true,example="",allowableValues="")
+	String userid;
+	
+	@ApiModelProperty(notes="姓名",allowEmptyValue=true,example="",allowableValues="")
+	String username;
+	
+	@ApiModelProperty(notes="创建日期",allowEmptyValue=true,example="",allowableValues="")
+	Date ctime;
+	
+	@ApiModelProperty(notes="业务对象主键任务编号",allowEmptyValue=true,example="",allowableValues="")
+	String taskId;
+	
+	@ApiModelProperty(notes="创建人编号",allowEmptyValue=true,example="",allowableValues="")
+	String cuserid;
+	
+	@ApiModelProperty(notes="业务日期yyyy-MM-dd",allowEmptyValue=true,example="",allowableValues="")
+	String bizDate;
+	
+	@ApiModelProperty(notes="状态0-待确认，1-已确认，2-无效",allowEmptyValue=true,example="",allowableValues="")
+	String wstatus;
+	
+	@ApiModelProperty(notes="备注",allowEmptyValue=true,example="",allowableValues="")
+	String remark;
+	
+	@ApiModelProperty(notes="任务类型-关联字典taskType",allowEmptyValue=true,example="",allowableValues="")
+	String ttype;
+	
+	@ApiModelProperty(notes="结算单据编号",allowEmptyValue=true,example="",allowableValues="")
+	String sbillId;
+	
+	@ApiModelProperty(notes="结算提交时间",allowEmptyValue=true,example="",allowableValues="")
+	Date stime;
+	
+	@ApiModelProperty(notes="结算状态0-无需结算，1-待结算2-已提交3-已通过4-已结算",allowEmptyValue=true,example="",allowableValues="")
+	String sstatus;
+	
+	@ApiModelProperty(notes="工时对应金额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal amt;
+	
+	@ApiModelProperty(notes="结算金额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal samt;
+	
+	@ApiModelProperty(notes="工时，一个task_id可多次提交，小时",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal workload;
+
+	/**主键**/
+	public XmTaskWorkload(Integer id) {
+		this.id = id;
+	}
+    
+    /**工时登记表**/
+	public XmTaskWorkload() {
+	}
+	
+	/**
+	 * 员工编号
+	 **/
+	public void setUserid(String userid) {
+		this.userid = userid;
+	}
+	/**
+	 * 姓名
+	 **/
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	/**
+	 * 创建日期
+	 **/
+	public void setCtime(Date ctime) {
+		this.ctime = ctime;
+	}
+	/**
+	 * 业务对象主键任务编号
+	 **/
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
+	}
+	/**
+	 * 创建人编号
+	 **/
+	public void setCuserid(String cuserid) {
+		this.cuserid = cuserid;
+	}
+	/**
+	 * 业务日期yyyy-MM-dd
+	 **/
+	public void setBizDate(String bizDate) {
+		this.bizDate = bizDate;
+	}
+	/**
+	 * 状态0-待确认，1-已确认，2-无效
+	 **/
+	public void setWstatus(String wstatus) {
+		this.wstatus = wstatus;
+	}
+	/**
+	 * 备注
+	 **/
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
+	/**
+	 * 任务类型-关联字典taskType
+	 **/
+	public void setTtype(String ttype) {
+		this.ttype = ttype;
+	}
+	/**
+	 * 主键
+	 **/
+	public void setId(Integer id) {
+		this.id = id;
+	}
+	/**
+	 * 结算单据编号
+	 **/
+	public void setSbillId(String sbillId) {
+		this.sbillId = sbillId;
+	}
+	/**
+	 * 结算提交时间
+	 **/
+	public void setStime(Date stime) {
+		this.stime = stime;
+	}
+	/**
+	 * 结算状态0-无需结算，1-待结算2-已提交3-已通过4-已结算
+	 **/
+	public void setSstatus(String sstatus) {
+		this.sstatus = sstatus;
+	}
+	/**
+	 * 工时对应金额
+	 **/
+	public void setAmt(BigDecimal amt) {
+		this.amt = amt;
+	}
+	/**
+	 * 结算金额
+	 **/
+	public void setSamt(BigDecimal samt) {
+		this.samt = samt;
+	}
+	/**
+	 * 工时，一个task_id可多次提交，小时
+	 **/
+	public void setWorkload(BigDecimal workload) {
+		this.workload = workload;
+	}
+	
+	/**
+	 * 员工编号
+	 **/
+	public String getUserid() {
+		return this.userid;
+	}
+	/**
+	 * 姓名
+	 **/
+	public String getUsername() {
+		return this.username;
+	}
+	/**
+	 * 创建日期
+	 **/
+	public Date getCtime() {
+		return this.ctime;
+	}
+	/**
+	 * 业务对象主键任务编号
+	 **/
+	public String getTaskId() {
+		return this.taskId;
+	}
+	/**
+	 * 创建人编号
+	 **/
+	public String getCuserid() {
+		return this.cuserid;
+	}
+	/**
+	 * 业务日期yyyy-MM-dd
+	 **/
+	public String getBizDate() {
+		return this.bizDate;
+	}
+	/**
+	 * 状态0-待确认，1-已确认，2-无效
+	 **/
+	public String getWstatus() {
+		return this.wstatus;
+	}
+	/**
+	 * 备注
+	 **/
+	public String getRemark() {
+		return this.remark;
+	}
+	/**
+	 * 任务类型-关联字典taskType
+	 **/
+	public String getTtype() {
+		return this.ttype;
+	}
+	/**
+	 * 主键
+	 **/
+	public Integer getId() {
+		return this.id;
+	}
+	/**
+	 * 结算单据编号
+	 **/
+	public String getSbillId() {
+		return this.sbillId;
+	}
+	/**
+	 * 结算提交时间
+	 **/
+	public Date getStime() {
+		return this.stime;
+	}
+	/**
+	 * 结算状态0-无需结算，1-待结算2-已提交3-已通过4-已结算
+	 **/
+	public String getSstatus() {
+		return this.sstatus;
+	}
+	/**
+	 * 工时对应金额
+	 **/
+	public BigDecimal getAmt() {
+		return this.amt;
+	}
+	/**
+	 * 结算金额
+	 **/
+	public BigDecimal getSamt() {
+		return this.samt;
+	}
+	/**
+	 * 工时，一个task_id可多次提交，小时
+	 **/
+	public BigDecimal getWorkload() {
+		return this.workload;
+	}
+
+}
