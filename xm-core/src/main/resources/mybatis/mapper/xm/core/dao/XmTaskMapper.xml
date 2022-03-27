@@ -407,7 +407,7 @@
 		insert into xm_task(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{productName},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl}
+		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl}
 		)
 	</insert>
 	
@@ -470,7 +470,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl
+		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -520,7 +520,6 @@
 		<if test="menuId != null and menuId != ''">      and res.menu_id = #{menuId}     </if>
 		<if test="menuName != null and menuName != ''">      and res.menu_name = #{menuName}     </if>
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
-		<if test="productName != null and productName != ''">      and res.product_name = #{productName}     </if>
 		<if test="cbranchId != null and cbranchId != ''">      and res.cbranch_id = #{cbranchId}     </if>
 		<if test="cdeptid != null and cdeptid != ''">      and res.cdeptid = #{cdeptid}     </if>
 		<if test="tagIds != null and tagIds != ''">      and res.tag_ids = #{tagIds}     </if>
@@ -585,7 +584,6 @@
 		menu_id = #{menuId},
 		menu_name = #{menuName},
 		product_id = #{productId},
-		product_name = #{productName},
 		cbranch_id = #{cbranchId},
 		cdeptid = #{cdeptid},
 		tag_ids = #{tagIds},
@@ -649,7 +647,6 @@
 		<if test="menuId != null and menuId != ''"> menu_id = #{menuId},     </if>
 		<if test="menuName != null and menuName != ''"> menu_name = #{menuName},     </if>
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
-		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
 		<if test="cbranchId != null and cbranchId != ''"> cbranch_id = #{cbranchId},     </if>
 		<if test="cdeptid != null and cdeptid != ''"> cdeptid = #{cdeptid},     </if>
 		<if test="tagIds != null and tagIds != ''"> tag_ids = #{tagIds},     </if>
@@ -714,7 +711,6 @@
 			menu_id = #{item.menuId},
 			menu_name = #{item.menuName},
 			product_id = #{item.productId},
-			product_name = #{item.productName},
 			cbranch_id = #{item.cbranchId},
 			cdeptid = #{item.cdeptid},
 			tag_ids = #{item.tagIds},

@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTask所有属性名: <br>
- *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,phaseId,phaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,productName,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime,pidPaths,lvl,isTpl,keyPath,uniInnerPrice,uniOutPrice,calcType,ptype,wtype,bctrl;<br>
+ *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,phaseId,phaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime,pidPaths,lvl,isTpl,keyPath,uniInnerPrice,uniOutPrice,calcType,ptype,wtype,bctrl;<br>
  * 表 xm_task xm_task的所有字段名: <br>
- *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,product_name,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl;<br>
+ *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -41,7 +41,7 @@ public class XmTask  implements java.io.Serializable {
 	@ApiModelProperty(notes="任务级别",allowEmptyValue=true,example="",allowableValues="")
 	String level;
 	
-	@ApiModelProperty(notes="排序级别",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="序号",allowEmptyValue=true,example="",allowableValues="")
 	String sortLevel;
 	
 	@ApiModelProperty(notes="任务执行人编号",allowEmptyValue=true,example="",allowableValues="")
@@ -81,7 +81,7 @@ public class XmTask  implements java.io.Serializable {
 	Date createTime;
 	
 	@ApiModelProperty(notes="任务进度0-100（=实际工时/预算工时*100）",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal rate;
+	Integer rate;
 	
 	@ApiModelProperty(notes="当前任务预算金额（calc_type=2时预算工时*单价，calc_type=1时下级汇总）",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal budgetCost;
@@ -154,9 +154,6 @@ public class XmTask  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="产品编号根据功能变化带进",allowEmptyValue=true,example="",allowableValues="")
 	String productId;
-	
-	@ApiModelProperty(notes="产品名称(作废)",allowEmptyValue=true,example="",allowableValues="")
-	String productName;
 	
 	@ApiModelProperty(notes="创建机构",allowEmptyValue=true,example="",allowableValues="")
 	String cbranchId;
@@ -261,7 +258,7 @@ public class XmTask  implements java.io.Serializable {
 		this.level = level;
 	}
 	/**
-	 * 排序级别
+	 * 序号
 	 **/
 	public void setSortLevel(String sortLevel) {
 		this.sortLevel = sortLevel;
@@ -341,7 +338,7 @@ public class XmTask  implements java.io.Serializable {
 	/**
 	 * 任务进度0-100（=实际工时/预算工时*100）
 	 **/
-	public void setRate(BigDecimal rate) {
+	public void setRate(Integer rate) {
 		this.rate = rate;
 	}
 	/**
@@ -489,12 +486,6 @@ public class XmTask  implements java.io.Serializable {
 		this.productId = productId;
 	}
 	/**
-	 * 产品名称(作废)
-	 **/
-	public void setProductName(String productName) {
-		this.productName = productName;
-	}
-	/**
 	 * 创建机构
 	 **/
 	public void setCbranchId(String cbranchId) {
@@ -640,7 +631,7 @@ public class XmTask  implements java.io.Serializable {
 		return this.level;
 	}
 	/**
-	 * 排序级别
+	 * 序号
 	 **/
 	public String getSortLevel() {
 		return this.sortLevel;
@@ -720,7 +711,7 @@ public class XmTask  implements java.io.Serializable {
 	/**
 	 * 任务进度0-100（=实际工时/预算工时*100）
 	 **/
-	public BigDecimal getRate() {
+	public Integer getRate() {
 		return this.rate;
 	}
 	/**
@@ -866,12 +857,6 @@ public class XmTask  implements java.io.Serializable {
 	 **/
 	public String getProductId() {
 		return this.productId;
-	}
-	/**
-	 * 产品名称(作废)
-	 **/
-	public String getProductName() {
-		return this.productName;
 	}
 	/**
 	 * 创建机构

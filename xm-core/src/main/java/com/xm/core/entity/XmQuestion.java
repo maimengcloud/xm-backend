@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmQuestion所有属性名: <br>
- *	id,name,projectId,projectName,caseId,caseName,endTime,askUserid,askUsername,handlerUserid,handlerUsername,priority,solution,description,createUserid,createUsername,createTime,bugStatus,bizProcInstId,bizFlowState,menuId,menuName,planWorkload,planCostAmount,totalActWorkload,totalActCostAmount,expectResult,opStep,currResult,refRequire,bugSeverity,bugType,tagIds,tagNames,urls,ltime,qtype,taskId,taskName,iterationId,iterationName,caseExecId,lremark,productId,repRate,verNum,vpath,pverNum;<br>
+ *	id,name,projectId,projectName,caseId,caseName,endTime,askUserid,askUsername,handlerUserid,handlerUsername,priority,solution,description,createUserid,createUsername,createTime,bugStatus,bizProcInstId,bizFlowState,menuId,menuName,budgetWorkload,budgetCost,actWorkload,actCost,expectResult,opStep,currResult,refRequire,bugSeverity,bugType,tagIds,tagNames,urls,ltime,qtype,iterationId,iterationName,caseExecId,remarks,productId,repRate,verNum,vpath,pverNum,bugReason,rate;<br>
  * 表 xm_question xm_question的所有字段名: <br>
- *	id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,plan_workload,plan_cost_amount,total_act_workload,total_act_cost_amount,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,task_id,task_name,iteration_id,iteration_name,case_exec_id,lremark,product_id,rep_rate,ver_num,vpath,pver_num;<br>
+ *	id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,budget_workload,budget_cost,act_workload,act_cost,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,iteration_id,iteration_name,case_exec_id,remarks,product_id,rep_rate,ver_num,vpath,pver_num,bug_reason,rate;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -87,16 +87,16 @@ public class XmQuestion  implements java.io.Serializable {
 	String menuName;
 	
 	@ApiModelProperty(notes="预估工时单位人时",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planWorkload;
+	BigDecimal budgetWorkload;
 	
 	@ApiModelProperty(notes="预估成本金额",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planCostAmount;
+	BigDecimal budgetCost;
 	
 	@ApiModelProperty(notes="实际工时",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal totalActWorkload;
+	BigDecimal actWorkload;
 	
 	@ApiModelProperty(notes="实际总金额",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal totalActCostAmount;
+	BigDecimal actCost;
 	
 	@ApiModelProperty(notes="期望结果",allowEmptyValue=true,example="",allowableValues="")
 	String expectResult;
@@ -131,12 +131,6 @@ public class XmQuestion  implements java.io.Serializable {
 	@ApiModelProperty(notes="问题类型risk-风险、bug-功能问题、consult-普通咨询、",allowEmptyValue=true,example="",allowableValues="")
 	String qtype;
 	
-	@ApiModelProperty(notes="测试任务编号关联taskType='test'的任务",allowEmptyValue=true,example="",allowableValues="")
-	String taskId;
-	
-	@ApiModelProperty(notes="测试任务名称",allowEmptyValue=true,example="",allowableValues="")
-	String taskName;
-	
 	@ApiModelProperty(notes="迭代编号",allowEmptyValue=true,example="",allowableValues="")
 	String iterationId;
 	
@@ -147,7 +141,7 @@ public class XmQuestion  implements java.io.Serializable {
 	String caseExecId;
 	
 	@ApiModelProperty(notes="最后更新说明",allowEmptyValue=true,example="",allowableValues="")
-	String lremark;
+	String remarks;
 	
 	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
 	String productId;
@@ -163,6 +157,12 @@ public class XmQuestion  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="发布版本",allowEmptyValue=true,example="",allowableValues="")
 	String pverNum;
+	
+	@ApiModelProperty(notes="原因分析",allowEmptyValue=true,example="",allowableValues="")
+	String bugReason;
+	
+	@ApiModelProperty(notes="进度0-100",allowEmptyValue=true,example="",allowableValues="")
+	Integer rate;
 
 	/**问题编号**/
 	public XmQuestion(String id) {
@@ -308,26 +308,26 @@ public class XmQuestion  implements java.io.Serializable {
 	/**
 	 * 预估工时单位人时
 	 **/
-	public void setPlanWorkload(BigDecimal planWorkload) {
-		this.planWorkload = planWorkload;
+	public void setBudgetWorkload(BigDecimal budgetWorkload) {
+		this.budgetWorkload = budgetWorkload;
 	}
 	/**
 	 * 预估成本金额
 	 **/
-	public void setPlanCostAmount(BigDecimal planCostAmount) {
-		this.planCostAmount = planCostAmount;
+	public void setBudgetCost(BigDecimal budgetCost) {
+		this.budgetCost = budgetCost;
 	}
 	/**
 	 * 实际工时
 	 **/
-	public void setTotalActWorkload(BigDecimal totalActWorkload) {
-		this.totalActWorkload = totalActWorkload;
+	public void setActWorkload(BigDecimal actWorkload) {
+		this.actWorkload = actWorkload;
 	}
 	/**
 	 * 实际总金额
 	 **/
-	public void setTotalActCostAmount(BigDecimal totalActCostAmount) {
-		this.totalActCostAmount = totalActCostAmount;
+	public void setActCost(BigDecimal actCost) {
+		this.actCost = actCost;
 	}
 	/**
 	 * 期望结果
@@ -396,18 +396,6 @@ public class XmQuestion  implements java.io.Serializable {
 		this.qtype = qtype;
 	}
 	/**
-	 * 测试任务编号关联taskType='test'的任务
-	 **/
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-	/**
-	 * 测试任务名称
-	 **/
-	public void setTaskName(String taskName) {
-		this.taskName = taskName;
-	}
-	/**
 	 * 迭代编号
 	 **/
 	public void setIterationId(String iterationId) {
@@ -428,8 +416,8 @@ public class XmQuestion  implements java.io.Serializable {
 	/**
 	 * 最后更新说明
 	 **/
-	public void setLremark(String lremark) {
-		this.lremark = lremark;
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 	/**
 	 * 产品编号
@@ -460,6 +448,18 @@ public class XmQuestion  implements java.io.Serializable {
 	 **/
 	public void setPverNum(String pverNum) {
 		this.pverNum = pverNum;
+	}
+	/**
+	 * 原因分析
+	 **/
+	public void setBugReason(String bugReason) {
+		this.bugReason = bugReason;
+	}
+	/**
+	 * 进度0-100
+	 **/
+	public void setRate(Integer rate) {
+		this.rate = rate;
 	}
 	
 	/**
@@ -597,26 +597,26 @@ public class XmQuestion  implements java.io.Serializable {
 	/**
 	 * 预估工时单位人时
 	 **/
-	public BigDecimal getPlanWorkload() {
-		return this.planWorkload;
+	public BigDecimal getBudgetWorkload() {
+		return this.budgetWorkload;
 	}
 	/**
 	 * 预估成本金额
 	 **/
-	public BigDecimal getPlanCostAmount() {
-		return this.planCostAmount;
+	public BigDecimal getBudgetCost() {
+		return this.budgetCost;
 	}
 	/**
 	 * 实际工时
 	 **/
-	public BigDecimal getTotalActWorkload() {
-		return this.totalActWorkload;
+	public BigDecimal getActWorkload() {
+		return this.actWorkload;
 	}
 	/**
 	 * 实际总金额
 	 **/
-	public BigDecimal getTotalActCostAmount() {
-		return this.totalActCostAmount;
+	public BigDecimal getActCost() {
+		return this.actCost;
 	}
 	/**
 	 * 期望结果
@@ -685,18 +685,6 @@ public class XmQuestion  implements java.io.Serializable {
 		return this.qtype;
 	}
 	/**
-	 * 测试任务编号关联taskType='test'的任务
-	 **/
-	public String getTaskId() {
-		return this.taskId;
-	}
-	/**
-	 * 测试任务名称
-	 **/
-	public String getTaskName() {
-		return this.taskName;
-	}
-	/**
 	 * 迭代编号
 	 **/
 	public String getIterationId() {
@@ -717,8 +705,8 @@ public class XmQuestion  implements java.io.Serializable {
 	/**
 	 * 最后更新说明
 	 **/
-	public String getLremark() {
-		return this.lremark;
+	public String getRemarks() {
+		return this.remarks;
 	}
 	/**
 	 * 产品编号
@@ -749,6 +737,18 @@ public class XmQuestion  implements java.io.Serializable {
 	 **/
 	public String getPverNum() {
 		return this.pverNum;
+	}
+	/**
+	 * 原因分析
+	 **/
+	public String getBugReason() {
+		return this.bugReason;
+	}
+	/**
+	 * 进度0-100
+	 **/
+	public Integer getRate() {
+		return this.rate;
 	}
 
 }
