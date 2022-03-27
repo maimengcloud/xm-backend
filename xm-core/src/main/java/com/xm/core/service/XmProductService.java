@@ -194,7 +194,7 @@ public class XmProductService extends BaseService {
 					node.setMenuId(newMenuIdMap.get(node.getMenuId()));
 					node.setExeUsernames(null);
 					node.setExeUserids(null);
-					node.setRate(BigDecimal.ZERO);
+					node.setRate(0);
 					node.setActEndTime(null);
 					node.setActStartTime(null);
 					node.setExecutorUserid(null);

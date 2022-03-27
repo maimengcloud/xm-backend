@@ -142,10 +142,9 @@ public class XmProjectService extends BaseService {
 					node.setMenuId(null);
 					node.setMenuName(null);
 					node.setProductId(null);
-					node.setProductName(null);
 					node.setExeUsernames(null);
 					node.setExeUserids(null);
-					node.setRate(BigDecimal.ZERO);
+					node.setRate(0);
 					node.setActEndTime(null);
 					node.setActStartTime(null);
 					node.setExecutorUserid(null);

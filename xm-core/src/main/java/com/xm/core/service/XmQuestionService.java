@@ -84,14 +84,12 @@ public class XmQuestionService extends BaseService {
     	User currentUser=LoginUtils.getCurrentUserInfo();
         XmQuestion xmQuestion = new XmQuestion();
         xmQuestion.setId(xmQuestionVo.getId());
-        xmQuestion.setTaskId(xmQuestionVo.getTaskId());
-        xmQuestion.setTaskName(xmQuestionVo.getTaskName());
         xmQuestion.setHandlerUserid(xmQuestionVo.getHandlerUserid());
         xmQuestion.setHandlerUsername(xmQuestionVo.getHandlerUsername());
         xmQuestion.setBugStatus(xmQuestionVo.getTardgetBugStatus());
         xmQuestion.setLtime(new Date());
 
-        xmQuestion.setLremark(xmQuestionVo.getReceiptMessage());
+        xmQuestion.setRemarks(xmQuestionVo.getReceiptMessage());
 
         this.updateSomeFieldByPk(xmQuestion);
         

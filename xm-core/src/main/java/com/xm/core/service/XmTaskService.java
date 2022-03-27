@@ -189,7 +189,7 @@ public class XmTaskService extends BaseService {
 		xmTaskVo.setCreateUserid(user.getUserid());
 		xmTaskVo.setCreateUsername(user.getUsername());
 		xmTaskVo.setCreateTime(new Date());
-		xmTaskVo.setRate(BigDecimal.ZERO);
+		xmTaskVo.setRate(0);
 		xmTaskVo.setSortLevel(xmTaskVo.getSortLevel());
 		if(StringUtils.isEmpty(xmTaskVo.getMilestone())){
 			xmTaskVo.setMilestone("0");
@@ -268,7 +268,7 @@ public class XmTaskService extends BaseService {
 		if(xmTaskDb.getBudgetWorkload()==null){
 			xmTaskDb.setBudgetWorkload(BigDecimal.ZERO);
 		}
-		xmTask2.setActWorkload(xmTaskDb.getBudgetWorkload().multiply(xmTask.getRate()).divide(BigDecimal.valueOf(100)));
+		xmTask2.setActWorkload(xmTaskDb.getBudgetWorkload().multiply(BigDecimal.valueOf(xmTask.getRate())).divide(BigDecimal.valueOf(100)));
 		this.updateSomeFieldByPk(xmTask);
 
 		if(StringUtils.hasText(xmTaskDb.getParentTaskid())){

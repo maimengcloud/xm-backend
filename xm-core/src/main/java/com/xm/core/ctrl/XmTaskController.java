@@ -336,7 +336,7 @@ public class XmTaskController {
 			xmTaskVo.setCdeptid(user.getDeptid());
 
 
-			xmTaskVo.setRate(BigDecimal.ZERO);
+			xmTaskVo.setRate(0);
 			if( !StringUtils.hasText(xmTaskVo.getMilestone()) ){
 				xmTaskVo.setMilestone("0");
 			}
