@@ -271,8 +271,6 @@ public class XmQuestionController {
 		return m;
 	}
 
-	
-	/**
 	@ApiOperation( value = "根据主键列表批量删除xm_question信息",notes="batchDelXmQuestion,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -293,7 +291,7 @@ public class XmQuestionController {
 		m.put("tips", tips);
 		return m;
 	} 
-	*/
+
 	
 
 

@@ -49,9 +49,10 @@ public class XmQuestionService extends BaseService {
             xmQuestionVo.setId(this.createKey("id"));
         }
         xmQuestionVo.setCreateTime(new Date());
+        xmQuestionVo.setLtime(new Date());
         XmQuestion xmQuestion = new XmQuestion();
         BeanUtils.copyProperties(xmQuestionVo,xmQuestion);
-        xmQuestion.setBugStatus("active");
+        xmQuestion.setBugStatus("1");
         this.insert(xmQuestion);
 
 		XmQuestionHandle handle=new XmQuestionHandle();
