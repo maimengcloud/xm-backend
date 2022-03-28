@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId,iterationId,calcType,mactWorkload,mactAmount,mactRate,source,proposerId,proposerName,dlvl,dtype,priority,dclass,iterationName;<br>
+ *	startTime,menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId,iterationId,calcType,mactWorkload,mactAmount,mactRate,source,proposerId,proposerName,dlvl,dtype,priority,dclass,iterationName,endTime;<br>
  * 表 xm_menu 功能表的所有字段名: <br>
- *	menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name;<br>
+ *	start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -22,6 +22,9 @@ public class XmMenu  implements java.io.Serializable {
 	@ApiModelProperty(notes="功能编号,主键",allowEmptyValue=true,example="",allowableValues="")
 	String menuId;
   	
+	
+	@ApiModelProperty(notes="开始时间",allowEmptyValue=true,example="",allowableValues="")
+	Date startTime;
 	
 	@ApiModelProperty(notes="功能名称",allowEmptyValue=true,example="",allowableValues="")
 	String menuName;
@@ -116,7 +119,7 @@ public class XmMenu  implements java.io.Serializable {
 	@ApiModelProperty(notes="迭代编号",allowEmptyValue=true,example="",allowableValues="")
 	String iterationId;
 	
-	@ApiModelProperty(notes="叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报，3-下往上",allowEmptyValue=true,example="",allowableValues="")
 	String calcType;
 	
 	@ApiModelProperty(notes="手工填报的情况下填报的工作量，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
@@ -151,6 +154,9 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="迭代名称",allowEmptyValue=true,example="",allowableValues="")
 	String iterationName;
+	
+	@ApiModelProperty(notes="结束时间",allowEmptyValue=true,example="",allowableValues="")
+	Date endTime;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -161,6 +167,12 @@ public class XmMenu  implements java.io.Serializable {
 	public XmMenu() {
 	}
 	
+	/**
+	 * 开始时间
+	 **/
+	public void setStartTime(Date startTime) {
+		this.startTime = startTime;
+	}
 	/**
 	 * 功能编号
 	 **/
@@ -354,7 +366,7 @@ public class XmMenu  implements java.io.Serializable {
 		this.iterationId = iterationId;
 	}
 	/**
-	 * 叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报
+	 * 叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报，3-下往上
 	 **/
 	public void setCalcType(String calcType) {
 		this.calcType = calcType;
@@ -425,7 +437,19 @@ public class XmMenu  implements java.io.Serializable {
 	public void setIterationName(String iterationName) {
 		this.iterationName = iterationName;
 	}
+	/**
+	 * 结束时间
+	 **/
+	public void setEndTime(Date endTime) {
+		this.endTime = endTime;
+	}
 	
+	/**
+	 * 开始时间
+	 **/
+	public Date getStartTime() {
+		return this.startTime;
+	}
 	/**
 	 * 功能编号
 	 **/
@@ -619,7 +643,7 @@ public class XmMenu  implements java.io.Serializable {
 		return this.iterationId;
 	}
 	/**
-	 * 叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报
+	 * 叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报，3-下往上
 	 **/
 	public String getCalcType() {
 		return this.calcType;
@@ -689,6 +713,12 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public String getIterationName() {
 		return this.iterationName;
+	}
+	/**
+	 * 结束时间
+	 **/
+	public Date getEndTime() {
+		return this.endTime;
 	}
 
 }
