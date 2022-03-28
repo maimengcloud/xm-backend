@@ -304,7 +304,7 @@ public class XmTaskController {
 			List<XmTask> can=new ArrayList<>();
 			List<XmTask> no=new ArrayList<>();
 			if(can.size()<=0){
-				return ResponseHelper.failed("noqx","您无权修改选中的任务。");
+				//return ResponseHelper.failed("noqx","您无权修改选中的任务。");
 			}
 			Set<String> fields=new HashSet<>();
 			fields.add("childrenCnt");
