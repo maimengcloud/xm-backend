@@ -175,6 +175,7 @@ public class XmIterationController {
 			xmIteration.setCusername(user.getUsername());
 			xmIteration.setBranchId(user.getBranchId());
 			xmIteration.setIstatus("0");
+			xmIteration.setIphase("0");
 			xmIteration.setAdminUserid(user.getUserid());
 			xmIteration.setAdminUsername(user.getUsername());
 			if(!xmGroupService.checkUserIsPmOrAssByPtype(user.getUserid(),"1",null,xmIteration.getProductId() )){
