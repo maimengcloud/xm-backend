@@ -305,5 +305,9 @@ public class XmMenuService extends BaseService {
 	public void editSomeFields(Map<String, Object> xmMenuMap) {
 		super.update("editSomeFields",xmMenuMap);
 	}
+
+    public List<XmMenu> selectListByIdsWithsChildrenCnt(List<String> ids) {
+		return super.selectList("selectListByIdsWithsChildrenCnt",ids);
+    }
 }
 
