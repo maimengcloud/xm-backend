@@ -140,7 +140,7 @@
 		insert into xm_question(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{projectId},#{projectName},#{caseId},#{caseName},#{endTime},#{askUserid},#{askUsername},#{handlerUserid},#{handlerUsername},#{priority},#{solution},#{description},#{createUserid},#{createUsername},#{createTime},#{bugStatus},#{bizProcInstId},#{bizFlowState},#{menuId},#{menuName},#{budgetWorkload},#{budgetCost},#{actWorkload},#{actCost},#{expectResult},#{opStep},#{currResult},#{refRequire},#{bugSeverity},#{bugType},#{tagIds},#{tagNames},#{urls},#{ltime},#{qtype},#{iterationId},#{iterationName},#{caseExecId},#{remarks},#{productId},#{repRate},#{verNum},#{vpath},#{pverNum},#{bugReason},#{rate}
+		#{id},#{name},#{projectId},#{projectName},#{caseId},#{caseName},#{endTime},#{askUserid},#{askUsername},#{handlerUserid},#{handlerUsername},#{priority},#{solution},#{description},#{createUserid},#{createUsername},#{createTime},#{bugStatus},#{bizProcInstId},#{bizFlowState},#{menuId},#{menuName},#{budgetWorkload},#{budgetCost},#{actWorkload},#{actCost},#{expectResult},#{opStep},#{currResult},#{refRequire},#{bugSeverity},#{bugType},#{tagIds},#{tagNames},#{urls},#{ltime},#{qtype},#{caseExecId},#{remarks},#{productId},#{repRate},#{verNum},#{vpath},#{pverNum},#{bugReason},#{rate}
 		)
 	</insert>
 	
@@ -203,7 +203,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,budget_workload,budget_cost,act_workload,act_cost,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,iteration_id,iteration_name,case_exec_id,remarks,product_id,rep_rate,ver_num,vpath,pver_num,bug_reason,rate
+		id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,budget_workload,budget_cost,act_workload,act_cost,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,case_exec_id,remarks,product_id,rep_rate,ver_num,vpath,pver_num,bug_reason,rate
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -245,8 +245,6 @@
 		<if test="urls != null and urls != ''">      and res.urls = #{urls}     </if>
 		<if test="ltime != null">      and date_format(res.ltime,'%Y-%m-%d') = date_format(#{ltime},'%Y-%m-%d')     </if>
 		<if test="qtype != null and qtype != ''">      and res.qtype = #{qtype}     </if>
-		<if test="iterationId != null and iterationId != ''">      and res.iteration_id = #{iterationId}     </if>
-		<if test="iterationName != null and iterationName != ''">      and res.iteration_name = #{iterationName}     </if>
 		<if test="caseExecId != null and caseExecId != ''">      and res.case_exec_id = #{caseExecId}     </if>
 		<if test="remarks != null and remarks != ''">      and res.remarks = #{remarks}     </if>
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
@@ -295,8 +293,6 @@
 		urls = #{urls},
 		ltime = #{ltime},
 		qtype = #{qtype},
-		iteration_id = #{iterationId},
-		iteration_name = #{iterationName},
 		case_exec_id = #{caseExecId},
 		remarks = #{remarks},
 		product_id = #{productId},
@@ -344,8 +340,6 @@
 		<if test="urls != null and urls != ''"> urls = #{urls},     </if>
 		<if test="ltime != null"> ltime = #{ltime},     </if>
 		<if test="qtype != null and qtype != ''"> qtype = #{qtype},     </if>
-		<if test="iterationId != null and iterationId != ''"> iteration_id = #{iterationId},     </if>
-		<if test="iterationName != null and iterationName != ''"> iteration_name = #{iterationName},     </if>
 		<if test="caseExecId != null and caseExecId != ''"> case_exec_id = #{caseExecId},     </if>
 		<if test="remarks != null and remarks != ''"> remarks = #{remarks},     </if>
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
@@ -394,8 +388,6 @@
 			urls = #{item.urls},
 			ltime = #{item.ltime},
 			qtype = #{item.qtype},
-			iteration_id = #{item.iterationId},
-			iteration_name = #{item.iterationName},
 			case_exec_id = #{item.caseExecId},
 			remarks = #{item.remarks},
 			product_id = #{item.productId},
