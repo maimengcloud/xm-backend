@@ -74,6 +74,7 @@
 		<where>
 			<include refid="where"/>
 		</where>
+		order by res.seq_no desc
 	</select>
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
