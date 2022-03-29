@@ -225,7 +225,7 @@ public class XmTaskWorkloadController {
 			List<XmTaskWorkload> noQxDel=new ArrayList<>();
 			for (XmTaskWorkload xmTaskWorkload : xmTaskWorkloads) {
 				 if(canDelTaskMap.containsKey(xmTaskWorkload.getTaskId())){
-				 	if("!1".equals(xmTaskWorkload.getWstatus())){
+				 	if(!"1".equals(xmTaskWorkload.getWstatus())){
 				 		canDel.add(xmTaskWorkload);
 					} else{
 						state1Ndel.add(xmTaskWorkload);
@@ -249,11 +249,11 @@ public class XmTaskWorkloadController {
 				msgs.add("成功删除"+canDel.size()+"条工时单据。");
 			}
 			if(state1Ndel.size()>0){
- 				msgs.add("以下"+state1Ndel.size()+"条工时单据状态为确认状态，不允许删除。【"+state1Ndel.stream().map(i->i.getUsername()+i.getBizDate())+"】");
+ 				msgs.add("以下"+state1Ndel.size()+"条工时单据状态为确认状态，不允许删除。【"+state1Ndel.stream().map(i->i.getUsername()+i.getBizDate()).collect(Collectors.joining(","))+"】");
 			}
 			if(noQxDel.size()>0){
 				xmTaskWorkloadService.batchDelete(canDel);
-				msgs.add("以下"+noQxDel.size()+"条工时单据无权限删除，您只能删除你负责的任务的工时单据，【"+noQxDel.stream().map(i->i.getUsername()+i.getBizDate())+"】.");
+				msgs.add("以下"+noQxDel.size()+"条工时单据无权限删除，您只能删除你负责的任务的工时单据，【"+noQxDel.stream().map(i->i.getUsername()+i.getBizDate()).collect(Collectors.joining(","))+"】.");
 			}
 			if(canDel.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
