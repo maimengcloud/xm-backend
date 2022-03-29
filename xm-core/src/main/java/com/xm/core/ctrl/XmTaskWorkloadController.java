@@ -2,7 +2,9 @@ package com.xm.core.ctrl;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmGroup;
@@ -151,51 +153,6 @@ public class XmTaskWorkloadController {
 		m.put("tips", tips);
 		return m;
 	}
-
-
-	@ApiOperation( value = "删除一条工时登记表信息",notes=" ")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
-	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmTaskWorkload(@RequestBody XmTaskWorkload xmTaskWorkload){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功删除一条数据");
-		try{
-            if(!StringUtils.hasText(xmTaskWorkload.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
-            }
-			if(!StringUtils.hasText(xmTaskWorkload.getTaskId())) {
-				return failed("taskId-0","请上送任务编号");
-			}
-			XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmTaskWorkload.getTaskId()));
-			if(xmTaskDb==null ){
-				return failed("data-0","任务已不存在");
-			}
-			User user= LoginUtils.getCurrentUserInfo();
-			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
-				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getCreateUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
-				if(!isCreate.isOk()){
-					Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
-					if(!isExec.isOk()){
-						return failed("noqx-0","你无权针对该业务进行报工");
-					}
-
-				}
-			}
-			xmTaskWorkloadService.deleteByPk(xmTaskWorkload);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
-	}
-	
-
 	@ApiOperation( value = "根据主键修改一条工时登记表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTaskWorkload.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -226,8 +183,6 @@ public class XmTaskWorkloadController {
 	}
 	
 
-	
-	/**
 	@ApiOperation( value = "根据主键列表批量删除工时登记表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -236,8 +191,70 @@ public class XmTaskWorkloadController {
 	public Map<String,Object> batchDelXmTaskWorkload(@RequestBody List<XmTaskWorkload> xmTaskWorkloads) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除"+xmTaskWorkloads.size()+"条数据"); 
-		try{ 
-			xmTaskWorkloadService.batchDelete(xmTaskWorkloads);
+		try{
+			if(xmTaskWorkloads.stream().filter(i->!StringUtils.hasText(i.getId())).findAny().isPresent()){
+				return ResponseHelper.failed("id-0","主键不能为空");
+			}
+			xmTaskWorkloads = xmTaskWorkloadService.selectListByIds(xmTaskWorkloads.stream().map(i->i.getId()).collect(Collectors.toList()));
+			if(xmTaskWorkloads==null || xmTaskWorkloads.size()==0){
+				return ResponseHelper.failed("data-0","工时已不存在");
+			}
+			User user= LoginUtils.getCurrentUserInfo();
+			List<String> taskIds=xmTaskWorkloads.stream().map(i->i.getTaskId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+			List<XmTask> tasksDb=this.xmTaskService.selectListByIds(taskIds);
+			Map<String,XmTask> taskMap=new HashMap<>();
+			Map<String,XmTask> canDelTaskMap=new HashMap<>();
+			for (XmTask xmTask : tasksDb) {
+				taskMap.put(xmTask.getId(),xmTask);
+			}
+			for (XmTask xmTaskDb : tasksDb) {
+				if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
+					Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getCreateUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+					if(!isCreate.isOk()){
+						Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+						if(!isExec.isOk()){
+							break;
+						}
+
+					}
+				}
+				canDelTaskMap.put(xmTaskDb.getId(),xmTaskDb);
+			}
+			List<XmTaskWorkload> canDel=new ArrayList<>();
+			List<XmTaskWorkload> state1Ndel=new ArrayList<>();
+			List<XmTaskWorkload> noQxDel=new ArrayList<>();
+			for (XmTaskWorkload xmTaskWorkload : xmTaskWorkloads) {
+				 if(canDelTaskMap.containsKey(xmTaskWorkload.getTaskId())){
+				 	if("!1".equals(xmTaskWorkload.getWstatus())){
+				 		canDel.add(xmTaskWorkload);
+					} else{
+						state1Ndel.add(xmTaskWorkload);
+					}
+				 }else{
+				 	if(!taskMap.containsKey(xmTaskWorkload.getTaskId())){//对应任务已被删除，不存在了
+				 		if(!"1".equals(xmTaskWorkload.getWstatus())){
+							canDel.add(xmTaskWorkload);
+						}else{
+							state1Ndel.add(xmTaskWorkload);
+						}
+					}else{
+						noQxDel.add(xmTaskWorkload);
+					}
+				 }
+			}
+
+			List<String> msgs=new ArrayList<>();
+			if(canDel.size()>0){
+				xmTaskWorkloadService.batchDelete(canDel);
+				msgs.add("成功删除"+canDel.size()+"条工时单据。");
+			}
+			if(state1Ndel.size()>0){
+ 				msgs.add("以下"+state1Ndel.size()+"条工时单据状态为确认状态，不允许删除。【"+state1Ndel.stream().map(i->i.getUsername()+i.getBizDate())+"】");
+			}
+			if(noQxDel.size()>0){
+				xmTaskWorkloadService.batchDelete(canDel);
+				msgs.add("以下"+noQxDel.size()+"条工时单据无权限删除，您只能删除你负责的任务的工时单据，【"+noQxDel.stream().map(i->i.getUsername()+i.getBizDate())+"】.");
+			}
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -248,7 +265,7 @@ public class XmTaskWorkloadController {
 		m.put("tips", tips);
 		return m;
 	} 
-	*/
+
 
 	/**
 	 * 用于结算单
