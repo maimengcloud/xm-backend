@@ -1,9 +1,14 @@
 package com.xm.core.ctrl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
+
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmGroup;
+import com.xm.core.entity.XmTask;
+import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmTaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,8 +58,12 @@ public class XmTaskWorkloadController {
 	
 	@Autowired
 	private XmTaskWorkloadService xmTaskWorkloadService;
-	 
-		
+
+	@Autowired
+	XmTaskService xmTaskService;
+
+	@Autowired
+	XmGroupService xmGroupService;
  
 	
 	@ApiOperation( value = "查询工时登记表信息列表",notes=" ") 
@@ -76,8 +85,7 @@ public class XmTaskWorkloadController {
 	}
 	
  
-	
-	/**
+
 	@ApiOperation( value = "新增一条工时登记表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -97,6 +105,38 @@ public class XmTaskWorkloadController {
                     return failed("pk-exists","编号重复，请修改编号再提交");
                 }
             }
+			if(!StringUtils.hasText(xmTaskWorkload.getTaskId())) {
+				return failed("taskId-0","请上送任务编号");
+			}
+			if(xmTaskWorkload.getWorkload()==null) {
+				return failed("workload-0","工时不能为空");
+			}
+
+			if(xmTaskWorkload.getWorkload().compareTo(BigDecimal.ZERO)==0) {
+				return failed("workload-0","工时不能为0");
+			}
+			XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmTaskWorkload.getTaskId()));
+			if(xmTaskDb==null ){
+				return failed("data-0","任务已不存在");
+			}
+			User user= LoginUtils.getCurrentUserInfo();
+			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
+				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getCreateUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+				if(!isCreate.isOk()){
+					Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+					if(!isExec.isOk()){
+						return failed("noqx-0","你无权针对该业务进行报工");
+					}
+
+				}
+			}
+			xmTaskWorkload.setCtime(new Date());
+			xmTaskWorkload.setCuserid(user.getUserid());
+			if(!StringUtils.hasText(xmTaskWorkload.getUserid())){
+				xmTaskWorkload.setUserid(user.getUserid());
+				xmTaskWorkload.setUsername(user.getUsername());
+			}
+			xmTaskWorkload.setWstatus("0");
 			xmTaskWorkloadService.insert(xmTaskWorkload);
 			m.put("data",xmTaskWorkload);
 		}catch (BizException e) { 
@@ -109,9 +149,8 @@ public class XmTaskWorkloadController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
-	
-	/**
+
+
 	@ApiOperation( value = "删除一条工时登记表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -124,10 +163,24 @@ public class XmTaskWorkloadController {
             if(!StringUtils.hasText(xmTaskWorkload.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
-            XmTaskWorkload xmTaskWorkloadDb = xmTaskWorkloadService.selectOneObject(xmTaskWorkload);
-            if( xmTaskWorkloadDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
-            }
+			if(!StringUtils.hasText(xmTaskWorkload.getTaskId())) {
+				return failed("taskId-0","请上送任务编号");
+			}
+			XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmTaskWorkload.getTaskId()));
+			if(xmTaskDb==null ){
+				return failed("data-0","任务已不存在");
+			}
+			User user= LoginUtils.getCurrentUserInfo();
+			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
+				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getCreateUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+				if(!isCreate.isOk()){
+					Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+					if(!isExec.isOk()){
+						return failed("noqx-0","你无权针对该业务进行报工");
+					}
+
+				}
+			}
 			xmTaskWorkloadService.deleteByPk(xmTaskWorkload);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -139,7 +192,6 @@ public class XmTaskWorkloadController {
 		m.put("tips", tips);
 		return m;
 	}
-	 */
 	
 
 	@ApiOperation( value = "根据主键修改一条工时登记表信息",notes=" ")
