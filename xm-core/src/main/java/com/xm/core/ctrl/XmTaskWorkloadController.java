@@ -255,6 +255,11 @@ public class XmTaskWorkloadController {
 				xmTaskWorkloadService.batchDelete(canDel);
 				msgs.add("以下"+noQxDel.size()+"条工时单据无权限删除，您只能删除你负责的任务的工时单据，【"+noQxDel.stream().map(i->i.getUsername()+i.getBizDate())+"】.");
 			}
+			if(canDel.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+			}else{
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+			}
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
