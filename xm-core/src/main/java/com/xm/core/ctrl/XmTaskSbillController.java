@@ -139,7 +139,12 @@ public class XmTaskSbillController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		if(!"0".equals(xmTaskSbill.getStatus())){
-			tips.setFailureMsg("当前状态不允许删除");
+			tips.setFailureMsg("只有待提交的结算单才能删除");
+			m.put("tips", tips);
+			return m;
+		}
+		if(!("0".equals(xmTaskSbill.getBizFlowState()) || "4".equals(xmTaskSbill.getBizFlowState()))){
+			tips.setFailureMsg("已发审数据不允许删除");
 			m.put("tips", tips);
 			return m;
 		}
@@ -167,11 +172,17 @@ public class XmTaskSbillController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		if(!"0".equals(xmTaskSbill.getStatus())){
-			tips.setFailureMsg("当前状态不允许修改");
+			tips.setFailureMsg("只能修改待提交的结算单");
+			m.put("tips", tips);
+			return m;
+		}
+		if(!("0".equals(xmTaskSbill.getBizFlowState()) || "4".equals(xmTaskSbill.getBizFlowState()))){
+			tips.setFailureMsg("已发审数据不允许修改");
 			m.put("tips", tips);
 			return m;
 		}
 		try{
+			xmTaskSbill.setLtime(new Date());
 			xmTaskSbillService.updateByPk(xmTaskSbill);
 			m.put("data",xmTaskSbill);
 		}catch (BizException e) { 

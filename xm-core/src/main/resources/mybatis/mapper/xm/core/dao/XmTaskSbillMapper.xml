@@ -11,7 +11,9 @@
                         ( #{id})
                     </foreach>
              </if>
-		    <if test="key != null and key !='' ">       </if>
+		    <if test="key != null and key !='' ">
+			 	AND( res.id like #{key} OR res.title like #{key} OR res.project_name like #{key} )
+			</if>
 		</sql>
 
 

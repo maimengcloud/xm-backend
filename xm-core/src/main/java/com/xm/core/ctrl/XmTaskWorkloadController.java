@@ -141,7 +141,7 @@ public class XmTaskWorkloadController {
 	}
 	 */
 	
-	/**
+
 	@ApiOperation( value = "根据主键修改一条工时登记表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTaskWorkload.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -170,7 +170,6 @@ public class XmTaskWorkloadController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 	
 
 	
@@ -196,4 +195,24 @@ public class XmTaskWorkloadController {
 		return m;
 	} 
 	*/
+
+	/**
+	 * 用于结算单
+	 * */
+	@ApiOperation( value = "查询工时登记表信息列表",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/listByProject",method=RequestMethod.GET)
+	public Map<String,Object> listXmTaskWorkloadByProject( @RequestParam Map<String,Object> xmTaskWorkload){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		PageUtils.startPage(xmTaskWorkload);
+		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.selectList("selectListMapByProject",xmTaskWorkload);	//列出XmTaskWorkload列表
+		PageUtils.responePage(m, xmTaskWorkloadList);
+		m.put("data",xmTaskWorkloadList);
+
+		m.put("tips", tips);
+		return m;
+	}
 }

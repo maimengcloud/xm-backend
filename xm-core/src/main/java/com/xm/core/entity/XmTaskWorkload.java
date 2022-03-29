@@ -20,7 +20,7 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	private static final long serialVersionUID = 1L;
 	
 	@ApiModelProperty(notes="主键,主键",allowEmptyValue=true,example="",allowableValues="")
-	Integer id;
+	String id;
   	
 	
 	@ApiModelProperty(notes="员工编号",allowEmptyValue=true,example="",allowableValues="")
@@ -69,7 +69,7 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	BigDecimal workload;
 
 	/**主键**/
-	public XmTaskWorkload(Integer id) {
+	public XmTaskWorkload(String id) {
 		this.id = id;
 	}
     
@@ -134,7 +134,7 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	/**
 	 * 主键
 	 **/
-	public void setId(Integer id) {
+	public void setId(String id) {
 		this.id = id;
 	}
 	/**
@@ -231,7 +231,7 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	/**
 	 * 主键
 	 **/
-	public Integer getId() {
+	public String getId() {
 		return this.id;
 	}
 	/**
