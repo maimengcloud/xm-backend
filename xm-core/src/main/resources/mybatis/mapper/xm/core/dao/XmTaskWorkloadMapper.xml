@@ -21,16 +21,25 @@
 		on res.task_id = task.id
 		<where>
 			res.wstatus = '1'
+			AND res.sstatus = '1'
 			AND task.project_id = #{projectId}
 			<if test="key != null and key !='' ">
 			AND
-			( task.id like #{key} OR task.name like #{key}
+			( task.id like #{key} OR task.name like #{key} OR res.userid like #{key} OR res.username like #{key} )
 			</if>
 		</where>
 	</select>
 
-
-
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByWhere" parameterType="com.xm.core.entity.XmTaskWorkload">
+		update  xm_task_workload res
+		<set>
+			res.sstatus = #{sstatus}
+		</set>
+		<where>
+			res.sbill_id = #{sbillId}
+		</where>
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 
