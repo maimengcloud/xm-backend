@@ -149,7 +149,8 @@ public class XmTaskSbillController {
 			return m;
 		}
 		try{
-			xmTaskSbillService.deleteByPk(xmTaskSbill);
+			//删除结算单时候，要一起恢复工时单为未加入结算状态
+			xmTaskSbillService.deleteByPkAndReturnWorkload(xmTaskSbill);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
