@@ -259,7 +259,9 @@
 			SET
 			res.act_cost = t2.act_cost,
 			res.act_workload = t2.act_workload,
-		    res.rate = case when (t2.budget_workload=0  or t2.budget_workload is null) and (t2.act_workload is null or t2.act_workload =0 ) and t2.rworkload is null then if(t2.children_cnt=0 or t2.children_cnt is null,t2.total_rate,t2.total_rate/t2.children_cnt) else ifnull(t2.act_workload,0) / ifnull(t2.act_workload,0)+ifnull(t2.rworkload,0) end,
+		    res.rate = case when (ifnull(t2.rworkload,0)+ifnull(t2.act_workload,0)>0) then ifnull(t2.act_workload,0)*100/(ifnull(t2.rworkload,0)+ifnull(t2.act_workload,0))
+		                    when  t2.children_cnt >0 then t2.total_rate/t2.children_cnt
+		                    else 0 end,
 			res.start_time = ifnull(res.start_time,t2.start_time),
 			res.end_time = ifnull(t2.end_time,t2.end_time),
 			res.act_start_time = t2.act_start_time,
@@ -300,7 +302,9 @@
 		SET
 		res.act_cost = t2.act_cost,
 		res.act_workload = t2.act_workload,
-			res.rate = case when (t2.budget_workload=0  or t2.budget_workload is null) and (t2.act_workload is null or t2.act_workload =0 ) and t2.rworkload is null then if(t2.children_cnt=0 or t2.children_cnt is null,t2.total_rate,t2.total_rate/t2.children_cnt) else ifnull(t2.act_workload,0) / ifnull(t2.act_workload,0)+ifnull(t2.rworkload,0) end,
+			res.rate = case when (ifnull(t2.rworkload,0)+ifnull(t2.act_workload,0)>0) then ifnull(t2.act_workload,0)*100/(ifnull(t2.rworkload,0)+ifnull(t2.act_workload,0))
+							when  t2.children_cnt >0 then t2.total_rate/t2.children_cnt
+							else 0 end,
 			res.start_time = ifnull(res.start_time,t2.start_time),
 		res.end_time = ifnull(t2.end_time,t2.end_time),
 		res.act_start_time = t2.act_start_time,
