@@ -245,7 +245,7 @@
 		insert into xm_menu(
 			<include refid="columns"/>
 		) values (
-		#{startTime},#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{budgetHours},#{budgetStaffNu},#{budgetWorkload},#{budgetAmount},#{phaseId},#{iterationId},#{calcType},#{mactWorkload},#{mactAmount},#{mactRate},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority},#{dclass},#{iterationName},#{endTime}
+		#{startTime},#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{budgetHours},#{budgetStaffNu},#{budgetWorkload},#{budgetCost},#{phaseId},#{iterationId},#{calcType},#{mactWorkload},#{mactCost},#{mactRate},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority},#{dclass},#{iterationName},#{endTime},#{rworkload}
 		)
 	</insert>
 	
@@ -308,7 +308,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time
+		start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_cost,phase_id,iteration_id,calc_type,mact_workload,mact_cost,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time,rworkload
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -343,12 +343,12 @@
 		<if test="budgetHours != null and budgetHours != ''">      and res.budget_hours = #{budgetHours}     </if>
 		<if test="budgetStaffNu != null and budgetStaffNu != ''">      and res.budget_staff_nu = #{budgetStaffNu}     </if>
 		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
-		<if test="budgetAmount != null and budgetAmount != ''">      and res.budget_amount = #{budgetAmount}     </if>
+		<if test="budgetCost != null and budgetCost != ''">      and res.budget_cost = #{budgetCost}     </if>
 		<if test="phaseId != null and phaseId != ''">      and res.phase_id = #{phaseId}     </if>
 		<if test="iterationId != null and iterationId != ''">      and res.iteration_id = #{iterationId}     </if>
 		<if test="calcType != null and calcType != ''">      and res.calc_type = #{calcType}     </if>
 		<if test="mactWorkload != null and mactWorkload != ''">      and res.mact_workload = #{mactWorkload}     </if>
-		<if test="mactAmount != null and mactAmount != ''">      and res.mact_amount = #{mactAmount}     </if>
+		<if test="mactCost != null and mactCost != ''">      and res.mact_cost = #{mactCost}     </if>
 		<if test="mactRate != null and mactRate != ''">      and res.mact_rate = #{mactRate}     </if>
 		<if test="source != null and source != ''">      and res.source = #{source}     </if>
 		<if test="proposerId != null and proposerId != ''">      and res.proposer_id = #{proposerId}     </if>
@@ -359,6 +359,7 @@
 		<if test="dclass != null and dclass != ''">      and res.dclass = #{dclass}     </if>
 		<if test="iterationName != null and iterationName != ''">      and res.iteration_name = #{iterationName}     </if>
 		<if test="endTime != null">      and date_format(res.end_time,'%Y-%m-%d') = date_format(#{endTime},'%Y-%m-%d')     </if>
+		<if test="rworkload != null and rworkload != ''">      and res.rworkload = #{rworkload}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -391,12 +392,12 @@
 		budget_hours = #{budgetHours},
 		budget_staff_nu = #{budgetStaffNu},
 		budget_workload = #{budgetWorkload},
-		budget_amount = #{budgetAmount},
+		budget_cost = #{budgetCost},
 		phase_id = #{phaseId},
 		iteration_id = #{iterationId},
 		calc_type = #{calcType},
 		mact_workload = #{mactWorkload},
-		mact_amount = #{mactAmount},
+		mact_cost = #{mactCost},
 		mact_rate = #{mactRate},
 		source = #{source},
 		proposer_id = #{proposerId},
@@ -406,7 +407,8 @@
 		priority = #{priority},
 		dclass = #{dclass},
 		iteration_name = #{iterationName},
-		end_time = #{endTime}
+		end_time = #{endTime},
+		rworkload = #{rworkload}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="startTime != null"> start_time = #{startTime},     </if>
@@ -438,12 +440,12 @@
 		<if test="budgetHours != null and budgetHours != ''"> budget_hours = #{budgetHours},     </if>
 		<if test="budgetStaffNu != null and budgetStaffNu != ''"> budget_staff_nu = #{budgetStaffNu},     </if>
 		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
-		<if test="budgetAmount != null and budgetAmount != ''"> budget_amount = #{budgetAmount},     </if>
+		<if test="budgetCost != null and budgetCost != ''"> budget_cost = #{budgetCost},     </if>
 		<if test="phaseId != null and phaseId != ''"> phase_id = #{phaseId},     </if>
 		<if test="iterationId != null and iterationId != ''"> iteration_id = #{iterationId},     </if>
 		<if test="calcType != null and calcType != ''"> calc_type = #{calcType},     </if>
 		<if test="mactWorkload != null and mactWorkload != ''"> mact_workload = #{mactWorkload},     </if>
-		<if test="mactAmount != null and mactAmount != ''"> mact_amount = #{mactAmount},     </if>
+		<if test="mactCost != null and mactCost != ''"> mact_cost = #{mactCost},     </if>
 		<if test="mactRate != null and mactRate != ''"> mact_rate = #{mactRate},     </if>
 		<if test="source != null and source != ''"> source = #{source},     </if>
 		<if test="proposerId != null and proposerId != ''"> proposer_id = #{proposerId},     </if>
@@ -454,6 +456,7 @@
 		<if test="dclass != null and dclass != ''"> dclass = #{dclass},     </if>
 		<if test="iterationName != null and iterationName != ''"> iteration_name = #{iterationName},     </if>
 		<if test="endTime != null"> end_time = #{endTime},     </if>
+		<if test="rworkload != null and rworkload != ''"> rworkload = #{rworkload},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -486,12 +489,12 @@
 			budget_hours = #{item.budgetHours},
 			budget_staff_nu = #{item.budgetStaffNu},
 			budget_workload = #{item.budgetWorkload},
-			budget_amount = #{item.budgetAmount},
+			budget_cost = #{item.budgetCost},
 			phase_id = #{item.phaseId},
 			iteration_id = #{item.iterationId},
 			calc_type = #{item.calcType},
 			mact_workload = #{item.mactWorkload},
-			mact_amount = #{item.mactAmount},
+			mact_cost = #{item.mactCost},
 			mact_rate = #{item.mactRate},
 			source = #{item.source},
 			proposer_id = #{item.proposerId},
@@ -501,6 +504,7 @@
 			priority = #{item.priority},
 			dclass = #{item.dclass},
 			iteration_name = #{item.iterationName},
-			end_time = #{item.endTime}
+			end_time = #{item.endTime},
+			rworkload = #{item.rworkload}
 	</sql>
 </mapper>

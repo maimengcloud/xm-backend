@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	startTime,menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetAmount,phaseId,iterationId,calcType,mactWorkload,mactAmount,mactRate,source,proposerId,proposerName,dlvl,dtype,priority,dclass,iterationName,endTime;<br>
+ *	startTime,menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetCost,phaseId,iterationId,calcType,mactWorkload,mactCost,mactRate,source,proposerId,proposerName,dlvl,dtype,priority,dclass,iterationName,endTime,rworkload;<br>
  * 表 xm_menu 功能表的所有字段名: <br>
- *	start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_amount,phase_id,iteration_id,calc_type,mact_workload,mact_amount,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time;<br>
+ *	start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_cost,phase_id,iteration_id,calc_type,mact_workload,mact_cost,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time,rworkload;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -111,7 +111,7 @@ public class XmMenu  implements java.io.Serializable {
 	BigDecimal budgetWorkload;
 	
 	@ApiModelProperty(notes="预算金额，从上到下汇总，从上到下分配，下级汇总不能大于上级",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal budgetAmount;
+	BigDecimal budgetCost;
 	
 	@ApiModelProperty(notes="计划编号",allowEmptyValue=true,example="",allowableValues="")
 	String phaseId;
@@ -122,13 +122,13 @@ public class XmMenu  implements java.io.Serializable {
 	@ApiModelProperty(notes="叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报，3-下往上",allowEmptyValue=true,example="",allowableValues="")
 	String calcType;
 	
-	@ApiModelProperty(notes="手工填报的情况下填报的工作量，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="用户故事由任务和bug报工工时汇总，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal mactWorkload;
 	
-	@ApiModelProperty(notes="手工填报情况下填报的费用总额，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
-	String mactAmount;
+	@ApiModelProperty(notes="用户故事由任务和bug报工工时汇总工时*工时单价，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
+	String mactCost;
 	
-	@ApiModelProperty(notes="手工填报下的进度",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="用户故事由任务和bug报工工时/(报工工时+剩余工时)汇总，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
 	Integer mactRate;
 	
 	@ApiModelProperty(notes="需求来源",allowEmptyValue=true,example="",allowableValues="")
@@ -157,6 +157,9 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="结束时间",allowEmptyValue=true,example="",allowableValues="")
 	Date endTime;
+	
+	@ApiModelProperty(notes="用户故事由任务和bug报工剩余工时汇总，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal rworkload;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -350,8 +353,8 @@ public class XmMenu  implements java.io.Serializable {
 	/**
 	 * 预算金额，从上到下汇总，从上到下分配，下级汇总不能大于上级
 	 **/
-	public void setBudgetAmount(BigDecimal budgetAmount) {
-		this.budgetAmount = budgetAmount;
+	public void setBudgetCost(BigDecimal budgetCost) {
+		this.budgetCost = budgetCost;
 	}
 	/**
 	 * 计划编号
@@ -372,19 +375,19 @@ public class XmMenu  implements java.io.Serializable {
 		this.calcType = calcType;
 	}
 	/**
-	 * 手工填报的情况下填报的工作量，其余为下级往上汇总数据
+	 * 用户故事由任务和bug报工工时汇总，其余为下级往上汇总数据
 	 **/
 	public void setMactWorkload(BigDecimal mactWorkload) {
 		this.mactWorkload = mactWorkload;
 	}
 	/**
-	 * 手工填报情况下填报的费用总额，其余为下级往上汇总数据
+	 * 用户故事由任务和bug报工工时汇总工时*工时单价，其余为下级往上汇总数据
 	 **/
-	public void setMactAmount(String mactAmount) {
-		this.mactAmount = mactAmount;
+	public void setMactCost(String mactCost) {
+		this.mactCost = mactCost;
 	}
 	/**
-	 * 手工填报下的进度
+	 * 用户故事由任务和bug报工工时/(报工工时+剩余工时)汇总，其余为下级往上汇总数据
 	 **/
 	public void setMactRate(Integer mactRate) {
 		this.mactRate = mactRate;
@@ -442,6 +445,12 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
+	}
+	/**
+	 * 用户故事由任务和bug报工剩余工时汇总，其余为下级往上汇总数据
+	 **/
+	public void setRworkload(BigDecimal rworkload) {
+		this.rworkload = rworkload;
 	}
 	
 	/**
@@ -627,8 +636,8 @@ public class XmMenu  implements java.io.Serializable {
 	/**
 	 * 预算金额，从上到下汇总，从上到下分配，下级汇总不能大于上级
 	 **/
-	public BigDecimal getBudgetAmount() {
-		return this.budgetAmount;
+	public BigDecimal getBudgetCost() {
+		return this.budgetCost;
 	}
 	/**
 	 * 计划编号
@@ -649,19 +658,19 @@ public class XmMenu  implements java.io.Serializable {
 		return this.calcType;
 	}
 	/**
-	 * 手工填报的情况下填报的工作量，其余为下级往上汇总数据
+	 * 用户故事由任务和bug报工工时汇总，其余为下级往上汇总数据
 	 **/
 	public BigDecimal getMactWorkload() {
 		return this.mactWorkload;
 	}
 	/**
-	 * 手工填报情况下填报的费用总额，其余为下级往上汇总数据
+	 * 用户故事由任务和bug报工工时汇总工时*工时单价，其余为下级往上汇总数据
 	 **/
-	public String getMactAmount() {
-		return this.mactAmount;
+	public String getMactCost() {
+		return this.mactCost;
 	}
 	/**
-	 * 手工填报下的进度
+	 * 用户故事由任务和bug报工工时/(报工工时+剩余工时)汇总，其余为下级往上汇总数据
 	 **/
 	public Integer getMactRate() {
 		return this.mactRate;
@@ -719,6 +728,12 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public Date getEndTime() {
 		return this.endTime;
+	}
+	/**
+	 * 用户故事由任务和bug报工剩余工时汇总，其余为下级往上汇总数据
+	 **/
+	public BigDecimal getRworkload() {
+		return this.rworkload;
 	}
 
 }

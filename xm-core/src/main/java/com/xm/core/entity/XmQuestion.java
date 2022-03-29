@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmQuestion所有属性名: <br>
- *	id,name,projectId,projectName,caseId,caseName,endTime,askUserid,askUsername,handlerUserid,handlerUsername,priority,solution,description,createUserid,createUsername,createTime,bugStatus,bizProcInstId,bizFlowState,menuId,menuName,budgetWorkload,budgetCost,actWorkload,actCost,expectResult,opStep,currResult,refRequire,bugSeverity,bugType,tagIds,tagNames,urls,ltime,qtype,caseExecId,remarks,productId,repRate,verNum,vpath,pverNum,bugReason,rate;<br>
+ *	id,name,projectId,projectName,caseId,caseName,endTime,askUserid,askUsername,handlerUserid,handlerUsername,priority,solution,description,createUserid,createUsername,createTime,bugStatus,bizProcInstId,bizFlowState,menuId,menuName,budgetWorkload,budgetCost,actWorkload,actCost,expectResult,opStep,currResult,refRequire,bugSeverity,bugType,tagIds,tagNames,urls,ltime,qtype,caseExecId,remarks,productId,repRate,verNum,vpath,pverNum,bugReason,rate,rworkload;<br>
  * 表 xm_question xm_question的所有字段名: <br>
- *	id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,budget_workload,budget_cost,act_workload,act_cost,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,case_exec_id,remarks,product_id,rep_rate,ver_num,vpath,pver_num,bug_reason,rate;<br>
+ *	id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,budget_workload,budget_cost,act_workload,act_cost,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,case_exec_id,remarks,product_id,rep_rate,ver_num,vpath,pver_num,bug_reason,rate,rworkload;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -92,7 +92,7 @@ public class XmQuestion  implements java.io.Serializable {
 	@ApiModelProperty(notes="预估成本金额",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal budgetCost;
 	
-	@ApiModelProperty(notes="实际工时",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="实际工时（取报工实际工时汇总）",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal actWorkload;
 	
 	@ApiModelProperty(notes="实际总金额",allowEmptyValue=true,example="",allowableValues="")
@@ -157,6 +157,9 @@ public class XmQuestion  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="进度0-100",allowEmptyValue=true,example="",allowableValues="")
 	Integer rate;
+	
+	@ApiModelProperty(notes="剩余工时，手工填写",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal rworkload;
 
 	/**问题编号**/
 	public XmQuestion(String id) {
@@ -312,7 +315,7 @@ public class XmQuestion  implements java.io.Serializable {
 		this.budgetCost = budgetCost;
 	}
 	/**
-	 * 实际工时
+	 * 实际工时（取报工实际工时汇总）
 	 **/
 	public void setActWorkload(BigDecimal actWorkload) {
 		this.actWorkload = actWorkload;
@@ -442,6 +445,12 @@ public class XmQuestion  implements java.io.Serializable {
 	 **/
 	public void setRate(Integer rate) {
 		this.rate = rate;
+	}
+	/**
+	 * 剩余工时，手工填写
+	 **/
+	public void setRworkload(BigDecimal rworkload) {
+		this.rworkload = rworkload;
 	}
 	
 	/**
@@ -589,7 +598,7 @@ public class XmQuestion  implements java.io.Serializable {
 		return this.budgetCost;
 	}
 	/**
-	 * 实际工时
+	 * 实际工时（取报工实际工时汇总）
 	 **/
 	public BigDecimal getActWorkload() {
 		return this.actWorkload;
@@ -719,6 +728,12 @@ public class XmQuestion  implements java.io.Serializable {
 	 **/
 	public Integer getRate() {
 		return this.rate;
+	}
+	/**
+	 * 剩余工时，手工填写
+	 **/
+	public BigDecimal getRworkload() {
+		return this.rworkload;
 	}
 
 }
