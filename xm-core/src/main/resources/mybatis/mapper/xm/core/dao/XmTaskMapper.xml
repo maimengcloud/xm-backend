@@ -240,6 +240,7 @@
 			sum( ifnull( t.budget_workload, 0 ) ) AS budget_workload,
 			sum( ifnull( t.act_cost, 0 ) ) AS act_cost,
 			sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
+			sum( ifnull( t.rworkload,  if(t.budget_workload>0,(t.budget_workload-ifnull(t.act_workload,0)),0)   ) ) AS rworkload,
 			sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) )   AS budget_workload_rate,
 			sum( ifnull(t.rate,0)) as total_rate,
 			min( t.start_time ) AS start_time,
@@ -258,7 +259,7 @@
 			SET
 			res.act_cost = t2.act_cost,
 			res.act_workload = t2.act_workload,
-		    res.rate = case when t2.budget_workload=0  or t2.budget_workload is null then if(t2.children_cnt=0 or t2.children_cnt is null,t2.total_rate,t2.total_rate/t2.children_cnt) else t2.budget_workload_rate / t2.budget_workload end,
+		    res.rate = case when (t2.budget_workload=0  or t2.budget_workload is null) and (t2.act_workload is null or t2.act_workload =0 ) and t2.rworkload is null then if(t2.children_cnt=0 or t2.children_cnt is null,t2.total_rate,t2.total_rate/t2.children_cnt) else ifnull(t2.act_workload,0) / ifnull(t2.act_workload,0)+ifnull(t2.rworkload) end,
 			res.start_time = ifnull(res.start_time,t2.start_time),
 			res.end_time = ifnull(t2.end_time,t2.end_time),
 			res.act_start_time = t2.act_start_time,
@@ -282,7 +283,9 @@
 		count(1) as children_cnt,
 		sum( ifnull( t.act_cost, 0 ) ) AS act_cost,
 		sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
-		sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) ) as budget_workload_rate,
+			sum( ifnull( t.rworkload,  if(t.budget_workload>0,(t.budget_workload-ifnull(t.act_workload,0)),0)   ) ) AS rworkload,
+
+			sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) ) as budget_workload_rate,
 			sum( ifnull(t.rate,0)) as total_rate,
 			sum( ifnull( t.budget_workload, 0 )) as budget_workload,
 			min( t.act_start_time ) AS act_start_time,
@@ -297,8 +300,8 @@
 		SET
 		res.act_cost = t2.act_cost,
 		res.act_workload = t2.act_workload,
-		res.rate = case when t2.budget_workload=0 or t2.budget_workload is null then if(t2.children_cnt=0 or t2.children_cnt is null,t2.total_rate,t2.total_rate/t2.children_cnt) else t2.budget_workload_rate / t2.budget_workload end,
-		res.start_time = ifnull(res.start_time,t2.start_time),
+			res.rate = case when (t2.budget_workload=0  or t2.budget_workload is null) and (t2.act_workload is null or t2.act_workload =0 ) and t2.rworkload is null then if(t2.children_cnt=0 or t2.children_cnt is null,t2.total_rate,t2.total_rate/t2.children_cnt) else ifnull(t2.act_workload,0) / ifnull(t2.act_workload,0)+ifnull(t2.rworkload) end,
+			res.start_time = ifnull(res.start_time,t2.start_time),
 		res.end_time = ifnull(t2.end_time,t2.end_time),
 		res.act_start_time = t2.act_start_time,
 		res.act_end_time = t2.act_end_time ,
@@ -363,6 +366,22 @@
 		</set>
 		where id in
 		<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+	</update>
+
+	<update id="calcWorkloadByRecord" parameterType="List">
+		update xm_task res left join
+		(select w.task_id, sum(ifnull(w.workload,0)) as workload  from xm_task_workload w where w.task_id  in
+			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+		  group by w.task_id
+		)
+		as w on res.id=w.task_id
+		set res.act_workload=w.workload,res.rate=if(res.rworkload is null and ifnull(w.workload,0)>0 and res.budget_workload>0,ifnull(res.act_workload,0)*100 / (res.budget_workload),ifnull(w.workload,0)*100/(ifnull(w.workload,0)+res.rworkload))
+		where res.id in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
 		</foreach>
 	</update>

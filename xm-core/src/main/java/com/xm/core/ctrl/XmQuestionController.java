@@ -14,6 +14,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmQuestion;
+import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmQuestionService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmQuestionVo;
@@ -25,6 +26,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * url编制采用rest风格,如对XM.xm_question xm_question的操作有增删改查,对应的url分别为:<br>
@@ -49,7 +51,8 @@ public class XmQuestionController {
 	 
 	@Autowired
 	private XmPushMsgService xmPushMsgService;
- 
+
+	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmQuestion());
 	
 	@ApiOperation( value = "查询xm_question信息列表",notes="listXmQuestion,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
@@ -251,13 +254,18 @@ public class XmQuestionController {
 			if(xmQuestionsDb==null ||xmQuestionsDb.size()==0){
 				ResponseHelper.failed("bugs-0","该bug已不存在");
 			}
-			Set<String> fields=new HashSet<>();
-			for (String fieldName : xmQuestionMap.keySet()) {
-				if(fields.contains(fieldName)){
-					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+			Set<String> fieldKey=xmQuestionMap.keySet().stream().filter(i->fieldsMap.containsKey(i)).collect(Collectors.toSet());
+			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmQuestionMap.get(i) )).collect(Collectors.toSet());
+			if(fieldKey.size()>0){
+				Set<String> fields=new HashSet<>();
+				for (String fieldName : xmQuestionMap.keySet()) {
+					if(fields.contains(fieldName)){
+						return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					}
 				}
+				xmQuestionService.editSomeFields(xmQuestionMap);
 			}
-			xmQuestionService.editSomeFields(xmQuestionMap);
+
 
 			//m.put("data",xmMenu);
 		}catch (BizException e) {

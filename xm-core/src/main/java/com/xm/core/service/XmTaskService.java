@@ -725,5 +725,20 @@ public class XmTaskService extends BaseService {
 	public void editSomeFields(Map<String, Object> xmTaskMap) {
 		super.update("editSomeFields",xmTaskMap);
 	}
+	public void calcWorkloadByRecord(String id) {
+		if(!StringUtils.hasText(id)){
+			return;
+		}
+		List<String> ids=new ArrayList<>();
+		ids.add(id);
+		calcWorkloadByRecord(ids);
+	}
+	public void calcWorkloadByRecord(List<String> ids) {
+		if(ids==null || ids.size()<=0){
+			return;
+		}
+		ids=ids.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
+		super.update("calcWorkloadByRecord",ids);
+	}
 }
 

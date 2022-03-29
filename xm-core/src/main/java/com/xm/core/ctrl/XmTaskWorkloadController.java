@@ -121,6 +121,9 @@ public class XmTaskWorkloadController {
 			if(xmTaskDb==null ){
 				return failed("data-0","任务已不存在");
 			}
+			if("1".equals(xmTaskDb.getNtype())){
+				return failed("ntype-1",xmTaskDb.getName()+"为计划，不是任务，不用登记工时");
+			}
 			User user= LoginUtils.getCurrentUserInfo();
 			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
 				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getCreateUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
@@ -142,6 +145,8 @@ public class XmTaskWorkloadController {
 			xmTaskWorkload.setWstatus("0");
 			xmTaskWorkload.setProjectId(xmTaskDb.getProjectId());
 			xmTaskWorkloadService.insert(xmTaskWorkload);
+			this.xmTaskService.calcWorkloadByRecord(xmTaskDb.getId());
+			this.xmTaskService.sumParents(xmTaskDb);
 			m.put("data",xmTaskWorkload);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -169,7 +174,28 @@ public class XmTaskWorkloadController {
             if( xmTaskWorkloadDb == null ){
                 return failed("data-not-exists","数据不存在，无法修改");
             }
+			XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmTaskWorkloadDb.getTaskId()));
+			if(xmTaskDb==null ){
+				return failed("data-0","任务已不存在");
+			}
+			if("1".equals(xmTaskDb.getNtype())){
+				return failed("ntype-1",xmTaskDb.getName()+"为计划，不是任务，不用登记工时");
+			}
+			User user= LoginUtils.getCurrentUserInfo();
+			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
+				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getCreateUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+				if(!isCreate.isOk()){
+					Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+					if(!isExec.isOk()){
+						return failed("noqx-0","你无权针对该业务进行报工");
+					}
+
+				}
+			}
 			xmTaskWorkloadService.updateSomeFieldByPk(xmTaskWorkload);
+		this.xmTaskService.sumParents(xmTaskDb);
+			this.xmTaskService.calcWorkloadByRecord(xmTaskWorkload.getTaskId());
+
 			m.put("data",xmTaskWorkload);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -246,13 +272,14 @@ public class XmTaskWorkloadController {
 			List<String> msgs=new ArrayList<>();
 			if(canDel.size()>0){
 				xmTaskWorkloadService.batchDelete(canDel);
+				this.xmTaskService.calcWorkloadByRecord(canDelTaskMap.keySet().stream().collect(Collectors.toList()));
+				this.xmTaskService.batchSumParents(canDelTaskMap.values().stream().collect(Collectors.toList()));
 				msgs.add("成功删除"+canDel.size()+"条工时单据。");
 			}
 			if(state1Ndel.size()>0){
  				msgs.add("以下"+state1Ndel.size()+"条工时单据状态为确认状态，不允许删除。【"+state1Ndel.stream().map(i->i.getUsername()+i.getBizDate()).collect(Collectors.joining(","))+"】");
 			}
 			if(noQxDel.size()>0){
-				xmTaskWorkloadService.batchDelete(canDel);
 				msgs.add("以下"+noQxDel.size()+"条工时单据无权限删除，您只能删除你负责的任务的工时单据，【"+noQxDel.stream().map(i->i.getUsername()+i.getBizDate()).collect(Collectors.joining(","))+"】.");
 			}
 			if(canDel.size()>0){

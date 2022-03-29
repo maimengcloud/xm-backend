@@ -76,6 +76,8 @@ public class XmTaskController {
 	@Autowired
 	XmProductService xmProductService;
 
+	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmTask());
+
 	@ApiOperation( value = "查询xm_task信息列表",notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({
 			@ApiImplicitParam(name="id",value="任务编号,主键",required=false),
@@ -315,8 +317,16 @@ public class XmTaskController {
 					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
-			xmTaskService.editSomeFields(xmTaskMap);
-			xmRecordService.addXmTaskRecord(xmTask.getProjectId(),xmTask.getId(),"修改项目任务","修改任务"+xmTask.getMenuName(),"", JSON.toJSONString(xmTask));
+			Set<String> fieldKey=xmTaskMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
+			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskMap.get(i) )).collect(Collectors.toSet());
+
+			if(fieldKey.size()>0){
+				fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskMap.get(i) )).collect(Collectors.toSet());
+
+				xmTaskService.editSomeFields(xmTaskMap);
+				xmRecordService.addXmTaskRecord(xmTask.getProjectId(),xmTask.getId(),"修改项目任务","修改任务"+xmTask.getMenuName(),"", JSON.toJSONString(xmTask));
+
+			}
 
 			//m.put("data",xmMenu);
 		}catch (BizException e) {

@@ -13,6 +13,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.PubTool;
 import com.xm.core.entity.XmMenu;
+import com.xm.core.entity.XmQuestion;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmMenuService;
 import com.xm.core.service.XmGroupService;
@@ -65,6 +66,9 @@ public class XmMenuController {
 
 	@Autowired
 	private XmGroupService groupService;
+
+
+	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmMenu());
 	
 	@ApiOperation( value = "查询项目菜单表信息列表",notes="listXmMenu,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
@@ -417,6 +421,9 @@ public class XmMenuController {
 					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
+			Set<String> fieldKey=xmMenuMap.keySet().stream().filter(i->fieldsMap.containsKey(i)).collect(Collectors.toSet());
+			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmMenuMap.get(i) )).collect(Collectors.toSet());
+
 			xmMenuService.editSomeFields(xmMenuMap);
 			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"修改产品需求","修改产品需求"+xmMenu.getMenuName(),"", JSON.toJSONString(xmMenu));
 
