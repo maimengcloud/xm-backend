@@ -138,6 +138,7 @@ public class XmTaskWorkloadController {
 			}
 
 			xmTaskWorkload.setWstatus("0");
+			xmTaskWorkload.setProjectId(xmTaskDb.getProjectId());
 			xmTaskWorkloadService.insert(xmTaskWorkload);
 			m.put("data",xmTaskWorkload);
 		}catch (BizException e) { 
