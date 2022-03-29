@@ -355,6 +355,17 @@
 		res.task_state=ifnull(#{taskState},res.task_state)
 		where id=#{id}
 	</update>
+
+	<update id="editSomeFields" parameterType="HashMap">
+		update  xm_task
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id in
+		<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

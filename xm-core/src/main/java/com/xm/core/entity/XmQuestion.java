@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmQuestion所有属性名: <br>
- *	id,name,projectId,projectName,caseId,caseName,endTime,askUserid,askUsername,handlerUserid,handlerUsername,priority,solution,description,createUserid,createUsername,createTime,bugStatus,bizProcInstId,bizFlowState,menuId,menuName,budgetWorkload,budgetCost,actWorkload,actCost,expectResult,opStep,currResult,refRequire,bugSeverity,bugType,tagIds,tagNames,urls,ltime,qtype,iterationId,iterationName,caseExecId,remarks,productId,repRate,verNum,vpath,pverNum,bugReason,rate;<br>
+ *	id,name,projectId,projectName,caseId,caseName,endTime,askUserid,askUsername,handlerUserid,handlerUsername,priority,solution,description,createUserid,createUsername,createTime,bugStatus,bizProcInstId,bizFlowState,menuId,menuName,budgetWorkload,budgetCost,actWorkload,actCost,expectResult,opStep,currResult,refRequire,bugSeverity,bugType,tagIds,tagNames,urls,ltime,qtype,caseExecId,remarks,productId,repRate,verNum,vpath,pverNum,bugReason,rate;<br>
  * 表 xm_question xm_question的所有字段名: <br>
- *	id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,budget_workload,budget_cost,act_workload,act_cost,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,iteration_id,iteration_name,case_exec_id,remarks,product_id,rep_rate,ver_num,vpath,pver_num,bug_reason,rate;<br>
+ *	id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,budget_workload,budget_cost,act_workload,act_cost,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,case_exec_id,remarks,product_id,rep_rate,ver_num,vpath,pver_num,bug_reason,rate;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -128,14 +128,8 @@ public class XmQuestion  implements java.io.Serializable {
 	@ApiModelProperty(notes="最后更新时间",allowEmptyValue=true,example="",allowableValues="")
 	Date ltime;
 	
-	@ApiModelProperty(notes="问题类型risk-风险、bug-功能问题、consult-普通咨询、",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="问题类型2-风险、1-功能问题、3-普通咨询、（暂时不用这个字段了）",allowEmptyValue=true,example="",allowableValues="")
 	String qtype;
-	
-	@ApiModelProperty(notes="迭代编号",allowEmptyValue=true,example="",allowableValues="")
-	String iterationId;
-	
-	@ApiModelProperty(notes="迭代名称",allowEmptyValue=true,example="",allowableValues="")
-	String iterationName;
 	
 	@ApiModelProperty(notes="关联的案例执行编号",allowEmptyValue=true,example="",allowableValues="")
 	String caseExecId;
@@ -390,22 +384,10 @@ public class XmQuestion  implements java.io.Serializable {
 		this.ltime = ltime;
 	}
 	/**
-	 * 问题类型risk-风险、bug-功能问题、consult-普通咨询、
+	 * 问题类型2-风险、1-功能问题、3-普通咨询、（暂时不用这个字段了）
 	 **/
 	public void setQtype(String qtype) {
 		this.qtype = qtype;
-	}
-	/**
-	 * 迭代编号
-	 **/
-	public void setIterationId(String iterationId) {
-		this.iterationId = iterationId;
-	}
-	/**
-	 * 迭代名称
-	 **/
-	public void setIterationName(String iterationName) {
-		this.iterationName = iterationName;
 	}
 	/**
 	 * 关联的案例执行编号
@@ -679,22 +661,10 @@ public class XmQuestion  implements java.io.Serializable {
 		return this.ltime;
 	}
 	/**
-	 * 问题类型risk-风险、bug-功能问题、consult-普通咨询、
+	 * 问题类型2-风险、1-功能问题、3-普通咨询、（暂时不用这个字段了）
 	 **/
 	public String getQtype() {
 		return this.qtype;
-	}
-	/**
-	 * 迭代编号
-	 **/
-	public String getIterationId() {
-		return this.iterationId;
-	}
-	/**
-	 * 迭代名称
-	 **/
-	public String getIterationName() {
-		return this.iterationName;
 	}
 	/**
 	 * 关联的案例执行编号

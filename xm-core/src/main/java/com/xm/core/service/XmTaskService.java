@@ -721,5 +721,9 @@ public class XmTaskService extends BaseService {
 	public void updateActCostAndActWorkloadAfterSettle(String taskId,String toTaskState) {
 		super.update("updateActCostAndActWorkloadAfterSettle",map("id",taskId,"taskState",toTaskState));
 	}
+
+	public void editSomeFields(Map<String, Object> xmTaskMap) {
+		super.update("editSomeFields",xmTaskMap);
+	}
 }
 

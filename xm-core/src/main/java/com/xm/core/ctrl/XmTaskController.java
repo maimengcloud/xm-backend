@@ -6,6 +6,7 @@ import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
@@ -279,6 +280,55 @@ public class XmTaskController {
 		return m;
 	}
 
+	/***/
+	@ApiOperation( value = "根据主键批量修改修改任务中的某些字段信息",notes="editXmMenu")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@HasQx(value = "xm_core_xmTask_editSomeFields",name = "批量修改修改任务中的某些字段",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
+	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmTaskMap) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新一条数据");
+		try{
+			List<String> ids= (List<String>) xmTaskMap.get("ids");
+
+			if(ids==null || ids.size()==0){
+				ResponseHelper.failed("ids-0","ids不能为空");
+			}
+			XmTask xmTask= BaseUtils.fromMap(xmTaskMap,XmTask.class);
+			List<XmTask> xmTasksDb=xmTaskService.selectListByIds(ids);
+			if(xmTasksDb==null ||xmTasksDb.size()==0){
+				ResponseHelper.failed("tasks-0","该任务已不存在");
+			}
+			List<XmTask> can=new ArrayList<>();
+			List<XmTask> no=new ArrayList<>();
+			if(can.size()<=0){
+				//return ResponseHelper.failed("noqx","您无权修改选中的任务。");
+			}
+			Set<String> fields=new HashSet<>();
+			fields.add("childrenCnt");
+			fields.add("ntype");
+			fields.add("pidPaths");
+			for (String fieldName : xmTaskMap.keySet()) {
+				if(fields.contains(fieldName)){
+					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+				}
+			}
+			xmTaskService.editSomeFields(xmTaskMap);
+			xmRecordService.addXmTaskRecord(xmTask.getProjectId(),xmTask.getId(),"修改项目任务","修改任务"+xmTask.getMenuName(),"", JSON.toJSONString(xmTask));
+
+			//m.put("data",xmMenu);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 	@ApiOperation( value = "查询任务的信息详情，免登录",notes="taskDetail,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 
 	@ApiResponses({

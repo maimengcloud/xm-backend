@@ -273,6 +273,7 @@ public class XmMenuController {
 			}
 			xmMenuService.parentIdPathsCalcBeforeSave(xmMenu);
 			xmMenu.setStatus("0");
+			xmMenu.setChildrenCnt(0);
 			xmMenuService.insert(xmMenu);
 			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"新增产品需求","新增需求"+xmMenu.getMenuName());
 			m.put("data",xmMenu);
@@ -305,9 +306,15 @@ public class XmMenuController {
 			if(taskCount>0) {
 				tips.setFailureMsg("存在"+taskCount+"个任务关联该需求，不允许删除");
 			}else {
-					xmMenu=this.xmMenuService.selectOneObject(xmMenu);
+				List<String> ids=new ArrayList<>();
+				ids.add(xmMenu.getMenuId());
+					List<XmMenu> xmMenus=this.xmMenuService.selectListByIdsWithsChildrenCnt(ids);
+					if(xmMenus==null || xmMenus.size()==0){
+						return ResponseHelper.failed("data-0","数据不存在");
+					}
+				xmMenu=xmMenus.get(0);
 					if(xmMenu.getChildrenCnt()!=null && xmMenu.getChildrenCnt()>0){
-						return ResponseHelper.failed("hadChild","该需求池有子需求，不能删除");
+						return ResponseHelper.failed("hadChild","该需求有子需求，不能删除");
 					}
 					if(!groupService.calcCanOpMenus(xmMenu)){
 						return ResponseHelper.failed("noqx","您无权删除此需求。");
@@ -440,7 +447,7 @@ public class XmMenuController {
 			List<XmMenu> noExists=new ArrayList<>();
 			List<String> hasChildMenus=new ArrayList<>();
 			List<XmMenu> canDelList=new ArrayList<>();
-			List<XmMenu> xmMenusDb=this.xmMenuService.selectListByIds(xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()));
+			List<XmMenu> xmMenusDb=this.xmMenuService.selectListByIdsWithsChildrenCnt(xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()));
 			for (XmMenu xmMenu : xmMenusDb) {
 				boolean canDel=this.xmMenuService.checkCanDelAllChild(xmMenu,xmMenusDb);
 				if(canDel){
