@@ -136,6 +136,7 @@ public class XmTaskWorkloadController {
 				xmTaskWorkload.setUserid(user.getUserid());
 				xmTaskWorkload.setUsername(user.getUsername());
 			}
+
 			xmTaskWorkload.setWstatus("0");
 			xmTaskWorkloadService.insert(xmTaskWorkload);
 			m.put("data",xmTaskWorkload);

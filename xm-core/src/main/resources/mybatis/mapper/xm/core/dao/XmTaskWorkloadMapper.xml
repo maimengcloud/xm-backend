@@ -92,7 +92,7 @@
 		insert into xm_task_workload(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{sbillId},#{stime},#{sstatus},#{amt},#{samt},#{workload}
+		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{sbillId},#{stime},#{sstatus},#{amt},#{samt},#{workload},#{rworkload},#{cusername},#{projectId}
 		)
 	</insert>
 	
@@ -155,7 +155,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,sbill_id,stime,sstatus,amt,samt,workload
+		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,sbill_id,stime,sstatus,amt,samt,workload,rworkload,cusername,project_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -176,6 +176,9 @@
 		<if test="amt != null and amt != ''">      and res.amt = #{amt}     </if>
 		<if test="samt != null and samt != ''">      and res.samt = #{samt}     </if>
 		<if test="workload != null and workload != ''">      and res.workload = #{workload}     </if>
+		<if test="rworkload != null and rworkload != ''">      and res.rworkload = #{rworkload}     </if>
+		<if test="cusername != null and cusername != ''">      and res.cusername = #{cusername}     </if>
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -193,7 +196,10 @@
 		sstatus = #{sstatus},
 		amt = #{amt},
 		samt = #{samt},
-		workload = #{workload}
+		workload = #{workload},
+		rworkload = #{rworkload},
+		cusername = #{cusername},
+		project_id = #{projectId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
@@ -211,6 +217,9 @@
 		<if test="amt != null and amt != ''"> amt = #{amt},     </if>
 		<if test="samt != null and samt != ''"> samt = #{samt},     </if>
 		<if test="workload != null and workload != ''"> workload = #{workload},     </if>
+		<if test="rworkload != null and rworkload != ''"> rworkload = #{rworkload},     </if>
+		<if test="cusername != null and cusername != ''"> cusername = #{cusername},     </if>
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -228,6 +237,9 @@
 			sstatus = #{item.sstatus},
 			amt = #{item.amt},
 			samt = #{item.samt},
-			workload = #{item.workload}
+			workload = #{item.workload},
+			rworkload = #{item.rworkload},
+			cusername = #{item.cusername},
+			project_id = #{item.projectId}
 	</sql>
 </mapper>
