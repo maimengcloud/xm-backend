@@ -8,8 +8,10 @@ import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmGroup;
+import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmMenuService;
 import com.xm.core.service.XmTaskService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,6 +68,8 @@ public class XmTaskWorkloadController {
 
 	@Autowired
 	XmGroupService xmGroupService;
+	@Autowired
+	XmMenuService xmMenuService;
  
 	
 	@ApiOperation( value = "查询工时登记表信息列表",notes=" ") 
@@ -233,6 +237,7 @@ public class XmTaskWorkloadController {
 			for (XmTask xmTask : tasksDb) {
 				taskMap.put(xmTask.getId(),xmTask);
 			}
+			Set<String> xmMenuIds=new HashSet<>();
 			for (XmTask xmTaskDb : tasksDb) {
 				if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
 					Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getCreateUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
@@ -245,6 +250,9 @@ public class XmTaskWorkloadController {
 					}
 				}
 				canDelTaskMap.put(xmTaskDb.getId(),xmTaskDb);
+				if(StringUtils.hasText(xmTaskDb.getMenuId())){
+					xmMenuIds.add(xmTaskDb.getMenuId());
+				}
 			}
 			List<XmTaskWorkload> canDel=new ArrayList<>();
 			List<XmTaskWorkload> state1Ndel=new ArrayList<>();
@@ -274,6 +282,7 @@ public class XmTaskWorkloadController {
 				xmTaskWorkloadService.batchDelete(canDel);
 				this.xmTaskService.calcWorkloadByRecord(canDelTaskMap.keySet().stream().collect(Collectors.toList()));
 				this.xmTaskService.batchSumParents(canDelTaskMap.values().stream().collect(Collectors.toList()));
+
 				msgs.add("成功删除"+canDel.size()+"条工时单据。");
 			}
 			if(state1Ndel.size()>0){
