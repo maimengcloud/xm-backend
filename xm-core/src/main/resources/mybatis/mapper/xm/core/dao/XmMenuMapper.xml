@@ -222,11 +222,11 @@
 			group by q.menu_id
 		) as q on q.menu_id=res.menu_id
 		set res.budget_workload=ifnull(t.budget_workload,0)+ifnull(q.budget_workload,0),
-		set res.budget_cost=ifnull(t.budget_cost,0)+ifnull(q.budget_cost,0),
-		set res.mact_workload=ifnull(t.act_workload,0)+ifnull(q.act_workload,0),
-		set res.mact_cost=ifnull(t.act_cost,0)+ifnull(q.act_cost,0),
-		set res.rworkload=ifnull(t.rworkload,0)+ifnull(q.rworkload,0),
-		set res.mact_rate=case when (ifnull(t.rworkload,0)+ifnull(q.rworkload,0)+ifnull(t.act_workload,0)+ifnull(q.act_workload,0))!=0 then (ifnull(t.act_workload,0)+ifnull(q.act_workload,0))*100/(ifnull(t.rworkload,0)+ifnull(q.rworkload,0)+ifnull(t.act_workload,0)+ifnull(q.act_workload,0))
+		  res.budget_cost=ifnull(t.budget_cost,0)+ifnull(q.budget_cost,0),
+		  res.mact_workload=ifnull(t.act_workload,0)+ifnull(q.act_workload,0),
+		  res.mact_cost=ifnull(t.act_cost,0)+ifnull(q.act_cost,0),
+		  res.rworkload=ifnull(t.rworkload,0)+ifnull(q.rworkload,0),
+		  res.mact_rate=case when (ifnull(t.rworkload,0)+ifnull(q.rworkload,0)+ifnull(t.act_workload,0)+ifnull(q.act_workload,0))!=0 then (ifnull(t.act_workload,0)+ifnull(q.act_workload,0))*100/(ifnull(t.rworkload,0)+ifnull(q.rworkload,0)+ifnull(t.act_workload,0)+ifnull(q.act_workload,0))
 		                       else 0 end
 		where  (res.menu_id) in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >

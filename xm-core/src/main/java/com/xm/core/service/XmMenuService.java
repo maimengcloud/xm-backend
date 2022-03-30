@@ -324,5 +324,87 @@ public class XmMenuService extends BaseService {
 		menuIds=menuIds.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
 		super.update("calcWorkloadByRecord",menuIds);
 	}
+
+
+
+	@Transactional
+	public void sumParents(XmMenu node){
+		String id=node.getMenuId();
+		String pidPaths=node.getPidPaths();
+		if(!StringUtils.hasText(pidPaths)){
+			return;
+		}
+		if(!pidPaths.startsWith("0,")){
+			return;
+		}
+		if("0".equals(node.getNtype())&&pidPaths.endsWith(id+",")){
+			pidPaths=pidPaths.substring(2,pidPaths.indexOf(id));
+		}else{
+			pidPaths=pidPaths.substring(2);
+		}
+
+		if(!StringUtils.hasText(pidPaths)){
+			return;
+		}
+		String[] pidPathss=pidPaths.split(",");
+		List<String> pidPathsList=new ArrayList<>();
+		for (int i = pidPathss.length-1; i >=0; i--) {
+			pidPathsList.add(pidPathss[i]);
+		}
+		if(pidPathsList.size()>0){
+			super.update("sumParents",pidPathsList	);
+		}
+
+	}
+	@Transactional
+	public void batchSumParents(List<XmMenu> xmMenus) {
+		List<Set<String>> list=new ArrayList<>();
+		for (XmMenu node : xmMenus) {
+			String id=node.getMenuId();
+			String pidPaths=node.getPidPaths();
+			if(!StringUtils.hasText(pidPaths)){
+				continue;
+			}
+			if(!pidPaths.startsWith("0,")){
+				continue;
+			}
+			if("0".equals(node.getNtype())){
+				pidPaths=pidPaths.substring(2,pidPaths.indexOf(id));
+			}else{
+				pidPaths=pidPaths.substring(2);
+			}
+
+			if(!StringUtils.hasText(pidPaths)){
+				continue;
+			}
+			String[] pidPathss=pidPaths.split(",");
+			for (int i = 0; i <pidPathss.length; i++) {
+				if(list.size()<=i){
+					list.add(new HashSet<>());
+				}
+				Set<String> set=list.get(i);
+				set.add(pidPathss[i]);
+			}
+			if(list.size()<=0){
+				return;
+			}
+			Set<String> allSet=new HashSet<>();
+			for (int i = list.size() - 1; i >= 0; i--) {
+				Set<String> set=list.get(i);
+				if(set.size()>0){
+					List<String> ids=set.stream().filter(k->!allSet.contains(k)).collect(Collectors.toList());
+					if(ids.size()>0){
+						allSet.addAll(ids.stream().collect(Collectors.toSet()));
+						super.update("batchSumParents", ids);
+					}
+
+				}
+
+			}
+
+
+		}
+
+	}
 }
 
