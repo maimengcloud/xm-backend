@@ -193,6 +193,47 @@
 			( #{item})
 		</foreach>
 	</select>
+	<update id="calcWorkloadByRecord" parameterType="List">
+		update xm_menu res left join (select t.menu_id,
+			sum(ifnull(t.budget_workload,0)) as budget_workload,
+			sum(ifnull(t.budget_cost,0)) as budget_cost,
+			sum(ifnull(t.act_workload,0)) as act_workload,
+			sum(ifnull(t.act_cost,0)) as act_cost,
+			sum(ifnull(t.rworkload,ifnull(t.budget_workload,0)-ifnull(t.act_workload,0))) as rworkload
+			  from xm_task t where t.menu_id in
+			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+				( #{item})
+			</foreach>
+			and t.ntype='0'
+			group by menu_id
+		) t on t.menu_id=res.menu_id
+		left join (
+			select q.menu_id,
+		sum(ifnull(q.budget_workload,0)) as budget_workload,
+		sum(ifnull(q.budget_cost,0)) as budget_cost,
+		sum(ifnull(q.act_workload,0)) as act_workload,
+		sum(ifnull(q.act_cost,0)) as act_cost,
+		sum(ifnull(q.rworkload,ifnull(q.budget_workload,0)-ifnull(q.act_workload,0))) as rworkload
+
+		from xm_question q where q.menu_id in
+			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+				( #{item})
+			</foreach>
+			group by q.menu_id
+		) as q on q.menu_id=res.menu_id
+		set res.budget_workload=ifnull(t.budget_workload,0)+ifnull(q.budget_workload,0),
+		set res.budget_cost=ifnull(t.budget_cost,0)+ifnull(q.budget_cost,0),
+		set res.mact_workload=ifnull(t.act_workload,0)+ifnull(q.act_workload,0),
+		set res.mact_cost=ifnull(t.act_cost,0)+ifnull(q.act_cost,0),
+		set res.rworkload=ifnull(t.rworkload,0)+ifnull(q.rworkload,0),
+		set res.mact_rate=case when (ifnull(t.rworkload,0)+ifnull(q.rworkload,0)+ifnull(t.act_workload,0)+ifnull(q.act_workload,0))!=0 then (ifnull(t.act_workload,0)+ifnull(q.act_workload,0))*100/(ifnull(t.rworkload,0)+ifnull(q.rworkload,0)+ifnull(t.act_workload,0)+ifnull(q.act_workload,0))
+		                       else 0 end
+		where  (res.menu_id) in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			( #{item})
+		</foreach>
+		and res.dclass='3'
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

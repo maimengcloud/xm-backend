@@ -151,6 +151,8 @@ public class XmTaskWorkloadController {
 			xmTaskWorkload.setWstatus("0");
 			xmTaskWorkload.setProjectId(xmTaskDb.getProjectId());
 			xmTaskWorkloadService.insert(xmTaskWorkload);
+			xmMenuService.calcWorkloadByRecord(xmTaskDb.getMenuId());
+
 			this.xmTaskService.calcWorkloadByRecord(xmTaskDb.getId());
 			this.xmTaskService.sumParents(xmTaskDb);
 			m.put("data",xmTaskWorkload);
@@ -200,6 +202,8 @@ public class XmTaskWorkloadController {
 			}
 			xmTaskWorkloadService.updateSomeFieldByPk(xmTaskWorkload);
 		this.xmTaskService.sumParents(xmTaskDb);
+			xmMenuService.calcWorkloadByRecord(xmTaskDb.getMenuId());
+
 			this.xmTaskService.calcWorkloadByRecord(xmTaskWorkload.getTaskId());
 
 			m.put("data",xmTaskWorkload);
@@ -285,6 +289,7 @@ public class XmTaskWorkloadController {
 				this.xmTaskService.calcWorkloadByRecord(canDelTaskMap.keySet().stream().collect(Collectors.toList()));
 				this.xmTaskService.batchSumParents(canDelTaskMap.values().stream().collect(Collectors.toList()));
 
+				xmMenuService.calcWorkloadByRecord(canDelTaskMap.values().stream().filter(i->StringUtils.hasText(i.getMenuId())).collect(Collectors.toList()).stream().map(i->i.getMenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
 				msgs.add("成功删除"+canDel.size()+"条工时单据。");
 			}
 			if(state1Ndel.size()>0){
