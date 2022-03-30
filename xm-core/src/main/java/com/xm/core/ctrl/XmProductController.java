@@ -201,6 +201,7 @@ public class XmProductController {
 			}
 
 			XmProduct xmProductNew=xmProductService.copyTo(user,xmProduct);
+			this.xmProductStateService.loadTasksToXmProductState(xmProductNew.getId());
 			xmRecordService.addXmProductRecord(xmProductNew.getId(),"通过拷贝创建产品","拷贝项目【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】,创建新的项目【"+xmProductNew.getId()+"】【"+xmProductNew.getProductName()+"】","参数:"+ JSON.toJSONString(xmProduct),"");
 			m.put("data",xmProductNew);
 		}catch (BizException e) {

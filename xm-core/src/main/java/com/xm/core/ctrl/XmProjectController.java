@@ -494,6 +494,8 @@ public class XmProjectController {
 				return m;
 			}
 			XmProject xmProjectTo=this.xmProjectService.copyProject(user,xmProject);
+
+			xmProjectStateService.loadTasksToXmProjectState(xmProjectTo.getId());
 			xmRecordService.addXmProjectRecord(xmProjectTo.getId(),"项目-通过拷贝创建新项目","拷贝项目【"+xmProjectTo.getName()+"】,创建新的项目【】", JSON.toJSONString(xmProjectTo), JSON.toJSONString(xmProjectDb));
 
 		}catch (BizException e) {
