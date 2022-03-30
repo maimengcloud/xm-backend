@@ -18,6 +18,21 @@
 		<if test="toSbill !=null and toSbill !=''">
 			AND  (res.wstatus = '1'AND res.sstatus = '1')
 		</if>
+		<if test ="wstatuses != null and wstatuses!=''">
+			AND res.wstatus IN
+			<foreach collection="wstatuses" item="item" index="index" open="(" separator="," close=")" >
+				 #{item}
+			</foreach>
+		</if>
+		<if test ="sstatuses != null and sstatuses!=''">
+			AND res.sstatus IN
+			<foreach collection="sstatuses" item="item" index="index" open="(" separator="," close=")" >
+				 #{item}
+			</foreach>
+		</if>
+		<if test="startTime!=null and startTime !=''">
+			AND res.ctime BETWEEN #{startTime} AND #{endTime}
+		</if>
     </sql>
 
 	<!-- 通过条件查询获取未提交结算的工作量 返回list<map> -->
@@ -44,6 +59,20 @@
 		</set>
 		<where>
 			res.sbill_id = #{sbillId}
+		</where>
+	</update>
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateWorkloadWstatus" parameterType="com.xm.core.entity.XmTaskWorkload">
+		update  xm_task_workload res
+		<set>
+			res.wstatus = #{wstatus}
+		</set>
+		<where>
+			<if test=" ids != null">  and (res.id) in
+				<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+					 #{item}
+				</foreach>
+			</if>
 		</where>
 	</update>
 	<!--结束 自定义sql函数区域-->

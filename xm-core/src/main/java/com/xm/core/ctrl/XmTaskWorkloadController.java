@@ -81,6 +81,8 @@ public class XmTaskWorkloadController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTaskWorkload, "ids");
+		RequestUtils.transformArray( xmTaskWorkload, "wstatuses");
+		RequestUtils.transformArray( xmTaskWorkload, "sstatuses");
 		PageUtils.startPage(xmTaskWorkload);
 		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.selectListMapByWhere(xmTaskWorkload);	//列出XmTaskWorkload列表
 		PageUtils.responePage(m, xmTaskWorkloadList);
@@ -328,7 +330,7 @@ public class XmTaskWorkloadController {
 		return m;
 	}
 
-	@ApiOperation( value = "根据主键修改一条工时登记表信息",notes=" ")
+	@ApiOperation( value = "",notes=" ")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskWorkload.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
@@ -338,6 +340,28 @@ public class XmTaskWorkloadController {
 		Tips tips=new Tips("成功添加到结算单");
 		try{
 			xmTaskWorkloadService.editWorkloadToSbill(params);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
+
+	@ApiOperation( value = "修改工时表状态",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTaskWorkload.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@RequestMapping(value="/editXmWorkloadWstatus",method=RequestMethod.POST)
+	public Map<String,Object> editXmWorkloadWstatus(@RequestBody Map<String,Object> params) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新工时登记表状态");
+		try{
+
+			xmTaskWorkloadService.update("updateWorkloadWstatus",params);
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
