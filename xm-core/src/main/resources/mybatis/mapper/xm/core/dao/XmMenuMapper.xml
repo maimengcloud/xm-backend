@@ -211,7 +211,7 @@
 		min( t.start_time ) AS start_time,
 		max( t.end_time ) AS end_time
 		FROM
-		xm_task t
+		xm_menu t
 		WHERE
 		t.pmenu_id in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
@@ -242,7 +242,7 @@
 	<!-- 适合父子关系的一批任务的更新 -->
 	<update id="sumParents" parameterType="List">
 		<foreach collection="list" item="item" index="index" open="" separator=";" close="" >
-			UPDATE xm_task res
+			UPDATE xm_menu res
 			left JOIN (
 			SELECT
 			t.pmenu_id,
@@ -260,7 +260,7 @@
 			min( t.start_time ) AS start_time,
 			max( t.end_time ) AS end_time
 			FROM
-			xm_task t
+			xm_menu t
 			WHERE
 			t.pmenu_id = #{item}
 			) t2 ON t2.pmenu_id = res.menu_id
