@@ -257,6 +257,9 @@
 			 group by t.parent_taskid
 			) t2 ON t2.parent_taskid = res.id
 			SET
+
+			res.budget_workload=ifnull(t2.budget_workload,0),
+			res.budget_cost=ifnull(t2.budget_cost,0),
 			res.act_cost = t2.act_cost,
 			res.act_workload = t2.act_workload,
 		    res.rate = case when (ifnull(t2.rworkload,0)+ifnull(t2.act_workload,0)>0) then ifnull(t2.act_workload,0)*100/(ifnull(t2.rworkload,0)+ifnull(t2.act_workload,0))
@@ -285,6 +288,7 @@
 		count(1) as children_cnt,
 		sum( ifnull( t.act_cost, 0 ) ) AS act_cost,
 		sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
+			sum( ifnull( t.budget_cost, 0 ) ) AS budget_cost,
 			sum( ifnull( t.rworkload,  if(t.budget_workload>0,(t.budget_workload-ifnull(t.act_workload,0)),0)   ) ) AS rworkload,
 
 			sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) ) as budget_workload_rate,
@@ -300,6 +304,8 @@
 			t.parent_taskid = #{item}
 		) t2 ON t2.parent_taskid = res.id
 		SET
+			res.budget_workload=ifnull(t2.budget_workload,0),
+			res.budget_cost=ifnull(t2.budget_cost,0),
 		res.act_cost = t2.act_cost,
 		res.act_workload = t2.act_workload,
 			res.rate = case when (ifnull(t2.rworkload,0)+ifnull(t2.act_workload,0)>0) then ifnull(t2.act_workload,0)*100/(ifnull(t2.rworkload,0)+ifnull(t2.act_workload,0))
