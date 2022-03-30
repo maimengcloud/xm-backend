@@ -14,6 +14,7 @@ import com.xm.core.entity.XmProductCopyVo;
 import com.xm.core.entity.XmProductProjectLink;
 import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmProductStateService;
 import com.xm.core.service.XmRecordService;
 import com.xm.core.vo.XmProductAddVo;
 import io.swagger.annotations.*;
@@ -56,8 +57,8 @@ public class XmProductController {
 
 	@Value("${mdp.platform-branch-id:platform-branch-001}")
 	String platformBranchId="platform-branch-001";
- 
-	
+	@Autowired
+	XmProductStateService xmProductStateService;
 	@ApiOperation( value = "查询产品表信息列表",notes="listXmProduct,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
 		@ApiImplicitParam(name="id",value="菜单编号,主键",required=false),
@@ -222,7 +223,7 @@ public class XmProductController {
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmProduct(@RequestBody XmProductAddVo xmProduct) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功新增一条数据");
+		Tips tips=new Tips("创建产品成功");
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
 			if(StringUtils.isEmpty(xmProduct.getCode())) {
@@ -272,7 +273,7 @@ public class XmProductController {
 			}
 			xmProductService.addProduct(xmProduct);
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"创建产品","创建产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】");
-
+			xmProductStateService.loadTasksToXmProductState(xmProduct.getId());
 			m.put("data",xmProduct);
 		}catch (BizException e) { 
 			tips=e.getTips();

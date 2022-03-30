@@ -56,6 +56,8 @@ public class XmIterationController {
 	@Autowired
 	private XmRecordService  xmRecordService;
 
+	@Autowired
+	XmIterationStateService xmIterationStateService;
 
 	@Autowired
 	XmGroupService xmGroupService;
@@ -182,6 +184,7 @@ public class XmIterationController {
 				return ResponseHelper.failed("no-product-qx","您不是产品管理人员，无权将该产品与迭代关联");
 			};
 			xmIterationService.addIteration(xmIteration);
+			xmIterationStateService.loadTasksToXmIterationState(xmIteration.getId());
 			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-新增","新增迭代"+xmIteration.getIterationName());
 			m.put("data",xmIteration);
 		}catch (BizException e) { 

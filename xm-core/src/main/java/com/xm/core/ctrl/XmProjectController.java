@@ -60,6 +60,8 @@ public class XmProjectController {
 	@Value("${mdp.platform-branch-id:platform-branch-001}")
 	String platformBranchId="platform-branch-001";
 
+	@Autowired
+	XmProjectStateService xmProjectStateService;
 
 	@Autowired
 	private XmTaskService xmTaskService;
@@ -138,7 +140,7 @@ public class XmProjectController {
 	@HasQx(value = "xm_core_xmProject_add",name = "创建项目",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	public Map<String,Object> addXmProject(@RequestBody XmProjectVo xmProjectVo) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功新增一条数据");
+		Tips tips=new Tips("成功创建项目");
 		try{
 			if(!StringUtils.hasText(xmProjectVo.getName())){
 				return ResponseHelper.failed("name-0","项目名称不能为空");
@@ -152,6 +154,7 @@ public class XmProjectController {
 			}
 				xmProjectService.saveProject(xmProjectVo);
 				xmProjectService.clearProject(xmProjectVo.getId());
+			xmProjectStateService.loadTasksToXmProjectState(xmProjectVo.getId());
 				m.put("data",xmProjectVo);
 			
 		}catch (BizException e) {
