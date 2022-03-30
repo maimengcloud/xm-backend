@@ -844,6 +844,15 @@ public class XmTaskController {
 			if(tips.isOk()) {
 				for (XmTask task : xmTasks) {
 					task.setChildrenCnt( Integer.valueOf(xmTasks.stream().filter(i->task.getId().equals(i.getParentTaskid())).count()+""));
+					if(task.getChildrenCnt()>0){
+						task.setNtype("1");
+					}else{
+						if(task.getLvl()>1){
+							task.setNtype("0");
+						}else{
+							task.setNtype("1");
+						}
+					}
 				}
 				xmTaskService.batchImportFromTemplate(xmTasks);
 				for (XmTask t : xmTasks) {
