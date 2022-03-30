@@ -14,6 +14,9 @@
 		    <if test="key != null and key !='' ">
 			 	AND( res.id like #{key} OR res.title like #{key} OR res.project_name like #{key} )
 			</if>
+			<if test="startTime !=null and startTime != ''">
+				AND res.ctime BETWEEN #{startTime} AND #{endTime}
+			</if>
 		</sql>
 
 

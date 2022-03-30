@@ -327,4 +327,25 @@ public class XmTaskWorkloadController {
 		m.put("tips", tips);
 		return m;
 	}
+
+	@ApiOperation( value = "根据主键修改一条工时登记表信息",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTaskWorkload.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@RequestMapping(value="/editWorkloadToSbill",method=RequestMethod.POST)
+	public Map<String,Object> editWorkloadToSbill(@RequestBody Map<String,Object> params) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功添加到结算单");
+		try{
+			xmTaskWorkloadService.editWorkloadToSbill(params);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 }
