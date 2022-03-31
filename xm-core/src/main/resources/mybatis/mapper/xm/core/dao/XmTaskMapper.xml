@@ -388,7 +388,7 @@
 		  group by w.task_id
 		)
 		as w on res.id=w.task_id
-		set res.act_workload=w.workload,res.rate=case when res.status in('2','3','4') then 100
+		set res.act_workload=w.workload,res.rate=case when res.task_state in('2','3','4') then 100
 		when res.budget_workload>0 then ifnull(w.workload,0)*100/ res.budget_workload
 		when w.workload>0 then 100
 		else res.rate end
@@ -402,9 +402,9 @@
 	<update id="batchUpdateBudgetWorkloadAndRate" parameterType="HashMap">
  			update  xm_task res
 			set
-			res.init_budget_workload=ifnull(res.init_budget_workload,res.budget_workload),
+			res.init_workload=ifnull(res.init_workload,res.budget_workload),
 		    res.budget_workload=#{budgetWorkload},
-			res.rate=case when res.status in('2','3','4') then 100
+			res.rate=case when res.task_state in('2','3','4') then 100
 			when #{budgetWorkload}>0 then ifnull(res.act_workload,0)*100/ #{budgetWorkload}
 			when res.act_workload>0 then 100
 			else res.rate end
