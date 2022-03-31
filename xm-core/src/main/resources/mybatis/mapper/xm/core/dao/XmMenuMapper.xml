@@ -286,7 +286,7 @@
 		insert into xm_menu(
 			<include refid="columns"/>
 		) values (
-		#{startTime},#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{budgetHours},#{budgetStaffNu},#{budgetWorkload},#{budgetCost},#{phaseId},#{iterationId},#{calcType},#{mactWorkload},#{mactCost},#{mactRate},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority},#{dclass},#{iterationName},#{endTime},#{rworkload}
+		#{startTime},#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{budgetHours},#{budgetStaffNu},#{budgetWorkload},#{budgetCost},#{phaseId},#{iterationId},#{calcType},#{mactWorkload},#{mactCost},#{mactRate},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority},#{dclass},#{iterationName},#{endTime}
 		)
 	</insert>
 	
@@ -349,7 +349,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_cost,phase_id,iteration_id,calc_type,mact_workload,mact_cost,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time,rworkload
+		start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_cost,phase_id,iteration_id,calc_type,mact_workload,mact_cost,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -400,7 +400,6 @@
 		<if test="dclass != null and dclass != ''">      and res.dclass = #{dclass}     </if>
 		<if test="iterationName != null and iterationName != ''">      and res.iteration_name = #{iterationName}     </if>
 		<if test="endTime != null">      and date_format(res.end_time,'%Y-%m-%d') = date_format(#{endTime},'%Y-%m-%d')     </if>
-		<if test="rworkload != null and rworkload != ''">      and res.rworkload = #{rworkload}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -448,8 +447,7 @@
 		priority = #{priority},
 		dclass = #{dclass},
 		iteration_name = #{iterationName},
-		end_time = #{endTime},
-		rworkload = #{rworkload}
+		end_time = #{endTime}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="startTime != null"> start_time = #{startTime},     </if>
@@ -497,7 +495,6 @@
 		<if test="dclass != null and dclass != ''"> dclass = #{dclass},     </if>
 		<if test="iterationName != null and iterationName != ''"> iteration_name = #{iterationName},     </if>
 		<if test="endTime != null"> end_time = #{endTime},     </if>
-		<if test="rworkload != null and rworkload != ''"> rworkload = #{rworkload},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -545,7 +542,6 @@
 			priority = #{item.priority},
 			dclass = #{item.dclass},
 			iteration_name = #{item.iterationName},
-			end_time = #{item.endTime},
-			rworkload = #{item.rworkload}
+			end_time = #{item.endTime}
 	</sql>
 </mapper>

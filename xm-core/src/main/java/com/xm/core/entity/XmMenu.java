@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	startTime,menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetCost,phaseId,iterationId,calcType,mactWorkload,mactCost,mactRate,source,proposerId,proposerName,dlvl,dtype,priority,dclass,iterationName,endTime,rworkload;<br>
+ *	startTime,menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetCost,phaseId,iterationId,calcType,mactWorkload,mactCost,mactRate,source,proposerId,proposerName,dlvl,dtype,priority,dclass,iterationName,endTime;<br>
  * 表 xm_menu 功能表的所有字段名: <br>
- *	start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_cost,phase_id,iteration_id,calc_type,mact_workload,mact_cost,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time,rworkload;<br>
+ *	start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_cost,phase_id,iteration_id,calc_type,mact_workload,mact_cost,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -157,9 +157,6 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="结束时间",allowEmptyValue=true,example="",allowableValues="")
 	Date endTime;
-	
-	@ApiModelProperty(notes="用户故事由任务和bug报工剩余工时汇总，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal rworkload;
 
 	/**功能编号**/
 	public XmMenu(String menuId) {
@@ -446,12 +443,6 @@ public class XmMenu  implements java.io.Serializable {
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
-	/**
-	 * 用户故事由任务和bug报工剩余工时汇总，其余为下级往上汇总数据
-	 **/
-	public void setRworkload(BigDecimal rworkload) {
-		this.rworkload = rworkload;
-	}
 	
 	/**
 	 * 开始时间
@@ -728,12 +719,6 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public Date getEndTime() {
 		return this.endTime;
-	}
-	/**
-	 * 用户故事由任务和bug报工剩余工时汇总，其余为下级往上汇总数据
-	 **/
-	public BigDecimal getRworkload() {
-		return this.rworkload;
 	}
 
 }
