@@ -740,5 +740,9 @@ public class XmTaskService extends BaseService {
 		ids=ids.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
 		super.update("calcWorkloadByRecord",ids);
 	}
+
+	public void batchUpdateBudgetWorkloadAndRate(List<String> ids) {
+		super.update("batchUpdateBudgetWorkloadAndRate",ids);
+	}
 }
 

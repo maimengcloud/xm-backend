@@ -323,7 +323,15 @@ public class XmTaskController {
 			if(fieldKey.size()>0){
 				fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskMap.get(i) )).collect(Collectors.toSet());
 
-				xmTaskService.editSomeFields(xmTaskMap);
+
+				if(fieldKey.contains("budgetWorkload")){//如果调整了预估工时，需要重新计算进度数据
+					if(xmTasksDb.size()>0){
+						this.xmTaskService.batchUpdateBudgetWorkloadAndRate(xmTasksDb.stream().map(i->i.getId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+						this.xmTaskService.batchSumParents(xmTasksDb);
+					}
+				}else{
+					xmTaskService.editSomeFields(xmTaskMap);
+				}
 				xmRecordService.addXmTaskRecord(xmTask.getProjectId(),xmTask.getId(),"修改项目任务","修改任务"+xmTask.getMenuName(),"", JSON.toJSONString(xmTask));
 
 			}
