@@ -449,7 +449,7 @@
 		insert into xm_task(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl},#{rworkload},#{eworkload}
+		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl},#{initWorkload}
 		)
 	</insert>
 	
@@ -512,7 +512,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,rworkload,eworkload
+		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -579,8 +579,7 @@
 		<if test="ptype != null and ptype != ''">      and res.ptype = #{ptype}     </if>
 		<if test="wtype != null and wtype != ''">      and res.wtype = #{wtype}     </if>
 		<if test="bctrl != null and bctrl != ''">      and res.bctrl = #{bctrl}     </if>
-		<if test="rworkload != null and rworkload != ''">      and res.rworkload = #{rworkload}     </if>
-		<if test="eworkload != null and eworkload != ''">      and res.eworkload = #{eworkload}     </if>
+		<if test="initWorkload != null and initWorkload != ''">      and res.init_workload = #{initWorkload}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -645,8 +644,7 @@
 		ptype = #{ptype},
 		wtype = #{wtype},
 		bctrl = #{bctrl},
-		rworkload = #{rworkload},
-		eworkload = #{eworkload}
+		init_workload = #{initWorkload}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -710,8 +708,7 @@
 		<if test="ptype != null and ptype != ''"> ptype = #{ptype},     </if>
 		<if test="wtype != null and wtype != ''"> wtype = #{wtype},     </if>
 		<if test="bctrl != null and bctrl != ''"> bctrl = #{bctrl},     </if>
-		<if test="rworkload != null and rworkload != ''"> rworkload = #{rworkload},     </if>
-		<if test="eworkload != null and eworkload != ''"> eworkload = #{eworkload},     </if>
+		<if test="initWorkload != null and initWorkload != ''"> init_workload = #{initWorkload},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -776,7 +773,6 @@
 			ptype = #{item.ptype},
 			wtype = #{item.wtype},
 			bctrl = #{item.bctrl},
-			rworkload = #{item.rworkload},
-			eworkload = #{item.eworkload}
+			init_workload = #{item.initWorkload}
 	</sql>
 </mapper>
