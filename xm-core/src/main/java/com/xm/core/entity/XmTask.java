@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTask所有属性名: <br>
- *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,phaseId,phaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime,pidPaths,lvl,isTpl,keyPath,uniInnerPrice,uniOutPrice,calcType,ptype,wtype,bctrl,rworkload;<br>
+ *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetCost,budgetWorkload,actCost,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,phaseId,phaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime,pidPaths,lvl,isTpl,keyPath,uniInnerPrice,uniOutPrice,calcType,ptype,wtype,bctrl,rworkload,eworkload;<br>
  * 表 xm_task xm_task的所有字段名: <br>
- *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,rworkload;<br>
+ *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,rworkload,eworkload;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -206,8 +206,11 @@ public class XmTask  implements java.io.Serializable {
 	@ApiModelProperty(notes="报工限制0-不限制，1-不得超出预估工时",allowEmptyValue=true,example="",allowableValues="")
 	String bctrl;
 	
-	@ApiModelProperty(notes="任务剩余工时，手工填写，计划由下往上汇总",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="剩余工作量(永远不保存数据，参与estimate",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal rworkload;
+	
+	@ApiModelProperty(notes="重新评估工作量，eworkload=(rworkload+act_workload)",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal eworkload;
 
 	/**任务编号**/
 	public XmTask(String id) {
@@ -591,10 +594,16 @@ public class XmTask  implements java.io.Serializable {
 		this.bctrl = bctrl;
 	}
 	/**
-	 * 任务剩余工时，手工填写，计划由下往上汇总
+	 * 剩余工作量(永远不保存数据，参与estimate
 	 **/
 	public void setRworkload(BigDecimal rworkload) {
 		this.rworkload = rworkload;
+	}
+	/**
+	 * 重新评估工作量，eworkload=(rworkload+act_workload)
+	 **/
+	public void setEworkload(BigDecimal eworkload) {
+		this.eworkload = eworkload;
 	}
 	
 	/**
@@ -970,10 +979,16 @@ public class XmTask  implements java.io.Serializable {
 		return this.bctrl;
 	}
 	/**
-	 * 任务剩余工时，手工填写，计划由下往上汇总
+	 * 剩余工作量(永远不保存数据，参与estimate
 	 **/
 	public BigDecimal getRworkload() {
 		return this.rworkload;
+	}
+	/**
+	 * 重新评估工作量，eworkload=(rworkload+act_workload)
+	 **/
+	public BigDecimal getEworkload() {
+		return this.eworkload;
 	}
 
 }
