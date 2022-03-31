@@ -326,7 +326,7 @@ public class XmTaskController {
 
 				if(fieldKey.contains("budgetWorkload")){//如果调整了预估工时，需要重新计算进度数据
 					if(xmTasksDb.size()>0){
-						this.xmTaskService.batchUpdateBudgetWorkloadAndRate(xmTasksDb.stream().map(i->i.getId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+						this.xmTaskService.batchUpdateBudgetWorkloadAndRate(xmTasksDb.stream().map(i->i.getId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()),NumberUtil.getBigDecimal(xmTaskMap.get("budgetWorkload")));
 						this.xmTaskService.batchSumParents(xmTasksDb);
 					}
 				}else{

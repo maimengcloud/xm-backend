@@ -741,8 +741,8 @@ public class XmTaskService extends BaseService {
 		super.update("calcWorkloadByRecord",ids);
 	}
 
-	public void batchUpdateBudgetWorkloadAndRate(List<String> ids) {
-		super.update("batchUpdateBudgetWorkloadAndRate",ids);
+	public void batchUpdateBudgetWorkloadAndRate(List<String> ids,BigDecimal budgetWorkload) {
+		super.update("batchUpdateBudgetWorkloadAndRate",map("ids",ids,"budgetWorkload",budgetWorkload));
 	}
 }
 

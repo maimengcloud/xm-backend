@@ -399,7 +399,7 @@
 	</update>
 
 	<!-- 批量更新 -->
-	<update id="batchUpdateBudgetWorkloadAndRate" parameterType="List">
+	<update id="batchUpdateBudgetWorkloadAndRate" parameterType="HashMap">
  			update  xm_task res
 			set
 			res.init_budget_workload=ifnull(res.init_budget_workload,res.budget_workload),
@@ -409,7 +409,7 @@
 			when res.act_workload>0 then 100
 			else res.rate end
 			where id in
-			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
 				#{item}
 			</foreach>
  	</update>
