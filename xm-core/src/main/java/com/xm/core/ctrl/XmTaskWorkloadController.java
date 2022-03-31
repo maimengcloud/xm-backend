@@ -3,6 +3,7 @@ package com.xm.core.ctrl;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
 
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
@@ -151,6 +152,12 @@ public class XmTaskWorkloadController {
 			xmTaskWorkload.setWstatus("0");
 			xmTaskWorkload.setProjectId(xmTaskDb.getProjectId());
 			xmTaskWorkloadService.insert(xmTaskWorkload);
+			if(xmTaskWorkload.getRworkload()!=null && BigDecimal.ZERO.compareTo(xmTaskWorkload.getRworkload())<0){
+				BigDecimal newBudgetWorkload= xmTaskWorkload.getRworkload().add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)).add(NumberUtil.getBigDecimal(xmTaskDb.getActWorkload(),BigDecimal.ZERO));
+				List<String> ids=new ArrayList<>();
+				ids.add(xmTaskDb.getId());
+				this.xmTaskService.batchUpdateBudgetWorkloadAndRate(ids,newBudgetWorkload );
+			}
 			xmMenuService.calcWorkloadByRecord(xmTaskDb.getMenuId());
 
 			this.xmTaskService.calcWorkloadByRecord(xmTaskDb.getId());
