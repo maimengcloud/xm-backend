@@ -389,7 +389,9 @@
 		  group by w.task_id
 		)
 		as w on res.id=w.task_id
-		set res.act_workload=w.workload,res.rate=if(res.rworkload is null and ifnull(w.workload,0)>0 and res.budget_workload>0,ifnull(res.act_workload,0)*100 / (res.budget_workload),ifnull(w.workload,0)*100/(ifnull(w.workload,0)+res.rworkload))
+		set res.act_workload=w.workload,res.rate=case when res.rworkload>0 then ifnull(w.workload,0)*100/(ifnull(w.workload,0)+res.rworkload)
+		when res.budget_workload>0 then ifnull(w.workload,0)*100/res.budget_workload
+		else 0 end
 		where res.id in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
