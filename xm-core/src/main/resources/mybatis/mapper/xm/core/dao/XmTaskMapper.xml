@@ -369,9 +369,15 @@
 	</update>
 
 	<update id="editSomeFields" parameterType="HashMap">
-		update  xm_task
+		update  xm_task res
 		<set>
 			<include refid="someFieldSet"/>
+			<if test="taskState!=null and taskState!=''">
+				res.rate=case when res.task_state in('2','3','4') then 100
+				when res.budget_workload>0 then ifnull(res.act_workload,0)*100/ res.budget_workload
+				when res.act_workload>0 then 100
+				else res.rate end
+			</if>
 		</set>
 		where id in
 		<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
