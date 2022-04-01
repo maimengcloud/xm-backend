@@ -6,6 +6,7 @@ import java.util.*;
 import com.mdp.core.utils.LogUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.tpa.client.entity.AppShopConfig;
 import com.mysql.cj.protocol.x.XMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -222,4 +223,35 @@ public class XmTaskSbillController {
 		return m;
 	}
 	*/
+
+	@ApiOperation( value = "流程审批信息，审批通过则更新sbill审批状态",notes="从workflow传过来")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
+	public Map<String,Object> sbillProcessApprova(@RequestBody Map<String,Object> paramMap) {
+		Map<String,Object> map=new HashMap<>();
+		Tips tips=new Tips("成功更新结算单状态");
+
+		String sbillId= (String) paramMap.get("sbillId");
+		if( !StringUtils.hasText(sbillId)){
+			tips.setFailureMsg("结算单ID必传");
+			map.put("tips", tips);
+			return map;
+		}
+		map.putAll(paramMap);
+
+		try{
+			this.xmTaskSbillService.processApprova(map);
+			logger.debug("procInstId====="+paramMap.get("procInstId"));
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("执行异常",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("执行异常",e);
+		}
+		map.put("tips", tips);
+		return map;
+	}
 }
