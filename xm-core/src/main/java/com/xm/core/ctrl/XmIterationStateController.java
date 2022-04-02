@@ -90,7 +90,18 @@ public class XmIterationStateController {
 		m.put("tips", tips);
 		return m;
 	}
-	 
+	@RequestMapping(value="/list/his",method=RequestMethod.GET)
+	public Map<String,Object> listXmIterationStateHis( @RequestParam Map<String,Object> xmIterationState){
+		Map<String,Object> m = new HashMap<>();
+		RequestUtils.transformArray(xmIterationState, "ids");
+		PageUtils.startPage(xmIterationState);
+		List<Map<String,Object>>	xmIterationStateList = xmIterationStateService.selectList("listXmIterationStateHis",xmIterationState);	//列出XmIterationState列表
+		PageUtils.responePage(m, xmIterationStateList);
+		m.put("data",xmIterationStateList);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
 
 	@ApiOperation( value = "计算bug、task、测试案例、等数据",notes="loadTasksToXmIterationState")
 	@ApiResponses({

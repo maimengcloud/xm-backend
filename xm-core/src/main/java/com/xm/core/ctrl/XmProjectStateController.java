@@ -123,6 +123,21 @@ public class XmProjectStateController {
 		m.put("tips", tips);
 		return m;
 	}
+
+
+	@RequestMapping(value="/list/his",method=RequestMethod.GET)
+	public Map<String,Object> listXmProjectStateHis( @RequestParam Map<String,Object> xmProjectState){
+		Map<String,Object> m = new HashMap<>();
+		RequestUtils.transformArray(xmProjectState, "ids");
+		PageUtils.startPage(xmProjectState);
+		List<Map<String,Object>>	xmProjectStateList = xmProjectStateService.selectList("listXmProjectStateHis",xmProjectState);	//列出XmProjectState列表
+		PageUtils.responePage(m, xmProjectStateList);
+		m.put("data",xmProjectStateList);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
+
 	@ApiOperation( value = "查询功能状态表,无需前端维护，所有数据由汇总统计得出信息列表",notes="listXmProductState,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 
 	@ApiResponses({

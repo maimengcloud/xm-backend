@@ -102,8 +102,19 @@ public class XmProductStateController {
 		m.put("tips", tips);
 		return m;
 	}
-	
 
+	@RequestMapping(value="/list/his",method=RequestMethod.GET)
+	public Map<String,Object> listXmProductStateHis( @RequestParam Map<String,Object> xmProductState){
+		Map<String,Object> m = new HashMap<>();
+		RequestUtils.transformArray(xmProductState, "ids");
+		PageUtils.startPage(xmProductState);
+		List<Map<String,Object>>	xmProductStateList = xmProductStateService.selectList("listXmProductStateHis",xmProductState);	//列出XmProductState列表
+		PageUtils.responePage(m, xmProductStateList);
+		m.put("data",xmProductStateList);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
 	@ApiOperation( value = "计算bug、task、测试案例、等数据",notes="loadTasksToXmProductState")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")

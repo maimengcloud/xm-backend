@@ -118,6 +118,20 @@ public class XmBranchStateController {
 		m.put("tips", tips);
 		return m;
 	}
+
+	@RequestMapping(value="/list/his",method=RequestMethod.GET)
+	public Map<String,Object> listXmBranchStateHis( @RequestParam Map<String,Object> xmBranchState){
+		Map<String,Object> m = new HashMap<>();
+		RequestUtils.transformArray(xmBranchState, "ids");
+		PageUtils.startPage(xmBranchState);
+		List<Map<String,Object>>	xmBranchStateList = xmBranchStateService.selectList("listXmBranchStateHis",xmBranchState);	//列出XmBranchState列表
+		PageUtils.responePage(m, xmBranchStateList);
+		m.put("data",xmBranchStateList);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
+
 	@ApiOperation( value = "查询机构内所有项目指标汇总信息列表",notes="listXmBranchState,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 
 	@ApiResponses({
