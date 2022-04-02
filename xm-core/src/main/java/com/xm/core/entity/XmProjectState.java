@@ -8,9 +8,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProjectState所有属性名: <br>
- *	projectId,bizDate,totalFileCnt,totalBugCnt,totalTaskCnt,totalBudgetNouserAmount,projectName,totalStaffCnt,calcTime,calcStatus,totalCostNouserAmount,totalClosedBugCnt,totalResolvedBugCnt,totalCompleteTaskCnt,totalPhaseCnt,totalCompletePhaseCnt,totalNeedPayAmount,totalFinishPayAmount,totalNeedColAmount,totalFinishColAmount,totalCostUserAmount,totalBudgetIuserAmount,totalPlanWorkload,totalRiskCnt,totalCompleteRiskCnt,branchId,branchName,totalBudgetOuserAmount,totalCompleteWorkload,totalCostIuserAmount,totalCostOuserAmount,totalProgress,totalActiveBugCnt,totalConfirmedBugCnt,projectStatus,totalActWorkload,totalActOutWorkload,totalActInnerWorkload,totalTaskBudgetCostAt,totalTaskOutCnt,totalNeedPayCnt,totalFinishPayCnt,totalFinishPayUserCnt,totalNeedPayUserCnt,totalPlanIuserWorkload,totalPlanOuserWorkload,testCases,execCases,designCases,finishCases,iterationCnt,productCnt,menuCnt,finishMenuCnt,estimateWorkload,execTaskCnt,toStartTaskCnt,execMenuCnt,toStartMenuCnt;<br>
+ *	projectId,bizDate,totalFileCnt,totalBugCnt,totalTaskCnt,totalBudgetNouserAmount,projectName,totalStaffCnt,calcTime,calcStatus,totalCostNouserAmount,totalClosedBugCnt,totalResolvedBugCnt,totalCompleteTaskCnt,totalPhaseCnt,totalCompletePhaseCnt,totalNeedPayAmount,totalFinishPayAmount,totalNeedColAmount,totalFinishColAmount,totalCostUserAmount,totalBudgetIuserAmount,totalPlanWorkload,totalRiskCnt,totalCompleteRiskCnt,branchId,branchName,totalBudgetOuserAmount,totalCompleteWorkload,totalCostIuserAmount,totalCostOuserAmount,totalProgress,totalActiveBugCnt,totalConfirmedBugCnt,projectStatus,totalActWorkload,totalActOutWorkload,totalActInnerWorkload,totalTaskBudgetCostAt,totalTaskOutCnt,totalNeedPayCnt,totalFinishPayCnt,totalFinishPayUserCnt,totalNeedPayUserCnt,totalPlanIuserWorkload,totalPlanOuserWorkload,testCases,execCases,designCases,finishCases,iterationCnt,productCnt,menuCnt,finishMenuCnt,estimateWorkload,execTaskCnt,toStartTaskCnt,execMenuCnt,toStartMenuCnt,minStartTime,maxEndTime;<br>
  * 表 xm_project_state 项目指标日统计表的所有字段名: <br>
- *	project_id,biz_date,total_file_cnt,total_bug_cnt,total_task_cnt,total_budget_nouser_amount,project_name,total_staff_cnt,calc_time,calc_status,total_cost_nouser_amount,total_closed_bug_cnt,total_resolved_bug_cnt,total_complete_task_cnt,total_phase_cnt,total_complete_phase_cnt,total_need_pay_amount,total_finish_pay_amount,total_need_col_amount,total_finish_col_amount,total_cost_user_amount,total_budget_iuser_amount,total_plan_workload,total_risk_cnt,total_complete_risk_cnt,branch_id,branch_name,total_budget_ouser_amount,total_complete_workload,total_cost_iuser_amount,total_cost_ouser_amount,total_progress,total_active_bug_cnt,total_confirmed_bug_cnt,project_status,total_act_workload,total_act_out_workload,total_act_inner_workload,total_task_budget_cost_at,total_task_out_cnt,total_need_pay_cnt,total_finish_pay_cnt,total_finish_pay_user_cnt,total_need_pay_user_cnt,total_plan_iuser_workload,total_plan_ouser_workload,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,product_cnt,menu_cnt,finish_menu_cnt,estimate_workload,exec_task_cnt,to_start_task_cnt,exec_menu_cnt,to_start_menu_cnt;<br>
+ *	project_id,biz_date,total_file_cnt,total_bug_cnt,total_task_cnt,total_budget_nouser_amount,project_name,total_staff_cnt,calc_time,calc_status,total_cost_nouser_amount,total_closed_bug_cnt,total_resolved_bug_cnt,total_complete_task_cnt,total_phase_cnt,total_complete_phase_cnt,total_need_pay_amount,total_finish_pay_amount,total_need_col_amount,total_finish_col_amount,total_cost_user_amount,total_budget_iuser_amount,total_plan_workload,total_risk_cnt,total_complete_risk_cnt,branch_id,branch_name,total_budget_ouser_amount,total_complete_workload,total_cost_iuser_amount,total_cost_ouser_amount,total_progress,total_active_bug_cnt,total_confirmed_bug_cnt,project_status,total_act_workload,total_act_out_workload,total_act_inner_workload,total_task_budget_cost_at,total_task_out_cnt,total_need_pay_cnt,total_finish_pay_cnt,total_finish_pay_user_cnt,total_need_pay_user_cnt,total_plan_iuser_workload,total_plan_ouser_workload,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,product_cnt,menu_cnt,finish_menu_cnt,estimate_workload,exec_task_cnt,to_start_task_cnt,exec_menu_cnt,to_start_menu_cnt,min_start_time,max_end_time;<br>
  * 当前主键(包括多主键):<br>
  *	project_id;<br>
  */
@@ -196,6 +196,12 @@ public class XmProjectState  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="待开始需求数=需求表中开始日期=当前日期+1的需求数",allowEmptyValue=true,example="",allowableValues="")
 	Integer toStartMenuCnt;
+	
+	@ApiModelProperty(notes="最早开始日期",allowEmptyValue=true,example="",allowableValues="")
+	Date minStartTime;
+	
+	@ApiModelProperty(notes="最晚结束时间",allowEmptyValue=true,example="",allowableValues="")
+	Date maxEndTime;
 
 	/**项目编号**/
 	public XmProjectState(String projectId) {
@@ -560,6 +566,18 @@ public class XmProjectState  implements java.io.Serializable {
 	public void setToStartMenuCnt(Integer toStartMenuCnt) {
 		this.toStartMenuCnt = toStartMenuCnt;
 	}
+	/**
+	 * 最早开始日期
+	 **/
+	public void setMinStartTime(Date minStartTime) {
+		this.minStartTime = minStartTime;
+	}
+	/**
+	 * 最晚结束时间
+	 **/
+	public void setMaxEndTime(Date maxEndTime) {
+		this.maxEndTime = maxEndTime;
+	}
 	
 	/**
 	 * 项目编号
@@ -914,6 +932,18 @@ public class XmProjectState  implements java.io.Serializable {
 	 **/
 	public Integer getToStartMenuCnt() {
 		return this.toStartMenuCnt;
+	}
+	/**
+	 * 最早开始日期
+	 **/
+	public Date getMinStartTime() {
+		return this.minStartTime;
+	}
+	/**
+	 * 最晚结束时间
+	 **/
+	public Date getMaxEndTime() {
+		return this.maxEndTime;
 	}
 
 }

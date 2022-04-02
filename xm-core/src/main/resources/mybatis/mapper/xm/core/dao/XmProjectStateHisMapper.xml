@@ -3,11 +3,18 @@
 <mapper namespace="com.xm.core.entity.XmProjectStateHis">
 	
 	
-	<!--开始 自定sql函数区域 -->
-		<!--请在此区域添加自定义函数-->
-		
-		
-		
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" pkList != null">  and (res.project_id, res.biz_date) in
+             <foreach collection="pkList" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item.projectId},  #{item.bizDate})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
+
+
 	<!--结束 自定义sql函数区域-->
 	
 
@@ -15,15 +22,9 @@
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
 		select * from xm_project_state_his res
-		<where> 
-			<if test="ids != null">  and     
-				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
-			 </if>
+		<where>
+		    <include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">       </if> 
 		</where>
 	</select>
 	
@@ -39,14 +40,22 @@
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProjectStateHis" resultType="com.xm.core.entity.XmProjectStateHis">
 		select * from xm_project_state_his res
 		where 
-			res.id = #{id}
+			res.project_id = #{projectId}
+			and res.biz_date = #{bizDate}
 	</select>
-	
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmProjectStateHis">
+        select * from xm_project_state_his res
+        where  (res.project_id, res.biz_date) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item.projectId},  #{item.bizDate})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_project_state_his res
 		where 
-			 res.id = #{id}
+			 res.project_id = #{projectId}
+			and  res.biz_date = #{bizDate}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProjectStateHis" resultType="long">
@@ -55,12 +64,12 @@
 			<include refid="where"/>
 		</where>
 	</select>
-	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmProjectStateHis" useGeneratedKeys="false" keyProperty="id">
+	<!-- 新增一条记录  主键project_id,biz_date,-->
+	<insert id="insert" parameterType="com.xm.core.entity.XmProjectStateHis" useGeneratedKeys="false"  >
 		insert into xm_project_state_his(
 			<include refid="columns"/>
 		) values (
-		#{projectId},#{bizDate},#{totalFileCnt},#{totalBugCnt},#{totalTaskCnt},#{totalBudgetNouserAmount},#{projectName},#{id},#{totalStaffCnt},#{calcTime},#{calcStatus},#{totalCostNouserAmount},#{totalClosedBugCnt},#{totalResolvedBugCnt},#{totalCompleteTaskCnt},#{totalPhaseCnt},#{totalCompletePhaseCnt},#{totalNeedPayAmount},#{totalFinishPayAmount},#{totalNeedColAmount},#{totalFinishColAmount},#{totalCostUserAmount},#{totalBudgetIuserAmount},#{totalPlanWorkload},#{totalRiskCnt},#{totalCompleteRiskCnt},#{branchId},#{branchName},#{totalBudgetOuserAmount},#{totalCompleteWorkload},#{totalCostIuserAmount},#{totalCostOuserAmount},#{totalProgress},#{totalActiveBugCnt},#{totalConfirmedBugCnt},#{projectStatus},#{totalActWorkload},#{totalActOutWorkload},#{totalActInnerWorkload},#{totalTaskBudgetCostAt},#{totalTaskOutCnt},#{totalNeedPayCnt},#{totalFinishPayCnt},#{totalFinishPayUserCnt},#{totalNeedPayUserCnt},#{totalPlanIuserWorkload},#{totalPlanOuserWorkload},#{testCases},#{execCases},#{designCases},#{finishCases},#{iterationCnt},#{productCnt},#{menuCnt}
+		#{projectId},#{bizDate},#{totalFileCnt},#{totalBugCnt},#{totalTaskCnt},#{totalBudgetNouserAmount},#{projectName},#{totalStaffCnt},#{calcTime},#{calcStatus},#{totalCostNouserAmount},#{totalClosedBugCnt},#{totalResolvedBugCnt},#{totalCompleteTaskCnt},#{totalPhaseCnt},#{totalCompletePhaseCnt},#{totalNeedPayAmount},#{totalFinishPayAmount},#{totalNeedColAmount},#{totalFinishColAmount},#{totalCostUserAmount},#{totalBudgetIuserAmount},#{totalPlanWorkload},#{totalRiskCnt},#{totalCompleteRiskCnt},#{branchId},#{branchName},#{totalBudgetOuserAmount},#{totalCompleteWorkload},#{totalCostIuserAmount},#{totalCostOuserAmount},#{totalProgress},#{totalActiveBugCnt},#{totalConfirmedBugCnt},#{projectStatus},#{totalActWorkload},#{totalActOutWorkload},#{totalActInnerWorkload},#{totalTaskBudgetCostAt},#{totalTaskOutCnt},#{totalNeedPayCnt},#{totalFinishPayCnt},#{totalFinishPayUserCnt},#{totalNeedPayUserCnt},#{totalPlanIuserWorkload},#{totalPlanOuserWorkload},#{testCases},#{execCases},#{designCases},#{finishCases},#{iterationCnt},#{productCnt},#{menuCnt},#{finishMenuCnt},#{estimateWorkload},#{execTaskCnt},#{toStartTaskCnt},#{execMenuCnt},#{toStartMenuCnt},#{minStartTime},#{maxEndTime}
 		)
 	</insert>
 	
@@ -74,26 +83,26 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProjectStateHis">
-		delete from xm_project_state_his
-		where id = #{id} 
+		delete from xm_project_state_his 
+		where project_id = #{projectId} and biz_date = #{bizDate} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProjectStateHis">
-		update  xm_project_state_his
+		update  xm_project_state_his 
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
-		where id = #{id} 
+		where project_id = #{projectId} and biz_date = #{bizDate} 
 	</update>
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProjectStateHis">
-		update  xm_project_state_his
+		update  xm_project_state_his 
 		<set>
 			<include refid="set"/>
 		</set>
-		where id = #{id} 
+		where project_id = #{projectId} and biz_date = #{bizDate} 
 	</update>
 
 	<!-- 批量新增  批量插入 借用insert 循环插入实现
@@ -104,27 +113,28 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_project_state_his
+   		update  xm_project_state_his 
 		set 
 			<include refid="batchSet"/>
-			where id = #{item.id}  
+			where project_id = #{item.projectId} and biz_date = #{item.bizDate}  
 		</foreach> 
 	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_project_state_his
-			where id in
-			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
-			        #{item.id }  
-			    </foreach>  
+		delete from xm_project_state_his 
+			where
+			(project_id, biz_date) in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    (  #{item.projectId},  #{item.bizDate} )
+                </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		project_id,biz_date,total_file_cnt,total_bug_cnt,total_task_cnt,total_budget_nouser_amount,project_name,id,total_staff_cnt,calc_time,calc_status,total_cost_nouser_amount,total_closed_bug_cnt,total_resolved_bug_cnt,total_complete_task_cnt,total_phase_cnt,total_complete_phase_cnt,total_need_pay_amount,total_finish_pay_amount,total_need_col_amount,total_finish_col_amount,total_cost_user_amount,total_budget_iuser_amount,total_plan_workload,total_risk_cnt,total_complete_risk_cnt,branch_id,branch_name,total_budget_ouser_amount,total_complete_workload,total_cost_iuser_amount,total_cost_ouser_amount,total_progress,total_active_bug_cnt,total_confirmed_bug_cnt,project_status,total_act_workload,total_act_out_workload,total_act_inner_workload,total_task_budget_cost_at,total_task_out_cnt,total_need_pay_cnt,total_finish_pay_cnt,total_finish_pay_user_cnt,total_need_pay_user_cnt,total_plan_iuser_workload,total_plan_ouser_workload,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,product_cnt,menu_cnt
+		project_id,biz_date,total_file_cnt,total_bug_cnt,total_task_cnt,total_budget_nouser_amount,project_name,total_staff_cnt,calc_time,calc_status,total_cost_nouser_amount,total_closed_bug_cnt,total_resolved_bug_cnt,total_complete_task_cnt,total_phase_cnt,total_complete_phase_cnt,total_need_pay_amount,total_finish_pay_amount,total_need_col_amount,total_finish_col_amount,total_cost_user_amount,total_budget_iuser_amount,total_plan_workload,total_risk_cnt,total_complete_risk_cnt,branch_id,branch_name,total_budget_ouser_amount,total_complete_workload,total_cost_iuser_amount,total_cost_ouser_amount,total_progress,total_active_bug_cnt,total_confirmed_bug_cnt,project_status,total_act_workload,total_act_out_workload,total_act_inner_workload,total_task_budget_cost_at,total_task_out_cnt,total_need_pay_cnt,total_finish_pay_cnt,total_finish_pay_user_cnt,total_need_pay_user_cnt,total_plan_iuser_workload,total_plan_ouser_workload,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,product_cnt,menu_cnt,finish_menu_cnt,estimate_workload,exec_task_cnt,to_start_task_cnt,exec_menu_cnt,to_start_menu_cnt,min_start_time,max_end_time
 	</sql>
-	
+
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
 	<sql id="where">
 		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
@@ -134,9 +144,8 @@
 		<if test="totalTaskCnt != null and totalTaskCnt != ''">      and res.total_task_cnt = #{totalTaskCnt}     </if>
 		<if test="totalBudgetNouserAmount != null and totalBudgetNouserAmount != ''">      and res.total_budget_nouser_amount = #{totalBudgetNouserAmount}     </if>
 		<if test="projectName != null and projectName != ''">      and res.project_name = #{projectName}     </if>
-		<if test="id != null and id != ''">      and res.id = #{id}     </if>
 		<if test="totalStaffCnt != null and totalStaffCnt != ''">      and res.total_staff_cnt = #{totalStaffCnt}     </if>
-		<if test="calcTime != null">      and TO_CHAR(res.calc_time,'YYYY-MM-DD') = TO_CHAR(#{calcTime},'YYYY-MM-DD')     </if>
+		<if test="calcTime != null">      and date_format(res.calc_time,'%Y-%m-%d') = date_format(#{calcTime},'%Y-%m-%d')     </if>
 		<if test="calcStatus != null and calcStatus != ''">      and res.calc_status = #{calcStatus}     </if>
 		<if test="totalCostNouserAmount != null and totalCostNouserAmount != ''">      and res.total_cost_nouser_amount = #{totalCostNouserAmount}     </if>
 		<if test="totalClosedBugCnt != null and totalClosedBugCnt != ''">      and res.total_closed_bug_cnt = #{totalClosedBugCnt}     </if>
@@ -181,11 +190,17 @@
 		<if test="iterationCnt != null and iterationCnt != ''">      and res.iteration_cnt = #{iterationCnt}     </if>
 		<if test="productCnt != null and productCnt != ''">      and res.product_cnt = #{productCnt}     </if>
 		<if test="menuCnt != null and menuCnt != ''">      and res.menu_cnt = #{menuCnt}     </if>
+		<if test="finishMenuCnt != null and finishMenuCnt != ''">      and res.finish_menu_cnt = #{finishMenuCnt}     </if>
+		<if test="estimateWorkload != null and estimateWorkload != ''">      and res.estimate_workload = #{estimateWorkload}     </if>
+		<if test="execTaskCnt != null and execTaskCnt != ''">      and res.exec_task_cnt = #{execTaskCnt}     </if>
+		<if test="toStartTaskCnt != null and toStartTaskCnt != ''">      and res.to_start_task_cnt = #{toStartTaskCnt}     </if>
+		<if test="execMenuCnt != null and execMenuCnt != ''">      and res.exec_menu_cnt = #{execMenuCnt}     </if>
+		<if test="toStartMenuCnt != null and toStartMenuCnt != ''">      and res.to_start_menu_cnt = #{toStartMenuCnt}     </if>
+		<if test="minStartTime != null">      and date_format(res.min_start_time,'%Y-%m-%d') = date_format(#{minStartTime},'%Y-%m-%d')     </if>
+		<if test="maxEndTime != null">      and date_format(res.max_end_time,'%Y-%m-%d') = date_format(#{maxEndTime},'%Y-%m-%d')     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
-		project_id = #{projectId},
-		biz_date = #{bizDate},
 		total_file_cnt = #{totalFileCnt},
 		total_bug_cnt = #{totalBugCnt},
 		total_task_cnt = #{totalTaskCnt},
@@ -236,11 +251,17 @@
 		finish_cases = #{finishCases},
 		iteration_cnt = #{iterationCnt},
 		product_cnt = #{productCnt},
-		menu_cnt = #{menuCnt}
+		menu_cnt = #{menuCnt},
+		finish_menu_cnt = #{finishMenuCnt},
+		estimate_workload = #{estimateWorkload},
+		exec_task_cnt = #{execTaskCnt},
+		to_start_task_cnt = #{toStartTaskCnt},
+		exec_menu_cnt = #{execMenuCnt},
+		to_start_menu_cnt = #{toStartMenuCnt},
+		min_start_time = #{minStartTime},
+		max_end_time = #{maxEndTime}
 	</sql>
 	<sql id="someFieldSet">
-		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
-		<if test="bizDate != null and bizDate != ''"> biz_date = #{bizDate},     </if>
 		<if test="totalFileCnt != null and totalFileCnt != ''"> total_file_cnt = #{totalFileCnt},     </if>
 		<if test="totalBugCnt != null and totalBugCnt != ''"> total_bug_cnt = #{totalBugCnt},     </if>
 		<if test="totalTaskCnt != null and totalTaskCnt != ''"> total_task_cnt = #{totalTaskCnt},     </if>
@@ -292,11 +313,17 @@
 		<if test="iterationCnt != null and iterationCnt != ''"> iteration_cnt = #{iterationCnt},     </if>
 		<if test="productCnt != null and productCnt != ''"> product_cnt = #{productCnt},     </if>
 		<if test="menuCnt != null and menuCnt != ''"> menu_cnt = #{menuCnt},     </if>
+		<if test="finishMenuCnt != null and finishMenuCnt != ''"> finish_menu_cnt = #{finishMenuCnt},     </if>
+		<if test="estimateWorkload != null and estimateWorkload != ''"> estimate_workload = #{estimateWorkload},     </if>
+		<if test="execTaskCnt != null and execTaskCnt != ''"> exec_task_cnt = #{execTaskCnt},     </if>
+		<if test="toStartTaskCnt != null and toStartTaskCnt != ''"> to_start_task_cnt = #{toStartTaskCnt},     </if>
+		<if test="execMenuCnt != null and execMenuCnt != ''"> exec_menu_cnt = #{execMenuCnt},     </if>
+		<if test="toStartMenuCnt != null and toStartMenuCnt != ''"> to_start_menu_cnt = #{toStartMenuCnt},     </if>
+		<if test="minStartTime != null"> min_start_time = #{minStartTime},     </if>
+		<if test="maxEndTime != null"> max_end_time = #{maxEndTime},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
-			project_id = #{item.projectId},
-			biz_date = #{item.bizDate},
 			total_file_cnt = #{item.totalFileCnt},
 			total_bug_cnt = #{item.totalBugCnt},
 			total_task_cnt = #{item.totalTaskCnt},
@@ -347,6 +374,14 @@
 			finish_cases = #{item.finishCases},
 			iteration_cnt = #{item.iterationCnt},
 			product_cnt = #{item.productCnt},
-			menu_cnt = #{item.menuCnt}
+			menu_cnt = #{item.menuCnt},
+			finish_menu_cnt = #{item.finishMenuCnt},
+			estimate_workload = #{item.estimateWorkload},
+			exec_task_cnt = #{item.execTaskCnt},
+			to_start_task_cnt = #{item.toStartTaskCnt},
+			exec_menu_cnt = #{item.execMenuCnt},
+			to_start_menu_cnt = #{item.toStartMenuCnt},
+			min_start_time = #{item.minStartTime},
+			max_end_time = #{item.maxEndTime}
 	</sql>
 </mapper>

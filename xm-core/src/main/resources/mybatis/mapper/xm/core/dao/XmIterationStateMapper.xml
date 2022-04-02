@@ -70,7 +70,7 @@
 		insert into xm_iteration_state(
 			<include refid="columns"/>
 		) values (
-		#{distBudgetCost},#{distBudgetWorkload},#{actCost},#{actWorkload},#{actStaffNum},#{finishRate},#{testCases},#{execCases},#{designCases},#{finishCases},#{projectCnt},#{productCnt},#{menuCnt},#{taskCnt},#{finishTaskCnt},#{calcTime},#{iterationName},#{budgetCost},#{budgetWorkload},#{iterationId},#{bizDate},#{closedBugCnt},#{resolvedBugCnt},#{activeBugCnt},#{confirmedBugCnt},#{bugCnt}
+		#{distBudgetCost},#{distBudgetWorkload},#{actCost},#{actWorkload},#{actStaffNum},#{finishRate},#{testCases},#{execCases},#{designCases},#{finishCases},#{projectCnt},#{productCnt},#{menuCnt},#{taskCnt},#{finishTaskCnt},#{calcTime},#{iterationName},#{budgetCost},#{budgetWorkload},#{iterationId},#{bizDate},#{closedBugCnt},#{resolvedBugCnt},#{activeBugCnt},#{confirmedBugCnt},#{bugCnt},#{estimateWorkload},#{minStartTime},#{maxEndTime}
 		)
 	</insert>
 	
@@ -133,7 +133,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		dist_budget_cost,dist_budget_workload,act_cost,act_workload,act_staff_num,finish_rate,test_cases,exec_cases,design_cases,finish_cases,project_cnt,product_cnt,menu_cnt,task_cnt,finish_task_cnt,calc_time,iteration_name,budget_cost,budget_workload,iteration_id,biz_date,closed_bug_cnt,resolved_bug_cnt,active_bug_cnt,confirmed_bug_cnt,bug_cnt
+		dist_budget_cost,dist_budget_workload,act_cost,act_workload,act_staff_num,finish_rate,test_cases,exec_cases,design_cases,finish_cases,project_cnt,product_cnt,menu_cnt,task_cnt,finish_task_cnt,calc_time,iteration_name,budget_cost,budget_workload,iteration_id,biz_date,closed_bug_cnt,resolved_bug_cnt,active_bug_cnt,confirmed_bug_cnt,bug_cnt,estimate_workload,min_start_time,max_end_time
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -164,6 +164,9 @@
 		<if test="activeBugCnt != null and activeBugCnt != ''">      and res.active_bug_cnt = #{activeBugCnt}     </if>
 		<if test="confirmedBugCnt != null and confirmedBugCnt != ''">      and res.confirmed_bug_cnt = #{confirmedBugCnt}     </if>
 		<if test="bugCnt != null and bugCnt != ''">      and res.bug_cnt = #{bugCnt}     </if>
+		<if test="estimateWorkload != null and estimateWorkload != ''">      and res.estimate_workload = #{estimateWorkload}     </if>
+		<if test="minStartTime != null">      and date_format(res.min_start_time,'%Y-%m-%d') = date_format(#{minStartTime},'%Y-%m-%d')     </if>
+		<if test="maxEndTime != null">      and date_format(res.max_end_time,'%Y-%m-%d') = date_format(#{maxEndTime},'%Y-%m-%d')     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -191,7 +194,10 @@
 		resolved_bug_cnt = #{resolvedBugCnt},
 		active_bug_cnt = #{activeBugCnt},
 		confirmed_bug_cnt = #{confirmedBugCnt},
-		bug_cnt = #{bugCnt}
+		bug_cnt = #{bugCnt},
+		estimate_workload = #{estimateWorkload},
+		min_start_time = #{minStartTime},
+		max_end_time = #{maxEndTime}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="distBudgetCost != null and distBudgetCost != ''"> dist_budget_cost = #{distBudgetCost},     </if>
@@ -219,6 +225,9 @@
 		<if test="activeBugCnt != null and activeBugCnt != ''"> active_bug_cnt = #{activeBugCnt},     </if>
 		<if test="confirmedBugCnt != null and confirmedBugCnt != ''"> confirmed_bug_cnt = #{confirmedBugCnt},     </if>
 		<if test="bugCnt != null and bugCnt != ''"> bug_cnt = #{bugCnt},     </if>
+		<if test="estimateWorkload != null and estimateWorkload != ''"> estimate_workload = #{estimateWorkload},     </if>
+		<if test="minStartTime != null"> min_start_time = #{minStartTime},     </if>
+		<if test="maxEndTime != null"> max_end_time = #{maxEndTime},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -246,6 +255,9 @@
 			resolved_bug_cnt = #{item.resolvedBugCnt},
 			active_bug_cnt = #{item.activeBugCnt},
 			confirmed_bug_cnt = #{item.confirmedBugCnt},
-			bug_cnt = #{item.bugCnt}
+			bug_cnt = #{item.bugCnt},
+			estimate_workload = #{item.estimateWorkload},
+			min_start_time = #{item.minStartTime},
+			max_end_time = #{item.maxEndTime}
 	</sql>
 </mapper>

@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProductState所有属性名: <br>
- *	planStartTime,planEndTime,actStartTime,actEndTime,planWorkload,actWorkload,planCostAmount,actCostAmount,finishRate,demandRate,designRate,devRate,uatRate,sitRate,ctime,ltime,cuserid,cusername,calcTime,planWorkhours,planWorkerCnt,closedBugs,activeBugs,confirmedBugs,resolvedBugs,productId,productName,testCases,execCases,designCases,finishCases,projectCnt,iterationCnt,taskCnt,finishTaskCnt,bizDate,branchId,bugCnt,menuCnt;<br>
+ *	planStartTime,planEndTime,actStartTime,actEndTime,planWorkload,actWorkload,planCostAmount,actCostAmount,finishRate,demandRate,designRate,devRate,uatRate,sitRate,ctime,ltime,cuserid,cusername,calcTime,planWorkhours,planWorkerCnt,closedBugs,activeBugs,confirmedBugs,resolvedBugs,productId,productName,testCases,execCases,designCases,finishCases,projectCnt,iterationCnt,taskCnt,finishTaskCnt,bizDate,branchId,bugCnt,menuCnt,menuFinishCnt,estimateWorkload;<br>
  * 表 xm_product_state 功能状态表,无需前端维护，所有数据由汇总统计得出的所有字段名: <br>
- *	plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,ctime,ltime,cuserid,cusername,calc_time,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,product_id,product_name,test_cases,exec_cases,design_cases,finish_cases,project_cnt,iteration_cnt,task_cnt,finish_task_cnt,biz_date,branch_id,bug_cnt,menu_cnt;<br>
+ *	plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,ctime,ltime,cuserid,cusername,calc_time,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,product_id,product_name,test_cases,exec_cases,design_cases,finish_cases,project_cnt,iteration_cnt,task_cnt,finish_task_cnt,biz_date,branch_id,bug_cnt,menu_cnt,menu_finish_cnt,estimate_workload;<br>
  * 当前主键(包括多主键):<br>
  *	product_id;<br>
  */
@@ -136,6 +136,12 @@ public class XmProductState  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="故事数",allowEmptyValue=true,example="",allowableValues="")
 	Integer menuCnt;
+	
+	@ApiModelProperty(notes="需求完成数",allowEmptyValue=true,example="",allowableValues="")
+	Integer menuFinishCnt;
+	
+	@ApiModelProperty(notes="预估工时=计划结束时间在计算当日前完成的任务的预算工时总和",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal estimateWorkload;
 
 	/**产品编号**/
 	public XmProductState(String productId) {
@@ -380,6 +386,18 @@ public class XmProductState  implements java.io.Serializable {
 	public void setMenuCnt(Integer menuCnt) {
 		this.menuCnt = menuCnt;
 	}
+	/**
+	 * 需求完成数
+	 **/
+	public void setMenuFinishCnt(Integer menuFinishCnt) {
+		this.menuFinishCnt = menuFinishCnt;
+	}
+	/**
+	 * 预估工时=计划结束时间在计算当日前完成的任务的预算工时总和
+	 **/
+	public void setEstimateWorkload(BigDecimal estimateWorkload) {
+		this.estimateWorkload = estimateWorkload;
+	}
 	
 	/**
 	 * 开始时间
@@ -614,6 +632,18 @@ public class XmProductState  implements java.io.Serializable {
 	 **/
 	public Integer getMenuCnt() {
 		return this.menuCnt;
+	}
+	/**
+	 * 需求完成数
+	 **/
+	public Integer getMenuFinishCnt() {
+		return this.menuFinishCnt;
+	}
+	/**
+	 * 预估工时=计划结束时间在计算当日前完成的任务的预算工时总和
+	 **/
+	public BigDecimal getEstimateWorkload() {
+		return this.estimateWorkload;
 	}
 
 }

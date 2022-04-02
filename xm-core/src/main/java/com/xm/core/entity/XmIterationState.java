@@ -8,9 +8,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmIterationState所有属性名: <br>
- *	distBudgetCost,distBudgetWorkload,actCost,actWorkload,actStaffNum,finishRate,testCases,execCases,designCases,finishCases,projectCnt,productCnt,menuCnt,taskCnt,finishTaskCnt,calcTime,iterationName,budgetCost,budgetWorkload,iterationId,bizDate,closedBugCnt,resolvedBugCnt,activeBugCnt,confirmedBugCnt,bugCnt;<br>
+ *	distBudgetCost,distBudgetWorkload,actCost,actWorkload,actStaffNum,finishRate,testCases,execCases,designCases,finishCases,projectCnt,productCnt,menuCnt,taskCnt,finishTaskCnt,calcTime,iterationName,budgetCost,budgetWorkload,iterationId,bizDate,closedBugCnt,resolvedBugCnt,activeBugCnt,confirmedBugCnt,bugCnt,estimateWorkload,minStartTime,maxEndTime;<br>
  * 表 xm_iteration_state 迭代定义的所有字段名: <br>
- *	dist_budget_cost,dist_budget_workload,act_cost,act_workload,act_staff_num,finish_rate,test_cases,exec_cases,design_cases,finish_cases,project_cnt,product_cnt,menu_cnt,task_cnt,finish_task_cnt,calc_time,iteration_name,budget_cost,budget_workload,iteration_id,biz_date,closed_bug_cnt,resolved_bug_cnt,active_bug_cnt,confirmed_bug_cnt,bug_cnt;<br>
+ *	dist_budget_cost,dist_budget_workload,act_cost,act_workload,act_staff_num,finish_rate,test_cases,exec_cases,design_cases,finish_cases,project_cnt,product_cnt,menu_cnt,task_cnt,finish_task_cnt,calc_time,iteration_name,budget_cost,budget_workload,iteration_id,biz_date,closed_bug_cnt,resolved_bug_cnt,active_bug_cnt,confirmed_bug_cnt,bug_cnt,estimate_workload,min_start_time,max_end_time;<br>
  * 当前主键(包括多主键):<br>
  *	iteration_id;<br>
  */
@@ -97,6 +97,15 @@ public class XmIterationState  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="bug总数",allowEmptyValue=true,example="",allowableValues="")
 	Integer bugCnt;
+	
+	@ApiModelProperty(notes="预估工时=计划结束时间在计算当日前完成的任务的预算工时总和",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal estimateWorkload;
+	
+	@ApiModelProperty(notes="最早开始日期",allowEmptyValue=true,example="",allowableValues="")
+	Date minStartTime;
+	
+	@ApiModelProperty(notes="最晚结束时间",allowEmptyValue=true,example="",allowableValues="")
+	Date maxEndTime;
 
 	/**迭代编号**/
 	public XmIterationState(String iterationId) {
@@ -263,6 +272,24 @@ public class XmIterationState  implements java.io.Serializable {
 	public void setBugCnt(Integer bugCnt) {
 		this.bugCnt = bugCnt;
 	}
+	/**
+	 * 预估工时=计划结束时间在计算当日前完成的任务的预算工时总和
+	 **/
+	public void setEstimateWorkload(BigDecimal estimateWorkload) {
+		this.estimateWorkload = estimateWorkload;
+	}
+	/**
+	 * 最早开始日期
+	 **/
+	public void setMinStartTime(Date minStartTime) {
+		this.minStartTime = minStartTime;
+	}
+	/**
+	 * 最晚结束时间
+	 **/
+	public void setMaxEndTime(Date maxEndTime) {
+		this.maxEndTime = maxEndTime;
+	}
 	
 	/**
 	 * 已分配到任务的预算从任务表汇总而来
@@ -419,6 +446,24 @@ public class XmIterationState  implements java.io.Serializable {
 	 **/
 	public Integer getBugCnt() {
 		return this.bugCnt;
+	}
+	/**
+	 * 预估工时=计划结束时间在计算当日前完成的任务的预算工时总和
+	 **/
+	public BigDecimal getEstimateWorkload() {
+		return this.estimateWorkload;
+	}
+	/**
+	 * 最早开始日期
+	 **/
+	public Date getMinStartTime() {
+		return this.minStartTime;
+	}
+	/**
+	 * 最晚结束时间
+	 **/
+	public Date getMaxEndTime() {
+		return this.maxEndTime;
 	}
 
 }

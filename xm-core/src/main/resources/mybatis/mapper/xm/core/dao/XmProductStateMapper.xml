@@ -70,7 +70,7 @@
 		insert into xm_product_state(
 			<include refid="columns"/>
 		) values (
-		#{planStartTime},#{planEndTime},#{actStartTime},#{actEndTime},#{planWorkload},#{actWorkload},#{planCostAmount},#{actCostAmount},#{finishRate},#{demandRate},#{designRate},#{devRate},#{uatRate},#{sitRate},#{ctime},#{ltime},#{cuserid},#{cusername},#{calcTime},#{planWorkhours},#{planWorkerCnt},#{closedBugs},#{activeBugs},#{confirmedBugs},#{resolvedBugs},#{productId},#{productName},#{testCases},#{execCases},#{designCases},#{finishCases},#{projectCnt},#{iterationCnt},#{taskCnt},#{finishTaskCnt},#{bizDate},#{branchId},#{bugCnt},#{menuCnt}
+		#{planStartTime},#{planEndTime},#{actStartTime},#{actEndTime},#{planWorkload},#{actWorkload},#{planCostAmount},#{actCostAmount},#{finishRate},#{demandRate},#{designRate},#{devRate},#{uatRate},#{sitRate},#{ctime},#{ltime},#{cuserid},#{cusername},#{calcTime},#{planWorkhours},#{planWorkerCnt},#{closedBugs},#{activeBugs},#{confirmedBugs},#{resolvedBugs},#{productId},#{productName},#{testCases},#{execCases},#{designCases},#{finishCases},#{projectCnt},#{iterationCnt},#{taskCnt},#{finishTaskCnt},#{bizDate},#{branchId},#{bugCnt},#{menuCnt},#{menuFinishCnt},#{estimateWorkload}
 		)
 	</insert>
 	
@@ -133,7 +133,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,ctime,ltime,cuserid,cusername,calc_time,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,product_id,product_name,test_cases,exec_cases,design_cases,finish_cases,project_cnt,iteration_cnt,task_cnt,finish_task_cnt,biz_date,branch_id,bug_cnt,menu_cnt
+		plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,ctime,ltime,cuserid,cusername,calc_time,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,product_id,product_name,test_cases,exec_cases,design_cases,finish_cases,project_cnt,iteration_cnt,task_cnt,finish_task_cnt,biz_date,branch_id,bug_cnt,menu_cnt,menu_finish_cnt,estimate_workload
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -177,6 +177,8 @@
 		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
 		<if test="bugCnt != null and bugCnt != ''">      and res.bug_cnt = #{bugCnt}     </if>
 		<if test="menuCnt != null and menuCnt != ''">      and res.menu_cnt = #{menuCnt}     </if>
+		<if test="menuFinishCnt != null and menuFinishCnt != ''">      and res.menu_finish_cnt = #{menuFinishCnt}     </if>
+		<if test="estimateWorkload != null and estimateWorkload != ''">      and res.estimate_workload = #{estimateWorkload}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -217,7 +219,9 @@
 		biz_date = #{bizDate},
 		branch_id = #{branchId},
 		bug_cnt = #{bugCnt},
-		menu_cnt = #{menuCnt}
+		menu_cnt = #{menuCnt},
+		menu_finish_cnt = #{menuFinishCnt},
+		estimate_workload = #{estimateWorkload}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="planStartTime != null"> plan_start_time = #{planStartTime},     </if>
@@ -258,6 +262,8 @@
 		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
 		<if test="bugCnt != null and bugCnt != ''"> bug_cnt = #{bugCnt},     </if>
 		<if test="menuCnt != null and menuCnt != ''"> menu_cnt = #{menuCnt},     </if>
+		<if test="menuFinishCnt != null and menuFinishCnt != ''"> menu_finish_cnt = #{menuFinishCnt},     </if>
+		<if test="estimateWorkload != null and estimateWorkload != ''"> estimate_workload = #{estimateWorkload},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -298,6 +304,8 @@
 			biz_date = #{item.bizDate},
 			branch_id = #{item.branchId},
 			bug_cnt = #{item.bugCnt},
-			menu_cnt = #{item.menuCnt}
+			menu_cnt = #{item.menuCnt},
+			menu_finish_cnt = #{item.menuFinishCnt},
+			estimate_workload = #{item.estimateWorkload}
 	</sql>
 </mapper>
