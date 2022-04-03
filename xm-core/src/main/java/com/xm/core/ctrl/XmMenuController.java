@@ -194,6 +194,21 @@ public class XmMenuController {
 		return this.listWithState(xmMenu);
 	}
 
+	@RequestMapping(value="/getXmMenuAttDist",method=RequestMethod.GET)
+	public Map<String,Object> getXmMenuAttDist( @RequestParam Map<String,Object> xmMenu){
+		User user=LoginUtils.getCurrentUserInfo();
+		xmMenu.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAttDist(xmMenu);
+		return ResponseHelper.ok("成功",datas);
+	}
+
+	@RequestMapping(value="/getXmMenuAgeDist",method=RequestMethod.GET)
+	public Map<String,Object> getXmMenuAgeDist( @RequestParam Map<String,Object> xmMenu){
+		User user=LoginUtils.getCurrentUserInfo();
+		xmMenu.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAgeDist(xmMenu);
+		return ResponseHelper.ok("成功",datas);
+	}
 
 	@RequestMapping(value="/listWithPhase",method=RequestMethod.GET)
 	public Map<String,Object> listWithPhase( @RequestParam Map<String,Object> xmMenu){

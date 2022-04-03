@@ -231,6 +231,28 @@
 		</foreach>
 		and res.dclass='3'
 	</update>
+
+
+	<select id="getXmMenuAttDist" parameterType="HashMap" resultType="HashMap">
+		select count(*) as value,${groupBy} as name from xm_menu res
+		<where>
+			<include refid="whereForMap"></include>
+			<include refid="where"></include>
+		</where>
+		group by ${groupBy}
+	</select>
+	<select id="getXmMenuAgeDist" parameterType="HashMap" resultType="HashMap">
+
+		select sum(value) as value,case when age&lt;3 then 0 when age &lt;6 then 1 when age &lt;8 then 2 when age &lt;16 then 3 when age&lt;31 then 4 else 5 end as name from (
+		select count(*) as value, datediff (res.end_time,res.start_time)  as age from  xm_menu res
+		<where>
+			<include refid="whereForMap"></include>
+			<include refid="where"></include>
+		</where>
+		group by age
+		) as a
+		group by name
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 
