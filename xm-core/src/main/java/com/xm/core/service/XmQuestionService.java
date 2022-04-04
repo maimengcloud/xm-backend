@@ -200,5 +200,13 @@ public class XmQuestionService extends BaseService {
 	public void editSomeFields(Map<String, Object> xmMenuMap) {
 		super.update("editSomeFields",xmMenuMap);
 	}
+
+    public List<Map<String, Object>> getXmQuestionAttDist(Map<String, Object> xmQuestion) {
+		return super.selectList("getXmQuestionAttDist",xmQuestion);
+    }
+
+	public List<Map<String, Object>> getXmQuestionAgeDist(Map<String, Object> xmQuestion) {
+		return super.selectList("getXmQuestionAgeDist",xmQuestion);
+	}
 }
 

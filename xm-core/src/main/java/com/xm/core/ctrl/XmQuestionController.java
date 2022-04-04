@@ -117,9 +117,25 @@ public class XmQuestionController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
-	
+
+
+	@RequestMapping(value="/getXmQuestionAttDist",method=RequestMethod.GET)
+	public Map<String,Object> getXmQuestionAttDist( @RequestParam Map<String,Object> xmQuestion){
+		User user=LoginUtils.getCurrentUserInfo();
+		xmQuestion.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAttDist(xmQuestion);
+		return ResponseHelper.ok("成功",datas);
+	}
+
+	@RequestMapping(value="/getXmQuestionAgeDist",method=RequestMethod.GET)
+	public Map<String,Object> getXmQuestionAgeDist( @RequestParam Map<String,Object> xmQuestion){
+		User user=LoginUtils.getCurrentUserInfo();
+		xmQuestion.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAgeDist(xmQuestion);
+		return ResponseHelper.ok("成功",datas);
+	}
+
+
 	@ApiOperation( value = "新增一条xm_question信息",notes="addXmQuestion,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmQuestion.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")

@@ -744,5 +744,13 @@ public class XmTaskService extends BaseService {
 	public void batchUpdateBudgetWorkloadAndRate(List<String> ids,BigDecimal budgetWorkload) {
 		super.update("batchUpdateBudgetWorkloadAndRate",map("ids",ids,"budgetWorkload",budgetWorkload));
 	}
+
+	public List<Map<String, Object>> getXmTaskAttDist(Map<String, Object> xmTask) {
+		return super.selectList("getXmTaskAttDist",xmTask);
+	}
+
+	public List<Map<String, Object>> getXmTaskAgeDist(Map<String, Object> xmTask) {
+		return super.selectList("getXmTaskAgeDist",xmTask);
+	}
 }
 

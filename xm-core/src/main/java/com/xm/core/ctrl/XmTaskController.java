@@ -281,7 +281,21 @@ public class XmTaskController {
 		m.put("tips", tips);
 		return m;
 	}
+	@RequestMapping(value="/getXmTaskAttDist",method=RequestMethod.GET)
+	public Map<String,Object> getXmTaskAttDist( @RequestParam Map<String,Object> xmTask){
+		User user=LoginUtils.getCurrentUserInfo();
+		xmTask.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAttDist(xmTask);
+		return ResponseHelper.ok("成功",datas);
+	}
 
+	@RequestMapping(value="/getXmTaskAgeDist",method=RequestMethod.GET)
+	public Map<String,Object> getXmTaskAgeDist( @RequestParam Map<String,Object> xmTask){
+		User user=LoginUtils.getCurrentUserInfo();
+		xmTask.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAgeDist(xmTask);
+		return ResponseHelper.ok("成功",datas);
+	}
 	/***/
 	@ApiOperation( value = "根据主键批量修改修改任务中的某些字段信息",notes="editXmMenu")
 	@ApiResponses({
