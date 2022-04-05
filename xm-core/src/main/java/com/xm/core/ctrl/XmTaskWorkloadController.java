@@ -158,8 +158,6 @@ public class XmTaskWorkloadController {
 				ids.add(xmTaskDb.getId());
 				this.xmTaskService.batchUpdateBudgetWorkloadAndRate(ids,newBudgetWorkload );
 			}
-			xmMenuService.calcWorkloadByRecord(xmTaskDb.getMenuId());
-
 			this.xmTaskService.calcWorkloadByRecord(xmTaskDb.getId());
 			this.xmTaskService.sumParents(xmTaskDb);
 			m.put("data",xmTaskWorkload);
@@ -209,7 +207,6 @@ public class XmTaskWorkloadController {
 			}
 			xmTaskWorkloadService.updateSomeFieldByPk(xmTaskWorkload);
 		this.xmTaskService.sumParents(xmTaskDb);
-			xmMenuService.calcWorkloadByRecord(xmTaskDb.getMenuId());
 
 			this.xmTaskService.calcWorkloadByRecord(xmTaskWorkload.getTaskId());
 
@@ -295,9 +292,7 @@ public class XmTaskWorkloadController {
 				xmTaskWorkloadService.batchDelete(canDel);
 				this.xmTaskService.calcWorkloadByRecord(canDelTaskMap.keySet().stream().collect(Collectors.toList()));
 				this.xmTaskService.batchSumParents(canDelTaskMap.values().stream().collect(Collectors.toList()));
-
-				xmMenuService.calcWorkloadByRecord(canDelTaskMap.values().stream().filter(i->StringUtils.hasText(i.getMenuId())).collect(Collectors.toList()).stream().map(i->i.getMenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
-				msgs.add("成功删除"+canDel.size()+"条工时单据。");
+ 				msgs.add("成功删除"+canDel.size()+"条工时单据。");
 			}
 			if(state1Ndel.size()>0){
  				msgs.add("以下"+state1Ndel.size()+"条工时单据状态为确认状态，不允许删除。【"+state1Ndel.stream().map(i->i.getUsername()+i.getBizDate()).collect(Collectors.joining(","))+"】");

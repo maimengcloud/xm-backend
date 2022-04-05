@@ -309,21 +309,6 @@ public class XmMenuService extends BaseService {
     public List<XmMenu> selectListByIdsWithsChildrenCnt(List<String> ids) {
 		return super.selectList("selectListByIdsWithsChildrenCnt",ids);
     }
-	public void calcWorkloadByRecord(String menuId) {
-		if(!StringUtils.hasText(menuId)){
-			return;
-		}
-		List<String> ids=new ArrayList<>();
-		ids.add(menuId);
-		calcWorkloadByRecord(ids);
-	}
-	public void calcWorkloadByRecord(List<String> menuIds) {
-		if(menuIds==null || menuIds.size()<=0){
-			return;
-		}
-		menuIds=menuIds.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
-		super.update("calcWorkloadByRecord",menuIds);
-	}
 
 
 

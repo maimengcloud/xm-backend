@@ -193,46 +193,6 @@
 			( #{item})
 		</foreach>
 	</select>
-	<update id="calcWorkloadByRecord" parameterType="List">
-		update xm_menu_state res left join (select t.menu_id,
-			sum(ifnull(t.budget_workload,0)) as budget_workload,
-			sum(ifnull(t.budget_at,0)) as budget_at,
-			sum(ifnull(t.act_workload,0)) as act_workload,
-			sum(ifnull(t.act_cost,0)) as act_cost
-			  from xm_task t where t.menu_id in
-			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
-				( #{item})
-			</foreach>
-			and t.ntype='0'
-			group by t.menu_id
-		) t on t.menu_id=res.menu_id
-		left join (
-			select q.menu_id,
-		sum(ifnull(q.budget_workload,0)) as budget_workload,
-		sum(ifnull(q.budget_at,0)) as budget_at,
-		sum(ifnull(q.act_workload,0)) as act_workload,
-		sum(ifnull(q.act_at,0)) as act_at
-		from xm_question q where q.menu_id in
-			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
-				( #{item})
-			</foreach>
-			group by q.menu_id
-		) as q on q.menu_id=res.menu_id
-		set res.budget_workload=ifnull(t.budget_workload,0)+ifnull(q.budget_workload,0),
-		  res.budget_at=ifnull(t.budget_at,0)+ifnull(q.budget_at,0),
-		  res.mact_workload=ifnull(t.act_workload,0)+ifnull(q.act_workload,0),
-		  res.mact_cost=ifnull(t.act_cost,0)+ifnull(q.act_cost,0),
-		  res.mact_rate=case when (ifnull(t.budget_workload,0)+ifnull(q.budget_workload,0) )!=0 then (ifnull(t.act_workload,0)+ifnull(q.act_workload,0))*100/(ifnull(t.budget_workload,0)+ifnull(q.budget_workload,0) )
-		                      when (ifnull(t.act_workload,0)+ifnull(q.act_workload,0))>0 then 100
-		                       else 0 end
-		where  (res.menu_id) in
-		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
-			( #{item})
-		</foreach>
-		and res.dclass='3'
-	</update>
-
-
 	<select id="getXmMenuAttDist" parameterType="HashMap" resultType="HashMap">
 		select count(*) as value,${groupBy} as name from xm_menu res
 		<where>
