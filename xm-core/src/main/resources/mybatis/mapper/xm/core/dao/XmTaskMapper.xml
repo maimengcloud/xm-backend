@@ -504,7 +504,7 @@
 		insert into xm_task(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetCost},#{budgetWorkload},#{actCost},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl},#{initWorkload}
+		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetAt},#{budgetWorkload},#{actAt},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl},#{initWorkload}
 		)
 	</insert>
 	
@@ -567,7 +567,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_cost,budget_workload,act_cost,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload
+		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_at,budget_workload,act_at,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -593,9 +593,9 @@
 		<if test="createUsername != null and createUsername != ''">      and res.create_username = #{createUsername}     </if>
 		<if test="createTime != null">      and date_format(res.create_time,'%Y-%m-%d') = date_format(#{createTime},'%Y-%m-%d')     </if>
 		<if test="rate != null and rate != ''">      and res.rate = #{rate}     </if>
-		<if test="budgetCost != null and budgetCost != ''">      and res.budget_cost = #{budgetCost}     </if>
+		<if test="budgetAt != null and budgetAt != ''">      and res.budget_at = #{budgetAt}     </if>
 		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
-		<if test="actCost != null and actCost != ''">      and res.act_cost = #{actCost}     </if>
+		<if test="actAt != null and actAt != ''">      and res.act_at = #{actAt}     </if>
 		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
 		<if test="taskState != null and taskState != ''">      and res.task_state = #{taskState}     </if>
 		<if test="taskType != null and taskType != ''">      and res.task_type = #{taskType}     </if>
@@ -658,9 +658,9 @@
 		create_username = #{createUsername},
 		create_time = #{createTime},
 		rate = #{rate},
-		budget_cost = #{budgetCost},
+		budget_at = #{budgetAt},
 		budget_workload = #{budgetWorkload},
-		act_cost = #{actCost},
+		act_at = #{actAt},
 		act_workload = #{actWorkload},
 		task_state = #{taskState},
 		task_type = #{taskType},
@@ -722,9 +722,9 @@
 		<if test="createUsername != null and createUsername != ''"> create_username = #{createUsername},     </if>
 		<if test="createTime != null"> create_time = #{createTime},     </if>
 		<if test="rate != null and rate != ''"> rate = #{rate},     </if>
-		<if test="budgetCost != null and budgetCost != ''"> budget_cost = #{budgetCost},     </if>
+		<if test="budgetAt != null and budgetAt != ''"> budget_at = #{budgetAt},     </if>
 		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
-		<if test="actCost != null and actCost != ''"> act_cost = #{actCost},     </if>
+		<if test="actAt != null and actAt != ''"> act_at = #{actAt},     </if>
 		<if test="actWorkload != null and actWorkload != ''"> act_workload = #{actWorkload},     </if>
 		<if test="taskState != null and taskState != ''"> task_state = #{taskState},     </if>
 		<if test="taskType != null and taskType != ''"> task_type = #{taskType},     </if>
@@ -787,9 +787,9 @@
 			create_username = #{item.createUsername},
 			create_time = #{item.createTime},
 			rate = #{item.rate},
-			budget_cost = #{item.budgetCost},
+			budget_at = #{item.budgetAt},
 			budget_workload = #{item.budgetWorkload},
-			act_cost = #{item.actCost},
+			act_at = #{item.actAt},
 			act_workload = #{item.actWorkload},
 			task_state = #{item.taskState},
 			task_type = #{item.taskType},
