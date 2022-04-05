@@ -2,15 +2,15 @@ package  com.xm.core.entity;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Date;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenuState所有属性名: <br>
- *	menuId,planStartTime,planEndTime,actStartTime,actEndTime,planWorkload,actWorkload,planCostAmount,actCostAmount,finishRate,demandRate,designRate,devRate,uatRate,sitRate,onlineStatus,onlineTime,planStatus,chargeUserid,chargeUsername,menuStatus,ctime,ltime,cuserid,cusername,calcTime,menuName,planWorkhours,planWorkerCnt,closedBugs,activeBugs,confirmedBugs,resolvedBugs,productId,productName,testCases,execCases,designCases,finishCases,projectCnt,iterationCnt,taskCnt,finishTaskCnt,bizDate,bugCnt;<br>
+ *	menuId,finishRate,menuStatus,ctime,calcTime,menuName,planWorkhours,planWorkerCnt,closedBugs,activeBugs,confirmedBugs,resolvedBugs,productId,testCases,execCases,designCases,finishCases,bizDate,bugCnt,taskCnt,taskUnstartCnt,taskExecCnt,taskFinishCnt,taskSetCnt,taskOutCnt,taskCloseCnt,budgetNouserAt,budgetOuserAt,budgetIuserAt,actUserAt,actIuserAt,actOuserAt,actNouserAt,budgetWorkload,budgetOuserWorkload,budgetIuserWorkload,actWorkload,actOuserWorkload,actIuserWorkload,estimateWorkload,budgetAt,actAt,minStartTime,maxEndTime,productCnt,iterationCnt,projectCnt;<br>
  * 表 xm_menu_state 功能状态表,无需前端维护，所有数据由汇总统计得出的所有字段名: <br>
- *	menu_id,plan_start_time,plan_end_time,act_start_time,act_end_time,plan_workload,act_workload,plan_cost_amount,act_cost_amount,finish_rate,demand_rate,design_rate,dev_rate,uat_rate,sit_rate,online_status,online_time,plan_status,charge_userid,charge_username,menu_status,ctime,ltime,cuserid,cusername,calc_time,menu_name,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,product_id,product_name,test_cases,exec_cases,design_cases,finish_cases,project_cnt,iteration_cnt,task_cnt,finish_task_cnt,biz_date,bug_cnt;<br>
+ *	menu_id,finish_rate,menu_status,ctime,calc_time,menu_name,plan_workhours,plan_worker_cnt,closed_bugs,active_bugs,confirmed_bugs,resolved_bugs,product_id,test_cases,exec_cases,design_cases,finish_cases,biz_date,bug_cnt,task_cnt,task_unstart_cnt,task_exec_cnt,task_finish_cnt,task_set_cnt,task_out_cnt,task_close_cnt,budget_nouser_at,budget_ouser_at,budget_iuser_at,act_user_at,act_iuser_at,act_ouser_at,act_nouser_at,budget_workload,budget_ouser_workload,budget_iuser_workload,act_workload,act_ouser_workload,act_iuser_workload,estimate_workload,budget_at,act_at,min_start_time,max_end_time,product_cnt,iteration_cnt,project_cnt;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -23,77 +23,14 @@ public class XmMenuState  implements java.io.Serializable {
 	String menuId;
   	
 	
-	@ApiModelProperty(notes="开始时间",allowEmptyValue=true,example="",allowableValues="")
-	Date planStartTime;
-	
-	@ApiModelProperty(notes="结束时间",allowEmptyValue=true,example="",allowableValues="")
-	Date planEndTime;
-	
-	@ApiModelProperty(notes="实际开始时间",allowEmptyValue=true,example="",allowableValues="")
-	Date actStartTime;
-	
-	@ApiModelProperty(notes="实际结束时间",allowEmptyValue=true,example="",allowableValues="")
-	Date actEndTime;
-	
-	@ApiModelProperty(notes="计划工作量，根据关联任务汇总",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planWorkload;
-	
-	@ApiModelProperty(notes="实际工作量，根据关联任务汇总",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal actWorkload;
-	
-	@ApiModelProperty(notes="计划成本，根据关联任务汇总",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal planCostAmount;
-	
-	@ApiModelProperty(notes="实际成本金额根据关联任务汇总",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal actCostAmount;
-	
 	@ApiModelProperty(notes="总体完成比例0-100之间,根据taskType进行汇总",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal finishRate;
-	
-	@ApiModelProperty(notes="需求完成率0-100之间,根据taskType进行汇总",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal demandRate;
-	
-	@ApiModelProperty(notes="设计完成率0-100之间,根据taskType进行汇总",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal designRate;
-	
-	@ApiModelProperty(notes="开发完成率0-100之间,根据taskType进行汇总",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal devRate;
-	
-	@ApiModelProperty(notes="uat测试完成率0-100之间,根据taskType进行汇总",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal uatRate;
-	
-	@ApiModelProperty(notes="sit测试完成率0-100之间,根据taskType进行汇总",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal sitRate;
-	
-	@ApiModelProperty(notes="上线状态0未上线1上线成功",allowEmptyValue=true,example="",allowableValues="")
-	String onlineStatus;
-	
-	@ApiModelProperty(notes="上线时间",allowEmptyValue=true,example="",allowableValues="")
-	Date onlineTime;
-	
-	@ApiModelProperty(notes="计划状态0初始1正常2暂停3延误4结束5关闭",allowEmptyValue=true,example="",allowableValues="")
-	String planStatus;
-	
-	@ApiModelProperty(notes="负责人编号",allowEmptyValue=true,example="",allowableValues="")
-	String chargeUserid;
-	
-	@ApiModelProperty(notes="负责人姓名",allowEmptyValue=true,example="",allowableValues="")
-	String chargeUsername;
 	
 	@ApiModelProperty(notes="状态0初始1设计中2开发中3测试中4uat测试2已上线3已下线4已删除",allowEmptyValue=true,example="",allowableValues="")
 	String menuStatus;
 	
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
 	Date ctime;
-	
-	@ApiModelProperty(notes="更新时间",allowEmptyValue=true,example="",allowableValues="")
-	Date ltime;
-	
-	@ApiModelProperty(notes="创建人编号",allowEmptyValue=true,example="",allowableValues="")
-	String cuserid;
-	
-	@ApiModelProperty(notes="创建人姓名",allowEmptyValue=true,example="",allowableValues="")
-	String cusername;
 	
 	@ApiModelProperty(notes="汇总时间",allowEmptyValue=true,example="",allowableValues="")
 	Date calcTime;
@@ -122,9 +59,6 @@ public class XmMenuState  implements java.io.Serializable {
 	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
 	String productId;
 	
-	@ApiModelProperty(notes="产品名称",allowEmptyValue=true,example="",allowableValues="")
-	String productName;
-	
 	@ApiModelProperty(notes="测试案例总数",allowEmptyValue=true,example="",allowableValues="")
 	Integer testCases;
 	
@@ -137,23 +71,95 @@ public class XmMenuState  implements java.io.Serializable {
 	@ApiModelProperty(notes="完成案例总数",allowEmptyValue=true,example="",allowableValues="")
 	Integer finishCases;
 	
-	@ApiModelProperty(notes="关联项目数",allowEmptyValue=true,example="",allowableValues="")
-	Integer projectCnt;
-	
-	@ApiModelProperty(notes="关联迭代数",allowEmptyValue=true,example="",allowableValues="")
-	Integer iterationCnt;
-	
-	@ApiModelProperty(notes="任务数",allowEmptyValue=true,example="",allowableValues="")
-	Integer taskCnt;
-	
-	@ApiModelProperty(notes="完成的任务数",allowEmptyValue=true,example="",allowableValues="")
-	Integer finishTaskCnt;
-	
 	@ApiModelProperty(notes="业务日期yyyy-MM-dd字符串",allowEmptyValue=true,example="",allowableValues="")
 	String bizDate;
 	
 	@ApiModelProperty(notes="bug总数",allowEmptyValue=true,example="",allowableValues="")
 	Integer bugCnt;
+	
+	@ApiModelProperty(notes="任务总数",allowEmptyValue=true,example="",allowableValues="")
+	Integer taskCnt;
+	
+	@ApiModelProperty(notes="待开始任务",allowEmptyValue=true,example="",allowableValues="")
+	Integer taskUnstartCnt;
+	
+	@ApiModelProperty(notes="执行中任务",allowEmptyValue=true,example="",allowableValues="")
+	Integer taskExecCnt;
+	
+	@ApiModelProperty(notes="已完成任务总数-来自任务表",allowEmptyValue=true,example="",allowableValues="")
+	Integer taskFinishCnt;
+	
+	@ApiModelProperty(notes="已结算任务",allowEmptyValue=true,example="",allowableValues="")
+	Integer taskSetCnt;
+	
+	@ApiModelProperty(notes="外购任务数，来自任务表",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal taskOutCnt;
+	
+	@ApiModelProperty(notes="已关闭任务",allowEmptyValue=true,example="",allowableValues="")
+	Integer taskCloseCnt;
+	
+	@ApiModelProperty(notes="项目总非人力预算-来自任务表",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal budgetNouserAt;
+	
+	@ApiModelProperty(notes="项目总外购人力预算-来自任务表",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal budgetOuserAt;
+	
+	@ApiModelProperty(notes="项目总内部人力预算-来自任务表",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal budgetIuserAt;
+	
+	@ApiModelProperty(notes="项目总人力成本",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal actUserAt;
+	
+	@ApiModelProperty(notes="项目总内部人力成本金额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal actIuserAt;
+	
+	@ApiModelProperty(notes="项目总外购人力成本金额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal actOuserAt;
+	
+	@ApiModelProperty(notes="项目总非人力成本",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal actNouserAt;
+	
+	@ApiModelProperty(notes="项目总预算工作量-来自任务表",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal budgetWorkload;
+	
+	@ApiModelProperty(notes="外购人力总工作量-应该大于或等于阶段计划外购人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal budgetOuserWorkload;
+	
+	@ApiModelProperty(notes="内部人力总工作量-应该大于或等于阶段计划内部人力总成本",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal budgetIuserWorkload;
+	
+	@ApiModelProperty(notes="已完成工作量-来自计划中实际完成工作量",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal actWorkload;
+	
+	@ApiModelProperty(notes="实际外购总工作量，来自任务表",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal actOuserWorkload;
+	
+	@ApiModelProperty(notes="实际内部总工作量，来自任务表",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal actIuserWorkload;
+	
+	@ApiModelProperty(notes="预估工时",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal estimateWorkload;
+	
+	@ApiModelProperty(notes="预算金额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal budgetAt;
+	
+	@ApiModelProperty(notes="实际金额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal actAt;
+	
+	@ApiModelProperty(notes="最早开始日期",allowEmptyValue=true,example="",allowableValues="")
+	Date minStartTime;
+	
+	@ApiModelProperty(notes="最晚结束时间",allowEmptyValue=true,example="",allowableValues="")
+	Date maxEndTime;
+	
+	@ApiModelProperty(notes="关联产品数（主要是指子节点关联）",allowEmptyValue=true,example="",allowableValues="")
+	Integer productCnt;
+	
+	@ApiModelProperty(notes="关联迭代数（主要是指子节点关联）",allowEmptyValue=true,example="",allowableValues="")
+	Integer iterationCnt;
+	
+	@ApiModelProperty(notes="关联项目数（主要是指子节点关联）",allowEmptyValue=true,example="",allowableValues="")
+	Integer projectCnt;
 
 	/**功能编号**/
 	public XmMenuState(String menuId) {
@@ -171,118 +177,10 @@ public class XmMenuState  implements java.io.Serializable {
 		this.menuId = menuId;
 	}
 	/**
-	 * 开始时间
-	 **/
-	public void setPlanStartTime(Date planStartTime) {
-		this.planStartTime = planStartTime;
-	}
-	/**
-	 * 结束时间
-	 **/
-	public void setPlanEndTime(Date planEndTime) {
-		this.planEndTime = planEndTime;
-	}
-	/**
-	 * 实际开始时间
-	 **/
-	public void setActStartTime(Date actStartTime) {
-		this.actStartTime = actStartTime;
-	}
-	/**
-	 * 实际结束时间
-	 **/
-	public void setActEndTime(Date actEndTime) {
-		this.actEndTime = actEndTime;
-	}
-	/**
-	 * 计划工作量，根据关联任务汇总
-	 **/
-	public void setPlanWorkload(BigDecimal planWorkload) {
-		this.planWorkload = planWorkload;
-	}
-	/**
-	 * 实际工作量，根据关联任务汇总
-	 **/
-	public void setActWorkload(BigDecimal actWorkload) {
-		this.actWorkload = actWorkload;
-	}
-	/**
-	 * 计划成本，根据关联任务汇总
-	 **/
-	public void setPlanCostAmount(BigDecimal planCostAmount) {
-		this.planCostAmount = planCostAmount;
-	}
-	/**
-	 * 实际成本金额根据关联任务汇总
-	 **/
-	public void setActCostAmount(BigDecimal actCostAmount) {
-		this.actCostAmount = actCostAmount;
-	}
-	/**
 	 * 总体完成比例0-100之间,根据taskType进行汇总
 	 **/
 	public void setFinishRate(BigDecimal finishRate) {
 		this.finishRate = finishRate;
-	}
-	/**
-	 * 需求完成率0-100之间,根据taskType进行汇总
-	 **/
-	public void setDemandRate(BigDecimal demandRate) {
-		this.demandRate = demandRate;
-	}
-	/**
-	 * 设计完成率0-100之间,根据taskType进行汇总
-	 **/
-	public void setDesignRate(BigDecimal designRate) {
-		this.designRate = designRate;
-	}
-	/**
-	 * 开发完成率0-100之间,根据taskType进行汇总
-	 **/
-	public void setDevRate(BigDecimal devRate) {
-		this.devRate = devRate;
-	}
-	/**
-	 * uat测试完成率0-100之间,根据taskType进行汇总
-	 **/
-	public void setUatRate(BigDecimal uatRate) {
-		this.uatRate = uatRate;
-	}
-	/**
-	 * sit测试完成率0-100之间,根据taskType进行汇总
-	 **/
-	public void setSitRate(BigDecimal sitRate) {
-		this.sitRate = sitRate;
-	}
-	/**
-	 * 上线状态0未上线1上线成功
-	 **/
-	public void setOnlineStatus(String onlineStatus) {
-		this.onlineStatus = onlineStatus;
-	}
-	/**
-	 * 上线时间
-	 **/
-	public void setOnlineTime(Date onlineTime) {
-		this.onlineTime = onlineTime;
-	}
-	/**
-	 * 计划状态0初始1正常2暂停3延误4结束5关闭
-	 **/
-	public void setPlanStatus(String planStatus) {
-		this.planStatus = planStatus;
-	}
-	/**
-	 * 负责人编号
-	 **/
-	public void setChargeUserid(String chargeUserid) {
-		this.chargeUserid = chargeUserid;
-	}
-	/**
-	 * 负责人姓名
-	 **/
-	public void setChargeUsername(String chargeUsername) {
-		this.chargeUsername = chargeUsername;
 	}
 	/**
 	 * 状态0初始1设计中2开发中3测试中4uat测试2已上线3已下线4已删除
@@ -295,24 +193,6 @@ public class XmMenuState  implements java.io.Serializable {
 	 **/
 	public void setCtime(Date ctime) {
 		this.ctime = ctime;
-	}
-	/**
-	 * 更新时间
-	 **/
-	public void setLtime(Date ltime) {
-		this.ltime = ltime;
-	}
-	/**
-	 * 创建人编号
-	 **/
-	public void setCuserid(String cuserid) {
-		this.cuserid = cuserid;
-	}
-	/**
-	 * 创建人姓名
-	 **/
-	public void setCusername(String cusername) {
-		this.cusername = cusername;
 	}
 	/**
 	 * 汇总时间
@@ -369,12 +249,6 @@ public class XmMenuState  implements java.io.Serializable {
 		this.productId = productId;
 	}
 	/**
-	 * 产品名称
-	 **/
-	public void setProductName(String productName) {
-		this.productName = productName;
-	}
-	/**
 	 * 测试案例总数
 	 **/
 	public void setTestCases(Integer testCases) {
@@ -399,30 +273,6 @@ public class XmMenuState  implements java.io.Serializable {
 		this.finishCases = finishCases;
 	}
 	/**
-	 * 关联项目数
-	 **/
-	public void setProjectCnt(Integer projectCnt) {
-		this.projectCnt = projectCnt;
-	}
-	/**
-	 * 关联迭代数
-	 **/
-	public void setIterationCnt(Integer iterationCnt) {
-		this.iterationCnt = iterationCnt;
-	}
-	/**
-	 * 任务数
-	 **/
-	public void setTaskCnt(Integer taskCnt) {
-		this.taskCnt = taskCnt;
-	}
-	/**
-	 * 完成的任务数
-	 **/
-	public void setFinishTaskCnt(Integer finishTaskCnt) {
-		this.finishTaskCnt = finishTaskCnt;
-	}
-	/**
 	 * 业务日期yyyy-MM-dd字符串
 	 **/
 	public void setBizDate(String bizDate) {
@@ -434,6 +284,174 @@ public class XmMenuState  implements java.io.Serializable {
 	public void setBugCnt(Integer bugCnt) {
 		this.bugCnt = bugCnt;
 	}
+	/**
+	 * 任务总数
+	 **/
+	public void setTaskCnt(Integer taskCnt) {
+		this.taskCnt = taskCnt;
+	}
+	/**
+	 * 待开始任务
+	 **/
+	public void setTaskUnstartCnt(Integer taskUnstartCnt) {
+		this.taskUnstartCnt = taskUnstartCnt;
+	}
+	/**
+	 * 执行中任务
+	 **/
+	public void setTaskExecCnt(Integer taskExecCnt) {
+		this.taskExecCnt = taskExecCnt;
+	}
+	/**
+	 * 已完成任务总数-来自任务表
+	 **/
+	public void setTaskFinishCnt(Integer taskFinishCnt) {
+		this.taskFinishCnt = taskFinishCnt;
+	}
+	/**
+	 * 已结算任务
+	 **/
+	public void setTaskSetCnt(Integer taskSetCnt) {
+		this.taskSetCnt = taskSetCnt;
+	}
+	/**
+	 * 外购任务数，来自任务表
+	 **/
+	public void setTaskOutCnt(BigDecimal taskOutCnt) {
+		this.taskOutCnt = taskOutCnt;
+	}
+	/**
+	 * 已关闭任务
+	 **/
+	public void setTaskCloseCnt(Integer taskCloseCnt) {
+		this.taskCloseCnt = taskCloseCnt;
+	}
+	/**
+	 * 项目总非人力预算-来自任务表
+	 **/
+	public void setBudgetNouserAt(BigDecimal budgetNouserAt) {
+		this.budgetNouserAt = budgetNouserAt;
+	}
+	/**
+	 * 项目总外购人力预算-来自任务表
+	 **/
+	public void setBudgetOuserAt(BigDecimal budgetOuserAt) {
+		this.budgetOuserAt = budgetOuserAt;
+	}
+	/**
+	 * 项目总内部人力预算-来自任务表
+	 **/
+	public void setBudgetIuserAt(BigDecimal budgetIuserAt) {
+		this.budgetIuserAt = budgetIuserAt;
+	}
+	/**
+	 * 项目总人力成本
+	 **/
+	public void setActUserAt(BigDecimal actUserAt) {
+		this.actUserAt = actUserAt;
+	}
+	/**
+	 * 项目总内部人力成本金额
+	 **/
+	public void setActIuserAt(BigDecimal actIuserAt) {
+		this.actIuserAt = actIuserAt;
+	}
+	/**
+	 * 项目总外购人力成本金额
+	 **/
+	public void setActOuserAt(BigDecimal actOuserAt) {
+		this.actOuserAt = actOuserAt;
+	}
+	/**
+	 * 项目总非人力成本
+	 **/
+	public void setActNouserAt(BigDecimal actNouserAt) {
+		this.actNouserAt = actNouserAt;
+	}
+	/**
+	 * 项目总预算工作量-来自任务表
+	 **/
+	public void setBudgetWorkload(BigDecimal budgetWorkload) {
+		this.budgetWorkload = budgetWorkload;
+	}
+	/**
+	 * 外购人力总工作量-应该大于或等于阶段计划外购人力总成本
+	 **/
+	public void setBudgetOuserWorkload(BigDecimal budgetOuserWorkload) {
+		this.budgetOuserWorkload = budgetOuserWorkload;
+	}
+	/**
+	 * 内部人力总工作量-应该大于或等于阶段计划内部人力总成本
+	 **/
+	public void setBudgetIuserWorkload(BigDecimal budgetIuserWorkload) {
+		this.budgetIuserWorkload = budgetIuserWorkload;
+	}
+	/**
+	 * 已完成工作量-来自计划中实际完成工作量
+	 **/
+	public void setActWorkload(BigDecimal actWorkload) {
+		this.actWorkload = actWorkload;
+	}
+	/**
+	 * 实际外购总工作量，来自任务表
+	 **/
+	public void setActOuserWorkload(BigDecimal actOuserWorkload) {
+		this.actOuserWorkload = actOuserWorkload;
+	}
+	/**
+	 * 实际内部总工作量，来自任务表
+	 **/
+	public void setActIuserWorkload(BigDecimal actIuserWorkload) {
+		this.actIuserWorkload = actIuserWorkload;
+	}
+	/**
+	 * 预估工时
+	 **/
+	public void setEstimateWorkload(BigDecimal estimateWorkload) {
+		this.estimateWorkload = estimateWorkload;
+	}
+	/**
+	 * 预算金额
+	 **/
+	public void setBudgetAt(BigDecimal budgetAt) {
+		this.budgetAt = budgetAt;
+	}
+	/**
+	 * 实际金额
+	 **/
+	public void setActAt(BigDecimal actAt) {
+		this.actAt = actAt;
+	}
+	/**
+	 * 最早开始日期
+	 **/
+	public void setMinStartTime(Date minStartTime) {
+		this.minStartTime = minStartTime;
+	}
+	/**
+	 * 最晚结束时间
+	 **/
+	public void setMaxEndTime(Date maxEndTime) {
+		this.maxEndTime = maxEndTime;
+	}
+	/**
+	 * 关联产品数（主要是指子节点关联）
+	 **/
+	public void setProductCnt(Integer productCnt) {
+		this.productCnt = productCnt;
+	}
+	/**
+	 * 关联迭代数（主要是指子节点关联）
+	 **/
+	public void setIterationCnt(Integer iterationCnt) {
+		this.iterationCnt = iterationCnt;
+	}
+	/**
+	 * 关联项目数（主要是指子节点关联）
+	 **/
+	public void setProjectCnt(Integer projectCnt) {
+		this.projectCnt = projectCnt;
+	}
 	
 	/**
 	 * 功能编号
@@ -442,118 +460,10 @@ public class XmMenuState  implements java.io.Serializable {
 		return this.menuId;
 	}
 	/**
-	 * 开始时间
-	 **/
-	public Date getPlanStartTime() {
-		return this.planStartTime;
-	}
-	/**
-	 * 结束时间
-	 **/
-	public Date getPlanEndTime() {
-		return this.planEndTime;
-	}
-	/**
-	 * 实际开始时间
-	 **/
-	public Date getActStartTime() {
-		return this.actStartTime;
-	}
-	/**
-	 * 实际结束时间
-	 **/
-	public Date getActEndTime() {
-		return this.actEndTime;
-	}
-	/**
-	 * 计划工作量，根据关联任务汇总
-	 **/
-	public BigDecimal getPlanWorkload() {
-		return this.planWorkload;
-	}
-	/**
-	 * 实际工作量，根据关联任务汇总
-	 **/
-	public BigDecimal getActWorkload() {
-		return this.actWorkload;
-	}
-	/**
-	 * 计划成本，根据关联任务汇总
-	 **/
-	public BigDecimal getPlanCostAmount() {
-		return this.planCostAmount;
-	}
-	/**
-	 * 实际成本金额根据关联任务汇总
-	 **/
-	public BigDecimal getActCostAmount() {
-		return this.actCostAmount;
-	}
-	/**
 	 * 总体完成比例0-100之间,根据taskType进行汇总
 	 **/
 	public BigDecimal getFinishRate() {
 		return this.finishRate;
-	}
-	/**
-	 * 需求完成率0-100之间,根据taskType进行汇总
-	 **/
-	public BigDecimal getDemandRate() {
-		return this.demandRate;
-	}
-	/**
-	 * 设计完成率0-100之间,根据taskType进行汇总
-	 **/
-	public BigDecimal getDesignRate() {
-		return this.designRate;
-	}
-	/**
-	 * 开发完成率0-100之间,根据taskType进行汇总
-	 **/
-	public BigDecimal getDevRate() {
-		return this.devRate;
-	}
-	/**
-	 * uat测试完成率0-100之间,根据taskType进行汇总
-	 **/
-	public BigDecimal getUatRate() {
-		return this.uatRate;
-	}
-	/**
-	 * sit测试完成率0-100之间,根据taskType进行汇总
-	 **/
-	public BigDecimal getSitRate() {
-		return this.sitRate;
-	}
-	/**
-	 * 上线状态0未上线1上线成功
-	 **/
-	public String getOnlineStatus() {
-		return this.onlineStatus;
-	}
-	/**
-	 * 上线时间
-	 **/
-	public Date getOnlineTime() {
-		return this.onlineTime;
-	}
-	/**
-	 * 计划状态0初始1正常2暂停3延误4结束5关闭
-	 **/
-	public String getPlanStatus() {
-		return this.planStatus;
-	}
-	/**
-	 * 负责人编号
-	 **/
-	public String getChargeUserid() {
-		return this.chargeUserid;
-	}
-	/**
-	 * 负责人姓名
-	 **/
-	public String getChargeUsername() {
-		return this.chargeUsername;
 	}
 	/**
 	 * 状态0初始1设计中2开发中3测试中4uat测试2已上线3已下线4已删除
@@ -566,24 +476,6 @@ public class XmMenuState  implements java.io.Serializable {
 	 **/
 	public Date getCtime() {
 		return this.ctime;
-	}
-	/**
-	 * 更新时间
-	 **/
-	public Date getLtime() {
-		return this.ltime;
-	}
-	/**
-	 * 创建人编号
-	 **/
-	public String getCuserid() {
-		return this.cuserid;
-	}
-	/**
-	 * 创建人姓名
-	 **/
-	public String getCusername() {
-		return this.cusername;
 	}
 	/**
 	 * 汇总时间
@@ -640,12 +532,6 @@ public class XmMenuState  implements java.io.Serializable {
 		return this.productId;
 	}
 	/**
-	 * 产品名称
-	 **/
-	public String getProductName() {
-		return this.productName;
-	}
-	/**
 	 * 测试案例总数
 	 **/
 	public Integer getTestCases() {
@@ -670,30 +556,6 @@ public class XmMenuState  implements java.io.Serializable {
 		return this.finishCases;
 	}
 	/**
-	 * 关联项目数
-	 **/
-	public Integer getProjectCnt() {
-		return this.projectCnt;
-	}
-	/**
-	 * 关联迭代数
-	 **/
-	public Integer getIterationCnt() {
-		return this.iterationCnt;
-	}
-	/**
-	 * 任务数
-	 **/
-	public Integer getTaskCnt() {
-		return this.taskCnt;
-	}
-	/**
-	 * 完成的任务数
-	 **/
-	public Integer getFinishTaskCnt() {
-		return this.finishTaskCnt;
-	}
-	/**
 	 * 业务日期yyyy-MM-dd字符串
 	 **/
 	public String getBizDate() {
@@ -704,6 +566,174 @@ public class XmMenuState  implements java.io.Serializable {
 	 **/
 	public Integer getBugCnt() {
 		return this.bugCnt;
+	}
+	/**
+	 * 任务总数
+	 **/
+	public Integer getTaskCnt() {
+		return this.taskCnt;
+	}
+	/**
+	 * 待开始任务
+	 **/
+	public Integer getTaskUnstartCnt() {
+		return this.taskUnstartCnt;
+	}
+	/**
+	 * 执行中任务
+	 **/
+	public Integer getTaskExecCnt() {
+		return this.taskExecCnt;
+	}
+	/**
+	 * 已完成任务总数-来自任务表
+	 **/
+	public Integer getTaskFinishCnt() {
+		return this.taskFinishCnt;
+	}
+	/**
+	 * 已结算任务
+	 **/
+	public Integer getTaskSetCnt() {
+		return this.taskSetCnt;
+	}
+	/**
+	 * 外购任务数，来自任务表
+	 **/
+	public BigDecimal getTaskOutCnt() {
+		return this.taskOutCnt;
+	}
+	/**
+	 * 已关闭任务
+	 **/
+	public Integer getTaskCloseCnt() {
+		return this.taskCloseCnt;
+	}
+	/**
+	 * 项目总非人力预算-来自任务表
+	 **/
+	public BigDecimal getBudgetNouserAt() {
+		return this.budgetNouserAt;
+	}
+	/**
+	 * 项目总外购人力预算-来自任务表
+	 **/
+	public BigDecimal getBudgetOuserAt() {
+		return this.budgetOuserAt;
+	}
+	/**
+	 * 项目总内部人力预算-来自任务表
+	 **/
+	public BigDecimal getBudgetIuserAt() {
+		return this.budgetIuserAt;
+	}
+	/**
+	 * 项目总人力成本
+	 **/
+	public BigDecimal getActUserAt() {
+		return this.actUserAt;
+	}
+	/**
+	 * 项目总内部人力成本金额
+	 **/
+	public BigDecimal getActIuserAt() {
+		return this.actIuserAt;
+	}
+	/**
+	 * 项目总外购人力成本金额
+	 **/
+	public BigDecimal getActOuserAt() {
+		return this.actOuserAt;
+	}
+	/**
+	 * 项目总非人力成本
+	 **/
+	public BigDecimal getActNouserAt() {
+		return this.actNouserAt;
+	}
+	/**
+	 * 项目总预算工作量-来自任务表
+	 **/
+	public BigDecimal getBudgetWorkload() {
+		return this.budgetWorkload;
+	}
+	/**
+	 * 外购人力总工作量-应该大于或等于阶段计划外购人力总成本
+	 **/
+	public BigDecimal getBudgetOuserWorkload() {
+		return this.budgetOuserWorkload;
+	}
+	/**
+	 * 内部人力总工作量-应该大于或等于阶段计划内部人力总成本
+	 **/
+	public BigDecimal getBudgetIuserWorkload() {
+		return this.budgetIuserWorkload;
+	}
+	/**
+	 * 已完成工作量-来自计划中实际完成工作量
+	 **/
+	public BigDecimal getActWorkload() {
+		return this.actWorkload;
+	}
+	/**
+	 * 实际外购总工作量，来自任务表
+	 **/
+	public BigDecimal getActOuserWorkload() {
+		return this.actOuserWorkload;
+	}
+	/**
+	 * 实际内部总工作量，来自任务表
+	 **/
+	public BigDecimal getActIuserWorkload() {
+		return this.actIuserWorkload;
+	}
+	/**
+	 * 预估工时
+	 **/
+	public BigDecimal getEstimateWorkload() {
+		return this.estimateWorkload;
+	}
+	/**
+	 * 预算金额
+	 **/
+	public BigDecimal getBudgetAt() {
+		return this.budgetAt;
+	}
+	/**
+	 * 实际金额
+	 **/
+	public BigDecimal getActAt() {
+		return this.actAt;
+	}
+	/**
+	 * 最早开始日期
+	 **/
+	public Date getMinStartTime() {
+		return this.minStartTime;
+	}
+	/**
+	 * 最晚结束时间
+	 **/
+	public Date getMaxEndTime() {
+		return this.maxEndTime;
+	}
+	/**
+	 * 关联产品数（主要是指子节点关联）
+	 **/
+	public Integer getProductCnt() {
+		return this.productCnt;
+	}
+	/**
+	 * 关联迭代数（主要是指子节点关联）
+	 **/
+	public Integer getIterationCnt() {
+		return this.iterationCnt;
+	}
+	/**
+	 * 关联项目数（主要是指子节点关联）
+	 **/
+	public Integer getProjectCnt() {
+		return this.projectCnt;
 	}
 
 }
