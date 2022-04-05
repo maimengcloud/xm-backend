@@ -194,9 +194,9 @@
 		</foreach>
 	</select>
 	<update id="calcWorkloadByRecord" parameterType="List">
-		update xm_menu res left join (select t.menu_id,
+		update xm_menu_state res left join (select t.menu_id,
 			sum(ifnull(t.budget_workload,0)) as budget_workload,
-			sum(ifnull(t.budget_cost,0)) as budget_cost,
+			sum(ifnull(t.budget_at,0)) as budget_at,
 			sum(ifnull(t.act_workload,0)) as act_workload,
 			sum(ifnull(t.act_cost,0)) as act_cost
 			  from xm_task t where t.menu_id in
@@ -209,9 +209,9 @@
 		left join (
 			select q.menu_id,
 		sum(ifnull(q.budget_workload,0)) as budget_workload,
-		sum(ifnull(q.budget_cost,0)) as budget_cost,
+		sum(ifnull(q.budget_at,0)) as budget_at,
 		sum(ifnull(q.act_workload,0)) as act_workload,
-		sum(ifnull(q.act_cost,0)) as act_cost
+		sum(ifnull(q.act_at,0)) as act_at
 		from xm_question q where q.menu_id in
 			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
 				( #{item})
@@ -219,7 +219,7 @@
 			group by q.menu_id
 		) as q on q.menu_id=res.menu_id
 		set res.budget_workload=ifnull(t.budget_workload,0)+ifnull(q.budget_workload,0),
-		  res.budget_cost=ifnull(t.budget_cost,0)+ifnull(q.budget_cost,0),
+		  res.budget_at=ifnull(t.budget_at,0)+ifnull(q.budget_at,0),
 		  res.mact_workload=ifnull(t.act_workload,0)+ifnull(q.act_workload,0),
 		  res.mact_cost=ifnull(t.act_cost,0)+ifnull(q.act_cost,0),
 		  res.mact_rate=case when (ifnull(t.budget_workload,0)+ifnull(q.budget_workload,0) )!=0 then (ifnull(t.act_workload,0)+ifnull(q.act_workload,0))*100/(ifnull(t.budget_workload,0)+ifnull(q.budget_workload,0) )
@@ -379,7 +379,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_cost,phase_id,iteration_id,calc_type,mact_workload,mact_cost,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time
+		start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_at,phase_id,iteration_id,calc_type,mact_workload,mact_cost,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -414,7 +414,7 @@
 		<if test="budgetHours != null and budgetHours != ''">      and res.budget_hours = #{budgetHours}     </if>
 		<if test="budgetStaffNu != null and budgetStaffNu != ''">      and res.budget_staff_nu = #{budgetStaffNu}     </if>
 		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
-		<if test="budgetCost != null and budgetCost != ''">      and res.budget_cost = #{budgetCost}     </if>
+		<if test="budgetCost != null and budgetCost != ''">      and res.budget_at = #{budgetCost}     </if>
 		<if test="phaseId != null and phaseId != ''">      and res.phase_id = #{phaseId}     </if>
 		<if test="iterationId != null and iterationId != ''">      and res.iteration_id = #{iterationId}     </if>
 		<if test="calcType != null and calcType != ''">      and res.calc_type = #{calcType}     </if>
@@ -462,7 +462,7 @@
 		budget_hours = #{budgetHours},
 		budget_staff_nu = #{budgetStaffNu},
 		budget_workload = #{budgetWorkload},
-		budget_cost = #{budgetCost},
+		budget_at = #{budgetCost},
 		phase_id = #{phaseId},
 		iteration_id = #{iterationId},
 		calc_type = #{calcType},
@@ -509,7 +509,7 @@
 		<if test="budgetHours != null and budgetHours != ''"> budget_hours = #{budgetHours},     </if>
 		<if test="budgetStaffNu != null and budgetStaffNu != ''"> budget_staff_nu = #{budgetStaffNu},     </if>
 		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
-		<if test="budgetCost != null and budgetCost != ''"> budget_cost = #{budgetCost},     </if>
+		<if test="budgetCost != null and budgetCost != ''"> budget_at = #{budgetCost},     </if>
 		<if test="phaseId != null and phaseId != ''"> phase_id = #{phaseId},     </if>
 		<if test="iterationId != null and iterationId != ''"> iteration_id = #{iterationId},     </if>
 		<if test="calcType != null and calcType != ''"> calc_type = #{calcType},     </if>
@@ -557,7 +557,7 @@
 			budget_hours = #{item.budgetHours},
 			budget_staff_nu = #{item.budgetStaffNu},
 			budget_workload = #{item.budgetWorkload},
-			budget_cost = #{item.budgetCost},
+			budget_at = #{item.budgetCost},
 			phase_id = #{item.phaseId},
 			iteration_id = #{item.iterationId},
 			calc_type = #{item.calcType},
