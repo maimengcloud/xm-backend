@@ -250,7 +250,7 @@ public class XmTaskExecuserService extends BaseService {
 		List<Map<String,Object>> actCostAmountList=xmProjectMCostUserService.listSumForSettleGroupByTaskIdAndUserid(params);
 		BigDecimal addSettleAmount=BigDecimal.ZERO;
 		BigDecimal allActCostAmount=BigDecimal.ZERO;
-		BigDecimal taskBudgetCost=NumberUtil.getBigDecimal(xmTaskDb.getBudgetCost(),BigDecimal.ZERO);
+		BigDecimal taskBudgetAt=NumberUtil.getBigDecimal(xmTaskDb.getBudgetAt(),BigDecimal.ZERO);
 		Map<String,Map<String,Object>> actCostAmountMap=new HashMap<>();
 		XmTaskExecuser execuserQuery=new XmTaskExecuser();
 		execuserQuery.setTaskId(taskId);
@@ -304,12 +304,12 @@ public class XmTaskExecuserService extends BaseService {
 			if(settleAmount.add(userActCostAmount).compareTo(quoteAmount)>0) {
 				throw new BizException(xmTaskExecuserDB.getUsername()+"的结算金额不能大于报价金额,剩余"+quoteAmount.subtract(userActCostAmount)+"元可结算");
 			} 
-			if(settleAmount.add(userActCostAmount).compareTo(taskBudgetCost)>0) {
+			if(settleAmount.add(userActCostAmount).compareTo(taskBudgetAt)>0) {
 				throw new BizException(xmTaskExecuserDB.getUsername()+"的总结算金额不能大于任务总预算金额");
 			}
 		}
 
-		if(allActCostAmount.add(addSettleAmount).compareTo(taskBudgetCost)>0) {
+		if(allActCostAmount.add(addSettleAmount).compareTo(taskBudgetAt)>0) {
 			throw new BizException(xmTaskDb.getName()+"结算总金额已经超出任务预算");
 		} 
 		for (XmTaskExecuser xmTaskExecuser : xmTaskExecuserList) {
