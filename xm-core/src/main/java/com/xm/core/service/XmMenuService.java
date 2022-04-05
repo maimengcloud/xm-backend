@@ -414,5 +414,9 @@ public class XmMenuService extends BaseService {
 	public List<Map<String, Object>> getXmMenuAgeDist(Map<String, Object> xmMenu) {
 		return super.selectList("getXmMenuAgeDist",xmMenu);
 	}
+
+    public List<Map<String, Object>> getXmMenuSort(Map<String, Object> xmMenu) {
+		return super.selectList("getXmMenuSort",xmMenu);
+    }
 }
 

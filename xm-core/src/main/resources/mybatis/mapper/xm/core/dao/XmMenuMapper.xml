@@ -253,6 +253,17 @@
 		) as a
 		group by name
 	</select>
+
+	<select id="getXmMenuSort" parameterType="HashMap" resultType="HashMap">
+		select count(*) as value,${groupBy} as id,
+		max( <if test="groupBy=='proposer_id'">proposer_name</if>
+		<if test="groupBy=='mm_userid'">mm_username</if>  ) as name from xm_menu res
+		<where>
+			<include refid="whereForMap"></include>
+			<include refid="where"></include>
+		</where>
+		group by ${groupBy}
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 

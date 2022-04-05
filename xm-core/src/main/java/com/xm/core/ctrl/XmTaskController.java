@@ -296,6 +296,21 @@ public class XmTaskController {
 		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAgeDist(xmTask);
 		return ResponseHelper.ok("成功",datas);
 	}
+
+
+	@RequestMapping(value="/getXmTaskSort",method=RequestMethod.GET)
+	public Map<String,Object> getXmTaskSort( @RequestParam Map<String,Object> xmTask){
+		User user=LoginUtils.getCurrentUserInfo();
+		PageUtils.startPage(xmTask);
+		xmTask.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskSort(xmTask);
+		Map<String,Object> m=new HashMap<>();
+		PageUtils.responePage(m,datas);
+		m.put("data",datas);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
 	/***/
 	@ApiOperation( value = "根据主键批量修改修改任务中的某些字段信息",notes="editXmMenu")
 	@ApiResponses({

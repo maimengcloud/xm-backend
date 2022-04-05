@@ -210,6 +210,20 @@ public class XmMenuController {
 		return ResponseHelper.ok("成功",datas);
 	}
 
+	@RequestMapping(value="/getXmMenuSort",method=RequestMethod.GET)
+	public Map<String,Object> getXmMenuSort( @RequestParam Map<String,Object> xmMenu){
+		User user=LoginUtils.getCurrentUserInfo();
+		PageUtils.startPage(xmMenu);
+		xmMenu.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuSort(xmMenu);
+		Map<String,Object> m=new HashMap<>();
+		PageUtils.responePage(m,datas);
+		m.put("data",datas);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
+
 	@RequestMapping(value="/listWithPhase",method=RequestMethod.GET)
 	public Map<String,Object> listWithPhase( @RequestParam Map<String,Object> xmMenu){
 		Map<String,Object> m = new HashMap<>();

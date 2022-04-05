@@ -752,5 +752,9 @@ public class XmTaskService extends BaseService {
 	public List<Map<String, Object>> getXmTaskAgeDist(Map<String, Object> xmTask) {
 		return super.selectList("getXmTaskAgeDist",xmTask);
 	}
+
+	public List<Map<String, Object>> getXmTaskSort(Map<String, Object> xmTask) {
+		return super.selectList("getXmTaskSort",xmTask);
+	}
 }
 

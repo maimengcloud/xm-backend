@@ -110,6 +110,18 @@
 		) as a
 		group by name
 	</select>
+	<select id="getXmQuestionSort" parameterType="HashMap" resultType="HashMap">
+		select count(*) as value,${groupBy} as id,
+		max( <if test="groupBy=='handler_userid'">handler_username</if>
+			 <if test="groupBy=='ask_userid'">ask_username</if>
+			 <if test="groupBy=='create_userid'">create_username</if>
+			 <if test="groupBy=='menu_id'">menu_name</if> ) as name from xm_question res
+		<where>
+			<include refid="whereForMap"></include>
+			<include refid="where"></include>
+		</where>
+		group by ${groupBy}
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 

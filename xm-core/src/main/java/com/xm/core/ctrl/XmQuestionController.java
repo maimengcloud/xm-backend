@@ -1,6 +1,7 @@
 package com.xm.core.ctrl;
 
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.Page;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Tips;
@@ -135,6 +136,19 @@ public class XmQuestionController {
 		return ResponseHelper.ok("成功",datas);
 	}
 
+	@RequestMapping(value="/getXmQuestionSort",method=RequestMethod.GET)
+	public Map<String,Object> getXmQuestionSort( @RequestParam Map<String,Object> xmQuestion){
+		User user=LoginUtils.getCurrentUserInfo();
+		PageUtils.startPage(xmQuestion);
+		xmQuestion.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionSort(xmQuestion);
+		Map<String,Object> m=new HashMap<>();
+		PageUtils.responePage(m,datas);
+		m.put("data",datas);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
 
 	@ApiOperation( value = "新增一条xm_question信息",notes="addXmQuestion,主键如果为空，后台自动生成")
 	@ApiResponses({
