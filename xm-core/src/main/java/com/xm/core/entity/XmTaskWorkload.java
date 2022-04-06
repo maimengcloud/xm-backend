@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskWorkload所有属性名: <br>
- *	userid,username,ctime,taskId,cuserid,bizDate,wstatus,remark,ttype,id,sbillId,stime,sstatus,amt,samt,workload,rworkload,cusername,projectId;<br>
+ *	userid,username,ctime,taskId,cuserid,bizDate,wstatus,remark,ttype,id,sbillId,stime,sstatus,amt,samt,workload,rworkload,cusername,projectId,sworkload;<br>
  * 表 xm_task_workload 工时登记表的所有字段名: <br>
- *	userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,sbill_id,stime,sstatus,amt,samt,workload,rworkload,cusername,project_id;<br>
+ *	userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,sbill_id,stime,sstatus,amt,samt,workload,rworkload,cusername,project_id,sworkload;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -62,13 +62,13 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	@ApiModelProperty(notes="工时对应金额",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal amt;
 	
-	@ApiModelProperty(notes="结算金额",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="结算工时对应结算金额",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal samt;
 	
 	@ApiModelProperty(notes="工时，一个task_id可多次提交，小时",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal workload;
 	
-	@ApiModelProperty(notes="剩余工时（同一天取最后日期更新到task表rworkload中）",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="剩余工时（同一天取最后日期更新到task表budget_workload中）",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal rworkload;
 	
 	@ApiModelProperty(notes="创建人姓名",allowEmptyValue=true,example="",allowableValues="")
@@ -76,6 +76,9 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="归属项目",allowEmptyValue=true,example="",allowableValues="")
 	String projectId;
+	
+	@ApiModelProperty(notes="结算工时，用于结算，默认=workload",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal sworkload;
 
 	/**主键**/
 	public XmTaskWorkload(String id) {
@@ -171,7 +174,7 @@ public class XmTaskWorkload  implements java.io.Serializable {
 		this.amt = amt;
 	}
 	/**
-	 * 结算金额
+	 * 结算工时对应结算金额
 	 **/
 	public void setSamt(BigDecimal samt) {
 		this.samt = samt;
@@ -183,7 +186,7 @@ public class XmTaskWorkload  implements java.io.Serializable {
 		this.workload = workload;
 	}
 	/**
-	 * 剩余工时（同一天取最后日期更新到task表rworkload中）
+	 * 剩余工时（同一天取最后日期更新到task表budget_workload中）
 	 **/
 	public void setRworkload(BigDecimal rworkload) {
 		this.rworkload = rworkload;
@@ -199,6 +202,12 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	 **/
 	public void setProjectId(String projectId) {
 		this.projectId = projectId;
+	}
+	/**
+	 * 结算工时，用于结算，默认=workload
+	 **/
+	public void setSworkload(BigDecimal sworkload) {
+		this.sworkload = sworkload;
 	}
 	
 	/**
@@ -286,7 +295,7 @@ public class XmTaskWorkload  implements java.io.Serializable {
 		return this.amt;
 	}
 	/**
-	 * 结算金额
+	 * 结算工时对应结算金额
 	 **/
 	public BigDecimal getSamt() {
 		return this.samt;
@@ -298,7 +307,7 @@ public class XmTaskWorkload  implements java.io.Serializable {
 		return this.workload;
 	}
 	/**
-	 * 剩余工时（同一天取最后日期更新到task表rworkload中）
+	 * 剩余工时（同一天取最后日期更新到task表budget_workload中）
 	 **/
 	public BigDecimal getRworkload() {
 		return this.rworkload;
@@ -314,6 +323,12 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	 **/
 	public String getProjectId() {
 		return this.projectId;
+	}
+	/**
+	 * 结算工时，用于结算，默认=workload
+	 **/
+	public BigDecimal getSworkload() {
+		return this.sworkload;
 	}
 
 }
