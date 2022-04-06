@@ -82,6 +82,19 @@
 			</if>
 		</where>
 	</update>
+
+	<!-- 根据条件修改若干条记录 -->
+	<update id="batchEditSbillId" parameterType="HashMap">
+		update  xm_task_workload res
+		<set>
+			res.sbill_id = #{sbillId}
+		</set>
+		<where>
+			<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+		</where>
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

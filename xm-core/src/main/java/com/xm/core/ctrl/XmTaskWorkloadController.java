@@ -2,18 +2,15 @@ package com.xm.core.ctrl;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.function.LongUnaryOperator;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.XmGroup;
-import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmTask;
-import com.xm.core.service.XmGroupService;
-import com.xm.core.service.XmMenuService;
-import com.xm.core.service.XmTaskService;
+import com.xm.core.entity.*;
+import com.xm.core.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,8 +38,7 @@ import com.mdp.core.err.BizException;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.NumberUtil;
-import com.xm.core.service.XmTaskWorkloadService;
-import com.xm.core.entity.XmTaskWorkload;
+
 /**
  * url编制采用rest风格,如对xm_task_workload 工时登记表的操作有增删改查,对应的url分别为:<br>
  *  新增: core/xmTaskWorkload/add <br>
@@ -71,6 +67,8 @@ public class XmTaskWorkloadController {
 	XmGroupService xmGroupService;
 	@Autowired
 	XmMenuService xmMenuService;
+	@Autowired
+	XmTaskSbillService xmTaskSbillService;
  
 	
 	@ApiOperation( value = "查询工时登记表信息列表",notes=" ") 
@@ -346,7 +344,50 @@ public class XmTaskWorkloadController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功添加到结算单");
 		try{
-			xmTaskWorkloadService.editWorkloadToSbill(params);
+
+			List<String> ids= (List<String>) params.get("ids");
+			if(ids==null || ids.size()==0){
+				return ResponseHelper.failed("ids-0","工时变化ids不能为空");
+			}
+			String sbillId= (String) params.get("sbillId");
+			if(!StringUtils.hasText(sbillId)){
+				return ResponseHelper.failed("sbillId-0","结算单变编号不能为空");
+			}
+			XmTaskSbill xmTaskSbillDb=this.xmTaskSbillService.selectOneObject(new XmTaskSbill(sbillId));
+			if(xmTaskSbillDb==null){
+				return ResponseHelper.failed("sbillId-0","结算单不存在");
+			}
+			if(!"0".equals(xmTaskSbillDb.getStatus())){
+				return ResponseHelper.failed("status-not-0","结算单已提交，不允许再更改");
+			}
+			User user= LoginUtils.getCurrentUserInfo();
+			if(!user.getUserid().equals(xmTaskSbillDb.getCuserid())){
+				return ResponseHelper.failed("cuserid-0","结算单不属于您的，无权修改");
+			}
+			List<XmTaskWorkload> list=this.xmTaskWorkloadService.selectListByIds(ids);
+			if(list.size()==0){
+				return ResponseHelper.failed("data-0","工时明细不存在");
+			}
+			List<XmTaskWorkload> canChanges=list.stream().filter(i->"1".equals(i.getSstatus()) && "1".equals(i.getWstatus())).collect(Collectors.toList());
+			List<XmTaskWorkload> sstatusNot1=list.stream().filter(i->!"1".equals(i.getSstatus()) || !"1".equals(i.getWstatus())).collect(Collectors.toList());
+
+			if(canChanges.size()>0){
+				xmTaskWorkloadService.editWorkloadToSbill(sbillId,canChanges);
+			}
+			List<String> msgs=new ArrayList<>();
+			if(canChanges.size()>0){
+				msgs.add("成功将"+canChanges.size()+"条工时加入结算单");
+			}
+
+			if(sstatusNot1.size()>0){
+				msgs.add("有"+sstatusNot1.size()+"条工时不是待结算状态，不允许更改");
+			}
+			if(canChanges.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+			}else{
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+			}
+
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);

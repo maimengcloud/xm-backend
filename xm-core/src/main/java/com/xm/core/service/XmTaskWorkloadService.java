@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,31 +37,16 @@ public class XmTaskWorkloadService extends BaseService {
 	XmTaskSbillService xmTaskSbillService;
 
 
-	@Transactional(rollbackFor = Exception.class)
-	public void editWorkloadToSbill(Map<String,Object> params){
-		//查询出相关工时单、结算单
-		Map<String,Object> query = new HashMap<>();
-		query.put("ids",params.get("ids"));
-		List<Map<String,Object>> workloads = this.selectListMapByWhere(query);
-		XmTaskSbill xmTaskSbill = new XmTaskSbill();
-		xmTaskSbill.setId((String) params.get("sbillId"));
-		xmTaskSbill = xmTaskSbillService.selectOneObject(xmTaskSbill);
-		//累加工时、结算金额
-		BigDecimal totalWork = BigDecimal.ZERO;
-		BigDecimal totalSamt = BigDecimal.ZERO;
-		for (Map<String, Object> workload : workloads) {
-			totalWork = totalWork.add((BigDecimal) workload.get("workload"));
-			totalSamt = totalSamt.add((BigDecimal) workload.get("samt"));
-			workload.put("sbillId",xmTaskSbill.getId());
-			workload.put("sstatus","2");
-			workload.put("stime", DateUtils.getDatetime());
-		}
-		xmTaskSbill.setWorkload(xmTaskSbill.getWorkload().add(totalWork));
-		xmTaskSbill.setAmt(xmTaskSbill.getAmt().add(totalSamt));
-		xmTaskSbill.setLtime(new Date());
-		xmTaskSbillService.updateByPk(xmTaskSbill);
-		this.batchUpdate(workloads);
+
+	@Transactional
+	public void editWorkloadToSbill(String sbillId, List<XmTaskWorkload> canChanges) {
+		xmTaskSbillService.updateByWorkloadList(sbillId);
+		this.batchEditSbillId(sbillId,canChanges.stream().map(i->i.getId()).collect(Collectors.toList()));
 	}
 
+	private void batchEditSbillId(String sbillId, List<String> ids) {
+		Map<String,Object> map=map("sbillId",sbillId,"ids",ids);
+		super.update("batchEditSbillId",map);
+	}
 }
 
