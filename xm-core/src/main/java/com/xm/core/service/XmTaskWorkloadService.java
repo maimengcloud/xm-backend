@@ -48,5 +48,10 @@ public class XmTaskWorkloadService extends BaseService {
 		Map<String,Object> map=map("sbillId",sbillId,"ids",ids);
 		super.update("batchEditSbillId",map);
 	}
+
+
+	public void editSomeFields(Map<String, Object> xmTaskWorkloadMap) {
+		super.update("editSomeFields",xmTaskWorkloadMap);
+	}
 }
 

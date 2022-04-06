@@ -13,10 +13,10 @@
          </if>
         <if test="key != null and key !='' ">
 			AND
-			( res.userid like #{key} OR res.username like #{key} OR res.project_id like #{key} OR res.task_id like #{key})
+			(   res.username like #{key} OR res.project_id like #{key} OR res.task_id like #{key})
 		</if>
 		<if test="toSbill !=null and toSbill !=''">
-			AND  (res.wstatus = '1'AND res.sstatus = '1')
+			AND  (res.wstatus = '1' AND res.sstatus = '1')
 		</if>
 		<if test ="wstatuses != null and wstatuses!=''">
 			AND res.wstatus IN
@@ -35,65 +35,30 @@
 		</if>
     </sql>
 
-	<!-- 通过条件查询获取未提交结算的工作量 返回list<map> -->
-	<select id="selectListMapByProject" parameterType="HashMap" resultType="HashMap">
-		select task.project_id,res.* from xm_task_workload res
-		inner join xm_task task
-		on res.task_id = task.id
-		<where>
-			res.wstatus = '1'
-			AND res.sstatus = '1'
-			AND task.project_id = #{projectId}
-			<if test="key != null and key !='' ">
-			AND
-			( task.id like #{key} OR task.name like #{key} OR res.userid like #{key} OR res.username like #{key} )
-			</if>
-		</where>
-	</select>
-
-	<!-- 根据条件修改若干条记录 -->
-	<update id="updateSomeFieldByWhere" parameterType="com.xm.core.entity.XmTaskWorkload">
-		update  xm_task_workload res
-		<set>
-			res.sstatus = #{sstatus}
-		</set>
-		<where>
-			res.sbill_id = #{sbillId}
-		</where>
-	</update>
-	<!-- 根据条件修改若干条记录 -->
-	<update id="updateWorkloadWstatus" parameterType="com.xm.core.entity.XmTaskWorkload">
-		update  xm_task_workload res
-		<set>
-			res.wstatus = #{wstatus},
-		    res.sstatus = '1',
-		    <if test="amt==null || amt ==''">
-				res.amt = 0,
-			</if>
-		    <if test="samt ==null || samt ==''">
-				res.samt = 0
-			</if>
-		</set>
-		<where>
-			<if test=" ids != null">  and (res.id) in
-				<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-					 #{item}
-				</foreach>
-			</if>
-		</where>
-	</update>
-
 	<!-- 根据条件修改若干条记录 -->
 	<update id="batchEditSbillId" parameterType="HashMap">
 		update  xm_task_workload res
 		<set>
-			res.sbill_id = #{sbillId}
+			res.sbill_id = #{sbillId},
+			res.sstatus=''
 		</set>
 		<where>
+			res.id in
 			<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
 				#{item}
 			</foreach>
 		</where>
+	</update>
+
+	<update id="editSomeFields" parameterType="HashMap">
+		update  xm_task_workload res
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id in
+		<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
 	</update>
 	<!--结束 自定义sql函数区域-->
 	
@@ -101,7 +66,9 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select * from xm_task_workload res
+		select res.* ,task.project_name,task.name as task_name from xm_task_workload res
+		inner join xm_task task
+		on res.task_id = task.id
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>

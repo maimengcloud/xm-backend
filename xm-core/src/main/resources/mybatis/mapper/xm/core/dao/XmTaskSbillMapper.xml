@@ -20,7 +20,7 @@
 		</sql>
 
 	<update id="updateByWorkloadList" parameterType="String">
-		upate xm_task_sbill res left join (select w.sbill_id,sum(ifnull(w.amt,0)) as amt,sum(ifnull(w.samt,0)) as samt,sum(ifnull(w.workload,0)) as workload from xm_task_workload w group by w.sbill_id where w.sbill_id=#{id} and w.wstatus='1') as w on res.id=w.sbill_id
+		update xm_task_sbill res left join (select w.sbill_id,sum(ifnull(w.amt,0)) as amt,sum(ifnull(w.samt,0)) as samt,sum(ifnull(w.workload,0)) as workload from xm_task_workload w  where w.sbill_id=#{id} and w.wstatus='1' group by w.sbill_id) as w on res.id=w.sbill_id
 		set
 		res.amt=w.samt,
 		res.workload=w.workload

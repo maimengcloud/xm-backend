@@ -6,7 +6,10 @@ import java.util.function.LongUnaryOperator;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 
+import com.alibaba.fastjson.JSON;
+import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.*;
@@ -69,6 +72,9 @@ public class XmTaskWorkloadController {
 	XmMenuService xmMenuService;
 	@Autowired
 	XmTaskSbillService xmTaskSbillService;
+
+
+	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmTaskWorkload());
  
 	
 	@ApiOperation( value = "查询工时登记表信息列表",notes=" ") 
@@ -315,25 +321,6 @@ public class XmTaskWorkloadController {
 	} 
 
 
-	/**
-	 * 用于结算单
-	 * */
-	@ApiOperation( value = "查询工时登记表信息列表",notes=" ")
-	@ApiResponses({
-			@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
-	})
-	@RequestMapping(value="/listByProject",method=RequestMethod.GET)
-	public Map<String,Object> listXmTaskWorkloadByProject( @RequestParam Map<String,Object> xmTaskWorkload){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		PageUtils.startPage(xmTaskWorkload);
-		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.selectList("selectListMapByProject",xmTaskWorkload);	//列出XmTaskWorkload列表
-		PageUtils.responePage(m, xmTaskWorkloadList);
-		m.put("data",xmTaskWorkloadList);
-
-		m.put("tips", tips);
-		return m;
-	}
 
 	@ApiOperation( value = "",notes=" ")
 	@ApiResponses({
@@ -399,17 +386,97 @@ public class XmTaskWorkloadController {
 		return m;
 	}
 
-	@ApiOperation( value = "修改工时表状态",notes=" ")
-	@ApiResponses({
-			@ApiResponse(code = 200,response=XmTaskWorkload.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	})
-	@RequestMapping(value="/editXmWorkloadWstatus",method=RequestMethod.POST)
-	public Map<String,Object> editXmWorkloadWstatus(@RequestBody Map<String,Object> params) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功更新工时登记表状态");
-		try{
 
-			xmTaskWorkloadService.update("updateWorkloadWstatus",params);
+	@ApiOperation( value = "批量更新工时表状态各个字段",notes="xmTaskWorkloadMap")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@HasQx(value = "xm_core_xmTaskWorkload_editSomeFields",name = "批量修改修改任务中的某些字段",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
+	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmTaskWorkloadMap) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新一条数据");
+		try{
+			List<String> ids= (List<String>) xmTaskWorkloadMap.get("ids");
+
+			if(ids==null || ids.size()==0){
+				return ResponseHelper.failed("ids-0","ids不能为空");
+			}
+			Set<String> fields=new HashSet<>();
+			fields.add("workload");
+			fields.add("userid");
+			fields.add("username");
+			fields.add("projectId");
+			fields.add("sbillId");
+
+			for (String fieldName : xmTaskWorkloadMap.keySet()) {
+				if(fields.contains(fieldName)){
+					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+				}
+			}
+			List<XmTaskWorkload> xmTaskWorkloadsDb=xmTaskWorkloadService.selectListByIds(ids);
+			if(xmTaskWorkloadsDb==null ||xmTaskWorkloadsDb.size()==0){
+				return ResponseHelper.failed("tasks-0","该工时已不存在");
+			}
+			String wstatus= (String) xmTaskWorkloadMap.get("wstatus");
+			String sstatus= (String) xmTaskWorkloadMap.get("sstatus");
+			if(StringUtils.hasText(sstatus)){
+				if(!"0".equals(sstatus) && !"1".equals(sstatus)){
+					return ResponseHelper.failed("sstatus-not-01","只能修改为无需结算或者待结算");
+				}
+			}
+			if(StringUtils.hasText(wstatus)){
+				if(!"0".equals(wstatus) && !"1".equals(wstatus) && !"2".equals(wstatus)){
+					return ResponseHelper.failed("wstatus-not-012","工时状态不正确");
+				}
+			}
+			if("1".equals(wstatus)){
+				sstatus="1";
+				xmTaskWorkloadMap.put("sstatus",sstatus);
+			}
+
+			if("0".equals(wstatus)){
+				sstatus="1";
+				xmTaskWorkloadMap.put("sstatus",sstatus);
+			}
+
+			if("2".equals(wstatus)){
+				sstatus="0";
+				xmTaskWorkloadMap.put("sstatus",sstatus);
+			}
+			List<XmTaskWorkload> canChanges=new ArrayList<>();
+			List<XmTaskWorkload> sstatusNot01=new ArrayList<>();
+			for (XmTaskWorkload xmTaskWorkload : xmTaskWorkloadsDb) {
+				if(!"1".equals(xmTaskWorkload.getSstatus()) && !"0".equals(xmTaskWorkload.getSstatus())){
+					sstatusNot01.add(xmTaskWorkload);
+				}else{
+					canChanges.add(xmTaskWorkload);
+				}
+			}
+
+			if(canChanges.size()>0){
+				Set<String> fieldKey=xmTaskWorkloadMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
+				fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskWorkloadMap.get(i) )).collect(Collectors.toSet());
+
+				if(fieldKey.size()>0){
+					xmTaskWorkloadService.editSomeFields(xmTaskWorkloadMap);
+				}
+			}
+			List<String> msgs=new ArrayList<>();
+			if(canChanges.size()>0){
+				msgs.add("成功修改"+canChanges.size()+"条工时清单");
+			}
+
+			if(sstatusNot01.size()>0){
+				msgs.add("有"+sstatusNot01.size()+"条工时不是待结算状态，不允许更改");
+			}
+			if(canChanges.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+			}else{
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+			}
+
+			//m.put("data",xmMenu);
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
