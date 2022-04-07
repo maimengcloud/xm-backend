@@ -327,16 +327,7 @@ public class XmTaskController {
 			if(ids==null || ids.size()==0){
 				ResponseHelper.failed("ids-0","ids不能为空");
 			}
-			XmTask xmTask= BaseUtils.fromMap(xmTaskMap,XmTask.class);
-			List<XmTask> xmTasksDb=xmTaskService.selectListByIds(ids);
-			if(xmTasksDb==null ||xmTasksDb.size()==0){
-				ResponseHelper.failed("tasks-0","该任务已不存在");
-			}
-			List<XmTask> can=new ArrayList<>();
-			List<XmTask> no=new ArrayList<>();
-			if(can.size()<=0){
-				//return ResponseHelper.failed("noqx","您无权修改选中的任务。");
-			}
+
 			Set<String> fields=new HashSet<>();
 			fields.add("childrenCnt");
 			fields.add("ntype");
@@ -349,22 +340,55 @@ public class XmTaskController {
 			Set<String> fieldKey=xmTaskMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskMap.get(i) )).collect(Collectors.toSet());
 
-			if(fieldKey.size()>0){
-				fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskMap.get(i) )).collect(Collectors.toSet());
-
-
-				if(fieldKey.contains("budgetWorkload")){//如果调整了预估工时，需要重新计算进度数据
-					if(xmTasksDb.size()>0){
-						this.xmTaskService.batchUpdateBudgetWorkloadAndRate(xmTasksDb.stream().map(i->i.getId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()),NumberUtil.getBigDecimal(xmTaskMap.get("budgetWorkload")));
-						this.xmTaskService.batchSumParents(xmTasksDb);
+			if(fieldKey.size()<=0) {
+				return ResponseHelper.failed("fieldKey-0","没有需要更新的字段");
+ 			}
+			XmTask xmTask= BaseUtils.fromMap(xmTaskMap,XmTask.class);
+			List<XmTask> xmTasksDb=xmTaskService.selectListByIds(ids);
+			if(xmTasksDb==null ||xmTasksDb.size()==0){
+				return ResponseHelper.failed("tasks-0","该任务已不存在");
+			}
+			List<XmTask> can=new ArrayList<>();
+			List<XmTask> no=new ArrayList<>();
+			User user = LoginUtils.getCurrentUserInfo();
+			for (XmTask xmTaskDb : xmTasksDb) {
+				tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+				if(!tips.isOk()){
+					if(user.getUserid().equals(xmTaskDb.getExecutorUserid())||user.getUserid().equals(xmTaskDb.getCreateUserid())){
+						can.add(xmTaskDb);
+					}else{
+						no.add(xmTaskDb);
 					}
 				}else{
-					xmTaskService.editSomeFields(xmTaskMap);
+					can.add(xmTaskDb);
 				}
-				xmRecordService.addXmTaskRecord(xmTask.getProjectId(),xmTask.getId(),"修改项目任务","修改任务"+xmTask.getMenuName(),"", JSON.toJSONString(xmTask));
+			}
+			if(can.size()>0){
+				xmTaskMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
+
+					if(fieldKey.contains("budgetWorkload")){//如果调整了预估工时，需要重新计算进度数据
+						if(xmTasksDb.size()>0){
+							this.xmTaskService.batchUpdateBudgetWorkloadAndRate(xmTasksDb.stream().map(i->i.getId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()),NumberUtil.getBigDecimal(xmTaskMap.get("budgetWorkload")));
+							this.xmTaskService.batchSumParents(xmTasksDb);
+						}
+					}else{
+						xmTaskService.editSomeFields(xmTaskMap);
+					}
+					xmRecordService.addXmTaskRecord(xmTask.getProjectId(),xmTask.getId(),"修改项目任务","修改任务"+xmTask.getMenuName(),"", JSON.toJSONString(xmTask));
 
 			}
-
+			List<String> msgs=new ArrayList<>();
+			if(can.size()>0){
+				msgs.add(String.format("成功更新以下%s个任务",can.size()));
+			}
+			if(no.size()>0){
+				msgs.add(String.format("以下%s个任务无权限更新",no.size()));
+			}
+			if(can.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+			}else {
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+			}
 			//m.put("data",xmMenu);
 		}catch (BizException e) {
 			tips=e.getTips();

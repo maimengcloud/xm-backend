@@ -450,7 +450,7 @@ public class XmTaskWorkloadController {
 			List<XmTaskWorkload> canChanges=new ArrayList<>();
 			List<XmTaskWorkload> sstatusNot01=new ArrayList<>();
 			for (XmTaskWorkload xmTaskWorkload : xmTaskWorkloadsDb) {
-				if(!"1".equals(xmTaskWorkload.getSstatus()) && !"0".equals(xmTaskWorkload.getSstatus())){
+				if(!"1".equals(xmTaskWorkload.getSstatus()) && !"0".equals(xmTaskWorkload.getSstatus()) &&StringUtils.hasText(xmTaskWorkload.getSstatus())){
 					sstatusNot01.add(xmTaskWorkload);
 				}else{
 					canChanges.add(xmTaskWorkload);
