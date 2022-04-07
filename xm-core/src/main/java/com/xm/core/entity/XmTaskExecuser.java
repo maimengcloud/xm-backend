@@ -8,29 +8,26 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskExecuser所有属性名: <br>
- *	createTime,id,taskId,userid,startTime,endTime,status,remarks,settleAmount,settleWorkload,settleStatus,settleTime,createUserid,createUsername,username,matchScore,quoteWeekday,quoteAmount,quoteTime,bizProcInstId,bizFlowState,projectId,phaseId,skillRemark,quoteWorkload,quoteStartTime,quoteEndTime,branchId,phaseName,taskName,isLeader,distUserid,distUsername,execUserBranchid,shareKey;<br>
+ *	createTime,taskId,userid,startTime,endTime,status,remarks,createUserid,createUsername,username,matchScore,quoteWeekday,quoteAmount,quoteTime,projectId,phaseId,skillRemark,quoteWorkload,quoteStartTime,quoteEndTime,branchId,phaseName,taskName,distUserid,distUsername,execUserBranchid,shareKey;<br>
  * 表 xm_task_execuser xm_task_execuser的所有字段名: <br>
- *	create_time,id,task_id,userid,start_time,end_time,status,remarks,settle_amount,settle_workload,settle_status,settle_time,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,biz_proc_inst_id,biz_flow_state,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,is_leader,dist_userid,dist_username,exec_user_branchid,share_key;<br>
+ *	create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branchid,share_key;<br>
  * 当前主键(包括多主键):<br>
- *	id;<br>
+ *	task_id,userid;<br>
  */
 @ApiModel(description="xm_task_execuser")
 public class XmTaskExecuser  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@ApiModelProperty(notes="编号,主键",allowEmptyValue=true,example="",allowableValues="")
-	String id;
+	@ApiModelProperty(notes="任务id,主键",allowEmptyValue=true,example="",allowableValues="")
+	String taskId;
+	
+	@ApiModelProperty(notes="执行人id,主键",allowEmptyValue=true,example="",allowableValues="")
+	String userid;
   	
 	
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
 	Date createTime;
-	
-	@ApiModelProperty(notes="任务id",allowEmptyValue=true,example="",allowableValues="")
-	String taskId;
-	
-	@ApiModelProperty(notes="执行人id",allowEmptyValue=true,example="",allowableValues="")
-	String userid;
 	
 	@ApiModelProperty(notes="加入时间",allowEmptyValue=true,example="",allowableValues="")
 	Date startTime;
@@ -38,23 +35,11 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	@ApiModelProperty(notes="离开时间",allowEmptyValue=true,example="",allowableValues="")
 	Date endTime;
 	
-	@ApiModelProperty(notes="执行人状态0候选排队中1执行任务中2提交任务3验收成功4验收不通过5结算中6结算成功7放弃任务8黑名单",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="执行人状态0候选排队中1执行任务中7放弃任务8黑名单",allowEmptyValue=true,example="",allowableValues="")
 	String status;
 	
 	@ApiModelProperty(notes="备注",allowEmptyValue=true,example="",allowableValues="")
 	String remarks;
-	
-	@ApiModelProperty(notes="已结算金额",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal settleAmount;
-	
-	@ApiModelProperty(notes="已结算工作量",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal settleWorkload;
-	
-	@ApiModelProperty(notes="结算状态0未结算4已申请结算5结算失败6已全部结算",allowEmptyValue=true,example="",allowableValues="")
-	String settleStatus;
-	
-	@ApiModelProperty(notes="上次结算时间",allowEmptyValue=true,example="",allowableValues="")
-	Date settleTime;
 	
 	@ApiModelProperty(notes="创建人",allowEmptyValue=true,example="",allowableValues="")
 	String createUserid;
@@ -76,12 +61,6 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="报价时间",allowEmptyValue=true,example="",allowableValues="")
 	Date quoteTime;
-	
-	@ApiModelProperty(notes="当前流程实例编号",allowEmptyValue=true,example="",allowableValues="")
-	String bizProcInstId;
-	
-	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
-	String bizFlowState;
 	
 	@ApiModelProperty(notes="项目编号",allowEmptyValue=true,example="",allowableValues="")
 	String projectId;
@@ -110,9 +89,6 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	@ApiModelProperty(notes="任务名称",allowEmptyValue=true,example="",allowableValues="")
 	String taskName;
 	
-	@ApiModelProperty(notes="是否主负责人0否1是",allowEmptyValue=true,example="",allowableValues="")
-	String isLeader;
-	
 	@ApiModelProperty(notes="推荐人编号",allowEmptyValue=true,example="",allowableValues="")
 	String distUserid;
 	
@@ -125,9 +101,10 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	@ApiModelProperty(notes="分享码",allowEmptyValue=true,example="",allowableValues="")
 	String shareKey;
 
-	/**编号**/
-	public XmTaskExecuser(String id) {
-		this.id = id;
+	/**任务id,执行人id**/
+	public XmTaskExecuser(String taskId,String userid) {
+		this.taskId = taskId;
+		this.userid = userid;
 	}
     
     /**xm_task_execuser**/
@@ -139,12 +116,6 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	 **/
 	public void setCreateTime(Date createTime) {
 		this.createTime = createTime;
-	}
-	/**
-	 * 编号
-	 **/
-	public void setId(String id) {
-		this.id = id;
 	}
 	/**
 	 * 任务id
@@ -171,7 +142,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		this.endTime = endTime;
 	}
 	/**
-	 * 执行人状态0候选排队中1执行任务中2提交任务3验收成功4验收不通过5结算中6结算成功7放弃任务8黑名单
+	 * 执行人状态0候选排队中1执行任务中7放弃任务8黑名单
 	 **/
 	public void setStatus(String status) {
 		this.status = status;
@@ -181,30 +152,6 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	 **/
 	public void setRemarks(String remarks) {
 		this.remarks = remarks;
-	}
-	/**
-	 * 已结算金额
-	 **/
-	public void setSettleAmount(BigDecimal settleAmount) {
-		this.settleAmount = settleAmount;
-	}
-	/**
-	 * 已结算工作量
-	 **/
-	public void setSettleWorkload(BigDecimal settleWorkload) {
-		this.settleWorkload = settleWorkload;
-	}
-	/**
-	 * 结算状态0未结算4已申请结算5结算失败6已全部结算
-	 **/
-	public void setSettleStatus(String settleStatus) {
-		this.settleStatus = settleStatus;
-	}
-	/**
-	 * 上次结算时间
-	 **/
-	public void setSettleTime(Date settleTime) {
-		this.settleTime = settleTime;
 	}
 	/**
 	 * 创建人
@@ -247,18 +194,6 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	 **/
 	public void setQuoteTime(Date quoteTime) {
 		this.quoteTime = quoteTime;
-	}
-	/**
-	 * 当前流程实例编号
-	 **/
-	public void setBizProcInstId(String bizProcInstId) {
-		this.bizProcInstId = bizProcInstId;
-	}
-	/**
-	 * 当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除
-	 **/
-	public void setBizFlowState(String bizFlowState) {
-		this.bizFlowState = bizFlowState;
 	}
 	/**
 	 * 项目编号
@@ -315,12 +250,6 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		this.taskName = taskName;
 	}
 	/**
-	 * 是否主负责人0否1是
-	 **/
-	public void setIsLeader(String isLeader) {
-		this.isLeader = isLeader;
-	}
-	/**
 	 * 推荐人编号
 	 **/
 	public void setDistUserid(String distUserid) {
@@ -352,12 +281,6 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		return this.createTime;
 	}
 	/**
-	 * 编号
-	 **/
-	public String getId() {
-		return this.id;
-	}
-	/**
 	 * 任务id
 	 **/
 	public String getTaskId() {
@@ -382,7 +305,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 		return this.endTime;
 	}
 	/**
-	 * 执行人状态0候选排队中1执行任务中2提交任务3验收成功4验收不通过5结算中6结算成功7放弃任务8黑名单
+	 * 执行人状态0候选排队中1执行任务中7放弃任务8黑名单
 	 **/
 	public String getStatus() {
 		return this.status;
@@ -392,30 +315,6 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	 **/
 	public String getRemarks() {
 		return this.remarks;
-	}
-	/**
-	 * 已结算金额
-	 **/
-	public BigDecimal getSettleAmount() {
-		return this.settleAmount;
-	}
-	/**
-	 * 已结算工作量
-	 **/
-	public BigDecimal getSettleWorkload() {
-		return this.settleWorkload;
-	}
-	/**
-	 * 结算状态0未结算4已申请结算5结算失败6已全部结算
-	 **/
-	public String getSettleStatus() {
-		return this.settleStatus;
-	}
-	/**
-	 * 上次结算时间
-	 **/
-	public Date getSettleTime() {
-		return this.settleTime;
 	}
 	/**
 	 * 创建人
@@ -458,18 +357,6 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	 **/
 	public Date getQuoteTime() {
 		return this.quoteTime;
-	}
-	/**
-	 * 当前流程实例编号
-	 **/
-	public String getBizProcInstId() {
-		return this.bizProcInstId;
-	}
-	/**
-	 * 当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除
-	 **/
-	public String getBizFlowState() {
-		return this.bizFlowState;
 	}
 	/**
 	 * 项目编号
@@ -524,12 +411,6 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	 **/
 	public String getTaskName() {
 		return this.taskName;
-	}
-	/**
-	 * 是否主负责人0否1是
-	 **/
-	public String getIsLeader() {
-		return this.isLeader;
 	}
 	/**
 	 * 推荐人编号
