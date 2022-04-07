@@ -135,6 +135,9 @@ public class XmTaskWorkloadController {
 			if("1".equals(xmTaskDb.getNtype())){
 				return failed("ntype-1",xmTaskDb.getName()+"为计划，不是任务，不用登记工时");
 			}
+			if("3".equals(xmTaskDb.getTaskState())){
+				return failed("taskState-3",xmTaskDb.getName()+"已结算完毕，不能再提交工时");
+			}
 			User user= LoginUtils.getCurrentUserInfo();
 			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
 				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getCreateUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
