@@ -175,6 +175,8 @@ public class XmTaskExecuserService extends BaseService {
 
 	public void becomeCandidate(XmTaskExecuser xmTaskExecuser) {
 		XmTaskExecuser xmTaskExecuserNew=new XmTaskExecuser();
+		xmTaskExecuserNew.setTaskId(xmTaskExecuser.getTaskId());
+		xmTaskExecuserNew.setUserid(xmTaskExecuser.getUserid());
  		xmTaskExecuserNew.setQuoteWeekday(xmTaskExecuser.getQuoteWeekday());
 		xmTaskExecuserNew.setQuoteWorkload(xmTaskExecuser.getQuoteWorkload());
 		xmTaskExecuserNew.setQuoteAmount(xmTaskExecuser.getQuoteAmount());

@@ -67,7 +67,7 @@
 
 	<select id="listProjectWorkloadSetDay" parameterType="HashMap" resultType="HashMap">
 		select
-		res.biz_date,res.project_id,
+		res.biz_date,
 		sum(ifnull(res.workload,0)) as workload,
 		sum(if(res.wstatus='0',ifnull(res.workload,0),0)) as to_confirm_workload,
 		sum(if(res.wstatus='1',ifnull(res.workload,0),0)) as had_confirm_workload,
@@ -82,13 +82,13 @@
 			<include refid="whereForMap"/>
 			<include refid="where"/>
 		</where>
-		group by res.project_id,res.biz_date
+		group by res.biz_date
 		order by res.biz_date asc
 	</select>
 
 	<select id="listProjectWorkloadSetMonth" parameterType="HashMap" resultType="HashMap">
 		select
-		SUBSTRING(res.biz_date, 1,7) as biz_month,res.project_id,
+		SUBSTRING(res.biz_date, 1,7) as biz_month,
 		sum(ifnull(res.workload,0)) as workload,
 		sum(if(res.wstatus='0',ifnull(res.workload,0),0)) as to_confirm_workload,
 		sum(if(res.wstatus='1',ifnull(res.workload,0),0)) as had_confirm_workload,
@@ -103,7 +103,7 @@
 			<include refid="whereForMap"/>
 			<include refid="where"/>
 		</where>
-		group by res.project_id,biz_month
+		group by biz_month
 		order by biz_month asc
 	</select>
 	<!--结束 自定义sql函数区域-->
