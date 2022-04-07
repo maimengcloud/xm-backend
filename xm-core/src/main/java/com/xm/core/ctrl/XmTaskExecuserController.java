@@ -191,18 +191,12 @@ public class XmTaskExecuserController {
 			List<String> noAllowUsers=new ArrayList<>();
 			List<XmTaskExecuser> allowUsers=new ArrayList<>();
 			List<String> allowUserNames=new ArrayList<>();
-			List<String> status5Names=new ArrayList<>();
-			List<String> flowState1Names=new ArrayList<>();
-			boolean isPm=groupService.checkUserIsPmOrAssByPtype(user.getUserid(),xmTask.getPtype(),xmTask.getProjectId(),xmTask.getProductId());
+ 			boolean isPm=groupService.checkUserIsPmOrAssByPtype(user.getUserid(),xmTask.getPtype(),xmTask.getProjectId(),xmTask.getProductId());
 
 			for (XmTaskExecuser xmTaskExecuser : xmTaskExecuserListDb) {
 				if(!taskId.equals(xmTaskExecuser.getTaskId())){
 					tips.setFailureMsg("批量操作只允许在同一个任务进行");
 					break;
-				}
-				if(("3".equals(xmTaskExecuser.getStatus())||"5".equals(xmTaskExecuser.getStatus()))&&"1".equals(xmTask.getTaskClass())){
-					status5Names.add(xmTaskExecuser.getUsername());
-					continue;
 				}
  				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {//只有组长、任务责任人可以请别人请离开任务
  					if(isTaskCreater||isExe||isPm){
@@ -232,12 +226,6 @@ public class XmTaskExecuserController {
 			if(noAllowUsers.size()>0){
 				String allowUserNamesStr=StringUtils.arrayToDelimitedString(noAllowUsers.toArray(), "、");
 				msgs.add("以下人员您无权操作，【"+allowUserNamesStr+"】;");
-			}
-			if(status5Names.size()>0){
-				msgs.add("以下人员为待结算状态，暂时不能离开，【"+status5Names.stream().collect(Collectors.joining(","))+"】;");
-			}
-			if(flowState1Names.size()>0){
-				msgs.add("以下人员为审核中状态，暂时不能离开，【"+flowState1Names.stream().collect(Collectors.joining(","))+"】;");
 			}
 			if(allowUserNames.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
