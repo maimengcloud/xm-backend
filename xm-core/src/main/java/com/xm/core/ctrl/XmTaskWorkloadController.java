@@ -96,8 +96,40 @@ public class XmTaskWorkloadController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
+	@ApiOperation( value = "查询项目每日登记工时情况",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/listProjectWorkloadSetDay",method=RequestMethod.GET)
+	public Map<String,Object> listProjectWorkloadSetDay( @RequestParam Map<String,Object> xmTaskWorkload){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		PageUtils.startPage(xmTaskWorkload);
+		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.listProjectWorkloadSetDay(xmTaskWorkload);	//列出XmTaskWorkload列表
+		PageUtils.responePage(m, xmTaskWorkloadList);
+		m.put("data",xmTaskWorkloadList);
+
+		m.put("tips", tips);
+		return m;
+	}
+
+
+	@ApiOperation( value = "查询项目每月登记工时情况",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/listProjectWorkloadSetMonth",method=RequestMethod.GET)
+	public Map<String,Object> listProjectWorkloadSetMonth( @RequestParam Map<String,Object> xmTaskWorkload){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		PageUtils.startPage(xmTaskWorkload);
+		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.listProjectWorkloadSetMonth(xmTaskWorkload);	//列出XmTaskWorkload列表
+		PageUtils.responePage(m, xmTaskWorkloadList);
+		m.put("data",xmTaskWorkloadList);
+
+		m.put("tips", tips);
+		return m;
+	}
 
 	@ApiOperation( value = "新增一条工时登记表信息",notes=" ")
 	@ApiResponses({
@@ -429,8 +461,8 @@ public class XmTaskWorkloadController {
 				}
 			}
 			if(StringUtils.hasText(wstatus)){
-				if(!"0".equals(wstatus) && !"1".equals(wstatus) && !"2".equals(wstatus)){
-					return ResponseHelper.failed("wstatus-not-012","工时状态不正确");
+				if(!"0".equals(wstatus) && !"1".equals(wstatus) ){
+					return ResponseHelper.failed("wstatus-not-01","工时状态不正确");
 				}
 			}
 			if("1".equals(wstatus)){
@@ -443,10 +475,6 @@ public class XmTaskWorkloadController {
 				xmTaskWorkloadMap.put("sstatus",sstatus);
 			}
 
-			if("2".equals(wstatus)){
-				sstatus="0";
-				xmTaskWorkloadMap.put("sstatus",sstatus);
-			}
 			List<XmTaskWorkload> canChanges=new ArrayList<>();
 			List<XmTaskWorkload> sstatusNot01=new ArrayList<>();
 			for (XmTaskWorkload xmTaskWorkload : xmTaskWorkloadsDb) {
