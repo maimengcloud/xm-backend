@@ -486,6 +486,7 @@ public class XmTaskWorkloadController {
 			}
 
 			if(canChanges.size()>0){
+				xmTaskWorkloadMap.put("ids",canChanges.stream().map(i->i.getId()).collect(Collectors.toList()));
 				Set<String> fieldKey=xmTaskWorkloadMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 				fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskWorkloadMap.get(i) )).collect(Collectors.toSet());
 

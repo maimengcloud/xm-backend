@@ -88,7 +88,7 @@
 
 	<select id="listProjectWorkloadSetMonth" parameterType="HashMap" resultType="HashMap">
 		select
-		SUBSTRING(res.biz_date, 0,8) as biz_month,res.project_id,
+		SUBSTRING(res.biz_date, 1,7) as biz_month,res.project_id,
 		sum(ifnull(res.workload,0)) as workload,
 		sum(if(res.wstatus='0',ifnull(res.workload,0),0)) as to_confirm_workload,
 		sum(if(res.wstatus='1',ifnull(res.workload,0),0)) as had_confirm_workload,
