@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import static com.mdp.core.utils.BaseUtils.map;
+
 /**
  * url编制采用rest风格,如对XM.xm_task_execuser xm_task_execuser的操作有增删改查,对应的url分别为:<br>
  *  新增: xm/xmTaskExecuser/add <br>
@@ -173,7 +175,7 @@ public class XmTaskExecuserController {
 				return m;
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			List<XmTaskExecuser> xmTaskExecuserListDb=this.xmTaskExecuserService.selectListByIds(xmTaskExecusers.stream().map(i->i.getId()).collect(Collectors.toList()));
+			List<XmTaskExecuser> xmTaskExecuserListDb=this.xmTaskExecuserService.selectListByIds(xmTaskExecusers.stream().map(i->map("taskId",i.getTaskId(),"userid",i.getUserid())).collect(Collectors.toList()));
 			if(xmTaskExecuserListDb==null || xmTaskExecuserListDb.size()==0){
 				return ResponseHelper.failed("data-0","执行人/候选人都已不存在");
 			}
@@ -200,10 +202,6 @@ public class XmTaskExecuserController {
 				}
 				if(("3".equals(xmTaskExecuser.getStatus())||"5".equals(xmTaskExecuser.getStatus()))&&"1".equals(xmTask.getTaskClass())){
 					status5Names.add(xmTaskExecuser.getUsername());
-					continue;
-				}
-				if("1".equals(xmTaskExecuser.getBizFlowState())){
-					flowState1Names.add(xmTaskExecuser.getUsername());
 					continue;
 				}
  				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {//只有组长、任务责任人可以请别人请离开任务
@@ -329,148 +327,6 @@ public class XmTaskExecuserController {
 		return m;
 	}
 
-	@ApiOperation( value = "提交任务测试",notes="editXmTaskExecuser")
-	@ApiResponses({
-			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	})
-	@HasQx(value = "xm_core_xmTaskExecuser_toTest",name = "提交任务到测试",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
-	@RequestMapping(value="/toTest",method=RequestMethod.POST)
-	public Map<String,Object> toTest(@RequestBody  XmTaskExecuser xmTaskExecuser) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功更新一条数据");
-		try{
-			/**
-			 * 如果是提交测试，需要检查提交人是本人还是组长，本人或者组长才有权提交任务测试
-			 */
-			String taskId=xmTaskExecuser.getTaskId();
-			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
-			if(xmTask==null ){
-				tips.setFailureMsg("任务已不存在");
-				m.put("tips", tips);
-				return m;
-			}
-			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算状态，不允许再修改");
-				m.put("tips", tips);
-				return m;
-			}
-			User user=LoginUtils.getCurrentUserInfo();
-			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
-			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
-				String projectId=xmTaskExecuser.getProjectId();
-				 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-				boolean isHead= groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
-				if( !isHead && !isTaskCreater ) {
-					tips.setFailureMsg("自己或者组长可以提交任务到测试，"+user.getUsername()+"不是"+xmTaskExecuser.getUsername()+"的组长，无权提交");
-				}
-			}
-			if(tips.isOk()) { 
-				xmTaskExecuserService.toTest(xmTaskExecuser);  
-			}
- 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
-		m.put("tips", tips);
-		return m;
-	}
-	@ApiOperation( value = "测试通过",notes="editXmTaskExecuser")
-	@ApiResponses({
-			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	})
-	@HasQx(value = "xm_core_xmTaskExecuser_testSuccess",name = "变更任务为测试通过",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
-	@RequestMapping(value="/testSuccess",method=RequestMethod.POST)
-	public Map<String,Object> testSuccess(@RequestBody  XmTaskExecuser xmTaskExecuser) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功更新一条数据");
-		try{
-			String taskId=xmTaskExecuser.getTaskId();
-			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
-			if(xmTask==null ){
-				tips.setFailureMsg("任务已不存在");
-				m.put("tips", tips);
-				return m;
-			}
-
-			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算状态，不允许再修改");
-				m.put("tips", tips);
-				return m;
-			}
-			User user=LoginUtils.getCurrentUserInfo();
-			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
-				String projectId=xmTaskExecuser.getProjectId();
-				 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-				boolean isHead= groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
-				if( !isHead && !isTaskCreater ) {
-					tips.setFailureMsg("您无权提交测试结果！任务责任人、组长可以提交该任务的测试结果。");
-				} 
-			
-			if(tips.isOk()) { 
-				xmTaskExecuserService.testSuccess(xmTaskExecuser);  
-			}
- 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
-		m.put("tips", tips);
-		return m;
-	}
-
-	@ApiOperation( value = "测试不通过",notes="editXmTaskExecuser")
-	@ApiResponses({
-			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	})
-	@HasQx(value = "xm_core_xmTaskExecuser_testFail",name = "变更任务状态为测试失败",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
-	@RequestMapping(value="/testFail",method=RequestMethod.POST)
-	public Map<String,Object> testFalse(@RequestBody  XmTaskExecuser xmTaskExecuser) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功更新一条数据");
-		try{
-			String taskId=xmTaskExecuser.getTaskId();
-			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
-			if(xmTask==null ){
-				tips.setFailureMsg("任务已不存在");
-				m.put("tips", tips);
-				return m;
-			} 
-			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算状态，不需要提交测试");
-				m.put("tips", tips);
-				return m;
-			}
-			User user=LoginUtils.getCurrentUserInfo();
-			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
-				String projectId=xmTaskExecuser.getProjectId();
-				 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-				boolean isHead= groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups, xmTaskExecuser.getUserid(), user.getUserid());
-				if( !isHead && !isTaskCreater ) {
-					tips.setFailureMsg("您无权提交测试结果！任务责任人、组长可以提交该任务的测试结果。");
-
-				} 
-			
-			if(tips.isOk()) { 
-				xmTaskExecuserService.testFail(xmTaskExecuser);  
-			}
- 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
-		m.put("tips", tips);
-		return m;
-	}
 	@ApiOperation( value = "候选人报价",notes="quotePrice")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -507,7 +363,7 @@ public class XmTaskExecuserController {
 				}
 			} 
 			if(tips.isOk()) {
-				XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getId()));
+				XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getTaskId(),xmTaskExecuser.getUserid()));
 				if("0".equals(xmTaskExecuserDb.getStatus())) {
 					xmTaskExecuserService.quotePrice(xmTaskExecuser);
 					m.put("data",xmTaskExecuser);
@@ -606,7 +462,7 @@ public class XmTaskExecuserController {
 				}
 			} 
 			if(tips.isOk()) { 
-				XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getId()));
+				XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getTaskId(),xmTaskExecuser.getUserid()));
 				if(xmTaskExecuserDb !=null ) {
 					if( "0".equals( xmTaskExecuserDb.getStatus() )  || "7".equals( xmTaskExecuserDb.getStatus() ) || "8".equals( xmTaskExecuserDb.getStatus() ) ) {
 						xmTaskExecuserService.delete(xmTaskExecuser); 
@@ -627,46 +483,6 @@ public class XmTaskExecuserController {
 		}catch (Exception e) {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
-	}
-
-
-
-	/**
-	 * 流程审批过程中回调该接口，更新业务数据
-	 * 如果发起流程时上送了restUrl，则无论流程中是否配置了监听器都会在流程发生以下事件时推送数据过来
-	 * eventName: PROCESS_STARTED 流程启动完成 全局
-	 *            PROCESS_COMPLETED 流程正常结束 全局
-	 *            PROCESS_CANCELLED 流程删除 全局
-	 *            create 人工任务启动
-	 *            complete 人工任务完成  
-	 *            assignment 人工任务分配给了具体的人
-	 *            delete 人工任务被删除
-	 *            
-	 * 其中 create/complete/assignment/delete事件是需要在模型中人工节点上配置了委托代理表达式 ${taskBizCallListener}才会推送过来。
-	 * 在人工任务节点上配置 任务监听器  建议事件为 complete,其它assignment/create/complete/delete也可以，一般建议在complete,委托代理表达式 ${taskBizCallListener}
-	 * 
-	 * @param flowVars {flowBranchId,agree,procInstId,assignee,actId,taskName,mainTitle,branchId,bizKey,commentMsg,eventName,modelKey} 等 
-	 * @return 如果tips.isOk==false，将影响流程提交
-	 **/
-	@AuditLog(firstMenu="办公平台",secondMenu="项目执行人管理",func="processApprova",funcDesc="任务分配/结算审核",operType=OperType.UPDATE)
-	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
-	public Map<String,Object> processApprova( @RequestBody Map<String,Object> flowVars){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功新增一条数据");
-		  
-		try{ 
-			
-			this.xmTaskExecuserService.processApprova(flowVars);
-			logger.debug("procInstId====="+flowVars.get("procInstId"));
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("执行异常",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("执行异常",e);
 		}  
 		m.put("tips", tips);
 		return m;
