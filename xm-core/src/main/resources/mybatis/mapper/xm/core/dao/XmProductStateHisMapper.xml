@@ -1,0 +1,411 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xm.core.entity.XmProductStateHis">
+	
+	
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" pkList != null">  and (res.product_id, res.biz_date) in
+             <foreach collection="pkList" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item.productId},  #{item.bizDate})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
+
+
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from xm_product_state_his res
+		<where>
+		    <include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmProductStateHis" resultType="com.xm.core.entity.XmProductStateHis">
+		select * from xm_product_state_his res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.xm.core.entity.XmProductStateHis" resultType="com.xm.core.entity.XmProductStateHis">
+		select * from xm_product_state_his res
+		where 
+			res.product_id = #{productId}
+			and res.biz_date = #{bizDate}
+	</select>
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmProductStateHis">
+        select * from xm_product_state_his res
+        where  (res.product_id, res.biz_date) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item.productId},  #{item.bizDate})
+             </foreach>
+    </select>
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from xm_product_state_his res
+		where 
+			 res.product_id = #{productId}
+			and  res.biz_date = #{bizDate}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.xm.core.entity.XmProductStateHis" resultType="long">
+		select count(1) from xm_product_state_his res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键product_id,biz_date,-->
+	<insert id="insert" parameterType="com.xm.core.entity.XmProductStateHis" useGeneratedKeys="false"  >
+		insert into xm_product_state_his(
+			<include refid="columns"/>
+		) values (
+		#{productId},#{bizDate},#{fileCnt},#{productName},#{calcTime},#{calcStatus},#{phaseCnt},#{phaseFinishCnt},#{needPayAt},#{finishPayAt},#{needColAt},#{finishColAt},#{riskCnt},#{riskFinishCnt},#{branchId},#{branchName},#{budgetNouserAt},#{budgetOuserAt},#{budgetIuserAt},#{actUserAt},#{actIuserAt},#{actOuserAt},#{actNouserAt},#{finishRate},#{budgetWorkload},#{budgetOuserWorkload},#{budgetIuserWorkload},#{estimateWorkload},#{actWorkload},#{projectStatus},#{actOuserWorkload},#{actIuserWorkload},#{needPayCnt},#{finishPayCnt},#{finishPayUserCnt},#{needPayUserCnt},#{testCases},#{execCases},#{designCases},#{finishCases},#{iterationCnt},#{productCnt},#{minStartTime},#{maxEndTime},#{menuCnt},#{menuFinishCnt},#{menuExecCnt},#{menuUnstartCnt},#{menuCloseCnt},#{taskCnt},#{taskUnstartCnt},#{taskExecCnt},#{taskFinishCnt},#{taskSetCnt},#{taskOutCnt},#{taskCloseCnt},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{planWorkhours},#{planWorkerCnt},#{actWorkerCnt},#{projectCnt},#{budgetAt},#{actAt}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProductStateHis">
+		delete from xm_product_state_his res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProductStateHis">
+		delete from xm_product_state_his 
+		where product_id = #{productId} and biz_date = #{bizDate} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProductStateHis">
+		update  xm_product_state_his 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where product_id = #{productId} and biz_date = #{bizDate} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.xm.core.entity.XmProductStateHis">
+		update  xm_product_state_his 
+		<set>
+			<include refid="set"/>
+		</set>
+		where product_id = #{productId} and biz_date = #{bizDate} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  xm_product_state_his 
+		set 
+			<include refid="batchSet"/>
+			where product_id = #{item.productId} and biz_date = #{item.bizDate}  
+		</foreach> 
+	</update>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from xm_product_state_his 
+			where
+			(product_id, biz_date) in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    (  #{item.productId},  #{item.bizDate} )
+                </foreach>
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		product_id,biz_date,file_cnt,product_name,calc_time,calc_status,phase_cnt,phase_finish_cnt,need_pay_at,finish_pay_at,need_col_at,finish_col_at,risk_cnt,risk_finish_cnt,branch_id,branch_name,budget_nouser_at,budget_ouser_at,budget_iuser_at,act_user_at,act_iuser_at,act_ouser_at,act_nouser_at,finish_rate,budget_workload,budget_ouser_workload,budget_iuser_workload,estimate_workload,act_workload,project_status,act_ouser_workload,act_iuser_workload,need_pay_cnt,finish_pay_cnt,finish_pay_user_cnt,need_pay_user_cnt,test_cases,exec_cases,design_cases,finish_cases,iteration_cnt,product_cnt,min_start_time,max_end_time,menu_cnt,menu_finish_cnt,menu_exec_cnt,menu_unstart_cnt,menu_close_cnt,task_cnt,task_unstart_cnt,task_exec_cnt,task_finish_cnt,task_set_cnt,task_out_cnt,task_close_cnt,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,plan_workhours,plan_worker_cnt,act_worker_cnt,project_cnt,budget_at,act_at
+	</sql>
+
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
+		<if test="bizDate != null and bizDate != ''">      and res.biz_date = #{bizDate}     </if>
+		<if test="fileCnt != null and fileCnt != ''">      and res.file_cnt = #{fileCnt}     </if>
+		<if test="productName != null and productName != ''">      and res.product_name = #{productName}     </if>
+		<if test="calcTime != null">      and date_format(res.calc_time,'%Y-%m-%d') = date_format(#{calcTime},'%Y-%m-%d')     </if>
+		<if test="calcStatus != null and calcStatus != ''">      and res.calc_status = #{calcStatus}     </if>
+		<if test="phaseCnt != null and phaseCnt != ''">      and res.phase_cnt = #{phaseCnt}     </if>
+		<if test="phaseFinishCnt != null and phaseFinishCnt != ''">      and res.phase_finish_cnt = #{phaseFinishCnt}     </if>
+		<if test="needPayAt != null and needPayAt != ''">      and res.need_pay_at = #{needPayAt}     </if>
+		<if test="finishPayAt != null and finishPayAt != ''">      and res.finish_pay_at = #{finishPayAt}     </if>
+		<if test="needColAt != null and needColAt != ''">      and res.need_col_at = #{needColAt}     </if>
+		<if test="finishColAt != null and finishColAt != ''">      and res.finish_col_at = #{finishColAt}     </if>
+		<if test="riskCnt != null and riskCnt != ''">      and res.risk_cnt = #{riskCnt}     </if>
+		<if test="riskFinishCnt != null and riskFinishCnt != ''">      and res.risk_finish_cnt = #{riskFinishCnt}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="branchName != null and branchName != ''">      and res.branch_name = #{branchName}     </if>
+		<if test="budgetNouserAt != null and budgetNouserAt != ''">      and res.budget_nouser_at = #{budgetNouserAt}     </if>
+		<if test="budgetOuserAt != null and budgetOuserAt != ''">      and res.budget_ouser_at = #{budgetOuserAt}     </if>
+		<if test="budgetIuserAt != null and budgetIuserAt != ''">      and res.budget_iuser_at = #{budgetIuserAt}     </if>
+		<if test="actUserAt != null and actUserAt != ''">      and res.act_user_at = #{actUserAt}     </if>
+		<if test="actIuserAt != null and actIuserAt != ''">      and res.act_iuser_at = #{actIuserAt}     </if>
+		<if test="actOuserAt != null and actOuserAt != ''">      and res.act_ouser_at = #{actOuserAt}     </if>
+		<if test="actNouserAt != null and actNouserAt != ''">      and res.act_nouser_at = #{actNouserAt}     </if>
+		<if test="finishRate != null and finishRate != ''">      and res.finish_rate = #{finishRate}     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
+		<if test="budgetOuserWorkload != null and budgetOuserWorkload != ''">      and res.budget_ouser_workload = #{budgetOuserWorkload}     </if>
+		<if test="budgetIuserWorkload != null and budgetIuserWorkload != ''">      and res.budget_iuser_workload = #{budgetIuserWorkload}     </if>
+		<if test="estimateWorkload != null and estimateWorkload != ''">      and res.estimate_workload = #{estimateWorkload}     </if>
+		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
+		<if test="projectStatus != null and projectStatus != ''">      and res.project_status = #{projectStatus}     </if>
+		<if test="actOuserWorkload != null and actOuserWorkload != ''">      and res.act_ouser_workload = #{actOuserWorkload}     </if>
+		<if test="actIuserWorkload != null and actIuserWorkload != ''">      and res.act_iuser_workload = #{actIuserWorkload}     </if>
+		<if test="needPayCnt != null and needPayCnt != ''">      and res.need_pay_cnt = #{needPayCnt}     </if>
+		<if test="finishPayCnt != null and finishPayCnt != ''">      and res.finish_pay_cnt = #{finishPayCnt}     </if>
+		<if test="finishPayUserCnt != null and finishPayUserCnt != ''">      and res.finish_pay_user_cnt = #{finishPayUserCnt}     </if>
+		<if test="needPayUserCnt != null and needPayUserCnt != ''">      and res.need_pay_user_cnt = #{needPayUserCnt}     </if>
+		<if test="testCases != null and testCases != ''">      and res.test_cases = #{testCases}     </if>
+		<if test="execCases != null and execCases != ''">      and res.exec_cases = #{execCases}     </if>
+		<if test="designCases != null and designCases != ''">      and res.design_cases = #{designCases}     </if>
+		<if test="finishCases != null and finishCases != ''">      and res.finish_cases = #{finishCases}     </if>
+		<if test="iterationCnt != null and iterationCnt != ''">      and res.iteration_cnt = #{iterationCnt}     </if>
+		<if test="productCnt != null and productCnt != ''">      and res.product_cnt = #{productCnt}     </if>
+		<if test="minStartTime != null">      and date_format(res.min_start_time,'%Y-%m-%d') = date_format(#{minStartTime},'%Y-%m-%d')     </if>
+		<if test="maxEndTime != null">      and date_format(res.max_end_time,'%Y-%m-%d') = date_format(#{maxEndTime},'%Y-%m-%d')     </if>
+		<if test="menuCnt != null and menuCnt != ''">      and res.menu_cnt = #{menuCnt}     </if>
+		<if test="menuFinishCnt != null and menuFinishCnt != ''">      and res.menu_finish_cnt = #{menuFinishCnt}     </if>
+		<if test="menuExecCnt != null and menuExecCnt != ''">      and res.menu_exec_cnt = #{menuExecCnt}     </if>
+		<if test="menuUnstartCnt != null and menuUnstartCnt != ''">      and res.menu_unstart_cnt = #{menuUnstartCnt}     </if>
+		<if test="menuCloseCnt != null and menuCloseCnt != ''">      and res.menu_close_cnt = #{menuCloseCnt}     </if>
+		<if test="taskCnt != null and taskCnt != ''">      and res.task_cnt = #{taskCnt}     </if>
+		<if test="taskUnstartCnt != null and taskUnstartCnt != ''">      and res.task_unstart_cnt = #{taskUnstartCnt}     </if>
+		<if test="taskExecCnt != null and taskExecCnt != ''">      and res.task_exec_cnt = #{taskExecCnt}     </if>
+		<if test="taskFinishCnt != null and taskFinishCnt != ''">      and res.task_finish_cnt = #{taskFinishCnt}     </if>
+		<if test="taskSetCnt != null and taskSetCnt != ''">      and res.task_set_cnt = #{taskSetCnt}     </if>
+		<if test="taskOutCnt != null and taskOutCnt != ''">      and res.task_out_cnt = #{taskOutCnt}     </if>
+		<if test="taskCloseCnt != null and taskCloseCnt != ''">      and res.task_close_cnt = #{taskCloseCnt}     </if>
+		<if test="bugCnt != null and bugCnt != ''">      and res.bug_cnt = #{bugCnt}     </if>
+		<if test="closedBugs != null and closedBugs != ''">      and res.closed_bugs = #{closedBugs}     </if>
+		<if test="resolvedBugs != null and resolvedBugs != ''">      and res.resolved_bugs = #{resolvedBugs}     </if>
+		<if test="activeBugs != null and activeBugs != ''">      and res.active_bugs = #{activeBugs}     </if>
+		<if test="confirmedBugs != null and confirmedBugs != ''">      and res.confirmed_bugs = #{confirmedBugs}     </if>
+		<if test="planWorkhours != null and planWorkhours != ''">      and res.plan_workhours = #{planWorkhours}     </if>
+		<if test="planWorkerCnt != null and planWorkerCnt != ''">      and res.plan_worker_cnt = #{planWorkerCnt}     </if>
+		<if test="actWorkerCnt != null and actWorkerCnt != ''">      and res.act_worker_cnt = #{actWorkerCnt}     </if>
+		<if test="projectCnt != null and projectCnt != ''">      and res.project_cnt = #{projectCnt}     </if>
+		<if test="budgetAt != null and budgetAt != ''">      and res.budget_at = #{budgetAt}     </if>
+		<if test="actAt != null and actAt != ''">      and res.act_at = #{actAt}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		file_cnt = #{fileCnt},
+		product_name = #{productName},
+		calc_time = #{calcTime},
+		calc_status = #{calcStatus},
+		phase_cnt = #{phaseCnt},
+		phase_finish_cnt = #{phaseFinishCnt},
+		need_pay_at = #{needPayAt},
+		finish_pay_at = #{finishPayAt},
+		need_col_at = #{needColAt},
+		finish_col_at = #{finishColAt},
+		risk_cnt = #{riskCnt},
+		risk_finish_cnt = #{riskFinishCnt},
+		branch_id = #{branchId},
+		branch_name = #{branchName},
+		budget_nouser_at = #{budgetNouserAt},
+		budget_ouser_at = #{budgetOuserAt},
+		budget_iuser_at = #{budgetIuserAt},
+		act_user_at = #{actUserAt},
+		act_iuser_at = #{actIuserAt},
+		act_ouser_at = #{actOuserAt},
+		act_nouser_at = #{actNouserAt},
+		finish_rate = #{finishRate},
+		budget_workload = #{budgetWorkload},
+		budget_ouser_workload = #{budgetOuserWorkload},
+		budget_iuser_workload = #{budgetIuserWorkload},
+		estimate_workload = #{estimateWorkload},
+		act_workload = #{actWorkload},
+		project_status = #{projectStatus},
+		act_ouser_workload = #{actOuserWorkload},
+		act_iuser_workload = #{actIuserWorkload},
+		need_pay_cnt = #{needPayCnt},
+		finish_pay_cnt = #{finishPayCnt},
+		finish_pay_user_cnt = #{finishPayUserCnt},
+		need_pay_user_cnt = #{needPayUserCnt},
+		test_cases = #{testCases},
+		exec_cases = #{execCases},
+		design_cases = #{designCases},
+		finish_cases = #{finishCases},
+		iteration_cnt = #{iterationCnt},
+		product_cnt = #{productCnt},
+		min_start_time = #{minStartTime},
+		max_end_time = #{maxEndTime},
+		menu_cnt = #{menuCnt},
+		menu_finish_cnt = #{menuFinishCnt},
+		menu_exec_cnt = #{menuExecCnt},
+		menu_unstart_cnt = #{menuUnstartCnt},
+		menu_close_cnt = #{menuCloseCnt},
+		task_cnt = #{taskCnt},
+		task_unstart_cnt = #{taskUnstartCnt},
+		task_exec_cnt = #{taskExecCnt},
+		task_finish_cnt = #{taskFinishCnt},
+		task_set_cnt = #{taskSetCnt},
+		task_out_cnt = #{taskOutCnt},
+		task_close_cnt = #{taskCloseCnt},
+		bug_cnt = #{bugCnt},
+		closed_bugs = #{closedBugs},
+		resolved_bugs = #{resolvedBugs},
+		active_bugs = #{activeBugs},
+		confirmed_bugs = #{confirmedBugs},
+		plan_workhours = #{planWorkhours},
+		plan_worker_cnt = #{planWorkerCnt},
+		act_worker_cnt = #{actWorkerCnt},
+		project_cnt = #{projectCnt},
+		budget_at = #{budgetAt},
+		act_at = #{actAt}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="fileCnt != null and fileCnt != ''"> file_cnt = #{fileCnt},     </if>
+		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
+		<if test="calcTime != null"> calc_time = #{calcTime},     </if>
+		<if test="calcStatus != null and calcStatus != ''"> calc_status = #{calcStatus},     </if>
+		<if test="phaseCnt != null and phaseCnt != ''"> phase_cnt = #{phaseCnt},     </if>
+		<if test="phaseFinishCnt != null and phaseFinishCnt != ''"> phase_finish_cnt = #{phaseFinishCnt},     </if>
+		<if test="needPayAt != null and needPayAt != ''"> need_pay_at = #{needPayAt},     </if>
+		<if test="finishPayAt != null and finishPayAt != ''"> finish_pay_at = #{finishPayAt},     </if>
+		<if test="needColAt != null and needColAt != ''"> need_col_at = #{needColAt},     </if>
+		<if test="finishColAt != null and finishColAt != ''"> finish_col_at = #{finishColAt},     </if>
+		<if test="riskCnt != null and riskCnt != ''"> risk_cnt = #{riskCnt},     </if>
+		<if test="riskFinishCnt != null and riskFinishCnt != ''"> risk_finish_cnt = #{riskFinishCnt},     </if>
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="branchName != null and branchName != ''"> branch_name = #{branchName},     </if>
+		<if test="budgetNouserAt != null and budgetNouserAt != ''"> budget_nouser_at = #{budgetNouserAt},     </if>
+		<if test="budgetOuserAt != null and budgetOuserAt != ''"> budget_ouser_at = #{budgetOuserAt},     </if>
+		<if test="budgetIuserAt != null and budgetIuserAt != ''"> budget_iuser_at = #{budgetIuserAt},     </if>
+		<if test="actUserAt != null and actUserAt != ''"> act_user_at = #{actUserAt},     </if>
+		<if test="actIuserAt != null and actIuserAt != ''"> act_iuser_at = #{actIuserAt},     </if>
+		<if test="actOuserAt != null and actOuserAt != ''"> act_ouser_at = #{actOuserAt},     </if>
+		<if test="actNouserAt != null and actNouserAt != ''"> act_nouser_at = #{actNouserAt},     </if>
+		<if test="finishRate != null and finishRate != ''"> finish_rate = #{finishRate},     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
+		<if test="budgetOuserWorkload != null and budgetOuserWorkload != ''"> budget_ouser_workload = #{budgetOuserWorkload},     </if>
+		<if test="budgetIuserWorkload != null and budgetIuserWorkload != ''"> budget_iuser_workload = #{budgetIuserWorkload},     </if>
+		<if test="estimateWorkload != null and estimateWorkload != ''"> estimate_workload = #{estimateWorkload},     </if>
+		<if test="actWorkload != null and actWorkload != ''"> act_workload = #{actWorkload},     </if>
+		<if test="projectStatus != null and projectStatus != ''"> project_status = #{projectStatus},     </if>
+		<if test="actOuserWorkload != null and actOuserWorkload != ''"> act_ouser_workload = #{actOuserWorkload},     </if>
+		<if test="actIuserWorkload != null and actIuserWorkload != ''"> act_iuser_workload = #{actIuserWorkload},     </if>
+		<if test="needPayCnt != null and needPayCnt != ''"> need_pay_cnt = #{needPayCnt},     </if>
+		<if test="finishPayCnt != null and finishPayCnt != ''"> finish_pay_cnt = #{finishPayCnt},     </if>
+		<if test="finishPayUserCnt != null and finishPayUserCnt != ''"> finish_pay_user_cnt = #{finishPayUserCnt},     </if>
+		<if test="needPayUserCnt != null and needPayUserCnt != ''"> need_pay_user_cnt = #{needPayUserCnt},     </if>
+		<if test="testCases != null and testCases != ''"> test_cases = #{testCases},     </if>
+		<if test="execCases != null and execCases != ''"> exec_cases = #{execCases},     </if>
+		<if test="designCases != null and designCases != ''"> design_cases = #{designCases},     </if>
+		<if test="finishCases != null and finishCases != ''"> finish_cases = #{finishCases},     </if>
+		<if test="iterationCnt != null and iterationCnt != ''"> iteration_cnt = #{iterationCnt},     </if>
+		<if test="productCnt != null and productCnt != ''"> product_cnt = #{productCnt},     </if>
+		<if test="minStartTime != null"> min_start_time = #{minStartTime},     </if>
+		<if test="maxEndTime != null"> max_end_time = #{maxEndTime},     </if>
+		<if test="menuCnt != null and menuCnt != ''"> menu_cnt = #{menuCnt},     </if>
+		<if test="menuFinishCnt != null and menuFinishCnt != ''"> menu_finish_cnt = #{menuFinishCnt},     </if>
+		<if test="menuExecCnt != null and menuExecCnt != ''"> menu_exec_cnt = #{menuExecCnt},     </if>
+		<if test="menuUnstartCnt != null and menuUnstartCnt != ''"> menu_unstart_cnt = #{menuUnstartCnt},     </if>
+		<if test="menuCloseCnt != null and menuCloseCnt != ''"> menu_close_cnt = #{menuCloseCnt},     </if>
+		<if test="taskCnt != null and taskCnt != ''"> task_cnt = #{taskCnt},     </if>
+		<if test="taskUnstartCnt != null and taskUnstartCnt != ''"> task_unstart_cnt = #{taskUnstartCnt},     </if>
+		<if test="taskExecCnt != null and taskExecCnt != ''"> task_exec_cnt = #{taskExecCnt},     </if>
+		<if test="taskFinishCnt != null and taskFinishCnt != ''"> task_finish_cnt = #{taskFinishCnt},     </if>
+		<if test="taskSetCnt != null and taskSetCnt != ''"> task_set_cnt = #{taskSetCnt},     </if>
+		<if test="taskOutCnt != null and taskOutCnt != ''"> task_out_cnt = #{taskOutCnt},     </if>
+		<if test="taskCloseCnt != null and taskCloseCnt != ''"> task_close_cnt = #{taskCloseCnt},     </if>
+		<if test="bugCnt != null and bugCnt != ''"> bug_cnt = #{bugCnt},     </if>
+		<if test="closedBugs != null and closedBugs != ''"> closed_bugs = #{closedBugs},     </if>
+		<if test="resolvedBugs != null and resolvedBugs != ''"> resolved_bugs = #{resolvedBugs},     </if>
+		<if test="activeBugs != null and activeBugs != ''"> active_bugs = #{activeBugs},     </if>
+		<if test="confirmedBugs != null and confirmedBugs != ''"> confirmed_bugs = #{confirmedBugs},     </if>
+		<if test="planWorkhours != null and planWorkhours != ''"> plan_workhours = #{planWorkhours},     </if>
+		<if test="planWorkerCnt != null and planWorkerCnt != ''"> plan_worker_cnt = #{planWorkerCnt},     </if>
+		<if test="actWorkerCnt != null and actWorkerCnt != ''"> act_worker_cnt = #{actWorkerCnt},     </if>
+		<if test="projectCnt != null and projectCnt != ''"> project_cnt = #{projectCnt},     </if>
+		<if test="budgetAt != null and budgetAt != ''"> budget_at = #{budgetAt},     </if>
+		<if test="actAt != null and actAt != ''"> act_at = #{actAt},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			file_cnt = #{item.fileCnt},
+			product_name = #{item.productName},
+			calc_time = #{item.calcTime},
+			calc_status = #{item.calcStatus},
+			phase_cnt = #{item.phaseCnt},
+			phase_finish_cnt = #{item.phaseFinishCnt},
+			need_pay_at = #{item.needPayAt},
+			finish_pay_at = #{item.finishPayAt},
+			need_col_at = #{item.needColAt},
+			finish_col_at = #{item.finishColAt},
+			risk_cnt = #{item.riskCnt},
+			risk_finish_cnt = #{item.riskFinishCnt},
+			branch_id = #{item.branchId},
+			branch_name = #{item.branchName},
+			budget_nouser_at = #{item.budgetNouserAt},
+			budget_ouser_at = #{item.budgetOuserAt},
+			budget_iuser_at = #{item.budgetIuserAt},
+			act_user_at = #{item.actUserAt},
+			act_iuser_at = #{item.actIuserAt},
+			act_ouser_at = #{item.actOuserAt},
+			act_nouser_at = #{item.actNouserAt},
+			finish_rate = #{item.finishRate},
+			budget_workload = #{item.budgetWorkload},
+			budget_ouser_workload = #{item.budgetOuserWorkload},
+			budget_iuser_workload = #{item.budgetIuserWorkload},
+			estimate_workload = #{item.estimateWorkload},
+			act_workload = #{item.actWorkload},
+			project_status = #{item.projectStatus},
+			act_ouser_workload = #{item.actOuserWorkload},
+			act_iuser_workload = #{item.actIuserWorkload},
+			need_pay_cnt = #{item.needPayCnt},
+			finish_pay_cnt = #{item.finishPayCnt},
+			finish_pay_user_cnt = #{item.finishPayUserCnt},
+			need_pay_user_cnt = #{item.needPayUserCnt},
+			test_cases = #{item.testCases},
+			exec_cases = #{item.execCases},
+			design_cases = #{item.designCases},
+			finish_cases = #{item.finishCases},
+			iteration_cnt = #{item.iterationCnt},
+			product_cnt = #{item.productCnt},
+			min_start_time = #{item.minStartTime},
+			max_end_time = #{item.maxEndTime},
+			menu_cnt = #{item.menuCnt},
+			menu_finish_cnt = #{item.menuFinishCnt},
+			menu_exec_cnt = #{item.menuExecCnt},
+			menu_unstart_cnt = #{item.menuUnstartCnt},
+			menu_close_cnt = #{item.menuCloseCnt},
+			task_cnt = #{item.taskCnt},
+			task_unstart_cnt = #{item.taskUnstartCnt},
+			task_exec_cnt = #{item.taskExecCnt},
+			task_finish_cnt = #{item.taskFinishCnt},
+			task_set_cnt = #{item.taskSetCnt},
+			task_out_cnt = #{item.taskOutCnt},
+			task_close_cnt = #{item.taskCloseCnt},
+			bug_cnt = #{item.bugCnt},
+			closed_bugs = #{item.closedBugs},
+			resolved_bugs = #{item.resolvedBugs},
+			active_bugs = #{item.activeBugs},
+			confirmed_bugs = #{item.confirmedBugs},
+			plan_workhours = #{item.planWorkhours},
+			plan_worker_cnt = #{item.planWorkerCnt},
+			act_worker_cnt = #{item.actWorkerCnt},
+			project_cnt = #{item.projectCnt},
+			budget_at = #{item.budgetAt},
+			act_at = #{item.actAt}
+	</sql>
+</mapper>

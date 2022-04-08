@@ -1,0 +1,229 @@
+package com.xm.core.ctrl;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiImplicitParam;
+import io.swagger.annotations.ApiImplicitParams;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+
+import static com.mdp.core.utils.ResponseHelper.*;
+import static com.mdp.core.utils.BaseUtils.*;
+import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
+import com.mdp.mybatis.PageUtils;
+import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.NumberUtil;
+import com.xm.core.service.XmBranchStateHisService;
+import com.xm.core.entity.XmBranchStateHis;
+/**
+ * url编制采用rest风格,如对xm_branch_state_his 机构内所有项目指标汇总的操作有增删改查,对应的url分别为:<br>
+ *  新增: core/xmBranchStateHis/add <br>
+ *  查询: core/xmBranchStateHis/list<br>
+ *  模糊查询: core/xmBranchStateHis/listKey<br>
+ *  修改: core/xmBranchStateHis/edit <br>
+ *  删除: core/xmBranchStateHis/del<br>
+ *  批量删除: core/xmBranchStateHis/batchDel<br>
+ * 组织 com  顶级模块 xm 大模块 core 小模块 <br>
+ * 实体 XmBranchStateHis 表 xm_branch_state_his 当前主键(包括多主键): biz_date,branch_id; 
+ ***/
+@RestController("xm.core.xmBranchStateHisController")
+@RequestMapping(value="/**/core/xmBranchStateHis")
+@Api(tags={"机构内所有项目指标汇总操作接口"})
+public class XmBranchStateHisController {
+	
+	static Logger logger =LoggerFactory.getLogger(XmBranchStateHisController.class);
+	
+	@Autowired
+	private XmBranchStateHisService xmBranchStateHisService;
+	 
+		
+ 
+	
+	@ApiOperation( value = "查询机构内所有项目指标汇总信息列表",notes=" ") 
+	@ApiResponses({
+		@ApiResponse(code = 200,response=XmBranchStateHis.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/list",method=RequestMethod.GET)
+	public Map<String,Object> listXmBranchStateHis( @RequestParam Map<String,Object> xmBranchStateHis){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		RequestUtils.transformArray(xmBranchStateHis, "pkList");
+		PageUtils.startPage(xmBranchStateHis);
+		List<Map<String,Object>>	xmBranchStateHisList = xmBranchStateHisService.selectListMapByWhere(xmBranchStateHis);	//列出XmBranchStateHis列表
+		PageUtils.responePage(m, xmBranchStateHisList);
+		m.put("data",xmBranchStateHisList);
+
+		m.put("tips", tips);
+		return m;
+	}
+
+	@ApiOperation( value = "查询机构内所有项目指标汇总信息列表5日内的",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmBranchStateHis.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/listXmBranchFiveDayTaskCnt",method=RequestMethod.GET)
+	public Map<String,Object> listXmBranchFiveDayTaskCnt( @RequestParam Map<String,Object> xmBranchStateHis){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		User user= LoginUtils.getCurrentUserInfo();
+		xmBranchStateHis.put("branchId",user.getBranchId());
+		List<Map<String,Object>>	xmBranchStateHisList = xmBranchStateHisService.listXmBranchFiveDayTaskCnt(xmBranchStateHis);	//列出XmBranchStateHis列表
+
+		m.put("data",xmBranchStateHisList);
+		m.put("tips", tips);
+		return m;
+	}
+
+ 
+	
+	/**
+	@ApiOperation( value = "新增一条机构内所有项目指标汇总信息",notes=" ")
+	@ApiResponses({
+		@ApiResponse(code = 200,response=XmBranchStateHis.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	}) 
+	@RequestMapping(value="/add",method=RequestMethod.POST)
+	public Map<String,Object> addXmBranchStateHis(@RequestBody XmBranchStateHis xmBranchStateHis) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功新增一条数据");
+		try{
+		    boolean createPk=false;
+			if(!StringUtils.hasText(xmBranchStateHis.getBizDate())) {
+			    createPk=true;
+				xmBranchStateHis.setBizDate(xmBranchStateHisService.createKey("bizDate"));
+			}
+			if(!StringUtils.hasText(xmBranchStateHis.getBranchId())) {
+			    createPk=true;
+				xmBranchStateHis.setBranchId(xmBranchStateHisService.createKey("branchId"));
+			}
+			if(createPk==false){
+                 if(xmBranchStateHisService.selectOneObject(xmBranchStateHis) !=null ){
+                    return failed("pk-exists","编号重复，请修改编号再提交");
+                }
+            }
+			xmBranchStateHisService.insert(xmBranchStateHis);
+			m.put("data",xmBranchStateHis);
+		}catch (BizException e) { 
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}  
+		m.put("tips", tips);
+		return m;
+	}
+	*/
+	
+	/**
+	@ApiOperation( value = "删除一条机构内所有项目指标汇总信息",notes=" ")
+	@ApiResponses({
+		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
+	}) 
+	@RequestMapping(value="/del",method=RequestMethod.POST)
+	public Map<String,Object> delXmBranchStateHis(@RequestBody XmBranchStateHis xmBranchStateHis){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功删除一条数据");
+		try{
+            if(!StringUtils.hasText(xmBranchStateHis.getBizDate())) {
+                 return failed("pk-not-exists","请上送主键参数bizDate");
+            }
+            if(!StringUtils.hasText(xmBranchStateHis.getBranchId())) {
+                 return failed("pk-not-exists","请上送主键参数branchId");
+            }
+            XmBranchStateHis xmBranchStateHisDb = xmBranchStateHisService.selectOneObject(xmBranchStateHis);
+            if( xmBranchStateHisDb == null ){
+                return failed("data-not-exists","数据不存在，无法删除");
+            }
+			xmBranchStateHisService.deleteByPk(xmBranchStateHis);
+		}catch (BizException e) { 
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}  
+		m.put("tips", tips);
+		return m;
+	}
+	 */
+	
+	/**
+	@ApiOperation( value = "根据主键修改一条机构内所有项目指标汇总信息",notes=" ")
+	@ApiResponses({
+		@ApiResponse(code = 200,response=XmBranchStateHis.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	}) 
+	@RequestMapping(value="/edit",method=RequestMethod.POST)
+	public Map<String,Object> editXmBranchStateHis(@RequestBody XmBranchStateHis xmBranchStateHis) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新一条数据");
+		try{
+            if(!StringUtils.hasText(xmBranchStateHis.getBizDate())) {
+                 return failed("pk-not-exists","请上送主键参数bizDate");
+            }
+            if(!StringUtils.hasText(xmBranchStateHis.getBranchId())) {
+                 return failed("pk-not-exists","请上送主键参数branchId");
+            }
+            XmBranchStateHis xmBranchStateHisDb = xmBranchStateHisService.selectOneObject(xmBranchStateHis);
+            if( xmBranchStateHisDb == null ){
+                return failed("data-not-exists","数据不存在，无法修改");
+            }
+			xmBranchStateHisService.updateSomeFieldByPk(xmBranchStateHis);
+			m.put("data",xmBranchStateHis);
+		}catch (BizException e) { 
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}  
+		m.put("tips", tips);
+		return m;
+	}
+	*/
+	
+
+	
+	/**
+	@ApiOperation( value = "根据主键列表批量删除机构内所有项目指标汇总信息",notes=" ")
+	@ApiResponses({
+		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	}) 
+	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
+	public Map<String,Object> batchDelXmBranchStateHis(@RequestBody List<XmBranchStateHis> xmBranchStateHiss) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功删除"+xmBranchStateHiss.size()+"条数据"); 
+		try{ 
+			xmBranchStateHisService.batchDelete(xmBranchStateHiss);
+		}catch (BizException e) { 
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}  
+		m.put("tips", tips);
+		return m;
+	} 
+	*/
+}
