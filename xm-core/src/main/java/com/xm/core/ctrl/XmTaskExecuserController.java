@@ -105,8 +105,46 @@ public class XmTaskExecuserController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
+
+
+	@ApiOperation( value = "查询xm_task_execuser信息列表",notes="listXmTaskExecuser,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="id",value="编号,主键",required=false),
+			@ApiImplicitParam(name="createTime",value="创建时间",required=false),
+			@ApiImplicitParam(name="taskId",value="任务id",required=false),
+			@ApiImplicitParam(name="userid",value="执行人id",required=false),
+			@ApiImplicitParam(name="startTime",value="加入时间",required=false),
+			@ApiImplicitParam(name="endTime",value="离开时间",required=false),
+			@ApiImplicitParam(name="status",value="执行人状态0候选排队中1执行任务中1离开任务",required=false),
+			@ApiImplicitParam(name="remarks",value="备注",required=false),
+			@ApiImplicitParam(name="settleAmount",value="结算金额",required=false),
+			@ApiImplicitParam(name="settleHour",value="结算工时",required=false),
+			@ApiImplicitParam(name="settleStatus",value="结算状态0未结算1已结算2无需结算",required=false),
+			@ApiImplicitParam(name="settleTime",value="结算时间",required=false),
+			@ApiImplicitParam(name="createUserid",value="创建人",required=false),
+			@ApiImplicitParam(name="createUsername",value="创建人姓名",required=false),
+			@ApiImplicitParam(name="username",value="执行人姓名",required=false),
+			@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
+			@ApiImplicitParam(name="currentPage",value="当前页码,从1开始",required=false),
+			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
+			@ApiImplicitParam(name="orderFields",value="排序列 如性别、学生编号排序 ['sex','studentId']",required=false),
+			@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false)
+	})
+	@ApiResponses({
+			@ApiResponse(code = 200,response= XmTaskExecuser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/listWithTask",method=RequestMethod.GET)
+	public Map<String,Object> listXmTaskExecuserWithTask( @RequestParam Map<String,Object> xmTaskExecuser){
+		Map<String,Object> m = new HashMap<>();
+		RequestUtils.transformArray(xmTaskExecuser, "ids");
+		PageUtils.startPage(xmTaskExecuser);
+		List<Map<String,Object>>	xmTaskExecuserList = xmTaskExecuserService.selectListMapByWhereWithTask(xmTaskExecuser);	//列出XmTaskExecuser列表
+		PageUtils.responePage(m, xmTaskExecuserList);
+		m.put("data",xmTaskExecuserList);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
 	
 	@ApiOperation( value = "新增一条xm_task_execuser信息",notes="addXmTaskExecuser,主键如果为空，后台自动生成")
 	@ApiResponses({

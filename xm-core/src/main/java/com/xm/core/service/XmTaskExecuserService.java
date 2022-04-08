@@ -219,6 +219,9 @@ public class XmTaskExecuserService extends BaseService {
 		this.update("updateXmTaskExeUseridsAndUsernamesByTaskId", taskId);
 	}
 
+	public List<Map<String,Object>> selectListMapByWhereWithTask(Map<String,Object> params){
+		return super.selectList("selectListMapByWhereWithTask",params);
+	}
 
 }
 

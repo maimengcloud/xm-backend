@@ -11,7 +11,7 @@
                 ( #{item.taskId},  #{item.userid})
              </foreach>
          </if>
-        <if test="key != null and key !='' ">       </if>
+        <if test="key != null and key !='' ">    and (res.task_name like concat('%',#{key},'%') or res.username like  concat('%',#{key},'%') ) </if>
     </sql>
 	<update id="updateXmTaskExeUseridsAndUsernamesByTaskId"
 			parameterType="String">
@@ -75,7 +75,13 @@
 		t.task_state=case when e1.executor_userid is null and t.task_state='1' then '0' when e1.executor_userid is not null and t.task_state='0' then '1' else t.task_state end
 		WHERE t.id = #{taskId}
 	</update>
-
+	<select id="selectListMapByWhereWithTask" parameterType="HashMap" resultType="HashMap">
+		select res.*,t.* from xm_task_execuser res left join xm_task t on res.task_id=t.id
+		<where>
+			<include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 
