@@ -12,7 +12,9 @@
              </foreach>
          </if>
         <if test="key != null and key !='' ">    and (res.task_name like concat('%',#{key},'%') or res.username like  concat('%',#{key},'%') ) </if>
-    </sql>
+		<if test="taskState != null and taskState !='' "> and task_state=#{taskState}</if>
+
+	</sql>
 	<update id="updateXmTaskExeUseridsAndUsernamesByTaskId"
 			parameterType="String">
 		UPDATE xm_task t
