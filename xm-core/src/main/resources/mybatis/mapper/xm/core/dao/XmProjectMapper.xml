@@ -24,7 +24,7 @@
 		<!-- 我参与的  包括我创建的，我监控的，我审核的-->
 		<if test=" compete !=null and compete !='' ">
 			and (    exists ( select 1 from xm_group g,XM.xm_group_user gu where gu.group_id=g.id and gu.userid=#{userid} and g.project_id=res.id )
-			or   res.pm_userid=#{compete} or res.adm_userid=#{compete} or res.ass_userid=#{compete}
+			or  res.create_userid=#{compete}  or res.pm_userid=#{compete} or res.adm_userid=#{compete} or res.ass_userid=#{compete}
 			)
 		</if>
 		<!-- 按参与角色查询等-->
