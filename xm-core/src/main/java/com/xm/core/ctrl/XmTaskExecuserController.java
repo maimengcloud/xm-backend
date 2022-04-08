@@ -257,7 +257,7 @@ public class XmTaskExecuserController {
 
 			}
 			List<String> msgs=new ArrayList<>();
-			if(noAllowUsers.size()>0){
+			if(allowUsers.size()>0){
 				String allowUserNamesStr=StringUtils.arrayToDelimitedString(allowUserNames.toArray(), "、");
 				msgs.add("成功将【"+allowUserNamesStr+"】请离任务;");
 			}
@@ -265,10 +265,6 @@ public class XmTaskExecuserController {
 				String allowUserNamesStr=StringUtils.arrayToDelimitedString(noAllowUsers.toArray(), "、");
 				msgs.add("以下人员您无权操作，【"+allowUserNamesStr+"】;");
 			}
-			if(allowUserNames.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
-			}
-
 			if(allowUserNames.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}else{
