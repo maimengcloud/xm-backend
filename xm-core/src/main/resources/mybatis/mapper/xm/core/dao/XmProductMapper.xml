@@ -21,9 +21,8 @@
 			and exists( select 1 from  xm_iteration  ppl where   ppl.product_id=res.id and ppl.id=#{linkIterationId} )
 		</if>
 		<if test="compete !=null and compete!=''">
-			and ( exists ( select 1 from xm_group_user gu inner join xm_task t on gu.project_id=t.project_id and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
-			or res.pm_userid=#{compete}
-			or exists ( select 1 from xm_menu m where m.mm_userid=#{compete} and m.product_id=res.id)
+			and ( exists ( select 1 from xm_group_user gu inner join xm_product_project_link t on (gu.project_id=t.project_id or gu.product_id=t.product_id ) and t.product_id=res.id where gu.userid=#{compete} and t.product_id=res.id )
+			or  res.create_userid=#{compete} or res.pm_userid=#{compete}  or res.pm_userid=#{compete} or res.adm_userid=#{compete} or res.ass_userid=#{compete}
 			)
 		</if>
 		<if test="ctimeStart!=null and ctimeEnd!=null ">and ctime between #{ctimeStart} and #{ctimeEnd}</if>
