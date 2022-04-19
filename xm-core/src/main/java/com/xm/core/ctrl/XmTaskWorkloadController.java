@@ -474,13 +474,30 @@ public class XmTaskWorkloadController {
 				sstatus="1";
 				xmTaskWorkloadMap.put("sstatus",sstatus);
 			}
+			List<String> taskIds=xmTaskWorkloadsDb.stream().map(i->i.getTaskId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+
+			Map<String,XmTask> taskMap=new HashMap<>();
+			if(xmTaskWorkloadMap.containsKey("wstatus") && "1".equals(wstatus)){
+				List<XmTask> tasks=this.xmTaskService.selectListByIds(taskIds);
+				for (XmTask task : tasks) {
+					taskMap.put(task.getId(),task);
+				}
+			}
 
 			List<XmTaskWorkload> canChanges=new ArrayList<>();
 			List<XmTaskWorkload> sstatusNot01=new ArrayList<>();
+			List<XmTaskWorkload> taskStateNot34=new ArrayList<>();
 			for (XmTaskWorkload xmTaskWorkload : xmTaskWorkloadsDb) {
 				if(!"1".equals(xmTaskWorkload.getSstatus()) && !"0".equals(xmTaskWorkload.getSstatus()) &&StringUtils.hasText(xmTaskWorkload.getSstatus())){
 					sstatusNot01.add(xmTaskWorkload);
 				}else{
+					if(xmTaskWorkloadMap.containsKey("wstatus") && "1".equals(wstatus)){
+						XmTask task=taskMap.get(xmTaskWorkload.getTaskId());
+						if(task==null || (!"2".equals(task.getTaskState()) && !"3".equals(task.getTaskState()))){
+							taskStateNot34.add(xmTaskWorkload);
+							continue;
+						}
+					}
 					canChanges.add(xmTaskWorkload);
 				}
 			}
@@ -501,6 +518,9 @@ public class XmTaskWorkloadController {
 
 			if(sstatusNot01.size()>0){
 				msgs.add("有"+sstatusNot01.size()+"条工时不是待结算状态，不允许更改");
+			}
+			if(taskStateNot34.size()>0){
+				msgs.add("有"+taskStateNot34.size()+"条工时对应的任务不是已完工状态，不允许确认工时");
 			}
 			if(canChanges.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));

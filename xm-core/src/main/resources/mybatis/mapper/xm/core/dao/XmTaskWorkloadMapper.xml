@@ -106,6 +106,13 @@
 		group by biz_month
 		order by biz_month asc
 	</select>
+
+	<select id="listTaskWorkloadBySbillIdGroupByUseridAndTaskId" parameterType="String" resultType="HashMap">
+		select sum(ifnull(res.workload,0)) as workload,sum(ifnull(res.samt,0)) as samt,sum(ifnull(res.amt,0)) as amt,
+		sum(ifnull(res.sworkload,0)) as sworkload,res.task_id ,max(res.username) as username,max(t.name) as task_name from xm_task_workload res inner join xm_task t on res.task_id=t.id
+		where res.sbill_id=#{sbillId} and res.sstatus='4'
+		group by res.userid,res.task_id
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 

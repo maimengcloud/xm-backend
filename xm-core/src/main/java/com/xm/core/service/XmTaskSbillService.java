@@ -2,10 +2,13 @@ package com.xm.core.service;
 
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
+import com.mdp.core.utils.NumberUtil;
 import com.xm.core.entity.XmTaskWorkload;
+import com.xm.core.service.client.MkClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +37,9 @@ public class XmTaskSbillService extends BaseService {
 
 	@Autowired
 	XmTaskWorkloadService xmTaskWorkloadService;
+
+	@Autowired
+	MkClient mkClient;
 
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteByPkAndReturnWorkload(XmTaskSbill xmTaskSbill){
@@ -87,6 +93,7 @@ public class XmTaskSbillService extends BaseService {
 				}else if("PROCESS_COMPLETED".equals(eventName)) {
 					if("1".equals(agree)) {
 						this.updateFlowStateByProcInst("2",xmTaskSbill, flowVars);
+						this.pushWorkloadToMk(xmTaskSbill);
 					}else {
 						this.updateFlowStateByProcInst("3",xmTaskSbill,  flowVars);
 					}
@@ -98,6 +105,24 @@ public class XmTaskSbillService extends BaseService {
 			throw new BizException("不支持的业务,请上送业务编码【bizKey】参数");
 		}
 
+	}
+
+	private void pushWorkloadToMk(XmTaskSbill xmTaskSbill) {
+		List<Map<String,Object>> taskWorkloads=this.xmTaskWorkloadService.listTaskWorkloadBySbillIdGroupByUseridAndTaskId(xmTaskSbill.getId());
+		if(taskWorkloads==null || taskWorkloads.size()==0){
+			return;
+		}
+		for (Map<String, Object> t : taskWorkloads) {
+			String taskId= (String) t.get("taskId");
+			String taskName= (String) t.get("taskName");
+			String userid= (String) t.get("userid");
+			String username= (String) t.get("username");
+			String custBranchId="";
+			BigDecimal actNum=BigDecimal.valueOf(1);
+			BigDecimal sigPrice= NumberUtil.getBigDecimal(t.get("samt"));
+			BigDecimal workload=NumberUtil.getBigDecimal(t.get("sworkload"));
+			mkClient.pushActiExecOrder(taskId,userid,username,custBranchId,taskId, actNum,sigPrice,actNum.multiply(sigPrice),workload,taskName);
+		}
 	}
 
 	/**
