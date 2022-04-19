@@ -722,9 +722,6 @@ public class XmTaskService extends BaseService {
 		super.update("updateActCostAndActWorkloadAfterSettle",map("id",taskId,"taskState",toTaskState));
 	}
 
-	public void editSomeFields(Map<String, Object> xmTaskMap) {
-		super.update("editSomeFields",xmTaskMap);
-	}
 	public void calcWorkloadByRecord(String id) {
 		if(!StringUtils.hasText(id)){
 			return;

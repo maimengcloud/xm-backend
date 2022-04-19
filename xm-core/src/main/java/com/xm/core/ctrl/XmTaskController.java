@@ -286,7 +286,7 @@ public class XmTaskController {
 		User user=LoginUtils.getCurrentUserInfo();
 		xmTask.put("branchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAttDist(xmTask);
-		return ResponseHelper.ok("成功",datas);
+		return ResponseHelper.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmTaskAgeDist",method=RequestMethod.GET)
@@ -294,7 +294,7 @@ public class XmTaskController {
 		User user=LoginUtils.getCurrentUserInfo();
 		xmTask.put("branchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAgeDist(xmTask);
-		return ResponseHelper.ok("成功",datas);
+		return ResponseHelper.ok("ok","成功",datas);
 	}
 
 

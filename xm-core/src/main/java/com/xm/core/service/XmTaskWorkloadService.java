@@ -50,9 +50,6 @@ public class XmTaskWorkloadService extends BaseService {
 	}
 
 
-	public void editSomeFields(Map<String, Object> xmTaskWorkloadMap) {
-		super.update("editSomeFields",xmTaskWorkloadMap);
-	}
 
 	public List<Map<String, Object>> listProjectWorkloadSetDay(Map<String, Object> xmTaskWorkload) {
 		return super.selectList("listProjectWorkloadSetDay",xmTaskWorkload);

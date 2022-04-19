@@ -197,9 +197,7 @@ public class XmQuestionService extends BaseService {
 		}
 		this.update("updateProcessApprova", flowVars);
 	}
-	public void editSomeFields(Map<String, Object> xmMenuMap) {
-		super.update("editSomeFields",xmMenuMap);
-	}
+
 
     public List<Map<String, Object>> getXmQuestionAttDist(Map<String, Object> xmQuestion) {
 		return super.selectList("getXmQuestionAttDist",xmQuestion);
