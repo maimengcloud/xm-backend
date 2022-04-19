@@ -199,7 +199,7 @@ public class XmMenuController {
 		User user=LoginUtils.getCurrentUserInfo();
 		xmMenu.put("branchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAttDist(xmMenu);
-		return ResponseHelper.ok("成功",datas);
+		return ResponseHelper.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmMenuAgeDist",method=RequestMethod.GET)
@@ -207,7 +207,7 @@ public class XmMenuController {
 		User user=LoginUtils.getCurrentUserInfo();
 		xmMenu.put("branchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAgeDist(xmMenu);
-		return ResponseHelper.ok("成功",datas);
+		return ResponseHelper.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmMenuSort",method=RequestMethod.GET)

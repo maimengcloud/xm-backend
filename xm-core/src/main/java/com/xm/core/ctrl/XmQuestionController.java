@@ -125,7 +125,7 @@ public class XmQuestionController {
 		User user=LoginUtils.getCurrentUserInfo();
 		xmQuestion.put("branchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAttDist(xmQuestion);
-		return ResponseHelper.ok("成功",datas);
+		return ResponseHelper.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmQuestionAgeDist",method=RequestMethod.GET)
@@ -133,7 +133,7 @@ public class XmQuestionController {
 		User user=LoginUtils.getCurrentUserInfo();
 		xmQuestion.put("branchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAgeDist(xmQuestion);
-		return ResponseHelper.ok("成功",datas);
+		return ResponseHelper.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmQuestionSort",method=RequestMethod.GET)
