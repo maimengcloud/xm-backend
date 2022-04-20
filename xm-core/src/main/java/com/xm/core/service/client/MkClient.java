@@ -13,6 +13,8 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.mdp.core.utils.BaseUtils.map;
+
 @Service
 /**
  * 对mk接口调用
@@ -21,6 +23,9 @@ public class MkClient {
 
     @Autowired
     StringRedisTemplate strRedisTemplate;
+
+    @Autowired
+    CallBizService callBizService;
 
     @Autowired
     Push push;
@@ -35,7 +40,7 @@ public class MkClient {
      * 		execOrder.setCustBranchId("platform-branch-001");
      * @return
      */
-    public Tips pushActiExecOrder(String orderId,String custId,String custName,String custBranchId, String entityId,BigDecimal actNum,BigDecimal actSinglePrice,BigDecimal totalPrice,BigDecimal workload,String entityDesc){
+    public Tips pushActiExecOrder(String orderId,String custId,String custName,String custBranchId,String orderBranchId, String entityId,BigDecimal actNum,BigDecimal actSinglePrice,BigDecimal totalPrice,BigDecimal workload,String entityDesc){
         Tips tips = new Tips("推送订单成功");
         Map<String,Object> params=new HashMap<>();
         params.put("orderId",orderId);
@@ -43,7 +48,7 @@ public class MkClient {
         params.put("custId",custId);
         params.put("custName",custName);
         params.put("custBranchId",custBranchId);
-        params.put("orderBranchId",custBranchId);
+        params.put("orderBranchId",orderBranchId);
         params.put("entityId",entityId);
         params.put("actNum",actNum);
         params.put("actSinglePrice",actSinglePrice);
@@ -53,5 +58,18 @@ public class MkClient {
         push.leftPush("xm_task_settle",params);
        // strRedisTemplate.convertAndSend("xm_task_settle", JSON.toJSONString(params));
         return tips;
+    }
+
+    /**
+     * 检查用户是否可以投标
+     * @param userid
+     * @param at
+     * @param exp
+     * @param bids
+     * @return {tipscode:bids-not-enough,msg:投标次数超限},{tipscode:smaxExp-not-enough,msg:投标工作量超限},{tipscode:smaxAt-not-enough,msg:投标金额超限},
+     */
+    public Tips checkMemberInterests(String userid,BigDecimal at,BigDecimal exp,Integer bids){
+        String url="/mk/mk/mem/memberInterests/checkMemberInterests";
+        return callBizService.postForTips(url,map("userid",userid  ,"at",at,"exp",exp,"bids",bids));
     }
 }

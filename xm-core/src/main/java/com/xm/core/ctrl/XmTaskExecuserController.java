@@ -17,6 +17,7 @@ import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmGroupUserService;
 import com.xm.core.service.XmTaskExecuserService;
 import com.xm.core.service.XmTaskService;
+import com.xm.core.service.client.MkClient;
 import com.xm.core.vo.XmGroupVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
@@ -62,6 +63,9 @@ public class XmTaskExecuserController {
 
 	@Autowired
 	ItemService itemService;
+
+	@Autowired
+	MkClient mkClient;
 	
 
 	@Autowired
@@ -163,6 +167,13 @@ public class XmTaskExecuserController {
 				tips.setFailureMsg("任务已不存在");
 				m.put("tips", tips);
 				return m;
+			}
+
+			if("1".equals(xmTask.getCrowd())){
+				tips=mkClient.checkMemberInterests(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
 			}
 
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){

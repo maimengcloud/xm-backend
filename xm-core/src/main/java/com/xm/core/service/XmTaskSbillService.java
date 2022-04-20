@@ -121,7 +121,7 @@ public class XmTaskSbillService extends BaseService {
 			BigDecimal actNum=BigDecimal.valueOf(1);
 			BigDecimal sigPrice= NumberUtil.getBigDecimal(t.get("samt"));
 			BigDecimal workload=NumberUtil.getBigDecimal(t.get("sworkload"));
-			mkClient.pushActiExecOrder(taskId,userid,username,custBranchId,taskId, actNum,sigPrice,actNum.multiply(sigPrice),workload,taskName);
+			mkClient.pushActiExecOrder(taskId,userid,username,custBranchId,xmTaskSbill.getBranchId(),taskId, actNum,sigPrice,actNum.multiply(sigPrice),workload,taskName);
 		}
 	}
 
