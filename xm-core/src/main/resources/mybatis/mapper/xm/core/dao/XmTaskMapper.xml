@@ -555,17 +555,6 @@
 		</foreach> 
 	</update>
 
-	<!-- 批量修改某几个字段 -->
-	<delete id="editSomeFields" parameterType="HashMap">
-		update  xm_task
-        <set>
-            <include refid="someFieldSet"/>
-        </set>
-        where  (id) in
-             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-                 ( #{item})
-             </foreach>
-	</delete>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from xm_task 
