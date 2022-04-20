@@ -72,4 +72,15 @@ public class MkClient {
         String url="/mk/mk/mem/memberInterests/checkMemberInterests";
         return callBizService.postForTips(url,map("userid",userid  ,"at",at,"exp",exp,"bids",bids));
     }
+
+    /**
+     * 投标成功后登记投标次数
+     * @return
+     */
+    public Tips pushBidsAfterBidSuccess(String userid,BigDecimal at,BigDecimal exp,Integer bids){
+        Tips tips = new Tips("推送订单成功");
+        push.leftPush("xm_task_bid",map("userid",userid  ,"at",at,"exp",exp,"bids",bids));
+        // strRedisTemplate.convertAndSend("xm_task_settle", JSON.toJSONString(params));
+        return tips;
+    }
 }

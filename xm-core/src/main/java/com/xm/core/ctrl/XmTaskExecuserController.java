@@ -194,6 +194,7 @@ public class XmTaskExecuserController {
 					 }
 				 }
 					 xmTaskExecuserService.addExecuser(xmTaskExecuser);
+				 mkClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
 					 m.put("data",xmTaskExecuser);
 			 }
 
