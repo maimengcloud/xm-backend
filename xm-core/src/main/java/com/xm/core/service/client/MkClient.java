@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.micro.client.CallBizService;
+import com.mdp.mq.queue.Push;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,9 @@ public class MkClient {
 
     @Autowired
     StringRedisTemplate strRedisTemplate;
+
+    @Autowired
+    Push push;
 
     /**
      * 		execOrder.setOrderId(sequence.getReqFlowNo());
@@ -46,7 +50,8 @@ public class MkClient {
         params.put("totalPrice",totalPrice);
         params.put("workload",workload);
         params.put("entityDesc",entityDesc);
-        strRedisTemplate.convertAndSend("xm_task_settle", JSON.toJSONString(params));
+        push.leftPush("xm_task_settle",params);
+       // strRedisTemplate.convertAndSend("xm_task_settle", JSON.toJSONString(params));
         return tips;
     }
 }

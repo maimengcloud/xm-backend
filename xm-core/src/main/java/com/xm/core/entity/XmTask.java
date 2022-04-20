@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTask所有属性名: <br>
- *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetAt,budgetWorkload,actAt,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,phaseId,phaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime,pidPaths,lvl,isTpl,keyPath,uniInnerPrice,uniOutPrice,calcType,ptype,wtype,bctrl,initWorkload;<br>
+ *	id,name,parentTaskid,parentTaskname,projectId,projectName,level,sortLevel,executorUserid,executorUsername,preTaskid,preTaskname,startTime,endTime,milestone,description,remarks,createUserid,createUsername,createTime,rate,budgetAt,budgetWorkload,actAt,actWorkload,taskState,taskType,taskClass,toTaskCenter,actStartTime,actEndTime,bizProcInstId,bizFlowState,phaseId,phaseName,taskSkillNames,exeUsernames,taskSkillIds,exeUserids,taskOut,planType,settleSchemel,menuId,menuName,productId,cbranchId,cdeptid,tagIds,tagNames,ntype,childrenCnt,ltime,pidPaths,lvl,isTpl,keyPath,uniInnerPrice,uniOutPrice,calcType,ptype,wtype,bctrl,initWorkload,crowd,shareFee,oshare;<br>
  * 表 xm_task xm_task的所有字段名: <br>
- *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_at,budget_workload,act_at,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload;<br>
+ *	id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_at,budget_workload,act_at,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload,crowd,share_fee,oshare;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -208,6 +208,15 @@ public class XmTask  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="原始预估工作量，budget_workload发生变化后，进行备份",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal initWorkload;
+	
+	@ApiModelProperty(notes="是否众包0-否1是-众包互联网上才能看见",allowEmptyValue=true,example="",allowableValues="")
+	String crowd;
+	
+	@ApiModelProperty(notes="分享赚佣金",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal shareFee;
+	
+	@ApiModelProperty(notes="开启分享赚功能0-否1是",allowEmptyValue=true,example="",allowableValues="")
+	String oshare;
 
 	/**任务编号**/
 	public XmTask(String id) {
@@ -596,6 +605,24 @@ public class XmTask  implements java.io.Serializable {
 	public void setInitWorkload(BigDecimal initWorkload) {
 		this.initWorkload = initWorkload;
 	}
+	/**
+	 * 是否众包0-否1是-众包互联网上才能看见
+	 **/
+	public void setCrowd(String crowd) {
+		this.crowd = crowd;
+	}
+	/**
+	 * 分享赚佣金
+	 **/
+	public void setShareFee(BigDecimal shareFee) {
+		this.shareFee = shareFee;
+	}
+	/**
+	 * 开启分享赚功能0-否1是
+	 **/
+	public void setOshare(String oshare) {
+		this.oshare = oshare;
+	}
 	
 	/**
 	 * 任务编号
@@ -974,6 +1001,24 @@ public class XmTask  implements java.io.Serializable {
 	 **/
 	public BigDecimal getInitWorkload() {
 		return this.initWorkload;
+	}
+	/**
+	 * 是否众包0-否1是-众包互联网上才能看见
+	 **/
+	public String getCrowd() {
+		return this.crowd;
+	}
+	/**
+	 * 分享赚佣金
+	 **/
+	public BigDecimal getShareFee() {
+		return this.shareFee;
+	}
+	/**
+	 * 开启分享赚功能0-否1是
+	 **/
+	public String getOshare() {
+		return this.oshare;
 	}
 
 }
