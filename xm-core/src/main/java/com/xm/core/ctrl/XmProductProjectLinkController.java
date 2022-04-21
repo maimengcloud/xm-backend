@@ -226,7 +226,7 @@ public class XmProductProjectLinkController {
 			if(fieldKey.size()<=0) {
 				return ResponseHelper.failed("fieldKey-0","没有需要更新的字段");
 			}
-			this.xmProductProjectLinkService.editSomeFields(m);
+			this.xmProductProjectLinkService.editSomeFields(map);
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
