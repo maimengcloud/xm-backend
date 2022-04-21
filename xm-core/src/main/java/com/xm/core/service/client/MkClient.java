@@ -70,7 +70,7 @@ public class MkClient {
      */
     public Tips checkMemberInterests(String userid,BigDecimal at,BigDecimal exp,Integer bids){
         String url="/mk/mk/mem/memberInterests/checkMemberInterests";
-        return callBizService.postForTips(url,map("userid",userid  ,"at",at,"exp",exp,"bids",bids));
+        return callBizService.getForTips(url,map("userid",userid  ,"at",at,"exp",exp,"bids",bids));
     }
 
     /**
