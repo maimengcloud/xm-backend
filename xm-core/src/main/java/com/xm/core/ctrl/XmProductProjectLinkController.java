@@ -3,9 +3,13 @@ package com.xm.core.ctrl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.alibaba.fastjson.JSON;
+import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmTaskService;
@@ -62,6 +66,9 @@ public class XmProductProjectLinkController {
 
 	@Autowired
 	XmTaskService xmTaskService;
+
+
+	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmProductProjectLink());
 	
 	@ApiOperation( value = "查询产品与项目的关联关系表，一般由产品经理挂接项目到产品上信息列表",notes=" ") 
 	@ApiResponses({
@@ -189,8 +196,47 @@ public class XmProductProjectLinkController {
 		return m;
 	}
 	*/
-	
 
+	@ApiOperation( value = "根据主键批量修改修改任务中的某些字段信息",notes="editXmMenu")
+	@ApiResponses({
+			@ApiResponse(code = 200,response= XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+ 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
+	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> map) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新");
+		try{
+			List<Map<String,Object>> ids= (List<Map<String, Object>>) map.get("pkList");
+
+			if(ids==null || ids.size()==0){
+				ResponseHelper.failed("ids-0","ids不能为空");
+			}
+
+			Set<String> fields=new HashSet<>();
+			fields.add("productId");
+			fields.add("projectId");
+			for (String fieldName : map.keySet()) {
+				if(fields.contains(fieldName)){
+					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+				}
+			}
+			Set<String> fieldKey=map.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
+			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(map.get(i) )).collect(Collectors.toSet());
+
+			if(fieldKey.size()<=0) {
+				return ResponseHelper.failed("fieldKey-0","没有需要更新的字段");
+			}
+			this.xmProductProjectLinkService.editSomeFields(m);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 	
 	/**
 	@ApiOperation( value = "根据主键列表批量删除产品与项目的关联关系表，一般由产品经理挂接项目到产品上信息",notes=" ")
