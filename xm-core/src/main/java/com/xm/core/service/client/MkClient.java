@@ -69,7 +69,7 @@ public class MkClient {
      * @return {tipscode:bids-not-enough,msg:投标次数超限},{tipscode:smaxExp-not-enough,msg:投标工作量超限},{tipscode:smaxAt-not-enough,msg:投标金额超限},
      */
     public Tips checkMemberInterests(String userid,BigDecimal at,BigDecimal exp,Integer bids){
-        String url="/mk/mk/mem/memberInterests/checkMemberInterests";
+        String url="/mk/mk/mem/memberInterests/checkMemberInterests?userid={userid}&at={at}&exp={exp}&bids={bids}";
         return callBizService.getForTips(url,map("userid",userid  ,"at",at,"exp",exp,"bids",bids));
     }
 
