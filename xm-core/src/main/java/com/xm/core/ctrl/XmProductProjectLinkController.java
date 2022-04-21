@@ -110,6 +110,10 @@ public class XmProductProjectLinkController {
 			};
 			xmProductProjectLink.setCtime(new Date());
 			xmProductProjectLink.setLinkStatus("1");
+			if(xmProductProjectLink.getSeq()==null){
+				xmProductProjectLink.setSeq(999);
+			}
+
 			xmProductProjectLink.setCuserid(user.getUserid());
 			xmProductProjectLink.setCusername(user.getUsername());
 			xmProductProjectLinkService.insert(xmProductProjectLink);
