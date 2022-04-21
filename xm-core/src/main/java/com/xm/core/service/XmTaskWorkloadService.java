@@ -62,5 +62,13 @@ public class XmTaskWorkloadService extends BaseService {
 	public List<Map<String,Object>> listTaskWorkloadBySbillIdGroupByUseridAndTaskId(String sbillId) {
 		return this.selectList("listTaskWorkloadBySbillIdGroupByUseridAndTaskId",sbillId);
 	}
+
+	public void updateStatusBySbillIdBySbillDel(XmTaskWorkload xmTaskWorkload) {
+		super.update("updateStatusBySbillIdBySbillDel",xmTaskWorkload);
+	}
+
+	public void batchSetSbillIdNull(List<String> ids) {
+		super.update("batchSetSbillIdNull",ids);
+	}
 }
 

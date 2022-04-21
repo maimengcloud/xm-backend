@@ -38,7 +38,17 @@
 			AND res.biz_date BETWEEN #{startBizDate} AND #{endBizDate}
 		</if>
     </sql>
-
+	<update id="updateStatusBySbillIdBySbillDel" parameterType="com.xm.core.entity.XmTaskWorkload">
+		update xm_task_workload res set sbill_id=null
+		where res.sbill_id=#{sbillId}
+	</update>
+	<update id="batchSetSbillIdNull" parameterType="List">
+		update xm_task_workload res set sbill_id=null
+		where res.id in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+	</update>
 	<!-- 根据条件修改若干条记录 -->
 	<update id="batchEditSbillId" parameterType="HashMap">
 		update  xm_task_workload res

@@ -47,7 +47,7 @@ public class XmTaskSbillService extends BaseService {
 		XmTaskWorkload xmTaskWorkload = new XmTaskWorkload();
 		xmTaskWorkload.setSbillId(xmTaskSbill.getId());
 		xmTaskWorkload.setSstatus("1");//标记为待提交结算
-		xmTaskWorkloadService.update("updateSomeFieldByWhere",xmTaskWorkload);
+		xmTaskWorkloadService.updateStatusBySbillIdBySbillDel(xmTaskWorkload);
 	}
 
 	/**
