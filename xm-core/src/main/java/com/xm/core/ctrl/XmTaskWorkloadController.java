@@ -151,6 +151,10 @@ public class XmTaskWorkloadController {
 			if(!StringUtils.hasText(xmTaskWorkload.getTaskId())) {
 				return failed("taskId-0","请上送任务编号");
 			}
+
+			if(!StringUtils.hasText(xmTaskWorkload.getBizDate())) {
+				return failed("bizDate-0","请上送日期");
+			}
 			if(xmTaskWorkload.getWorkload()==null) {
 				return failed("workload-0","工时不能为空");
 			}
