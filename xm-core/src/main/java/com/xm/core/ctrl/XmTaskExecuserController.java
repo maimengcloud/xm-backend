@@ -169,7 +169,7 @@ public class XmTaskExecuserController {
 				return m;
 			}
 
-			if("1".equals(xmTask.getCrowd())){
+			if("1".equals(xmTask.getCrowd()) && "1".equals(xmTask.getTaskOut())){
 				tips=mkClient.checkMemberInterests(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
