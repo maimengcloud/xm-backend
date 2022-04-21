@@ -89,6 +89,11 @@ public class XmTaskWorkloadController {
 		RequestUtils.transformArray( xmTaskWorkload, "wstatuses");
 		RequestUtils.transformArray( xmTaskWorkload, "sstatuses");
 		PageUtils.startPage(xmTaskWorkload);
+		String taskId= (String) xmTaskWorkload.get("taskId");
+		String sbillId= (String) xmTaskWorkload.get("sbillId");
+		String projectId= (String) xmTaskWorkload.get("projectId");
+		String userid= (String) xmTaskWorkload.get("userid");
+		User user=LoginUtils.getCurrentUserInfo();
 		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.selectListMapByWhere(xmTaskWorkload);	//列出XmTaskWorkload列表
 		PageUtils.responePage(m, xmTaskWorkloadList);
 		m.put("data",xmTaskWorkloadList);
@@ -140,16 +145,9 @@ public class XmTaskWorkloadController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-		    boolean createPk=false;
-			if(!StringUtils.hasText(xmTaskWorkload.getId())) {
-			    createPk=true;
-				xmTaskWorkload.setId(xmTaskWorkloadService.createKey("id"));
-			}
-			if(createPk==false){
-                 if(xmTaskWorkloadService.selectOneObject(xmTaskWorkload) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
-                }
-            }
+			User user= LoginUtils.getCurrentUserInfo();
+			xmTaskWorkload.setId(xmTaskWorkloadService.createKey("id"));
+
 			if(!StringUtils.hasText(xmTaskWorkload.getTaskId())) {
 				return failed("taskId-0","请上送任务编号");
 			}
@@ -159,6 +157,14 @@ public class XmTaskWorkloadController {
 
 			if(xmTaskWorkload.getWorkload().compareTo(BigDecimal.ZERO)==0) {
 				return failed("workload-0","工时不能为0");
+			}
+			XmTaskWorkload xmTaskWorkloadCount=new XmTaskWorkload();
+			//xmTaskWorkloadCount.setUserid(user.getUserid());
+			xmTaskWorkloadCount.setBizDate(xmTaskWorkload.getBizDate());
+			xmTaskWorkloadCount.setTaskId(xmTaskWorkload.getTaskId());
+			long count=this.xmTaskWorkloadService.countByWhere(xmTaskWorkloadCount);
+			if(count>0){
+				return failed("data-1","当前任务今天已经报工");
 			}
 			XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmTaskWorkload.getTaskId()));
 			if(xmTaskDb==null ){
@@ -170,7 +176,7 @@ public class XmTaskWorkloadController {
 			if("3".equals(xmTaskDb.getTaskState())){
 				return failed("taskState-3",xmTaskDb.getName()+"已结算完毕，不能再提交工时");
 			}
-			User user= LoginUtils.getCurrentUserInfo();
+
 			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
 				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getCreateUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
 				if(!isCreate.isOk()){
@@ -392,6 +398,7 @@ public class XmTaskWorkloadController {
 			List<XmTaskWorkload> noChanges=list.stream().filter(i->!canBillMap.containsKey(i.getSbillId())).collect(Collectors.toList());
 			if(canChanges.size()>0){
 				xmTaskWorkloadService.batchSetSbillIdNull(canChanges.stream().map(i->i.getId()).collect(Collectors.toList()));
+
 			}
 			List<String> msgs=new ArrayList<>();
 			if(canChanges.size()>0){
