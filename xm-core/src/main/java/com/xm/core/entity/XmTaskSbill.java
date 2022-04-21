@@ -62,7 +62,7 @@ public class XmTaskSbill  implements java.io.Serializable {
 	@ApiModelProperty(notes="业务日期yyyy-MM-dd",allowEmptyValue=true,example="",allowableValues="")
 	String bizDate;
 	
-	@ApiModelProperty(notes="结算流程状态",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="结算流程状态：0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
 	String bizFlowState;
 	
 	@ApiModelProperty(notes="结算流程实例",allowEmptyValue=true,example="",allowableValues="")
@@ -177,7 +177,7 @@ public class XmTaskSbill  implements java.io.Serializable {
 		this.bizDate = bizDate;
 	}
 	/**
-	 * 结算流程状态
+	 * 结算流程状态：0初始1审批中2审批通过3审批不通过4流程取消或者删除
 	 **/
 	public void setBizFlowState(String bizFlowState) {
 		this.bizFlowState = bizFlowState;
@@ -304,7 +304,7 @@ public class XmTaskSbill  implements java.io.Serializable {
 		return this.bizDate;
 	}
 	/**
-	 * 结算流程状态
+	 * 结算流程状态：0初始1审批中2审批通过3审批不通过4流程取消或者删除
 	 **/
 	public String getBizFlowState() {
 		return this.bizFlowState;

@@ -5,19 +5,20 @@
 	
 	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
 
-		<sql id="whereForMap">
-            <if test="ids != null">  and (res.id) in
-                    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-                        ( #{id})
-                    </foreach>
-             </if>
-		    <if test="key != null and key !='' ">
-			 	AND( res.id like #{key} OR res.title like #{key} OR res.project_name like #{key} )
-			</if>
-			<if test="startTime !=null and startTime != ''">
-				AND res.ctime BETWEEN #{startTime} AND #{endTime}
-			</if>
-		</sql>
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+
+		<if test="key != null and key !='' ">
+			AND( res.id like #{key} OR res.title like #{key} OR res.project_name like #{key} )
+		</if>
+		<if test="startTime !=null and startTime != ''">
+			AND res.ctime BETWEEN #{startTime} AND #{endTime}
+		</if>
+    </sql>
 
 	<update id="updateByWorkloadList" parameterType="String">
 		update xm_task_sbill res left join (select w.sbill_id,sum(ifnull(w.amt,0)) as amt,sum(ifnull(w.samt,0)) as samt,sum(ifnull(w.workload,0)) as workload from xm_task_workload w  where w.sbill_id=#{id} and w.wstatus='1' group by w.sbill_id) as w on res.id=w.sbill_id
@@ -53,7 +54,13 @@
 		where 
 			res.id = #{id}
 	</select>
-	
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmTaskSbill">
+        select * from xm_task_sbill res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_task_sbill res
@@ -62,7 +69,7 @@
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmTaskSbill" resultType="long">
-		select count(1) from xm_task_sbill res
+		select count(*) from xm_task_sbill res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -78,9 +85,9 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmTaskSbill">
-		delete from xm_task_sbill
+		delete from xm_task_sbill res
 		<where>  
-			1=2
+			<include refid="where"/>
 		</where>
 	</delete>
 	
@@ -122,6 +129,18 @@
 			where id = #{item.id}  
 		</foreach> 
 	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_task_sbill
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from xm_task_sbill 
