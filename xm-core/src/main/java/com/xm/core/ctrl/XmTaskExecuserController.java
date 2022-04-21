@@ -183,6 +183,7 @@ public class XmTaskExecuserController {
 			}
 			 if(user.getUserid().equals(xmTaskExecuser.getUserid())){//自己作为候选人
 				 xmTaskExecuserService.addExecuser(xmTaskExecuser);
+				 mkClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
 				 m.put("data",xmTaskExecuser);
 			 }else {
 				 boolean isPm=groupService.checkUserIsProjectAdm(xmTask.getProjectId(),user.getUserid());

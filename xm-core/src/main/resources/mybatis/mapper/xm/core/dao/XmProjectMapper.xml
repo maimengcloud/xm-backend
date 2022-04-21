@@ -61,48 +61,6 @@
 			and res.del!="1"
 		</if>
     </sql>
-	<insert id="insertProcessApprova"
-			parameterType="HashMap"
-			useGeneratedKeys="false" keyProperty="id">
-		insert into xm_project_process_approva (
-		id,project_id,flow_branch_id,agree,act_id,task_name,proc_inst_id,main_title,comment_msg,flow_last_time,event_name,biz_key,model_key,assignee,start_userid,proc_def_id
-		) values (
-		#{id},#{projectId},#{flowBranchId},#{agree},#{actId},#{taskName},#{procInstId},#{mainTitle},#{commentMsg},#{flowLastTime},#{eventName},#{bizKey},#{modelKey},#{assignee},#{startUserid},#{procDefId}
-		)
-	</insert>
-
-	<!-- 同时修改业务表及流程审批表数据状态 -->
-	<update id="updateProcessApprova"
-			parameterType="HashMap">
-		update xm_project  b ,XM.xm_project_process_approva pa
-		<set>
-			<if test=' agree != null and agree !="" '> pa.agree = #{agree},</if>
-			<if test=' actId != null and actId !="" '> pa.act_id = #{actId},</if>
-			<if test=' assignee != null and assignee !="" '> pa.assignee = #{assignee},</if>
-			<if test=' assigneeName != null and assigneeName !="" '> pa.assignee_name = #{assigneeName},</if>
-			<if test=' taskName != null and taskName !="" '> pa.task_name = #{taskName},</if>
-			<if test=' commentMsg != null and commentMsg !="" '> pa.comment_msg = #{commentMsg},</if>
-			pa.flow_last_time = now(),
-			<if test=' eventName != null and eventName !="" '> pa.event_name = #{eventName},</if>
-			<if test=' flowState != null and flowState !="" '> pa.flow_state=#{flowState},</if>
-			<if test=' bizFlowState != null and bizFlowState !="" '> b.biz_flow_state=#{bizFlowState},</if>
-			<if test=' bizProcInstId != null and bizProcInstId !="" '> b.biz_proc_inst_id=#{bizProcInstId},</if>
-		</set>
-		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
-		and b.id=pa.project_id
-	</update>
-
-	<update id="updateFlowStateByProcInstForDeleteSuccess"
-			parameterType="HashMap">
-		update xm_project_process_approva pa set pa.flow_state='2'
-		where pa.proc_inst_id = #{procInstId} and pa.flow_branch_id=#{flowBranchId}
-	</update>
-
-	<!-- 按条件删除若干条记录-->
-	<delete id="deleteByProcInstId" parameterType="HashMap">
-		delete from xm_project
-		where biz_proc_inst_id=#{procInstId}
-	</delete>
 
 	<!--结束 自定义sql函数区域-->
 	
