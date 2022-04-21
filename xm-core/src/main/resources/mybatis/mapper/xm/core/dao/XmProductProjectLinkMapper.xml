@@ -3,14 +3,21 @@
 <mapper namespace="com.xm.core.entity.XmProductProjectLink">
 	
 	
-	<!--开始 自定sql函数区域 -->
-		<!--请在此区域添加自定义函数-->
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
 
+    <sql id="whereForMap">
+         <if test=" pkList != null">  and (res.project_id, res.product_id) in
+             <foreach collection="pkList" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item.projectId},  #{item.productId})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
 	<select id="selectListByIterationId" parameterType="String" resultType="com.xm.core.entity.XmProductProjectLink">
 		select * from xm_product_project_link res
 		where exists (select 1 from xm_iteration ipl where ipl.id=#{iterationId} and ipl.product_id=res.product_id)
 	</select>
-		
+
 	<!--结束 自定义sql函数区域-->
 	
 
@@ -19,15 +26,9 @@
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
 		select res.*,prd.product_name,prj.name from xm_product_project_link res
 		inner join xm_product prd on prd.id=res.product_id inner join xm_project prj on prj.id=res.project_id
-		<where> 
-			<if test="ids != null">  and     
-				project_id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
-			 </if>
+		<where>
+		    <include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test="key != null and key !='' ">       </if> 
 		</where>
 	</select>
 	
@@ -46,7 +47,13 @@
 			res.project_id = #{projectId}
 			and res.product_id = #{productId}
 	</select>
-	
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmProductProjectLink">
+        select * from xm_product_project_link res
+        where  (res.project_id, res.product_id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item.projectId},  #{item.productId})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_product_project_link res
@@ -56,7 +63,7 @@
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProductProjectLink" resultType="long">
-		select count(1) from xm_product_project_link res
+		select count(*) from xm_product_project_link res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -66,27 +73,27 @@
 		insert into xm_product_project_link(
 			<include refid="columns"/>
 		) values (
-		#{projectId},#{productId},#{ctime},#{cuserid},#{cusername},#{linkStatus}
+		#{projectId},#{productId},#{ctime},#{cuserid},#{cusername},#{linkStatus},#{seq}
 		)
 	</insert>
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmProductProjectLink">
-		delete from xm_product_project_link
+		delete from xm_product_project_link res
 		<where>  
-			1=2
+			<include refid="where"/>
 		</where>
 	</delete>
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmProductProjectLink">
-		delete from xm_product_project_link
+		delete from xm_product_project_link 
 		where project_id = #{projectId} and product_id = #{productId} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmProductProjectLink">
-		update  xm_product_project_link
+		update  xm_product_project_link 
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -95,7 +102,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmProductProjectLink">
-		update  xm_product_project_link
+		update  xm_product_project_link 
 		<set>
 			<include refid="set"/>
 		</set>
@@ -110,28 +117,38 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_product_project_link
+   		update  xm_product_project_link 
 		set 
 			<include refid="batchSet"/>
 			where project_id = #{item.projectId} and product_id = #{item.productId}  
 		</foreach> 
 	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_product_project_link
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (project_id, product_id) in
+             <foreach collection="pkList" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item.projectId},  #{item.productId})
+             </foreach>
+	</delete>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_product_project_link
+		delete from xm_product_project_link 
 			where
-			(project_id, product_id)
-			    in
+			(project_id, product_id) in
                 <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
-                    ( #{item.projectId},  #{item.productId}
-                    )
+                    (  #{item.projectId},  #{item.productId} )
                 </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		project_id,product_id,ctime,cuserid,cusername,link_status
+		project_id,product_id,ctime,cuserid,cusername,link_status,seq
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -142,25 +159,29 @@
 		<if test="cuserid != null and cuserid != ''">      and res.cuserid = #{cuserid}     </if>
 		<if test="cusername != null and cusername != ''">      and res.cusername = #{cusername}     </if>
 		<if test="linkStatus != null and linkStatus != ''">      and res.link_status = #{linkStatus}     </if>
+		<if test="seq != null and seq != ''">      and res.seq = #{seq}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
 		ctime = #{ctime},
 		cuserid = #{cuserid},
 		cusername = #{cusername},
-		link_status = #{linkStatus}
+		link_status = #{linkStatus},
+		seq = #{seq}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="ctime != null"> ctime = #{ctime},     </if>
 		<if test="cuserid != null and cuserid != ''"> cuserid = #{cuserid},     </if>
 		<if test="cusername != null and cusername != ''"> cusername = #{cusername},     </if>
 		<if test="linkStatus != null and linkStatus != ''"> link_status = #{linkStatus},     </if>
+		<if test="seq != null and seq != ''"> seq = #{seq},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
 			ctime = #{item.ctime},
 			cuserid = #{item.cuserid},
 			cusername = #{item.cusername},
-			link_status = #{item.linkStatus}
+			link_status = #{item.linkStatus},
+			seq = #{item.seq}
 	</sql>
 </mapper>
