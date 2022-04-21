@@ -385,9 +385,9 @@ public class XmProjectService extends BaseService {
 
 		if("complete".equals(eventName)) { 
 			if("1".equals(agree)) {
-				this.updateFlowStateByProcInst("", flowVars);
+				this.updateFlowStateByProcInst("",bizProject, flowVars);
 			}else {
-				this.updateFlowStateByProcInst("", flowVars);
+				this.updateFlowStateByProcInst("",bizProject, flowVars);
 			}
 		}else {
 
@@ -412,10 +412,7 @@ public class XmProjectService extends BaseService {
 						throw new BizException("该项目正在审批中，不能再发起审批");
 					}
 				}
-
-				flowVars.put("id", this.createKey("id"));
-					this.insert("insertProcessApprova", flowVars);   
-					this.updateFlowStateByProcInst("1", flowVars);
+				this.updateFlowStateByProcInst("1",bizProject, flowVars);
 			}else if("PROCESS_COMPLETED".equals(eventName)) {
 				if("1".equals(agree)) { 
 					
@@ -432,6 +429,8 @@ public class XmProjectService extends BaseService {
 						project.setBudgetCtrl(bizProject.getBudgetCtrl());
 						project.setDescription(bizProject.getDescription());
 						project.setAssessRemarks(bizProject.getAssessRemarks());
+						project.setBizProcInstId((String) flowVars.get("procInstId"));
+						project.setBizFlowState("2");
 						//project.setCode(project.getCode());
 						this.updateSomeFieldByPk(project);
 				        xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-基本信息", "修改基本信息" );  
@@ -440,8 +439,8 @@ public class XmProjectService extends BaseService {
 						XmProject project=new XmProject();
 						project.setId(bizProject.getId());
 						project.setStatus("3");
-						//todo 立项通过需要把预算数据同步到财务系统，把项目数据同步到财务系统
-
+						project.setBizProcInstId((String) flowVars.get("procInstId"));
+						project.setBizFlowState("2");
 						this.updateSomeFieldByPk(project);
 				        xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-立项", "项目立项通过审批" );  
 				        this.createBaseline(bizProject.getId(),"项目立项通过审批");
@@ -450,55 +449,57 @@ public class XmProjectService extends BaseService {
 						XmProject project=new XmProject(); 
 						project.setId(bizProject.getId()); 
 						project.setEndTime(bizProject.getEndTime());
+						project.setBizProcInstId((String) flowVars.get("procInstId"));
+						project.setBizFlowState("2");
 						this.updateSomeFieldByPk(project);
 						 xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-逾期", "项目逾期申请通过审批" );   
 					}else if("xm_project_over_approva".equals(bizKey) ) { //结项
 						XmProject project=new XmProject();
 						project.setId(bizProject.getId());
+						project.setBizProcInstId((String) flowVars.get("procInstId"));
+						project.setBizFlowState("2");
 						project.setStatus("6");
 						this.updateSomeFieldByPk(project);
 						this.createBaseline(bizProject.getId(),"项目结项申请通过审批");
 						 xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-结项", "项目结项申请通过审批" );   
 					}else if("xm_project_budget_change_approva".equals(bizKey) ) { //总预算调整，需要同步预算到财务系统
 						
- 
+
 						this.editBudget(bizProject);
 						xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-预算调整", "项目预算调整申请通过审批" );   
 					}else if("xm_project_restart_approva".equals(bizKey) ) { //重新启动
 						XmProject project=new XmProject();
 						project.setId(bizProject.getId());
-						project.setStatus("ssz");
+						project.setStatus("4");
 						this.updateSomeFieldByPk(project);
 						xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-重新启动", "项目重新启动申请通过审批" );   
 					}else if("xm_project_pause_approva".equals(bizKey) ) { //暂停
 						XmProject project=new XmProject();
 						project.setId(bizProject.getId());
 						project.setLocked("0");
+						project.setBizProcInstId((String) flowVars.get("procInstId"));
+						project.setBizFlowState("2");
 						this.updateSomeFieldByPk(project);
 						xmRecordService.addXmProjectRecord(bizProject.getId(),  "项目-暂停", "项目暂停申请通过审批" );   
 					}
-					this.updateFlowStateByProcInst("2", flowVars);
-				}else { 
-					this.updateFlowStateByProcInst("3", flowVars);
+ 				}else {
+					this.updateFlowStateByProcInst("3",bizProject, flowVars);
 				} 
 			}else if("PROCESS_CANCELLED".equals(eventName)) { 
-				this.updateFlowStateByProcInst("4", flowVars);
+				this.updateFlowStateByProcInst("4",bizProject, flowVars);
 			}
 		} 
 	}
-	
-	private void updateFlowStateByProcInstForDeleteSuccess(Map<String, Object> flowVars) {
-		this.update("updateFlowStateByProcInstForDeleteSuccess", flowVars);
-		
-	}
 
-	public void updateFlowStateByProcInst(String flowState,Map<String, Object> flowVars) {
-		flowVars.put("flowState", flowState);
-		flowVars.put("bizFlowState", flowState);
-		if("1".equals(flowState)) {
-			flowVars.put("bizProcInstId", flowVars.get("procInstId"));
+	public void updateFlowStateByProcInst(String flowState,XmProject project,Map<String, Object> flowVars) {
+		if(!StringUtils.hasText(flowState)){
+			return;
 		}
-		this.update("updateProcessApprova", flowVars);
+		XmProject projectUpdate=new XmProject();
+		projectUpdate.setId(project.getId());
+		projectUpdate.setBizFlowState(flowState);
+		projectUpdate.setBizProcInstId((String) flowVars.get("procInstId"));
+		this.updateSomeFieldByPk(projectUpdate);
 	}
 
 	Date getDateFromObject(Object date){

@@ -300,7 +300,7 @@ public class XmTaskService extends BaseService {
 	public List<XmTask> selectTaskListByIds(List<String> ids){
 		return super.selectList("selectTaskListByIds",map("ids",ids));
 	}
-	
+
 
 	/**
 	 * 流程审批过程中回调该接口，更新业务数据
@@ -309,45 +309,45 @@ public class XmTaskService extends BaseService {
 	 *            PROCESS_COMPLETED 流程正常结束 全局
 	 *            PROCESS_CANCELLED 流程删除 全局
 	 *            create 人工任务启动
-	 *            complete 人工任务完成  
+	 *            complete 人工任务完成
 	 *            assignment 人工任务分配给了具体的人
 	 *            delete 人工任务被删除
 	 *            TASK_COMPLETED_FORM_DATA_UPDATE 人工任务提交完成后，智能表单数据更新
-	 *            
+	 *
 	 * 其中 create/complete/assignment/delete事件是需要在模型中人工节点上配置了委托代理表达式 ${taskBizCallListener}才会推送过来。
 	 * 在人工任务节点上配置 任务监听器  建议事件为 complete,其它assignment/create/complete/delete也可以，一般建议在complete,委托代理表达式 ${taskBizCallListener}
-	 * 
-	 * @param flowVars {flowBranchId,agree,procInstId,startUserid,assignee,actId,taskName,mainTitle,branchId,bizKey,commentMsg,eventName,modelKey} 等 
+	 *
+	 * @param flowVars {flowBranchId,agree,procInstId,startUserid,assignee,actId,taskName,mainTitle,branchId,bizKey,commentMsg,eventName,modelKey} 等
 	 * @return 如果tips.isOk==false，将影响流程提交
 	 **/
 	@Transactional
-	public void processApprova(Map<String, Object> flowVars) { 
-		String eventName=(String) flowVars.get("eventName"); 
-		String agree=(String) flowVars.get("agree");  
+	public void processApprova(Map<String, Object> flowVars) {
+		String eventName=(String) flowVars.get("eventName");
+		String agree=(String) flowVars.get("agree");
 		String bizKey=(String) flowVars.get("bizKey");
 		XmTask bizXmTask=null;
-		if("xm_task_approva".equals(bizKey) ) { 
+		if("xm_task_approva".equals(bizKey) ) {
 			if(!flowVars.containsKey("data")) {
 				throw new BizException("缺乏任务信息，请将任务信息放在flowVars.data中");
 			}
-			bizXmTask= BaseUtils.fromMap((Map)flowVars.get("data"), XmTask.class); 
+			bizXmTask= BaseUtils.fromMap((Map)flowVars.get("data"), XmTask.class);
 			flowVars.put("xmTaskId", bizXmTask.getId());
 		}else {
 			throw new BizException("不支持的业务,请上送业务编码【bizKey】参数");
 		}
-		if("complete".equals(eventName)) { 
+		if("complete".equals(eventName)) {
 			if("1".equals(agree)) {
 				this.updateFlowStateByProcInst("", flowVars);
 			}else {
 				this.updateFlowStateByProcInst("", flowVars);
 			}
 		}else {
-			if("PROCESS_STARTED".equals(eventName)) {   
-				Map<String,Object> bizQuery=new HashMap<>(); 
+			if("PROCESS_STARTED".equals(eventName)) {
+				Map<String,Object> bizQuery=new HashMap<>();
 				bizQuery.put("id", bizXmTask.getId());
 				if(StringUtils.isEmpty(bizXmTask.getId())) {
 					throw new BizException("请上送任务编号flowVars.data.id");
-				} 
+				}
 				List<Map<String,Object>> bizList=this.selectListMapByWhere(bizQuery);
 				if(bizList==null || bizList.size()==0) {
 					throw new BizException("没有找到对应项目任务单,项目任务单为【"+bizXmTask.getId()+"】");
@@ -358,33 +358,28 @@ public class XmTaskService extends BaseService {
 					}
 				}
 				flowVars.put("id", this.createKey("id"));
-					this.insert("insertProcessApprova", flowVars);   
-					this.updateFlowStateByProcInst("1", flowVars);
+				this.updateFlowStateByProcInst("1", flowVars);
 			}else if("PROCESS_COMPLETED".equals(eventName)) {
-				if("1".equals(agree)) { 
-					this.updateFlowStateByProcInst("2", flowVars); 
-					
-				}else { 
+				if("1".equals(agree)) {
+					this.updateFlowStateByProcInst("2", flowVars);
+
+				}else {
 					this.updateFlowStateByProcInst("3", flowVars);
-				} 
-			}else if("PROCESS_CANCELLED".equals(eventName)) { 
+				}
+			}else if("PROCESS_CANCELLED".equals(eventName)) {
 				this.updateFlowStateByProcInst("4", flowVars);
 			}
-		} 
-	}
-	@Transactional
-	private void updateFlowStateByProcInstForDeleteSuccess(Map<String, Object> flowVars) {
-		this.update("updateFlowStateByProcInstForDeleteSuccess", flowVars);
-		
+		}
 	}
 	@Transactional
 	public void updateFlowStateByProcInst(String flowState,Map<String, Object> flowVars) {
-		flowVars.put("flowState", flowState);
-		flowVars.put("bizFlowState", flowState);
-		if("1".equals(flowState)) {
-			flowVars.put("bizProcInstId", flowVars.get("procInstId"));
+		if(StringUtils.hasText((String) flowVars.get("xmTaskId"))){
+			XmTask xmTask=new XmTask();
+			xmTask.setId((String) flowVars.get("taskId"));
+			xmTask.setBizFlowState(flowState);
+			xmTask.setBizProcInstId((String) flowVars.get("procInstId"));
+			this.updateSomeFieldByPk(xmTask);
 		}
-		this.update("updateProcessApprova", flowVars);
 	}
 	@Transactional
 	public void batchImportFromTemplate(List<XmTask> xmTasks) {
