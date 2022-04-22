@@ -537,10 +537,6 @@ public class XmTaskWorkloadController {
 					return ResponseHelper.failed("wstatus-not-01","工时状态不正确");
 				}
 			}
-			if("1".equals(wstatus)){
-				sstatus="1";
-				xmTaskWorkloadMap.put("sstatus",sstatus);
-			}
 			List<String> taskIds=xmTaskWorkloadsDb.stream().map(i->i.getTaskId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
 
 			Map<String,XmTask> taskMap=new HashMap<>();
