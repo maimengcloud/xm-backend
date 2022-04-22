@@ -336,7 +336,10 @@ public class XmGroupController {
 				}
 
 			}
-			if(groupDb.getChildrenCnt()!=null && groupDb.getChildrenCnt()>0){
+			XmGroup childrenGroupQuery=new XmGroup();
+			childrenGroupQuery.setPgroupId(xmGroup.getId());
+			long childrenCnt=this.xmGroupService.countByWhere(childrenGroupQuery);
+			if(childrenCnt>0){
 				return ResponseHelper.failed("childrenCnt-no-0","该小组有下级小组，不能删除。请先删除下级小组。");
 			}
 			xmGroupService.doDeleteByPk(xmGroup,groupDb);
