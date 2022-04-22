@@ -40,8 +40,8 @@ public class XmTaskWorkloadService extends BaseService {
 
 	@Transactional
 	public void editWorkloadToSbill(String sbillId, List<XmTaskWorkload> canChanges) {
-		xmTaskSbillService.updateByWorkloadList(sbillId);
 		this.batchEditSbillId(sbillId,canChanges.stream().map(i->i.getId()).collect(Collectors.toList()));
+		xmTaskSbillService.updateByWorkloadList(Arrays.asList(sbillId));
 	}
 
 	private void batchEditSbillId(String sbillId, List<String> ids) {
@@ -69,6 +69,13 @@ public class XmTaskWorkloadService extends BaseService {
 
 	public void batchSetSbillIdNull(List<String> ids) {
 		super.update("batchSetSbillIdNull",ids);
+	}
+
+	public void editSomeFieldsWithSbillIds(Map<String, Object> xmTaskWorkloadMap, List<String> sbillIds) {
+		super.editSomeFields(xmTaskWorkloadMap);
+		if(sbillIds!=null && sbillIds.size()>0){
+			 this.xmTaskSbillService.updateByWorkloadList(sbillIds);
+		}
 	}
 }
 

@@ -565,13 +565,18 @@ public class XmTaskWorkloadController {
 				}
 			}
 
+
+
 			if(canChanges.size()>0){
 				xmTaskWorkloadMap.put("ids",canChanges.stream().map(i->i.getId()).collect(Collectors.toList()));
 				Set<String> fieldKey=xmTaskWorkloadMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 				fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskWorkloadMap.get(i) )).collect(Collectors.toSet());
 
 				if(fieldKey.size()>0){
-					xmTaskWorkloadService.editSomeFields(xmTaskWorkloadMap);
+					List<String> sbillIds= canChanges.stream().filter(i->StringUtils.hasText(i.getSbillId())).map(i->i.getSbillId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+
+					xmTaskWorkloadService.editSomeFieldsWithSbillIds(xmTaskWorkloadMap,sbillIds);
+
 				}
 			}
 			List<String> msgs=new ArrayList<>();
