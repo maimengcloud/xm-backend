@@ -35,7 +35,7 @@ public class XmGroupStateController {
 	static Log logger=LogFactory.getLog(XmGroupStateController.class);
 	
 	@Autowired
-	private XmGroupStateService xmProjectGroupStateService;
+	private XmGroupStateService xmGroupStateService;
 	 
 		
  
@@ -88,13 +88,13 @@ public class XmGroupStateController {
 		@ApiResponse(code = 200,response= XmGroupState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmProjectGroupState( @RequestParam Map<String,Object> xmProjectGroupState){
+	public Map<String,Object> listXmProjectGroupState( @RequestParam Map<String,Object> xmGroupState){
 		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmProjectGroupState, "ids");
-		PageUtils.startPage(xmProjectGroupState);
-		List<Map<String,Object>>	xmProjectGroupStateList = xmProjectGroupStateService.selectListMapByWhere(xmProjectGroupState);	//列出XmProjectGroupState列表
-		PageUtils.responePage(m, xmProjectGroupStateList);
-		m.put("data",xmProjectGroupStateList);
+		RequestUtils.transformArray(xmGroupState, "ids");
+		PageUtils.startPage(xmGroupState);
+		List<Map<String,Object>>	xmGroupStateList = xmGroupStateService.selectListMapByWhere(xmGroupState);	//列出XmProjectGroupState列表
+		PageUtils.responePage(m, xmGroupStateList);
+		m.put("data",xmGroupStateList);
 		Tips tips=new Tips("查询成功");
 		m.put("tips", tips);
 		return m;
@@ -111,7 +111,7 @@ public class XmGroupStateController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功修改数据"); 
 		try{ 
-			int i= xmProjectGroupStateService.loadTasksToXmProjectGroupState((String) params.get("projectId"));
+			int i= xmGroupStateService.loadTasksToXmProjectGroupState((String) params.get("projectId"));
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -128,22 +128,22 @@ public class XmGroupStateController {
 		@ApiResponse(code = 200,response=XmProjectGroupState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmProjectGroupState(@RequestBody XmProjectGroupState xmProjectGroupState) {
+	public Map<String,Object> addXmProjectGroupState(@RequestBody XmProjectGroupState xmGroupState) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-			if(StringUtils.isEmpty(xmProjectGroupState.getId())) {
-				xmProjectGroupState.setId(xmProjectGroupStateService.createKey("id"));
+			if(StringUtils.isEmpty(xmGroupState.getId())) {
+				xmGroupState.setId(xmGroupStateService.createKey("id"));
 			}else{
-				 XmProjectGroupState xmProjectGroupStateQuery = new  XmProjectGroupState(xmProjectGroupState.getId());
-				if(xmProjectGroupStateService.countByWhere(xmProjectGroupStateQuery)>0){
+				 XmProjectGroupState xmGroupStateQuery = new  XmProjectGroupState(xmGroupState.getId());
+				if(xmGroupStateService.countByWhere(xmGroupStateQuery)>0){
 					tips.setFailureMsg("编号重复，请修改编号再提交");
 					m.put("tips", tips);
 					return m;
 				}
 			}
-			xmProjectGroupStateService.insert(xmProjectGroupState);
-			m.put("data",xmProjectGroupState);
+			xmGroupStateService.insert(xmGroupState);
+			m.put("data",xmGroupState);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -162,11 +162,11 @@ public class XmGroupStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmProjectGroupState(@RequestBody XmProjectGroupState xmProjectGroupState){
+	public Map<String,Object> delXmProjectGroupState(@RequestBody XmProjectGroupState xmGroupState){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
-			xmProjectGroupStateService.deleteByPk(xmProjectGroupState);
+			xmGroupStateService.deleteByPk(xmGroupState);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -185,12 +185,12 @@ public class XmGroupStateController {
 		@ApiResponse(code = 200,response=XmProjectGroupState.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmProjectGroupState(@RequestBody XmProjectGroupState xmProjectGroupState) {
+	public Map<String,Object> editXmProjectGroupState(@RequestBody XmProjectGroupState xmGroupState) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
-			xmProjectGroupStateService.updateByPk(xmProjectGroupState);
-			m.put("data",xmProjectGroupState);
+			xmGroupStateService.updateByPk(xmGroupState);
+			m.put("data",xmGroupState);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -211,11 +211,11 @@ public class XmGroupStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmProjectGroupState(@RequestBody List<XmProjectGroupState> xmProjectGroupStates) {
+	public Map<String,Object> batchDelXmProjectGroupState(@RequestBody List<XmProjectGroupState> xmGroupStates) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功删除"+xmProjectGroupStates.size()+"条数据"); 
+		Tips tips=new Tips("成功删除"+xmGroupStates.size()+"条数据"); 
 		try{ 
-			xmProjectGroupStateService.batchDelete(xmProjectGroupStates);
+			xmGroupStateService.batchDelete(xmGroupStates);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);

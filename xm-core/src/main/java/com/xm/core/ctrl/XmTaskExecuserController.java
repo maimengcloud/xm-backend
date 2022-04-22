@@ -59,7 +59,7 @@ public class XmTaskExecuserController {
 	private XmTaskService xmTaskService;
 	 
 	@Autowired
-	XmGroupUserService xmProjectGroupUserService;
+	XmGroupUserService xmGroupUserService;
 
 	@Autowired
 	ItemService itemService;
