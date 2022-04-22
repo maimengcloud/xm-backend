@@ -71,6 +71,7 @@ public class XmTaskWorkloadService extends BaseService {
 		super.update("batchSetSbillIdNull",ids);
 	}
 
+	@Transactional
 	public void editSomeFieldsWithSbillIds(Map<String, Object> xmTaskWorkloadMap, List<String> sbillIds) {
 		super.editSomeFields(xmTaskWorkloadMap);
 		if(sbillIds!=null && sbillIds.size()>0){
