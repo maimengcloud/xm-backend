@@ -156,6 +156,7 @@
 		<where>
 			<include refid="whereForMap"/>
 			<include refid="where"/>
+			and res.detail_id is null
 		</where>
 		group by res.project_id,res.task_id,res.userid
 		) as res on res.task_id = task.id
