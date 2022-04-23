@@ -154,8 +154,16 @@
 		sum(if(res.sstatus='4',ifnull(res.workload,0),0)) as had_set_sworkload
 		from xm_task_workload res
 		<where>
-			<include refid="whereForMap"/>
-			<include refid="where"/>
+			<if test="projectId!=null and projectId!=''">
+				and task.project_id=#{projectId}
+			</if>
+			<if test="taskId!=null and taskId!=''">
+				and task.id=#{taskId}
+			</if>
+			<if test="userid!=null and userid!=''">
+				and res.userid=#{userid}
+			</if>
+			and res.sstatus='1'
 			and res.detail_id is null
 		</where>
 		group by res.project_id,res.task_id,res.userid
