@@ -145,6 +145,9 @@ public class XmTaskWorkloadController {
 	public Map<String,Object> ListGroupByTaskIdAndUserid( @RequestParam Map<String,Object> xmTaskWorkload){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
+		RequestUtils.transformArray(xmTaskWorkload, "ids");
+		RequestUtils.transformArray( xmTaskWorkload, "wstatuses");
+		RequestUtils.transformArray( xmTaskWorkload, "sstatuses");
 		PageUtils.startPage(xmTaskWorkload);
 		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.ListGroupByTaskIdAndUserid(xmTaskWorkload);	//列出XmTaskWorkload列表
 		PageUtils.responePage(m, xmTaskWorkloadList);
