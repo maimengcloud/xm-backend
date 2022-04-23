@@ -135,6 +135,45 @@
 		</where>
 
 	</select>
+
+	<!--查询待结算工时-->
+	<select id="ListGroupByTaskIdAndUseridToSet" parameterType="HashMap" resultType="HashMap">
+		select res.*, task.project_name,task.name as task_name,task.budget_workload,task.act_workload,task_state,task_out,uni_inner_price,uni_out_price,settle_schemel
+		e.quote_workload,e.quote_amount,e.exec_user_branch_id,e.quote_end_time,e.quote_start_time,e.dist_userid,e.dist_username
+		from xm_task task
+		inner join (
+		select res.project_id,res.task_id,res.userid,
+		max(res.username) as username,
+		sum(ifnull(res.workload,0)) as workload,
+		sum(if(res.wstatus='0',ifnull(res.workload,0),0)) as to_confirm_workload,
+		sum(if(res.wstatus='1',ifnull(res.workload,0),0)) as had_confirm_workload,
+		sum(if(res.sstatus='0',ifnull(res.workload,0),0)) as not_need_set_workload,
+		sum(if(res.sstatus='1',ifnull(res.workload,0),0)) as to_set_sworkload,
+		sum(if(res.sstatus='2',ifnull(res.workload,0),0)) as had_commit_sworkload,
+		sum(if(res.sstatus='3',ifnull(res.workload,0),0)) as had_agree_sworkload,
+		sum(if(res.sstatus='4',ifnull(res.workload,0),0)) as had_set_sworkload
+		from xm_task_workload res
+		<where>
+			<include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+		group by res.project_id,res.task_id,res.userid
+		) as res on res.task_id = task.id
+		inner join xm_task_execuser e on res.task_id=e.task_id and res.userid=e.userid
+		<where>
+			<if test="projectId!=null and projectId!=''">
+				and task.project_id=#{projectId}
+			</if>
+			<if test="taskId!=null and taskId!=''">
+				and task.id=#{taskId}
+			</if>
+			<if test="userid!=null and userid!=''">
+				and res.userid=#{userid}
+			</if>
+		</where>
+
+	</select>
+
 	<!--结束 自定义sql函数区域-->
 	
 

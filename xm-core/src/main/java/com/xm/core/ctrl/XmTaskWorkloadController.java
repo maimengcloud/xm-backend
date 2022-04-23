@@ -149,6 +149,11 @@ public class XmTaskWorkloadController {
 		RequestUtils.transformArray( xmTaskWorkload, "wstatuses");
 		RequestUtils.transformArray( xmTaskWorkload, "sstatuses");
 		PageUtils.startPage(xmTaskWorkload);
+		String queryScope= (String) xmTaskWorkload.get("queryScope");
+		User user=LoginUtils.getCurrentUserInfo();
+		if("my".equals(queryScope)){
+			xmTaskWorkload.put("userid",user.getUserid());
+		}
 		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.ListGroupByTaskIdAndUserid(xmTaskWorkload);	//列出XmTaskWorkload列表
 		PageUtils.responePage(m, xmTaskWorkloadList);
 		m.put("data",xmTaskWorkloadList);
@@ -156,6 +161,32 @@ public class XmTaskWorkloadController {
 		m.put("tips", tips);
 		return m;
 	}
+
+	@ApiOperation( value = "按任务及报工人查询待确认工时",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/ListGroupByTaskIdAndUseridToSet",method=RequestMethod.GET)
+	public Map<String,Object> ListGroupByTaskIdAndUseridToSet( @RequestParam Map<String,Object> xmTaskWorkload){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		RequestUtils.transformArray(xmTaskWorkload, "ids");
+		RequestUtils.transformArray( xmTaskWorkload, "wstatuses");
+		RequestUtils.transformArray( xmTaskWorkload, "sstatuses");
+		PageUtils.startPage(xmTaskWorkload);
+		String queryScope= (String) xmTaskWorkload.get("queryScope");
+		User user=LoginUtils.getCurrentUserInfo();
+		if("my".equals(queryScope)){
+			xmTaskWorkload.put("userid",user.getUserid());
+		}
+		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.ListGroupByTaskIdAndUseridToSet(xmTaskWorkload);	//列出XmTaskWorkload列表
+		PageUtils.responePage(m, xmTaskWorkloadList);
+		m.put("data",xmTaskWorkloadList);
+
+		m.put("tips", tips);
+		return m;
+	}
+
 
 	@ApiOperation( value = "新增一条工时登记表信息",notes=" ")
 	@ApiResponses({

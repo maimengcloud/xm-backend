@@ -86,5 +86,9 @@ public class XmTaskWorkloadService extends BaseService {
 	public List<Map<String, Object>> ListGroupByTaskIdAndUserid(Map<String, Object> xmTaskWorkload) {
 		return super.selectList("selectListMapGroupByTaskIdAndUserid",xmTaskWorkload);
 	}
+
+	public List<Map<String, Object>> ListGroupByTaskIdAndUseridToSet(Map<String, Object> xmTaskWorkload) {
+		return super.selectList("ListGroupByTaskIdAndUseridToSet",xmTaskWorkload);
+	}
 }
 
