@@ -21,7 +21,7 @@
     </sql>
 
 	<update id="updateByWorkloadList" parameterType="List">
-		update xm_task_sbill res left join (
+		update xm_task_sbill res inner join (
 		select w.sbill_id,sum(ifnull(w.amt,0)) as amt,sum(ifnull(w.samt,0)) as samt,sum(ifnull(w.sworkload,0)) as workload from xm_task_workload w
 		where w.sbill_id in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
