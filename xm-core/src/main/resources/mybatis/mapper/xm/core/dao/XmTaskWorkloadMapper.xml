@@ -163,6 +163,13 @@
 			<if test="userid!=null and userid!=''">
 				and res.userid=#{userid}
 			</if>
+			<if test="userTasks!=null">
+				and (res.userid,res.task_id) in
+				<foreach collection="userTasks" item="item" index="index" open="(" separator="," close=")" >
+					( #{item.userid,item.taskId})
+				</foreach>
+			</if>
+
 			and res.sstatus='1'
 			and res.detail_id is null
 		</where>

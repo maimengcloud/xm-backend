@@ -3,8 +3,7 @@ package com.xm.core.ctrl;
 import java.math.BigDecimal;
 import java.util.*;
 
-import com.mdp.core.utils.LogUtils;
-import com.mdp.core.utils.ResponseHelper;
+import com.mdp.core.utils.*;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.tpa.client.entity.AppShopConfig;
@@ -14,6 +13,7 @@ import com.xm.core.service.XmTaskSbillDetailService;
 import com.xm.core.service.XmTaskService;
 import com.xm.core.service.XmTaskWorkloadService;
 import com.xm.core.vo.BatchJoinToSbillVo;
+import com.xm.core.vo.UserTaskVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +39,6 @@ import static com.mdp.core.utils.BaseUtils.*;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.mybatis.PageUtils;
-import com.mdp.core.utils.RequestUtils;
 import com.xm.core.service.XmTaskSbillService;
 import com.xm.core.entity.XmTaskSbill;
 /**
@@ -220,6 +219,23 @@ public class XmTaskSbillController {
 			if(details!=null && details.size()>0){
 				//进行合并操作
 			}
+
+			List<XmTaskSbillDetail> canAdd=new ArrayList<>();
+			for (Map<String,Object> userTask : toSetUserTasks) {
+				XmTaskSbillDetail detail= BaseUtils.fromMap(userTask,XmTaskSbillDetail.class);
+				if(details.stream().filter(i->i.getTaskId().equals(detail.getTaskId()) && i.getUserid().equals(detail.getUserid())).findAny().isPresent()){
+					continue;
+				}
+				detail.setId(this.xmTaskSbillDetailService.createKey("id"));
+				detail.setBizDate(DateUtils.getDate("yyyy-MM-dd"));
+				detail.setBizMonth(DateUtils.getDate("yyyy-MM"));
+				detail.setSbillId(batchJoinToSbill.getSbillId());
+				detail.setProjectId(projectId);
+				detail.setCtime(new Date());
+				canAdd.add(detail);
+			}
+			xmTaskSbillDetailService.batchInsert(canAdd);
+			//todo 需要更新工时明细表detailId..
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
