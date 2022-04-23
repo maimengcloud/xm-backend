@@ -64,17 +64,6 @@
 		</where>
 	</update>
 
-	<update id="editSomeFields" parameterType="HashMap">
-		update  xm_task_workload res
-		<set>
-			<include refid="someFieldSet"/>
-		</set>
-		where id in
-		<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-			#{item}
-		</foreach>
-	</update>
-
 	<select id="listProjectWorkloadSetDay" parameterType="HashMap" resultType="HashMap">
 		select
 		res.biz_date,
@@ -167,7 +156,7 @@
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmTaskWorkload" resultType="long">
-		select count(1) from xm_task_workload res
+		select count(*) from xm_task_workload res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -177,7 +166,7 @@
 		insert into xm_task_workload(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{sbillId},#{stime},#{sstatus},#{amt},#{samt},#{workload},#{rworkload},#{cusername},#{projectId},#{sworkload}
+		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{detailId}
 		)
 	</insert>
 	
@@ -227,6 +216,18 @@
 			where id = #{item.id}  
 		</foreach> 
 	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_task_workload
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from xm_task_workload 
@@ -240,7 +241,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,sbill_id,stime,sstatus,amt,samt,workload,rworkload,cusername,project_id,sworkload
+		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,detail_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -255,16 +256,13 @@
 		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
 		<if test="ttype != null and ttype != ''">      and res.ttype = #{ttype}     </if>
 		<if test="id != null and id != ''">      and res.id = #{id}     </if>
-		<if test="sbillId != null and sbillId != ''">      and res.sbill_id = #{sbillId}     </if>
 		<if test="stime != null">      and date_format(res.stime,'%Y-%m-%d') = date_format(#{stime},'%Y-%m-%d')     </if>
 		<if test="sstatus != null and sstatus != ''">      and res.sstatus = #{sstatus}     </if>
-		<if test="amt != null and amt != ''">      and res.amt = #{amt}     </if>
-		<if test="samt != null and samt != ''">      and res.samt = #{samt}     </if>
 		<if test="workload != null and workload != ''">      and res.workload = #{workload}     </if>
 		<if test="rworkload != null and rworkload != ''">      and res.rworkload = #{rworkload}     </if>
 		<if test="cusername != null and cusername != ''">      and res.cusername = #{cusername}     </if>
 		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
-		<if test="sworkload != null and sworkload != ''">      and res.sworkload = #{sworkload}     </if>
+		<if test="detailId != null and detailId != ''">      and res.detail_id = #{detailId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -277,16 +275,13 @@
 		wstatus = #{wstatus},
 		remark = #{remark},
 		ttype = #{ttype},
-		sbill_id = #{sbillId},
 		stime = #{stime},
 		sstatus = #{sstatus},
-		amt = #{amt},
-		samt = #{samt},
 		workload = #{workload},
 		rworkload = #{rworkload},
 		cusername = #{cusername},
 		project_id = #{projectId},
-		sworkload = #{sworkload}
+		detail_id = #{detailId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
@@ -298,16 +293,13 @@
 		<if test="wstatus != null and wstatus != ''"> wstatus = #{wstatus},     </if>
 		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
 		<if test="ttype != null and ttype != ''"> ttype = #{ttype},     </if>
-		<if test="sbillId != null and sbillId != ''"> sbill_id = #{sbillId},     </if>
 		<if test="stime != null"> stime = #{stime},     </if>
 		<if test="sstatus != null and sstatus != ''"> sstatus = #{sstatus},     </if>
-		<if test="amt != null and amt != ''"> amt = #{amt},     </if>
-		<if test="samt != null and samt != ''"> samt = #{samt},     </if>
 		<if test="workload != null and workload != ''"> workload = #{workload},     </if>
 		<if test="rworkload != null and rworkload != ''"> rworkload = #{rworkload},     </if>
 		<if test="cusername != null and cusername != ''"> cusername = #{cusername},     </if>
 		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
-		<if test="sworkload != null and sworkload != ''"> sworkload = #{sworkload},     </if>
+		<if test="detailId != null and detailId != ''"> detail_id = #{detailId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -320,15 +312,12 @@
 			wstatus = #{item.wstatus},
 			remark = #{item.remark},
 			ttype = #{item.ttype},
-			sbill_id = #{item.sbillId},
 			stime = #{item.stime},
 			sstatus = #{item.sstatus},
-			amt = #{item.amt},
-			samt = #{item.samt},
 			workload = #{item.workload},
 			rworkload = #{item.rworkload},
 			cusername = #{item.cusername},
 			project_id = #{item.projectId},
-			sworkload = #{item.sworkload}
+			detail_id = #{item.detailId}
 	</sql>
 </mapper>

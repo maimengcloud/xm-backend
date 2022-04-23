@@ -8,9 +8,9 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskSbill所有属性名: <br>
- *	id,title,amt,ctime,cuserid,cusername,remark,branchId,deptid,cpId,cpName,workload,bizMonth,bizDate,bizFlowState,bizProcInstId,ltime,status,fmsg,projectId,projectName;<br>
+ *	id,title,amt,ctime,cuserid,cusername,remark,branchId,deptid,cpId,cpName,workload,bizMonth,bizDate,bizFlowState,bizProcInstId,ltime,status,fmsg,projectId,projectName,userCnt;<br>
  * 表 xm_task_sbill 任务结算表的所有字段名: <br>
- *	id,title,amt,ctime,cuserid,cusername,remark,branch_id,deptid,cp_id,cp_name,workload,biz_month,biz_date,biz_flow_state,biz_proc_inst_id,ltime,status,fmsg,project_id,project_name;<br>
+ *	id,title,amt,ctime,cuserid,cusername,remark,branch_id,deptid,cp_id,cp_name,workload,biz_month,biz_date,biz_flow_state,biz_proc_inst_id,ltime,status,fmsg,project_id,project_name,user_cnt;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -82,6 +82,9 @@ public class XmTaskSbill  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="项目名称",allowEmptyValue=true,example="",allowableValues="")
 	String projectName;
+	
+	@ApiModelProperty(notes="结算人数",allowEmptyValue=true,example="",allowableValues="")
+	Integer userCnt;
 
 	/**结算单据编号**/
 	public XmTaskSbill(String id) {
@@ -218,6 +221,12 @@ public class XmTaskSbill  implements java.io.Serializable {
 	public void setProjectName(String projectName) {
 		this.projectName = projectName;
 	}
+	/**
+	 * 结算人数
+	 **/
+	public void setUserCnt(Integer userCnt) {
+		this.userCnt = userCnt;
+	}
 	
 	/**
 	 * 结算单据编号
@@ -344,6 +353,12 @@ public class XmTaskSbill  implements java.io.Serializable {
 	 **/
 	public String getProjectName() {
 		return this.projectName;
+	}
+	/**
+	 * 结算人数
+	 **/
+	public Integer getUserCnt() {
+		return this.userCnt;
 	}
 
 }

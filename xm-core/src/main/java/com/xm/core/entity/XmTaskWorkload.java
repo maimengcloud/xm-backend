@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskWorkload所有属性名: <br>
- *	userid,username,ctime,taskId,cuserid,bizDate,wstatus,remark,ttype,id,sbillId,stime,sstatus,amt,samt,workload,rworkload,cusername,projectId,sworkload;<br>
+ *	userid,username,ctime,taskId,cuserid,bizDate,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,projectId,detailId;<br>
  * 表 xm_task_workload 工时登记表的所有字段名: <br>
- *	userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,sbill_id,stime,sstatus,amt,samt,workload,rworkload,cusername,project_id,sworkload;<br>
+ *	userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,detail_id;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -50,20 +50,11 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	@ApiModelProperty(notes="任务类型-关联字典taskType",allowEmptyValue=true,example="",allowableValues="")
 	String ttype;
 	
-	@ApiModelProperty(notes="结算单据编号",allowEmptyValue=true,example="",allowableValues="")
-	String sbillId;
-	
 	@ApiModelProperty(notes="结算提交时间",allowEmptyValue=true,example="",allowableValues="")
 	Date stime;
 	
 	@ApiModelProperty(notes="结算状态0-无需结算，1-待结算2-已提交3-已通过4-已结算",allowEmptyValue=true,example="",allowableValues="")
 	String sstatus;
-	
-	@ApiModelProperty(notes="工时对应金额",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal amt;
-	
-	@ApiModelProperty(notes="结算工时对应结算金额",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal samt;
 	
 	@ApiModelProperty(notes="工时，一个task_id可多次提交，小时",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal workload;
@@ -77,8 +68,8 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	@ApiModelProperty(notes="归属项目",allowEmptyValue=true,example="",allowableValues="")
 	String projectId;
 	
-	@ApiModelProperty(notes="结算工时，用于结算，默认=workload",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal sworkload;
+	@ApiModelProperty(notes="结算明细编号，指向xm_task_sbill_detail.id",allowEmptyValue=true,example="",allowableValues="")
+	String detailId;
 
 	/**主键**/
 	public XmTaskWorkload(String id) {
@@ -150,12 +141,6 @@ public class XmTaskWorkload  implements java.io.Serializable {
 		this.id = id;
 	}
 	/**
-	 * 结算单据编号
-	 **/
-	public void setSbillId(String sbillId) {
-		this.sbillId = sbillId;
-	}
-	/**
 	 * 结算提交时间
 	 **/
 	public void setStime(Date stime) {
@@ -166,18 +151,6 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	 **/
 	public void setSstatus(String sstatus) {
 		this.sstatus = sstatus;
-	}
-	/**
-	 * 工时对应金额
-	 **/
-	public void setAmt(BigDecimal amt) {
-		this.amt = amt;
-	}
-	/**
-	 * 结算工时对应结算金额
-	 **/
-	public void setSamt(BigDecimal samt) {
-		this.samt = samt;
 	}
 	/**
 	 * 工时，一个task_id可多次提交，小时
@@ -204,10 +177,10 @@ public class XmTaskWorkload  implements java.io.Serializable {
 		this.projectId = projectId;
 	}
 	/**
-	 * 结算工时，用于结算，默认=workload
+	 * 结算明细编号，指向xm_task_sbill_detail.id
 	 **/
-	public void setSworkload(BigDecimal sworkload) {
-		this.sworkload = sworkload;
+	public void setDetailId(String detailId) {
+		this.detailId = detailId;
 	}
 	
 	/**
@@ -271,12 +244,6 @@ public class XmTaskWorkload  implements java.io.Serializable {
 		return this.id;
 	}
 	/**
-	 * 结算单据编号
-	 **/
-	public String getSbillId() {
-		return this.sbillId;
-	}
-	/**
 	 * 结算提交时间
 	 **/
 	public Date getStime() {
@@ -287,18 +254,6 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	 **/
 	public String getSstatus() {
 		return this.sstatus;
-	}
-	/**
-	 * 工时对应金额
-	 **/
-	public BigDecimal getAmt() {
-		return this.amt;
-	}
-	/**
-	 * 结算工时对应结算金额
-	 **/
-	public BigDecimal getSamt() {
-		return this.samt;
 	}
 	/**
 	 * 工时，一个task_id可多次提交，小时
@@ -325,10 +280,10 @@ public class XmTaskWorkload  implements java.io.Serializable {
 		return this.projectId;
 	}
 	/**
-	 * 结算工时，用于结算，默认=workload
+	 * 结算明细编号，指向xm_task_sbill_detail.id
 	 **/
-	public BigDecimal getSworkload() {
-		return this.sworkload;
+	public String getDetailId() {
+		return this.detailId;
 	}
 
 }

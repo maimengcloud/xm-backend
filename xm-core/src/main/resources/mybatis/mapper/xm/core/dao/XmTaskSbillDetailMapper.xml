@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xm.core.entity.XmTaskSbillDetail">
+	
+	
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
+
+
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from xm_task_sbill_detail res
+		<where>
+		    <include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmTaskSbillDetail" resultType="com.xm.core.entity.XmTaskSbillDetail">
+		select * from xm_task_sbill_detail res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.xm.core.entity.XmTaskSbillDetail" resultType="com.xm.core.entity.XmTaskSbillDetail">
+		select * from xm_task_sbill_detail res
+		where 
+			res.id = #{id}
+	</select>
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmTaskSbillDetail">
+        select * from xm_task_sbill_detail res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from xm_task_sbill_detail res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.xm.core.entity.XmTaskSbillDetail" resultType="long">
+		select count(*) from xm_task_sbill_detail res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.xm.core.entity.XmTaskSbillDetail" useGeneratedKeys="false"   keyProperty="id">
+		insert into xm_task_sbill_detail(
+			<include refid="columns"/>
+		) values (
+		#{userid},#{username},#{ctime},#{taskId},#{bizDate},#{remark},#{id},#{sbillId},#{stime},#{sstatus},#{amt},#{samt},#{workload},#{projectId},#{sworkload},#{bizMonth},#{budgetAt},#{budgetWorkload},#{initWorkload},#{quoteAt},#{quoteWorkload},#{sschemel},#{uniPrice},#{qendTime},#{qstartTime},#{actEndTime},#{actStartTime}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmTaskSbillDetail">
+		delete from xm_task_sbill_detail res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmTaskSbillDetail">
+		delete from xm_task_sbill_detail 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmTaskSbillDetail">
+		update  xm_task_sbill_detail 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.xm.core.entity.XmTaskSbillDetail">
+		update  xm_task_sbill_detail 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  xm_task_sbill_detail 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_task_sbill_detail
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from xm_task_sbill_detail 
+			where
+			(id) in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    (  #{item.id} )
+                </foreach>
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time
+	</sql>
+
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="userid != null and userid != ''">      and res.userid = #{userid}     </if>
+		<if test="username != null and username != ''">      and res.username = #{username}     </if>
+		<if test="ctime != null">      and date_format(res.ctime,'%Y-%m-%d') = date_format(#{ctime},'%Y-%m-%d')     </if>
+		<if test="taskId != null and taskId != ''">      and res.task_id = #{taskId}     </if>
+		<if test="bizDate != null and bizDate != ''">      and res.biz_date = #{bizDate}     </if>
+		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="sbillId != null and sbillId != ''">      and res.sbill_id = #{sbillId}     </if>
+		<if test="stime != null">      and date_format(res.stime,'%Y-%m-%d') = date_format(#{stime},'%Y-%m-%d')     </if>
+		<if test="sstatus != null and sstatus != ''">      and res.sstatus = #{sstatus}     </if>
+		<if test="amt != null and amt != ''">      and res.amt = #{amt}     </if>
+		<if test="samt != null and samt != ''">      and res.samt = #{samt}     </if>
+		<if test="workload != null and workload != ''">      and res.workload = #{workload}     </if>
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
+		<if test="sworkload != null and sworkload != ''">      and res.sworkload = #{sworkload}     </if>
+		<if test="bizMonth != null and bizMonth != ''">      and res.biz_month = #{bizMonth}     </if>
+		<if test="budgetAt != null and budgetAt != ''">      and res.budget_at = #{budgetAt}     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
+		<if test="initWorkload != null and initWorkload != ''">      and res.init_workload = #{initWorkload}     </if>
+		<if test="quoteAt != null and quoteAt != ''">      and res.quote_at = #{quoteAt}     </if>
+		<if test="quoteWorkload != null and quoteWorkload != ''">      and res.quote_workload = #{quoteWorkload}     </if>
+		<if test="sschemel != null and sschemel != ''">      and res.sschemel = #{sschemel}     </if>
+		<if test="uniPrice != null and uniPrice != ''">      and res.uni_price = #{uniPrice}     </if>
+		<if test="qendTime != null">      and date_format(res.qend_time,'%Y-%m-%d') = date_format(#{qendTime},'%Y-%m-%d')     </if>
+		<if test="qstartTime != null">      and date_format(res.qstart_time,'%Y-%m-%d') = date_format(#{qstartTime},'%Y-%m-%d')     </if>
+		<if test="actEndTime != null">      and date_format(res.act_end_time,'%Y-%m-%d') = date_format(#{actEndTime},'%Y-%m-%d')     </if>
+		<if test="actStartTime != null">      and date_format(res.act_start_time,'%Y-%m-%d') = date_format(#{actStartTime},'%Y-%m-%d')     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		userid = #{userid},
+		username = #{username},
+		ctime = #{ctime},
+		task_id = #{taskId},
+		biz_date = #{bizDate},
+		remark = #{remark},
+		sbill_id = #{sbillId},
+		stime = #{stime},
+		sstatus = #{sstatus},
+		amt = #{amt},
+		samt = #{samt},
+		workload = #{workload},
+		project_id = #{projectId},
+		sworkload = #{sworkload},
+		biz_month = #{bizMonth},
+		budget_at = #{budgetAt},
+		budget_workload = #{budgetWorkload},
+		init_workload = #{initWorkload},
+		quote_at = #{quoteAt},
+		quote_workload = #{quoteWorkload},
+		sschemel = #{sschemel},
+		uni_price = #{uniPrice},
+		qend_time = #{qendTime},
+		qstart_time = #{qstartTime},
+		act_end_time = #{actEndTime},
+		act_start_time = #{actStartTime}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
+		<if test="username != null and username != ''"> username = #{username},     </if>
+		<if test="ctime != null"> ctime = #{ctime},     </if>
+		<if test="taskId != null and taskId != ''"> task_id = #{taskId},     </if>
+		<if test="bizDate != null and bizDate != ''"> biz_date = #{bizDate},     </if>
+		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
+		<if test="sbillId != null and sbillId != ''"> sbill_id = #{sbillId},     </if>
+		<if test="stime != null"> stime = #{stime},     </if>
+		<if test="sstatus != null and sstatus != ''"> sstatus = #{sstatus},     </if>
+		<if test="amt != null and amt != ''"> amt = #{amt},     </if>
+		<if test="samt != null and samt != ''"> samt = #{samt},     </if>
+		<if test="workload != null and workload != ''"> workload = #{workload},     </if>
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
+		<if test="sworkload != null and sworkload != ''"> sworkload = #{sworkload},     </if>
+		<if test="bizMonth != null and bizMonth != ''"> biz_month = #{bizMonth},     </if>
+		<if test="budgetAt != null and budgetAt != ''"> budget_at = #{budgetAt},     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
+		<if test="initWorkload != null and initWorkload != ''"> init_workload = #{initWorkload},     </if>
+		<if test="quoteAt != null and quoteAt != ''"> quote_at = #{quoteAt},     </if>
+		<if test="quoteWorkload != null and quoteWorkload != ''"> quote_workload = #{quoteWorkload},     </if>
+		<if test="sschemel != null and sschemel != ''"> sschemel = #{sschemel},     </if>
+		<if test="uniPrice != null and uniPrice != ''"> uni_price = #{uniPrice},     </if>
+		<if test="qendTime != null"> qend_time = #{qendTime},     </if>
+		<if test="qstartTime != null"> qstart_time = #{qstartTime},     </if>
+		<if test="actEndTime != null"> act_end_time = #{actEndTime},     </if>
+		<if test="actStartTime != null"> act_start_time = #{actStartTime},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			userid = #{item.userid},
+			username = #{item.username},
+			ctime = #{item.ctime},
+			task_id = #{item.taskId},
+			biz_date = #{item.bizDate},
+			remark = #{item.remark},
+			sbill_id = #{item.sbillId},
+			stime = #{item.stime},
+			sstatus = #{item.sstatus},
+			amt = #{item.amt},
+			samt = #{item.samt},
+			workload = #{item.workload},
+			project_id = #{item.projectId},
+			sworkload = #{item.sworkload},
+			biz_month = #{item.bizMonth},
+			budget_at = #{item.budgetAt},
+			budget_workload = #{item.budgetWorkload},
+			init_workload = #{item.initWorkload},
+			quote_at = #{item.quoteAt},
+			quote_workload = #{item.quoteWorkload},
+			sschemel = #{item.sschemel},
+			uni_price = #{item.uniPrice},
+			qend_time = #{item.qendTime},
+			qstart_time = #{item.qstartTime},
+			act_end_time = #{item.actEndTime},
+			act_start_time = #{item.actStartTime}
+	</sql>
+</mapper>
