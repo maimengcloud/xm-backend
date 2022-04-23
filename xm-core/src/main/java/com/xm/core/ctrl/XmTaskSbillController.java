@@ -4,10 +4,16 @@ import java.math.BigDecimal;
 import java.util.*;
 
 import com.mdp.core.utils.LogUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.tpa.client.entity.AppShopConfig;
 import com.mysql.cj.protocol.x.XMessage;
+import com.xm.core.entity.XmTaskSbillDetail;
+import com.xm.core.service.XmTaskSbillDetailService;
+import com.xm.core.service.XmTaskService;
+import com.xm.core.service.XmTaskWorkloadService;
+import com.xm.core.vo.BatchJoinToSbillVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,9 +62,15 @@ public class XmTaskSbillController {
 	
 	@Autowired
 	private XmTaskSbillService xmTaskSbillService;
-	 
-		
- 
+	@Autowired
+	XmTaskSbillDetailService xmTaskSbillDetailService;
+
+	@Autowired
+	XmTaskService xmTaskService;
+
+
+	@Autowired
+	XmTaskWorkloadService xmTaskWorkloadService;
 	
 	@ApiOperation( value = "查询任务结算表信息列表",notes=" ") 
 	@ApiResponses({
@@ -163,7 +175,61 @@ public class XmTaskSbillController {
 		return m;
 	}
 
-	
+
+
+	@ApiOperation( value = "批量将工时加入到一个结算单中",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTaskSbill.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@RequestMapping(value="/batchJoinToSbill",method=RequestMethod.POST)
+	public Map<String,Object> batchJoinToSbill(@RequestBody BatchJoinToSbillVo batchJoinToSbill) {
+
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新一条数据");
+		if(!StringUtils.hasText(batchJoinToSbill.getSbillId())){
+			return ResponseHelper.failed("sbillId-0","请上送结算单编号");
+		}
+		if(batchJoinToSbill.getUserTasks()==null){
+			return ResponseHelper.failed("userTasks-0","请上送userTasks");
+		}
+		User user=LoginUtils.getCurrentUserInfo();
+		try{
+			XmTaskSbill sbillDb=this.xmTaskSbillService.selectOneById(batchJoinToSbill.getSbillId());
+			if(sbillDb==null){
+				return ResponseHelper.failed("sbill-0","结算单不存在");
+			}
+			if(!"0".equals(sbillDb.getStatus())){
+				return ResponseHelper.failed("status-not-0","结算单已提交，不允许再加入工时");
+			}
+			if(user.getUserid().equals(sbillDb.getCuserid())){
+				return ResponseHelper.failed("cuserid-0","结算单不是您的结算单，您不能操作");
+			}
+ 			List<Map<String,Object>> toSetUserTasks=xmTaskWorkloadService.ListGroupByTaskIdAndUseridToSet(map("userTasks",batchJoinToSbill.getUserTasks()));
+			if(toSetUserTasks==null && toSetUserTasks.size()==0){
+				return ResponseHelper.failed("userTasks-0","不存在需要结算的用户列表");
+			}
+			if(toSetUserTasks.stream().filter(i->!"2".equals(i.get("taskState"))).findAny().isPresent()){
+				return ResponseHelper.failed("taskState-not-2","任务不是完工状态，不允许结算");
+			}
+			String projectId= sbillDb.getProjectId();
+			if(toSetUserTasks.stream().filter(i->!projectId.equals(i.get("projectId"))).findAny().isPresent()){
+				return ResponseHelper.failed("projectId-not-same","请选择同一个项目的任务加入工时单");
+			}
+			//检查是否已有同样的数据加入了结算单，如果有，需要合并
+			List<XmTaskSbillDetail> details=xmTaskSbillDetailService.selectListByUserTasks(batchJoinToSbill);
+			if(details!=null && details.size()>0){
+				//进行合并操作
+			}
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 
 	@ApiOperation( value = "根据主键修改一条任务结算表信息",notes=" ")
 	@ApiResponses({

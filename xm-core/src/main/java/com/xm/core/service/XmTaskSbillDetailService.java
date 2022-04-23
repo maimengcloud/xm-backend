@@ -1,5 +1,7 @@
 package com.xm.core.service;
 
+import com.xm.core.vo.BatchJoinToSbillVo;
+import com.xm.core.vo.UserTaskVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.List;
@@ -20,5 +22,8 @@ import com.xm.core.entity.XmTaskSbillDetail;
 public class XmTaskSbillDetailService extends BaseService {
 	static Logger logger =LoggerFactory.getLogger(XmTaskSbillDetailService.class);
 
+    public List<XmTaskSbillDetail> selectListByUserTasks(BatchJoinToSbillVo batchJoinToSbillVo) {
+        return super.selectList("selectListByUserTasks",batchJoinToSbillVo);
+    }
 }
 
