@@ -128,7 +128,7 @@
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmTaskExecuser" resultType="long">
-		select count(1) from xm_task_execuser res
+		select count(*) from xm_task_execuser res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -138,7 +138,7 @@
 		insert into xm_task_execuser(
 			<include refid="columns"/>
 		) values (
-		#{createTime},#{taskId},#{userid},#{startTime},#{endTime},#{status},#{remarks},#{createUserid},#{createUsername},#{username},#{matchScore},#{quoteWeekday},#{quoteAmount},#{quoteTime},#{projectId},#{phaseId},#{skillRemark},#{quoteWorkload},#{quoteStartTime},#{quoteEndTime},#{branchId},#{phaseName},#{taskName},#{distUserid},#{distUsername},#{execUserBranchid},#{shareKey}
+		#{createTime},#{taskId},#{userid},#{startTime},#{endTime},#{status},#{remarks},#{createUserid},#{createUsername},#{username},#{matchScore},#{quoteWeekday},#{quoteAmount},#{quoteTime},#{projectId},#{phaseId},#{skillRemark},#{quoteWorkload},#{quoteStartTime},#{quoteEndTime},#{branchId},#{phaseName},#{taskName},#{distUserid},#{distUsername},#{execUserBranchId},#{shareKey}
 		)
 	</insert>
 	
@@ -188,6 +188,18 @@
 			where task_id = #{item.taskId} and userid = #{item.userid}  
 		</foreach> 
 	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_task_execuser
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (task_id, userid) in
+             <foreach collection="pkList" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item.taskId},  #{item.userid})
+             </foreach>
+	</delete>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from xm_task_execuser 
@@ -201,7 +213,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branchid,share_key
+		create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branch_id,share_key
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -231,7 +243,7 @@
 		<if test="taskName != null and taskName != ''">      and res.task_name = #{taskName}     </if>
 		<if test="distUserid != null and distUserid != ''">      and res.dist_userid = #{distUserid}     </if>
 		<if test="distUsername != null and distUsername != ''">      and res.dist_username = #{distUsername}     </if>
-		<if test="execUserBranchid != null and execUserBranchid != ''">      and res.exec_user_branchid = #{execUserBranchid}     </if>
+		<if test="execUserBranchId != null and execUserBranchId != ''">      and res.exec_user_branch_id = #{execUserBranchId}     </if>
 		<if test="shareKey != null and shareKey != ''">      and res.share_key = #{shareKey}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
@@ -259,7 +271,7 @@
 		task_name = #{taskName},
 		dist_userid = #{distUserid},
 		dist_username = #{distUsername},
-		exec_user_branchid = #{execUserBranchid},
+		exec_user_branch_id = #{execUserBranchId},
 		share_key = #{shareKey}
 	</sql>
 	<sql id="someFieldSet">
@@ -286,7 +298,7 @@
 		<if test="taskName != null and taskName != ''"> task_name = #{taskName},     </if>
 		<if test="distUserid != null and distUserid != ''"> dist_userid = #{distUserid},     </if>
 		<if test="distUsername != null and distUsername != ''"> dist_username = #{distUsername},     </if>
-		<if test="execUserBranchid != null and execUserBranchid != ''"> exec_user_branchid = #{execUserBranchid},     </if>
+		<if test="execUserBranchId != null and execUserBranchId != ''"> exec_user_branch_id = #{execUserBranchId},     </if>
 		<if test="shareKey != null and shareKey != ''"> share_key = #{shareKey},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
@@ -314,7 +326,7 @@
 			task_name = #{item.taskName},
 			dist_userid = #{item.distUserid},
 			dist_username = #{item.distUsername},
-			exec_user_branchid = #{item.execUserBranchid},
+			exec_user_branch_id = #{item.execUserBranchId},
 			share_key = #{item.shareKey}
 	</sql>
 </mapper>

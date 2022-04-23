@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskExecuser所有属性名: <br>
- *	createTime,taskId,userid,startTime,endTime,status,remarks,createUserid,createUsername,username,matchScore,quoteWeekday,quoteAmount,quoteTime,projectId,phaseId,skillRemark,quoteWorkload,quoteStartTime,quoteEndTime,branchId,phaseName,taskName,distUserid,distUsername,execUserBranchid,shareKey;<br>
+ *	createTime,taskId,userid,startTime,endTime,status,remarks,createUserid,createUsername,username,matchScore,quoteWeekday,quoteAmount,quoteTime,projectId,phaseId,skillRemark,quoteWorkload,quoteStartTime,quoteEndTime,branchId,phaseName,taskName,distUserid,distUsername,execUserBranchId,shareKey;<br>
  * 表 xm_task_execuser xm_task_execuser的所有字段名: <br>
- *	create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branchid,share_key;<br>
+ *	create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branch_id,share_key;<br>
  * 当前主键(包括多主键):<br>
  *	task_id,userid;<br>
  */
@@ -96,7 +96,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	String distUsername;
 	
 	@ApiModelProperty(notes="执行人归属公司",allowEmptyValue=true,example="",allowableValues="")
-	String execUserBranchid;
+	String execUserBranchId;
 	
 	@ApiModelProperty(notes="分享码",allowEmptyValue=true,example="",allowableValues="")
 	String shareKey;
@@ -264,8 +264,8 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	/**
 	 * 执行人归属公司
 	 **/
-	public void setExecUserBranchid(String execUserBranchid) {
-		this.execUserBranchid = execUserBranchid;
+	public void setExecUserBranchId(String execUserBranchId) {
+		this.execUserBranchId = execUserBranchId;
 	}
 	/**
 	 * 分享码
@@ -427,8 +427,8 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	/**
 	 * 执行人归属公司
 	 **/
-	public String getExecUserBranchid() {
-		return this.execUserBranchid;
+	public String getExecUserBranchId() {
+		return this.execUserBranchId;
 	}
 	/**
 	 * 分享码
