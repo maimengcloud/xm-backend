@@ -43,11 +43,9 @@ public class XmTaskSbillService extends BaseService {
 
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteByPkAndReturnWorkload(XmTaskSbill xmTaskSbill){
+
+		xmTaskWorkloadService.updateStatusBySbillIdBySbillDel(xmTaskSbill.getId());
 		this.deleteByPk(xmTaskSbill);
-		XmTaskWorkload xmTaskWorkload = new XmTaskWorkload();
-		xmTaskWorkload.setSbillId(xmTaskSbill.getId());
-		xmTaskWorkload.setSstatus("1");//标记为待提交结算
-		xmTaskWorkloadService.updateStatusBySbillIdBySbillDel(xmTaskWorkload);
 	}
 
 	/**
@@ -139,28 +137,21 @@ public class XmTaskSbillService extends BaseService {
 		xmTaskSbill.setBizMonth(DateUtils.format(toDay,"yyyy-MM"));
 		xmTaskSbill.setBizDate(DateUtils.format(toDay,"yyyy-MM-dd"));
 		xmTaskSbill.setBizDate(bizFlowState);
-
 		if("1".equals(bizFlowState)){
 			//发起审核，更新sbill表状态，工时登记表状态无需更新
 			xmTaskSbill.setStatus("1");
+			xmTaskWorkloadService.updateStatusBySbillIdByFlowState(xmTaskSbill.getId(),"2");
 		}else if("2".equals(bizFlowState)){
 			//审核通过，工时登记表更新为已通过-3
 			xmTaskSbill.setStatus("2");//结算单状态-已通过
-			XmTaskWorkload queryMap =new XmTaskWorkload();
-			queryMap.setSbillId(xmTaskSbill.getId());
-			List<XmTaskWorkload> xmTaskWorkloadList = xmTaskWorkloadService.selectListByWhere(queryMap);
-			if(xmTaskWorkloadList.size()>0){
-				xmTaskWorkloadList.forEach(item->item.setSstatus("3"));
-				xmTaskWorkloadService.batchUpdate(xmTaskWorkloadList);
-			}
+			xmTaskWorkloadService.updateStatusBySbillIdByFlowState(xmTaskSbill.getId(),"4");
 		}else if("3".equals(bizFlowState)){
 			//3为审批不通过，退回发起人，可继续向上提交。工时表无需修改
 			xmTaskSbill.setStatus("1");//结算单状态-已提交
-
-
 		}else if("4".equals(bizFlowState)){
 			//4为流程删除或者取消，sbill可重新发起审批/删除。工时表无需修改
 			xmTaskSbill.setStatus("0");//结算单状态-待提交
+			xmTaskWorkloadService.updateStatusBySbillIdByFlowState(xmTaskSbill.getId(),"1");
 		}
 
 		this.updateSomeFieldByPk(xmTaskSbill);

@@ -38,30 +38,13 @@
 			AND res.biz_date BETWEEN #{startBizDate} AND #{endBizDate}
 		</if>
     </sql>
-	<update id="updateStatusBySbillIdBySbillDel" parameterType="com.xm.core.entity.XmTaskWorkload">
-		update xm_task_workload res set sbill_id=null
-		where res.sbill_id=#{sbillId}
+	<update id="updateStatusBySbillIdBySbillDel" parameterType="String">
+		update xm_task_workload res set detail_id=null,sstaus='1'
+		where exists (select 1 from xm_task_bill_detail d where d.id=res.detail_id and d.sbill_id=#{sbillId})
 	</update>
-	<update id="batchSetSbillIdNull" parameterType="List">
-		update xm_task_workload res set sbill_id=null
-		where res.id in
-		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
-			#{item}
-		</foreach>
-	</update>
-	<!-- 根据条件修改若干条记录 -->
-	<update id="batchEditSbillId" parameterType="HashMap">
-		update  xm_task_workload res
-		<set>
-			res.sbill_id = #{sbillId},
-			res.sstatus=''
-		</set>
-		<where>
-			res.id in
-			<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-				#{item}
-			</foreach>
-		</where>
+	<update id="updateStatusBySbillId" parameterType="HashMap">
+		update xm_task_workload res set sstatus=#{sstatus}
+		where exists (select 1 from xm_task_bill_detail d where d.id=res.detail_id and d.sbill_id=#{sbillId})
 	</update>
 
 	<select id="listProjectWorkloadSetDay" parameterType="HashMap" resultType="HashMap">
@@ -71,10 +54,10 @@
 		sum(if(res.wstatus='0',ifnull(res.workload,0),0)) as to_confirm_workload,
 		sum(if(res.wstatus='1',ifnull(res.workload,0),0)) as had_confirm_workload,
 		sum(if(res.sstatus='0',ifnull(res.workload,0),0)) as not_need_set_workload,
-		sum(if(res.sstatus='1',ifnull(res.sworkload,0),0)) as to_set_sworkload,
-		sum(if(res.sstatus='2',ifnull(res.sworkload,0),0)) as had_commit_sworkload,
-		sum(if(res.sstatus='3',ifnull(res.sworkload,0),0)) as had_agree_sworkload,
-		sum(if(res.sstatus='4',ifnull(res.sworkload,0),0)) as had_set_sworkload,
+		sum(if(res.sstatus='1',ifnull(res.workload,0),0)) as to_set_sworkload,
+		sum(if(res.sstatus='2',ifnull(res.workload,0),0)) as had_commit_sworkload,
+		sum(if(res.sstatus='3',ifnull(res.workload,0),0)) as had_agree_sworkload,
+		sum(if(res.sstatus='4',ifnull(res.workload,0),0)) as had_set_sworkload,
 		count(distinct res.userid) as user_num
 		from xm_task_workload res
 		<where>
@@ -87,15 +70,15 @@
 
 	<select id="listProjectWorkloadSetMonth" parameterType="HashMap" resultType="HashMap">
 		select
-		SUBSTRING(res.biz_date, 1,7) as biz_month,
+		left(res.biz_date,7) as biz_month,
 		sum(ifnull(res.workload,0)) as workload,
 		sum(if(res.wstatus='0',ifnull(res.workload,0),0)) as to_confirm_workload,
 		sum(if(res.wstatus='1',ifnull(res.workload,0),0)) as had_confirm_workload,
 		sum(if(res.sstatus='0',ifnull(res.workload,0),0)) as not_need_set_workload,
-		sum(if(res.sstatus='1',ifnull(res.sworkload,0),0)) as to_set_sworkload,
-		sum(if(res.sstatus='2',ifnull(res.sworkload,0),0)) as had_commit_sworkload,
-		sum(if(res.sstatus='3',ifnull(res.sworkload,0),0)) as had_agree_sworkload,
-		sum(if(res.sstatus='4',ifnull(res.sworkload,0),0)) as had_set_sworkload,
+		sum(if(res.sstatus='1',ifnull(res.workload,0),0)) as to_set_sworkload,
+		sum(if(res.sstatus='2',ifnull(res.workload,0),0)) as had_commit_sworkload,
+		sum(if(res.sstatus='3',ifnull(res.workload,0),0)) as had_agree_sworkload,
+		sum(if(res.sstatus='4',ifnull(res.workload,0),0)) as had_set_sworkload,
 		count(distinct res.userid) as user_num
 		from xm_task_workload res
 		<where>
@@ -107,9 +90,11 @@
 	</select>
 
 	<select id="listTaskWorkloadBySbillIdGroupByUseridAndTaskId" parameterType="String" resultType="HashMap">
-		select sum(ifnull(res.workload,0)) as workload,sum(ifnull(res.samt,0)) as samt,sum(ifnull(res.amt,0)) as amt,
-		sum(ifnull(res.sworkload,0)) as sworkload,res.task_id ,max(res.username) as username,max(t.name) as task_name from xm_task_workload res inner join xm_task t on res.task_id=t.id
-		where res.sbill_id=#{sbillId} and res.sstatus='4'
+		select sum(ifnull(res.workload,0)) as workload,
+		sum(ifnull(res.workload,0)) as sworkload,res.task_id ,max(res.username) as username,max(t.name) as task_name from xm_task_workload res inner join xm_task t on res.task_id=t.id
+		where
+		exists (select 1 from xm_task_sbill_detail d where d.id=res.detail_id and d.sbill_id=#{sbillId})
+		and res.sstatus='4'
 		group by res.userid,res.task_id
 	</select>
 	<!--结束 自定义sql函数区域-->

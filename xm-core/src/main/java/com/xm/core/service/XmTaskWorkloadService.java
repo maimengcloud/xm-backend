@@ -63,8 +63,8 @@ public class XmTaskWorkloadService extends BaseService {
 		return this.selectList("listTaskWorkloadBySbillIdGroupByUseridAndTaskId",sbillId);
 	}
 
-	public void updateStatusBySbillIdBySbillDel(XmTaskWorkload xmTaskWorkload) {
-		super.update("updateStatusBySbillIdBySbillDel",xmTaskWorkload);
+	public void updateStatusBySbillIdBySbillDel(String sbillId) {
+		super.update("updateStatusBySbillIdBySbillDel",sbillId);
 	}
 
 	public void batchSetSbillIdNull(List<String> ids) {
@@ -77,6 +77,10 @@ public class XmTaskWorkloadService extends BaseService {
 		if(sbillIds!=null && sbillIds.size()>0){
 			 this.xmTaskSbillService.updateByWorkloadList(sbillIds);
 		}
+	}
+
+	public void updateStatusBySbillIdByFlowState(String sbillId,String sstatus) {
+		super.update("updateStatusBySbillIdByFlowState",map("sbillId",sbillId,"sstatus",sstatus));
 	}
 }
 

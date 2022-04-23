@@ -367,131 +367,6 @@ public class XmTaskWorkloadController {
 
 
 
-	@ApiOperation( value = "",notes=" ")
-	@ApiResponses({
-			@ApiResponse(code = 200,response=XmTaskWorkload.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	})
-	@RequestMapping(value="/batchSetSbillIdNull",method=RequestMethod.POST)
-	public Map<String,Object> batchSetSbillIdNull(@RequestBody List<XmTaskWorkload> xmTaskWorkloads) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功移出结算单");
-		try{
-
-			List<String> ids= xmTaskWorkloads.stream().map(i->i.getId()).collect(Collectors.toList());
-			if(ids==null || ids.size()==0){
-				return ResponseHelper.failed("ids-0","工时变化ids不能为空");
-			}
-
-			User user= LoginUtils.getCurrentUserInfo();
-
-			List<XmTaskWorkload> list=this.xmTaskWorkloadService.selectListByIds(ids);
-			if(list.size()==0){
-				return ResponseHelper.failed("data-0","工时明细不存在");
-			}
-
-			List<XmTaskSbill> xmTaskSbills=this.xmTaskSbillService.selectListByIds(list.stream().map(i->i.getSbillId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
-			Map<String,XmTaskSbill> canBillMap=new HashMap<>();
-			for (XmTaskSbill xmTaskSbill : xmTaskSbills) {
-				if(user.getUserid().equals(xmTaskSbill.getCuserid())){
-					if("0".equals(xmTaskSbill.getStatus())){
-						canBillMap.put(xmTaskSbill.getId(),xmTaskSbill);
-					}
-				}
-			}
-			List<XmTaskWorkload> canChanges=list.stream().filter(i->canBillMap.containsKey(i.getSbillId())).collect(Collectors.toList());
-			List<XmTaskWorkload> noChanges=list.stream().filter(i->!canBillMap.containsKey(i.getSbillId())).collect(Collectors.toList());
-			if(canChanges.size()>0){
-				xmTaskWorkloadService.batchSetSbillIdNull(canChanges.stream().map(i->i.getId()).collect(Collectors.toList()));
-
-			}
-			List<String> msgs=new ArrayList<>();
-			if(canChanges.size()>0){
-				msgs.add("成功将"+canChanges.size()+"条工时移出结算单");
-			}
-
-			if(noChanges.size()>0){
-				msgs.add("有"+noChanges.size()+"条工时对应的结算单不是待提交状态，不允许更改");
-			}
-			if(canChanges.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
-			}else{
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
-			}
-
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
-		m.put("tips", tips);
-		return m;
-	}
-
-	@ApiOperation( value = "",notes=" ")
-	@ApiResponses({
-			@ApiResponse(code = 200,response=XmTaskWorkload.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	})
-	@RequestMapping(value="/editWorkloadToSbill",method=RequestMethod.POST)
-	public Map<String,Object> editWorkloadToSbill(@RequestBody Map<String,Object> params) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功添加到结算单");
-		try{
-
-			List<String> ids= (List<String>) params.get("ids");
-			if(ids==null || ids.size()==0){
-				return ResponseHelper.failed("ids-0","工时变化ids不能为空");
-			}
-			String sbillId= (String) params.get("sbillId");
-			if(!StringUtils.hasText(sbillId)){
-				return ResponseHelper.failed("sbillId-0","结算单变编号不能为空");
-			}
-			XmTaskSbill xmTaskSbillDb=this.xmTaskSbillService.selectOneObject(new XmTaskSbill(sbillId));
-			if(xmTaskSbillDb==null){
-				return ResponseHelper.failed("sbillId-0","结算单不存在");
-			}
-			if(!"0".equals(xmTaskSbillDb.getStatus())){
-				return ResponseHelper.failed("status-not-0","结算单已提交，不允许再更改");
-			}
-			User user= LoginUtils.getCurrentUserInfo();
-			if(!user.getUserid().equals(xmTaskSbillDb.getCuserid())){
-				return ResponseHelper.failed("cuserid-0","结算单不属于您的，无权修改");
-			}
-			List<XmTaskWorkload> list=this.xmTaskWorkloadService.selectListByIds(ids);
-			if(list.size()==0){
-				return ResponseHelper.failed("data-0","工时明细不存在");
-			}
-			List<XmTaskWorkload> canChanges=list.stream().filter(i->"1".equals(i.getSstatus()) && "1".equals(i.getWstatus())).collect(Collectors.toList());
-			List<XmTaskWorkload> sstatusNot1=list.stream().filter(i->!"1".equals(i.getSstatus()) || !"1".equals(i.getWstatus())).collect(Collectors.toList());
-
-			if(canChanges.size()>0){
-				xmTaskWorkloadService.editWorkloadToSbill(sbillId,canChanges);
-			}
-			List<String> msgs=new ArrayList<>();
-			if(canChanges.size()>0){
-				msgs.add("成功将"+canChanges.size()+"条工时加入结算单");
-			}
-
-			if(sstatusNot1.size()>0){
-				msgs.add("有"+sstatusNot1.size()+"条工时不是待结算状态，不允许更改");
-			}
-			if(canChanges.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
-			}else{
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
-			}
-
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
-		m.put("tips", tips);
-		return m;
-	}
 
 
 	@ApiOperation( value = "批量更新工时表状态各个字段",notes="xmTaskWorkloadMap")
@@ -573,10 +448,7 @@ public class XmTaskWorkloadController {
 				fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskWorkloadMap.get(i) )).collect(Collectors.toSet());
 
 				if(fieldKey.size()>0){
-					List<String> sbillIds= canChanges.stream().filter(i->StringUtils.hasText(i.getSbillId())).map(i->i.getSbillId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
-
-					xmTaskWorkloadService.editSomeFieldsWithSbillIds(xmTaskWorkloadMap,sbillIds);
-
+					xmTaskWorkloadService.editSomeFieldsWithSbillIds(xmTaskWorkloadMap,null);
 				}
 			}
 			List<String> msgs=new ArrayList<>();
