@@ -37,6 +37,9 @@
 		<if test="startBizDate!=null and startBizDate !=''">
 			AND res.biz_date BETWEEN #{startBizDate} AND #{endBizDate}
 		</if>
+		<if test="sbillId!=null and sbillId !=''">
+			AND exists( select 1 from xm_task_sbill_detail d where d.id=res.detail_id and d.sbill_id=#{sbillId})
+		</if>
     </sql>
 	<update id="updateStatusBySbillIdBySbillDel" parameterType="String">
 		update xm_task_workload res set detail_id=null,sstaus='1'
@@ -96,6 +99,41 @@
 		exists (select 1 from xm_task_sbill_detail d where d.id=res.detail_id and d.sbill_id=#{sbillId})
 		and res.sstatus='4'
 		group by res.userid,res.task_id
+	</select>
+
+	<!--查询待确认工时-->
+	<select id="selectListMapGroupByTaskIdAndUserid" parameterType="HashMap" resultType="HashMap">
+		select res.*, task.project_name,task.name as task_name,task.budget_workload,task.act_workload,task_state from xm_task task
+		inner join (
+		select res.project_id,res.task_id,res.userid,
+		max(res.username) as username,
+		sum(ifnull(res.workload,0)) as workload,
+		sum(if(res.wstatus='0',ifnull(res.workload,0),0)) as to_confirm_workload,
+		sum(if(res.wstatus='1',ifnull(res.workload,0),0)) as had_confirm_workload,
+		sum(if(res.sstatus='0',ifnull(res.workload,0),0)) as not_need_set_workload,
+		sum(if(res.sstatus='1',ifnull(res.workload,0),0)) as to_set_sworkload,
+		sum(if(res.sstatus='2',ifnull(res.workload,0),0)) as had_commit_sworkload,
+		sum(if(res.sstatus='3',ifnull(res.workload,0),0)) as had_agree_sworkload,
+		sum(if(res.sstatus='4',ifnull(res.workload,0),0)) as had_set_sworkload
+		from xm_task_workload res
+		<where>
+			<include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+		group by res.project_id,res.task_id,res.userid
+		) as res on res.task_id = task.id
+		<where>
+			<if test="projectId!=null and projectId!=''">
+				and task.project_id=#{projectId}
+			</if>
+			<if test="taskId!=null and taskId!=''">
+				and task.id=#{taskId}
+			</if>
+			<if test="userid!=null and userid!=''">
+				and res.userid=#{userid}
+			</if>
+		</where>
+
 	</select>
 	<!--结束 自定义sql函数区域-->
 	

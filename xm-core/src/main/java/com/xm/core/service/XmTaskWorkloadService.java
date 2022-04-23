@@ -82,5 +82,9 @@ public class XmTaskWorkloadService extends BaseService {
 	public void updateStatusBySbillIdByFlowState(String sbillId,String sstatus) {
 		super.update("updateStatusBySbillIdByFlowState",map("sbillId",sbillId,"sstatus",sstatus));
 	}
+
+	public List<Map<String, Object>> ListGroupByTaskIdAndUserid(Map<String, Object> xmTaskWorkload) {
+		return super.selectList("selectListMapGroupByTaskIdAndUserid",xmTaskWorkload);
+	}
 }
 

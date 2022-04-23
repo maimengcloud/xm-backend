@@ -136,6 +136,24 @@ public class XmTaskWorkloadController {
 		return m;
 	}
 
+
+	@ApiOperation( value = "按任务及报工人查询待确认工时",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/ListGroupByTaskIdAndUserid",method=RequestMethod.GET)
+	public Map<String,Object> ListGroupByTaskIdAndUserid( @RequestParam Map<String,Object> xmTaskWorkload){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		PageUtils.startPage(xmTaskWorkload);
+		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.ListGroupByTaskIdAndUserid(xmTaskWorkload);	//列出XmTaskWorkload列表
+		PageUtils.responePage(m, xmTaskWorkloadList);
+		m.put("data",xmTaskWorkloadList);
+
+		m.put("tips", tips);
+		return m;
+	}
+
 	@ApiOperation( value = "新增一条工时登记表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
