@@ -40,19 +40,6 @@ public class XmTaskWorkloadService extends BaseService {
 
 
 
-	@Transactional
-	public void editWorkloadToSbill(String sbillId, List<XmTaskWorkload> canChanges) {
-		this.batchEditSbillId(sbillId,canChanges.stream().map(i->i.getId()).collect(Collectors.toList()));
-		xmTaskSbillService.updateByWorkloadList(Arrays.asList(sbillId));
-	}
-
-	private void batchEditSbillId(String sbillId, List<String> ids) {
-		Map<String,Object> map=map("sbillId",sbillId,"ids",ids);
-		super.update("batchEditSbillId",map);
-	}
-
-
-
 	public List<Map<String, Object>> listProjectWorkloadSetDay(Map<String, Object> xmTaskWorkload) {
 		return super.selectList("listProjectWorkloadSetDay",xmTaskWorkload);
 	}
@@ -69,16 +56,10 @@ public class XmTaskWorkloadService extends BaseService {
 		super.update("updateStatusBySbillIdBySbillDel",sbillId);
 	}
 
-	public void batchSetSbillIdNull(List<String> ids) {
-		super.update("batchSetSbillIdNull",ids);
-	}
 
 	@Transactional
 	public void editSomeFieldsWithSbillIds(Map<String, Object> xmTaskWorkloadMap, List<String> sbillIds) {
 		super.editSomeFields(xmTaskWorkloadMap);
-		if(sbillIds!=null && sbillIds.size()>0){
-			 this.xmTaskSbillService.updateByWorkloadList(sbillIds);
-		}
 	}
 
 	public void updateStatusBySbillIdByFlowState(String sbillId,String sstatus) {

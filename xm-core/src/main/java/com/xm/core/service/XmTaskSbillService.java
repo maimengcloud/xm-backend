@@ -157,8 +157,8 @@ public class XmTaskSbillService extends BaseService {
 		this.updateSomeFieldByPk(xmTaskSbill);
 	}
 
-	public void updateByWorkloadList(List<String> sbillIds) {
-		super.update("updateByWorkloadList",sbillIds);
+	public void updateBySbillDetailList(List<String> sbillIds) {
+		super.update("updateBySbillDetailList",sbillIds);
 	}
 
 	@Transactional

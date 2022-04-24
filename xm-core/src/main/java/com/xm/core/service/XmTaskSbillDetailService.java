@@ -48,7 +48,7 @@ public class XmTaskSbillDetailService extends BaseService {
         xmTaskWorkloadService.updateStatusAfterDetailDel(xmTaskSbillDetails.stream().map(i->i.getId()).collect(Collectors.toList()));
 
         //更新结算单数据
-        xmTaskSbillService.updateByWorkloadList(Arrays.asList(sbillId));
+        xmTaskSbillService.updateBySbillDetailList(Arrays.asList(sbillId));
     }
 }
 

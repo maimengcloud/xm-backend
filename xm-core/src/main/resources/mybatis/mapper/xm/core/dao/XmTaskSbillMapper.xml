@@ -20,14 +20,13 @@
 		</if>
     </sql>
 
-	<update id="updateByWorkloadList" parameterType="List">
+	<update id="updateBySbillDetailList" parameterType="List">
 		update xm_task_sbill res inner join (
-		select w.sbill_id,sum(ifnull(w.amt,0)) as amt,sum(ifnull(w.samt,0)) as samt,sum(ifnull(w.sworkload,0)) as workload from xm_task_workload w
+		select w.sbill_id,sum(ifnull(w.amt,0)) as amt,sum(ifnull(w.samt,0)) as samt,sum(ifnull(w.sworkload,0)) as workload from xm_task_sbill_detail w
 		where w.sbill_id in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
 			( #{item})
 		</foreach>
-		and w.wstatus='1'
 		group by w.sbill_id
 		) as w on res.id=w.sbill_id
 		set
