@@ -200,7 +200,7 @@ public class XmTaskSbillController {
 			if(!"0".equals(sbillDb.getStatus())){
 				return ResponseHelper.failed("status-not-0","结算单已提交，不允许再加入工时");
 			}
-			if(user.getUserid().equals(sbillDb.getCuserid())){
+			if(!user.getUserid().equals(sbillDb.getCuserid())){
 				return ResponseHelper.failed("cuserid-0","结算单不是您的结算单，您不能操作");
 			}
  			List<Map<String,Object>> toSetUserTasks=xmTaskWorkloadService.ListGroupByTaskIdAndUseridToSet(map("userTasks",batchJoinToSbill.getUserTasks()));
