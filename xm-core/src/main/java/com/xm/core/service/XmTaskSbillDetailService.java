@@ -70,16 +70,19 @@ public class XmTaskSbillDetailService extends BaseService {
         }else{
             detail.setAmt(BigDecimal.ZERO);
         }
+        if("1".equals(detail.getOshare()) && detail.getShareFee()!=null && detail.getShareFee().compareTo(BigDecimal.ZERO)>0 ){
+
+        }else{
+            detail.setShareFee(BigDecimal.ZERO);
+        }
         if(detail.getSfeeRate()!=null && detail.getSfeeRate()>0){
             if(detail.getAmt()!=null){
                 detail.setSfee(detail.getAmt().multiply(BigDecimal.valueOf(detail.getSfeeRate()/100)));
             }else{
                 detail.setSfee(BigDecimal.ZERO);
             }
-            if(detail.getSamt()!=null){
-                detail.setSfee(detail.getSamt().multiply(BigDecimal.valueOf(detail.getSfeeRate()/100)));
-            }
         }
+        detail.setSamt(detail.getAmt().subtract(detail.getShareFee()).subtract(detail.getSfee()));
 
     }
 }
