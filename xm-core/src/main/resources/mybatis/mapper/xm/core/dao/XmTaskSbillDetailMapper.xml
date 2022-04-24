@@ -13,13 +13,13 @@
          </if>
         <if test="key != null and key !='' ">       </if>
     </sql>
-	<select id="selectListByUserTasks" parameterType="com.xm.core.entity.XmTaskSbillDetail" resultType="com.xm.core.vo.BatchJoinToSbillVo">
+	<select id="selectListByUserTasks" parameterType="com.xm.core.vo.BatchJoinToSbillVo" resultType="com.xm.core.entity.XmTaskSbillDetail">
 		select * from xm_task_sbill_detail res
 		<where>
 			and res.sbill_id=#{sbillId}
 			and (res.userid,res.task_id) in
 			<foreach collection="userTasks" item="item" index="index" open="(" separator="," close=")" >
-				( #{item.userid,item.taskId})
+				( #{item.userid},#{item.taskId})
 			</foreach>
 		</where>
 	</select>
