@@ -219,14 +219,15 @@ public class XmTaskSbillController {
 			BatchJoinToSbillVo batchJoinToSbillQuery=new BatchJoinToSbillVo();
 			batchJoinToSbillQuery.setUserTasks(batchJoinToSbill.getUserTasks());
 			List<XmTaskSbillDetail> details=xmTaskSbillDetailService.selectListByUserTasks(batchJoinToSbillQuery);
-			List<XmTaskSbillDetail> othSbillDetails=details.stream().filter(i->sbillDb.getId().equals(i.getSbillId())).collect(Collectors.toList());
+			List<XmTaskSbillDetail> sameSbillDetails=details.stream().filter(i->sbillDb.getId().equals(i.getSbillId())).collect(Collectors.toList());
+			List<XmTaskSbillDetail> othSbillDetails=details.stream().filter(i->!sbillDb.getId().equals(i.getSbillId())).collect(Collectors.toList());
  			for (XmTaskSbillDetail i : othSbillDetails) {
 				if(!"4".equals(i.getSstatus())){
-					return ResponseHelper.failed("user-task-exists-not-4",String.format("任务【%s】，人员【%s】存在未完成的结算单【%s】，暂时不允许发起结算。",i.getName(),i.getUsername(),i.getSbillId()));
+					return ResponseHelper.failed("user-task-exists-not-4",String.format("任务【%s】，人员【%s】存在未完成的结算单【%s】，暂时不允许发起结算。",i.getTaskName(),i.getUsername(),i.getSbillId()));
 				}
 			}
-			if(details!=null && details.size()>0){
-				for (XmTaskSbillDetail detail : details) {
+			if(sameSbillDetails!=null && sameSbillDetails.size()>0){
+				for (XmTaskSbillDetail detail : sameSbillDetails) {
 					//进行合并操作
 					for (Map<String, Object> toSetUserTask : toSetUserTasks) {
 						if(detail.getUserid().equals(toSetUserTask.get("userid")) && detail.getTaskId().equals(toSetUserTask.get("taskId"))){
@@ -240,7 +241,7 @@ public class XmTaskSbillController {
 			List<XmTaskSbillDetail> canAdd=new ArrayList<>();
 			for (Map<String,Object> userTask : toSetUserTasks) {
 				XmTaskSbillDetail detail= BaseUtils.fromMap(userTask,XmTaskSbillDetail.class);
-				if(details.stream().filter(i->i.getTaskId().equals(detail.getTaskId()) && i.getUserid().equals(detail.getUserid())).findAny().isPresent()){
+				if(sameSbillDetails.stream().filter(i->i.getTaskId().equals(detail.getTaskId()) && i.getUserid().equals(detail.getUserid())).findAny().isPresent()){
 					continue;
 				}
 				detail.setId(this.xmTaskSbillDetailService.createKey("id"));
@@ -249,10 +250,18 @@ public class XmTaskSbillController {
 				detail.setSbillId(batchJoinToSbill.getSbillId());
 				detail.setProjectId(projectId);
 				detail.setCtime(new Date());
-				this.xmTaskSbillDetailService.preCalcSamt(detail);
 				canAdd.add(detail);
 			}
-			this.xmTaskSbillService.batchJoinToSbill(canAdd,details);
+			for (XmTaskSbillDetail d : canAdd) {
+				List<XmTaskSbillDetail> othDetails=othSbillDetails.stream().filter(i->i.getTaskId().equals(d.getTaskId()) && i.getUserid().equals(d.getUserid())).collect(Collectors.toList());
+				BigDecimal tactAt=BigDecimal.ZERO;
+				for (XmTaskSbillDetail othDetail : othDetails) {
+					tactAt=tactAt.add(othDetail.getAmt());
+				}
+				d.setTactAt(tactAt);
+				this.xmTaskSbillDetailService.preCalcSamt(d);
+			}
+			this.xmTaskSbillService.batchJoinToSbill(canAdd,sameSbillDetails);
 
 
 		}catch (BizException e) {

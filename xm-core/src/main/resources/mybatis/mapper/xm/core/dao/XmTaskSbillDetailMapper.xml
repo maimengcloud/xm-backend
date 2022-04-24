@@ -16,7 +16,9 @@
 	<select id="selectListByUserTasks" parameterType="com.xm.core.vo.BatchJoinToSbillVo" resultType="com.xm.core.entity.XmTaskSbillDetail">
 		select * from xm_task_sbill_detail res
 		<where>
-			and res.sbill_id=#{sbillId}
+			<if test="sbillId!=null and sbillId!=''">
+				and res.sbill_id=#{sbillId}
+			</if>
 			and (res.userid,res.task_id) in
 			<foreach collection="userTasks" item="item" index="index" open="(" separator="," close=")" >
 				( #{item.userid},#{item.taskId})
@@ -76,7 +78,7 @@
 		insert into xm_task_sbill_detail(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{ctime},#{taskId},#{bizDate},#{remark},#{id},#{sbillId},#{stime},#{sstatus},#{amt},#{samt},#{workload},#{projectId},#{sworkload},#{bizMonth},#{budgetAt},#{budgetWorkload},#{initWorkload},#{quoteAt},#{quoteWorkload},#{sschemel},#{uniPrice},#{qendTime},#{qstartTime},#{actEndTime},#{actStartTime},#{oshare},#{shareFee},#{sfee},#{sfeeRate},#{cpId},#{cpName},#{cpType},#{distUserid},#{distUsername},#{shareKey},#{taskOut},#{crowd},#{othFee},#{feeRemark},#{tactAt}
+		#{userid},#{username},#{ctime},#{taskId},#{bizDate},#{remark},#{id},#{sbillId},#{stime},#{sstatus},#{amt},#{samt},#{workload},#{projectId},#{sworkload},#{bizMonth},#{budgetAt},#{budgetWorkload},#{initWorkload},#{quoteAt},#{quoteWorkload},#{sschemel},#{uniPrice},#{qendTime},#{qstartTime},#{actEndTime},#{actStartTime},#{oshare},#{shareFee},#{sfee},#{sfeeRate},#{cpId},#{cpName},#{cpType},#{distUserid},#{distUsername},#{shareKey},#{taskOut},#{crowd},#{othFee},#{feeRemark},#{tactAt},#{taskName}
 		)
 	</insert>
 	
@@ -151,7 +153,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee,sfee,sfee_rate,cp_id,cp_name,cp_type,dist_userid,dist_username,share_key,task_out,crowd,oth_fee,fee_remark,tact_at
+		userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee,sfee,sfee_rate,cp_id,cp_name,cp_type,dist_userid,dist_username,share_key,task_out,crowd,oth_fee,fee_remark,tact_at,task_name
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -198,6 +200,7 @@
 		<if test="othFee != null and othFee != ''">      and res.oth_fee = #{othFee}     </if>
 		<if test="feeRemark != null and feeRemark != ''">      and res.fee_remark = #{feeRemark}     </if>
 		<if test="tactAt != null and tactAt != ''">      and res.tact_at = #{tactAt}     </if>
+		<if test="taskName != null and taskName != ''">      and res.task_name = #{taskName}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -241,7 +244,8 @@
 		crowd = #{crowd},
 		oth_fee = #{othFee},
 		fee_remark = #{feeRemark},
-		tact_at = #{tactAt}
+		tact_at = #{tactAt},
+		task_name = #{taskName}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
@@ -285,6 +289,7 @@
 		<if test="othFee != null and othFee != ''"> oth_fee = #{othFee},     </if>
 		<if test="feeRemark != null and feeRemark != ''"> fee_remark = #{feeRemark},     </if>
 		<if test="tactAt != null and tactAt != ''"> tact_at = #{tactAt},     </if>
+		<if test="taskName != null and taskName != ''"> task_name = #{taskName},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -328,6 +333,7 @@
 			crowd = #{item.crowd},
 			oth_fee = #{item.othFee},
 			fee_remark = #{item.feeRemark},
-			tact_at = #{item.tactAt}
+			tact_at = #{item.tactAt},
+			task_name = #{item.taskName}
 	</sql>
 </mapper>

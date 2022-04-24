@@ -66,28 +66,39 @@ public class XmTaskSbillDetailService extends BaseService {
      */
     public void preCalcSamt(XmTaskSbillDetail detail) {
         if(detail.getQuoteAt()!=null){
-            detail.setAmt(detail.getQuoteAt());
+            if(detail.getTactAt()!=null){
+                detail.setAmt(detail.getQuoteAt().subtract(detail.getTactAt()));
+            }else{
+                detail.setAmt(detail.getQuoteAt());
+            }
+           if(detail.getAmt().compareTo(BigDecimal.ZERO)==0){
+               detail.setSamt(BigDecimal.ZERO);
+               return;
+           }
         }else{
             detail.setAmt(BigDecimal.ZERO);
+            detail.setSamt(BigDecimal.ZERO);
+            return;
         }
-        if("1".equals(detail.getOshare()) && detail.getShareFee()!=null && detail.getShareFee().compareTo(BigDecimal.ZERO)>0 ){
-
-        }else{
+        if("0".equals(detail.getOshare()) || detail.getShareFee()==null || detail.getShareFee().compareTo(BigDecimal.ZERO)<=0 ){
             detail.setShareFee(BigDecimal.ZERO);
         }
         if(detail.getSfeeRate()!=null && detail.getSfeeRate()>0){
-            if(detail.getAmt()!=null){
-                detail.setSfee(detail.getAmt().multiply(BigDecimal.valueOf(detail.getSfeeRate()/100)));
-            }else{
-                detail.setSfee(BigDecimal.ZERO);
-            }
+            detail.setSfee(detail.getAmt().multiply(BigDecimal.valueOf(detail.getSfeeRate()/100)));
+        }else{
+            detail.setSfee(BigDecimal.ZERO);
         }
         if(detail.getOthFee()==null){
             detail.setOthFee(BigDecimal.ZERO);
         }else if(detail.getOthFee().compareTo(BigDecimal.ZERO)<0){
             detail.setOthFee(BigDecimal.ZERO);
         }
-        detail.setSamt(detail.getAmt().subtract(detail.getShareFee()).subtract(detail.getSfee()).subtract(detail.getOthFee()));
+        if(detail.getTactAt()!=null && detail.getTactAt().compareTo(BigDecimal.ZERO)>0){
+            detail.setSamt(detail.getAmt().subtract(detail.getSfee()).subtract(detail.getOthFee()));
+        }else{
+            detail.setSamt(detail.getAmt().subtract(detail.getShareFee()).subtract(detail.getSfee()).subtract(detail.getOthFee()));
+        }
+
 
     }
 }
