@@ -96,5 +96,9 @@ public class XmTaskWorkloadService extends BaseService {
     public void updateStatusAfterJoinSbill(List<XmTaskSbillDetail> details) {
 		super.update("updateStatusAfterJoinSbill",details);
     }
+
+	public void updateStatusAfterDetailDel(List<String> detailIds) {
+		super.update("updateStatusAfterDetailDel",detailIds);
+	}
 }
 

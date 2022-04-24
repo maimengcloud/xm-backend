@@ -2,6 +2,9 @@ package com.xm.core.ctrl;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import com.xm.core.entity.XmTaskSbill;
+import com.xm.core.service.XmTaskSbillService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,7 +53,9 @@ public class XmTaskSbillDetailController {
 	
 	@Autowired
 	private XmTaskSbillDetailService xmTaskSbillDetailService;
-	 
+
+	@Autowired
+	private XmTaskSbillService xmTaskSbillService;
 
 	Map<String,Object> fieldsMap = toMap(new XmTaskSbillDetail());
  
@@ -108,8 +113,7 @@ public class XmTaskSbillDetailController {
 		return m;
 	}
 	*/
-	
-	/**
+
 	@ApiOperation( value = "删除一条工时登记表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -137,7 +141,6 @@ public class XmTaskSbillDetailController {
 		m.put("tips", tips);
 		return m;
 	}
-	 */
 	
 	/**
 	@ApiOperation( value = "根据主键修改一条工时登记表信息",notes=" ")
@@ -172,8 +175,6 @@ public class XmTaskSbillDetailController {
 
 
 
-
-	/**
     @ApiOperation( value = "批量修改某些字段",notes="")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskSbillDetail.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -244,9 +245,7 @@ public class XmTaskSbillDetailController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 
-	/**
 	@ApiOperation( value = "根据主键列表批量删除工时登记表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -255,12 +254,23 @@ public class XmTaskSbillDetailController {
 	public Map<String,Object> batchDelXmTaskSbillDetail(@RequestBody List<XmTaskSbillDetail> xmTaskSbillDetails) {
 		Map<String,Object> m = new HashMap<>();
         Tips tips=new Tips("成功删除"); 
-        try{ 
+        try{
+        	User user=LoginUtils.getCurrentUserInfo();
             if(xmTaskSbillDetails.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
             }
              List<XmTaskSbillDetail> datasDb=xmTaskSbillDetailService.selectListByIds(xmTaskSbillDetails.stream().map(i-> i.getId() ).collect(Collectors.toList()));
-
+			String sbillId=datasDb.get(0).getSbillId();
+			if(datasDb.stream().filter(i->!sbillId.equals(i.getSbillId())).findAny().isPresent()){
+				return failed("sbillId-0","只能删除同一个结算单的清单");
+			}
+			XmTaskSbill xmTaskSbill=xmTaskSbillService.selectOneById(sbillId);
+			if(!user.getUserid().equals(xmTaskSbill.getCuserid())){
+				return failed("sbillId-0","该结算单不是您创建的，您不能删除其清单");
+			}
+			if(!"0".equals(xmTaskSbill.getStatus())){
+				return failed("status-not-0","结算单已提交，不允许更改");
+			}
             List<XmTaskSbillDetail> can=new ArrayList<>();
             List<XmTaskSbillDetail> no=new ArrayList<>();
             for (XmTaskSbillDetail data : datasDb) {
@@ -272,7 +282,7 @@ public class XmTaskSbillDetailController {
             }
             List<String> msgs=new ArrayList<>();
             if(can.size()>0){
-                xmTaskSbillDetailService.batchDelete(xmTaskSbillDetails);
+                xmTaskSbillDetailService.batchDoDelete(xmTaskSbillDetails);
                 msgs.add(String.format("成功删除%s条数据.",can.size()));
             }
     
@@ -293,6 +303,5 @@ public class XmTaskSbillDetailController {
         }  
         m.put("tips", tips);
         return m;
-	} 
-	*/
+	}
 }
