@@ -217,7 +217,15 @@ public class XmTaskSbillController {
 			//检查是否已有同样的数据加入了结算单，如果有，需要合并
 			List<XmTaskSbillDetail> details=xmTaskSbillDetailService.selectListByUserTasks(batchJoinToSbill);
 			if(details!=null && details.size()>0){
-				//进行合并操作
+				for (XmTaskSbillDetail detail : details) {
+					//进行合并操作
+					for (Map<String, Object> toSetUserTask : toSetUserTasks) {
+						if(detail.getUserid().equals(toSetUserTask.get("userid")) && detail.getTaskId().equals(toSetUserTask.get("taskId"))){
+							detail.setWorkload(detail.getWorkload().add(NumberUtil.getBigDecimal(toSetUserTask.get("workload"),BigDecimal.ZERO)));
+							detail.setWorkload(detail.getSworkload().add(NumberUtil.getBigDecimal(toSetUserTask.get("workload"),BigDecimal.ZERO)));
+						}
+					}
+				}
 			}
 
 			List<XmTaskSbillDetail> canAdd=new ArrayList<>();
@@ -234,8 +242,9 @@ public class XmTaskSbillController {
 				detail.setCtime(new Date());
 				canAdd.add(detail);
 			}
-			xmTaskSbillDetailService.batchInsert(canAdd);
-			//todo 需要更新工时明细表detailId..
+			this.xmTaskSbillService.batchJoinToSbill(canAdd,details);
+
+
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);

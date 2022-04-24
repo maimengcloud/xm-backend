@@ -189,7 +189,12 @@
 		</where>
 
 	</select>
-
+	<update id="updateStatusAfterJoinSbill" parameterType="List">
+		<foreach collection="list" item="item" index="index" separator=";" >
+			update xm_task_workload res set res.sstatus='2'
+			where res.sstatus='1' and res.userid=#{userid} and res.task_id=#{taskId}
+		</foreach>
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

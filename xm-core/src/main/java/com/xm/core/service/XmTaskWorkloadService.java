@@ -6,6 +6,8 @@ import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.MapUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.xm.core.entity.XmTaskSbill;
+import com.xm.core.entity.XmTaskSbillDetail;
+import com.xm.core.vo.BatchJoinToSbillVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,5 +92,9 @@ public class XmTaskWorkloadService extends BaseService {
 	public List<Map<String, Object>> ListGroupByTaskIdAndUseridToSet(Map<String, Object> xmTaskWorkload) {
 		return super.selectList("ListGroupByTaskIdAndUseridToSet",xmTaskWorkload);
 	}
+
+    public void updateStatusAfterJoinSbill(List<XmTaskSbillDetail> details) {
+		super.update("updateStatusAfterJoinSbill",details);
+    }
 }
 

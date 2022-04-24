@@ -3,16 +3,14 @@ package com.xm.core.service;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.NumberUtil;
+import com.xm.core.entity.XmTaskSbillDetail;
 import com.xm.core.entity.XmTaskWorkload;
 import com.xm.core.service.client.MkClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +35,8 @@ public class XmTaskSbillService extends BaseService {
 
 	@Autowired
 	XmTaskWorkloadService xmTaskWorkloadService;
+	@Autowired
+	XmTaskSbillDetailService xmTaskSbillDetailService;
 
 	@Autowired
 	MkClient mkClient;
@@ -160,5 +160,21 @@ public class XmTaskSbillService extends BaseService {
 	public void updateByWorkloadList(List<String> sbillIds) {
 		super.update("updateByWorkloadList",sbillIds);
 	}
+
+	@Transactional
+    public void batchJoinToSbill(List<XmTaskSbillDetail> canAdd, List<XmTaskSbillDetail> details) {
+
+		if(canAdd.size()>0){
+			xmTaskSbillDetailService.batchInsert(canAdd);
+		}
+		//需要更新工时明细表detailId..
+		if(details.size()>0){
+			this.xmTaskSbillDetailService.batchUpdate(details);
+		}
+		List<XmTaskSbillDetail> detailsAll=new ArrayList<>();
+		detailsAll.addAll(canAdd);
+		detailsAll.addAll(details);
+		this.xmTaskWorkloadService.updateStatusAfterJoinSbill(detailsAll);
+    }
 }
 
