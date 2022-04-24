@@ -166,7 +166,7 @@
 			<if test="userTasks!=null">
 				and (res.userid,res.task_id) in
 				<foreach collection="userTasks" item="item" index="index" open="(" separator="," close=")" >
-					( #{item.userid,item.taskId})
+					( #{item.userid},#{item.taskId})
 				</foreach>
 			</if>
 
