@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskSbillDetail所有属性名: <br>
- *	userid,username,ctime,taskId,bizDate,remark,id,sbillId,stime,sstatus,amt,samt,workload,projectId,sworkload,bizMonth,budgetAt,budgetWorkload,initWorkload,quoteAt,quoteWorkload,sschemel,uniPrice,qendTime,qstartTime,actEndTime,actStartTime,oshare,shareFee,sfee,sfeeRate,cpId,cpName,cpType;<br>
+ *	userid,username,ctime,taskId,bizDate,remark,id,sbillId,stime,sstatus,amt,samt,workload,projectId,sworkload,bizMonth,budgetAt,budgetWorkload,initWorkload,quoteAt,quoteWorkload,sschemel,uniPrice,qendTime,qstartTime,actEndTime,actStartTime,oshare,shareFee,sfee,sfeeRate,cpId,cpName,cpType,distUserid,distUsername,shareKey;<br>
  * 表 xm_task_sbill_detail 工时登记表的所有字段名: <br>
- *	userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee,sfee,sfee_rate,cp_id,cp_name,cp_type;<br>
+ *	userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee,sfee,sfee_rate,cp_id,cp_name,cp_type,dist_userid,dist_username,share_key;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -121,6 +121,15 @@ public class XmTaskSbillDetail  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="相对方类型1-个人，2-企业",allowEmptyValue=true,example="",allowableValues="")
 	String cpType;
+	
+	@ApiModelProperty(notes="推荐人编号",allowEmptyValue=true,example="",allowableValues="")
+	String distUserid;
+	
+	@ApiModelProperty(notes="推荐人姓名",allowEmptyValue=true,example="",allowableValues="")
+	String distUsername;
+	
+	@ApiModelProperty(notes="分享码",allowEmptyValue=true,example="",allowableValues="")
+	String shareKey;
 
 	/**主键**/
 	public XmTaskSbillDetail(String id) {
@@ -335,6 +344,24 @@ public class XmTaskSbillDetail  implements java.io.Serializable {
 	public void setCpType(String cpType) {
 		this.cpType = cpType;
 	}
+	/**
+	 * 推荐人编号
+	 **/
+	public void setDistUserid(String distUserid) {
+		this.distUserid = distUserid;
+	}
+	/**
+	 * 推荐人姓名
+	 **/
+	public void setDistUsername(String distUsername) {
+		this.distUsername = distUsername;
+	}
+	/**
+	 * 分享码
+	 **/
+	public void setShareKey(String shareKey) {
+		this.shareKey = shareKey;
+	}
 	
 	/**
 	 * 员工编号
@@ -539,6 +566,24 @@ public class XmTaskSbillDetail  implements java.io.Serializable {
 	 **/
 	public String getCpType() {
 		return this.cpType;
+	}
+	/**
+	 * 推荐人编号
+	 **/
+	public String getDistUserid() {
+		return this.distUserid;
+	}
+	/**
+	 * 推荐人姓名
+	 **/
+	public String getDistUsername() {
+		return this.distUsername;
+	}
+	/**
+	 * 分享码
+	 **/
+	public String getShareKey() {
+		return this.shareKey;
 	}
 
 }
