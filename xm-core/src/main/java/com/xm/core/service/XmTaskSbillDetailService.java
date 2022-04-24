@@ -82,7 +82,12 @@ public class XmTaskSbillDetailService extends BaseService {
                 detail.setSfee(BigDecimal.ZERO);
             }
         }
-        detail.setSamt(detail.getAmt().subtract(detail.getShareFee()).subtract(detail.getSfee()));
+        if(detail.getOthFee()==null){
+            detail.setOthFee(BigDecimal.ZERO);
+        }else if(detail.getOthFee().compareTo(BigDecimal.ZERO)<0){
+            detail.setOthFee(BigDecimal.ZERO);
+        }
+        detail.setSamt(detail.getAmt().subtract(detail.getShareFee()).subtract(detail.getSfee()).subtract(detail.getOthFee()));
 
     }
 }
