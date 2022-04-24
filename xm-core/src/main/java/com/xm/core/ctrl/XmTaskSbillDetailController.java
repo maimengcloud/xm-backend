@@ -3,6 +3,7 @@ package com.xm.core.ctrl;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.mdp.core.utils.ResponseHelper;
 import com.xm.core.entity.XmTaskSbill;
 import com.xm.core.service.XmTaskSbillService;
 import org.slf4j.Logger;
@@ -172,6 +173,12 @@ public class XmTaskSbillDetailController {
 
 			Set<String> fields=new HashSet<>();
             fields.add("id");
+            fields.add("samt");
+            fields.add("quoteAt");
+            fields.add("tactAt");
+            fields.add("userid");
+            fields.add("taskId");
+            fields.add("projectId");
 			for (String fieldName : xmTaskSbillDetailMap.keySet()) {
 				if(fields.contains(fieldName)){
 					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
@@ -187,6 +194,17 @@ public class XmTaskSbillDetailController {
 			List<XmTaskSbillDetail> xmTaskSbillDetailsDb=xmTaskSbillDetailService.selectListByIds(ids);
 			if(xmTaskSbillDetailsDb==null ||xmTaskSbillDetailsDb.size()==0){
 				return failed("data-0","记录已不存在");
+			}
+			if(fieldKey.contains("othFee")){
+				if(xmTaskSbillDetailsDb.size()>1){
+					return failed("data-not-1","其他费用的修改只能一次修改一条记录，不能批量修改");
+				}else{
+					XmTaskSbillDetail detail=xmTaskSbillDetailsDb.get(0);
+					this.xmTaskSbillDetailService.preCalcSamt(detail);
+					this.xmTaskSbillDetailService.updateSomeFieldByPk(detail);
+					this.xmTaskSbillService.updateBySbillDetailList(Arrays.asList(detail.getSbillId()));
+					return ResponseHelper.ok("成功");
+				}
 			}
 			List<XmTaskSbillDetail> can=new ArrayList<>();
 			List<XmTaskSbillDetail> no=new ArrayList<>();
@@ -263,7 +281,7 @@ public class XmTaskSbillDetailController {
             }
             List<String> msgs=new ArrayList<>();
             if(can.size()>0){
-                xmTaskSbillDetailService.batchDoDelete(xmTaskSbillDetails);
+                xmTaskSbillDetailService.batchDoDelete(can);
                 msgs.add(String.format("成功删除%s条数据.",can.size()));
             }
     

@@ -55,7 +55,7 @@ public class XmTaskSbillDetailService extends BaseService {
     @Transactional
     public void doEditSomeFields(Map<String, Object> xmTaskSbillDetailMap,List<String> sbillIds) {
         super.editSomeFields(xmTaskSbillDetailMap);
-        if(xmTaskSbillDetailMap.containsKey("samt")){
+        if(xmTaskSbillDetailMap.containsKey("othFee")){
             xmTaskSbillService.updateBySbillDetailList(sbillIds);
         }
     }
