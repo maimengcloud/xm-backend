@@ -76,7 +76,7 @@
 		insert into xm_task_sbill_detail(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{ctime},#{taskId},#{bizDate},#{remark},#{id},#{sbillId},#{stime},#{sstatus},#{amt},#{samt},#{workload},#{projectId},#{sworkload},#{bizMonth},#{budgetAt},#{budgetWorkload},#{initWorkload},#{quoteAt},#{quoteWorkload},#{sschemel},#{uniPrice},#{qendTime},#{qstartTime},#{actEndTime},#{actStartTime},#{oshare},#{shareFee},#{sfee},#{sfeeRate},#{cpId},#{cpName},#{cpType},#{distUserid},#{distUsername},#{shareKey},#{taskOut},#{crowd}
+		#{userid},#{username},#{ctime},#{taskId},#{bizDate},#{remark},#{id},#{sbillId},#{stime},#{sstatus},#{amt},#{samt},#{workload},#{projectId},#{sworkload},#{bizMonth},#{budgetAt},#{budgetWorkload},#{initWorkload},#{quoteAt},#{quoteWorkload},#{sschemel},#{uniPrice},#{qendTime},#{qstartTime},#{actEndTime},#{actStartTime},#{oshare},#{shareFee},#{sfee},#{sfeeRate},#{cpId},#{cpName},#{cpType},#{distUserid},#{distUsername},#{shareKey},#{taskOut},#{crowd},#{othFee},#{feeRemark}
 		)
 	</insert>
 	
@@ -151,7 +151,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee,sfee,sfee_rate,cp_id,cp_name,cp_type,dist_userid,dist_username,share_key,task_out,crowd
+		userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee,sfee,sfee_rate,cp_id,cp_name,cp_type,dist_userid,dist_username,share_key,task_out,crowd,oth_fee,fee_remark
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -195,6 +195,8 @@
 		<if test="shareKey != null and shareKey != ''">      and res.share_key = #{shareKey}     </if>
 		<if test="taskOut != null and taskOut != ''">      and res.task_out = #{taskOut}     </if>
 		<if test="crowd != null and crowd != ''">      and res.crowd = #{crowd}     </if>
+		<if test="othFee != null and othFee != ''">      and res.oth_fee = #{othFee}     </if>
+		<if test="feeRemark != null and feeRemark != ''">      and res.fee_remark = #{feeRemark}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -235,7 +237,9 @@
 		dist_username = #{distUsername},
 		share_key = #{shareKey},
 		task_out = #{taskOut},
-		crowd = #{crowd}
+		crowd = #{crowd},
+		oth_fee = #{othFee},
+		fee_remark = #{feeRemark}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
@@ -276,6 +280,8 @@
 		<if test="shareKey != null and shareKey != ''"> share_key = #{shareKey},     </if>
 		<if test="taskOut != null and taskOut != ''"> task_out = #{taskOut},     </if>
 		<if test="crowd != null and crowd != ''"> crowd = #{crowd},     </if>
+		<if test="othFee != null and othFee != ''"> oth_fee = #{othFee},     </if>
+		<if test="feeRemark != null and feeRemark != ''"> fee_remark = #{feeRemark},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -316,6 +322,8 @@
 			dist_username = #{item.distUsername},
 			share_key = #{item.shareKey},
 			task_out = #{item.taskOut},
-			crowd = #{item.crowd}
+			crowd = #{item.crowd},
+			oth_fee = #{item.othFee},
+			fee_remark = #{item.feeRemark}
 	</sql>
 </mapper>
