@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskSbillDetail所有属性名: <br>
- *	userid,username,ctime,taskId,bizDate,remark,id,sbillId,stime,sstatus,amt,samt,workload,projectId,sworkload,bizMonth,budgetAt,budgetWorkload,initWorkload,quoteAt,quoteWorkload,sschemel,uniPrice,qendTime,qstartTime,actEndTime,actStartTime,oshare,shareFee;<br>
+ *	userid,username,ctime,taskId,bizDate,remark,id,sbillId,stime,sstatus,amt,samt,workload,projectId,sworkload,bizMonth,budgetAt,budgetWorkload,initWorkload,quoteAt,quoteWorkload,sschemel,uniPrice,qendTime,qstartTime,actEndTime,actStartTime,oshare,shareFee,sfee,sfeeRate,cpId,cpName,cpType;<br>
  * 表 xm_task_sbill_detail 工时登记表的所有字段名: <br>
- *	userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee;<br>
+ *	userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee,sfee,sfee_rate,cp_id,cp_name,cp_type;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -106,6 +106,21 @@ public class XmTaskSbillDetail  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="分享赚佣金",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal shareFee;
+	
+	@ApiModelProperty(notes="平台服务费",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal sfee;
+	
+	@ApiModelProperty(notes="服务费率",allowEmptyValue=true,example="",allowableValues="")
+	Integer sfeeRate;
+	
+	@ApiModelProperty(notes="相对方编号(机构写机构号，个人写个人编号)",allowEmptyValue=true,example="",allowableValues="")
+	String cpId;
+	
+	@ApiModelProperty(notes="相对方名称（机构写机构名称，个人写个人名称）",allowEmptyValue=true,example="",allowableValues="")
+	String cpName;
+	
+	@ApiModelProperty(notes="相对方类型1-个人，2-企业",allowEmptyValue=true,example="",allowableValues="")
+	String cpType;
 
 	/**主键**/
 	public XmTaskSbillDetail(String id) {
@@ -290,6 +305,36 @@ public class XmTaskSbillDetail  implements java.io.Serializable {
 	public void setShareFee(BigDecimal shareFee) {
 		this.shareFee = shareFee;
 	}
+	/**
+	 * 平台服务费
+	 **/
+	public void setSfee(BigDecimal sfee) {
+		this.sfee = sfee;
+	}
+	/**
+	 * 服务费率
+	 **/
+	public void setSfeeRate(Integer sfeeRate) {
+		this.sfeeRate = sfeeRate;
+	}
+	/**
+	 * 相对方编号(机构写机构号，个人写个人编号)
+	 **/
+	public void setCpId(String cpId) {
+		this.cpId = cpId;
+	}
+	/**
+	 * 相对方名称（机构写机构名称，个人写个人名称）
+	 **/
+	public void setCpName(String cpName) {
+		this.cpName = cpName;
+	}
+	/**
+	 * 相对方类型1-个人，2-企业
+	 **/
+	public void setCpType(String cpType) {
+		this.cpType = cpType;
+	}
 	
 	/**
 	 * 员工编号
@@ -464,6 +509,36 @@ public class XmTaskSbillDetail  implements java.io.Serializable {
 	 **/
 	public BigDecimal getShareFee() {
 		return this.shareFee;
+	}
+	/**
+	 * 平台服务费
+	 **/
+	public BigDecimal getSfee() {
+		return this.sfee;
+	}
+	/**
+	 * 服务费率
+	 **/
+	public Integer getSfeeRate() {
+		return this.sfeeRate;
+	}
+	/**
+	 * 相对方编号(机构写机构号，个人写个人编号)
+	 **/
+	public String getCpId() {
+		return this.cpId;
+	}
+	/**
+	 * 相对方名称（机构写机构名称，个人写个人名称）
+	 **/
+	public String getCpName() {
+		return this.cpName;
+	}
+	/**
+	 * 相对方类型1-个人，2-企业
+	 **/
+	public String getCpType() {
+		return this.cpType;
 	}
 
 }

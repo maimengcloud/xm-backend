@@ -76,7 +76,7 @@
 		insert into xm_task_sbill_detail(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{ctime},#{taskId},#{bizDate},#{remark},#{id},#{sbillId},#{stime},#{sstatus},#{amt},#{samt},#{workload},#{projectId},#{sworkload},#{bizMonth},#{budgetAt},#{budgetWorkload},#{initWorkload},#{quoteAt},#{quoteWorkload},#{sschemel},#{uniPrice},#{qendTime},#{qstartTime},#{actEndTime},#{actStartTime},#{oshare},#{shareFee}
+		#{userid},#{username},#{ctime},#{taskId},#{bizDate},#{remark},#{id},#{sbillId},#{stime},#{sstatus},#{amt},#{samt},#{workload},#{projectId},#{sworkload},#{bizMonth},#{budgetAt},#{budgetWorkload},#{initWorkload},#{quoteAt},#{quoteWorkload},#{sschemel},#{uniPrice},#{qendTime},#{qstartTime},#{actEndTime},#{actStartTime},#{oshare},#{shareFee},#{sfee},#{sfeeRate},#{cpId},#{cpName},#{cpType}
 		)
 	</insert>
 	
@@ -151,7 +151,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee
+		userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee,sfee,sfee_rate,cp_id,cp_name,cp_type
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -185,6 +185,11 @@
 		<if test="actStartTime != null">      and date_format(res.act_start_time,'%Y-%m-%d') = date_format(#{actStartTime},'%Y-%m-%d')     </if>
 		<if test="oshare != null and oshare != ''">      and res.oshare = #{oshare}     </if>
 		<if test="shareFee != null and shareFee != ''">      and res.share_fee = #{shareFee}     </if>
+		<if test="sfee != null and sfee != ''">      and res.sfee = #{sfee}     </if>
+		<if test="sfeeRate != null and sfeeRate != ''">      and res.sfee_rate = #{sfeeRate}     </if>
+		<if test="cpId != null and cpId != ''">      and res.cp_id = #{cpId}     </if>
+		<if test="cpName != null and cpName != ''">      and res.cp_name = #{cpName}     </if>
+		<if test="cpType != null and cpType != ''">      and res.cp_type = #{cpType}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -215,7 +220,12 @@
 		act_end_time = #{actEndTime},
 		act_start_time = #{actStartTime},
 		oshare = #{oshare},
-		share_fee = #{shareFee}
+		share_fee = #{shareFee},
+		sfee = #{sfee},
+		sfee_rate = #{sfeeRate},
+		cp_id = #{cpId},
+		cp_name = #{cpName},
+		cp_type = #{cpType}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
@@ -246,6 +256,11 @@
 		<if test="actStartTime != null"> act_start_time = #{actStartTime},     </if>
 		<if test="oshare != null and oshare != ''"> oshare = #{oshare},     </if>
 		<if test="shareFee != null and shareFee != ''"> share_fee = #{shareFee},     </if>
+		<if test="sfee != null and sfee != ''"> sfee = #{sfee},     </if>
+		<if test="sfeeRate != null and sfeeRate != ''"> sfee_rate = #{sfeeRate},     </if>
+		<if test="cpId != null and cpId != ''"> cp_id = #{cpId},     </if>
+		<if test="cpName != null and cpName != ''"> cp_name = #{cpName},     </if>
+		<if test="cpType != null and cpType != ''"> cp_type = #{cpType},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -276,6 +291,11 @@
 			act_end_time = #{item.actEndTime},
 			act_start_time = #{item.actStartTime},
 			oshare = #{item.oshare},
-			share_fee = #{item.shareFee}
+			share_fee = #{item.shareFee},
+			sfee = #{item.sfee},
+			sfee_rate = #{item.sfeeRate},
+			cp_id = #{item.cpId},
+			cp_name = #{item.cpName},
+			cp_type = #{item.cpType}
 	</sql>
 </mapper>

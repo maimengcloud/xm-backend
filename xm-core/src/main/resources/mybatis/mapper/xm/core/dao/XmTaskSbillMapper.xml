@@ -89,7 +89,7 @@
 		insert into xm_task_sbill(
 			<include refid="columns"/>
 		) values (
-		#{id},#{title},#{amt},#{ctime},#{cuserid},#{cusername},#{remark},#{branchId},#{deptid},#{cpId},#{cpName},#{workload},#{bizMonth},#{bizDate},#{bizFlowState},#{bizProcInstId},#{ltime},#{status},#{fmsg},#{projectId},#{projectName},#{userCnt}
+		#{id},#{title},#{amt},#{ctime},#{cuserid},#{cusername},#{remark},#{branchId},#{deptid},#{cpId},#{cpName},#{workload},#{bizMonth},#{bizDate},#{bizFlowState},#{bizProcInstId},#{ltime},#{status},#{fmsg},#{projectId},#{projectName},#{userCnt},#{cpType}
 		)
 	</insert>
 	
@@ -164,7 +164,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,title,amt,ctime,cuserid,cusername,remark,branch_id,deptid,cp_id,cp_name,workload,biz_month,biz_date,biz_flow_state,biz_proc_inst_id,ltime,status,fmsg,project_id,project_name,user_cnt
+		id,title,amt,ctime,cuserid,cusername,remark,branch_id,deptid,cp_id,cp_name,workload,biz_month,biz_date,biz_flow_state,biz_proc_inst_id,ltime,status,fmsg,project_id,project_name,user_cnt,cp_type
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -191,6 +191,7 @@
 		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
 		<if test="projectName != null and projectName != ''">      and res.project_name = #{projectName}     </if>
 		<if test="userCnt != null and userCnt != ''">      and res.user_cnt = #{userCnt}     </if>
+		<if test="cpType != null and cpType != ''">      and res.cp_type = #{cpType}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -214,7 +215,8 @@
 		fmsg = #{fmsg},
 		project_id = #{projectId},
 		project_name = #{projectName},
-		user_cnt = #{userCnt}
+		user_cnt = #{userCnt},
+		cp_type = #{cpType}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="title != null and title != ''"> title = #{title},     </if>
@@ -238,6 +240,7 @@
 		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
 		<if test="projectName != null and projectName != ''"> project_name = #{projectName},     </if>
 		<if test="userCnt != null and userCnt != ''"> user_cnt = #{userCnt},     </if>
+		<if test="cpType != null and cpType != ''"> cp_type = #{cpType},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -261,6 +264,7 @@
 			fmsg = #{item.fmsg},
 			project_id = #{item.projectId},
 			project_name = #{item.projectName},
-			user_cnt = #{item.userCnt}
+			user_cnt = #{item.userCnt},
+			cp_type = #{item.cpType}
 	</sql>
 </mapper>
