@@ -67,15 +67,17 @@ public class XmTaskSbillDetailService extends BaseService {
     public void preCalcSamt(XmTaskSbillDetail detail) {
         if(detail.getQuoteAt()!=null){
             detail.setSamt(detail.getQuoteAt());
-            return;
-        }
-        if(detail.getBudgetAt()==null && detail.getQuoteAt()==null){
+        }else if(detail.getBudgetAt()==null && detail.getQuoteAt()==null){
             detail.setSamt(BigDecimal.ZERO);
-            return;
-        }
-        if(detail.getBudgetAt()!=null){
+        }else if(detail.getBudgetAt()!=null){
             detail.setSamt(detail.getBudgetAt());
-            return;
+        }
+        if("1".equals(detail.getOshare())){
+            if(detail.getShareFee()!=null && detail.getShareFee().compareTo(BigDecimal.ZERO)>0){
+                if(detail.getSamt()!=null){
+                    detail.setSamt(detail.getSamt().subtract(detail.getShareFee()));
+                }
+            }
         }
 
     }
