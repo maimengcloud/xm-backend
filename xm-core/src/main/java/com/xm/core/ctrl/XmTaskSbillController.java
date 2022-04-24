@@ -240,6 +240,7 @@ public class XmTaskSbillController {
 				detail.setSbillId(batchJoinToSbill.getSbillId());
 				detail.setProjectId(projectId);
 				detail.setCtime(new Date());
+				this.xmTaskSbillDetailService.calcSamt(detail);
 				canAdd.add(detail);
 			}
 			this.xmTaskSbillService.batchJoinToSbill(canAdd,details);

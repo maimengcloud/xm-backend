@@ -175,6 +175,8 @@ public class XmTaskSbillService extends BaseService {
 		detailsAll.addAll(canAdd);
 		detailsAll.addAll(details);
 		this.xmTaskWorkloadService.updateStatusAfterJoinSbill(detailsAll);
+
+		this.updateBySbillDetailList(detailsAll.stream().map(i->i.getSbillId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
     }
 }
 

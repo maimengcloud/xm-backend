@@ -120,26 +120,7 @@ public class XmTaskSbillDetailController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmTaskSbillDetail(@RequestBody XmTaskSbillDetail xmTaskSbillDetail){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功删除一条数据");
-		try{
-            if(!StringUtils.hasText(xmTaskSbillDetail.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
-            }
-            XmTaskSbillDetail xmTaskSbillDetailDb = xmTaskSbillDetailService.selectOneObject(xmTaskSbillDetail);
-            if( xmTaskSbillDetailDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
-            }
-			xmTaskSbillDetailService.deleteByPk(xmTaskSbillDetail);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		 return batchDelXmTaskSbillDetail(Arrays.asList(xmTaskSbillDetail));
 	}
 	
 	/**
@@ -220,7 +201,7 @@ public class XmTaskSbillDetailController {
 			}
 			if(can.size()>0){
                 xmTaskSbillDetailMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
-			    xmTaskSbillDetailService.editSomeFields(xmTaskSbillDetailMap); 
+			    xmTaskSbillDetailService.doEditSomeFields(xmTaskSbillDetailMap,can.stream().map(i->i.getSbillId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
 			}
 			List<String> msgs=new ArrayList<>();
 			if(can.size()>0){

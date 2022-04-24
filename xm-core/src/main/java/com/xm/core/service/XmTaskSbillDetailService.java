@@ -6,6 +6,7 @@ import com.xm.core.vo.UserTaskVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -49,6 +50,34 @@ public class XmTaskSbillDetailService extends BaseService {
 
         //更新结算单数据
         xmTaskSbillService.updateBySbillDetailList(Arrays.asList(sbillId));
+    }
+
+    @Transactional
+    public void doEditSomeFields(Map<String, Object> xmTaskSbillDetailMap,List<String> sbillIds) {
+        super.editSomeFields(xmTaskSbillDetailMap);
+        if(xmTaskSbillDetailMap.containsKey("samt")){
+            xmTaskSbillService.updateBySbillDetailList(sbillIds);
+        }
+    }
+
+    /**
+     * 提前计算结算金额
+     * @param detail
+     */
+    public void preCalcSamt(XmTaskSbillDetail detail) {
+        if(detail.getQuoteAt()!=null){
+            detail.setSamt(detail.getQuoteAt());
+            return;
+        }
+        if(detail.getBudgetAt()==null && detail.getQuoteAt()==null){
+            detail.setSamt(BigDecimal.ZERO);
+            return;
+        }
+        if(detail.getBudgetAt()!=null){
+            detail.setSamt(detail.getBudgetAt());
+            return;
+        }
+
     }
 }
 
