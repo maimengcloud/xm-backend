@@ -2,6 +2,7 @@ package com.xm.core.ctrl;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import com.mdp.core.utils.*;
 import com.mdp.safe.client.entity.User;
@@ -215,7 +216,15 @@ public class XmTaskSbillController {
 				return ResponseHelper.failed("projectId-not-same","请选择同一个项目的任务加入工时单");
 			}
 			//检查是否已有同样的数据加入了结算单，如果有，需要合并
-			List<XmTaskSbillDetail> details=xmTaskSbillDetailService.selectListByUserTasks(batchJoinToSbill);
+			BatchJoinToSbillVo batchJoinToSbillQuery=new BatchJoinToSbillVo();
+			batchJoinToSbillQuery.setUserTasks(batchJoinToSbill.getUserTasks());
+			List<XmTaskSbillDetail> details=xmTaskSbillDetailService.selectListByUserTasks(batchJoinToSbillQuery);
+			List<XmTaskSbillDetail> othSbillDetails=details.stream().filter(i->sbillDb.getId().equals(i.getSbillId())).collect(Collectors.toList());
+ 			for (XmTaskSbillDetail i : othSbillDetails) {
+				if(!"4".equals(i.getSstatus())){
+					return ResponseHelper.failed("user-task-exists-not-4",String.format("任务【%s】，人员【%s】存在未完成的结算单【%s】，暂时不允许发起结算。",i.getName(),i.getUsername(),i.getSbillId()));
+				}
+			}
 			if(details!=null && details.size()>0){
 				for (XmTaskSbillDetail detail : details) {
 					//进行合并操作
