@@ -76,7 +76,7 @@
 		insert into xm_task_sbill_detail(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{ctime},#{taskId},#{bizDate},#{remark},#{id},#{sbillId},#{stime},#{sstatus},#{amt},#{samt},#{workload},#{projectId},#{sworkload},#{bizMonth},#{budgetAt},#{budgetWorkload},#{initWorkload},#{quoteAt},#{quoteWorkload},#{sschemel},#{uniPrice},#{qendTime},#{qstartTime},#{actEndTime},#{actStartTime}
+		#{userid},#{username},#{ctime},#{taskId},#{bizDate},#{remark},#{id},#{sbillId},#{stime},#{sstatus},#{amt},#{samt},#{workload},#{projectId},#{sworkload},#{bizMonth},#{budgetAt},#{budgetWorkload},#{initWorkload},#{quoteAt},#{quoteWorkload},#{sschemel},#{uniPrice},#{qendTime},#{qstartTime},#{actEndTime},#{actStartTime},#{oshare},#{shareFee}
 		)
 	</insert>
 	
@@ -151,7 +151,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time
+		userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -183,6 +183,8 @@
 		<if test="qstartTime != null">      and date_format(res.qstart_time,'%Y-%m-%d') = date_format(#{qstartTime},'%Y-%m-%d')     </if>
 		<if test="actEndTime != null">      and date_format(res.act_end_time,'%Y-%m-%d') = date_format(#{actEndTime},'%Y-%m-%d')     </if>
 		<if test="actStartTime != null">      and date_format(res.act_start_time,'%Y-%m-%d') = date_format(#{actStartTime},'%Y-%m-%d')     </if>
+		<if test="oshare != null and oshare != ''">      and res.oshare = #{oshare}     </if>
+		<if test="shareFee != null and shareFee != ''">      and res.share_fee = #{shareFee}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -211,7 +213,9 @@
 		qend_time = #{qendTime},
 		qstart_time = #{qstartTime},
 		act_end_time = #{actEndTime},
-		act_start_time = #{actStartTime}
+		act_start_time = #{actStartTime},
+		oshare = #{oshare},
+		share_fee = #{shareFee}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
@@ -240,6 +244,8 @@
 		<if test="qstartTime != null"> qstart_time = #{qstartTime},     </if>
 		<if test="actEndTime != null"> act_end_time = #{actEndTime},     </if>
 		<if test="actStartTime != null"> act_start_time = #{actStartTime},     </if>
+		<if test="oshare != null and oshare != ''"> oshare = #{oshare},     </if>
+		<if test="shareFee != null and shareFee != ''"> share_fee = #{shareFee},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -268,6 +274,8 @@
 			qend_time = #{item.qendTime},
 			qstart_time = #{item.qstartTime},
 			act_end_time = #{item.actEndTime},
-			act_start_time = #{item.actStartTime}
+			act_start_time = #{item.actStartTime},
+			oshare = #{item.oshare},
+			share_fee = #{item.shareFee}
 	</sql>
 </mapper>
