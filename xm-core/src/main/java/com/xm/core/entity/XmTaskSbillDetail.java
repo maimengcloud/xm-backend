@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskSbillDetail所有属性名: <br>
- *	userid,username,ctime,taskId,bizDate,remark,id,sbillId,stime,sstatus,amt,samt,workload,projectId,sworkload,bizMonth,budgetAt,budgetWorkload,initWorkload,quoteAt,quoteWorkload,sschemel,uniPrice,qendTime,qstartTime,actEndTime,actStartTime,oshare,shareFee,sfee,sfeeRate,cpId,cpName,cpType,distUserid,distUsername,shareKey,taskOut,crowd,othFee,feeRemark;<br>
+ *	userid,username,ctime,taskId,bizDate,remark,id,sbillId,stime,sstatus,amt,samt,workload,projectId,sworkload,bizMonth,budgetAt,budgetWorkload,initWorkload,quoteAt,quoteWorkload,sschemel,uniPrice,qendTime,qstartTime,actEndTime,actStartTime,oshare,shareFee,sfee,sfeeRate,cpId,cpName,cpType,distUserid,distUsername,shareKey,taskOut,crowd,othFee,feeRemark,tactAt;<br>
  * 表 xm_task_sbill_detail 工时登记表的所有字段名: <br>
- *	userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee,sfee,sfee_rate,cp_id,cp_name,cp_type,dist_userid,dist_username,share_key,task_out,crowd,oth_fee,fee_remark;<br>
+ *	userid,username,ctime,task_id,biz_date,remark,id,sbill_id,stime,sstatus,amt,samt,workload,project_id,sworkload,biz_month,budget_at,budget_workload,init_workload,quote_at,quote_workload,sschemel,uni_price,qend_time,qstart_time,act_end_time,act_start_time,oshare,share_fee,sfee,sfee_rate,cp_id,cp_name,cp_type,dist_userid,dist_username,share_key,task_out,crowd,oth_fee,fee_remark,tact_at;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -142,6 +142,9 @@ public class XmTaskSbillDetail  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="费用说明",allowEmptyValue=true,example="",allowableValues="")
 	String feeRemark;
+	
+	@ApiModelProperty(notes="该任务在本次结算前已结算的金额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal tactAt;
 
 	/**主键**/
 	public XmTaskSbillDetail(String id) {
@@ -398,6 +401,12 @@ public class XmTaskSbillDetail  implements java.io.Serializable {
 	public void setFeeRemark(String feeRemark) {
 		this.feeRemark = feeRemark;
 	}
+	/**
+	 * 该任务在本次结算前已结算的金额
+	 **/
+	public void setTactAt(BigDecimal tactAt) {
+		this.tactAt = tactAt;
+	}
 	
 	/**
 	 * 员工编号
@@ -644,6 +653,12 @@ public class XmTaskSbillDetail  implements java.io.Serializable {
 	 **/
 	public String getFeeRemark() {
 		return this.feeRemark;
+	}
+	/**
+	 * 该任务在本次结算前已结算的金额
+	 **/
+	public BigDecimal getTactAt() {
+		return this.tactAt;
 	}
 
 }
