@@ -155,10 +155,10 @@
 		from xm_task_workload res
 		<where>
 			<if test="projectId!=null and projectId!=''">
-				and task.project_id=#{projectId}
+				and res.project_id=#{projectId}
 			</if>
 			<if test="taskId!=null and taskId!=''">
-				and task.id=#{taskId}
+				and res.id=#{taskId}
 			</if>
 			<if test="userid!=null and userid!=''">
 				and res.userid=#{userid}
@@ -191,8 +191,8 @@
 	</select>
 	<update id="updateStatusAfterJoinSbill" parameterType="List">
 		<foreach collection="list" item="item" index="index" separator=";" >
-			update xm_task_workload res set res.sstatus='2'
-			where res.sstatus='1' and res.userid=#{userid} and res.task_id=#{taskId}
+			update xm_task_workload res set res.sstatus='2',res.detail_id=#{item.id}
+			where res.sstatus='1' and res.userid=#{item.userid} and res.task_id=#{item.taskId}
 		</foreach>
 	</update>
 	<!--结束 自定义sql函数区域-->

@@ -221,8 +221,8 @@ public class XmTaskSbillController {
 					//进行合并操作
 					for (Map<String, Object> toSetUserTask : toSetUserTasks) {
 						if(detail.getUserid().equals(toSetUserTask.get("userid")) && detail.getTaskId().equals(toSetUserTask.get("taskId"))){
-							detail.setWorkload(detail.getWorkload().add(NumberUtil.getBigDecimal(toSetUserTask.get("workload"),BigDecimal.ZERO)));
-							detail.setWorkload(detail.getSworkload().add(NumberUtil.getBigDecimal(toSetUserTask.get("workload"),BigDecimal.ZERO)));
+							detail.setWorkload(NumberUtil.getBigDecimal(detail.getWorkload(),BigDecimal.ZERO).add(NumberUtil.getBigDecimal(toSetUserTask.get("workload"),BigDecimal.ZERO)));
+							detail.setSworkload(NumberUtil.getBigDecimal(detail.getSworkload(),BigDecimal.ZERO).add(NumberUtil.getBigDecimal(toSetUserTask.get("workload"),BigDecimal.ZERO)));
 						}
 					}
 				}
