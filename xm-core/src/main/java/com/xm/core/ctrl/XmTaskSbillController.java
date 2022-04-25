@@ -261,6 +261,7 @@ public class XmTaskSbillController {
 					tactAt=tactAt.add(othDetail.getAmt());
 				}
 				d.setTactAt(tactAt);
+				this.xmTaskSbillDetailService.preCalcSamt(d);
 
 			}
 			this.xmTaskSbillService.batchJoinToSbill(canAdd,sameSbillDetails);

@@ -139,7 +139,7 @@
 	<!--查询待结算工时-->
 	<select id="ListGroupByTaskIdAndUseridToSet" parameterType="HashMap" resultType="HashMap">
 		select res.*, task.project_name,task.name as task_name,task.budget_workload,task.act_workload,task_state,task_out,crowd,uni_inner_price,uni_out_price,settle_schemel as sschemel,task.budget_at,task.oshare,task.share_fee,
-		e.quote_workload,e.quote_amount as quote_at,e.exec_user_branch_id,e.quote_end_time,e.quote_start_time,e.dist_userid,e.dist_username,e.exec_user_branch_id as cp_id,e.share_key
+		e.quote_workload,e.quote_amount as quote_at,e.exec_user_branch_id,e.quote_end_time,e.quote_start_time,e.dist_userid,e.dist_username,e.exec_user_branch_id as cp_id,e.share_key,e.sfee_rate,e.sfee
 		from xm_task task
 		inner join (
 		select res.project_id,res.task_id,res.userid,

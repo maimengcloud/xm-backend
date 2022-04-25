@@ -4,6 +4,7 @@ import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.meta.client.service.ItemService;
@@ -26,10 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.math.BigDecimal;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.map;
@@ -160,7 +159,7 @@ public class XmTaskExecuserController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-			String projectId=xmTaskExecuser.getProjectId();
+
 			 User user=LoginUtils.getCurrentUserInfo();
 			XmTask xmTask=xmTaskService.selectOneObject(new XmTask(xmTaskExecuser.getTaskId()));
 			if(xmTask==null){
@@ -168,20 +167,31 @@ public class XmTaskExecuserController {
 				m.put("tips", tips);
 				return m;
 			}
-
-			if("1".equals(xmTask.getCrowd()) && "1".equals(xmTask.getTaskOut())){
-				Tips tips2=mkClient.checkMemberInterests(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
-				if(!tips2.isOk()){
-					return ResponseHelper.failed(tips2);
-				}
-			}
-
+			String projectId=xmTask.getProjectId();
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
 				tips.setFailureMsg("该任务已经处于完工、结算状态，不允许再修改");
 				m.put("tips", tips);
 				return m;
 			}
+			if("1".equals(xmTask.getCrowd()) && "1".equals(xmTask.getTaskOut())){
+				String colUserid=StringUtils.hasText(xmTaskExecuser.getExecUserBranchId())?xmTaskExecuser.getExecUserBranchId():xmTaskExecuser.getUserid();
+				Map<String,Object> result=mkClient.checkAndGetMemberInterests(colUserid,xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+				Tips tips2= (Tips) result.get("tips");
+				if(!tips2.isOk()){
+					return ResponseHelper.failed(tips2);
+				}
+				Map<String,Object> data= (Map<String, Object>) result.get("data");
+				if(data!=null && data.containsKey("sfeeRate")){
+					xmTaskExecuser.setSfeeRate(NumberUtil.getInteger(data.get("sfeeRate"),0));
+					if(xmTaskExecuser.getQuoteAmount()!=null){
+						xmTaskExecuser.setSfee(xmTaskExecuser.getQuoteAmount().multiply(BigDecimal.valueOf(xmTaskExecuser.getSfeeRate()/100)));
+					}
+				}
+			}
+
+
 			 if(user.getUserid().equals(xmTaskExecuser.getUserid())){//自己作为候选人
+				 xmTaskExecuser.setExecUserBranchId(user.getBranchId());
 				 xmTaskExecuserService.addExecuser(xmTaskExecuser);
 				 mkClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
 				 m.put("data",xmTaskExecuser);
