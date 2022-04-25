@@ -177,16 +177,20 @@ public class XmTaskExecuserController {
 				m.put("tips", tips);
 				return m;
 			}
-			if("1".equals(xmTask.getCrowd()) && "1".equals(xmTask.getTaskOut())){
-				String colUserid=user.getBranchId();
-				if(!xmTaskExecuser.getUserid().equals(user.getUserid())){
-					User userDb=userBaseInfoRemoteQueryService.getUserByUserid(xmTaskExecuser.getUserid(),map());
-					if(userDb==null){
-						return ResponseHelper.failed("userid-0","候选人不存在");
-					}
-					colUserid=userDb.getBranchId();
-					xmTaskExecuser.setExecUserBranchId(userDb.getUserid());
+			String colUserid=user.getBranchId();
+			if(!xmTaskExecuser.getUserid().equals(user.getUserid())){
+				User userDb=userBaseInfoRemoteQueryService.getUserByUserid(xmTaskExecuser.getUserid(),map());
+				if(userDb==null){
+					return ResponseHelper.failed("userid-0","候选人不存在");
 				}
+				colUserid=userDb.getBranchId();
+				xmTaskExecuser.setExecUserBranchId(userDb.getBranchId());
+			}else{
+				xmTaskExecuser.setExecUserBranchId(user.getBranchId());
+			}
+			if("1".equals(xmTask.getCrowd()) && "1".equals(xmTask.getTaskOut())){
+
+
 				Map<String,Object> result=mkClient.checkAndGetMemberInterests(colUserid,xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
 				Tips tips2= (Tips) result.get("tips");
 				if(!tips2.isOk()){
