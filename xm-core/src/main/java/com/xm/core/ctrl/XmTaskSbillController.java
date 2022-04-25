@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.mdp.core.utils.*;
+import com.mdp.safe.client.cache.ModuleBranchRedisCacheService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.tpa.client.entity.AppShopConfig;
@@ -71,6 +72,7 @@ public class XmTaskSbillController {
 
 	@Autowired
 	XmTaskWorkloadService xmTaskWorkloadService;
+
 	
 	@ApiOperation( value = "查询任务结算表信息列表",notes=" ") 
 	@ApiResponses({
@@ -259,7 +261,7 @@ public class XmTaskSbillController {
 					tactAt=tactAt.add(othDetail.getAmt());
 				}
 				d.setTactAt(tactAt);
-				this.xmTaskSbillDetailService.preCalcSamt(d);
+
 			}
 			this.xmTaskSbillService.batchJoinToSbill(canAdd,sameSbillDetails);
 
