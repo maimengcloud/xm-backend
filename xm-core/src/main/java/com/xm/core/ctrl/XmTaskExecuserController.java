@@ -11,6 +11,7 @@ import com.mdp.meta.client.service.ItemService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.service.remote.UserBaseInfoRemoteQueryService;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskExecuser;
@@ -65,6 +66,9 @@ public class XmTaskExecuserController {
 
 	@Autowired
 	MkClient mkClient;
+
+	@Autowired
+	UserBaseInfoRemoteQueryService userBaseInfoRemoteQueryService;
 	
 
 	@Autowired
@@ -174,7 +178,14 @@ public class XmTaskExecuserController {
 				return m;
 			}
 			if("1".equals(xmTask.getCrowd()) && "1".equals(xmTask.getTaskOut())){
-				String colUserid=StringUtils.hasText(xmTaskExecuser.getExecUserBranchId())?xmTaskExecuser.getExecUserBranchId():xmTaskExecuser.getUserid();
+				String colUserid=user.getBranchId();
+				if(!xmTaskExecuser.getUserid().equals(user.getUserid())){
+					User userDb=userBaseInfoRemoteQueryService.getUserByUserid(xmTaskExecuser.getUserid(),map());
+					if(userDb==null){
+						return ResponseHelper.failed("userid-0","候选人不存在");
+					}
+					colUserid=userDb.getBranchId();
+				}
 				Map<String,Object> result=mkClient.checkAndGetMemberInterests(colUserid,xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
 				Tips tips2= (Tips) result.get("tips");
 				if(!tips2.isOk()){
