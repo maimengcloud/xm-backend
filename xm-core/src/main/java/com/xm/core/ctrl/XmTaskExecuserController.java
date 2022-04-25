@@ -185,6 +185,7 @@ public class XmTaskExecuserController {
 						return ResponseHelper.failed("userid-0","候选人不存在");
 					}
 					colUserid=userDb.getBranchId();
+					xmTaskExecuser.setExecUserBranchId(userDb.getUserid());
 				}
 				Map<String,Object> result=mkClient.checkAndGetMemberInterests(colUserid,xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
 				Tips tips2= (Tips) result.get("tips");
