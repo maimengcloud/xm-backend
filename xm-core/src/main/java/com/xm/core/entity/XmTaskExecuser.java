@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskExecuser所有属性名: <br>
- *	createTime,taskId,userid,startTime,endTime,status,remarks,createUserid,createUsername,username,matchScore,quoteWeekday,quoteAmount,quoteTime,projectId,phaseId,skillRemark,quoteWorkload,quoteStartTime,quoteEndTime,branchId,phaseName,taskName,distUserid,distUsername,execUserBranchId,shareKey;<br>
+ *	createTime,taskId,userid,startTime,endTime,status,remarks,createUserid,createUsername,username,matchScore,quoteWeekday,quoteAmount,quoteTime,projectId,phaseId,skillRemark,quoteWorkload,quoteStartTime,quoteEndTime,branchId,phaseName,taskName,distUserid,distUsername,execUserBranchId,shareKey,sfeeRate,sfee;<br>
  * 表 xm_task_execuser xm_task_execuser的所有字段名: <br>
- *	create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branch_id,share_key;<br>
+ *	create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branch_id,share_key,sfee_rate,sfee;<br>
  * 当前主键(包括多主键):<br>
  *	task_id,userid;<br>
  */
@@ -100,6 +100,12 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="分享码",allowEmptyValue=true,example="",allowableValues="")
 	String shareKey;
+	
+	@ApiModelProperty(notes="服务费率",allowEmptyValue=true,example="",allowableValues="")
+	Integer sfeeRate;
+	
+	@ApiModelProperty(notes="众包服务费",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal sfee;
 
 	/**任务id,执行人id**/
 	public XmTaskExecuser(String taskId,String userid) {
@@ -273,6 +279,18 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	public void setShareKey(String shareKey) {
 		this.shareKey = shareKey;
 	}
+	/**
+	 * 服务费率
+	 **/
+	public void setSfeeRate(Integer sfeeRate) {
+		this.sfeeRate = sfeeRate;
+	}
+	/**
+	 * 众包服务费
+	 **/
+	public void setSfee(BigDecimal sfee) {
+		this.sfee = sfee;
+	}
 	
 	/**
 	 * 创建时间
@@ -435,6 +453,18 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	 **/
 	public String getShareKey() {
 		return this.shareKey;
+	}
+	/**
+	 * 服务费率
+	 **/
+	public Integer getSfeeRate() {
+		return this.sfeeRate;
+	}
+	/**
+	 * 众包服务费
+	 **/
+	public BigDecimal getSfee() {
+		return this.sfee;
 	}
 
 }

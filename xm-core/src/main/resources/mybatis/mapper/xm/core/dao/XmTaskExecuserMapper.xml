@@ -138,7 +138,7 @@
 		insert into xm_task_execuser(
 			<include refid="columns"/>
 		) values (
-		#{createTime},#{taskId},#{userid},#{startTime},#{endTime},#{status},#{remarks},#{createUserid},#{createUsername},#{username},#{matchScore},#{quoteWeekday},#{quoteAmount},#{quoteTime},#{projectId},#{phaseId},#{skillRemark},#{quoteWorkload},#{quoteStartTime},#{quoteEndTime},#{branchId},#{phaseName},#{taskName},#{distUserid},#{distUsername},#{execUserBranchId},#{shareKey}
+		#{createTime},#{taskId},#{userid},#{startTime},#{endTime},#{status},#{remarks},#{createUserid},#{createUsername},#{username},#{matchScore},#{quoteWeekday},#{quoteAmount},#{quoteTime},#{projectId},#{phaseId},#{skillRemark},#{quoteWorkload},#{quoteStartTime},#{quoteEndTime},#{branchId},#{phaseName},#{taskName},#{distUserid},#{distUsername},#{execUserBranchId},#{shareKey},#{sfeeRate},#{sfee}
 		)
 	</insert>
 	
@@ -213,7 +213,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branch_id,share_key
+		create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branch_id,share_key,sfee_rate,sfee
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -245,6 +245,8 @@
 		<if test="distUsername != null and distUsername != ''">      and res.dist_username = #{distUsername}     </if>
 		<if test="execUserBranchId != null and execUserBranchId != ''">      and res.exec_user_branch_id = #{execUserBranchId}     </if>
 		<if test="shareKey != null and shareKey != ''">      and res.share_key = #{shareKey}     </if>
+		<if test="sfeeRate != null and sfeeRate != ''">      and res.sfee_rate = #{sfeeRate}     </if>
+		<if test="sfee != null and sfee != ''">      and res.sfee = #{sfee}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -272,7 +274,9 @@
 		dist_userid = #{distUserid},
 		dist_username = #{distUsername},
 		exec_user_branch_id = #{execUserBranchId},
-		share_key = #{shareKey}
+		share_key = #{shareKey},
+		sfee_rate = #{sfeeRate},
+		sfee = #{sfee}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="createTime != null"> create_time = #{createTime},     </if>
@@ -300,6 +304,8 @@
 		<if test="distUsername != null and distUsername != ''"> dist_username = #{distUsername},     </if>
 		<if test="execUserBranchId != null and execUserBranchId != ''"> exec_user_branch_id = #{execUserBranchId},     </if>
 		<if test="shareKey != null and shareKey != ''"> share_key = #{shareKey},     </if>
+		<if test="sfeeRate != null and sfeeRate != ''"> sfee_rate = #{sfeeRate},     </if>
+		<if test="sfee != null and sfee != ''"> sfee = #{sfee},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -327,6 +333,8 @@
 			dist_userid = #{item.distUserid},
 			dist_username = #{item.distUsername},
 			exec_user_branch_id = #{item.execUserBranchId},
-			share_key = #{item.shareKey}
+			share_key = #{item.shareKey},
+			sfee_rate = #{item.sfeeRate},
+			sfee = #{item.sfee}
 	</sql>
 </mapper>
