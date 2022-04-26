@@ -203,6 +203,12 @@
 		</foreach>
 	</update>
 
+	<update id="updateStatusBySbillIdByFlowStatea" parameterType="HashMap">
+		update xm_task_workload res inner join xm_task_sbill_detail d on d.id=res.detail_id
+		set res.sstatus=#{sstatus},d.sstatus=#{sstatus}
+		where d.sbill_id=#{sbillId}
+	</update>
+
 	<!--结束 自定义sql函数区域-->
 	
 
