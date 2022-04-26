@@ -5,6 +5,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.micro.client.CallBizService;
 import com.mdp.mq.queue.Push;
+import com.xm.core.entity.XmTaskSbillDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -30,34 +31,10 @@ public class MkClient {
     @Autowired
     Push push;
 
-    /**
-     * 		execOrder.setOrderId(sequence.getReqFlowNo());
-     * 		execOrder.setActNum(new BigDecimal("1"));
-     * 		execOrder.setEntityId(entityId);
-     * 		execOrder.setCustId(receiverId);
-     * 		execOrder.setActSinglePrice(new BigDecimal("10.22"));
-     * 		execOrder.setTotalPrice(new BigDecimal("10.22"));
-     * 		execOrder.setCustBranchId("platform-branch-001");
-     * @return
-     */
-    public Tips pushActiExecOrder(String orderId,String custId,String custName,String custBranchId,String orderBranchId, String entityId,BigDecimal actNum,BigDecimal actSinglePrice,BigDecimal totalPrice,BigDecimal workload,String entityDesc){
+    public Tips pushSbillDetail(XmTaskSbillDetail detail){
         Tips tips = new Tips("推送订单成功");
-        Map<String,Object> params=new HashMap<>();
-        params.put("orderId",orderId);
-        params.put("entityType","2");
-        params.put("custId",custId);
-        params.put("custName",custName);
-        params.put("custBranchId",custBranchId);
-        params.put("orderBranchId",orderBranchId);
-        params.put("entityId",entityId);
-        params.put("actNum",actNum);
-        params.put("actSinglePrice",actSinglePrice);
-        params.put("totalPrice",totalPrice);
-        params.put("workload",workload);
-        params.put("entityDesc",entityDesc);
-        push.leftPush("xm_task_settle",params);
-       // strRedisTemplate.convertAndSend("xm_task_settle", JSON.toJSONString(params));
-        return tips;
+        push.leftPush("xm_task_settle",BaseUtils.toMap(detail));
+         return tips;
     }
 
     /**

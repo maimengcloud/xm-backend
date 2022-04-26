@@ -1,28 +1,21 @@
 package com.xm.core.service;
 
-import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
-import com.mdp.core.utils.NumberUtil;
 import com.xm.core.entity.XmTaskSbillDetail;
-import com.xm.core.entity.XmTaskWorkload;
 import com.xm.core.service.client.MkClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.mdp.core.service.BaseService;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 
 import com.xm.core.entity.XmTaskSbill;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.util.StringUtils;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -106,20 +99,14 @@ public class XmTaskSbillService extends BaseService {
 	}
 
 	private void pushWorkloadToMk(XmTaskSbill xmTaskSbill) {
-		List<Map<String,Object>> taskWorkloads=this.xmTaskWorkloadService.listTaskWorkloadBySbillIdGroupByUseridAndTaskId(xmTaskSbill.getId());
-		if(taskWorkloads==null || taskWorkloads.size()==0){
+		XmTaskSbillDetail detailQ=new XmTaskSbillDetail();
+		detailQ.setSbillId(xmTaskSbill.getId());
+		List<XmTaskSbillDetail> detailsDb=this.xmTaskSbillDetailService.selectListByWhere(detailQ);
+		if(detailsDb!=null && detailsDb.size()>0){
 			return;
 		}
-		for (Map<String, Object> t : taskWorkloads) {
-			String taskId= (String) t.get("taskId");
-			String taskName= (String) t.get("taskName");
-			String userid= (String) t.get("userid");
-			String username= (String) t.get("username");
-			String custBranchId="";
-			BigDecimal actNum=BigDecimal.valueOf(1);
-			BigDecimal sigPrice= NumberUtil.getBigDecimal(t.get("samt"));
-			BigDecimal workload=NumberUtil.getBigDecimal(t.get("sworkload"));
-			mkClient.pushActiExecOrder(taskId,userid,username,custBranchId,xmTaskSbill.getBranchId(),taskId, actNum,sigPrice,actNum.multiply(sigPrice),workload,taskName);
+		for (XmTaskSbillDetail t : detailsDb) {
+			mkClient.pushSbillDetail(t);
 		}
 	}
 
