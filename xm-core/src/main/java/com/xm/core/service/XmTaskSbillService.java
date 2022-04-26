@@ -136,7 +136,6 @@ public class XmTaskSbillService extends BaseService {
 		xmTaskSbill.setLtime(toDay);
 		xmTaskSbill.setBizMonth(DateUtils.format(toDay,"yyyy-MM"));
 		xmTaskSbill.setBizDate(DateUtils.format(toDay,"yyyy-MM-dd"));
-		xmTaskSbill.setBizDate(bizFlowState);
 		if("1".equals(bizFlowState)){
 			//发起审核，更新sbill表状态，工时登记表状态无需更新
 			xmTaskSbill.setStatus("1");
