@@ -20,6 +20,7 @@ import com.xm.core.service.XmGroupUserService;
 import com.xm.core.service.XmTaskExecuserService;
 import com.xm.core.service.XmTaskService;
 import com.xm.core.service.client.MkClient;
+import com.xm.core.service.client.SysClient;
 import com.xm.core.vo.XmGroupVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
@@ -68,7 +69,7 @@ public class XmTaskExecuserController {
 	MkClient mkClient;
 
 	@Autowired
-	UserBaseInfoRemoteQueryService userBaseInfoRemoteQueryService;
+	SysClient sysClient;
 	
 
 	@Autowired
@@ -179,7 +180,7 @@ public class XmTaskExecuserController {
 			}
 			String colUserid=user.getBranchId();
 			if(!xmTaskExecuser.getUserid().equals(user.getUserid())){
-				User userDb=userBaseInfoRemoteQueryService.getUserByUserid(xmTaskExecuser.getUserid(),map());
+				User userDb=sysClient.getUserByUserid(xmTaskExecuser.getUserid());
 				if(userDb==null){
 					return ResponseHelper.failed("userid-0","候选人不存在");
 				}
