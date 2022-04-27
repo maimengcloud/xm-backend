@@ -250,6 +250,12 @@ public class XmTaskSbillDetailController {
 			if(fieldKey.size()<=0) {
 				return failed("fieldKey-0","没有需要更新的字段");
  			}
+			String sstatus= (String) xmTaskSbillDetailMap.get("sstatus");
+			if(StringUtils.hasText(sstatus)){
+				if(!"0".equals(sstatus) && !"1".equals(sstatus)){
+					return ResponseHelper.failed("sstatus-not-01","只能修改为无需结算或者待结算");
+				}
+			}
 			XmTaskSbillDetail xmTaskSbillDetail = fromMap(xmTaskSbillDetailMap,XmTaskSbillDetail.class);
 			List<XmTaskSbillDetail> xmTaskSbillDetailsDb=xmTaskSbillDetailService.selectListByIds(ids);
 			if(xmTaskSbillDetailsDb==null ||xmTaskSbillDetailsDb.size()==0){
