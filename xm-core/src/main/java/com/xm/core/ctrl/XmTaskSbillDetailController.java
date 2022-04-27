@@ -71,6 +71,8 @@ public class XmTaskSbillDetailController {
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTaskSbillDetail, "ids");
 		PageUtils.startPage(xmTaskSbillDetail);
+		User user=LoginUtils.getCurrentUserInfo();
+		xmTaskSbillDetail.put("branchId",user.getBranchId());
 		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.selectListMapByWhere(xmTaskSbillDetail);	//列出XmTaskSbillDetail列表
 		PageUtils.responePage(m, xmTaskSbillDetailList);
 		m.put("data",xmTaskSbillDetailList);
@@ -78,9 +80,69 @@ public class XmTaskSbillDetailController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
-	
+	@ApiOperation( value = "查询个人支出费用按月分布报表",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTaskSbillDetail.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/listSumSamtGroupByUseridBizMonth",method=RequestMethod.GET)
+	public Map<String,Object> listSumSamtGroupByUseridBizMonth( @RequestParam Map<String,Object> xmTaskSbillDetail){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		String bizYear= (String) xmTaskSbillDetail.get("bizYear");
+		if(!StringUtils.hasText(bizYear)){
+			return ResponseHelper.failed("bizYear-0","年份不能为空");
+		}
+		User user=LoginUtils.getCurrentUserInfo();
+		xmTaskSbillDetail.put("branchId",user.getBranchId());
+		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.listSumSamtGroupByUseridBizMonth(xmTaskSbillDetail);	//列出XmTaskSbillDetail列表
+
+		m.put("data",xmTaskSbillDetailList);
+
+		m.put("tips", tips);
+		return m;
+	}
+	@ApiOperation( value = "查询项目支出费用按月分布报表",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTaskSbillDetail.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/listSumSamtGroupByProjectIdBizMonth",method=RequestMethod.GET)
+	public Map<String,Object> listSumSamtGroupByProjectIdBizMonth( @RequestParam Map<String,Object> xmTaskSbillDetail){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		String bizYear= (String) xmTaskSbillDetail.get("bizYear");
+		if(!StringUtils.hasText(bizYear)){
+			return ResponseHelper.failed("bizYear-0","年份不能为空");
+		}
+		User user=LoginUtils.getCurrentUserInfo();
+		xmTaskSbillDetail.put("branchId",user.getBranchId());
+		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.listSumSamtGroupByProjectIdBizMonth(xmTaskSbillDetail);	//列出XmTaskSbillDetail列表
+
+		m.put("data",xmTaskSbillDetailList);
+
+		m.put("tips", tips);
+		return m;
+	}
+	@ApiOperation( value = "查询机构支出费用按月分布报表",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTaskSbillDetail.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/listSumSamtGroupByBranchIdBizMonth",method=RequestMethod.GET)
+	public Map<String,Object> listSumSamtGroupByBranchIdBizMonth( @RequestParam Map<String,Object> xmTaskSbillDetail){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		String bizYear= (String) xmTaskSbillDetail.get("bizYear");
+		if(!StringUtils.hasText(bizYear)){
+			return ResponseHelper.failed("bizYear-0","年份不能为空");
+		}
+		User user=LoginUtils.getCurrentUserInfo();
+		xmTaskSbillDetail.put("branchId",user.getBranchId());
+		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.listSumSamtGroupByBranchIdBizMonth(xmTaskSbillDetail);	//列出XmTaskSbillDetail列表
+
+		m.put("data",xmTaskSbillDetailList);
+
+		m.put("tips", tips);
+		return m;
+	}
 	/**
 	@ApiOperation( value = "新增一条工时登记表信息",notes=" ")
 	@ApiResponses({
@@ -154,8 +216,6 @@ public class XmTaskSbillDetailController {
 		return m;
 	}
 	*/
-
-
 
     @ApiOperation( value = "批量修改某些字段",notes="")
 	@ApiResponses({

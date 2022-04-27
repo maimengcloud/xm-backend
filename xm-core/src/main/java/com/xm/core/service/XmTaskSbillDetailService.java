@@ -101,5 +101,18 @@ public class XmTaskSbillDetailService extends BaseService {
 
 
     }
+
+
+    public List<Map<String, Object>> listSumSamtGroupByUseridBizMonth(Map<String, Object> xmTaskSbillDetail) {
+        return super.selectList("listSumSamtGroupByUseridBizMonth",xmTaskSbillDetail);
+    }
+
+    public List<Map<String, Object>> listSumSamtGroupByProjectIdBizMonth(Map<String, Object> xmTaskSbillDetail) {
+        return super.selectList("listSumSamtGroupByProjectIdBizMonth",xmTaskSbillDetail);
+    }
+
+    public List<Map<String, Object>> listSumSamtGroupByBranchIdBizMonth(Map<String, Object> xmTaskSbillDetail) {
+        return super.selectList("listSumSamtGroupByBranchIdBizMonth",xmTaskSbillDetail);
+    }
 }
 
