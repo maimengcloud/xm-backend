@@ -251,6 +251,7 @@ public class XmTaskSbillController {
 				detail.setBizMonth(DateUtils.getDate("yyyy-MM"));
 				detail.setSbillId(batchJoinToSbill.getSbillId());
 				detail.setProjectId(projectId);
+				detail.setBranchId(user.getBranchId());
 				detail.setCtime(new Date());
 				canAdd.add(detail);
 			}
