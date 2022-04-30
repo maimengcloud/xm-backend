@@ -132,6 +132,9 @@
 			<if test="userid!=null and userid!=''">
 				and res.userid=#{userid}
 			</if>
+			<if test="branchId!=null and branchId!=''">
+				and task.cbranch_id=#{branchId}
+			</if>
 		</where>
 
 	</select>
@@ -163,6 +166,12 @@
 			<if test="userid!=null and userid!=''">
 				and res.userid=#{userid}
 			</if>
+			<if test="branchId!=null and branchId!=''">
+				and res.branch_id=#{branchId}
+			</if>
+			<if test="ubranchId!=null and ubranchId!=''">
+				and res.ubranch_id=#{ubranchId}
+			</if>
 			<if test="userTasks!=null">
 				and (res.userid,res.task_id) in
 				<foreach collection="userTasks" item="item" index="index" open="(" separator="," close=")" >
@@ -185,6 +194,12 @@
 			</if>
 			<if test="userid!=null and userid!=''">
 				and res.userid=#{userid}
+			</if>
+			<if test="branchId!=null and branchId!=''">
+				and e.branch_id=#{branchId}
+			</if>
+			<if test="ubranchId!=null and ubranchId!=''">
+				and e.exec_user_branch_id=#{ubranchId}
 			</if>
 		</where>
 
