@@ -84,6 +84,8 @@ public class XmTaskSbillController {
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTaskSbill, "ids");
 		PageUtils.startPage(xmTaskSbill);
+		User user=LoginUtils.getCurrentUserInfo();
+		xmTaskSbill.put("branchId",user.getBranchId());
 		List<Map<String,Object>>	xmTaskSbillList = xmTaskSbillService.selectListMapByWhere(xmTaskSbill);	//列出XmTaskSbill列表
 		PageUtils.responePage(m, xmTaskSbillList);
 		m.put("data",xmTaskSbillList);
