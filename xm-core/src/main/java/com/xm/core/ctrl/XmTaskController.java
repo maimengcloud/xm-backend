@@ -759,6 +759,7 @@ public class XmTaskController {
 		m.put("tips", tips);
 		return m;
 	}
+	/**不允许直接改进度，通过报工形式改进度
 	@ApiOperation( value = "根据主键修改一条xm_task信息",notes="editXmTask")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -801,6 +802,7 @@ public class XmTaskController {
 		m.put("tips", tips);
 		return m;
 	}
+	**/
 
 	@ApiOperation( value = "批量导入任务-从模板导入",notes="batchDelXmTask,仅需要上传主键字段")
 	@ApiResponses({
