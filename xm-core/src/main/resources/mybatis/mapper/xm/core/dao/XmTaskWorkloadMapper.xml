@@ -263,7 +263,7 @@
 		insert into xm_task_workload(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{detailId}
+		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{detailId},#{branchId},#{ubranchId}
 		)
 	</insert>
 	
@@ -338,7 +338,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,detail_id
+		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,detail_id,branch_id,ubranch_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -360,6 +360,8 @@
 		<if test="cusername != null and cusername != ''">      and res.cusername = #{cusername}     </if>
 		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
 		<if test="detailId != null and detailId != ''">      and res.detail_id = #{detailId}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="ubranchId != null and ubranchId != ''">      and res.ubranch_id = #{ubranchId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -378,7 +380,9 @@
 		rworkload = #{rworkload},
 		cusername = #{cusername},
 		project_id = #{projectId},
-		detail_id = #{detailId}
+		detail_id = #{detailId},
+		branch_id = #{branchId},
+		ubranch_id = #{ubranchId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
@@ -397,6 +401,8 @@
 		<if test="cusername != null and cusername != ''"> cusername = #{cusername},     </if>
 		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
 		<if test="detailId != null and detailId != ''"> detail_id = #{detailId},     </if>
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="ubranchId != null and ubranchId != ''"> ubranch_id = #{ubranchId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -415,6 +421,8 @@
 			rworkload = #{item.rworkload},
 			cusername = #{item.cusername},
 			project_id = #{item.projectId},
-			detail_id = #{item.detailId}
+			detail_id = #{item.detailId},
+			branch_id = #{item.branchId},
+			ubranch_id = #{item.ubranchId}
 	</sql>
 </mapper>

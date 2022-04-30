@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskWorkload所有属性名: <br>
- *	userid,username,ctime,taskId,cuserid,bizDate,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,projectId,detailId;<br>
+ *	userid,username,ctime,taskId,cuserid,bizDate,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,projectId,detailId,branchId,ubranchId;<br>
  * 表 xm_task_workload 工时登记表的所有字段名: <br>
- *	userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,detail_id;<br>
+ *	userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,detail_id,branch_id,ubranch_id;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -70,6 +70,12 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="结算明细编号，指向xm_task_sbill_detail.id",allowEmptyValue=true,example="",allowableValues="")
 	String detailId;
+	
+	@ApiModelProperty(notes="项目归属机构",allowEmptyValue=true,example="",allowableValues="")
+	String branchId;
+	
+	@ApiModelProperty(notes="用户归属机构",allowEmptyValue=true,example="",allowableValues="")
+	String ubranchId;
 
 	/**主键**/
 	public XmTaskWorkload(String id) {
@@ -182,6 +188,18 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	public void setDetailId(String detailId) {
 		this.detailId = detailId;
 	}
+	/**
+	 * 项目归属机构
+	 **/
+	public void setBranchId(String branchId) {
+		this.branchId = branchId;
+	}
+	/**
+	 * 用户归属机构
+	 **/
+	public void setUbranchId(String ubranchId) {
+		this.ubranchId = ubranchId;
+	}
 	
 	/**
 	 * 员工编号
@@ -284,6 +302,18 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	 **/
 	public String getDetailId() {
 		return this.detailId;
+	}
+	/**
+	 * 项目归属机构
+	 **/
+	public String getBranchId() {
+		return this.branchId;
+	}
+	/**
+	 * 用户归属机构
+	 **/
+	public String getUbranchId() {
+		return this.ubranchId;
 	}
 
 }
