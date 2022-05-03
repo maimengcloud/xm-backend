@@ -8,9 +8,9 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmQuestion所有属性名: <br>
- *	id,name,projectId,projectName,caseId,caseName,endTime,askUserid,askUsername,handlerUserid,handlerUsername,priority,solution,description,createUserid,createUsername,createTime,bugStatus,bizProcInstId,bizFlowState,menuId,menuName,budgetWorkload,budgetCost,actWorkload,actCost,expectResult,opStep,currResult,refRequire,bugSeverity,bugType,tagIds,tagNames,urls,ltime,qtype,caseExecId,remarks,productId,repRate,verNum,vpath,pverNum,bugReason,rate,initWorkload;<br>
+ *	id,name,projectId,projectName,caseId,caseName,endTime,askUserid,askUsername,handlerUserid,handlerUsername,priority,solution,description,createUserid,createUsername,createTime,bugStatus,bizProcInstId,bizFlowState,menuId,menuName,budgetWorkload,budgetAt,actWorkload,actAt,expectResult,opStep,currResult,refRequire,bugSeverity,bugType,tagIds,tagNames,urls,ltime,qtype,caseExecId,remarks,productId,repRate,verNum,vpath,pverNum,bugReason,rate,initWorkload,taskOut;<br>
  * 表 xm_question xm_question的所有字段名: <br>
- *	id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,budget_workload,budget_cost,act_workload,act_cost,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,case_exec_id,remarks,product_id,rep_rate,ver_num,vpath,pver_num,bug_reason,rate,init_workload;<br>
+ *	id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,budget_workload,budget_at,act_workload,act_at,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,case_exec_id,remarks,product_id,rep_rate,ver_num,vpath,pver_num,bug_reason,rate,init_workload,task_out;<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -90,13 +90,13 @@ public class XmQuestion  implements java.io.Serializable {
 	BigDecimal budgetWorkload;
 	
 	@ApiModelProperty(notes="预估成本金额",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal budgetCost;
+	BigDecimal budgetAt;
 	
 	@ApiModelProperty(notes="实际工时（取报工实际工时汇总）",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal actWorkload;
 	
 	@ApiModelProperty(notes="实际总金额",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal actCost;
+	BigDecimal actAt;
 	
 	@ApiModelProperty(notes="期望结果",allowEmptyValue=true,example="",allowableValues="")
 	String expectResult;
@@ -160,6 +160,9 @@ public class XmQuestion  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="原始预估工作量，budget_workload发生变化后，进行备份",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal initWorkload;
+	
+	@ApiModelProperty(notes="是否众包0否1是",allowEmptyValue=true,example="",allowableValues="")
+	String taskOut;
 
 	/**问题编号**/
 	public XmQuestion(String id) {
@@ -311,8 +314,8 @@ public class XmQuestion  implements java.io.Serializable {
 	/**
 	 * 预估成本金额
 	 **/
-	public void setBudgetCost(BigDecimal budgetCost) {
-		this.budgetCost = budgetCost;
+	public void setBudgetAt(BigDecimal budgetAt) {
+		this.budgetAt = budgetAt;
 	}
 	/**
 	 * 实际工时（取报工实际工时汇总）
@@ -323,8 +326,8 @@ public class XmQuestion  implements java.io.Serializable {
 	/**
 	 * 实际总金额
 	 **/
-	public void setActCost(BigDecimal actCost) {
-		this.actCost = actCost;
+	public void setActAt(BigDecimal actAt) {
+		this.actAt = actAt;
 	}
 	/**
 	 * 期望结果
@@ -451,6 +454,12 @@ public class XmQuestion  implements java.io.Serializable {
 	 **/
 	public void setInitWorkload(BigDecimal initWorkload) {
 		this.initWorkload = initWorkload;
+	}
+	/**
+	 * 是否众包0否1是
+	 **/
+	public void setTaskOut(String taskOut) {
+		this.taskOut = taskOut;
 	}
 	
 	/**
@@ -594,8 +603,8 @@ public class XmQuestion  implements java.io.Serializable {
 	/**
 	 * 预估成本金额
 	 **/
-	public BigDecimal getBudgetCost() {
-		return this.budgetCost;
+	public BigDecimal getBudgetAt() {
+		return this.budgetAt;
 	}
 	/**
 	 * 实际工时（取报工实际工时汇总）
@@ -606,8 +615,8 @@ public class XmQuestion  implements java.io.Serializable {
 	/**
 	 * 实际总金额
 	 **/
-	public BigDecimal getActCost() {
-		return this.actCost;
+	public BigDecimal getActAt() {
+		return this.actAt;
 	}
 	/**
 	 * 期望结果
@@ -734,6 +743,12 @@ public class XmQuestion  implements java.io.Serializable {
 	 **/
 	public BigDecimal getInitWorkload() {
 		return this.initWorkload;
+	}
+	/**
+	 * 是否众包0否1是
+	 **/
+	public String getTaskOut() {
+		return this.taskOut;
 	}
 
 }
