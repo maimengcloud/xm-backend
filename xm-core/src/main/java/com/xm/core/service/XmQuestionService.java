@@ -57,7 +57,7 @@ public class XmQuestionService extends BaseService {
 
 		XmQuestionHandle handle=new XmQuestionHandle();
 		handle.setReceiptMessage(xmQuestionVo.getReceiptMessage());
-		handle.setHandleStatus(xmQuestionVo.getTardgetBugStatus());
+		handle.setHandleStatus(xmQuestionVo.getBugStatus());
 		handle.setCreateTime(new Date());
 		handle.setReceiptTime(new Date());
 		handle.setHandlerUserid(xmQuestion.getCreateUserid());
@@ -82,20 +82,15 @@ public class XmQuestionService extends BaseService {
      */
     public XmQuestionVo updateQuestion(XmQuestionVo xmQuestionVo) {
     	User currentUser=LoginUtils.getCurrentUserInfo();
-        XmQuestion xmQuestion = new XmQuestion();
-        xmQuestion.setId(xmQuestionVo.getId());
-        xmQuestion.setHandlerUserid(xmQuestionVo.getHandlerUserid());
-        xmQuestion.setHandlerUsername(xmQuestionVo.getHandlerUsername());
-        xmQuestion.setBugStatus(xmQuestionVo.getTardgetBugStatus());
-        xmQuestion.setLtime(new Date());
+		xmQuestionVo.setLtime(new Date());
 
-        xmQuestion.setRemarks(xmQuestionVo.getReceiptMessage());
+		xmQuestionVo.setRemarks(xmQuestionVo.getReceiptMessage());
 
-        this.updateSomeFieldByPk(xmQuestion);
+        this.updateSomeFieldByPk(xmQuestionVo);
         
         XmQuestionHandle handle=new XmQuestionHandle();
         handle.setReceiptMessage(xmQuestionVo.getReceiptMessage());
-        handle.setHandleStatus(xmQuestionVo.getTardgetBugStatus());
+        handle.setHandleStatus(xmQuestionVo.getBugStatus());
         handle.setCreateTime(new Date());
         handle.setReceiptTime(new Date());
         handle.setHandlerUserid(currentUser.getUserid());
@@ -107,7 +102,6 @@ public class XmQuestionService extends BaseService {
         handle.setTargetUsername(xmQuestionVo.getHandlerUsername());
         handle.setId(this.xmQuestionHandleService.createKey("id"));
         xmQuestionHandleService.insert(handle);
-        xmQuestionVo.setBugStatus(xmQuestionVo.getTardgetBugStatus());
         //xmAttachmentService.insertOrUpdate(xmQuestionVo.getId(),"问题",xmQuestionVo.getAttachment());
         return xmQuestionVo;
     }

@@ -11,7 +11,6 @@ public class XmQuestionVo extends XmQuestion {
     List<XmAttachment> attachment;
     
     String receiptMessage;
-    String tardgetBugStatus;
 
     public List<XmAttachment> getAttachment() {
         return attachment;
@@ -29,13 +28,7 @@ public class XmQuestionVo extends XmQuestion {
 		this.receiptMessage = receiptMessage;
 	}
 
-	public String getTardgetBugStatus() {
-		return tardgetBugStatus;
-	}
 
-	public void setTardgetBugStatus(String tardgetBugStatus) {
-		this.tardgetBugStatus = tardgetBugStatus;
-	}
 
 	 
     
