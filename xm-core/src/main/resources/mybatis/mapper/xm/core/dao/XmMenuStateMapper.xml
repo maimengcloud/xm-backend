@@ -105,13 +105,6 @@
 		s.resolved_bugs=ifnull(s2.resolved_bugs,0),
 		s.closed_bugs=ifnull(s2.closed_bugs,0),
 		xmm.children_cnt=ifnull(s2.children_cnt,0),
-		xmm.mact_workload=ifnull(s2.act_workload,0),
-		xmm.mact_cost=ifnull(s2.act_at,0),
-		xmm.mact_rate=case when  ifnull(s2.budget_workload,0)  >0
-		then 100*(ifnull(s2.act_workload,0)) / s2.budget_workload
-		when ifnull(s2.act_workload,0)>0 then 100
-		else  0  end,
-		s.biz_date=bizDate,
 		s.min_start_time=s2.min_start_time,
 		s.max_end_time=s2.max_end_time,
 		xmm.start_time=s2.min_start_time,
@@ -206,13 +199,6 @@
 			s.resolved_bugs=ifnull(s2.resolved_bugs,0),
 			s.closed_bugs=ifnull(s2.closed_bugs,0),
 			xmm.children_cnt=ifnull(s2.children_cnt,0),
-			xmm.mact_workload=ifnull(s2.act_workload,0),
-			xmm.mact_cost=ifnull(s2.act_at,0),
-			xmm.mact_rate=case when  ifnull(s2.budget_workload,0)  >0
-			then 100*(ifnull(s2.act_workload,0)) / s2.budget_workload
-			when ifnull(s2.act_workload,0)>0 then 100
-			else  0  end,
-			s.biz_date=bizDate,
 			s.min_start_time=s2.min_start_time,
 			s.max_end_time=s2.max_end_time,
 			xmm.start_time=s2.min_start_time,
