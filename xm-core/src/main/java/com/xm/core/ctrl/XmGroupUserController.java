@@ -92,6 +92,8 @@ public class XmGroupUserController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmGroupUser, "ids");
 		PageUtils.startPage(xmGroupUser);
+		User user=LoginUtils.getCurrentUserInfo();
+		xmGroupUser.put("branchId",user.getBranchId());
 		List<Map<String,Object>>	xmGroupUserList = xmGroupUserService.selectListMapByWhere(xmGroupUser);	//列出XmProjectGroupUser列表
 		PageUtils.responePage(m, xmGroupUserList);
 		m.put("data",xmGroupUserList);

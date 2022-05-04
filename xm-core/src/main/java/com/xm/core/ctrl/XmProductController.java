@@ -103,7 +103,12 @@ public class XmProductController {
 		xmProduct.put("userid",user.getUserid());
 		if( !StringUtils.hasText(queryScope) && !(StringUtils.hasText(id) || StringUtils.hasText(projectId)|| StringUtils.hasText(pmUserid)||ids!=null
 				 ||ids!=null ) ){
-			xmProduct.put("compete",user.getUserid());
+			if(LoginUtils.isBranchAdmin()){
+				xmProduct.put("branchId",user.getBranchId());
+			}else{
+				xmProduct.put("compete",user.getUserid());
+			}
+
 		}
 		if(!StringUtils.hasText((String) xmProduct.get("isTpl"))){
 			xmProduct.put("isTpl","0");
@@ -153,7 +158,11 @@ public class XmProductController {
 		xmProduct.put("userid",user.getUserid());
 		if( !StringUtils.hasText(queryScope) && !(StringUtils.hasText(id) || StringUtils.hasText(projectId)|| StringUtils.hasText(pmUserid)||ids!=null
 				||ids!=null ) ){
-			xmProduct.put("compete",user.getUserid());
+			if(LoginUtils.isBranchAdmin()){
+				xmProduct.put("branchId",user.getBranchId());
+			}else{
+				xmProduct.put("compete",user.getUserid());
+			}
 		}
 		if(!StringUtils.hasText((String) xmProduct.get("isTpl"))){
 			xmProduct.put("isTpl","0");

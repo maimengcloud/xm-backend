@@ -111,8 +111,12 @@ public class XmProjectController {
 		xmProject.put("userid",user.getUserid());
 		if( !(StringUtils.hasText(id) || StringUtils.hasText(myFocus)|| StringUtils.hasText(productId)||ids!=null
 				|| StringUtils.hasText(myExecuserStatus)||pgTypeIds!=null|| StringUtils.hasText(createUserid)) ){
+			if(LoginUtils.isBranchAdmin()){
+				xmProject.put("branchId",user.getBranchId());
+			}else {
+				xmProject.put("compete",user.getUserid());
+			}
 
-			xmProject.put("compete",user.getUserid());
 		}
 		if(!StringUtils.hasText((String) xmProject.get("isTpl"))){
 			xmProject.put("isTpl","0");

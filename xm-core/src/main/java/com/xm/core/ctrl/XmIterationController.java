@@ -107,7 +107,11 @@ public class XmIterationController {
 		xmIteration.put("userid",user.getUserid());
 		if(  !( StringUtils.hasText(branchId)|| StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
 				|| StringUtils.hasText(adminUserid) ) ){
-			xmIteration.put("compete",user.getUserid());
+			if(LoginUtils.isBranchAdmin()){
+				xmIteration.put("branchId",user.getBranchId());
+			}else{
+				xmIteration.put("compete",user.getUserid());
+			}
 		}
 		if("branchId".equals(queryScope)){
 			xmIteration.put("branchId",user.getBranchId());
@@ -141,7 +145,11 @@ public class XmIterationController {
 		xmIteration.put("userid",user.getUserid());
 		if(  !(StringUtils.hasText(branchId)|| StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
 				|| StringUtils.hasText(adminUserid) ) ){
-			xmIteration.put("compete",user.getUserid());
+			if(LoginUtils.isBranchAdmin()){
+				xmIteration.put("branchId",user.getBranchId());
+			}else{
+				xmIteration.put("compete",user.getUserid());
+			}
 		}
 		if("branchId".equals(queryScope)){
 			xmIteration.put("branchId",user.getBranchId());

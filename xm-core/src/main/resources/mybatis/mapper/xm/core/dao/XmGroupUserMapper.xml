@@ -11,7 +11,9 @@
                 ( #{item.groupId},  #{item.userid})
              </foreach>
          </if>
-
+		<if test="branchId!=null and branchId!=''">
+			and (g.branch_id=#{branchId} or g.crow_branch_id=#{branchId})
+		</if>
 		<if test="groupNameKey != null and groupNameKey !='' ">    and g.group_name like concat('%',#{groupNameKey},'%')   </if>
 		<if test="mngUsernamekey != null and mngUsernamekey !='' ">    and (g.leader_username like concat('%',#{mngUsernamekey},'%') or g.ass_username like  concat('%',#{mngUsernamekey},'%'))  </if>
 		<if test="groupUsernameKey != null and groupUsernameKey !='' ">    and res.username like concat('%',#{groupUsernameKey},'%') </if>
