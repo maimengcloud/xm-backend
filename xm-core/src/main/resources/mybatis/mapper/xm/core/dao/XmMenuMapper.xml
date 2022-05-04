@@ -266,7 +266,7 @@
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmMenu" resultType="long">
-		select count(1) from xm_menu res
+		select count(*) from xm_menu res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -276,7 +276,7 @@
 		insert into xm_menu(
 			<include refid="columns"/>
 		) values (
-		#{startTime},#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{budgetHours},#{budgetStaffNu},#{budgetWorkload},#{budgetCost},#{phaseId},#{iterationId},#{calcType},#{mactWorkload},#{mactCost},#{mactRate},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority},#{dclass},#{iterationName},#{endTime}
+		#{startTime},#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{phaseId},#{iterationId},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority},#{dclass},#{iterationName},#{endTime}
 		)
 	</insert>
 	
@@ -326,6 +326,18 @@
 			where menu_id = #{item.menuId}  
 		</foreach> 
 	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_menu
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (menu_id) in
+             <foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from xm_menu 
@@ -339,7 +351,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_at,phase_id,iteration_id,calc_type,mact_workload,mact_cost,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time
+		start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,phase_id,iteration_id,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -371,16 +383,8 @@
 		<if test="pidPaths != null and pidPaths != ''">      and res.pid_paths = #{pidPaths}     </if>
 		<if test="lvl != null and lvl != ''">      and res.lvl = #{lvl}     </if>
 		<if test="isTpl != null and isTpl != ''">      and res.is_tpl = #{isTpl}     </if>
-		<if test="budgetHours != null and budgetHours != ''">      and res.budget_hours = #{budgetHours}     </if>
-		<if test="budgetStaffNu != null and budgetStaffNu != ''">      and res.budget_staff_nu = #{budgetStaffNu}     </if>
-		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
-		<if test="budgetCost != null and budgetCost != ''">      and res.budget_at = #{budgetCost}     </if>
 		<if test="phaseId != null and phaseId != ''">      and res.phase_id = #{phaseId}     </if>
 		<if test="iterationId != null and iterationId != ''">      and res.iteration_id = #{iterationId}     </if>
-		<if test="calcType != null and calcType != ''">      and res.calc_type = #{calcType}     </if>
-		<if test="mactWorkload != null and mactWorkload != ''">      and res.mact_workload = #{mactWorkload}     </if>
-		<if test="mactCost != null and mactCost != ''">      and res.mact_cost = #{mactCost}     </if>
-		<if test="mactRate != null and mactRate != ''">      and res.mact_rate = #{mactRate}     </if>
 		<if test="source != null and source != ''">      and res.source = #{source}     </if>
 		<if test="proposerId != null and proposerId != ''">      and res.proposer_id = #{proposerId}     </if>
 		<if test="proposerName != null and proposerName != ''">      and res.proposer_name = #{proposerName}     </if>
@@ -419,16 +423,8 @@
 		pid_paths = #{pidPaths},
 		lvl = #{lvl},
 		is_tpl = #{isTpl},
-		budget_hours = #{budgetHours},
-		budget_staff_nu = #{budgetStaffNu},
-		budget_workload = #{budgetWorkload},
-		budget_at = #{budgetCost},
 		phase_id = #{phaseId},
 		iteration_id = #{iterationId},
-		calc_type = #{calcType},
-		mact_workload = #{mactWorkload},
-		mact_cost = #{mactCost},
-		mact_rate = #{mactRate},
 		source = #{source},
 		proposer_id = #{proposerId},
 		proposer_name = #{proposerName},
@@ -466,16 +462,8 @@
 		<if test="pidPaths != null and pidPaths != ''"> pid_paths = #{pidPaths},     </if>
 		<if test="lvl != null and lvl != ''"> lvl = #{lvl},     </if>
 		<if test="isTpl != null and isTpl != ''"> is_tpl = #{isTpl},     </if>
-		<if test="budgetHours != null and budgetHours != ''"> budget_hours = #{budgetHours},     </if>
-		<if test="budgetStaffNu != null and budgetStaffNu != ''"> budget_staff_nu = #{budgetStaffNu},     </if>
-		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
-		<if test="budgetCost != null and budgetCost != ''"> budget_at = #{budgetCost},     </if>
 		<if test="phaseId != null and phaseId != ''"> phase_id = #{phaseId},     </if>
 		<if test="iterationId != null and iterationId != ''"> iteration_id = #{iterationId},     </if>
-		<if test="calcType != null and calcType != ''"> calc_type = #{calcType},     </if>
-		<if test="mactWorkload != null and mactWorkload != ''"> mact_workload = #{mactWorkload},     </if>
-		<if test="mactCost != null and mactCost != ''"> mact_cost = #{mactCost},     </if>
-		<if test="mactRate != null and mactRate != ''"> mact_rate = #{mactRate},     </if>
 		<if test="source != null and source != ''"> source = #{source},     </if>
 		<if test="proposerId != null and proposerId != ''"> proposer_id = #{proposerId},     </if>
 		<if test="proposerName != null and proposerName != ''"> proposer_name = #{proposerName},     </if>
@@ -514,16 +502,8 @@
 			pid_paths = #{item.pidPaths},
 			lvl = #{item.lvl},
 			is_tpl = #{item.isTpl},
-			budget_hours = #{item.budgetHours},
-			budget_staff_nu = #{item.budgetStaffNu},
-			budget_workload = #{item.budgetWorkload},
-			budget_at = #{item.budgetCost},
 			phase_id = #{item.phaseId},
 			iteration_id = #{item.iterationId},
-			calc_type = #{item.calcType},
-			mact_workload = #{item.mactWorkload},
-			mact_cost = #{item.mactCost},
-			mact_rate = #{item.mactRate},
 			source = #{item.source},
 			proposer_id = #{item.proposerId},
 			proposer_name = #{item.proposerName},

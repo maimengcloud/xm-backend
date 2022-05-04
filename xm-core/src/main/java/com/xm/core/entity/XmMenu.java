@@ -3,14 +3,13 @@ package  com.xm.core.entity;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
-import java.math.BigDecimal;
 
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	startTime,menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,budgetHours,budgetStaffNu,budgetWorkload,budgetCost,phaseId,iterationId,calcType,mactWorkload,mactCost,mactRate,source,proposerId,proposerName,dlvl,dtype,priority,dclass,iterationName,endTime;<br>
+ *	startTime,menuId,menuName,pmenuId,productId,remark,status,online,demandUrl,codeUrl,designUrl,docUrl,helpUrl,operDocUrl,seqNo,mmUserid,mmUsername,ctime,ntype,sinceVersion,childrenCnt,ltime,tagIds,tagNames,pidPaths,lvl,isTpl,phaseId,iterationId,source,proposerId,proposerName,dlvl,dtype,priority,dclass,iterationName,endTime;<br>
  * 表 xm_menu 功能表的所有字段名: <br>
- *	start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,budget_hours,budget_staff_nu,budget_workload,budget_cost,phase_id,iteration_id,calc_type,mact_workload,mact_cost,mact_rate,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time;<br>
+ *	start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,phase_id,iteration_id,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time;<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -101,35 +100,11 @@ public class XmMenu  implements java.io.Serializable {
 	@ApiModelProperty(notes="是否为模板",allowEmptyValue=true,example="",allowableValues="")
 	String isTpl;
 	
-	@ApiModelProperty(notes="预算工时总数从上到下分配",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal budgetHours;
-	
-	@ApiModelProperty(notes="投入人员数，从上到下分配",allowEmptyValue=true,example="",allowableValues="")
-	Integer budgetStaffNu;
-	
-	@ApiModelProperty(notes="总工作量单位人时，从上到下分配，下级汇总不能大于上级",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal budgetWorkload;
-	
-	@ApiModelProperty(notes="预算金额，从上到下汇总，从上到下分配，下级汇总不能大于上级",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal budgetCost;
-	
 	@ApiModelProperty(notes="计划编号",allowEmptyValue=true,example="",allowableValues="")
 	String phaseId;
 	
 	@ApiModelProperty(notes="迭代编号",allowEmptyValue=true,example="",allowableValues="")
 	String iterationId;
-	
-	@ApiModelProperty(notes="叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报，3-下往上",allowEmptyValue=true,example="",allowableValues="")
-	String calcType;
-	
-	@ApiModelProperty(notes="用户故事由任务和bug报工工时汇总，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal mactWorkload;
-	
-	@ApiModelProperty(notes="用户故事由任务和bug报工工时汇总工时*工时单价，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
-	String mactCost;
-	
-	@ApiModelProperty(notes="用户故事由任务和bug报工工时/(报工工时+剩余工时)汇总，其余为下级往上汇总数据",allowEmptyValue=true,example="",allowableValues="")
-	Integer mactRate;
 	
 	@ApiModelProperty(notes="需求来源",allowEmptyValue=true,example="",allowableValues="")
 	String source;
@@ -330,30 +305,6 @@ public class XmMenu  implements java.io.Serializable {
 		this.isTpl = isTpl;
 	}
 	/**
-	 * 预算工时总数从上到下分配
-	 **/
-	public void setBudgetHours(BigDecimal budgetHours) {
-		this.budgetHours = budgetHours;
-	}
-	/**
-	 * 投入人员数，从上到下分配
-	 **/
-	public void setBudgetStaffNu(Integer budgetStaffNu) {
-		this.budgetStaffNu = budgetStaffNu;
-	}
-	/**
-	 * 总工作量单位人时，从上到下分配，下级汇总不能大于上级
-	 **/
-	public void setBudgetWorkload(BigDecimal budgetWorkload) {
-		this.budgetWorkload = budgetWorkload;
-	}
-	/**
-	 * 预算金额，从上到下汇总，从上到下分配，下级汇总不能大于上级
-	 **/
-	public void setBudgetCost(BigDecimal budgetCost) {
-		this.budgetCost = budgetCost;
-	}
-	/**
 	 * 计划编号
 	 **/
 	public void setPhaseId(String phaseId) {
@@ -364,30 +315,6 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public void setIterationId(String iterationId) {
 		this.iterationId = iterationId;
-	}
-	/**
-	 * 叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报，3-下往上
-	 **/
-	public void setCalcType(String calcType) {
-		this.calcType = calcType;
-	}
-	/**
-	 * 用户故事由任务和bug报工工时汇总，其余为下级往上汇总数据
-	 **/
-	public void setMactWorkload(BigDecimal mactWorkload) {
-		this.mactWorkload = mactWorkload;
-	}
-	/**
-	 * 用户故事由任务和bug报工工时汇总工时*工时单价，其余为下级往上汇总数据
-	 **/
-	public void setMactCost(String mactCost) {
-		this.mactCost = mactCost;
-	}
-	/**
-	 * 用户故事由任务和bug报工工时/(报工工时+剩余工时)汇总，其余为下级往上汇总数据
-	 **/
-	public void setMactRate(Integer mactRate) {
-		this.mactRate = mactRate;
 	}
 	/**
 	 * 需求来源
@@ -607,30 +534,6 @@ public class XmMenu  implements java.io.Serializable {
 		return this.isTpl;
 	}
 	/**
-	 * 预算工时总数从上到下分配
-	 **/
-	public BigDecimal getBudgetHours() {
-		return this.budgetHours;
-	}
-	/**
-	 * 投入人员数，从上到下分配
-	 **/
-	public Integer getBudgetStaffNu() {
-		return this.budgetStaffNu;
-	}
-	/**
-	 * 总工作量单位人时，从上到下分配，下级汇总不能大于上级
-	 **/
-	public BigDecimal getBudgetWorkload() {
-		return this.budgetWorkload;
-	}
-	/**
-	 * 预算金额，从上到下汇总，从上到下分配，下级汇总不能大于上级
-	 **/
-	public BigDecimal getBudgetCost() {
-		return this.budgetCost;
-	}
-	/**
 	 * 计划编号
 	 **/
 	public String getPhaseId() {
@@ -641,30 +544,6 @@ public class XmMenu  implements java.io.Serializable {
 	 **/
 	public String getIterationId() {
 		return this.iterationId;
-	}
-	/**
-	 * 叶子节点数据收集方式0-不计算，1-由任务汇总，2-手工填报，3-下往上
-	 **/
-	public String getCalcType() {
-		return this.calcType;
-	}
-	/**
-	 * 用户故事由任务和bug报工工时汇总，其余为下级往上汇总数据
-	 **/
-	public BigDecimal getMactWorkload() {
-		return this.mactWorkload;
-	}
-	/**
-	 * 用户故事由任务和bug报工工时汇总工时*工时单价，其余为下级往上汇总数据
-	 **/
-	public String getMactCost() {
-		return this.mactCost;
-	}
-	/**
-	 * 用户故事由任务和bug报工工时/(报工工时+剩余工时)汇总，其余为下级往上汇总数据
-	 **/
-	public Integer getMactRate() {
-		return this.mactRate;
 	}
 	/**
 	 * 需求来源
