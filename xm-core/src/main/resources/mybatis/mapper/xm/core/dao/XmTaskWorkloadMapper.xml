@@ -40,6 +40,9 @@
 		<if test="sbillId!=null and sbillId !=''">
 			AND exists( select 1 from xm_task_sbill_detail d where d.id=res.detail_id and d.sbill_id=#{sbillId})
 		</if>
+		<if test="linkBranchId!=null and linkBranchId!=''">
+			and (res.branch_id = #{linkBranchId} or res.ubranch_id=#{linkBranchId})
+		</if>
     </sql>
 	<update id="updateStatusBySbillIdBySbillDel" parameterType="String">
 		update xm_task_workload res set detail_id=null,sstaus='1'

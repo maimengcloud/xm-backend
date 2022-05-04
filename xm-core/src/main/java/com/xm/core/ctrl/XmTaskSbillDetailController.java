@@ -72,7 +72,7 @@ public class XmTaskSbillDetailController {
 		RequestUtils.transformArray(xmTaskSbillDetail, "ids");
 		PageUtils.startPage(xmTaskSbillDetail);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskSbillDetail.put("branchId",user.getBranchId());
+		xmTaskSbillDetail.put("linkBranchId",user.getBranchId());
 		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.selectListMapByWhere(xmTaskSbillDetail);	//列出XmTaskSbillDetail列表
 		PageUtils.responePage(m, xmTaskSbillDetailList);
 		m.put("data",xmTaskSbillDetailList);

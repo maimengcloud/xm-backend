@@ -94,7 +94,7 @@ public class XmTaskWorkloadController {
 		String projectId= (String) xmTaskWorkload.get("projectId");
 		String userid= (String) xmTaskWorkload.get("userid");
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskWorkload.put("branchId",user.getBranchId());
+		xmTaskWorkload.put("linkBranchId",user.getBranchId());
 		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.selectListMapByWhere(xmTaskWorkload);	//列出XmTaskWorkload列表
 		PageUtils.responePage(m, xmTaskWorkloadList);
 		m.put("data",xmTaskWorkloadList);
@@ -112,7 +112,7 @@ public class XmTaskWorkloadController {
 		Tips tips=new Tips("查询成功");
 		PageUtils.startPage(xmTaskWorkload);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskWorkload.put("branchId",user.getBranchId());
+		xmTaskWorkload.put("linkBranchId",user.getBranchId());
 		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.listProjectWorkloadSetDay(xmTaskWorkload);	//列出XmTaskWorkload列表
 		PageUtils.responePage(m, xmTaskWorkloadList);
 		m.put("data",xmTaskWorkloadList);
@@ -132,7 +132,7 @@ public class XmTaskWorkloadController {
 		Tips tips=new Tips("查询成功");
 		PageUtils.startPage(xmTaskWorkload);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskWorkload.put("branchId",user.getBranchId());
+		xmTaskWorkload.put("linkBranchId",user.getBranchId());
 		List<Map<String,Object>>	xmTaskWorkloadList = xmTaskWorkloadService.listProjectWorkloadSetMonth(xmTaskWorkload);	//列出XmTaskWorkload列表
 		PageUtils.responePage(m, xmTaskWorkloadList);
 		m.put("data",xmTaskWorkloadList);
@@ -155,7 +155,7 @@ public class XmTaskWorkloadController {
 		RequestUtils.transformArray( xmTaskWorkload, "sstatuses");
 		PageUtils.startPage(xmTaskWorkload);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskWorkload.put("branchId",user.getBranchId());
+		xmTaskWorkload.put("linkBranchId",user.getBranchId());
 		String queryScope= (String) xmTaskWorkload.get("queryScope");
 		if("my".equals(queryScope)){
 			xmTaskWorkload.put("userid",user.getUserid());
@@ -182,7 +182,7 @@ public class XmTaskWorkloadController {
 		PageUtils.startPage(xmTaskWorkload);
 		String queryScope= (String) xmTaskWorkload.get("queryScope");
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskWorkload.put("branchId",user.getBranchId());
+		xmTaskWorkload.put("linkBranchId",user.getBranchId());
 		if("my".equals(queryScope)){
 			xmTaskWorkload.put("userid",user.getUserid());
 		}

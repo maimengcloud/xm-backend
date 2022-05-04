@@ -13,7 +13,9 @@
          </if>
         <if test="key != null and key !='' ">    and (res.task_name like concat('%',#{key},'%') or res.username like  concat('%',#{key},'%') ) </if>
 		<if test="taskState != null and taskState !='' "> and task_state=#{taskState}</if>
-
+		<if test="linkBranchId!=null and linkBranchId!=''">
+			and (res.branch_id = #{linkBranchId} or res.exec_user_branch_id=#{linkBranchId})
+		</if>
 	</sql>
 	<update id="updateXmTaskExeUseridsAndUsernamesByTaskId"
 			parameterType="String">

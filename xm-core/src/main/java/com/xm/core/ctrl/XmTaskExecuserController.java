@@ -106,6 +106,8 @@ public class XmTaskExecuserController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmTaskExecuser, "ids");
 		PageUtils.startPage(xmTaskExecuser);
+		User user=LoginUtils.getCurrentUserInfo();
+		xmTaskExecuser.put("linkBranchId",user.getBranchId());
 		List<Map<String,Object>>	xmTaskExecuserList = xmTaskExecuserService.selectListMapByWhere(xmTaskExecuser);	//列出XmTaskExecuser列表
 		PageUtils.responePage(m, xmTaskExecuserList);
 		m.put("data",xmTaskExecuserList);
@@ -146,6 +148,8 @@ public class XmTaskExecuserController {
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(xmTaskExecuser, "ids");
 		PageUtils.startPage(xmTaskExecuser);
+		User user=LoginUtils.getCurrentUserInfo();
+		xmTaskExecuser.put("linkBranchId",user.getBranchId());
 		List<Map<String,Object>>	xmTaskExecuserList = xmTaskExecuserService.selectListMapByWhereWithTask(xmTaskExecuser);	//列出XmTaskExecuser列表
 		PageUtils.responePage(m, xmTaskExecuserList);
 		m.put("data",xmTaskExecuserList);
