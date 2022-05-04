@@ -172,7 +172,7 @@ public class XmQuestionController {
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmQuestionVo.getQtype())){
-				xmQuestionVo.setQtype("bug");
+				xmQuestionVo.setQtype("1");
 			}
 			xmQuestionService.addQuestion(xmQuestionVo);
 			if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {
