@@ -173,19 +173,6 @@
 
 	</update>
 
-
-	<update id="editSomeFields" parameterType="HashMap">
-		update  xm_menu
-		<set>
-			<include refid="someFieldSet"/>
-		</set>
-		where menu_id in
-		<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
-			#{item}
-		</foreach>
-	</update>
-
-
 	<select id="selectListByIdsWithsChildrenCnt"  parameterType="List" resultType="com.xm.core.entity.XmMenu">
 		select (select count(*) from xm_menu m where m.pmenu_id=res.menu_id) as children_cnt,res.* from xm_menu res
 		where  (res.menu_id) in
