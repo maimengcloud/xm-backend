@@ -30,8 +30,10 @@
 			and exists ( select 1 from xm_group_user gu where gu.userid=#{compete} and (gu.project_id=res.project_id or gu.product_id=res.product_id))
 		</if>
 		<if test="key != null and key !='' ">  and res.name like #{key}     </if>
-		<if test="work != null and work != ''"> and res.status != 'resolved' </if>
-
+		<if test="work != null and work != ''"> and res.status in ('1','2','3','4','7') </if>
+		<if test="branchId!=null and branchId!=''">
+			and exists( select 1 from xm_project p where p.id=res.project_id and p.branch_id=#{branchId})
+		</if>
 		<if test="linkIterationId != null and linkIterationId != ''"> and exists (select 1 from xm_menu m where m.iteration_id=#{linkIterationId} and m.menu_id=res.menu_id) </if>
     </sql>
 

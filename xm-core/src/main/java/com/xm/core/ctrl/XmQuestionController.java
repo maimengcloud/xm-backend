@@ -109,7 +109,12 @@ public class XmQuestionController {
 		RequestUtils.transformArray(xmQuestion, "tagIdList");
 		PageUtils.startPage(xmQuestion);
 		User user = LoginUtils.getCurrentUserInfo();
-		xmQuestion.put("compete",user.getUserid());
+		if(LoginUtils.isBranchAdmin()){
+			xmQuestion.put("branchId",user.getBranchId());
+		}else {
+			xmQuestion.put("compete",user.getUserid());
+		}
+
 
 		List<Map<String,Object>>	xmQuestionList = xmQuestionService.getQuestion(xmQuestion);	//列出XmQuestion列表
 		PageUtils.responePage(m, xmQuestionList);
