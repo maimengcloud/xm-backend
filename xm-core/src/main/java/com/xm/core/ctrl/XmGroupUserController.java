@@ -421,6 +421,7 @@ public class XmGroupUserController {
 			Set<String> groupIds=gusNoExists.stream().map(i->i.getGroupId()).collect(Collectors.toSet());
 			List<XmGroupUser> canAddUsers=new ArrayList<>();
 			Map<String,List<XmGroupUser>> groupUsersMap=new HashMap<>();
+			List<XmGroupUser> noQx=new ArrayList<>();
 			for (String groupId : groupIds) {
 				if("1".equals(pgClass)){
 					boolean isPm=xmGroupService.checkUserIsProductAdm(xmProduct,user.getUserid());
@@ -451,12 +452,16 @@ public class XmGroupUserController {
 				canAddUsers.addAll(cdus);
 				groupUsersMap.put(groupId,cdus);
 			}
+			noQx=gus.stream().filter(i->!canAddUsers.stream().filter(k->k.getUserid().equals(i.getUserid()) && k.getGroupId().equals(i.getGroupId())).findAny().isPresent()).collect(Collectors.toList());
 			List<String> msg=new ArrayList<>();
 			msg.add("成功新增"+canAddUsers.size()+"个小组用户.");
 			if(canAddUsers.size()>0){
 				xmGroupUserService.batchInsert(canAddUsers);
 			}
- 			if(canAddUsers.size()<gus.size()){
+			if(noQx.size()>0){
+				msg.add("不是项目经理、小组长，无权限操作以下"+noQx.size()+"个用户，【"+noQx.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"】");
+			}
+ 			if(gusDb.size()>0){
 				msg.add("以下"+gusDb.size()+"个小组用户已在组里，无需再添加。【"+gusDb.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"】");
 			}
 			if(canAddUsers.size()!=0){
