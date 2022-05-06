@@ -128,24 +128,22 @@ public class XmTaskController {
 		RequestUtils.transformArray(xmTask, "tagIdList");
 		PageUtils.startPage(xmTask);
 		String taskOut= (String) xmTask.get("taskOut");
-		if(!"1".equals(taskOut)){
-			String projectId= (String) xmTask.get("projectId");
-			String myExecuserStatus= (String) xmTask.get("myExecuserStatus");
-			String isMy= (String) xmTask.get("isMy");
-			String myFocus= (String) xmTask.get("myFocus");
-			String createUserid= (String) xmTask.get("createUserid");
-			String executorUserid= (String) xmTask.get("executorUserid");
-			String menuId= (String) xmTask.get("menuId");
-			String productId= (String) xmTask.get("productId");
-			String iterationId= (String) xmTask.get("iterationId");
-			User user = LoginUtils.getCurrentUserInfo();
-			xmTask.put("userid",user.getUserid());
-			if( !(StringUtils.hasText(projectId)
-					|| StringUtils.hasText(myExecuserStatus)|| StringUtils.hasText(isMy)|| StringUtils.hasText(myFocus)|| StringUtils.hasText(createUserid)
-					|| StringUtils.hasText(executorUserid) || StringUtils.hasText(menuId) || StringUtils.hasText(productId)|| StringUtils.hasText(iterationId)) ){
+		String projectId= (String) xmTask.get("projectId");
+		String myExecuserStatus= (String) xmTask.get("myExecuserStatus");
+		String isMy= (String) xmTask.get("isMy");
+		String myFocus= (String) xmTask.get("myFocus");
+		String createUserid= (String) xmTask.get("createUserid");
+		String executorUserid= (String) xmTask.get("executorUserid");
+		String menuId= (String) xmTask.get("menuId");
+		String productId= (String) xmTask.get("productId");
+		String iterationId= (String) xmTask.get("iterationId");
+		User user = LoginUtils.getCurrentUserInfo();
+		xmTask.put("userid",user.getUserid());
+		if( !(StringUtils.hasText(projectId)
+				|| StringUtils.hasText(myExecuserStatus)|| StringUtils.hasText(isMy)|| StringUtils.hasText(myFocus)|| StringUtils.hasText(createUserid)
+				|| StringUtils.hasText(executorUserid) || StringUtils.hasText(menuId) || StringUtils.hasText(productId)|| StringUtils.hasText(iterationId)) ){
 
-				xmTask.put("compete",user.getUserid());
-			}
+			xmTask.put("compete",user.getUserid());
 		}
 		List<Map<String,Object>> xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
 		PageUtils.responePage(m,xmTaskVoList);
@@ -229,55 +227,9 @@ public class XmTaskController {
 		RequestUtils.transformArray(xmTask, "skillIds");
 		PageUtils.startPage(xmTask);
 		xmTask.put("taskOut","1");
-		String isDefault= (String) xmTask.get("isDefault");
-		String pageNum= (String) xmTask.get("pageNum");
-		String queryKeys="xm-out-tasks-default-"+pageNum;
-		List<Map<String,Object>> xmTaskVoList=new ArrayList<>();
-		if(!StringUtils.hasText(isDefault)){
-			tips.setFailureMsg("isDefault-not-set","isDefault","isDefault参数必传，默认查询isDefault=1,非默认查询isDefault=0");
-		}else if("1".equals(isDefault)){
-			PageSerializable<Map<String,Object>> tasks =xmTaskCacheService.getTasks(queryKeys);
-			if(tasks==null){
-				xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
-				tasks=new PageSerializable<>(xmTaskVoList);
-				xmTaskCacheService.putTasks(queryKeys,tasks);
-				PageUtils.responePage(m,xmTaskVoList);
-			}else{
-				xmTaskVoList=tasks.getList();
-				m.put("total",tasks.getTotal());
-			}
-		}else {
-			xmTaskVoList = xmTaskService.getTask(xmTask);	//列出XmTask列表
-			PageUtils.responePage(m,xmTaskVoList);
-			if("1".equals(xmTask.get("withParents"))  && !"1".equals(xmTask.get("isTop")) && xmTaskVoList.size()>0){
-
-				Set<String> pidPathsSet=new HashSet<>();
-				Set<String> idSet=new HashSet<>();
-				for (Map<String, Object> map : xmTaskVoList) {
-					String id= (String) map.get("id");
-					idSet.add(id);
-					String pidPaths= (String) map.get("pidPaths");
-					pidPaths=PubTool.getPidPaths(pidPaths,id);
-					if(pidPaths.length()<=3){
-						continue;
-					}
-					pidPathsSet.add(pidPaths);
-				}
-
-				if(pidPathsSet!=null && pidPathsSet.size()>0){
-					List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
-					parentList=parentList.stream().filter(i->!idSet.contains(i.get("id"))).collect(Collectors.toList());
-					if(parentList!=null && parentList.size()>0){
-						xmTaskVoList.addAll(parentList);
-						m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
-					}
-				}
-			}
-		}
-
-
-
-		m.put("data",xmTaskVoList);
+		List<Map<String,Object>> tasks=xmTaskService.getTask(xmTask);
+		PageUtils.responePage(m,tasks);
+		m.put("data",tasks);
 		m.put("tips", tips);
 		return m;
 	}

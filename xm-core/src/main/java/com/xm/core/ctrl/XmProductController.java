@@ -158,21 +158,12 @@ public class XmProductController {
 		xmProduct.put("userid",user.getUserid());
 		if( !StringUtils.hasText(queryScope) && !(StringUtils.hasText(id) || StringUtils.hasText(projectId)|| StringUtils.hasText(pmUserid)||ids!=null
 				||ids!=null ) ){
-			if(LoginUtils.isBranchAdmin()){
-				xmProduct.put("branchId",user.getBranchId());
-			}else{
+			if(!LoginUtils.isBranchAdmin()){
 				xmProduct.put("compete",user.getUserid());
 			}
 		}
-		if(!StringUtils.hasText((String) xmProduct.get("isTpl"))){
-			xmProduct.put("isTpl","0");
-		}else{
-			if("1".equals(xmProduct.get("isTpl"))){
-				xmProduct.remove("branchId");
-				xmProduct.put("myBranchId",user.getBranchId());
-				xmProduct.put("platformBranchId",platformBranchId);
-			}
-		}
+		xmProduct.put("platformBranchId",platformBranchId);
+		xmProduct.put("linkBranchId",user.getBranchId());
 		List<Map<String,Object>>	xmProductList = xmProductService.selectListMapByWhereWithState(xmProduct);	//列出XmProduct列表
 		PageUtils.responePage(m, xmProductList);
 		m.put("data",xmProductList);

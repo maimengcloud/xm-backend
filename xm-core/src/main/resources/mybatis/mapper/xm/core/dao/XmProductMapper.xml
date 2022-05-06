@@ -22,10 +22,18 @@
 		</if>
 		<if test="ctimeStart!=null and ctimeEnd!=null ">and ctime between #{ctimeStart} and #{ctimeEnd}</if>
 		<if test="isTpl!=null and isTpl=='1'">
-			and (res.branch_id in( #{platformBranchId},#{myBranchId}) and res.is_tpl='1')
+			and (res.branch_id in( #{platformBranchId},#{linkBranchId}) and res.is_tpl='1')
 		</if>
 		<if test="del==null or del==''">
 			and res.del!="1"
+		</if>
+		<if test="linkBranchId!=null and linkBranchId!=''">
+			and ( res.branch_id = #{linkBranchId}
+			<if test="isTpl!=null and isTpl=='1'">
+				or (res.branch_id in( #{platformBranchId},#{linkBranchId}) and res.is_tpl='1')
+			</if>
+			)
+
 		</if>
     </sql>
 
