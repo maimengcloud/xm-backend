@@ -111,22 +111,21 @@ public class XmProjectController {
 		xmProject.put("userid",user.getUserid());
 		if( !(StringUtils.hasText(id) || StringUtils.hasText(myFocus)|| StringUtils.hasText(productId)||ids!=null
 				|| StringUtils.hasText(myExecuserStatus)||pgTypeIds!=null|| StringUtils.hasText(createUserid)) ){
-			if(LoginUtils.isBranchAdmin()){
-				xmProject.put("branchId",user.getBranchId());
-			}else {
+			if(!LoginUtils.isBranchAdmin()){
 				xmProject.put("compete",user.getUserid());
 			}
-
 		}
 		if(!StringUtils.hasText((String) xmProject.get("isTpl"))){
 			xmProject.put("isTpl","0");
 		}else{
 			if("1".equals(xmProject.get("isTpl"))){
 				xmProject.remove("branchId");
-				xmProject.put("myBranchId",user.getBranchId());
+				xmProject.put("linkBranchId",user.getBranchId());
 				xmProject.put("platformBranchId",platformBranchId);
 			}
 		}
+		xmProject.put("linkBranchId",user.getBranchId());
+		xmProject.put("platformBranchId",platformBranchId);
 		List<Map<String,Object>> xmProjectList = xmProjectService.getProject(xmProject);	//列出XmProject列表
 		PageUtils.responePage(m, xmProjectList);
 		m.put("data",xmProjectList);
