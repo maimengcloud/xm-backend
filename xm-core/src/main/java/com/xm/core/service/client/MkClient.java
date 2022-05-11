@@ -38,7 +38,7 @@ public class MkClient {
     }
 
     /**
-     * 检查用户是否可以投标
+     * 检查用户是否可以投标-针对私人用户
      * @param userid
      * @param at
      * @param exp
@@ -50,7 +50,7 @@ public class MkClient {
         return callBizService.getForTips(url,map("userid",userid  ,"at",at,"exp",exp,"bids",bids));
     }
     /**
-     * 检查用户是否可以投标
+     * 检查用户是否可以投标-针对私人用户
      * @param userid
      * @param at
      * @param exp
@@ -63,7 +63,7 @@ public class MkClient {
         return re;
     }
     /**
-     * 检查用户是否可以投标
+     * 检查用户是否可以投标-针对私人用户
      * @param userid
      * @return Map
      */
@@ -74,7 +74,7 @@ public class MkClient {
     }
 
     /**
-     * 投标成功后登记投标次数
+     * 投标成功后登记投标次数-针对私人用户
      * @return
      */
     public Tips pushBidsAfterBidSuccess(String userid,BigDecimal at,BigDecimal exp,Integer bids){

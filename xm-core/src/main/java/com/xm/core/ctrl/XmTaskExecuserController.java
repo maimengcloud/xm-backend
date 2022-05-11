@@ -182,21 +182,25 @@ public class XmTaskExecuserController {
 				m.put("tips", tips);
 				return m;
 			}
-			String colUserid=user.getBranchId();
+			boolean isBranch=false;
 			if(!xmTaskExecuser.getUserid().equals(user.getUserid())){
 				User userDb=sysClient.getUserByUserid(xmTaskExecuser.getUserid());
 				if(userDb==null){
 					return ResponseHelper.failed("userid-0","候选人不存在");
 				}
-				colUserid=userDb.getBranchId();
-				xmTaskExecuser.setExecUserBranchId(userDb.getBranchId());
+				isBranch=!"0".equals(userDb.getMemType());
+ 				xmTaskExecuser.setExecUserBranchId(userDb.getBranchId());
 			}else{
+				isBranch=!"0".equals(user.getMemType());
 				xmTaskExecuser.setExecUserBranchId(user.getBranchId());
 			}
 			if("1".equals(xmTask.getCrowd()) && "1".equals(xmTask.getTaskOut())){
-
-
-				Map<String,Object> result=mkClient.checkAndGetMemberInterests(colUserid,xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+				Map<String,Object> result=null;
+				if(isBranch){
+					result=mkClient.checkAndGetMemberInterests(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+				}else{
+					result= sysClient.checkAndGetBranchInterests(xmTaskExecuser.getExecUserBranchId(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+				}
 				Tips tips2= (Tips) result.get("tips");
 				if(!tips2.isOk()){
 					return ResponseHelper.failed(tips2);
@@ -214,7 +218,12 @@ public class XmTaskExecuserController {
 			 if(user.getUserid().equals(xmTaskExecuser.getUserid())){//自己作为候选人
 				 xmTaskExecuser.setExecUserBranchId(user.getBranchId());
 				 xmTaskExecuserService.addExecuser(xmTaskExecuser);
-				 mkClient.pushBidsAfterBidSuccess(colUserid,xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+				 if(isBranch){
+				 	sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getExecUserBranchId(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+				 }else {
+					 mkClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+				 }
+
 				 m.put("data",xmTaskExecuser);
 			 }else {
 				 boolean isPm=groupService.checkUserIsProjectAdm(xmTask.getProjectId(),user.getUserid());
@@ -225,9 +234,13 @@ public class XmTaskExecuserController {
 					 	return ResponseHelper.failed("no-qx","您无权操作！只有任务负责人、组长、项目管理者可以给任务分配候选人。");
 					 }
 				 }
-					 xmTaskExecuserService.addExecuser(xmTaskExecuser);
-				 mkClient.pushBidsAfterBidSuccess(colUserid,xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
-					 m.put("data",xmTaskExecuser);
+				 xmTaskExecuserService.addExecuser(xmTaskExecuser);
+				 if(isBranch){
+					 sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getExecUserBranchId(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+				 }else {
+					 mkClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+				 }
+				 m.put("data",xmTaskExecuser);
 			 }
 
 		}catch (BizException e) { 
