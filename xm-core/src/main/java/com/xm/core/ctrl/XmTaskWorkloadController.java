@@ -13,6 +13,7 @@ import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.*;
+import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.service.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,6 +73,9 @@ public class XmTaskWorkloadController {
 	XmMenuService xmMenuService;
 	@Autowired
 	XmTaskSbillService xmTaskSbillService;
+
+	@Autowired
+	XmTaskSumParentsPushService pushService;
 
 
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmTaskWorkload());
@@ -269,7 +273,7 @@ public class XmTaskWorkloadController {
 				this.xmTaskService.batchUpdateBudgetWorkloadAndRate(ids,newBudgetWorkload );
 			}
 			this.xmTaskService.calcWorkloadByRecord(xmTaskDb.getId());
-			this.xmTaskService.sumParents(xmTaskDb);
+			pushService.pushXmTask(xmTaskDb);
 			m.put("data",xmTaskWorkload);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -316,8 +320,7 @@ public class XmTaskWorkloadController {
 				}
 			}
 			xmTaskWorkloadService.updateSomeFieldByPk(xmTaskWorkload);
-		this.xmTaskService.sumParents(xmTaskDb);
-
+			pushService.pushXmTask(xmTaskDb);
 			this.xmTaskService.calcWorkloadByRecord(xmTaskWorkload.getTaskId());
 
 			m.put("data",xmTaskWorkload);
@@ -401,8 +404,8 @@ public class XmTaskWorkloadController {
 			if(canDel.size()>0){
 				xmTaskWorkloadService.batchDelete(canDel);
 				this.xmTaskService.calcWorkloadByRecord(canDelTaskMap.keySet().stream().collect(Collectors.toList()));
-				this.xmTaskService.batchSumParents(canDelTaskMap.values().stream().collect(Collectors.toList()));
- 				msgs.add("成功删除"+canDel.size()+"条工时单据。");
+ 				pushService.pushXmTasks(canDelTaskMap.values().stream().collect(Collectors.toList()));
+				msgs.add("成功删除"+canDel.size()+"条工时单据。");
 			}
 			if(state1Ndel.size()>0){
  				msgs.add("以下"+state1Ndel.size()+"条工时单据状态为确认状态，不允许删除。【"+state1Ndel.stream().map(i->i.getUsername()+i.getBizDate()).collect(Collectors.joining(","))+"】");
