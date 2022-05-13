@@ -55,17 +55,25 @@ public class XmTaskSumParentsListener extends MessageListener<XmTask> {
         if(myTasksAllMap.size()>0){
 
             List<XmTask> tasks=new ArrayList<>();
-            List<XmTask> errors=new ArrayList<>();
              myTasksAllMap.forEach((projectId,tasksMap)->{
                  tasks.addAll(tasksMap.values());
                  if(tasks.size()>100){
-                     try {
-                         xmTaskService.batchSumParents(tasks);
-                         tasks.clear();
-                     }catch (Exception e){
-                         errors.addAll(tasks);
-                         tasks.clear();
-                     }
+                     new Thread(){
+                         @Override
+                         public void run() {
+                             List<XmTask> myTasks=new ArrayList<>();
+                             synchronized (tasks){
+                                 myTasks.addAll(tasks);
+                                 tasks.clear();
+                             }
+                             try {
+                                 xmTaskService.batchSumParents(myTasks);
+                             }catch (Exception e){
+                                 xmTaskService.batchSumParents(myTasks);
+                             }
+                         }
+                     }.start();
+
                  }
              });
              if(tasks.size()>0){
@@ -76,14 +84,7 @@ public class XmTaskSumParentsListener extends MessageListener<XmTask> {
 
                  }
              }
-            if(errors.size()>0){
-                try {
-                    xmTaskService.batchSumParents(errors);
-                    errors.clear();
-                }catch (Exception e){
-                    errors.clear();
-                }
-            }
+
         }
 
     }

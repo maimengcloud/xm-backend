@@ -56,17 +56,25 @@ public class XmMenuSumParentsListener extends MessageListener<XmMenu> {
         if(myMenusAllMap.size()>0){
 
             List<XmMenu> menus=new ArrayList<>();
-            List<XmMenu> errors=new ArrayList<>();
-            myMenusAllMap.forEach((projectId,menusMap)->{
+             myMenusAllMap.forEach((projectId,menusMap)->{
                 menus.addAll(menusMap.values());
                 if(menus.size()>100){
-                    try {
-                        xmMenuStateService.batchSumParents(menus);
-                        menus.clear();
-                    }catch (Exception e){
-                        errors.addAll(menus);
-                        menus.clear();
-                    }
+                    new Thread(){
+                        @Override
+                        public void run() {
+                            List<XmMenu> myMenus=new ArrayList<>();
+                            synchronized (menus){
+                                myMenus.addAll(menus);
+                                menus.clear();
+                            }
+                            try {
+                                xmMenuStateService.batchSumParents(myMenus);
+                            }catch (Exception e){
+                                xmMenuStateService.batchSumParents(myMenus);
+                            }
+                        }
+                    }.start();
+
                 }
             });
             if(menus.size()>0){
@@ -74,15 +82,7 @@ public class XmMenuSumParentsListener extends MessageListener<XmMenu> {
                     xmMenuStateService.batchSumParents(menus);
                     menus.clear();
                 }catch (Exception e){
-
-                }
-            }
-            if(errors.size()>0){
-                try {
-                    xmMenuStateService.batchSumParents(errors);
-                    errors.clear();
-                }catch (Exception e){
-                    errors.clear();
+                    xmMenuStateService.batchSumParents(menus);
                 }
             }
         }
