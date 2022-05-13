@@ -4,6 +4,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
+import com.xm.core.queue.XmMenuSumParentsPushService;
 import com.xm.core.vo.XmIterationMenuVo;
 import com.xm.core.vo.XmMenuVo;
 import com.xm.core.vo.XmPhaseMenusVo;
@@ -25,6 +26,9 @@ public class XmMenuService extends BaseService {
 
 	@Autowired
 	XmMenuStateService xmMenuStateService;
+
+	@Autowired
+	XmMenuSumParentsPushService pushService;
 
 	/**
 	 * 连同功能关联的项目需求计划数据一起带出
@@ -86,7 +90,7 @@ public class XmMenuService extends BaseService {
 			this.batchUpdate(editList);
 		}
 		if (xmMenuList.size() > 0) {
-			this.xmMenuStateService.batchSumParents(xmMenuList);
+			pushService.pushXmMenus(xmMenuList);
 		}
 	}
 
@@ -215,7 +219,7 @@ public class XmMenuService extends BaseService {
 	public int insert(XmMenu xmMenu) {
 		int i = super.insert(xmMenu);
 		xmMenuStateService.batchLoadXmMenuToState(xmMenu.getProductId());
-		xmMenuStateService.sumParents(xmMenu);
+		pushService.pushXmMenu(xmMenu);
 		return i;
 	}
 
@@ -229,14 +233,14 @@ public class XmMenuService extends BaseService {
 	public void doBatchInsert(List<XmMenu> xmMenus) {
 		super.batchInsert(xmMenus);
 		this.xmMenuStateService.batchLoadXmMenuToState(xmMenus.get(0).getProductId());
-		this.xmMenuStateService.batchSumParents(xmMenus);
+		pushService.pushXmMenus(xmMenus);
 
 	}
 
 	@Transactional
 	public void doBatchDelete(List<XmMenu> canDelList) {
 		super.batchDelete(canDelList);
-		this.xmMenuStateService.batchSumParents(canDelList);
+		pushService.pushXmMenus(canDelList);
 	}
 
 	@Transactional
@@ -299,7 +303,7 @@ public class XmMenuService extends BaseService {
 	@Transactional
 	public void batchChangeParent(List<XmMenu> xmMenus,XmMenu parentMenu) {
 		super.update("batchChangeParent",map("menuIds",xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()),"pmenuId",parentMenu.getMenuId(),"parentPidPaths",parentMenu.getPidPaths()));
-		xmMenuStateService.sumParents(parentMenu);
+ 		pushService.pushXmMenu(parentMenu);
 	}
 
 

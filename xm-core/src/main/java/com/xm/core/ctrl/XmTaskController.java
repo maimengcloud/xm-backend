@@ -16,6 +16,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.PubTool;
 import com.xm.core.entity.*;
+import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.service.*;
 import com.xm.core.service.cache.XmTaskCacheService;
 import com.xm.core.service.push.XmPushMsgService;
@@ -75,6 +76,9 @@ public class XmTaskController {
 
 	@Autowired
 	XmProductService xmProductService;
+
+	@Autowired
+	XmTaskSumParentsPushService pushService;
 
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmTask());
 
@@ -321,7 +325,7 @@ public class XmTaskController {
 					if(fieldKey.contains("budgetWorkload")){//如果调整了预估工时，需要重新计算进度数据
 						if(xmTasksDb.size()>0){
 							this.xmTaskService.batchUpdateBudgetWorkloadAndRate(xmTasksDb.stream().map(i->i.getId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()),NumberUtil.getBigDecimal(xmTaskMap.get("budgetWorkload")));
-							this.xmTaskService.batchSumParents(xmTasksDb);
+							pushService.pushXmTasks(xmTasksDb);
 						}
 					}else{
 						xmTaskService.editSomeFields(xmTaskMap);

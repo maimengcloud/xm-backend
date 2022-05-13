@@ -13,6 +13,7 @@ import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskSkill;
+import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.vo.BatchRelTasksWithMenu;
 import com.xm.core.vo.BatchRelTasksWithPhase;
 import com.xm.core.vo.XmGroupVo;
@@ -53,6 +54,9 @@ public class XmTaskService extends BaseService {
 	@Autowired
     XmTaskSkillService xmTaskSkillService;
 
+	@Autowired
+	XmTaskSumParentsPushService pushService;
+
 
 	@Autowired
 	XmGroupService groupService;
@@ -60,7 +64,7 @@ public class XmTaskService extends BaseService {
 	@Transactional
 	public   int[] doBatchDelete(List<XmTask> batchValues) {
 		int[] i2= super.batchDelete(batchValues);
-		this.batchSumParents(batchValues);
+		pushService.pushXmTasks(batchValues);
 		return i2;
 	}
 
@@ -198,7 +202,7 @@ public class XmTaskService extends BaseService {
 		BeanUtils.copyProperties(xmTaskVo,xmTask);
 		this.insert(xmTask);
 		if(StringUtils.hasText(xmTask.getParentTaskid())){
-			this.sumParents(xmTask);
+			pushService.pushXmTask(xmTask);
 		}
 		//新增/更新附件
 		//xmAttachmentService.insertOrUpdate(xmTaskVo.getId(),TYPE,xmTaskVo.getAttachment());
@@ -222,7 +226,7 @@ public class XmTaskService extends BaseService {
 	public void deleteTask(XmTask xmTask) {
 		this.deleteByPk(xmTask);
 		if(StringUtils.hasText(xmTask.getParentTaskid())){
-			this.sumParents(xmTask);
+			pushService.pushXmTask(xmTask);
 		}
 	}
 	@Transactional
@@ -235,7 +239,7 @@ public class XmTaskService extends BaseService {
 		}
 		this.updateSomeFieldByPk(xmTask);
 		if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
-			this.sumParents(xmTaskDb);
+			pushService.pushXmTask(xmTaskDb);
 		}
 		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-更新任务基础信息", "更新任务"+xmTask.getName(),JSONObject.toJSONString(xmTask),null);  
 	}
@@ -251,7 +255,7 @@ public class XmTaskService extends BaseService {
 		xmTask2.setActEndTime(xmTask.getActEndTime());
 		this.updateSomeFieldByPk(xmTask);
 		if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
-			this.sumParents(xmTaskDb);
+			pushService.pushXmTask(xmTaskDb);
 		}
 		//更新父任务的进度
 		//updateParentProgress(xmTask.getParentTaskid());
@@ -272,7 +276,7 @@ public class XmTaskService extends BaseService {
 		this.updateSomeFieldByPk(xmTask);
 
 		if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
-			this.sumParents(xmTaskDb);
+			pushService.pushXmTask(xmTaskDb);
 		}
 		//更新父任务的进度
 		//updateParentProgress(xmTask.getParentTaskid());
@@ -384,7 +388,7 @@ public class XmTaskService extends BaseService {
 	@Transactional
 	public void batchImportFromTemplate(List<XmTask> xmTasks) {
 		this.batchInsert(xmTasks);
-		this.batchSumParents(xmTasks);
+		this.pushService.pushXmTasks(xmTasks);
 		
 	}
 	
@@ -410,7 +414,7 @@ public class XmTaskService extends BaseService {
 			all.addAll(editXmTasks);
 		}
 		if(all.size()>0){
-			this.batchSumParents(all);
+			this.pushService.pushXmTasks(all);
 		}
 	}
 
@@ -706,7 +710,7 @@ public class XmTaskService extends BaseService {
 	@Transactional
 	public void batchChangeParent(List<XmTask> xmTasks,XmTask parentTask) {
 		super.update("batchChangeParent",map("taskIds",xmTasks.stream().map(i->i.getId()).collect(Collectors.toList()),"parentTaskid",parentTask.getId(),"parentPidPaths",parentTask.getPidPaths()));
-		this.sumParents(parentTask);
+		pushService.pushXmTask(parentTask);
 	}
 
 	/**

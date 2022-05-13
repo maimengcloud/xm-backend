@@ -15,6 +15,7 @@ import com.xm.core.PubTool;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmQuestion;
 import com.xm.core.entity.XmTask;
+import com.xm.core.queue.XmMenuSumParentsPushService;
 import com.xm.core.service.XmMenuService;
 import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmRecordService;
@@ -66,6 +67,10 @@ public class XmMenuController {
 
 	@Autowired
 	private XmGroupService groupService;
+
+
+	@Autowired
+	XmMenuSumParentsPushService pushService;
 
 
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmMenu());
