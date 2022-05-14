@@ -312,6 +312,12 @@ public class XmMenuController {
 			xmMenuService.parentIdPathsCalcBeforeSave(xmMenu);
 			xmMenu.setStatus("0");
 			xmMenu.setChildrenCnt(0);
+			if(!StringUtils.hasText(xmMenu.getProposerId())){
+				xmMenu.setProposerId(user.getUserid());
+				xmMenu.setProposerName(user.getUsername());
+			}
+			xmMenu.setCtime(new Date());
+			xmMenu.setLtime(new Date());
 			xmMenuService.insert(xmMenu);
 			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"新增产品需求","新增需求"+xmMenu.getMenuName());
 			m.put("data",xmMenu);
@@ -404,7 +410,8 @@ public class XmMenuController {
 					xmMenu.setNtype("1");
 				}
 			}
-			xmMenuService.updateByPk(xmMenu);
+			xmMenu.setLtime(new Date());
+			xmMenuService.updateSomeFieldByPk(xmMenu);
 			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"修改产品需求","修改产品需求"+xmMenu.getMenuName(),"", JSON.toJSONString(xmMenu));
 
 			m.put("data",xmMenu);
@@ -457,7 +464,7 @@ public class XmMenuController {
 			}
 			Set<String> fieldKey=xmMenuMap.keySet().stream().filter(i->fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmMenuMap.get(i) )).collect(Collectors.toSet());
-
+			xmMenuMap.put("ltime",new Date());
 			xmMenuService.editSomeFields(xmMenuMap);
 			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"修改产品需求","修改产品需求"+xmMenu.getMenuName(),"", JSON.toJSONString(xmMenu));
 

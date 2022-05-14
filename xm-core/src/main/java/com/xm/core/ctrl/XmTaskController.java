@@ -1036,6 +1036,7 @@ public class XmTaskController {
 			List<XmTask> noAllowTasks=new ArrayList<>();
 			List<XmTask> tasksDb=this.xmTaskService.selectTaskListByIds(tasksMenu.getTaskIds());
 			for (XmTask xmTask : tasksDb) {
+				xmTask.setLtime(new Date());
 				if("1".equals(xmTask.getNtype())){
 					ntype1Tasks.add(xmTask);
 					continue;
@@ -1273,6 +1274,7 @@ public class XmTaskController {
 				}
 				frontParamsTaskMap.put(task.getId(),task);
 				if(xmTaskDbMap.containsKey(task.getId())){
+					task.setLtime(new Date());
 					updateTasks.add(task);
 				}else {
 					task.setCreateUsername(user.getUsername());
@@ -1280,6 +1282,7 @@ public class XmTaskController {
 					task.setExecutorUserid(user.getUserid());
 					task.setExecutorUsername(user.getUsername());
 					task.setCreateTime(new Date());
+					task.setLtime(new Date());
 					insertTasks.add(task);
 				}
 			}
@@ -1446,12 +1449,14 @@ public class XmTaskController {
 			}
 			Map<String,XmTask> allowTasksDbMap2=new HashMap<>();
 			for (XmTask t : allowTasksDbMap.values()) {
+				t.setLtime(new Date());
 				if(!allowTasksDbMap.containsKey(t.getParentTaskid())){
 					allowTasksDbMap2.put(t.getId(),t);
 				}
 			}
 			Map<String,XmTask> allowTasksDbMap3=new HashMap<>();
 			for (XmTask t : allowTasksDbMap2.values()) {
+				t.setLtime(new Date());
 				boolean hasChildren=false;
 				for (XmTask t2 : allowTasksDbMap2.values()) {
 					if(!t2.getId().equals(t.getId()) && t2.getPidPaths().indexOf(t.getPidPaths())>=0 ){
