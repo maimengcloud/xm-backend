@@ -19,7 +19,7 @@ import java.util.List;
 
 /**
  * api 文档,
- * 生产环境需要禁止访问
+ * 生产环境需要禁止访问,每个项目需要单独引入swagger包，不能继承
  *
  * 需要将下面路径放到 WebSecurityConfig 中
  *
@@ -31,6 +31,7 @@ import java.util.List;
  *                 "/csrf",
  *                 "/"
  */
+
 //@ConditionalOnProperty(havingValue = "dev",name = {"spring.profiles.active"})
 @Configuration
 @EnableSwagger2
@@ -83,10 +84,10 @@ public class SwaggerConfig {
 
 
     private ApiInfo apiInfo() {
-        Contact contact = new Contact("擎勤科技", String.format("http://localhost:%s/swagger-ui.html",serverPort), "cyc58469@163.com");
+        Contact contact = new Contact("广州擎勤网络科技有限公司", String.format("https://www.qingqinkj/api/m1/%s/swagger-ui.html",applicationName), "cyc58469@163.com");
         return new ApiInfoBuilder()
-                .title("唛盟项目核心接口")
-                .description("接口文档")
+                .title("唛盟接口")
+                .description(String.format("接口文档 本地访问地址 http://localhost:%s/swagger-ui.html",serverPort))
                 .contact(contact)
                 .version("1.0.0")
                 .build();
