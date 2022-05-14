@@ -114,13 +114,12 @@ public class XmTaskController {
 	}
 
 	@ApiOperation( value = "查询xm_task信息列表",notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-
 	@ApiGlobalModel(component = XmTask.class, value = "id,name")
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/getTask",method=RequestMethod.GET)
-	public Map<String,Object> getTask(   @RequestParam Map<String,Object> xmTask){
+	public Map<String,Object> getTask( @ApiIgnore  @RequestParam Map<String,Object> xmTask){
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(xmTask, "ids");
 		RequestUtils.transformArray(xmTask, "skillIds");
@@ -468,7 +467,7 @@ public class XmTaskController {
 		@ApiResponse(code = 200,response=XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTask( @RequestParam Map<String,Object> xmTask){
+	public Map<String,Object> listXmTask(@ApiIgnore @RequestParam Map<String,Object> xmTask){
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmTask, "ids");
 		RequestUtils.transformArray(xmTask, "tagIdList");
