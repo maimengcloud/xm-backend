@@ -40,7 +40,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/**/xm/core/xmTask/shareTaskDetail").permitAll().anyRequest().authenticated();
+        http.authorizeRequests().antMatchers("/**/xm/core/xmTask/shareTaskDetail",
+
+                "/swagger-ui.html",
+                "/webjars/**",
+                "/swagger-ui/**",
+                "/swagger-resources/**",
+                "/v2/*",
+                "/csrf",
+                "/"
+
+        ).permitAll().anyRequest().authenticated();
         http.oauth2Client().and().logout().disable();
         http.formLogin().usernameParameter("userloginid");
         http.oauth2Login();

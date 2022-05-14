@@ -237,6 +237,7 @@ public class XmTaskService extends BaseService {
 		if(StringUtils.isEmpty(xmTask.getMilestone())){
 			xmTask.setMilestone("0");
 		}
+		xmTask.setLtime(new Date());
 		this.updateSomeFieldByPk(xmTask);
 		if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
 			pushService.pushXmTask(xmTaskDb);

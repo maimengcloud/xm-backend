@@ -80,7 +80,7 @@ public class XmProjectMCostUserController {
 		@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false) 
 	})
 	@ApiResponses({
-		@ApiResponse(code = 200,response= XmProjectMCostUser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+		@ApiResponse(code = 200,response= XmProjectMCostUser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Map<String,Object> listXmProjectMCostUser( @RequestParam Map<String,Object> xmProjectMCostUser){
@@ -97,7 +97,7 @@ public class XmProjectMCostUserController {
 	
 
 	@ApiResponses({
-		@ApiResponse(code = 200,response= XmProjectMBudgetCostNouser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+		@ApiResponse(code = 200,response= XmProjectMBudgetCostNouser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listSum",method=RequestMethod.GET)
 	public Map<String,Object> listSum( @RequestParam Map<String,Object> xmProjectMCostUser){

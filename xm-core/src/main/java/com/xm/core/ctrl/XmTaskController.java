@@ -14,6 +14,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.swagger.ApiGlobalModel;
 import com.xm.core.PubTool;
 import com.xm.core.entity.*;
 import com.xm.core.queue.XmTaskSumParentsPushService;
@@ -27,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -81,51 +83,44 @@ public class XmTaskController {
 	XmTaskSumParentsPushService pushService;
 
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmTask());
+	Map<String,String> fieldNameMap=new HashMap<>();
+	public void initFieldNameMap(){
+		fieldNameMap.put("name","任务名称");
+		fieldNameMap.put("parentTaskid","父任务编号");
+		fieldNameMap.put("parentTaskname","父任务名称");
+		fieldNameMap.put("projectId","项目编号");
+		fieldNameMap.put("level","任务级别");
+		fieldNameMap.put("sortLevel","排序级别");
+		fieldNameMap.put("executorUserid","任务执行人编号");
+		fieldNameMap.put("executorUsername","任务执行人");
+		fieldNameMap.put("preTaskid","前置任务编号");
+		fieldNameMap.put("preTaskname","前置任务名称");
+		fieldNameMap.put("startTime","任务开始时间");
+		fieldNameMap.put("endTime","任务结束时间");
+		fieldNameMap.put("milestone","里程碑");
+		fieldNameMap.put("description","任务描述");
+		fieldNameMap.put("remarks","备注");
+		fieldNameMap.put("createUserid","任务创建人编号");
+		fieldNameMap.put("createUsername","任务创建人");
+
+		fieldNameMap.put("createTime","创建时间");
+		fieldNameMap.put("remarks","备注");
+		fieldNameMap.put("createUserid","任务创建人编号");
+		fieldNameMap.put("createUsername","任务创建人");
+		fieldNameMap.put("description","任务描述");
+		fieldNameMap.put("remarks","备注");
+		fieldNameMap.put("createUserid","任务创建人编号");
+		fieldNameMap.put("createUsername","任务创建人");
+	}
 
 	@ApiOperation( value = "查询xm_task信息列表",notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name="id",value="任务编号,主键",required=false),
-			@ApiImplicitParam(name="name",value="任务名称",required=false),
-			@ApiImplicitParam(name="parentTaskid",value="父任务编号",required=false),
-			@ApiImplicitParam(name="parentTaskname",value="父任务名称",required=false),
-			@ApiImplicitParam(name="projectId",value="项目编号",required=false),
-			@ApiImplicitParam(name="projectName",value="项目名称",required=false),
-			@ApiImplicitParam(name="level",value="任务级别",required=false),
-			@ApiImplicitParam(name="sortLevel",value="排序级别",required=false),
-			@ApiImplicitParam(name="executorUserid",value="任务执行人编号",required=false),
-			@ApiImplicitParam(name="executorUsername",value="任务执行人",required=false),
-			@ApiImplicitParam(name="preTaskid",value="前置任务编号",required=false),
-			@ApiImplicitParam(name="preTaskname",value="前置任务名称",required=false),
-			@ApiImplicitParam(name="startTime",value="任务开始时间",required=false),
-			@ApiImplicitParam(name="endTime",value="任务结束时间",required=false),
-			@ApiImplicitParam(name="milestone",value="里程碑",required=false),
-			@ApiImplicitParam(name="description",value="任务描述",required=false),
-			@ApiImplicitParam(name="remarks",value="备注",required=false),
-			@ApiImplicitParam(name="createUserid",value="任务创建人编号",required=false),
-			@ApiImplicitParam(name="createUsername",value="任务创建人",required=false),
-			@ApiImplicitParam(name="createTime",value="创建时间",required=false),
-			@ApiImplicitParam(name="rate",value="任务进度",required=false),
-			@ApiImplicitParam(name="budgetCost",value="当前任务预算金额（包括所有成本，包括直接下一级）",required=false),
-			@ApiImplicitParam(name="budgetWorkload",value="预算工时（包括直接下级）",required=false),
-			@ApiImplicitParam(name="actCost",value="当前任务实际费用金额（包括所有成本，包括直接下一级）",required=false),
-			@ApiImplicitParam(name="actWorkload",value="实际工时（包括直接下级）",required=false),
-			@ApiImplicitParam(name="taskState",value="任务状态0待领取1已领取执行中2已完工3已结算",required=false),
-			@ApiImplicitParam(name="taskType",value="1可外包0不可外包",required=false),
-			@ApiImplicitParam(name="taskClass",value="1需结算0不需结算",required=false),
-			@ApiImplicitParam(name="toTaskCenter",value="是否发布到任务大厅0否1是",required=false),
-			@ApiImplicitParam(name="actStartTime",value="实际开始时间",required=false),
-			@ApiImplicitParam(name="actEndTime",value="实际结束时间",required=false),
-			@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
-			@ApiImplicitParam(name="currentPage",value="当前页码,从1开始",required=false),
-			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-			@ApiImplicitParam(name="orderFields",value="排序列 如性别、学生编号排序 ['sex','studentId']",required=false),
-			@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false)
-	})
+
+	@ApiGlobalModel(component = XmTask.class, value = "id,name")
 	@ApiResponses({
-			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/getTask",method=RequestMethod.GET)
-	public Map<String,Object> getTask( @RequestParam Map<String,Object> xmTask){
+	public Map<String,Object> getTask(   @RequestParam Map<String,Object> xmTask){
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(xmTask, "ids");
 		RequestUtils.transformArray(xmTask, "skillIds");
@@ -181,59 +176,32 @@ public class XmTaskController {
 	}
 
 
-	@ApiOperation( value = "查询xm_task信息列表-互联网大厅首页专用、免登录",notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiOperation(  value = "查询xm_task信息列表-互联网大厅首页专用、免登录", notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+
 	@ApiImplicitParams({
-			@ApiImplicitParam(name="id",value="任务编号,主键",required=false),
-			@ApiImplicitParam(name="name",value="任务名称",required=false),
-			@ApiImplicitParam(name="parentTaskid",value="父任务编号",required=false),
-			@ApiImplicitParam(name="parentTaskname",value="父任务名称",required=false),
-			@ApiImplicitParam(name="projectId",value="项目编号",required=false),
-			@ApiImplicitParam(name="projectName",value="项目名称",required=false),
-			@ApiImplicitParam(name="level",value="任务级别",required=false),
-			@ApiImplicitParam(name="sortLevel",value="排序级别",required=false),
-			@ApiImplicitParam(name="executorUserid",value="任务执行人编号",required=false),
-			@ApiImplicitParam(name="executorUsername",value="任务执行人",required=false),
-			@ApiImplicitParam(name="preTaskid",value="前置任务编号",required=false),
-			@ApiImplicitParam(name="preTaskname",value="前置任务名称",required=false),
-			@ApiImplicitParam(name="startTime",value="任务开始时间",required=false),
-			@ApiImplicitParam(name="endTime",value="任务结束时间",required=false),
-			@ApiImplicitParam(name="milestone",value="里程碑",required=false),
-			@ApiImplicitParam(name="description",value="任务描述",required=false),
-			@ApiImplicitParam(name="remarks",value="备注",required=false),
-			@ApiImplicitParam(name="createUserid",value="任务创建人编号",required=false),
-			@ApiImplicitParam(name="createUsername",value="任务创建人",required=false),
-			@ApiImplicitParam(name="createTime",value="创建时间",required=false),
-			@ApiImplicitParam(name="rate",value="任务进度",required=false),
-			@ApiImplicitParam(name="budgetCost",value="当前任务预算金额（包括所有成本，包括直接下一级）",required=false),
-			@ApiImplicitParam(name="budgetWorkload",value="预算工时（包括直接下级）",required=false),
-			@ApiImplicitParam(name="actCost",value="当前任务实际费用金额（包括所有成本，包括直接下一级）",required=false),
-			@ApiImplicitParam(name="actWorkload",value="实际工时（包括直接下级）",required=false),
-			@ApiImplicitParam(name="taskState",value="任务状态0待领取1已领取执行中2已完工3已结算",required=false),
-			@ApiImplicitParam(name="taskType",value="1可外包0不可外包",required=false),
-			@ApiImplicitParam(name="taskClass",value="1需结算0不需结算",required=false),
-			@ApiImplicitParam(name="toTaskCenter",value="是否发布到任务大厅0否1是",required=false),
-			@ApiImplicitParam(name="actStartTime",value="实际开始时间",required=false),
-			@ApiImplicitParam(name="actEndTime",value="实际结束时间",required=false),
-			@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
-			@ApiImplicitParam(name="currentPage",value="当前页码,从1开始",required=false),
-			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-			@ApiImplicitParam(name="orderFields",value="排序列 如性别、学生编号排序 ['sex','studentId']",required=false),
-			@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false)
-	})
+			@ApiImplicitParam(name="xmTask",value = "业务参数，参考对象xmTask中各字段描述",dataTypeClass = XmTask.class,required=false),
+			@ApiImplicitParam(name="pageSize",value="每页大小，默认20条",dataType = "int" ,required=false),
+			@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",dataType = "int" ,required=false),
+			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",dataType = "int" ,required=false),			@ApiImplicitParam(name="count",value="是否进行总记录数计算，默认是计算，如果需要关闭，请上送count=false",dataType = "int" ,required=false),
+			@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student desc",dataType = "string" ,required=false),
+ 	})
 	@ApiResponses({
-			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/getOutTask",method=RequestMethod.GET)
-	public Map<String,Object> getOutTask( @RequestParam Map<String,Object> xmTask){
+	public Map<String,Object> getOutTask( @RequestParam XmTask xmTask){
 		Map<String,Object> m = new HashMap<>();
 
 		Tips tips=new Tips("查询成功");
+		/**
 		RequestUtils.transformArray(xmTask, "skillIds");
 		PageUtils.startPage(xmTask);
 		xmTask.put("taskOut","1");
 		List<Map<String,Object>> tasks=xmTaskService.getTask(xmTask);
 		PageUtils.responePage(m,tasks);
+
 		m.put("data",tasks);
+		 **/
 		m.put("tips", tips);
 		return m;
 	}
@@ -330,7 +298,10 @@ public class XmTaskController {
 					}else{
 						xmTaskService.editSomeFields(xmTaskMap);
 					}
-					xmRecordService.addXmTaskRecord(xmTask.getProjectId(),xmTask.getId(),"修改项目任务","修改任务"+xmTask.getMenuName(),"", JSON.toJSONString(xmTask));
+				for (XmTask task : can) {
+					xmRecordService.addXmTaskRecord(task.getProjectId(),task.getId(),"项目-任务-批量修改","修改任务"+task.getName(),"", JSON.toJSONString(xmTask));
+				}
+
 
 			}
 			List<String> msgs=new ArrayList<>();
@@ -359,7 +330,7 @@ public class XmTaskController {
 	@ApiOperation( value = "查询任务的信息详情，免登录",notes="taskDetail,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 
 	@ApiResponses({
-			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/shareTaskDetail",method=RequestMethod.GET)
 	public Map<String,Object> taskDetail( @RequestParam Map<String,Object> xmTask){
@@ -494,7 +465,7 @@ public class XmTaskController {
 		@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false)
 	})
 	@ApiResponses({
-		@ApiResponse(code = 200,response=XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+		@ApiResponse(code = 200,response=XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Map<String,Object> listXmTask( @RequestParam Map<String,Object> xmTask){
@@ -704,6 +675,7 @@ public class XmTaskController {
 				}
 			}
 			xmTaskService.updateTime(xmTask,xmTaskDb);
+
 			m.put("data",xmTask);
 		}catch (BizException e) {
 			tips=e.getTips();
@@ -1225,7 +1197,7 @@ public class XmTaskController {
 	}
 
 
-	/***/
+	/**
 	@ApiOperation( value = "批量修改预算",notes="batchSaveBudget,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -1376,6 +1348,9 @@ public class XmTaskController {
 		m.put("tips", tips);
 		return m;
 	}
+	 */
+
+
 	/***/
 	@ApiOperation( value = "批量修改任务的上级",notes="batchChangeParentTask,仅需要上传主键字段")
 	@ApiResponses({

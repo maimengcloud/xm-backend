@@ -88,7 +88,7 @@ public class XmIterationController {
 		@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false) 
 	})
 	@ApiResponses({
-		@ApiResponse(code = 200,response= XmIteration.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+		@ApiResponse(code = 200,response= XmIteration.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Map<String,Object> listXmIteration( @RequestParam Map<String,Object> xmIteration){
@@ -126,7 +126,7 @@ public class XmIterationController {
 	
 	@ApiOperation( value = "查询迭代数据，联通状态数据一起带出",notes="") 
 	@ApiResponses({
-		@ApiResponse(code = 200,response=XmIteration.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},pageInfo:{total:总记录数},data:[数据对象1,数据对象2,...]}")
+		@ApiResponse(code = 200,response=XmIteration.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listWithState",method=RequestMethod.GET)
 	public Map<String,Object> listWithState( @RequestParam Map<String,Object> xmIteration){
