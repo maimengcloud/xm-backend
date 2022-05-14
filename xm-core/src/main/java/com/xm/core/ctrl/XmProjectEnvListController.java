@@ -61,7 +61,7 @@ public class XmProjectEnvListController {
 		@ApiImplicitParam(name="createUsername",value="添加人员姓名",required=false),
 		@ApiImplicitParam(name="createTime",value="添加时间",required=false),
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
-		@ApiImplicitParam(name="currentPage",value="当前页码,从1开始",required=false),
+		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
 		@ApiImplicitParam(name="orderFields",value="排序列 如性别、学生编号排序 ['sex','studentId']",required=false),
 		@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false) 
