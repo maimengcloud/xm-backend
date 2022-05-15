@@ -12,12 +12,12 @@
         class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>logs/xm.log</File>  
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
-            <FileNamePattern>logs/xm-%d{yyyy-MM-dd}%i.log
+            <FileNamePattern>logs/xm-%d{yyyy-MM-dd}-%i.log
             </FileNamePattern>  
             <MaxHistory>10</MaxHistory>  
             <TimeBasedFileNamingAndTriggeringPolicy  
                 class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">  
-                <MaxFileSize>10MB</MaxFileSize>  
+                <MaxFileSize>50MB</MaxFileSize>
             </TimeBasedFileNamingAndTriggeringPolicy>  
         </rollingPolicy>  
         <layout class="ch.qos.logback.classic.PatternLayout">  
