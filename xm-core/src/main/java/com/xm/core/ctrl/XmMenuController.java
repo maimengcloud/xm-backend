@@ -13,13 +13,10 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.PubTool;
 import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmTask;
 import com.xm.core.queue.XmMenuSumParentsPushService;
 import com.xm.core.service.*;
 import com.xm.core.vo.BatchChangeParentMenuVo;
-import com.xm.core.vo.XmGroupVo;
-import com.xm.core.vo.XmMenuVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -645,7 +642,7 @@ public class XmMenuController {
 			}
 			if(allowMenusDbMap3.size()>0){
 				this.xmMenuService.batchChangeParent(allowMenusDbMap3.values().stream().collect(Collectors.toList()),parentDb);
- 				this.xmRecordService.addXmMenuRecord(parentDb.getProductId(),parentDb.getMenuId(),"批量挂接子节点","成功将以下"+allowMenusDbMap3.size()+"个需求及其所有子项挂接到【"+parentMenu.getMenuName()+"】上,【"+allowMenusDbMap3.values().stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】;");
+ 				this.xmRecordService.addXmMenuRecord(parentDb.getProductId(),parentDb.getMenuId(),"批量挂接子节点","成功将以下"+allowMenusDbMap3.size()+"个需求及其所有子项挂接到【"+parentDb.getMenuName()+"】上,【"+allowMenusDbMap3.values().stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】;");
 
 			}
 
