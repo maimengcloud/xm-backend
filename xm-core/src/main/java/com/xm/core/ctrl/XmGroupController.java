@@ -123,13 +123,10 @@ public class XmGroupController {
 		List<XmGroupVo>	xmGroupList=new ArrayList<>();
 		String iterationId= (String) params.get("iterationId");
 		String projectId= (String) params.get("projectId");
-		String productId= (String) params.get("productId");
 		if(StringUtils.hasText(projectId)){
 			xmGroupList = xmGroupService.getProjectGroupVoList(projectId);	//列出XmProjectGroup列表
 		}else if(StringUtils.hasText(iterationId)){
 			xmGroupList = xmGroupService.getProjectGroupVoListByIterationId(iterationId );	//列出XmProjectGroup列表
-		}else  if(StringUtils.hasText(productId)){
-			xmGroupList = xmGroupService.getProjectGroupVoListByProductId( productId);	//列出XmProjectGroup列表
 		}
 
 		PageUtils.responePage(m, xmGroupList);

@@ -62,7 +62,8 @@ public class XmIterationController {
 	XmIterationStateService xmIterationStateService;
 
 	@Autowired
-	XmGroupService xmGroupService;
+	XmMenuOperQxService operQxService;
+
 
 	@ApiOperation( value = "查询迭代定义信息列表",notes="listXmIteration,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiEntityParams(XmIteration.class)
@@ -174,7 +175,8 @@ public class XmIterationController {
 			xmIteration.setIphase("0");
 			xmIteration.setAdminUserid(user.getUserid());
 			xmIteration.setAdminUsername(user.getUsername());
-			if(!xmGroupService.checkUserIsPmOrAssByPtype(user.getUserid(),"1",null,xmIteration.getProductId() )){
+
+			if(!operQxService.checkIsProductAdmOrAss(xmProductService.getProductFromCache(xmIteration.getProductId()), user.getUserid())){
 				return ResponseHelper.failed("no-product-qx","您不是产品管理人员，无权将该产品与迭代关联");
 			};
 			xmIterationService.addIteration(xmIteration);
@@ -212,7 +214,8 @@ public class XmIterationController {
 				return ResponseHelper.failed("data-0","迭代不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			if(!user.getUserid().equals(iterationDb.getAdminUserid()) && !user.getUserid().equals(iterationDb.getCuserid())){
+			boolean isPm= this.operQxService.checkIsProductAdmOrAss(xmProductService.getProductFromCache(iterationDb.getProductId()), user.getUserid());
+			if( !isPm && !user.getUserid().equals(iterationDb.getAdminUserid()) && !user.getUserid().equals(iterationDb.getCuserid())){
 				return ResponseHelper.failed("no-qx","您无权删除，迭代创建人、负责人可以删除");
 			}
 
@@ -255,7 +258,9 @@ public class XmIterationController {
 				return ResponseHelper.failed("data-0","迭代不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			if(!user.getUserid().equals(iterationDb.getAdminUserid()) && user.getUserid().equals(iterationDb.getAdminUserid())){
+			boolean isPm= this.operQxService.checkIsProductAdmOrAss(xmProductService.getProductFromCache(iterationDb.getProductId()), user.getUserid());
+
+			if( !isPm && !user.getUserid().equals(iterationDb.getAdminUserid()) && user.getUserid().equals(iterationDb.getAdminUserid())){
 				return ResponseHelper.failed("no-qx","您无权修改，迭代创建人、负责人可以修改");
 			}
 			xmIterationService.updateByPk(xmIteration);
