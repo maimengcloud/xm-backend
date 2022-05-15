@@ -3,13 +3,12 @@ package com.xm.core.ctrl;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.entity.XmMenu;
-import com.xm.core.service.XmGroupService;
-import com.xm.core.service.XmIterationService;
-import com.xm.core.service.XmMenuService;
-import com.xm.core.service.XmRecordService;
+import com.xm.core.service.*;
 import com.xm.core.service.push.XmMenuPushMsgService;
 import com.xm.core.vo.XmIterationMenuVo;
 import io.swagger.annotations.*;
@@ -51,6 +50,9 @@ public class XmIterationMenuController {
 
 	@Autowired
 	XmMenuService xmMenuService;
+
+	@Autowired
+	XmMenuOperQxService operQxService;
 
 	@Autowired
 	XmIterationService xmIterationService;
@@ -115,18 +117,17 @@ public class XmIterationMenuController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功将用户故事移出迭代");
 		try{
+			User user= LoginUtils.getCurrentUserInfo();
 			List<String> menuIds=xmIterationMenus.getMenuIds();
 			if(menuIds==null || menuIds.size()==0){
 				return ResponseHelper.failed("menuIds-0","用户故事编号不能为空");
 			}
-			List<XmMenu> menus=xmMenuService.selectListByIds(menuIds);
+			List<XmMenu> menus=operQxService.getUserCanOpMenusByIds(menuIds,user.getUserid(),false);
 			if(menus==null || menus.size()==0){
-				return ResponseHelper.failed("menus-0","用户故事已不存在");
+				return ResponseHelper.failed("menus-0","无权限操作");
 			}
-			List<XmMenu> noQxOpList=new ArrayList<>();
-			List<XmMenu> canOpList=new ArrayList<>();
-			groupService.calcCanOpMenus(menus,canOpList,noQxOpList);
-			List<XmMenu> notJoins=new ArrayList<>();
+			List<XmMenu> canOpList=menus;
+ 			List<XmMenu> notJoins=new ArrayList<>();
 			List<XmMenu> status7=new ArrayList<>();
 			List<XmMenu> canDels=new ArrayList<>();
 			for (XmMenu menu : canOpList) {
@@ -173,7 +174,8 @@ public class XmIterationMenuController {
 	public Map<String,Object> batchAddXmIterationMenu(@RequestBody XmIterationMenuVo xmIterationMenus) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功将用户故事发布到迭代中");
-		try{ 
+		try{
+			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmIterationMenus.getIterationId())){
 				return ResponseHelper.failed("iterationId-0","迭代编号不能为空");
 			}
@@ -181,13 +183,11 @@ public class XmIterationMenuController {
 			if(menuIds==null || menuIds.size()==0){
 				return ResponseHelper.failed("menuIds-0","用户故事编号不能为空");
 			}
-			List<XmMenu> menus=xmMenuService.selectListByIds(menuIds);
+			List<XmMenu> menus=operQxService.getUserCanOpMenusByIds(menuIds,user.getUserid(),false);
 			if(menus==null || menus.size()==0){
-				return ResponseHelper.failed("menus-0","用户故事已不存在");
+				return ResponseHelper.failed("no-qx-0","无权限操作");
 			}
-			List<XmMenu> noQxOpList=new ArrayList<>();
-			List<XmMenu> canOpList=new ArrayList<>();
-			groupService.calcCanOpMenus(menus,canOpList,noQxOpList);
+ 			List<XmMenu> canOpList=new ArrayList<>();
 			List<XmMenu> hadJoin=new ArrayList<>();
 			List<XmMenu> ntype1=new ArrayList<>();
 			List<XmMenu> status789=new ArrayList<>();

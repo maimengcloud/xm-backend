@@ -57,6 +57,7 @@ public class XmRecordService extends BaseService {
 		record.setObjType("product");
 		record.setNewValue(newValue);
 		record.setOldValue(oldValue);
+		record.setGloNo(MDC.get("gloNo"));
 		this.insert(record);
 	}
 
@@ -74,6 +75,7 @@ public class XmRecordService extends BaseService {
 		record.setBizId(productId);
 		record.setRemarks(remarks);
 		record.setObjType("product");
+		record.setGloNo(MDC.get("gloNo"));
 		this.insert(record);
 	}
 	/**
@@ -94,6 +96,7 @@ public class XmRecordService extends BaseService {
 		record.setObjType("project"); 
 		record.setNewValue(newValue);
 		record.setOldValue(oldValue);
+		record.setGloNo(MDC.get("gloNo"));
 		this.insert(record);
 	}
 	
@@ -110,7 +113,8 @@ public class XmRecordService extends BaseService {
 		record.setAction(action);
 		record.setRemarks(remarks);
 		record.setBizId(projectId);
-		record.setObjType("project");  
+		record.setObjType("project");
+		record.setGloNo(MDC.get("gloNo"));
 		this.insert(record);
 	}
 
@@ -159,9 +163,54 @@ public class XmRecordService extends BaseService {
 		record.setBizId(taskId);
 		record.setAction(action);
 		record.setRemarks(remarks); 
-		record.setObjType("task"); 
+		record.setObjType("task");
+		record.setGloNo(MDC.get("gloNo"));
 		this.insert(record);
 	}
+
+
+	/**
+	 * 针对项目下的任务的所有操作用此方法
+	 * @param projectId 项目编号
+	 * @param budgetId 预算编号
+	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
+	 * @param remarks 人性化语言描述
+	 */
+	@Async
+	public void addXmBudgetRecord(String projectId,String budgetId,String action,String remarks) {
+		XmRecord record=this.initXmRecord();
+		record.setProjectId(projectId);
+		record.setBizId(budgetId);
+		record.setAction(action);
+		record.setRemarks(remarks);
+		record.setObjType("budget");
+		record.setGloNo(MDC.get("gloNo"));
+		this.insert(record);
+	}
+
+	/**
+	 * 针对项目下的任务的所有操作用此方法
+	 * @param projectId 项目编号
+	 * @param budgetId 预算编号
+	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
+	 * @param remarks 人性化语言描述
+	 * @param newValue 需要记录下来的新数据 可空
+	 * @param oldValue 需要记录下来的旧数据 可空
+	 */
+	@Async
+	public void addXmBudgetRecord(String projectId,String budgetId,String action,String remarks,String newValue,String oldValue) {
+		XmRecord record=this.initXmRecord();
+		record.setProjectId(projectId);
+		record.setBizId(budgetId);
+		record.setAction(action);
+		record.setRemarks(remarks);
+		record.setObjType("budget");
+		record.setNewValue(newValue);
+		record.setOldValue(oldValue);
+		record.setGloNo(MDC.get("gloNo"));
+		this.insert(record);
+	}
+
 	/**
 	 * 针对项目下的任务的所有操作用此方法
 	 * @param projectId 项目编号
@@ -181,6 +230,7 @@ public class XmRecordService extends BaseService {
 		record.setObjType("task");
 		record.setNewValue(newValue);
 		record.setOldValue(oldValue);
+		record.setGloNo(MDC.get("gloNo"));
 		this.insert(record);
 	}
 
@@ -199,6 +249,7 @@ public class XmRecordService extends BaseService {
 		record.setAction(action);
 		record.setRemarks(remarks);
 		record.setObjType("menu");
+		record.setGloNo(MDC.get("gloNo"));
 		this.insert(record);
 	}
 	/**
@@ -253,6 +304,7 @@ public class XmRecordService extends BaseService {
 		record.setObjType("task");
 		record.setNewValue(newValue);
 		record.setOldValue(oldValue);
+		record.setGloNo(MDC.get("gloNo"));
 		this.insert(record);
 	}
 	/**
@@ -268,6 +320,7 @@ public class XmRecordService extends BaseService {
 		 record.setObjType("iteration");
 		 record.setAction(action);
 		 record.setRemarks(remarks);
+		record.setGloNo(MDC.get("gloNo"));
 		 super.insert(record);
 
 	}
@@ -287,6 +340,7 @@ public class XmRecordService extends BaseService {
 		record.setRemarks(remarks);
 		record.setNewValue(newValue);
 		record.setOldValue(oldValue);
+		record.setGloNo(MDC.get("gloNo"));
 		super.insert(record);
 	}
 
@@ -305,7 +359,8 @@ public class XmRecordService extends BaseService {
 		record.setBizId(groupId);
 		record.setAction(action);
 		record.setRemarks(remarks); 
-		record.setObjType("group"); 
+		record.setObjType("group");
+		record.setGloNo(MDC.get("gloNo"));
 		this.insert(record);
 	}
 
@@ -328,6 +383,51 @@ public class XmRecordService extends BaseService {
 		record.setObjType("group");
 		record.setNewValue(newValue);
 		record.setOldValue(oldValue);
+		record.setGloNo(MDC.get("gloNo"));
+		this.insert(record);
+	}
+
+
+
+	/**
+	 * 针对项目下的任务的所有操作用此方法
+	 * @param projectId 项目编号
+	 * @param costId 成本编号
+	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
+	 * @param remarks 人性化语言描述
+	 */
+	@Async
+	public void addXmCostRecord(String projectId,String costId,String action,String remarks) {
+		XmRecord record=this.initXmRecord();
+		record.setProjectId(projectId);
+		record.setBizId(costId);
+		record.setAction(action);
+		record.setRemarks(remarks);
+		record.setObjType("cost");
+		record.setGloNo(MDC.get("gloNo"));
+		this.insert(record);
+	}
+
+	/**
+	 * 针对项目下的任务的所有操作用此方法
+	 * @param projectId 项目编号
+	 * @param costId 成本编号
+	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
+	 * @param remarks 人性化语言描述
+	 * @param newValue 需要记录下来的新数据 可空
+	 * @param oldValue 需要记录下来的旧数据 可空
+	 */
+	@Async
+	public void addXmCostRecord(String projectId,String costId,String action,String remarks,String newValue,String oldValue) {
+		XmRecord record=this.initXmRecord();
+		record.setProjectId(projectId);
+		record.setBizId(costId);
+		record.setAction(action);
+		record.setRemarks(remarks);
+		record.setObjType("cost");
+		record.setNewValue(newValue);
+		record.setOldValue(oldValue);
+		record.setGloNo(MDC.get("gloNo"));
 		this.insert(record);
 	}
 

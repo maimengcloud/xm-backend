@@ -287,7 +287,7 @@ public class XmTaskExecuserController {
 			List<String> noAllowUsers=new ArrayList<>();
 			List<XmTaskExecuser> allowUsers=new ArrayList<>();
 			List<String> allowUserNames=new ArrayList<>();
- 			boolean isPm=groupService.checkUserIsPmOrAssByPtype(user.getUserid(),xmTask.getPtype(),xmTask.getProjectId(),xmTask.getProductId());
+ 			boolean isPm=groupService.checkUserIsProjectAdm(xmTask.getProjectId(),user.getUserid());
 
 			for (XmTaskExecuser xmTaskExecuser : xmTaskExecuserListDb) {
 				if(!taskId.equals(xmTaskExecuser.getTaskId())){
@@ -299,7 +299,7 @@ public class XmTaskExecuserController {
 						allowUsers.add(xmTaskExecuser);
 						allowUserNames.add(xmTaskExecuser.getUsername());
 					}else{
-						Tips tips2=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskExecuser.getUserid(),xmTask.getPtype(),xmTask.getProductId(),xmTask.getProjectId());
+						Tips tips2=groupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskExecuser.getUserid(),xmTask.getProjectId());
 						if(tips2.isOk()==false){
 							noAllowUsers.add(xmTaskExecuser.getUsername());
 							continue;

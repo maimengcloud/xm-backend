@@ -234,9 +234,9 @@ public class XmTaskWorkloadController {
 			}
 
 			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
-				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getCreateUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
 				if(!isCreate.isOk()){
-					Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+					Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
 					if(!isExec.isOk()){
 						return failed("noqx-0","你无权针对该业务进行报工");
 					}
@@ -299,9 +299,9 @@ public class XmTaskWorkloadController {
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
-				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getCreateUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
 				if(!isCreate.isOk()){
-					Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+					Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
 					if(!isExec.isOk()){
 						return failed("noqx-0","你无权针对该业务进行报工");
 					}
@@ -352,9 +352,9 @@ public class XmTaskWorkloadController {
 			Set<String> xmMenuIds=new HashSet<>();
 			for (XmTask xmTaskDb : tasksDb) {
 				if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
-					Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getCreateUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+					Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
 					if(!isCreate.isOk()){
-						Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAssByPtype(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+						Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
 						if(!isExec.isOk()){
 							break;
 						}
