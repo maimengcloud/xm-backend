@@ -257,13 +257,22 @@ public class XmTaskController {
 			List<XmTask> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			for (XmTask xmTaskDb : xmTasksDb) {
-				tips=groupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
-				if(!tips.isOk()){
-					if(user.getUserid().equals(xmTaskDb.getExecutorUserid())||user.getUserid().equals(xmTaskDb.getCreateUserid())){
-						can.add(xmTaskDb);
-					}else{
-						no.add(xmTaskDb);
+				String taskUserid=StringUtils.hasText(xmTaskDb.getExecutorUserid())?xmTaskDb.getExecutorUserid():xmTaskDb.getCreateUserid();
+				if(user.getUserid().equals(taskUserid)||user.getUserid().equals(xmTaskDb.getExecutorUserid())){
+					if(xmTaskMap.containsKey("createUserid")){
+						tips=groupService.checkIsAdmOrTeamHeadOrAss(user, (String) xmTaskMap.get("createUserid"),xmTaskDb.getProjectId());
 					}
+				}else{
+					tips=groupService.checkIsAdmOrTeamHeadOrAss(user,taskUserid,xmTaskDb.getProjectId());
+					if(tips.isOk()){
+						if(xmTaskMap.containsKey("createUserid")){
+							tips=groupService.checkIsAdmOrTeamHeadOrAss(user, (String) xmTaskMap.get("createUserid"),xmTaskDb.getProjectId());
+						}
+					}
+				}
+
+				if(!tips.isOk()){
+					no.add(xmTaskDb);
 				}else{
 					can.add(xmTaskDb);
 				}
@@ -287,10 +296,10 @@ public class XmTaskController {
 			}
 			List<String> msgs=new ArrayList<>();
 			if(can.size()>0){
-				msgs.add(String.format("成功更新以下%s个任务",can.size()));
+				msgs.add(String.format("成功更新%s个任务",can.size()));
 			}
 			if(no.size()>0){
-				msgs.add(String.format("以下%s个任务无权限更新",no.size()));
+				msgs.add(String.format("以下%s个任务无权限更新,【%s】。",no.size(),no.stream().map(i->i.getName()).collect(Collectors.joining(","))));
 			}
 			if(can.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
