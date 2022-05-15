@@ -33,7 +33,6 @@
     <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" value="DEBUG" />  
     <!-- 日志级别 -->  
     <root level="info">
-        <appender-ref ref="file" />   
-        <appender-ref ref="console" />  
+        <appender-ref ref="file" />
     </root>  
 </configuration> 
