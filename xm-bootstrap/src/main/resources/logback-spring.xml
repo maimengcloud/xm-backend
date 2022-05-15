@@ -12,7 +12,7 @@
         class="ch.qos.logback.core.rolling.RollingFileAppender">
         <File>logs/xm.log</File>  
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
-            <FileNamePattern>logs/oa-%d{yyyy-MM-dd}%-i.log
+            <FileNamePattern>logs/oa-%d{yyyy-MM-dd}-%i.log
             </FileNamePattern>  
             <MaxHistory>10</MaxHistory>  
             <TimeBasedFileNamingAndTriggeringPolicy  

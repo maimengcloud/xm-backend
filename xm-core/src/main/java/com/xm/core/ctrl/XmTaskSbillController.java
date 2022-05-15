@@ -109,7 +109,8 @@ public class XmTaskSbillController {
 			xmTaskSbill.setCtime(new Date());
 			xmTaskSbill.setCuserid(user.getUserid());
 			xmTaskSbill.setCusername(user.getUsername());
-			xmTaskSbill.setBizDate(user.getBranchId());
+			xmTaskSbill.setBizDate(DateUtils.getDate("yyyy-MM-dd"));
+			xmTaskSbill.setBranchId(user.getBranchId());
 			xmTaskSbill.setDeptid(user.getDeptid());
 			xmTaskSbill.setWorkload(BigDecimal.ZERO);
 			xmTaskSbill.setBizFlowState("0");
