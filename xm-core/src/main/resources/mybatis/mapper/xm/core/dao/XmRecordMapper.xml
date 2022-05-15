@@ -42,7 +42,13 @@
 		where 
 			res.id = #{id}
 	</select>
-	
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmRecord">
+        select * from xm_record res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_record res
@@ -51,7 +57,7 @@
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmRecord" resultType="long">
-		select count(1) from xm_record res
+		select count(*) from xm_record res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -61,7 +67,7 @@
 		insert into xm_record(
 			<include refid="columns"/>
 		) values (
-		#{id},#{projectId},#{operUserid},#{operUsername},#{operTime},#{objType},#{action},#{oldValue},#{newValue},#{remarks},#{reqNo},#{branchId},#{ip},#{bizId},#{pbizId},#{productId}
+		#{id},#{projectId},#{operUserid},#{operUsername},#{operTime},#{objType},#{action},#{oldValue},#{newValue},#{remarks},#{gloNo},#{branchId},#{ip},#{bizId},#{pbizId},#{productId},#{bizName}
 		)
 	</insert>
 	
@@ -111,6 +117,18 @@
 			where id = #{item.id}  
 		</foreach> 
 	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_record
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from xm_record 
@@ -124,7 +142,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,project_id,oper_userid,oper_username,oper_time,obj_type,action,old_value,new_value,remarks,req_no,branch_id,ip,biz_id,pbiz_id,product_id
+		id,project_id,oper_userid,oper_username,oper_time,obj_type,action,old_value,new_value,remarks,glo_no,branch_id,ip,biz_id,pbiz_id,product_id,biz_name
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -139,12 +157,13 @@
 		<if test="oldValue != null and oldValue != ''">      and res.old_value = #{oldValue}     </if>
 		<if test="newValue != null and newValue != ''">      and res.new_value = #{newValue}     </if>
 		<if test="remarks != null and remarks != ''">      and res.remarks = #{remarks}     </if>
-		<if test="reqNo != null and reqNo != ''">      and res.req_no = #{reqNo}     </if>
+		<if test="gloNo != null and gloNo != ''">      and res.glo_no = #{gloNo}     </if>
 		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
 		<if test="ip != null and ip != ''">      and res.ip = #{ip}     </if>
 		<if test="bizId != null and bizId != ''">      and res.biz_id = #{bizId}     </if>
 		<if test="pbizId != null and pbizId != ''">      and res.pbiz_id = #{pbizId}     </if>
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
+		<if test="bizName != null and bizName != ''">      and res.biz_name = #{bizName}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -157,12 +176,13 @@
 		old_value = #{oldValue},
 		new_value = #{newValue},
 		remarks = #{remarks},
-		req_no = #{reqNo},
+		glo_no = #{gloNo},
 		branch_id = #{branchId},
 		ip = #{ip},
 		biz_id = #{bizId},
 		pbiz_id = #{pbizId},
-		product_id = #{productId}
+		product_id = #{productId},
+		biz_name = #{bizName}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
@@ -174,12 +194,13 @@
 		<if test="oldValue != null and oldValue != ''"> old_value = #{oldValue},     </if>
 		<if test="newValue != null and newValue != ''"> new_value = #{newValue},     </if>
 		<if test="remarks != null and remarks != ''"> remarks = #{remarks},     </if>
-		<if test="reqNo != null and reqNo != ''"> req_no = #{reqNo},     </if>
+		<if test="gloNo != null and gloNo != ''"> glo_no = #{gloNo},     </if>
 		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
 		<if test="ip != null and ip != ''"> ip = #{ip},     </if>
 		<if test="bizId != null and bizId != ''"> biz_id = #{bizId},     </if>
 		<if test="pbizId != null and pbizId != ''"> pbiz_id = #{pbizId},     </if>
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
+		<if test="bizName != null and bizName != ''"> biz_name = #{bizName},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -192,11 +213,12 @@
 			old_value = #{item.oldValue},
 			new_value = #{item.newValue},
 			remarks = #{item.remarks},
-			req_no = #{item.reqNo},
+			glo_no = #{item.gloNo},
 			branch_id = #{item.branchId},
 			ip = #{item.ip},
 			biz_id = #{item.bizId},
 			pbiz_id = #{item.pbizId},
-			product_id = #{item.productId}
+			product_id = #{item.productId},
+			biz_name = #{item.bizName}
 	</sql>
 </mapper>
