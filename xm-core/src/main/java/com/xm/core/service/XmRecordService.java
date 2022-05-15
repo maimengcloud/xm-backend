@@ -31,7 +31,7 @@ public class XmRecordService extends BaseService {
 		XmRecord record=new XmRecord();
 		record.setId(this.createKey("id"));
 		record.setOperTime(new Date());
-		record.setReqNo(MDC.get("reqNo"));
+		record.setGloNo(MDC.get("gloNo"));
 		record.setOperUserid(user.getUserid());
 		record.setOperUsername(user.getUsername());
 		record.setBranchId(user.getBranchId());
@@ -129,7 +129,7 @@ public class XmRecordService extends BaseService {
 			XmRecord record=new XmRecord();
 			record.setId(this.createKey("id"));
 			record.setOperTime(new Date());
-			record.setReqNo(MDC.get("reqNo"));
+			record.setGloNo(MDC.get("gloNo"));
 			record.setOperUserid(user.getUserid());
 			record.setOperUsername(user.getUsername());
 			record.setBranchId(user.getBranchId());
@@ -160,23 +160,6 @@ public class XmRecordService extends BaseService {
 		record.setAction(action);
 		record.setRemarks(remarks); 
 		record.setObjType("task"); 
-		this.insert(record);
-	}
-	/**
-	 * 针对项目下的任务的所有操作用此方法
-	 * @param productId 产品编号
-	 * @param taskId 任务编号
-	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
-	 * @param remarks 人性化语言描述
-	 */
-	@Async
-	public void addProductXmTaskRecord(String productId,String taskId,String action,String remarks) {
-		XmRecord record=this.initXmRecord();
-		record.setProductId(productId);
-		record.setBizId(taskId);
-		record.setAction(action);
-		record.setRemarks(remarks);
-		record.setObjType("task");
 		this.insert(record);
 	}
 	/**
@@ -234,7 +217,7 @@ public class XmRecordService extends BaseService {
 			XmRecord record=new XmRecord();
 			record.setId(this.createKey("id"));
 			record.setOperTime(new Date());
-			record.setReqNo(MDC.get("reqNo"));
+			record.setGloNo(MDC.get("gloNo"));
 			record.setOperUserid(user.getUserid());
 			record.setOperUsername(user.getUsername());
 			record.setBranchId(user.getBranchId());
@@ -306,85 +289,6 @@ public class XmRecordService extends BaseService {
 		record.setOldValue(oldValue);
 		super.insert(record);
 	}
-	/**
-	 * 针对项目下的任务的所有操作用此方法
-	 * @param projectId 项目编号
-	 * @param phaseId 计划编号
-	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
-	 * @param remarks 人性化语言描述 
-	 */
-	@Async
-	public void addProjectPhaseRecord(String projectId, String phaseId, String action, String remarks) {
-		XmRecord record=this.initXmRecord();
-		record.setProjectId(projectId);
-		record.setBizId(phaseId);
-		record.setAction(action);
-		record.setRemarks(remarks); 
-		record.setObjType("phase"); 
-		this.insert(record);
-	}
-
-	/**
-	 * 针对项目下的任务的所有操作用此方法
-	 * @param projectId 项目编号
-	 * @param phaseId 计划编号
-	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
-	 * @param remarks 人性化语言描述
-	 * @param newValue 需要记录下来的新数据 可空
-	 * @param oldValue 需要记录下来的旧数据 可空
-	 */
-	@Async
-	public void addProjectPhaseRecord(String projectId, String phaseId, String action, String remarks, String newValue, String oldValue) {
-		XmRecord record=this.initXmRecord();
-		record.setProjectId(projectId);
-		record.setBizId(phaseId);
-		record.setAction(action);
-		record.setRemarks(remarks); 
-		record.setObjType("phase");
-		record.setNewValue(newValue);
-		record.setOldValue(oldValue);
-		this.insert(record);
-	}
-
-	/**
-	 * 针对项目下的任务的所有操作用此方法
-	 * @param productId 产品编号
-	 * @param phaseId 计划编号
-	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
-	 * @param remarks 人性化语言描述
-	 */
-	@Async
-	public void addProductPhaseRecord(String productId, String phaseId, String action, String remarks) {
-		XmRecord record=this.initXmRecord();
-		record.setProductId(productId);
-		record.setBizId(phaseId);
-		record.setAction(action);
-		record.setRemarks(remarks);
-		record.setObjType("phase");
-		this.insert(record);
-	}
-
-	/**
-	 * 针对项目下的任务的所有操作用此方法
-	 * @param productId 产品编号
-	 * @param phaseId 计划编号
-	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
-	 * @param remarks 人性化语言描述
-	 * @param newValue 需要记录下来的新数据 可空
-	 * @param oldValue 需要记录下来的旧数据 可空
-	 */
-	@Async
-	public void addProductPhaseRecord(String productId, String phaseId, String action, String remarks, String newValue, String oldValue) {
-		XmRecord record=this.initXmRecord();
-		record.setProductId(productId);
-		record.setBizId(phaseId);
-		record.setAction(action);
-		record.setRemarks(remarks);
-		record.setObjType("phase");
-		record.setNewValue(newValue);
-		record.setOldValue(oldValue);
-		this.insert(record);
-	}
 
 	/**
 	 * 针对项目下的任务的所有操作用此方法
@@ -427,124 +331,5 @@ public class XmRecordService extends BaseService {
 		this.insert(record);
 	}
 
-	/**
-	 * 针对项目下的任务的所有操作用此方法
-	 * @param productId 产品编号
-	 * @param groupId 小组编号
-	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
-	 * @param remarks 人性化语言描述
-	 */
-	@Async
-	public void addXmProductGroupRecord(String productId,String groupId,String action,String remarks) {
-		XmRecord record=this.initXmRecord();
-		record.setProductId(productId);
-		record.setBizId(groupId);
-		record.setAction(action);
-		record.setRemarks(remarks);
-		record.setObjType("group");
-		this.insert(record);
-	}
-
-	/**
-	 * 针对项目下的任务的所有操作用此方法
-	 * @param productId 产品编号
-	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
-	 * @param remarks 人性化语言描述
-	 * @param newValue 需要记录下来的新数据 可空
-	 * @param oldValue 需要记录下来的旧数据 可空
-	 */
-	@Async
-	public void addXmProductGroupRecord(String productId,String groupId,String action,String remarks,String newValue,String oldValue) {
-		XmRecord record=this.initXmRecord();
-		record.setProductId(productId);
-		record.setBizId(groupId);
-		record.setAction(action);
-		record.setRemarks(remarks);
-		record.setObjType("group");
-		record.setNewValue(newValue);
-		record.setOldValue(oldValue);
-		this.insert(record);
-	}
-
-	/**
-	 * 针对项目下的任务的所有操作用此方法
-	 * @param projectId 项目编号
-	 * @param budgetId 预算编号
-	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
-	 * @param remarks 人性化语言描述 
-	 */
-	@Async
-	public void addXmBudgetRecord(String projectId,String budgetId,String action,String remarks) {
-		XmRecord record=this.initXmRecord();
-		record.setProjectId(projectId);
-		record.setBizId(budgetId);
-		record.setAction(action);
-		record.setRemarks(remarks); 
-		record.setObjType("budget"); 
-		this.insert(record);
-	}
-
-	/**
-	 * 针对项目下的任务的所有操作用此方法
-	 * @param projectId 项目编号
-	 * @param budgetId 预算编号
-	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
-	 * @param remarks 人性化语言描述
-	 * @param newValue 需要记录下来的新数据 可空
-	 * @param oldValue 需要记录下来的旧数据 可空
-	 */
-	@Async
-	public void addXmBudgetRecord(String projectId,String budgetId,String action,String remarks,String newValue,String oldValue) {
-		XmRecord record=this.initXmRecord();
-		record.setProjectId(projectId);
-		record.setBizId(budgetId);
-		record.setAction(action);
-		record.setRemarks(remarks); 
-		record.setObjType("budget");
-		record.setNewValue(newValue);
-		record.setOldValue(oldValue);
-		this.insert(record);
-	}
-	
-
-	/**
-	 * 针对项目下的任务的所有操作用此方法
-	 * @param projectId 项目编号
-	 * @param costId 成本编号
-	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
-	 * @param remarks 人性化语言描述 
-	 */
-	@Async
-	public void addXmCostRecord(String projectId,String costId,String action,String remarks) {
-		XmRecord record=this.initXmRecord();
-		record.setProjectId(projectId);
-		record.setBizId(costId);
-		record.setAction(action);
-		record.setRemarks(remarks); 
-		record.setObjType("cost");
-		this.insert(record);
-	}
-
-	/**
-	 * 针对项目下的任务的所有操作用此方法
-	 * @param projectId 项目编号
-	 * @param costId 成本编号
-	 * @param action 操作如 新增任务，修改任务信息，修改任务进度 等
-	 * @param remarks 人性化语言描述
-	 * @param newValue 需要记录下来的新数据 可空
-	 * @param oldValue 需要记录下来的旧数据 可空
-	 */
-	@Async
-	public void addXmCostRecord(String projectId,String costId,String action,String remarks,String newValue,String oldValue) {
-		XmRecord record=this.initXmRecord();
-		record.setProjectId(projectId);
-		record.setBizId(costId);
-		record.setAction(action);
-		record.setRemarks(remarks); 
-		record.setObjType("cost");
-		record.setNewValue(newValue);
-		record.setOldValue(oldValue);
-		this.insert(record);
-	}
 }
 
