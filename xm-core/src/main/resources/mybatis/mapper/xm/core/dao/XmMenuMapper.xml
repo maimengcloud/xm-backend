@@ -212,7 +212,7 @@
 		group by ${groupBy}
 	</select>
 
-	<select id="getUserCanOpMenusByIds" parameterType="HashMap">
+	<select id="getUserCanOpMenusByIds" parameterType="HashMap" resultType="com.xm.core.entity.XmMenu">
 		select
 		<if test="childrenCnt==true">
 			(select count(*) from xm_menu m where m.pmenu_id=res.menu_id) as children_cnt,

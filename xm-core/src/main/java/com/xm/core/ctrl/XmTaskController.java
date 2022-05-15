@@ -227,6 +227,7 @@ public class XmTaskController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
+			User user = LoginUtils.getCurrentUserInfo();
 			List<String> ids= (List<String>) xmTaskMap.get("ids");
 
 			if(ids==null || ids.size()==0){
@@ -237,6 +238,7 @@ public class XmTaskController {
 			fields.add("childrenCnt");
 			fields.add("ntype");
 			fields.add("pidPaths");
+			fields.add("executorUserid");
 			for (String fieldName : xmTaskMap.keySet()) {
 				if(fields.contains(fieldName)){
 					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
@@ -253,22 +255,25 @@ public class XmTaskController {
 			if(xmTasksDb==null ||xmTasksDb.size()==0){
 				return ResponseHelper.failed("tasks-0","该任务已不存在");
 			}
+			if(xmTaskMap.containsKey("createUserid")){
+				Set<String> projects=xmTasksDb.stream().map(i->i.getProjectId()).collect(Collectors.toSet());
+				for (String project : projects) {
+					tips=groupService.checkIsAdmOrTeamHeadOrAss(user, (String) xmTaskMap.get("createUserid"),project);
+					if(!tips.isOk()){
+						return ResponseHelper.failed("no-qx-0","您无权把任务指派给您的小组成员以外的人。");
+					}
+				}
+
+			}
 			List<XmTask> can=new ArrayList<>();
 			List<XmTask> no=new ArrayList<>();
-			User user = LoginUtils.getCurrentUserInfo();
+
 			for (XmTask xmTaskDb : xmTasksDb) {
-				String taskUserid=StringUtils.hasText(xmTaskDb.getExecutorUserid())?xmTaskDb.getExecutorUserid():xmTaskDb.getCreateUserid();
-				if(user.getUserid().equals(taskUserid)||user.getUserid().equals(xmTaskDb.getExecutorUserid())){
-					if(xmTaskMap.containsKey("createUserid")){
-						tips=groupService.checkIsAdmOrTeamHeadOrAss(user, (String) xmTaskMap.get("createUserid"),xmTaskDb.getProjectId());
-					}
-				}else{
-					tips=groupService.checkIsAdmOrTeamHeadOrAss(user,taskUserid,xmTaskDb.getProjectId());
-					if(tips.isOk()){
-						if(xmTaskMap.containsKey("createUserid")){
-							tips=groupService.checkIsAdmOrTeamHeadOrAss(user, (String) xmTaskMap.get("createUserid"),xmTaskDb.getProjectId());
-						}
-					}
+				if(StringUtils.hasText(xmTaskDb.getCreateUserid())){
+					tips=groupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
+				}
+				if(!tips.isOk() && StringUtils.hasText(xmTaskDb.getExecutorUserid())){
+					tips=groupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
 				}
 
 				if(!tips.isOk()){
