@@ -461,7 +461,7 @@
 		insert into xm_task(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetAt},#{budgetWorkload},#{actAt},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl},#{initWorkload},#{crowd},#{shareFee},#{oshare}
+		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetAt},#{budgetWorkload},#{actAt},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl},#{initWorkload},#{shareFee},#{oshare},#{crowd}
 		)
 	</insert>
 	
@@ -512,6 +512,17 @@
 		</foreach> 
 	</update>
 
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_task
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from xm_task 
@@ -525,7 +536,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_at,budget_workload,act_at,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload,crowd,share_fee,oshare
+		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_at,budget_workload,act_at,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload,share_fee,oshare,crowd
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -593,9 +604,9 @@
 		<if test="wtype != null and wtype != ''">      and res.wtype = #{wtype}     </if>
 		<if test="bctrl != null and bctrl != ''">      and res.bctrl = #{bctrl}     </if>
 		<if test="initWorkload != null and initWorkload != ''">      and res.init_workload = #{initWorkload}     </if>
-		<if test="crowd != null and crowd != ''">      and res.crowd = #{crowd}     </if>
 		<if test="shareFee != null and shareFee != ''">      and res.share_fee = #{shareFee}     </if>
 		<if test="oshare != null and oshare != ''">      and res.oshare = #{oshare}     </if>
+		<if test="crowd != null and crowd != ''">      and res.crowd = #{crowd}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -661,9 +672,9 @@
 		wtype = #{wtype},
 		bctrl = #{bctrl},
 		init_workload = #{initWorkload},
-		crowd = #{crowd},
 		share_fee = #{shareFee},
-		oshare = #{oshare}
+		oshare = #{oshare},
+		crowd = #{crowd}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -728,9 +739,9 @@
 		<if test="wtype != null and wtype != ''"> wtype = #{wtype},     </if>
 		<if test="bctrl != null and bctrl != ''"> bctrl = #{bctrl},     </if>
 		<if test="initWorkload != null and initWorkload != ''"> init_workload = #{initWorkload},     </if>
-		<if test="crowd != null and crowd != ''"> crowd = #{crowd},     </if>
 		<if test="shareFee != null and shareFee != ''"> share_fee = #{shareFee},     </if>
 		<if test="oshare != null and oshare != ''"> oshare = #{oshare},     </if>
+		<if test="crowd != null and crowd != ''"> crowd = #{crowd},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -796,8 +807,8 @@
 			wtype = #{item.wtype},
 			bctrl = #{item.bctrl},
 			init_workload = #{item.initWorkload},
-			crowd = #{item.crowd},
 			share_fee = #{item.shareFee},
-			oshare = #{item.oshare}
+			oshare = #{item.oshare},
+			crowd = #{item.crowd}
 	</sql>
 </mapper>
