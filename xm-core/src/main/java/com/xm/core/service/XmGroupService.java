@@ -63,108 +63,27 @@ public class XmGroupService extends BaseService {
 		groupCacheService.clearProductGroups(productId);
 	}
 
-	public boolean calcCanOpMenus(XmMenu menus){
-		List<XmMenu> menuList=new ArrayList<>();
-		menuList.add(menus);
-		List<XmMenu> can=new ArrayList<>();
-		List<XmMenu> no=new ArrayList<>();
-		Tips tips = new Tips();
-		calcCanOpMenus(menuList,can,no);
-		return can.size()>0;
-	}
 
 
-	public Tips checkIsAdmOrTeamHeadOrAssByPtype(User user,String tardgetUserid,String ptype,String productId,String projectId){
+
+	public Tips checkIsAdmOrTeamHeadOrAss(User user,String tardgetUserid,String projectId){
     	Tips tips = new Tips("成功");
-		if(!"0".equals(ptype) && !"1".equals(ptype)){
-			throw new BizException( new Tips(false,"ptype-not-0|1","类型不正确"));
-		}
-		if("0".equals(ptype) && !StringUtils.hasText(projectId)){
-			throw new BizException( new Tips(false,"projectId-0","项目编号不能为空"));
+		List<XmGroupVo> pgroups=new ArrayList<>();
+		boolean isAdm=this.checkUserIsProjectAdm(projectId, user.getUserid());
+		if(!isAdm){
+			pgroups=this.getProjectGroupVoList(projectId);
+			if(pgroups==null || pgroups.size()==0){
+				return new Tips(false,"group-0","该产品还未建立产品团队，请先进行团队成员维护");
+			}
+			boolean isHead=this.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),tardgetUserid);
+			if(!isHead){
+				return new Tips(false,"not-head","您无权操作！产品经理、组长可以操作。");
+			}
 		}
 
-		if("1".equals(ptype) && !StringUtils.hasText(productId)){
-			throw new BizException( new Tips(false,"productId-0","产品编号不能为空"));
-		}
-		List<XmGroupVo> pgroups=new ArrayList<>();
-		boolean isAdm=false;
-		if("1".equals(ptype)){
-			isAdm=this.checkUserIsProductAdm(productId, user.getUserid());
-			if(!isAdm){
-				pgroups=this.getProductGroupVoList(productId);
-				if(pgroups==null || pgroups.size()==0){
-					return new Tips(false,"group-0","该项目还未建立项目团队，请先进行团队成员维护");
-				}
-				boolean isHead=this.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),tardgetUserid);
-				if(!isHead){
-					return new Tips(false,"not-head","您无权操作！项目经理、组长可以。");
-				}
-			}
-		}else if("0".equals(ptype)){
-			isAdm=this.checkUserIsProjectAdm(projectId, user.getUserid());
-			if(!isAdm){
-				pgroups=this.getProjectGroupVoList(projectId);
-				if(pgroups==null || pgroups.size()==0){
-					return new Tips(false,"group-0","该产品还未建立产品团队，请先进行团队成员维护");
-				}
-				boolean isHead=this.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),tardgetUserid);
-				if(!isHead){
-					return new Tips(false,"not-head","您无权操作！产品经理、组长可以操作。");
-				}
-			}
-		}
 		return tips;
 	}
-	
-    public void calcCanOpMenus(List<XmMenu> menus,List<XmMenu> canOpResult,List<XmMenu> noQxOpResult ){
-		Tips tips=new Tips("成功");
-		//按产品分组检查权限
-		Map<String,List<XmMenu>> productMenusMap=new HashMap<>();
-		for (XmMenu menu : menus) {
-			List<XmMenu> menus0=productMenusMap.get(menu.getProductId());
-			if(menus0==null){
-				menus0=new ArrayList<>();
-				productMenusMap.put(menu.getProductId(),menus0);
-			}
-			menus0.add(menu);
-		}
 
-		User user= LoginUtils.getCurrentUserInfo();
-		productMenusMap.forEach((key,menuList)->{
-			XmProduct xmProduct=this.xmProductService.getProductFromCache(key);
-			if(xmProduct==null||"3".equals(xmProduct.getPstatus())){
-				noQxOpResult.addAll(menuList);
-			}else{
-				if(!this.checkUserIsProductAdm(xmProduct,user.getUserid())){
-					List<XmGroupVo> groupVoList=this.getProductGroupVoList(xmProduct.getId());
-					for (XmMenu xmMenu : menuList) {
-						boolean canOp=false;
-						if(user.getUserid().equals(xmMenu.getMmUserid())){
-							canOp=true;
-						}else{
-							if(StringUtils.hasText(xmMenu.getMmUserid())){
-								if(this.checkUserIsOtherUserTeamHeadOrAss(groupVoList,xmMenu.getMmUserid(),user.getUserid())){
-									canOp=true;
-								}
-							}else{
-								if(this.checkUserIsOtherUserTeamHeadOrAss(groupVoList,user.getUserid(),user.getUserid())){
-									canOp=true;
-								}
-							}
-						}
-						if(canOp){
-							canOpResult.add(xmMenu);
-						}else{
-							noQxOpResult.add(xmMenu);
-						}
-
-					}
-				}else{
-					canOpResult.addAll(menuList);
-				}
-			}
-		});
-	}
 
 	/** 请在此类添加自定义函数 */
 	public List<XmGroupVo> getProjectGroupVoList(String projectId) {
@@ -247,40 +166,7 @@ public class XmGroupService extends BaseService {
 		}
 		return false;
 	}
-	public List<XmGroupVo> getProductGroupVoList(String productId) {
-		List<XmGroupVo>	groupVoList=new ArrayList<>();
-		List<XmGroupVo>	groupVoList2  = groupCacheService.getProductGroups(productId);
-		if(groupVoList2==null||groupVoList2.size()==0) {
 
-			XmGroup group = new XmGroup();
-			group.setProductId(productId);
-			List<XmGroup> groupList = this.selectListByWhere(group);
-			if(groupList==null || groupList.size()==0) {
-				groupCacheService.putProductGroups(productId, groupVoList);
-				return groupVoList;
-			}
-			List<XmGroupUser> groupUserList=this.xmGroupUserService.selectGroupUserListByProductId(productId);
-			if(groupUserList==null || groupUserList.size()==0) {
-			}
-			groupList.forEach(g -> {
-				XmGroupVo gvo = new XmGroupVo();
-				BeanUtils.copyProperties(g,gvo);
-				List<XmGroupUser> groupUsers=new ArrayList<>();
-				groupUserList.forEach(gu -> {
-					if(g.getId().equals(gu.getGroupId())) {
-						groupUsers.add(gu);
-					}
-				});
-				gvo.setGroupUsers(groupUsers );
-				groupVoList.add(gvo);
-			});
-			groupCacheService.putProductGroups(productId, groupVoList);
-			return groupVoList;
-		}else {
-			return groupVoList2;
-		}
-
-	}
 	/**
 	 * 新增项目时，同时新增项目团队及小组组员等
 	 * @param projectId
@@ -369,16 +255,7 @@ public class XmGroupService extends BaseService {
     	List<XmGroupVo> xmGroupVoList=this.getProjectGroupVoList(projectId);
     	return this.getUserGroups(xmGroupVoList, userid);
     }
-	/**
-	 * 获取用户在某个项目中的组
-	 * @param productId
-	 * @param userid
-	 * @return
-	 */
-	public List<XmGroupVo> getUserGroupsByProductId(String productId, String userid){
-		List<XmGroupVo> xmGroupVoList=this.getProductGroupVoList(productId);
-		return this.getUserGroups(xmGroupVoList, userid);
-	}
+
 
 	/**
 	 * 检查用户是否在一些组中任意个组当组长
@@ -453,14 +330,9 @@ public class XmGroupService extends BaseService {
 		}
     	return userGroups;
     }
-    public boolean checkUserExistsGroupByPtype(String ptype,String projectId,String productId, String userid){
-		if("1".equals(ptype)){
-			List<XmGroupVo> userGroups= getUserGroupsByProductId(productId,userid);
-			return userGroups!=null && userGroups.size()>0;
-		}else {
-			List<XmGroupVo> userGroups= getUserGroupsByProjectId(projectId,userid);
-			return userGroups!=null && userGroups.size()>0;
-		}
+    public boolean checkUserExistsGroup(String projectId, String userid){
+		List<XmGroupVo> userGroups= getUserGroupsByProjectId(projectId,userid);
+		return userGroups!=null && userGroups.size()>0;
 
     }
 
@@ -599,16 +471,6 @@ public class XmGroupService extends BaseService {
 		return datas;
 	}
 
-	/**
-	 * 根据产品编号查询团队
-	 * @param productId
-	 * @return
-	 */
-	public List<XmGroupVo> getProjectGroupVoListByProductId(String productId) {
-		List<XmGroupVo> data0=this.getProductGroupVoList(productId);
-		return data0;
-	}
-
 
 
 	public List<XmGroup> parentIdPathsCalcBeforeSave(List<XmGroup> nodes) {
@@ -689,15 +551,7 @@ public class XmGroupService extends BaseService {
 		}
 		return tips;
 	}
-	public Tips checkProductStatus( XmProduct xmProductDb) {
-		Tips tips=new Tips("成功");
-		if(xmProductDb==null){
-			tips.setFailureMsg("product-0","产品已不存在");
-		} else if("3".equals(xmProductDb.getPstatus())){
-			tips.setFailureMsg("pstatus-3","产品已经关闭，不能再操作");
-		}
-		return tips;
-	}
+
 
 	public Map<String,String> getProductAdmUsers(XmProduct xmProductDb){
 

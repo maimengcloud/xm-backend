@@ -255,7 +255,7 @@ public class XmTaskController {
 			List<XmTask> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			for (XmTask xmTaskDb : xmTasksDb) {
-				tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+				tips=groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskDb.getProjectId());
 				if(!tips.isOk()){
 					if(user.getUserid().equals(xmTaskDb.getExecutorUserid())||user.getUserid().equals(xmTaskDb.getCreateUserid())){
 						can.add(xmTaskDb);
@@ -350,7 +350,7 @@ public class XmTaskController {
 				return m;
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskVo.getPtype(),xmTaskVo.getProductId(),xmTaskVo.getProjectId());
+			tips=groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskVo.getProjectId());
 			if(!tips.isOk()){
 				 return ResponseHelper.failed(tips);
 			}
@@ -468,7 +468,7 @@ public class XmTaskController {
 				return ResponseHelper.failed("existsExecuser","有待验收、待结算的执行人，不能删除");
 			};
 
-			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+			tips=groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskDb.getProjectId());
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
@@ -509,11 +509,11 @@ public class XmTaskController {
 				return m;
 			}
 
-			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+			tips=groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskDb.getProjectId());
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
-			boolean existsGrouop=groupService.checkUserExistsGroupByPtype(xmTaskDb.getPtype(),xmTaskDb.getProjectId(),xmTaskDb.getProductId(),xmTaskVo.getCreateUserid());
+			boolean existsGrouop=groupService.checkUserExistsGroup(xmTaskDb.getProjectId(),xmTaskVo.getCreateUserid());
 			if(!existsGrouop){
 				return ResponseHelper.failed("not-member",xmTaskVo.getCreateUsername()+"不是项目组成员，不能作为任务责任人");
 			}
@@ -563,7 +563,7 @@ public class XmTaskController {
 					xmTaskVo.setNtype("1");
 				}
 			}
-			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+			tips=groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskDb.getProjectId());
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
@@ -615,7 +615,7 @@ public class XmTaskController {
 			if(xmTaskDb==null){
 				return ResponseHelper.failed("data-0","任务已不存在");
 			}
-			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+			tips=groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskDb.getProjectId());
 			if(!tips.isOk()){
 				boolean isCreateUser=user.getUserid().equals(xmTaskDb.getCreateUserid());
 				boolean isExecUser=user.getUserid().equals(xmTaskDb.getExecutorUserid());
@@ -710,7 +710,7 @@ public class XmTaskController {
 			}
 			String projectId=batchImportVo.getProjectId();
 			String productId=batchImportVo.getProductId();
-			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),batchImportVo.getPtype(),batchImportVo.getProductId(),batchImportVo.getProjectId());
+			tips=groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),batchImportVo.getProjectId());
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
@@ -947,7 +947,7 @@ public class XmTaskController {
 
 			XmProduct xmProductDb=xmProductService.getProductFromCache(xmMenuDb.getProductId());
 			boolean hasMenuQx=true;
-			Tips tips2=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),"1",xmProductDb.getId(),null);
+			Tips tips2=groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),"1",xmProductDb.getId(),null);
 			if(!tips2.isOk()){
 				hasMenuQx=false;
 			}
@@ -1063,19 +1063,17 @@ public class XmTaskController {
 			}
 			String projectId=xmTaskDb.getProjectId();
 			String productId=xmTaskDb.getProductId();
-			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
+			tips=groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskDb.getProjectId());
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
 			List<XmTask> allowDelNodes=new ArrayList<>();
 			List<XmTask> noAllowNodes=new ArrayList<>();
 			Map<String,XmTask> delNodesDbMap=this.xmTaskService.selectTasksMapByTasks(xmTasks);
-			List<XmGroupVo> pgroups="0".equals(xmTaskDb.getPtype())? groupService.getProjectGroupVoList(projectId) : groupService.getProductGroupVoList(productId);
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId) ;
 			for (XmTask node : delNodesDbMap.values()) {
-				if("0".equals(xmTaskDb.getPtype()) && !projectId.equals(node.getProjectId()) ){
+				if(!projectId.equals(node.getProjectId()) ){
 					return ResponseHelper.failed("not-same-project","所有任务必须同属于一个项目");
-				}else if("1".equals(xmTaskDb.getPtype()) && !productId.equals(node.getProductId()) ){
-					return ResponseHelper.failed("not-same-productId","所有任务必须同属于一个产品");
 				}
 				boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,node.getCreateUserid(),user.getUserid());
 
@@ -1333,7 +1331,7 @@ public class XmTaskController {
 			if(!"1".equals(parentTask.getNtype())){
 				return ResponseHelper.failed("parentTask-ntype-not-1", "【"+parentTask.getName()+"】为任务，不能作为上级节点。请另选上级或者变更其为计划节点");
 			}
-			Tips tips2=this.groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),parentTask.getPtype(),parentTask.getProductId(),parentTask.getProjectId());
+			Tips tips2=this.groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),parentTask.getProjectId());
 			if(!tips2.isOk()){
 				return ResponseHelper.failed(tips2);
 			}

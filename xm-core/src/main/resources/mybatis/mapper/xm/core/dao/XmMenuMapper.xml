@@ -211,6 +211,21 @@
 		</where>
 		group by ${groupBy}
 	</select>
+
+	<select id="getUserCanOpMenusByIds" parameterType="HashMap">
+		select
+		<if test="childrenCnt==true">
+			(select count(*) from xm_menu m where m.pmenu_id=res.menu_id) as children_cnt,
+		</if>
+		res.* from xm_menu res inner join xm_product p on res.product_id=p.id where
+		res.menu_id in
+		<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+		and ( (p.adm_userid=#{mmUserid} or p.pm_userid=#{mmUserid} or pm.ass_userid=#{mmUserid})
+			or exists( select 1 from xm_menu m where  FIND_IN_SET(m.menu_id,res.pid_paths) and m.mm_userid=#{mmUserid} )
+		    )
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 
