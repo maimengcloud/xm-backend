@@ -222,7 +222,7 @@
 		<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
 		</foreach>
-		and ( (p.adm_userid=#{mmUserid} or p.pm_userid=#{mmUserid} or pm.ass_userid=#{mmUserid})
+		and ( (p.adm_userid=#{mmUserid} or p.pm_userid=#{mmUserid} or p.ass_userid=#{mmUserid})
 			or exists( select 1 from xm_menu m where  FIND_IN_SET(m.menu_id,res.pid_paths) and m.mm_userid=#{mmUserid} )
 		    )
 	</select>

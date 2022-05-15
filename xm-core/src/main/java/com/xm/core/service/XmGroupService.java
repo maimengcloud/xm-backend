@@ -398,11 +398,11 @@ public class XmGroupService extends BaseService {
 	/**
 	 * 检查某个人是否另外一个人的组长
 	 * @param xmGroupVoList
+	 * @param headUserid 检查headUserid是不是memUserid的组长
 	 * @param memUserid
-	 * @param headUserid
 	 * @return
 	 */
-	public boolean checkUserIsOtherUserTeamHeadOrAss(List<XmGroupVo> xmGroupVoList, String memUserid, String headUserid){
+	public boolean checkUserIsOtherUserTeamHeadOrAss(List<XmGroupVo> xmGroupVoList, String headUserid, String memUserid){
 		if(xmGroupVoList==null || xmGroupVoList.size()==0) {
 			return false;
 		}
