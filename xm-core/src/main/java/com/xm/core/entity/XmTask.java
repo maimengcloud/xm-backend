@@ -14,7 +14,7 @@ import java.math.BigDecimal;
  *	id;<br>
  */
  @Data
-@ApiModel(description="xm_task")
+@ApiModel(description="项目任务表")
 public class XmTask  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -226,7 +226,7 @@ public class XmTask  implements java.io.Serializable {
 	}
     
     /**
-     * xm_task
+     * 项目任务表
      **/
 	public XmTask() {
 	}
