@@ -5,9 +5,9 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.utils.ResponseHelper;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.entity.XmMenu;
+import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmIterationService;
 import com.xm.core.service.XmMenuService;
-import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmRecordService;
 import com.xm.core.service.push.XmMenuPushMsgService;
 import com.xm.core.vo.XmIterationMenuVo;
@@ -17,8 +17,12 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -72,14 +76,14 @@ public class XmIterationMenuController {
 			@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 			@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-			@ApiImplicitParam(name="orderFields",value="排序列 如性别、学生编号排序 ['sex','studentId']",required=false),
-			@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false)
+			@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student_id desc",required=false),
+			@ApiImplicitParam(name="count",value="是否进行总条数计算,count=true|false",required=false)
 	})
 	@ApiResponses({
 			@ApiResponse(code = 200,response= Map.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmIterationMenu( @RequestParam Map<String,Object> xmIterationMenu){
+	public Map<String,Object> listXmIterationMenu( @ApiIgnore @RequestParam Map<String,Object> xmIterationMenu){
 		 return xmMenuController.listWithState(xmIterationMenu);
 	}
 

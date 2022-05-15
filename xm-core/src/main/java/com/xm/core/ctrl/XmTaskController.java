@@ -1,7 +1,6 @@
 package com.xm.core.ctrl;
 
 import com.alibaba.fastjson.JSON;
-import com.github.pagehelper.PageSerializable;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Tips;
@@ -14,9 +13,12 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.mdp.swagger.ApiGlobalModel;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.PubTool;
-import com.xm.core.entity.*;
+import com.xm.core.entity.XmMenu;
+import com.xm.core.entity.XmProduct;
+import com.xm.core.entity.XmProject;
+import com.xm.core.entity.XmTask;
 import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.service.*;
 import com.xm.core.service.cache.XmTaskCacheService;
@@ -114,12 +116,18 @@ public class XmTaskController {
 	}
 
 	@ApiOperation( value = "查询xm_task信息列表",notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiGlobalModel(component = XmTask.class, value = "id,name")
+	@ApiEntityParams( value = XmTask.class,paramType = "body")
+	@ApiImplicitParams({
+		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
+		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
+		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
+		@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderyBy = sex desc, student_id desc",required=false)
+	})
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
-	@RequestMapping(value="/getTask",method=RequestMethod.GET)
-	public Map<String,Object> getTask( @ApiIgnore  @RequestParam Map<String,Object> xmTask){
+	@RequestMapping(value="/getTask",method=RequestMethod.POST)
+	public Map<String,Object> getTask( @ApiIgnore @RequestBody Map<String,Object> xmTask){
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(xmTask, "ids");
 		RequestUtils.transformArray(xmTask, "skillIds");
@@ -178,12 +186,12 @@ public class XmTaskController {
 	@ApiOperation(  value = "查询xm_task信息列表-互联网大厅首页专用、免登录", notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 
 	@ApiImplicitParams({
-			@ApiImplicitParam(name="xmTask",value = "业务参数，参考对象xmTask中各字段描述",dataTypeClass = XmTask.class,required=false),
-			@ApiImplicitParam(name="pageSize",value="每页大小，默认20条",dataType = "int" ,required=false),
+ 			@ApiImplicitParam(name="pageSize",value="每页大小，默认20条",dataType = "int" ,required=false),
 			@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",dataType = "int" ,required=false),
 			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",dataType = "int" ,required=false),			@ApiImplicitParam(name="count",value="是否进行总记录数计算，默认是计算，如果需要关闭，请上送count=false",dataType = "int" ,required=false),
 			@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student desc",dataType = "string" ,required=false),
  	})
+
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
@@ -205,7 +213,7 @@ public class XmTaskController {
 		return m;
 	}
 	@RequestMapping(value="/getXmTaskAttDist",method=RequestMethod.GET)
-	public Map<String,Object> getXmTaskAttDist( @RequestParam Map<String,Object> xmTask){
+	public Map<String,Object> getXmTaskAttDist( @ApiIgnore @RequestParam Map<String,Object> xmTask){
 		User user=LoginUtils.getCurrentUserInfo();
 		xmTask.put("branchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAttDist(xmTask);
@@ -213,7 +221,7 @@ public class XmTaskController {
 	}
 
 	@RequestMapping(value="/getXmTaskAgeDist",method=RequestMethod.GET)
-	public Map<String,Object> getXmTaskAgeDist( @RequestParam Map<String,Object> xmTask){
+	public Map<String,Object> getXmTaskAgeDist( @ApiIgnore @RequestParam Map<String,Object> xmTask){
 		User user=LoginUtils.getCurrentUserInfo();
 		xmTask.put("branchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAgeDist(xmTask);
@@ -222,7 +230,7 @@ public class XmTaskController {
 
 
 	@RequestMapping(value="/getXmTaskSort",method=RequestMethod.GET)
-	public Map<String,Object> getXmTaskSort( @RequestParam Map<String,Object> xmTask){
+	public Map<String,Object> getXmTaskSort( @ApiIgnore @RequestParam Map<String,Object> xmTask){
 		User user=LoginUtils.getCurrentUserInfo();
 		PageUtils.startPage(xmTask);
 		xmTask.put("branchId",user.getBranchId());
@@ -236,6 +244,7 @@ public class XmTaskController {
 	}
 	/***/
 	@ApiOperation( value = "根据主键批量修改修改任务中的某些字段信息",notes="editXmMenu")
+	@ApiEntityParams( value = XmTask.class, props={ }, remark = "任务", paramType = "body" )
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
@@ -332,7 +341,7 @@ public class XmTaskController {
 			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/shareTaskDetail",method=RequestMethod.GET)
-	public Map<String,Object> taskDetail( @RequestParam Map<String,Object> xmTask){
+	public Map<String,Object> taskDetail( @ApiIgnore @RequestParam Map<String,Object> xmTask){
 		Tips tips=new Tips("查询成功");
 		Map<String,Object> m = new HashMap<>();
 		String id=(String) xmTask.get("id");
@@ -460,8 +469,8 @@ public class XmTaskController {
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-		@ApiImplicitParam(name="orderFields",value="排序列 如性别、学生编号排序 ['sex','studentId']",required=false),
-		@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false)
+		@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student_id desc",required=false),
+		@ApiImplicitParam(name="count",value="是否进行总条数计算,count=true|false",required=false)
 	})
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")

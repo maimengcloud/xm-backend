@@ -1,48 +1,34 @@
 package com.xm.core.ctrl;
 
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.stream.Collectors;
-
+import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
 import com.mdp.core.utils.*;
-import com.mdp.safe.client.cache.ModuleBranchRedisCacheService;
+import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.mdp.tpa.client.entity.AppShopConfig;
-import com.mysql.cj.protocol.x.XMessage;
+import com.xm.core.entity.XmTaskSbill;
 import com.xm.core.entity.XmTaskSbillDetail;
 import com.xm.core.service.XmTaskSbillDetailService;
+import com.xm.core.service.XmTaskSbillService;
 import com.xm.core.service.XmTaskService;
 import com.xm.core.service.XmTaskWorkloadService;
 import com.xm.core.vo.BatchJoinToSbillVo;
-import com.xm.core.vo.UserTaskVo;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.mdp.core.utils.ResponseHelper.*;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-import com.mdp.mybatis.PageUtils;
-import com.xm.core.service.XmTaskSbillService;
-import com.xm.core.entity.XmTaskSbill;
+import static com.mdp.core.utils.BaseUtils.map;
 /**
  * url编制采用rest风格,如对xm_task_sbill 任务结算表的操作有增删改查,对应的url分别为:<br>
  *  新增: core/xmTaskSbill/add <br>
@@ -79,7 +65,7 @@ public class XmTaskSbillController {
 		@ApiResponse(code = 200,response=XmTaskSbill.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTaskSbill( @RequestParam Map<String,Object> xmTaskSbill){
+	public Map<String,Object> listXmTaskSbill( @ApiIgnore @RequestParam Map<String,Object> xmTaskSbill){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTaskSbill, "ids");

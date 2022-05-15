@@ -1,37 +1,32 @@
 package com.xm.core.ctrl;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
+import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
+import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmIterationLink;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
 import com.xm.core.service.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
-import com.mdp.mybatis.PageUtils;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-import com.mdp.core.utils.RequestUtils;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * url编制采用rest风格,如对XM.xm_iteration_product_link 迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表的操作有增删改查,对应的url分别为:<br>
@@ -74,7 +69,7 @@ public class XmIterationLinkController {
 		@ApiResponse(code = 200,response= XmIterationLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmIterationLink( @RequestParam Map<String,Object> xmIterationLink){
+	public Map<String,Object> listXmIterationLink( @ApiIgnore @RequestParam Map<String,Object> xmIterationLink){
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmIterationLink, "iterationIdsproductIds");
 		PageUtils.startPage(xmIterationLink);
@@ -90,7 +85,7 @@ public class XmIterationLinkController {
 			@ApiResponse(code = 200,response= XmIterationLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listWithProductInfo",method=RequestMethod.GET)
-	public Map<String,Object> listWithProductInfo( @RequestParam Map<String,Object> xmIterationLink){
+	public Map<String,Object> listWithProductInfo( @ApiIgnore @RequestParam Map<String,Object> xmIterationLink){
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(xmIterationLink, "iterationIdsproductIds");
 		PageUtils.startPage(xmIterationLink);
@@ -106,7 +101,7 @@ public class XmIterationLinkController {
 			@ApiResponse(code = 200,response= XmIterationLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listWithProjectInfo",method=RequestMethod.GET)
-	public Map<String,Object> listWithProjectInfo( @RequestParam Map<String,Object> xmIterationLink){
+	public Map<String,Object> listWithProjectInfo( @ApiIgnore @RequestParam Map<String,Object> xmIterationLink){
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(xmIterationLink, "iterationIdsproductIds");
 		PageUtils.startPage(xmIterationLink);

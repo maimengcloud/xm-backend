@@ -1,6 +1,5 @@
 package com.xm.core.service.client;
 
-import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.micro.client.CallBizService;
@@ -11,7 +10,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
-import java.util.HashMap;
 import java.util.Map;
 
 import static com.mdp.core.utils.BaseUtils.map;

@@ -1,11 +1,6 @@
 package com.xm.core.service;
 
-import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
-import com.mdp.safe.client.entity.User;
-import com.xm.core.entity.XmIteration;
-import com.xm.core.entity.XmProduct;
-import com.xm.core.entity.XmProject;
 import com.xm.core.vo.XmIterationVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

@@ -1,12 +1,9 @@
 package com.xm.core.service;
 
-import com.mdp.core.entity.Tips;
-import com.xm.core.entity.XmIteration;
+import com.mdp.core.service.BaseService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.mdp.core.service.BaseService;
 
 import java.util.List;
 import java.util.Map;

@@ -3,9 +3,13 @@ package com.xm.core.ctrl;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmAttachment;
 import com.xm.core.service.XmAttachmentService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.HashMap;
 import java.util.List;
@@ -43,25 +48,12 @@ public class XmAttachmentController {
  
 	
 	@ApiOperation( value = "查询xm_attachment信息列表",notes="listXmAttachment,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="主键,主键",required=false),
-		@ApiImplicitParam(name="originType",value="附件来源类型，0任务，1问题，2文档",required=false),
-		@ApiImplicitParam(name="originId",value="来源id",required=false),
-		@ApiImplicitParam(name="name",value="附件名字",required=false),
-		@ApiImplicitParam(name="addr",value="附件地址",required=false),
-		@ApiImplicitParam(name="type",value="附件类型",required=false),
-		@ApiImplicitParam(name="remark",value="备注说明",required=false),
-		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
-		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
-		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-		@ApiImplicitParam(name="orderFields",value="排序列 如性别、学生编号排序 ['sex','studentId']",required=false),
-		@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false) 
-	})
+	@ApiEntityParams(XmAttachment.class)
 	@ApiResponses({
 		@ApiResponse(code = 200,response= XmAttachment.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmAttachment( @RequestParam Map<String,Object> xmAttachment){
+	public Map<String,Object> listXmAttachment( @ApiIgnore @RequestParam Map<String,Object> xmAttachment){
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmAttachment, "ids");
 		PageUtils.startPage(xmAttachment);

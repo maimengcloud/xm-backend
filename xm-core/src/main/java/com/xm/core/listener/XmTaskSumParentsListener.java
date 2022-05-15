@@ -1,6 +1,5 @@
 package com.xm.core.listener;
 
-import com.mdp.core.service.BaseService;
 import com.mdp.mq.queue.MessageListener;
 import com.xm.core.entity.XmTask;
 import com.xm.core.queue.XmTaskSumParentsPushService;
@@ -10,11 +9,10 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import java.util.*;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class XmTaskSumParentsListener extends MessageListener<XmTask> {

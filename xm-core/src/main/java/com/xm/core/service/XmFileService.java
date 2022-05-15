@@ -5,7 +5,6 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.*;
 import com.xm.core.entity.XmFile;
 import com.xm.core.vo.XmFileVo;
 import org.springframework.beans.BeanUtils;

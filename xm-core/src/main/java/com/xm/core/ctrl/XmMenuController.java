@@ -13,15 +13,13 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.PubTool;
 import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmQuestion;
 import com.xm.core.entity.XmTask;
 import com.xm.core.queue.XmMenuSumParentsPushService;
-import com.xm.core.service.XmMenuService;
 import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmMenuService;
 import com.xm.core.service.XmRecordService;
 import com.xm.core.service.XmTaskService;
 import com.xm.core.vo.BatchChangeParentMenuVo;
-import com.xm.core.vo.BatchChangeParentTaskVo;
 import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmMenuVo;
 import io.swagger.annotations.*;
@@ -30,6 +28,7 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -84,14 +83,14 @@ public class XmMenuController {
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-		@ApiImplicitParam(name="orderFields",value="排序列 如性别、学生编号排序 ['sex','studentId']",required=false),
-		@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false) 
+		@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student_id desc",required=false),
+		@ApiImplicitParam(name="count",value="是否进行总条数计算,count=true|false",required=false) 
 	})
 	@ApiResponses({
 		@ApiResponse(code = 200,response= XmMenu.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmMenu( @RequestParam Map<String,Object> xmMenu){
+	public Map<String,Object> listXmMenu( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmMenu, "menuIds");
 		RequestUtils.transformArray(xmMenu, "tagIdList");
@@ -144,7 +143,7 @@ public class XmMenuController {
 	
 
 	@RequestMapping(value="/listWithState",method=RequestMethod.GET)
-	public Map<String,Object> listWithState( @RequestParam Map<String,Object> xmMenu){
+	public Map<String,Object> listWithState( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmMenu, "menuIds");
 		RequestUtils.transformArray(xmMenu, "tagIdList");
@@ -195,12 +194,12 @@ public class XmMenuController {
 		return m;
 	}
 	@RequestMapping(value="/listWithPlan",method=RequestMethod.GET)
-	public Map<String,Object> listWithPlan( @RequestParam Map<String,Object> xmMenu){
+	public Map<String,Object> listWithPlan( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
 		return this.listWithState(xmMenu);
 	}
 
 	@RequestMapping(value="/getXmMenuAttDist",method=RequestMethod.GET)
-	public Map<String,Object> getXmMenuAttDist( @RequestParam Map<String,Object> xmMenu){
+	public Map<String,Object> getXmMenuAttDist( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
 		User user=LoginUtils.getCurrentUserInfo();
 		xmMenu.put("branchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAttDist(xmMenu);
@@ -208,7 +207,7 @@ public class XmMenuController {
 	}
 
 	@RequestMapping(value="/getXmMenuAgeDist",method=RequestMethod.GET)
-	public Map<String,Object> getXmMenuAgeDist( @RequestParam Map<String,Object> xmMenu){
+	public Map<String,Object> getXmMenuAgeDist( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
 		User user=LoginUtils.getCurrentUserInfo();
 		xmMenu.put("branchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAgeDist(xmMenu);
@@ -216,7 +215,7 @@ public class XmMenuController {
 	}
 
 	@RequestMapping(value="/getXmMenuSort",method=RequestMethod.GET)
-	public Map<String,Object> getXmMenuSort( @RequestParam Map<String,Object> xmMenu){
+	public Map<String,Object> getXmMenuSort( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
 		User user=LoginUtils.getCurrentUserInfo();
 		PageUtils.startPage(xmMenu);
 		xmMenu.put("branchId",user.getBranchId());
@@ -230,7 +229,7 @@ public class XmMenuController {
 	}
 
 	@RequestMapping(value="/listWithPhase",method=RequestMethod.GET)
-	public Map<String,Object> listWithPhase( @RequestParam Map<String,Object> xmMenu){
+	public Map<String,Object> listWithPhase( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(xmMenu, "menuIds");
 		RequestUtils.transformArray(xmMenu, "tagIdList");

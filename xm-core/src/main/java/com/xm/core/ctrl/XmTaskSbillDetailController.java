@@ -1,38 +1,33 @@
 package com.xm.core.ctrl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
+import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
+import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.mybatis.PageUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmTaskSbill;
+import com.xm.core.entity.XmTaskSbillDetail;
+import com.xm.core.service.XmTaskSbillDetailService;
 import com.xm.core.service.XmTaskSbillService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
-import static com.mdp.core.utils.ResponseHelper.*;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-import com.mdp.mybatis.PageUtils;
-import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.NumberUtil;
-import com.mdp.safe.client.entity.User;
-import com.mdp.safe.client.utils.LoginUtils;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import com.xm.core.service.XmTaskSbillDetailService;
-import com.xm.core.entity.XmTaskSbillDetail;
+import static com.mdp.core.utils.BaseUtils.fromMap;
+import static com.mdp.core.utils.BaseUtils.toMap;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_task_sbill_detail 工时登记表的操作有增删改查,对应的url分别为:<br>
@@ -66,7 +61,7 @@ public class XmTaskSbillDetailController {
 		@ApiResponse(code = 200,response=XmTaskSbillDetail.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTaskSbillDetail( @RequestParam Map<String,Object> xmTaskSbillDetail){
+	public Map<String,Object> listXmTaskSbillDetail( @ApiIgnore @RequestParam Map<String,Object> xmTaskSbillDetail){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTaskSbillDetail, "ids");
@@ -85,7 +80,7 @@ public class XmTaskSbillDetailController {
 			@ApiResponse(code = 200,response=XmTaskSbillDetail.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listSumSamtGroupByUseridBizMonth",method=RequestMethod.GET)
-	public Map<String,Object> listSumSamtGroupByUseridBizMonth( @RequestParam Map<String,Object> xmTaskSbillDetail){
+	public Map<String,Object> listSumSamtGroupByUseridBizMonth( @ApiIgnore @RequestParam Map<String,Object> xmTaskSbillDetail){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		String bizYear= (String) xmTaskSbillDetail.get("bizYear");
@@ -106,7 +101,7 @@ public class XmTaskSbillDetailController {
 			@ApiResponse(code = 200,response=XmTaskSbillDetail.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listSumSamtGroupByProjectIdBizMonth",method=RequestMethod.GET)
-	public Map<String,Object> listSumSamtGroupByProjectIdBizMonth( @RequestParam Map<String,Object> xmTaskSbillDetail){
+	public Map<String,Object> listSumSamtGroupByProjectIdBizMonth( @ApiIgnore @RequestParam Map<String,Object> xmTaskSbillDetail){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		String bizYear= (String) xmTaskSbillDetail.get("bizYear");
@@ -127,7 +122,7 @@ public class XmTaskSbillDetailController {
 			@ApiResponse(code = 200,response=XmTaskSbillDetail.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listSumSamtGroupByBranchIdBizMonth",method=RequestMethod.GET)
-	public Map<String,Object> listSumSamtGroupByBranchIdBizMonth( @RequestParam Map<String,Object> xmTaskSbillDetail){
+	public Map<String,Object> listSumSamtGroupByBranchIdBizMonth( @ApiIgnore @RequestParam Map<String,Object> xmTaskSbillDetail){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		String bizYear= (String) xmTaskSbillDetail.get("bizYear");

@@ -1,26 +1,19 @@
 package com.xm.core.service;
 
-import com.xm.core.entity.XmTaskWorkload;
+import com.mdp.core.service.BaseService;
+import com.xm.core.entity.XmTaskSbillDetail;
 import com.xm.core.vo.BatchJoinToSbillVo;
-import com.xm.core.vo.UserTaskVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import com.mdp.core.service.BaseService;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-
-import com.xm.core.entity.XmTaskSbillDetail;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 

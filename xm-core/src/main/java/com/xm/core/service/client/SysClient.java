@@ -5,9 +5,7 @@ import com.mdp.core.utils.BaseUtils;
 import com.mdp.micro.client.CallBizService;
 import com.mdp.mq.queue.Push;
 import com.mdp.safe.client.entity.User;
-import com.xm.core.entity.XmTaskSbillDetail;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;

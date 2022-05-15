@@ -1,38 +1,26 @@
 package com.xm.core.ctrl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import com.mdp.core.entity.Tips;
+import com.mdp.core.utils.RequestUtils;
+import com.mdp.mybatis.PageUtils;
+import com.xm.core.entity.XmProductStateHis;
+import com.xm.core.service.XmProductStateHisService;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.stereotype.Controller;
+import springfox.documentation.annotations.ApiIgnore;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
-import static com.mdp.core.utils.ResponseHelper.*;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-import com.mdp.mybatis.PageUtils;
-import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.NumberUtil;
-import com.xm.core.service.XmProductStateHisService;
-import com.xm.core.entity.XmProductStateHis;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /**
  * url编制采用rest风格,如对xm_product_state_his 功能状态表,无需前端维护，所有数据由汇总统计得出的操作有增删改查,对应的url分别为:<br>
  *  新增: core/xmProductStateHis/add <br>
@@ -62,7 +50,7 @@ public class XmProductStateHisController {
 		@ApiResponse(code = 200,response=XmProductStateHis.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmProductStateHis( @RequestParam Map<String,Object> xmProductStateHis){
+	public Map<String,Object> listXmProductStateHis( @ApiIgnore @RequestParam Map<String,Object> xmProductStateHis){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmProductStateHis, "pkList");

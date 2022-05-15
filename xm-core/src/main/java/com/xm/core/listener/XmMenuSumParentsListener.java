@@ -2,8 +2,6 @@ package com.xm.core.listener;
 
 import com.mdp.mq.queue.MessageListener;
 import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmMenu;
-import com.xm.core.queue.XmMenuSumParentsPushService;
 import com.xm.core.queue.XmMenuSumParentsPushService;
 import com.xm.core.service.XmMenuStateService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,7 +13,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class XmMenuSumParentsListener extends MessageListener<XmMenu> {

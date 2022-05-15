@@ -1,13 +1,11 @@
 package com.xm.core.service.cache;
 
 import com.github.pagehelper.PageSerializable;
-import com.xm.core.entity.XmProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 

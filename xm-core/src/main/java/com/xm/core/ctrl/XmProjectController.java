@@ -24,8 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * url编制采用rest风格,如对XM.xm_project xm_project的操作有增删改查,对应的url分别为:<br>
@@ -88,14 +92,14 @@ public class XmProjectController {
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-		@ApiImplicitParam(name="orderFields",value="排序列 如性别、学生编号排序 ['sex','studentId']",required=false),
-		@ApiImplicitParam(name="orderDirs",value="排序方式,与orderFields对应，升序 asc,降序desc 如 性别 升序、学生编号降序 ['asc','desc']",required=false) 
+		@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student_id desc",required=false),
+		@ApiImplicitParam(name="count",value="是否进行总条数计算,count=true|false",required=false) 
 	})
 	@ApiResponses({
 		@ApiResponse(code = 200,response= XmProject.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmProject( @RequestParam Map<String,Object> xmProject){
+	public Map<String,Object> listXmProject( @ApiIgnore @RequestParam Map<String,Object> xmProject){
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(xmProject, "ids"); 
 		RequestUtils.transformArray(xmProject, "pgTypeIds");

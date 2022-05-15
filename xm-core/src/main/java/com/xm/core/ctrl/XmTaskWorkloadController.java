@@ -1,47 +1,36 @@
 package com.xm.core.ctrl;
 
-import java.math.BigDecimal;
-import java.util.*;
-import java.util.function.LongUnaryOperator;
-import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-
-import com.alibaba.fastjson.JSON;
+import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
 import com.mdp.core.utils.BaseUtils;
+import com.mdp.core.utils.NumberUtil;
+import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.*;
+import com.xm.core.entity.XmMenu;
+import com.xm.core.entity.XmTask;
+import com.xm.core.entity.XmTaskWorkload;
 import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.service.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiImplicitParam;
-import io.swagger.annotations.ApiImplicitParams;
-import io.swagger.annotations.ApiModel;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import static com.mdp.core.utils.ResponseHelper.*;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-import com.mdp.mybatis.PageUtils;
-import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.NumberUtil;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_task_workload 工时登记表的操作有增删改查,对应的url分别为:<br>
@@ -86,7 +75,7 @@ public class XmTaskWorkloadController {
 		@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTaskWorkload( @RequestParam Map<String,Object> xmTaskWorkload){
+	public Map<String,Object> listXmTaskWorkload( @ApiIgnore @RequestParam Map<String,Object> xmTaskWorkload){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTaskWorkload, "ids");
@@ -111,7 +100,7 @@ public class XmTaskWorkloadController {
 			@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listProjectWorkloadSetDay",method=RequestMethod.GET)
-	public Map<String,Object> listProjectWorkloadSetDay( @RequestParam Map<String,Object> xmTaskWorkload){
+	public Map<String,Object> listProjectWorkloadSetDay( @ApiIgnore @RequestParam Map<String,Object> xmTaskWorkload){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		PageUtils.startPage(xmTaskWorkload);
@@ -131,7 +120,7 @@ public class XmTaskWorkloadController {
 			@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listProjectWorkloadSetMonth",method=RequestMethod.GET)
-	public Map<String,Object> listProjectWorkloadSetMonth( @RequestParam Map<String,Object> xmTaskWorkload){
+	public Map<String,Object> listProjectWorkloadSetMonth( @ApiIgnore @RequestParam Map<String,Object> xmTaskWorkload){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		PageUtils.startPage(xmTaskWorkload);
@@ -151,7 +140,7 @@ public class XmTaskWorkloadController {
 			@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/ListGroupByTaskIdAndUserid",method=RequestMethod.GET)
-	public Map<String,Object> ListGroupByTaskIdAndUserid( @RequestParam Map<String,Object> xmTaskWorkload){
+	public Map<String,Object> ListGroupByTaskIdAndUserid( @ApiIgnore @RequestParam Map<String,Object> xmTaskWorkload){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTaskWorkload, "ids");
@@ -177,7 +166,7 @@ public class XmTaskWorkloadController {
 			@ApiResponse(code = 200,response=XmTaskWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/ListGroupByTaskIdAndUseridToSet",method=RequestMethod.GET)
-	public Map<String,Object> ListGroupByTaskIdAndUseridToSet( @RequestParam Map<String,Object> xmTaskWorkload){
+	public Map<String,Object> ListGroupByTaskIdAndUseridToSet( @ApiIgnore @RequestParam Map<String,Object> xmTaskWorkload){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTaskWorkload, "ids");

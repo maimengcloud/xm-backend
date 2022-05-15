@@ -7,16 +7,13 @@ import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.NumberUtil;
-import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
-import com.xm.core.entity.XmTaskSkill;
 import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.vo.BatchRelTasksWithMenu;
 import com.xm.core.vo.BatchRelTasksWithPhase;
-import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmTaskVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +23,6 @@ import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
