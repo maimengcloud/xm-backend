@@ -8,6 +8,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmGroup;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
@@ -131,10 +132,8 @@ public class XmGroupController {
 	}
 
 	@ApiOperation( value = "根据项目Id拿到团队",notes="")
+	@ApiEntityParams(XmGroup.class)
 	@ApiImplicitParams({
-			@ApiImplicitParam(name="id",value="主键,主键",required=false),
-			@ApiImplicitParam(name="groupName",value="团队名称",required=false),
-			@ApiImplicitParam(name="projectId",value="项目编号",required=false),
 			@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 			@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
@@ -174,10 +173,8 @@ public class XmGroupController {
  
 	
 	@ApiOperation( value = "查询xm_group信息列表",notes="listXmProjectGroup,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="主键,主键",required=false),
-		@ApiImplicitParam(name="groupName",value="团队名称",required=false),
-		@ApiImplicitParam(name="projectId",value="项目编号",required=false),
+	@ApiEntityParams(XmGroup.class)
+	@ApiImplicitParams({
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),

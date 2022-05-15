@@ -7,6 +7,7 @@ import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmIterationLink;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
@@ -64,7 +65,8 @@ public class XmIterationLinkController {
 	XmGroupService xmGroupService;
 
 	
-	@ApiOperation( value = "查询迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息列表",notes=" ") 
+	@ApiOperation( value = "查询迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息列表",notes=" ")
+	@ApiEntityParams(XmIterationLink.class)
 	@ApiResponses({
 		@ApiResponse(code = 200,response= XmIterationLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
@@ -97,6 +99,7 @@ public class XmIterationLinkController {
 		return m;
 	}
 	@ApiOperation( value = "查询迭代表与产品表的关联关系，一般由迭代管理员将迭代挂接到产品表信息列表",notes=" ")
+	@ApiEntityParams(XmIterationLink.class)
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmIterationLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})

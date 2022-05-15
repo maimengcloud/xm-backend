@@ -7,6 +7,7 @@ import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmGroupUser;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
@@ -67,18 +68,8 @@ public class XmGroupUserController {
  
 	
 	@ApiOperation( value = "查询xm_group_user信息列表",notes="listXmProjectGroupUser,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="主键,主键",required=false),
-		@ApiImplicitParam(name="joinTime",value="加入时间",required=false),
-		@ApiImplicitParam(name="groupId",value="团队编号",required=false),
-		@ApiImplicitParam(name="userid",value="团队成员编号",required=false),
-		@ApiImplicitParam(name="username",value="团队成员",required=false),
-		@ApiImplicitParam(name="isHead",value="是否组长，1是，0否",required=false),
-		@ApiImplicitParam(name="outTime",value="离队时间",required=false),
-		@ApiImplicitParam(name="status",value="当前状态0参与中1已退出团队",required=false),
-		@ApiImplicitParam(name="bizProcInstId",value="当前流程实例编号",required=false),
-		@ApiImplicitParam(name="bizFlowState",value="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",required=false),
-		@ApiImplicitParam(name="projectId",value="项目编号",required=false),
+	@ApiEntityParams(XmGroupUser.class)
+	@ApiImplicitParams({
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),

@@ -5,6 +5,7 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.service.XmBranchStateHisService;
 import io.swagger.annotations.Api;
@@ -47,7 +48,8 @@ public class XmBranchStateHisController {
 		
  
 	
-	@ApiOperation( value = "查询机构内所有项目指标汇总信息列表",notes=" ") 
+	@ApiOperation( value = "查询机构内所有项目指标汇总信息列表",notes=" ")
+	@ApiEntityParams(XmBranchStateHis.class)
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmBranchStateHis.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})

@@ -7,6 +7,7 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmEnvList;
 import com.xm.core.service.XmEnvListService;
 import io.swagger.annotations.*;
@@ -45,28 +46,8 @@ public class XmEnvListController {
  
 	
 	@ApiOperation( value = "查询xm_env_list信息列表",notes="listXmEnvList,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="主键,主键",required=false),
-		@ApiImplicitParam(name="remark",value="备注说明",required=false),
-		@ApiImplicitParam(name="ipAddress",value="内网ip地址",required=false),
-		@ApiImplicitParam(name="port",value="内网访问端口",required=false),
-		@ApiImplicitParam(name="branchId",value="归属机构",required=false),
-		@ApiImplicitParam(name="accessUserid",value="访问用户编号",required=false),
-		@ApiImplicitParam(name="accessPassword",value="访问密码",required=false),
-		@ApiImplicitParam(name="effect",value="作用说明",required=false),
-		@ApiImplicitParam(name="accessUrl",value="访问链接",required=false),
-		@ApiImplicitParam(name="supplier",value="供应商",required=false),
-		@ApiImplicitParam(name="webIpAddress",value="外网ip地址",required=false),
-		@ApiImplicitParam(name="webPort",value="外网端口",required=false),
-		@ApiImplicitParam(name="otherRemark",value="其它说明",required=false),
-		@ApiImplicitParam(name="createUserid",value="添加人员",required=false),
-		@ApiImplicitParam(name="createUsername",value="添加人员姓名",required=false),
-		@ApiImplicitParam(name="createTime",value="添加时间",required=false),
-		@ApiImplicitParam(name="envState",value="状态0不可用1已启用2已过期",required=false),
-		@ApiImplicitParam(name="startTime",value="有效日期开始",required=false),
-		@ApiImplicitParam(name="endTime",value="有效日期结束",required=false),
-		@ApiImplicitParam(name="feeAmount",value="费用",required=false),
-		@ApiImplicitParam(name="feeRule",value="计费规则",required=false),
+	@ApiEntityParams(XmEnvList.class)
+	@ApiImplicitParams({
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),

@@ -9,6 +9,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.entity.XmIterationLink;
 import com.xm.core.service.*;
@@ -64,24 +65,8 @@ public class XmIterationController {
 	XmGroupService xmGroupService;
 
 	@ApiOperation( value = "查询迭代定义信息列表",notes="listXmIteration,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="迭代编码,主键",required=false),
-		@ApiImplicitParam(name="branchId",value="机构编号",required=false),
-		@ApiImplicitParam(name="iterationName",value="迭代名称",required=false),
-		@ApiImplicitParam(name="startTime",value="开始时间",required=false),
-		@ApiImplicitParam(name="endTime",value="结束时间",required=false),
-		@ApiImplicitParam(name="onlineTime",value="上线时间",required=false),
-		@ApiImplicitParam(name="pid",value="上级迭代",required=false),
-		@ApiImplicitParam(name="adminUserid",value="负责人",required=false),
-		@ApiImplicitParam(name="adminUsername",value="负责人姓名",required=false),
-		@ApiImplicitParam(name="ctime",value="创建时间",required=false),
-		@ApiImplicitParam(name="budgetCost",value="预算成本",required=false),
-		@ApiImplicitParam(name="budgetWorkload",value="预算工作量",required=false),
-		@ApiImplicitParam(name="seqNo",value="顺序号",required=false),
-		@ApiImplicitParam(name="istatus",value="迭代状态0未结束1已结束",required=false),
-		@ApiImplicitParam(name="cuserid",value="创建人编号",required=false),
-		@ApiImplicitParam(name="cusername",value="创建人人姓名",required=false),
-		@ApiImplicitParam(name="remark",value="备注",required=false),
+	@ApiEntityParams(XmIteration.class)
+	@ApiImplicitParams({
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),

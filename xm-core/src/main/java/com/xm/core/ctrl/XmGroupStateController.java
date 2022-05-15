@@ -4,6 +4,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmGroupState;
 import com.xm.core.service.XmGroupStateService;
 import io.swagger.annotations.*;
@@ -42,43 +43,8 @@ public class XmGroupStateController {
  
 	
 	@ApiOperation( value = "查询功能状态表,无需前端维护，所有数据由汇总统计得出信息列表",notes="listXmProjectGroupState,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="主键,主键",required=false),
-		@ApiImplicitParam(name="planStartTime",value="开始时间",required=false),
-		@ApiImplicitParam(name="planEndTime",value="结束时间",required=false),
-		@ApiImplicitParam(name="actStartTime",value="实际开始时间",required=false),
-		@ApiImplicitParam(name="actEndTime",value="实际结束时间",required=false),
-		@ApiImplicitParam(name="planWorkload",value="计划工作量，根据关联任务汇总",required=false),
-		@ApiImplicitParam(name="actWorkload",value="实际工作量，根据关联任务汇总",required=false),
-		@ApiImplicitParam(name="planCostAmount",value="计划成本，根据关联任务汇总",required=false),
-		@ApiImplicitParam(name="actCostAmount",value="实际成本金额根据关联任务汇总",required=false),
-		@ApiImplicitParam(name="finishRate",value="总体完成比例0-100之间,根据taskType进行汇总",required=false),
-		@ApiImplicitParam(name="demandRate",value="需求完成率0-100之间,根据taskType进行汇总",required=false),
-		@ApiImplicitParam(name="designRate",value="设计完成率0-100之间,根据taskType进行汇总",required=false),
-		@ApiImplicitParam(name="devRate",value="开发完成率0-100之间,根据taskType进行汇总",required=false),
-		@ApiImplicitParam(name="uatRate",value="uat测试完成率0-100之间,根据taskType进行汇总",required=false),
-		@ApiImplicitParam(name="sitRate",value="sit测试完成率0-100之间,根据taskType进行汇总",required=false),
-		@ApiImplicitParam(name="ctime",value="创建时间",required=false),
-		@ApiImplicitParam(name="calcTime",value="汇总时间",required=false),
-		@ApiImplicitParam(name="planWorkhours",value="工时数",required=false),
-		@ApiImplicitParam(name="planWorkerCnt",value="总人数",required=false),
-		@ApiImplicitParam(name="closedBugs",value="总关闭bugs",required=false),
-		@ApiImplicitParam(name="activeBugs",value="激活bugs",required=false),
-		@ApiImplicitParam(name="confirmedBugs",value="已确认bugs总数",required=false),
-		@ApiImplicitParam(name="resolvedBugs",value="已解决bugs总数",required=false),
-		@ApiImplicitParam(name="testCases",value="测试案例总数",required=false),
-		@ApiImplicitParam(name="execCases",value="测试中案例总数",required=false),
-		@ApiImplicitParam(name="designCases",value="设计中案例总数",required=false),
-		@ApiImplicitParam(name="finishCases",value="完成案例总数",required=false),
-		@ApiImplicitParam(name="iterationCnt",value="关联迭代数",required=false),
-		@ApiImplicitParam(name="taskCnt",value="任务数",required=false),
-		@ApiImplicitParam(name="finishTaskCnt",value="完成的任务数",required=false),
-		@ApiImplicitParam(name="bizDate",value="业务日期yyyy-MM-dd字符串",required=false),
-		@ApiImplicitParam(name="bugCnt",value="bug总数",required=false),
-		@ApiImplicitParam(name="groupId",value="团队编号",required=false),
-		@ApiImplicitParam(name="projectId",value="项目编号",required=false),
-		@ApiImplicitParam(name="projectName",value="项目名称",required=false),
-		@ApiImplicitParam(name="groupName",value="团队名称",required=false),
+	@ApiEntityParams(XmGroupState.class)
+	@ApiImplicitParams({
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),

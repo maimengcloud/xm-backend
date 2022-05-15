@@ -7,6 +7,7 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmFile;
 import com.xm.core.service.XmFileService;
 import com.xm.core.vo.XmFileVo;
@@ -46,16 +47,8 @@ public class XmFileController {
  
 	
 	@ApiOperation( value = "查询xm_file信息列表",notes="listXmFile,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="文档编号,主键",required=false),
-		@ApiImplicitParam(name="name",value="文件名称",required=false),
-		@ApiImplicitParam(name="projectId",value="项目编号",required=false),
-		@ApiImplicitParam(name="projectName",value="项目名称",required=false),
-		@ApiImplicitParam(name="description",value="文件说明",required=false),
-		@ApiImplicitParam(name="createUserid",value="任务创建人编号",required=false),
-		@ApiImplicitParam(name="createUsername",value="任务创建人",required=false),
-		@ApiImplicitParam(name="createTime",value="创建时间",required=false),
-		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
+	@ApiEntityParams(XmFile.class)
+	@ApiImplicitParams({   		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
 		@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student_id desc",required=false),

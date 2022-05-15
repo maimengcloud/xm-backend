@@ -3,6 +3,7 @@ package com.xm.core.ctrl;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.service.XmGroupService;
@@ -66,13 +67,8 @@ public class XmIterationMenuController {
 	XmRecordService xmRecordService;
 
 	@ApiOperation( value = "查询迭代定义信息列表",notes="listXmIterationMenu,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiEntityParams(XmIterationMenuVo.class)
 	@ApiImplicitParams({
-			@ApiImplicitParam(name="id",value="主键,主键",required=false),
-			@ApiImplicitParam(name="iterationId",value="对应的迭代编号",required=false),
-			@ApiImplicitParam(name="menuId",value="用户故事编号",required=false),
-			@ApiImplicitParam(name="productId",value="产品编号",required=false),
-			@ApiImplicitParam(name="ctime",value="关联时间",required=false),
-			@ApiImplicitParam(name="relStatus",value="关联状态0不再关联1正常关联",required=false),
 			@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 			@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),

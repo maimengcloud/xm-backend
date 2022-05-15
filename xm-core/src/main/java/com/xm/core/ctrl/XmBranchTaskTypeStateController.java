@@ -4,6 +4,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmBranchState;
 import com.xm.core.entity.XmBranchTaskTypeState;
 import com.xm.core.service.XmBranchTaskTypeStateService;
@@ -44,27 +45,8 @@ public class XmBranchTaskTypeStateController {
  
 	
 	@ApiOperation( value = "查询按机构编号任务类型汇总信息列表",notes="listXmBranchTaskTypeState,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="主键,主键",required=false),
-		@ApiImplicitParam(name="taskType",value="任务类型",required=false),
-		@ApiImplicitParam(name="planWorkload",value="工作量",required=false),
-		@ApiImplicitParam(name="planAmount",value="预算金额",required=false),
-		@ApiImplicitParam(name="actWorkload",value="实际完成工作量",required=false),
-		@ApiImplicitParam(name="actAmount",value="实际完成金额",required=false),
-		@ApiImplicitParam(name="branchId",value="机构编号",required=false),
-		@ApiImplicitParam(name="bizDate",value="业务日期yyyy-MM-dd型",required=false),
-		@ApiImplicitParam(name="calcTime",value="计算日期",required=false),
-		@ApiImplicitParam(name="planOuserAt",value="外购资金预算",required=false),
-		@ApiImplicitParam(name="planIuserAt",value="内购资金预算",required=false),
-		@ApiImplicitParam(name="actOuserAt",value="实际外购成本",required=false),
-		@ApiImplicitParam(name="actIuserAt",value="实际内购成本",required=false),
-		@ApiImplicitParam(name="planOuserWorkload",value="计划外购工作量",required=false),
-		@ApiImplicitParam(name="planIuserWorkload",value="计划内购工作量",required=false),
-		@ApiImplicitParam(name="actOuserWorkload",value="实际外购工作量",required=false),
-		@ApiImplicitParam(name="actIuserWorkload",value="实际内购工作量",required=false),
-		@ApiImplicitParam(name="planNouserAt",value="计划非人力成本",required=false),
-		@ApiImplicitParam(name="actNouserAt",value="实际非人力成本",required=false),
-		@ApiImplicitParam(name="branchName",value="机构名称",required=false),
+	@ApiEntityParams(XmBranchTaskTypeState.class)
+	@ApiImplicitParams({
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),

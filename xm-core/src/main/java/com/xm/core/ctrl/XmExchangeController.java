@@ -6,6 +6,7 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmExchange;
 import com.xm.core.service.XmExchangeService;
 import io.swagger.annotations.*;
@@ -44,30 +45,8 @@ public class XmExchangeController {
 
 
 	@ApiOperation( value = "查询功能表信息列表",notes="listXmExchange,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="评论编号,主键",required=false),
-		@ApiImplicitParam(name="taskId",value="功能编号",required=false),
-		@ApiImplicitParam(name="taskName",value="功能名称",required=false),
-		@ApiImplicitParam(name="projectId",value="归属产品编号",required=false),
-		@ApiImplicitParam(name="remark",value="备注",required=false),
-		@ApiImplicitParam(name="pid",value="上级评论编号",required=false),
-		@ApiImplicitParam(name="cuserid",value="评论人编号",required=false),
-		@ApiImplicitParam(name="cusername",value="评论人名称",required=false),
-		@ApiImplicitParam(name="ctime",value="评论时间",required=false),
-		@ApiImplicitParam(name="cbranchId",value="评论人所属机构",required=false),
-		@ApiImplicitParam(name="adopt",value="是否采纳0否1采纳",required=false),
-		@ApiImplicitParam(name="adoptUserid",value="采纳人编号",required=false),
-		@ApiImplicitParam(name="adoptUsername",value="采纳人名称",required=false),
-		@ApiImplicitParam(name="adoptTime",value="采纳时间",required=false),
-		@ApiImplicitParam(name="closed",value="关闭该评论0否1是",required=false),
-		@ApiImplicitParam(name="puserid",value="上级用户编号",required=false),
-		@ApiImplicitParam(name="pusername",value="上级姓名",required=false),
-		@ApiImplicitParam(name="premark",value="上级备注",required=false),
-		@ApiImplicitParam(name="notifyUserids",value="本评论需要同步给的人列表,逗号分隔",required=false),
-		@ApiImplicitParam(name="notifyChannels",value="发送通知渠道inner-email/wxpub/sms/im/out-email等逗号分割",required=false),
-		@ApiImplicitParam(name="notifyUsernames",value="通知用户姓名逗号分隔",required=false),
-		@ApiImplicitParam(name="cuserHeadImg",value="发言人头像地址",required=false),
-		@ApiImplicitParam(name="replyType",value="回复方式1引用2回复",required=false),
+	@ApiEntityParams(XmExchange.class)
+	@ApiImplicitParams({
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
