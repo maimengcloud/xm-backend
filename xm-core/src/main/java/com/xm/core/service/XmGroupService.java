@@ -2,7 +2,6 @@ package com.xm.core.service;
 
 import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
@@ -867,26 +866,6 @@ public class XmGroupService extends BaseService {
 			}
 		}else {
 			return groupVo;
-		}
-	}
-
-	public boolean checkUserIsPmOrAssByPtype(String userid, String ptype, String projectId, String productId) {
-		Tips tips = new Tips("成功");
-		if(!"0".equals(ptype) && !"1".equals(ptype)){
-			throw new BizException( new Tips(false,"ptype-not-0|1","类型不正确"));
-		}
-		if("0".equals(ptype) && !StringUtils.hasText(projectId)){
-			throw new BizException( new Tips(false,"projectId-0","项目编号不能为空"));
-		}
-
-		if("1".equals(ptype) && !StringUtils.hasText(productId)){
-			throw new BizException( new Tips(false,"productId-0","产品编号不能为空"));
-		}
-
-		if("0".equals(ptype)){
-			return this.checkUserIsProjectAdm(projectId,userid);
-		}else{
-			return this.checkUserIsProductAdm(productId,userid);
 		}
 	}
 }

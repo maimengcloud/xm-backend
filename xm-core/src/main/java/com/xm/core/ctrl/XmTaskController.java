@@ -16,7 +16,6 @@ import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.PubTool;
 import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmTask;
 import com.xm.core.queue.XmTaskSumParentsPushService;
@@ -77,6 +76,9 @@ public class XmTaskController {
 
 	@Autowired
 	XmMenuService xmMenusService;
+
+	@Autowired
+	XmMenuOperQxService menuOperQxService;
 
 	@Autowired
 	XmProductService xmProductService;
@@ -932,9 +934,9 @@ public class XmTaskController {
 			if(!StringUtils.hasText(tasksMenu.getMenuId()) ){
 				return ResponseHelper.failed("menuId-0","需求编号不能为空");
 			};
-			XmMenu xmMenuDb=this.xmMenusService.selectOneObject(new XmMenu(tasksMenu.getMenuId()));
-			if(xmMenuDb==null){
-				return ResponseHelper.failed("menu-0","需求已不存在");
+			XmMenu xmMenuDb= menuOperQxService.getUserCanOpMenuById(tasksMenu.getMenuId(), user.getUserid(), false);
+ 			if(xmMenuDb==null){
+				return ResponseHelper.failed("menu-0","无权限挂接任务到别人负责的需求上");
 			}
 
 			if("8".equals(xmMenuDb.getStatus())){
@@ -944,15 +946,7 @@ public class XmTaskController {
 			if("9".equals(xmMenuDb.getStatus())){
 				return ResponseHelper.failed("menu-status-8","需求已删除");
 			}
-
-			XmProduct xmProductDb=xmProductService.getProductFromCache(xmMenuDb.getProductId());
-			boolean hasMenuQx=true;
-			Tips tips2=groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),"1",xmProductDb.getId(),null);
-			if(!tips2.isOk()){
-				hasMenuQx=false;
-			}
 			List<XmTask> allowTasks=new ArrayList<>();
-
 			List<XmTask> ntype1Tasks=new ArrayList<>();
 			List<XmTask> noAllowTasks=new ArrayList<>();
 			List<XmTask> tasksDb=this.xmTaskService.selectTaskListByIds(tasksMenu.getTaskIds());
@@ -963,37 +957,35 @@ public class XmTaskController {
 					continue;
 				}
 			}
-			if(hasMenuQx==false){
-				Map<String,List<XmTask>> projectTasksMap=new HashMap<>();
-				for (XmTask xmTask : tasksDb) {
-					 List<XmTask> projectTasks=projectTasksMap.get(xmTask.getProjectId());
-					 if(projectTasks==null){
-						projectTasks=new ArrayList<>();
-						projectTasksMap.put(xmTask.getProjectId(),projectTasks);
-					 }
-					projectTasks.add(xmTask);
-				}
+			Map<String,List<XmTask>> projectTasksMap=new HashMap<>();
+			for (XmTask xmTask : tasksDb) {
+				 List<XmTask> projectTasks=projectTasksMap.get(xmTask.getProjectId());
+				 if(projectTasks==null){
+					projectTasks=new ArrayList<>();
+					projectTasksMap.put(xmTask.getProjectId(),projectTasks);
+				 }
+				projectTasks.add(xmTask);
+			}
 
-				for (Map.Entry<String, List<XmTask>> pt : projectTasksMap.entrySet()) {
-					XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(pt.getKey());
-					boolean isProjectAdm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
-					List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectDb.getId());
-					if(isProjectAdm==false){
-						if(groupVoList==null){
-							noAllowTasks.addAll(pt.getValue());
-						}else{
-							for (XmTask xmTask : pt.getValue()) {
-								if(!user.getUserid().equals(xmTask.getCreateUserid()) && !user.getUserid().equals(xmTask.getExecutorUserid())){
-									if(!groupService.checkUserIsOtherUserTeamHeadOrAss(groupVoList,xmTask.getCreateUserid(),user.getUserid())){
-										if(!groupService.checkUserIsOtherUserTeamHeadOrAss(groupVoList,xmTask.getExecutorUserid(),user.getUserid())){
-											noAllowTasks.add(xmTask);
-										}
+			for (Map.Entry<String, List<XmTask>> pt : projectTasksMap.entrySet()) {
+				XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(pt.getKey());
+				boolean isProjectAdm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
+				List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectDb.getId());
+				if(isProjectAdm==false){
+					if(groupVoList==null){
+						noAllowTasks.addAll(pt.getValue());
+					}else{
+						for (XmTask xmTask : pt.getValue()) {
+							if(!user.getUserid().equals(xmTask.getCreateUserid()) && !user.getUserid().equals(xmTask.getExecutorUserid())){
+								if(!groupService.checkUserIsOtherUserTeamHeadOrAss(groupVoList,xmTask.getCreateUserid(),user.getUserid())){
+									if(!groupService.checkUserIsOtherUserTeamHeadOrAss(groupVoList,xmTask.getExecutorUserid(),user.getUserid())){
+										noAllowTasks.add(xmTask);
 									}
 								}
 							}
 						}
-
 					}
+
 				}
 			}
 
@@ -1353,8 +1345,8 @@ public class XmTaskController {
 
 			Map<String,XmTask> allowTasksDbMap=new HashMap<>();
 			Map<String,XmTask>  noAllowTasksDbMap=new HashMap<>();
-			List<XmGroupVo> pgroups="0".equals(parentTask.getPtype())? groupService.getProjectGroupVoList(parentTask.getProjectId()) : groupService.getProductGroupVoList(parentTask.getProductId());
-			boolean isAdm=groupService.checkUserIsPmOrAssByPtype(user.getUserid(),parentTask.getPtype(),parentTask.getProjectId(),parentTask.getProductId());
+			List<XmGroupVo> pgroups= groupService.getProjectGroupVoList(parentTask.getProjectId());
+			boolean isAdm=groupService.checkUserIsProjectAdm(parentTask.getProjectId(),user.getUserid());
 			if(!isAdm){
 				for (XmTask task : canOpxmTasks) {
 					boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,task.getCreateUserid(),user.getUserid());
@@ -1392,11 +1384,9 @@ public class XmTaskController {
 			}
 			if(allowTasksDbMap3.size()>0){
 				this.xmTaskService.batchChangeParent(allowTasksDbMap3.values().stream().collect(Collectors.toList()),parentTask);
-				if("1".equals(parentTask.getPtype())){
-					this.xmRecordService.addProductXmTaskRecord(parentTask.getProductId(),parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
-				}else {
-					this.xmRecordService.addXmTaskRecord(parentTask.getProjectId(),parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
-				}
+
+				this.xmRecordService.addXmTaskRecord(parentTask.getProjectId(),parentTask.getId(),"批量挂接子节点","成功将以下"+allowTasksDbMap3.size()+"个计划或任务及其所有子项挂接到【"+parentTask.getName()+"】上,【"+allowTasksDbMap3.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】;");
+
 
 			}
 
