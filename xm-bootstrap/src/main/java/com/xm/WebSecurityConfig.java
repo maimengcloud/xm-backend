@@ -41,7 +41,16 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/**/xm/core/xmTask/shareTaskDetail",
                 "/**/xm/core/xmTask/getOutTask",
                 "/**/xm/core/xmBranchState/list/portal/allBranchSum",
-                "/**/xm/core/xmProjectState/list/portal"
+                "/**/xm/core/xmProjectState/list/portal",
+
+                "/swagger-ui.html",
+                "/webjars/**",
+                "/swagger-ui/**",
+                "/swagger-resources/**",
+                "/v2/*",
+                "/csrf",
+                "/"
+
                 ).permitAll().
 
                 anyRequest().authenticated();
