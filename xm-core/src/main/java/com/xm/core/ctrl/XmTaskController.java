@@ -100,7 +100,7 @@ public class XmTaskController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
-	@RequestMapping(value="/getTask",method=RequestMethod.POST)
+	@RequestMapping(value="/getTask",method=RequestMethod.GET)
 	public Map<String,Object> getTask( @ApiIgnore @RequestParam Map<String,Object> xmTask){
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(xmTask, "ids");
