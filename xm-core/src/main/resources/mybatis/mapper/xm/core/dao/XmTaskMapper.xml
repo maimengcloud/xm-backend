@@ -324,24 +324,6 @@
 		res.task_state=ifnull(#{taskState},res.task_state)
 		where id=#{id}
 	</update>
-
-	<update id="editSomeFields" parameterType="HashMap">
-		update  xm_task res
-		<set>
-			<include refid="someFieldSet"/>
-			<if test="taskState!=null and taskState!=''">
-				res.rate=case when res.task_state in('2','3','4') then 100
-				when res.budget_workload>0 then ifnull(res.act_workload,0)*100/ res.budget_workload
-				when res.act_workload>0 then 100
-				else res.rate end
-			</if>
-		</set>
-		where id in
-		<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-			#{item}
-		</foreach>
-	</update>
-
 	<update id="calcWorkloadByRecord" parameterType="List">
 		update xm_task res left join
 		(select w.task_id, sum(ifnull(w.workload,0)) as workload  from xm_task_workload w where w.task_id  in
@@ -513,16 +495,23 @@
 	</update>
 
 	<!-- 批量修改某几个字段 -->
-	<delete id="editSomeFields" parameterType="HashMap">
-		update  xm_task
-        <set>
-            <include refid="someFieldSet"/>
-        </set>
-        where  (id) in
-             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
-                 ( #{item})
-             </foreach>
-	</delete>
+
+	<update id="editSomeFields" parameterType="HashMap">
+		update  xm_task res
+		<set>
+			<include refid="someFieldSet"/>
+			<if test="taskState!=null and taskState!=''">
+				res.rate=case when res.task_state in('2','3','4') then 100
+				when res.budget_workload>0 then ifnull(res.act_workload,0)*100/ res.budget_workload
+				when res.act_workload>0 then 100
+				else res.rate end
+			</if>
+		</set>
+		where id in
+		<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+	</update>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from xm_task 
