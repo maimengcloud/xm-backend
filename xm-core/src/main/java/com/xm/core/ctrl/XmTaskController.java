@@ -51,7 +51,7 @@ import static com.mdp.core.utils.BaseUtils.map;
  ***/
 @RestController("xm.core.xmTaskController")
 @RequestMapping(value="/**/xm/core/xmTask")
-@Api(tags={"xm_task操作接口"})
+@Api(tags={"任务操作接口"})
 public class XmTaskController {
 	
 	static Log logger=LogFactory.getLog(XmTaskController.class);
@@ -115,8 +115,8 @@ public class XmTaskController {
 		fieldNameMap.put("createUsername","任务创建人");
 	}
 
-	@ApiOperation( value = "查询xm_task信息列表",notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiEntityParams( value = XmTask.class,paramType = "body")
+	@ApiOperation( value = "查询任务信息列表",notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiEntityParams(XmTask.class)
 	@ApiImplicitParams({
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
@@ -127,7 +127,7 @@ public class XmTaskController {
 			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/getTask",method=RequestMethod.POST)
-	public Map<String,Object> getTask( @ApiIgnore @RequestBody Map<String,Object> xmTask){
+	public Map<String,Object> getTask( @ApiIgnore @RequestParam Map<String,Object> xmTask){
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(xmTask, "ids");
 		RequestUtils.transformArray(xmTask, "skillIds");
@@ -183,15 +183,14 @@ public class XmTaskController {
 	}
 
 
-	@ApiOperation(  value = "查询xm_task信息列表-互联网大厅首页专用、免登录", notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-
+	@ApiOperation(  value = "查询任务信息列表-互联网大厅首页专用、免登录", notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiEntityParams(XmTask.class) 
 	@ApiImplicitParams({
  			@ApiImplicitParam(name="pageSize",value="每页大小，默认20条",dataType = "int" ,required=false),
 			@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",dataType = "int" ,required=false),
 			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",dataType = "int" ,required=false),			@ApiImplicitParam(name="count",value="是否进行总记录数计算，默认是计算，如果需要关闭，请上送count=false",dataType = "int" ,required=false),
 			@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student desc",dataType = "string" ,required=false),
- 	})
-
+ 	}) 
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
@@ -250,7 +249,7 @@ public class XmTaskController {
 	})
 	@HasQx(value = "xm_core_xmTask_editSomeFields",name = "批量修改修改任务中的某些字段",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmTaskMap) {
+	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTaskMap) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
@@ -336,7 +335,7 @@ public class XmTaskController {
 		return m;
 	}
 	@ApiOperation( value = "查询任务的信息详情，免登录",notes="taskDetail,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-
+	@ApiEntityParams(value = XmTask.class,props = {"id","shareKey"}) 
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
@@ -361,7 +360,7 @@ public class XmTaskController {
 		m.put("tips", tips);
 		return m;
 	}
-	@ApiOperation( value = "新增一条xm_task信息",notes="addXmTask,主键如果为空，后台自动生成")
+	@ApiOperation( value = "新增一条任务信息",notes="addXmTask,主键如果为空，后台自动生成")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
@@ -433,39 +432,9 @@ public class XmTaskController {
 
 
 	
-	@ApiOperation( value = "查询xm_task信息列表",notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="任务编号,主键",required=false),
-		@ApiImplicitParam(name="name",value="任务名称",required=false),
-		@ApiImplicitParam(name="parentTaskid",value="父任务编号",required=false),
-		@ApiImplicitParam(name="parentTaskname",value="父任务名称",required=false),
-		@ApiImplicitParam(name="projectId",value="项目编号",required=false),
-		@ApiImplicitParam(name="projectName",value="项目名称",required=false),
-		@ApiImplicitParam(name="level",value="任务级别",required=false),
-		@ApiImplicitParam(name="sortLevel",value="排序级别",required=false),
-		@ApiImplicitParam(name="executorUserid",value="任务执行人编号",required=false),
-		@ApiImplicitParam(name="executorUsername",value="任务执行人",required=false),
-		@ApiImplicitParam(name="preTaskid",value="前置任务编号",required=false),
-		@ApiImplicitParam(name="preTaskname",value="前置任务名称",required=false),
-		@ApiImplicitParam(name="startTime",value="任务开始时间",required=false),
-		@ApiImplicitParam(name="endTime",value="任务结束时间",required=false),
-		@ApiImplicitParam(name="milestone",value="里程碑",required=false),
-		@ApiImplicitParam(name="description",value="任务描述",required=false),
-		@ApiImplicitParam(name="remarks",value="备注",required=false),
-		@ApiImplicitParam(name="createUserid",value="任务创建人编号",required=false),
-		@ApiImplicitParam(name="createUsername",value="任务创建人",required=false),
-		@ApiImplicitParam(name="createTime",value="创建时间",required=false),
-		@ApiImplicitParam(name="rate",value="任务进度",required=false),
-		@ApiImplicitParam(name="budgetCost",value="当前任务预算金额（包括所有成本，包括直接下一级）",required=false),
-		@ApiImplicitParam(name="budgetWorkload",value="预算工时（包括直接下级）",required=false),
-		@ApiImplicitParam(name="actCost",value="当前任务实际费用金额（包括所有成本，包括直接下一级）",required=false),
-		@ApiImplicitParam(name="actWorkload",value="实际工时（包括直接下级）",required=false),
-		@ApiImplicitParam(name="taskState",value="任务状态0待领取1已领取执行中2已完工3已结算",required=false),
-		@ApiImplicitParam(name="taskType",value="1可外包0不可外包",required=false),
-		@ApiImplicitParam(name="taskClass",value="1需结算0不需结算",required=false),
-		@ApiImplicitParam(name="toTaskCenter",value="是否发布到任务大厅0否1是",required=false),
-		@ApiImplicitParam(name="actStartTime",value="实际开始时间",required=false),
-		@ApiImplicitParam(name="actEndTime",value="实际结束时间",required=false),
+	@ApiOperation( value = "查询任务信息列表",notes="listXmTask,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiEntityParams(XmTask.class)
+	@ApiImplicitParams({
 		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
 		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
 		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
@@ -499,7 +468,7 @@ public class XmTaskController {
 		return m;
 	}
 	
-	@ApiOperation( value = "删除一条xm_task信息",notes="delXmTask,仅需要上传主键字段")
+	@ApiOperation( value = "删除一条任务信息",notes="delXmTask,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
@@ -545,7 +514,7 @@ public class XmTaskController {
 		return m;
 	}
 
-	@ApiOperation( value = "根据主键修改一条xm_task信息",notes="setTaskCreateUser")
+	@ApiOperation( value = "根据主键修改一条任务信息",notes="setTaskCreateUser")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
@@ -592,7 +561,7 @@ public class XmTaskController {
 		m.put("tips", tips);
 		return m;
 	}
-	@ApiOperation( value = "根据主键修改一条xm_task信息",notes="editXmTask")
+	@ApiOperation( value = "根据主键修改一条任务信息",notes="editXmTask")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
@@ -654,7 +623,7 @@ public class XmTaskController {
 		m.put("tips", tips);
 		return m;
 	}
-	@ApiOperation( value = "根据主键修改一条xm_task信息",notes="editXmTask")
+	@ApiOperation( value = "根据主键修改一条任务信息",notes="editXmTask")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
@@ -696,7 +665,7 @@ public class XmTaskController {
 		return m;
 	}
 	/**不允许直接改进度，通过报工形式改进度
-	@ApiOperation( value = "根据主键修改一条xm_task信息",notes="editXmTask")
+	@ApiOperation( value = "根据主键修改一条任务信息",notes="editXmTask")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
@@ -1094,7 +1063,7 @@ public class XmTaskController {
 	} 
 	/**
 	*/
-	@ApiOperation( value = "根据主键列表批量删除xm_task信息",notes="batchDelXmTask,仅需要上传主键字段")
+	@ApiOperation( value = "根据主键列表批量删除任务信息",notes="batchDelXmTask,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
