@@ -202,6 +202,14 @@ public class XmTaskController {
 	}
 
 
+	@ApiOperation("统计所有上级的进度情况")
+	@RequestMapping(value="/calcProgress",method=RequestMethod.POST)
+	public Map<String,Object> calcProgress( @ApiIgnore @RequestBody XmTask xmTask){
+		User user=LoginUtils.getCurrentUserInfo();
+		XmTask xmTaskDb=this.xmTaskService.selectOneById(xmTask.getId());
+		this.xmTaskService.sumParents(xmTaskDb);
+		return ResponseHelper.ok("成功");
+	}
 	@RequestMapping(value="/getXmTaskSort",method=RequestMethod.GET)
 	public Map<String,Object> getXmTaskSort( @ApiIgnore @RequestParam Map<String,Object> xmTask){
 		User user=LoginUtils.getCurrentUserInfo();
