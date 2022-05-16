@@ -11,6 +11,12 @@
                  ( #{item})
              </foreach>
          </if>
+
+		<if test=" lvls != null">  and (res.lvl) in
+			<foreach collection="lvls" item="item" index="index" open="(" separator="," close=")" >
+				( #{item})
+			</foreach>
+		</if>
 		<if test=" pidPathsList != null">  and
 			<foreach collection="pidPathsList" item="item" index="index" open="(" separator=" or " close=")" >
 				#{item} like concat(res.pid_paths,'%')

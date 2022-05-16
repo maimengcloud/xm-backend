@@ -106,6 +106,7 @@ public class XmTaskController {
 		RequestUtils.transformArray(xmTask, "ids");
 		RequestUtils.transformArray(xmTask, "skillIds");
 		RequestUtils.transformArray(xmTask, "tagIdList");
+		RequestUtils.transformArray(xmTask, "lvls");
 		PageUtils.startPage(xmTask);
 		String taskOut= (String) xmTask.get("taskOut");
 		String projectId= (String) xmTask.get("projectId");
