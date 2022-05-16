@@ -5,7 +5,6 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmBudgetLabor;
-import com.xm.core.entity.XmProjectMBudgetCostUser;
 import com.xm.core.service.XmBudgetLaborService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
