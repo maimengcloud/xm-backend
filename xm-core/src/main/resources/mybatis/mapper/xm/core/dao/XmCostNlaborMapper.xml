@@ -13,7 +13,45 @@
          </if>
         <if test="key != null and key !='' ">       </if>
     </sql>
-
+	<!-- 查询非人力的支出及对应的项目的预算，非人力支出不能大于项目非人力总预算 -->
+	<select id="selectTotalProjectAndNouserActCost" parameterType="HashMap" resultType="HashMap">
+		SELECT
+		sum(  ifnull(res.act_at,0)   ) AS act_cost_nouser_amount,
+		p.plan_nouser_at,
+		p.plan_iuser_at,
+		p.plan_ouser_at,
+		p.locked,
+		p.plan_workload,
+		p.total_receivables,
+		p.budget_margin_rate,
+		p.contract_amt,
+		p.plan_iuser_price,
+		p.plan_ouser_price,
+		p.plan_ouser_cnt,
+		p.plan_iuser_cnt,
+		p.plan_working_hours
+		FROM
+		XM.xm_project p
+		LEFT JOIN xm_cost_nlabor res ON p.id = res.project_id
+		<where>
+			p.id = #{projectId}
+			<if test=" excludeIds !=null "> and res.id not in
+				<foreach collection="excludeIds" item="item" index="index" open="(" separator="," close=")" >
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</select>
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="listSum" parameterType="HashMap" resultType="HashMap">
+		select res.project_id,res.subject_id,res.subject_name,biz_month,sum(res.act_at) as act_at from  xm_cost_nlabor res
+		<where>
+			and res.project_id=#{projectId}
+			<if test="subjectId != null and subjectId !='' ">     and res.subject_id =#{subjectId} </if>
+			<if test="costType != null and costType !='' ">     and res.cost_type =#{costType} </if>
+		</where>
+		group by res.project_id ,res.subject_id,res.subject_name,res.biz_month
+	</select>
 
 	<!--结束 自定义sql函数区域-->
 	

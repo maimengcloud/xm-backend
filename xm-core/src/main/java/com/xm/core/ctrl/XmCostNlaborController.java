@@ -1,36 +1,26 @@
 package com.xm.core.ctrl;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.mdp.core.entity.Tips;
+import com.mdp.core.utils.RequestUtils;
+import com.mdp.mybatis.PageUtils;
+import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmCostNlabor;
+import com.xm.core.service.XmCostNlaborService;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
-import static com.mdp.core.utils.ResponseHelper.*;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-import com.mdp.mybatis.PageUtils;
-import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.NumberUtil;
-import com.mdp.safe.client.entity.User;
-import com.mdp.safe.client.utils.LoginUtils;
-import com.mdp.swagger.ApiEntityParams;
 import springfox.documentation.annotations.ApiIgnore;
 
-import com.xm.core.service.XmCostNlaborService;
-import com.xm.core.entity.XmCostNlabor;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.mdp.core.utils.BaseUtils.toMap;
 
 /**
  * url编制采用rest风格,如对xm_cost_nlabor 项目实际人工成本费用的操作有增删改查,对应的url分别为:<br>
