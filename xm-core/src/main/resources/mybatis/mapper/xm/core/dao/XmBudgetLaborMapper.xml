@@ -14,7 +14,48 @@
         <if test="key != null and key !='' ">       </if>
     </sql>
 
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="listSum" parameterType="HashMap" resultType="HashMap">
+		select res.project_id,res.userid,res.username,subject_id,subject_name,biz_month,sum(res.budget_cost) as budget_at from  xm_budget_labor res
+		<where>
+			and res.project_id=#{projectId}
+			<if test="subjectId != null and subjectId !='' ">     and res.subject_id =#{subjectId} </if>
+			<if test="costType != null and costType !='' ">     and res.cost_type =#{costType} </if>
+		</where>
+		group by res.project_id,res.userid,res.username,subject_id,subject_name,bizz_month
+	</select>
 
+	<!-- 查询人力的预算及对应的项目的预算，人力总预算不能大于项目人力总预算 -->
+	<select id="selectTotalProjectAndUserBudgetCost" parameterType="HashMap" resultType="HashMap">
+		SELECT
+		sum( case when res.cost_type='1' then ifnull(res.budget_at,0) else 0 end ) AS budget_iuser_at,
+		sum( case when res.cost_type='2' then ifnull(res.budget_at,0) else 0 end ) AS budget_ouser_at,
+		sum(  ifnull(res.budget_at,0)   ) AS budget_at,
+		p.plan_nouser_at,
+		p.plan_iuser_at,
+		p.plan_ouser_at,
+		p.locked,
+		p.plan_workload,
+		p.total_receivables,
+		p.budget_margin_rate,
+		p.contract_amt,
+		p.plan_iuser_price,
+		p.plan_ouser_price,
+		p.plan_ouser_cnt,
+		p.plan_iuser_cnt,
+		p.plan_working_hours
+		FROM
+		XM.xm_project p
+		LEFT JOIN xm_budget_labor res ON p.id = res.project_id
+		<where>
+			p.id = #{projectId}
+			<if test=" excludeIds !=null "> and res.id not in
+				<foreach collection="excludeIds" item="item" index="index" open="(" separator="," close=")" >
+					#{item}
+				</foreach>
+			</if>
+		</where>
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 
