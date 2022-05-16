@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xm.core.entity.XmBudgetLabor">
+	
+	
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
+
+
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from xm_budget_labor res
+		<where>
+		    <include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmBudgetLabor" resultType="com.xm.core.entity.XmBudgetLabor">
+		select * from xm_budget_labor res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.xm.core.entity.XmBudgetLabor" resultType="com.xm.core.entity.XmBudgetLabor">
+		select * from xm_budget_labor res
+		where 
+			res.id = #{id}
+	</select>
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmBudgetLabor">
+        select * from xm_budget_labor res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from xm_budget_labor res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.xm.core.entity.XmBudgetLabor" resultType="long">
+		select count(*) from xm_budget_labor res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.xm.core.entity.XmBudgetLabor" useGeneratedKeys="false"   keyProperty="id">
+		insert into xm_budget_labor(
+			<include refid="columns"/>
+		) values (
+		#{projectId},#{userid},#{budgetAt},#{id},#{remark},#{username},#{subjectId},#{bizSdate},#{bizEdate},#{bizMonth},#{instId},#{bizFlowState},#{costType},#{subjectName},#{branchId},#{ubranchId}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmBudgetLabor">
+		delete from xm_budget_labor res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmBudgetLabor">
+		delete from xm_budget_labor 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmBudgetLabor">
+		update  xm_budget_labor 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.xm.core.entity.XmBudgetLabor">
+		update  xm_budget_labor 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  xm_budget_labor 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_budget_labor
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from xm_budget_labor 
+			where
+			(id) in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    (  #{item.id} )
+                </foreach>
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		project_id,userid,budget_at,id,remark,username,subject_id,biz_sdate,biz_edate,biz_month,inst_id,biz_flow_state,cost_type,subject_name,branch_id,ubranch_id
+	</sql>
+
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
+		<if test="userid != null and userid != ''">      and res.userid = #{userid}     </if>
+		<if test="budgetAt != null and budgetAt != ''">      and res.budget_at = #{budgetAt}     </if>
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
+		<if test="username != null and username != ''">      and res.username = #{username}     </if>
+		<if test="subjectId != null and subjectId != ''">      and res.subject_id = #{subjectId}     </if>
+		<if test="bizSdate != null">      and date_format(res.biz_sdate,'%Y-%m-%d') = date_format(#{bizSdate},'%Y-%m-%d')     </if>
+		<if test="bizEdate != null">      and date_format(res.biz_edate,'%Y-%m-%d') = date_format(#{bizEdate},'%Y-%m-%d')     </if>
+		<if test="bizMonth != null and bizMonth != ''">      and res.biz_month = #{bizMonth}     </if>
+		<if test="instId != null and instId != ''">      and res.inst_id = #{instId}     </if>
+		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
+		<if test="costType != null and costType != ''">      and res.cost_type = #{costType}     </if>
+		<if test="subjectName != null and subjectName != ''">      and res.subject_name = #{subjectName}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="ubranchId != null and ubranchId != ''">      and res.ubranch_id = #{ubranchId}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		project_id = #{projectId},
+		userid = #{userid},
+		budget_at = #{budgetAt},
+		remark = #{remark},
+		username = #{username},
+		subject_id = #{subjectId},
+		biz_sdate = #{bizSdate},
+		biz_edate = #{bizEdate},
+		biz_month = #{bizMonth},
+		inst_id = #{instId},
+		biz_flow_state = #{bizFlowState},
+		cost_type = #{costType},
+		subject_name = #{subjectName},
+		branch_id = #{branchId},
+		ubranch_id = #{ubranchId}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
+		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
+		<if test="budgetAt != null and budgetAt != ''"> budget_at = #{budgetAt},     </if>
+		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
+		<if test="username != null and username != ''"> username = #{username},     </if>
+		<if test="subjectId != null and subjectId != ''"> subject_id = #{subjectId},     </if>
+		<if test="bizSdate != null"> biz_sdate = #{bizSdate},     </if>
+		<if test="bizEdate != null"> biz_edate = #{bizEdate},     </if>
+		<if test="bizMonth != null and bizMonth != ''"> biz_month = #{bizMonth},     </if>
+		<if test="instId != null and instId != ''"> inst_id = #{instId},     </if>
+		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
+		<if test="costType != null and costType != ''"> cost_type = #{costType},     </if>
+		<if test="subjectName != null and subjectName != ''"> subject_name = #{subjectName},     </if>
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="ubranchId != null and ubranchId != ''"> ubranch_id = #{ubranchId},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			project_id = #{item.projectId},
+			userid = #{item.userid},
+			budget_at = #{item.budgetAt},
+			remark = #{item.remark},
+			username = #{item.username},
+			subject_id = #{item.subjectId},
+			biz_sdate = #{item.bizSdate},
+			biz_edate = #{item.bizEdate},
+			biz_month = #{item.bizMonth},
+			inst_id = #{item.instId},
+			biz_flow_state = #{item.bizFlowState},
+			cost_type = #{item.costType},
+			subject_name = #{item.subjectName},
+			branch_id = #{item.branchId},
+			ubranch_id = #{item.ubranchId}
+	</sql>
+</mapper>

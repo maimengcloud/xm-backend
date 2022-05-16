@@ -58,7 +58,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.* from xm_project_m_cost_nouser res
+		select * from xm_project_m_cost_nouser res
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
@@ -94,7 +94,7 @@
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmProjectMCostNouser" resultType="long">
-		select count(1) from xm_project_m_cost_nouser res
+		select count(*) from xm_project_m_cost_nouser res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -104,7 +104,7 @@
 		insert into xm_project_m_cost_nouser(
 			<include refid="columns"/>
 		) values (
-		#{projectId},#{userid},#{createTime},#{sendCostTime},#{username},#{projectName},#{remark},#{id},#{taskId},#{taskName},#{subjectId},#{bizzStartDate},#{bizzEndDate},#{bizProcInstId},#{bizFlowState},#{phaseId},#{actCostAmount},#{costType},#{bizMonth},#{bizDate},#{subjectName},#{phaseName}
+		#{projectId},#{userid},#{createTime},#{sendCostTime},#{username},#{projectName},#{remark},#{id},#{taskId},#{taskName},#{subjectId},#{bizzStartDate},#{bizzEndDate},#{bizProcInstId},#{bizFlowState},#{projectPhaseId},#{actCostAmount},#{costType},#{bizMonth},#{bizDate},#{subjectName},#{projectPhaseName}
 		)
 	</insert>
 	
@@ -154,6 +154,18 @@
 			where id = #{item.id}  
 		</foreach> 
 	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_project_m_cost_nouser
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
 		delete from xm_project_m_cost_nouser 
@@ -167,7 +179,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		project_id,userid,create_time,send_cost_time,username,project_name,remark,id,task_id,task_name,subject_id,bizz_start_date,bizz_end_date,biz_proc_inst_id,biz_flow_state,phase_id,act_cost_amount,cost_type,biz_month,biz_date,subject_name,phase_name
+		project_id,userid,create_time,send_cost_time,username,project_name,remark,id,task_id,task_name,subject_id,bizz_start_date,bizz_end_date,biz_proc_inst_id,biz_flow_state,project_phase_id,act_cost_amount,cost_type,biz_month,biz_date,subject_name,project_phase_name
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -187,13 +199,13 @@
 		<if test="bizzEndDate != null">      and date_format(res.bizz_end_date,'%Y-%m-%d') = date_format(#{bizzEndDate},'%Y-%m-%d')     </if>
 		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
 		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
-		<if test="phaseId != null and phaseId != ''">      and res.phase_id = #{phaseId}     </if>
+		<if test="projectPhaseId != null and projectPhaseId != ''">      and res.project_phase_id = #{projectPhaseId}     </if>
 		<if test="actCostAmount != null and actCostAmount != ''">      and res.act_cost_amount = #{actCostAmount}     </if>
 		<if test="costType != null and costType != ''">      and res.cost_type = #{costType}     </if>
 		<if test="bizMonth != null and bizMonth != ''">      and res.biz_month = #{bizMonth}     </if>
 		<if test="bizDate != null and bizDate != ''">      and res.biz_date = #{bizDate}     </if>
 		<if test="subjectName != null and subjectName != ''">      and res.subject_name = #{subjectName}     </if>
-		<if test="phaseName != null and phaseName != ''">      and res.phase_name = #{phaseName}     </if>
+		<if test="projectPhaseName != null and projectPhaseName != ''">      and res.project_phase_name = #{projectPhaseName}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -211,13 +223,13 @@
 		bizz_end_date = #{bizzEndDate},
 		biz_proc_inst_id = #{bizProcInstId},
 		biz_flow_state = #{bizFlowState},
-		phase_id = #{phaseId},
+		project_phase_id = #{projectPhaseId},
 		act_cost_amount = #{actCostAmount},
 		cost_type = #{costType},
 		biz_month = #{bizMonth},
 		biz_date = #{bizDate},
 		subject_name = #{subjectName},
-		phase_name = #{phaseName}
+		project_phase_name = #{projectPhaseName}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
@@ -234,13 +246,13 @@
 		<if test="bizzEndDate != null"> bizz_end_date = #{bizzEndDate},     </if>
 		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
 		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
-		<if test="phaseId != null and phaseId != ''"> phase_id = #{phaseId},     </if>
+		<if test="projectPhaseId != null and projectPhaseId != ''"> project_phase_id = #{projectPhaseId},     </if>
 		<if test="actCostAmount != null and actCostAmount != ''"> act_cost_amount = #{actCostAmount},     </if>
 		<if test="costType != null and costType != ''"> cost_type = #{costType},     </if>
 		<if test="bizMonth != null and bizMonth != ''"> biz_month = #{bizMonth},     </if>
 		<if test="bizDate != null and bizDate != ''"> biz_date = #{bizDate},     </if>
 		<if test="subjectName != null and subjectName != ''"> subject_name = #{subjectName},     </if>
-		<if test="phaseName != null and phaseName != ''"> phase_name = #{phaseName},     </if>
+		<if test="projectPhaseName != null and projectPhaseName != ''"> project_phase_name = #{projectPhaseName},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -258,12 +270,12 @@
 			bizz_end_date = #{item.bizzEndDate},
 			biz_proc_inst_id = #{item.bizProcInstId},
 			biz_flow_state = #{item.bizFlowState},
-			phase_id = #{item.phaseId},
+			project_phase_id = #{item.projectPhaseId},
 			act_cost_amount = #{item.actCostAmount},
 			cost_type = #{item.costType},
 			biz_month = #{item.bizMonth},
 			biz_date = #{item.bizDate},
 			subject_name = #{item.subjectName},
-			phase_name = #{item.phaseName}
+			project_phase_name = #{item.projectPhaseName}
 	</sql>
 </mapper>
