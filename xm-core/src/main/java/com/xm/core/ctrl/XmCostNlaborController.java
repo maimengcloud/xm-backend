@@ -5,6 +5,7 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmCostNlabor;
+import com.xm.core.entity.XmProjectMCostNouser;
 import com.xm.core.service.XmCostNlaborService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -66,8 +67,23 @@ public class XmCostNlaborController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
+
+
+	@ApiResponses({
+			@ApiResponse(code = 200,response= XmCostNlabor.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/listSum",method=RequestMethod.GET)
+	public Map<String,Object> listSum( @ApiIgnore @RequestParam Map<String,Object> xmCostNlabor){
+		Map<String,Object> m = new HashMap<>();
+		RequestUtils.transformArray(xmCostNlabor, "ids");
+		PageUtils.startPage(xmCostNlabor);
+		List<Map<String,Object>>	data = xmCostNlaborService.listSum(xmCostNlabor);	//列出xmProjectMCostNouser列表
+		PageUtils.responePage(m, data);
+		m.put("data",data);
+		Tips tips=new Tips("查询成功");
+		m.put("tips", tips);
+		return m;
+	}
 	
 	/**
 	@ApiOperation( value = "新增一条项目实际人工成本费用信息",notes=" ")
