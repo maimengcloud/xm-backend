@@ -16,13 +16,13 @@
 
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="listSum" parameterType="HashMap" resultType="HashMap">
-		select res.project_id,res.userid,res.username,subject_id,subject_name,biz_month,sum(res.budget_cost) as budget_at from  xm_budget_labor res
+		select res.project_id,res.userid,res.username,subject_id,subject_name,biz_month,sum(res.budget_at) as budget_at from  xm_budget_labor res
 		<where>
 			and res.project_id=#{projectId}
 			<if test="subjectId != null and subjectId !='' ">     and res.subject_id =#{subjectId} </if>
 			<if test="costType != null and costType !='' ">     and res.cost_type =#{costType} </if>
 		</where>
-		group by res.project_id,res.userid,res.username,subject_id,subject_name,bizz_month
+		group by res.project_id,res.userid,res.username,subject_id,subject_name,biz_month
 	</select>
 
 	<!-- 查询人力的预算及对应的项目的预算，人力总预算不能大于项目人力总预算 -->
