@@ -1,8 +1,11 @@
 package com.xm.core.ctrl;
 
 import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmCostNlabor;
 import com.xm.core.service.XmCostNlaborService;
@@ -10,17 +13,16 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
+import static com.mdp.core.utils.BaseUtils.fromMap;
 import static com.mdp.core.utils.BaseUtils.toMap;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_cost_nlabor 项目实际人工成本费用的操作有增删改查,对应的url分别为:<br>
@@ -84,7 +86,7 @@ public class XmCostNlaborController {
 		return m;
 	}
 	
-	/**
+
 	@ApiOperation( value = "新增一条项目实际人工成本费用信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmCostNlabor.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -106,7 +108,7 @@ public class XmCostNlaborController {
             }
 			xmCostNlaborService.insert(xmCostNlabor);
 			m.put("data",xmCostNlabor);
-		}catch (BizException e) { 
+		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
@@ -116,9 +118,7 @@ public class XmCostNlaborController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
-	
-	/**
+
 	@ApiOperation( value = "删除一条项目实际人工成本费用信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -146,9 +146,7 @@ public class XmCostNlaborController {
 		m.put("tips", tips);
 		return m;
 	}
-	 */
-	
-	/**
+
 	@ApiOperation( value = "根据主键修改一条项目实际人工成本费用信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmCostNlabor.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -177,9 +175,7 @@ public class XmCostNlaborController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 
-	/**
     @ApiOperation( value = "批量修改某些字段",notes="")
     @ApiEntityParams( value = XmCostNlabor.class, props={ }, remark = "项目实际人工成本费用", paramType = "body" )
 	@ApiResponses({
@@ -251,9 +247,7 @@ public class XmCostNlaborController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 
-	/**
 	@ApiOperation( value = "根据主键列表批量删除项目实际人工成本费用信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -301,5 +295,5 @@ public class XmCostNlaborController {
         m.put("tips", tips);
         return m;
 	} 
-	*/
+
 }

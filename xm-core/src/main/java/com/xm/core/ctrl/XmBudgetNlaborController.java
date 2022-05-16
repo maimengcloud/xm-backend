@@ -1,8 +1,12 @@
 package com.xm.core.ctrl;
 
 import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
+import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmBudgetNlabor;
 import com.xm.core.service.XmBudgetNlaborService;
@@ -10,17 +14,15 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.toMap;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_budget_nlabor 项目人力成本预算的操作有增删改查,对应的url分别为:<br>
@@ -83,7 +85,7 @@ public class XmBudgetNlaborController {
 		return m;
 	}
 	
-	/**
+
 	@ApiOperation( value = "新增一条项目人力成本预算信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmBudgetNlabor.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -105,7 +107,7 @@ public class XmBudgetNlaborController {
             }
 			xmBudgetNlaborService.insert(xmBudgetNlabor);
 			m.put("data",xmBudgetNlabor);
-		}catch (BizException e) { 
+		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
@@ -115,9 +117,7 @@ public class XmBudgetNlaborController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
-	
-	/**
+
 	@ApiOperation( value = "删除一条项目人力成本预算信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -145,9 +145,7 @@ public class XmBudgetNlaborController {
 		m.put("tips", tips);
 		return m;
 	}
-	 */
-	
-	/**
+
 	@ApiOperation( value = "根据主键修改一条项目人力成本预算信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmBudgetNlabor.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -176,9 +174,7 @@ public class XmBudgetNlaborController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 
-	/**
     @ApiOperation( value = "批量修改某些字段",notes="")
     @ApiEntityParams( value = XmBudgetNlabor.class, props={ }, remark = "项目人力成本预算", paramType = "body" )
 	@ApiResponses({
@@ -207,7 +203,7 @@ public class XmBudgetNlaborController {
 			if(fieldKey.size()<=0) {
 				return failed("fieldKey-0","没有需要更新的字段");
  			}
-			XmBudgetNlabor xmBudgetNlabor = fromMap(xmBudgetNlaborMap,XmBudgetNlabor.class);
+			XmBudgetNlabor xmBudgetNlabor = BaseUtils.fromMap(xmBudgetNlaborMap,XmBudgetNlabor.class);
 			List<XmBudgetNlabor> xmBudgetNlaborsDb=xmBudgetNlaborService.selectListByIds(ids);
 			if(xmBudgetNlaborsDb==null ||xmBudgetNlaborsDb.size()==0){
 				return failed("data-0","记录已不存在");
@@ -250,9 +246,55 @@ public class XmBudgetNlaborController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 
-	/**
+	@ApiOperation( value = "批量新增非人力预算",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
+	public Map<String,Object> batchAddXmBudgetNlabor(@RequestBody List<XmBudgetNlabor> xmBudgetNlabors) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功删除");
+		try{
+			if(xmBudgetNlabors.size()<=0){
+				return failed("data-0","请上送待新增数据列表");
+			}
+			List<XmBudgetNlabor> datasDb=xmBudgetNlabors;
+			List<XmBudgetNlabor> can=new ArrayList<>();
+			List<XmBudgetNlabor> no=new ArrayList<>();
+			for (XmBudgetNlabor data : datasDb) {
+				if(true){
+					data.setId(this.xmBudgetNlaborService.createKey("id"));
+					can.add(data);
+				}else{
+					no.add(data);
+				}
+			}
+			List<String> msgs=new ArrayList<>();
+			if(can.size()>0){
+				xmBudgetNlaborService.batchInsert(can);
+				msgs.add(String.format("成功新增%s条数据.",can.size()));
+			}
+
+			if(no.size()>0){
+				msgs.add(String.format("以下%s条数据不能新增.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
+			}
+			if(can.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+			}else {
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+			}
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
+
 	@ApiOperation( value = "根据主键列表批量删除项目人力成本预算信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -300,5 +342,5 @@ public class XmBudgetNlaborController {
         m.put("tips", tips);
         return m;
 	} 
-	*/
+
 }
