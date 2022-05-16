@@ -33,10 +33,7 @@ public class XmTaskExecuserService extends BaseService {
 	
 	@Autowired
     XmGroupService groupService;
-	
-	
-	@Autowired
-	XmProjectMCostUserService xmProjectMCostUserService;
+
 	
 	@Autowired
     XmPushMsgService pushMsgService ;
