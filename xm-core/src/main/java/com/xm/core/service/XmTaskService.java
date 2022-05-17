@@ -749,5 +749,10 @@ public class XmTaskService extends BaseService {
 	public List<Map<String, Object>> getXmTaskSort(Map<String, Object> xmTask) {
 		return super.selectList("getXmTaskSort",xmTask);
 	}
+
+	@Override
+	public String createKey(String keyName) {
+		return "T"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
+	}
 }
 

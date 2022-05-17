@@ -430,6 +430,9 @@ public class XmRecordService extends BaseService {
 		record.setGloNo(MDC.get("gloNo"));
 		this.insert(record);
 	}
-
+	@Override
+	public String createKey(String keyName) {
+		return "R"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
+	}
 }
 

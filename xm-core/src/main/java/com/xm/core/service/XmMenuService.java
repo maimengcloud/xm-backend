@@ -403,5 +403,10 @@ public class XmMenuService extends BaseService {
     public List<Map<String, Object>> getXmMenuSort(Map<String, Object> xmMenu) {
 		return super.selectList("getXmMenuSort",xmMenu);
     }
+
+	@Override
+	public String createKey(String keyName) {
+		return "M"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
+ 	}
 }
 

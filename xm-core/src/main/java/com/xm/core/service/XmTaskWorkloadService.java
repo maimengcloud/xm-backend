@@ -66,5 +66,10 @@ public class XmTaskWorkloadService extends BaseService {
 	public void updateStatusAfterDetailDel(List<String> detailIds) {
 		super.update("updateStatusAfterDetailDel",detailIds);
 	}
+
+	@Override
+	public String createKey(String keyName) {
+		return "TW"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
+	}
 }
 

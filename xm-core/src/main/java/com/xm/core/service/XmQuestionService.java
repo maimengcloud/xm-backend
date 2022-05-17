@@ -204,5 +204,10 @@ public class XmQuestionService extends BaseService {
 	public List<Map<String, Object>> getXmQuestionSort(Map<String, Object> xmQuestion) {
 		return super.selectList("getXmQuestionSort",xmQuestion);
 	}
+
+	@Override
+	public String createKey(String keyName) {
+		return "Q"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
+	}
 }
 
