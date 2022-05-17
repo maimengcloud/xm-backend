@@ -379,10 +379,18 @@ public class XmTaskController {
 			if(!tips.isOk()){
 				 return ResponseHelper.failed(tips);
 			}
-			xmTaskVo.setCreateUserid(user.getUserid());
-			xmTaskVo.setCreateUsername(user.getUsername());
-			xmTaskVo.setExecutorUserid(user.getUserid());
-			xmTaskVo.setExecutorUsername(user.getUsername());
+			if(!StringUtils.hasText(xmTaskVo.getCreateUserid())){
+				xmTaskVo.setCreateUserid(user.getUserid());
+				xmTaskVo.setCreateUsername(user.getUsername());
+			}
+			xmTaskVo.setExecutorUserid(null);
+			xmTaskVo.setExecutorUsername(null);
+			xmTaskVo.setExeUserids(null);
+			xmTaskVo.setExeUsernames(null);
+			xmTaskVo.setTagIds(null);
+			xmTaskVo.setTaskSkillIds(null);
+			xmTaskVo.setTaskSkillNames(null);
+			xmTaskVo.setTagNames(null);
 			xmTaskVo.setCreateTime(new Date());
 			xmTaskVo.setCbranchId(user.getBranchId());
 			xmTaskVo.setCdeptid(user.getDeptid());
