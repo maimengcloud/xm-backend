@@ -58,8 +58,6 @@ public class XmProjectService extends BaseService {
     
     @Autowired
     XmProjectCacheService xmProjectCacheService;
-	@Autowired
-	XmPhaseService xmProjectPhaseService;
 
 	@Autowired
     XmGroupService groupService;

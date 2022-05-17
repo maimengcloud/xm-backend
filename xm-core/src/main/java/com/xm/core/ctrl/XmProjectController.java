@@ -58,9 +58,6 @@ public class XmProjectController {
 	@Autowired
 	private XmRecordService xmRecordService;
 
-	@Autowired
-	private XmPhaseService xmProjectPhaseService;
-
 	@Value("${mdp.platform-branch-id:platform-branch-001}")
 	String platformBranchId="platform-branch-001";
 

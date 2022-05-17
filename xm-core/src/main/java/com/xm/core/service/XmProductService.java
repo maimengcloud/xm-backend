@@ -44,10 +44,6 @@ public class XmProductService extends BaseService {
 	@Autowired
 	XmGroupUserService groupUserService;
 
-
-	@Autowired
-    XmPhaseService xmProjectPhaseService;
-
 	@Autowired
 	XmProductProjectLinkService linkService;
 

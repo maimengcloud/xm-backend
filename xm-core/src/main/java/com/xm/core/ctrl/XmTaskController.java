@@ -71,8 +71,6 @@ public class XmTaskController {
 	private XmPushMsgService xmPushMsgService;
 	@Autowired
 	private XmProjectService xmProjectService;
-	@Autowired
-	XmPhaseService xmPhaseService;
 
 	@Autowired
 	XmMenuService xmMenusService;
@@ -1085,7 +1083,6 @@ public class XmTaskController {
 				return ResponseHelper.failed("data-0","计划任务已不存在");
 			}
 			String projectId=xmTaskDb.getProjectId();
-			String productId=xmTaskDb.getProductId();
 			tips=groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskDb.getProjectId());
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);

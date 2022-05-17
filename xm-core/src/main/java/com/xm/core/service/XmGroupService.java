@@ -374,11 +374,11 @@ public class XmGroupService extends BaseService {
     /**
      * 检查某个人是否另外一个人的组长
      * @param xmGroupVoList
+	 * @param headUserid
      * @param memUserid
-     * @param headUserid
      * @return
      */
-    public boolean checkUserIsOtherUserTeamHead(List<XmGroupVo> xmGroupVoList, String memUserid, String headUserid){
+    public boolean checkUserIsOtherUserTeamHead(List<XmGroupVo> xmGroupVoList, String headUserid, String memUserid){
     	if(xmGroupVoList==null || xmGroupVoList.size()==0) {
     		return false;
     	}
@@ -390,6 +390,17 @@ public class XmGroupService extends BaseService {
     	for (XmGroupVo ug : userGroups) {
     		if(headUserid.equals(ug.getLeaderUserid())){
     			return true;
+			}else{
+				Optional<XmGroupVo> optional=xmGroupVoList.stream().filter(i->i.getId().equals(ug.getPgroupId())).findAny();
+				while (optional!=null  && !optional.isPresent()){
+					XmGroupVo g=optional.get();
+					if(headUserid.equals(g.getLeaderUserid())){
+						return true;
+					}else{
+						optional=xmGroupVoList.stream().filter(i->i.getId().equals(g.getPgroupId())).findAny();
+					}
+
+				}
 			}
     	}
     	return false;
@@ -414,6 +425,17 @@ public class XmGroupService extends BaseService {
 		for (XmGroupVo ug : userGroups) {
 			if(headUserid.equals(ug.getLeaderUserid())||headUserid.equals(ug.getAssUserid())){
 				return true;
+			}else{
+				Optional<XmGroupVo> optional=xmGroupVoList.stream().filter(i->i.getId().equals(ug.getPgroupId())).findAny();
+				while (optional!=null  && !optional.isPresent()){
+					XmGroupVo g=optional.get();
+					if(headUserid.equals(g.getLeaderUserid())||headUserid.equals(g.getAssUserid())){
+						return true;
+					}else{
+						optional=xmGroupVoList.stream().filter(i->i.getId().equals(g.getPgroupId())).findAny();
+					}
+
+				}
 			}
 		}
 		return false;
