@@ -186,8 +186,11 @@ public class XmTaskService extends BaseService {
 		Tips tips = new Tips();
 
 		User user = LoginUtils.getCurrentUserInfo();
-		xmTaskVo.setCreateUserid(user.getUserid());
-		xmTaskVo.setCreateUsername(user.getUsername());
+		if(!StringUtils.hasText(xmTaskVo.getCreateUserid())){
+			xmTaskVo.setCreateUserid(user.getUserid());
+			xmTaskVo.setCreateUsername(user.getUsername());
+		}
+
 		xmTaskVo.setCreateTime(new Date());
 		xmTaskVo.setRate(0);
 		xmTaskVo.setSortLevel(xmTaskVo.getSortLevel());
@@ -205,9 +208,9 @@ public class XmTaskService extends BaseService {
 		
 //		新增任务技能
 //		xmTaskSkillService.addSkill(xmTaskVo.getSkill());
-		xmTaskExecuserService.updateXmTaskExeUseridsAndUsernamesByTaskId(xmTaskVo.getId());
+		//xmTaskExecuserService.updateXmTaskExeUseridsAndUsernamesByTaskId(xmTaskVo.getId());
 		
-		xmTaskSkillService.updateXmTaskSkillIdsAndNamesByTaskId(xmTaskVo.getId());
+		//xmTaskSkillService.updateXmTaskSkillIdsAndNamesByTaskId(xmTaskVo.getId());
 		
 		//新增日志
 		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-新增任务", "新增任务"+xmTask.getName()); 
