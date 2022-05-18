@@ -392,7 +392,7 @@ public class XmGroupService extends BaseService {
     			return true;
 			}else{
 				Optional<XmGroupVo> optional=xmGroupVoList.stream().filter(i->i.getId().equals(ug.getPgroupId())).findAny();
-				while (optional!=null  && !optional.isPresent()){
+				while (optional!=null  && optional.isPresent()){
 					XmGroupVo g=optional.get();
 					if(headUserid.equals(g.getLeaderUserid())){
 						return true;
@@ -427,7 +427,7 @@ public class XmGroupService extends BaseService {
 				return true;
 			}else{
 				Optional<XmGroupVo> optional=xmGroupVoList.stream().filter(i->i.getId().equals(ug.getPgroupId())).findAny();
-				while (optional!=null  && !optional.isPresent()){
+				while (optional!=null  && optional.isPresent()){
 					XmGroupVo g=optional.get();
 					if(headUserid.equals(g.getLeaderUserid())||headUserid.equals(g.getAssUserid())){
 						return true;

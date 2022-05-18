@@ -392,6 +392,7 @@ public class XmTaskController {
 			xmTaskVo.setCreateTime(new Date());
 			xmTaskVo.setCbranchId(user.getBranchId());
 			xmTaskVo.setCdeptid(user.getDeptid());
+			xmTaskVo.setTaskState("0");
 
 
 			xmTaskVo.setRate(0);
