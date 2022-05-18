@@ -256,8 +256,8 @@ public class XmTaskController {
 			if(fieldKey.size()<=0) {
 				return ResponseHelper.failed("fieldKey-0","没有需要更新的字段");
  			}
-			if(fieldKey.contains("budgetAt") && ids.size()>0){
-				return ResponseHelper.failed("ids-to-more","修改预算只能一次修改一条数据");
+			if(fieldKey.contains("budgetAt") && ids.size()>1){
+				return ResponseHelper.failed("ids-to0-more","修改预算只能一次修改一条数据");
 			}
 			XmTask xmTask= BaseUtils.fromMap(xmTaskMap,XmTask.class);
 			List<XmTask> xmTasksDb=xmTaskService.selectListByIds(ids);
