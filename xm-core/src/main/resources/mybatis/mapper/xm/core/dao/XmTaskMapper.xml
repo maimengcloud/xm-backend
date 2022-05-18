@@ -188,9 +188,7 @@
 			 group by t.parent_taskid
 			) t2 ON t2.parent_taskid = res.id
 			SET
-
 			res.budget_workload=ifnull(t2.budget_workload,0),
-			res.budget_at=ifnull(t2.budget_at,0),
 			res.act_at = t2.act_at,
 			res.act_workload = t2.act_workload,
 		    res.rate = case when (ifnull(t2.budget_workload,0) >0) then ifnull(t2.act_workload,0)*100/(ifnull(t2.budget_workload,0) )
@@ -235,7 +233,6 @@
 		) t2 ON t2.parent_taskid = res.id
 		SET
 			res.budget_workload=ifnull(t2.budget_workload,0),
-			res.budget_at=ifnull(t2.budget_at,0),
 		res.act_at = t2.act_at,
 		res.act_workload = t2.act_workload,
 			res.rate = case when ( ifnull(t2.budget_workload,0)>0) then ifnull(t2.act_workload,0)*100/( ifnull(t2.budget_workload,0))
