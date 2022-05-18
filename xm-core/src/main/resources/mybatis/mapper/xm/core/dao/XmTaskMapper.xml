@@ -142,7 +142,7 @@
 		sum( ifnull(res.budget_at,0) ) AS child_budget_at,
 		sum( ifnull(res.budget_workload,0) ) AS child_budget_workload
 		from
-		xm_task res where res.parent_taskid=#{parentTaskid} and res.lvl=1
+		xm_task res where res.parent_taskid=#{parentTaskid}
 		<if test=" excludeTaskIds !=null "> and res.id not in
 			<foreach collection="excludeTaskIds" item="item" index="index" open="(" separator="," close=")" >
 				#{item}
@@ -151,37 +151,6 @@
 		) as tc ON p.id = tc.parent_taskid
 		WHERE
 		p.id = #{parentTaskid}
-
-	</select>
-	<!-- 查询任务总的预算及对应的计划的预算，任务总预算不能大于计划总预算 -->
-	<select id="selectTotalPhaseAndTaskBudgetCost" parameterType="HashMap" resultType="HashMap">
-		SELECT
-		p.budget_nouser_at,
-		p.budget_iuser_at,
-		p.budget_ouser_at,
-		p.budget_at,
-		p.budget_workload,
-		p.budget_hours,
-		p.budget_staff_nu,
-		tc.*
-		FROM xm_phase p	LEFT JOIN
-			(select
-		res.phase_id,
-		sum( ifnull(res.budget_at,0) ) AS budget_at,
-		sum( case when res.task_out='1' then ifnull(res.budget_at,0) else 0 end ) AS task_budget_ouser_at,
-		sum( case when res.task_out='1' then 0 else ifnull(res.budget_at,0)  end ) AS task_budget_iuser_at,
-		sum(0) AS task_budget_nouser_at,
-		sum( res.budget_workload ) AS budget_workload
-		from
-		xm_task res where res.phase_id=#{phaseId} and res.lvl=1
-			<if test=" excludeTaskIds !=null "> and res.id not in
-				<foreach collection="excludeTaskIds" item="item" index="index" open="(" separator="," close=")" >
-					#{item}
-				</foreach>
-			</if>
-		) as tc ON p.id = tc.phase_id
-		WHERE
-		p.id = #{phaseId}
 
 	</select>
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->

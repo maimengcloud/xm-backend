@@ -157,11 +157,11 @@ public class XmTaskService extends BaseService {
 			return tips;
 		}
 
-		BigDecimal budgetCost=NumberUtil.getBigDecimal(g.get("budgetCost"),BigDecimal.ZERO);
-		BigDecimal childBudgetCost=NumberUtil.getBigDecimal(g.get("childBudgetCost"),BigDecimal.ZERO);
-		childBudgetCost=childBudgetCost.add(addTaskBudgetCost);
-		if(budgetCost.compareTo(childBudgetCost)<0) {
-			tips.setFailureMsg("任务合计总预算超出上级总预算"+childBudgetCost.subtract(budgetCost)+"元");
+		BigDecimal budgetAt=NumberUtil.getBigDecimal(g.get("budgetAt"),BigDecimal.ZERO);
+		BigDecimal childBudgetAt=NumberUtil.getBigDecimal(g.get("childBudgetAt"),BigDecimal.ZERO);
+		childBudgetAt=childBudgetAt.add(addTaskBudgetCost);
+		if(budgetAt.compareTo(childBudgetAt)<0) {
+			tips.setFailureMsg("任务合计总预算超出上级总预算"+childBudgetAt.subtract(budgetAt)+"元");
 			return tips;
 		}else {
 			return tips;

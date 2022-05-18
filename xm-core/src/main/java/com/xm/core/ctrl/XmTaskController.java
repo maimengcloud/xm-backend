@@ -256,6 +256,9 @@ public class XmTaskController {
 			if(fieldKey.size()<=0) {
 				return ResponseHelper.failed("fieldKey-0","没有需要更新的字段");
  			}
+			if(fieldKey.contains("budgetAt") && ids.size()>0){
+				return ResponseHelper.failed("ids-to-more","修改预算只能一次修改一条数据");
+			}
 			XmTask xmTask= BaseUtils.fromMap(xmTaskMap,XmTask.class);
 			List<XmTask> xmTasksDb=xmTaskService.selectListByIds(ids);
 			if(xmTasksDb==null ||xmTasksDb.size()==0){
@@ -271,6 +274,7 @@ public class XmTaskController {
 				}
 
 			}
+
 			List<XmTask> can=new ArrayList<>();
 			List<XmTask> no=new ArrayList<>();
 
@@ -288,6 +292,23 @@ public class XmTaskController {
 					can.add(xmTaskDb);
 				}
 			}
+
+			if(can.size()>0 && fieldKey.contains("budgetAt")){
+
+				XmTask taskDb=can.get(0);
+				XmProject xmProject=xmProjectService.getProjectFromCache(taskDb.getProjectId());
+				BigDecimal budgetAt=NumberUtil.getBigDecimal(xmTaskMap.get("budgetAt"),BigDecimal.ZERO);
+				if("1".equals(xmProject.getBudgetCtrl())){
+					if(taskDb.getLvl()<=1){
+						tips=this.xmTaskService.judgetProjectBudget(taskDb.getProjectId(),budgetAt,Arrays.asList(taskDb.getId()));
+					}else {
+						tips=this.xmTaskService.judgetTaskBudget(taskDb.getParentTaskid(),budgetAt,null,null,null,Arrays.asList(taskDb.getId()));
+					}
+					if(!tips.isOk()){
+						return ResponseHelper.failed(tips);
+					}
+				}
+			}
 			if(can.size()>0){
 				xmTaskMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
 
@@ -296,7 +317,7 @@ public class XmTaskController {
 							this.xmTaskService.batchUpdateBudgetWorkloadAndRate(xmTasksDb.stream().map(i->i.getId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()),NumberUtil.getBigDecimal(xmTaskMap.get("budgetWorkload")));
 							pushService.pushXmTasks(xmTasksDb);
 						}
-					}else{
+					}else {
 						xmTaskService.editSomeFields(xmTaskMap);
 					}
 				for (XmTask task : can) {
@@ -371,6 +392,9 @@ public class XmTaskController {
 				m.put("tips", tips);
 				return m;
 			}
+			if(!StringUtils.hasText(xmTaskVo.getProjectId())){
+				return ResponseHelper.failed("projectId-0","项目编号不能为空");
+			}
 			User user=LoginUtils.getCurrentUserInfo();
 			tips=groupService.checkIsAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskVo.getProjectId());
 			if(!tips.isOk()){
@@ -411,13 +435,17 @@ public class XmTaskController {
 				}
 			}
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTaskVo);
-			if(xmTaskVo.getBudgetAt()!=null  && xmTaskVo.getBudgetAt().compareTo(BigDecimal.ZERO)>0){
-				if("0".equals(xmTaskVo.getPtype()) && xmTaskVo.getLvl()<=1){
-					xmTaskService.judgetProjectBudget(xmTaskVo.getProjectId(),xmTaskVo.getBudgetAt(),null);
- 				}else{
-					tips=xmTaskService.judgetTaskBudget(xmTaskVo.getParentTaskid(), xmTaskVo.getBudgetAt(),null,null,null,null);
+			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskVo.getProjectId());
+			if("1".equals(xmProject.getBudgetCtrl())){
+				if(xmTaskVo.getBudgetAt()!=null  && xmTaskVo.getBudgetAt().compareTo(BigDecimal.ZERO)>0){
+					if(xmTaskVo.getLvl()<=1){
+						tips=xmTaskService.judgetProjectBudget(xmTaskVo.getProjectId(),xmTaskVo.getBudgetAt(),null);
+					}else{
+						tips=xmTaskService.judgetTaskBudget(xmTaskVo.getParentTaskid(), xmTaskVo.getBudgetAt(),null,null,null,null);
+					}
 				}
 			}
+
 			if(tips.isOk()) {
 				xmTaskVo = xmTaskService.addTask(xmTaskVo);
 			}
@@ -604,8 +632,9 @@ public class XmTaskController {
 			if(xmTaskDb.getBudgetAt()==null)xmTaskDb.setBudgetAt(BigDecimal.ZERO);
 			List<String> excludeIds=new ArrayList<>();
 			excludeIds.add(xmTaskDb.getId());
-			if( xmTaskDb.getBudgetAt().compareTo(xmTaskVo.getBudgetAt())!=0){
-				if("0".equals(xmTaskDb.getPtype()) && xmTaskVo.getLvl()<=1){
+			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
+			if( "1".equals(xmProject.getBudgetCtrl()) && xmTaskDb.getBudgetAt().compareTo(xmTaskVo.getBudgetAt())!=0){
+				if(xmTaskVo.getLvl()<=1){
 					tips=xmTaskService.judgetProjectBudget(xmTaskDb.getProjectId(), xmTaskVo.getBudgetAt(),excludeIds);
 				}else if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
 					tips=xmTaskService.judgetTaskBudget(xmTaskDb.getParentTaskid(), xmTaskVo.getBudgetAt(),null,null,null,excludeIds);
@@ -780,38 +809,42 @@ public class XmTaskController {
 			}
 			xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
 			List<XmTask> tasksLvl1=xmTasks.stream().filter(i->i.getLvl()<=1).collect(Collectors.toList());
-			if(tasksLvl1.size()>0){
-				BigDecimal totalTaskBudgetAt=BigDecimal.ZERO;
-				for (XmTask task : tasksLvl1) {
-					totalTaskBudgetAt=totalTaskBudgetAt.add(task.getBudgetAt());
-				}
-				if("0".equals(batchImportVo.getPtype())&&totalTaskBudgetAt.compareTo(BigDecimal.ZERO)>0){
-					tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetAt,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
-					if(!tips.isOk()){
-						tips.setFailureMsg(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
-						return ResponseHelper.failed(tips);
+			XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
+			if("1".equals(xmProject.getBudgetCtrl())){
+				if(tasksLvl1.size()>0){
+					BigDecimal totalTaskBudgetAt=BigDecimal.ZERO;
+					for (XmTask task : tasksLvl1) {
+						totalTaskBudgetAt=totalTaskBudgetAt.add(task.getBudgetAt());
 					}
-				}
-			}else{
-				List<XmTask> tasks=xmTasks.stream().filter(i->!xmTasks.stream().filter(k->k.getId().equals(i.getParentTaskid())).findAny().isPresent()).collect(Collectors.toList());
-				tasks=tasks.stream().filter(i->StringUtils.hasText(i.getParentTaskid())).collect(Collectors.toList());
-				if(tasks.size()>0){
-					Set<String> parentTaskIdSet=tasks.stream().map(i->i.getParentTaskid()).collect(Collectors.toSet());
-					for (String pid : parentTaskIdSet) {
-						BigDecimal childBudgetAt=BigDecimal.ZERO;
-						List<XmTask> childs=xmTasks.stream().filter(i->pid.equals(i.getParentTaskid())).collect(Collectors.toList());
-						for (XmTask child : childs) {
-							childBudgetAt=childBudgetAt.add(child.getBudgetAt());
+					if("0".equals(batchImportVo.getPtype())&&totalTaskBudgetAt.compareTo(BigDecimal.ZERO)>0){
+						tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetAt,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
+						if(!tips.isOk()){
+							tips.setFailureMsg(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+							return ResponseHelper.failed(tips);
 						}
-						if(childBudgetAt.compareTo(BigDecimal.ZERO)>0){
-							tips= xmTaskService.judgetTaskBudget(pid,childBudgetAt,null,null,null,childs.stream().map(i->i.getId()).collect(Collectors.toList()));
-							if(!tips.isOk()){
-								return ResponseHelper.failed("budget-not-enought",tips.getMsg()+" 相关任务【"+childs.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+					}
+				}else{
+					List<XmTask> tasks=xmTasks.stream().filter(i->!xmTasks.stream().filter(k->k.getId().equals(i.getParentTaskid())).findAny().isPresent()).collect(Collectors.toList());
+					tasks=tasks.stream().filter(i->StringUtils.hasText(i.getParentTaskid())).collect(Collectors.toList());
+					if(tasks.size()>0){
+						Set<String> parentTaskIdSet=tasks.stream().map(i->i.getParentTaskid()).collect(Collectors.toSet());
+						for (String pid : parentTaskIdSet) {
+							BigDecimal childBudgetAt=BigDecimal.ZERO;
+							List<XmTask> childs=xmTasks.stream().filter(i->pid.equals(i.getParentTaskid())).collect(Collectors.toList());
+							for (XmTask child : childs) {
+								childBudgetAt=childBudgetAt.add(child.getBudgetAt());
+							}
+							if(childBudgetAt.compareTo(BigDecimal.ZERO)>0){
+								tips= xmTaskService.judgetTaskBudget(pid,childBudgetAt,null,null,null,childs.stream().map(i->i.getId()).collect(Collectors.toList()));
+								if(!tips.isOk()){
+									return ResponseHelper.failed("budget-not-enought",tips.getMsg()+" 相关任务【"+childs.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+								}
 							}
 						}
 					}
 				}
 			}
+
 			if(tips.isOk()) {
 				for (XmTask task : xmTasks) {
 					task.setChildrenCnt( Integer.valueOf(xmTasks.stream().filter(i->task.getId().equals(i.getParentTaskid())).count()+""));
