@@ -133,16 +133,15 @@ public class XmTaskController {
 				String id= (String) map.get("id");
 				idSet.add(id);
 				String pidPaths= (String) map.get("pidPaths");
-				pidPaths=PubTool.getPidPaths(pidPaths,id);
 				if(pidPaths==null || pidPaths.length()<=2){
 					continue;
 				}
-				pidPathsSet.add(pidPaths);
+				pidPathsSet.addAll(PubTool.getPidSet(pidPaths,id));
 			}
-			if(pidPathsSet!=null && pidPathsSet.size()>0){
-				List<Map<String,Object>> parentList=xmTaskService.getTask(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
-				parentList=parentList.stream().filter(i->!idSet.contains(i.get("id"))).collect(Collectors.toList());
-				if(parentList!=null && parentList.size()>0){
+			List<String> ids=pidPathsSet.stream().filter(i->!idSet.contains(i)).collect(Collectors.toList());
+			if(ids!=null && ids.size()>0){
+				List<Map<String,Object>> parentList=xmTaskService.getTask(map("ids",ids));
+ 				if(parentList!=null && parentList.size()>0){
 					xmTaskVoList.addAll(parentList);
 					m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
 				}

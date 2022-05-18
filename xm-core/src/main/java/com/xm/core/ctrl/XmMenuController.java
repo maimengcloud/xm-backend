@@ -117,21 +117,19 @@ public class XmMenuController {
 		PageUtils.responePage(m, xmMenuList);
 		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))&& xmMenuList.size()>0){
 			Set<String> pidPathsSet=new HashSet<>();
-			Set<String> idSet=new HashSet<>();
+			Set<String> originIdSet=new HashSet<>();
 			for (Map<String, Object> map : xmMenuList) {
 				String id= (String) map.get("menuId");
-				idSet.add(id);
+				originIdSet.add(id);
 				String pidPaths= (String) map.get("pidPaths");
-				pidPaths=PubTool.getPidPaths(pidPaths,id);
 				if(pidPaths==null || pidPaths.length()<=2){
 					continue;
 				}
-				pidPathsSet.add(pidPaths);
+				pidPathsSet.addAll(PubTool.getPidSet(pidPaths,id));
 			}
-
-			if(pidPathsSet!=null && pidPathsSet.size()>0){
-				List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhere(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
-				parentList=parentList.stream().filter(i->!idSet.contains(i.get("menuId"))).collect(Collectors.toList());
+			List<String> menusIds=pidPathsSet.stream().filter(i->!originIdSet.contains(i)).collect(Collectors.toList());
+			if(menusIds!=null && menusIds.size()>0){
+				List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhere(map("menuIds",menusIds));
 				if(parentList!=null && parentList.size()>0){
 					xmMenuList.addAll(parentList);
 					m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
@@ -172,20 +170,19 @@ public class XmMenuController {
 		PageUtils.responePage(m, xmMenuList);
 		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))&& xmMenuList.size()>0){
 			Set<String> pidPathsSet=new HashSet<>();
-			Set<String> idSet=new HashSet<>();
+			Set<String> originIdSet=new HashSet<>();
 			for (Map<String, Object> map : xmMenuList) {
 				String id= (String) map.get("menuId");
-				idSet.add(id);
+				originIdSet.add(id);
 				String pidPaths= (String) map.get("pidPaths");
-				pidPaths=PubTool.getPidPaths(pidPaths,id);
 				if(pidPaths==null || pidPaths.length()<=2){
 					continue;
 				}
-				pidPathsSet.add(pidPaths);
+				pidPathsSet.addAll(PubTool.getPidSet(pidPaths,id));
 			}
-			if(pidPathsSet!=null && pidPathsSet.size()>0){
-				List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithState(map("pidPathsList",pidPathsSet.stream().collect(Collectors.toList())));
-				parentList=parentList.stream().filter(i->!idSet.contains(i.get("menuId"))).collect(Collectors.toList());
+			List<String> menusIds=pidPathsSet.stream().filter(i->!originIdSet.contains(i)).collect(Collectors.toList());
+			if(menusIds!=null && menusIds.size()>0){
+				List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithState(map("menuIds",menusIds));
 				if(parentList!=null && parentList.size()>0){
 					xmMenuList.addAll(parentList);
 					m.put("total", NumberUtil.getInteger(m.get("total"),0)+parentList.size());
