@@ -686,8 +686,8 @@ public class XmTaskService extends BaseService {
 			tips.setFailureMsg("项目不存在");
 			return tips;
 		}
-		BigDecimal planTotalCost=NumberUtil.getBigDecimal(map().get("planTotalCost"),BigDecimal.ZERO);
-		BigDecimal taskBudgetCost=NumberUtil.getBigDecimal(map().get("budgetCost"),BigDecimal.ZERO);
+		BigDecimal planTotalCost=NumberUtil.getBigDecimal(data.get("planTotalCost"),BigDecimal.ZERO);
+		BigDecimal taskBudgetCost=NumberUtil.getBigDecimal(data.get("budgetAt"),BigDecimal.ZERO);
 		BigDecimal chaochu=taskBudgetCost.add(addBudgetCost).subtract(planTotalCost);
 		if(chaochu.compareTo(BigDecimal.ZERO)>0){
 			tips.setFailureMsg("超出项目总预算"+chaochu+"元");
