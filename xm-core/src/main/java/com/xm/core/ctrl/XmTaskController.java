@@ -167,19 +167,16 @@ public class XmTaskController {
 			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/getOutTask",method=RequestMethod.GET)
-	public Map<String,Object> getOutTask( @RequestParam XmTask xmTask){
+	public Map<String,Object> getOutTask(@ApiIgnore @RequestParam Map<String,Object> xmTask){
 		Map<String,Object> m = new HashMap<>();
 
 		Tips tips=new Tips("查询成功");
-		/**
 		RequestUtils.transformArray(xmTask, "skillIds");
 		PageUtils.startPage(xmTask);
 		xmTask.put("taskOut","1");
 		List<Map<String,Object>> tasks=xmTaskService.getTask(xmTask);
 		PageUtils.responePage(m,tasks);
-
 		m.put("data",tasks);
-		 **/
 		m.put("tips", tips);
 		return m;
 	}
