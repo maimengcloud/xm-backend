@@ -13,6 +13,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.PubTool;
 import com.xm.core.entity.XmMenu;
+import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmTask;
 import com.xm.core.queue.XmMenuSumParentsPushService;
 import com.xm.core.service.*;
@@ -255,10 +256,24 @@ public class XmMenuController {
 				xmMenu.setMmUserid(user.getUserid());
 				xmMenu.setMmUsername(user.getUsername());
 			}
-			XmMenu parentMenu= menuOperQxService.getUserCanOpMenuById(xmMenu.getPmenuId(),user.getUserid(),false);
-			if(parentMenu==null){
-				return ResponseHelper.failed("noqx","您无权新增需求。");
+			if(!StringUtils.hasText(xmMenu.getPmenuId())|| "0".equals(xmMenu.getPmenuId())){
+				if(!"1".equals(xmMenu.getDclass())){
+					return ResponseHelper.failed("dclass-not-1","一级需求目录只能是史诗");
+				}
 			}
+			if(StringUtils.hasText(xmMenu.getPmenuId()) && !xmMenu.getPmenuId().equals("0")){
+				XmMenu parentMenu= menuOperQxService.getUserCanOpMenuById(xmMenu.getPmenuId(),user.getUserid(),false);
+				if(parentMenu==null){
+					return ResponseHelper.failed("noqx","您无权新增需求。");
+				}
+			}else{
+				XmProduct xmProduct=productService.getProductFromCache(xmMenu.getProductId());
+				if(!this.menuOperQxService.checkIsProductAdmOrAss(xmProduct,user.getUserid())){
+					return ResponseHelper.failed("noqx","产品级管理人员(产品经理、产品助理等)才能创建史诗。");
+				};
+			}
+
+
 			xmMenuService.parentIdPathsCalcBeforeSave(xmMenu);
 			xmMenu.setStatus("0");
 			xmMenu.setChildrenCnt(0);
