@@ -319,7 +319,7 @@
 	<update id="batchUpdateBudgetWorkloadAndRate" parameterType="HashMap">
  			update  xm_task res
 			set
-			res.init_workload=ifnull(res.init_workload,res.budget_workload),
+			res.init_workload=if(res.init_workload is null or res.init_workload=0,#{budgetWorkload},res.init_workload),
 		    res.budget_workload=#{budgetWorkload},
 			res.rate=case when res.task_state in('2','3','4') then 100
 			when #{budgetWorkload}>0 then ifnull(res.act_workload,0)*100/ #{budgetWorkload}
@@ -700,7 +700,7 @@
 		<if test="wtype != null and wtype != ''"> wtype = #{wtype},     </if>
 		<if test="bctrl != null and bctrl != ''"> bctrl = #{bctrl},     </if>
 		<if test="initWorkload != null and initWorkload != ''"> init_workload = #{initWorkload},     </if>
-		<if test="shareFee != null and shareFee != ''"> share_fee = #{shareFee},     </if>
+ 		<if test="shareFee != null and shareFee != ''"> share_fee = #{shareFee},     </if>
 		<if test="oshare != null and oshare != ''"> oshare = #{oshare},     </if>
 		<if test="crowd != null and crowd != ''"> crowd = #{crowd},     </if>
 	</sql>
