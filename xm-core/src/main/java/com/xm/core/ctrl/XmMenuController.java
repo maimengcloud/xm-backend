@@ -456,7 +456,7 @@ public class XmMenuController {
 			List<String> hasChildMenus=new ArrayList<>();
 			List<XmMenu> canDelList=new ArrayList<>();
 			List<XmMenu> xmMenusDb=this.menuOperQxService.getUserCanOpMenusByIds(xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()),user.getUserid(),true);
-			if(xmMenusDb==null || xmMenusDb.size()>0){
+			if(xmMenusDb==null || xmMenusDb.size()<=0){
 				return ResponseHelper.failed("data-0-or-no-qx","您不是产品级管理人员、需求负责人、上级需求负责人，无权限操作");
 			}
 			for (XmMenu xmMenu : xmMenusDb) {
@@ -467,22 +467,19 @@ public class XmMenuController {
 					hasChildMenus.add(xmMenu.getMenuName());
 				}
 			}
- 			List<XmMenu> canDelResult=new ArrayList<>();
-			List<XmMenu> noQxResult=xmMenus.stream().filter(i->!xmMenusDb.stream().filter(k->k.getMenuId().equals(i.getMenuId())).findAny().isPresent()).collect(Collectors.toList());
+ 			List<XmMenu> noQxResult=xmMenus.stream().filter(i->!xmMenusDb.stream().filter(k->k.getMenuId().equals(i.getMenuId())).findAny().isPresent()).collect(Collectors.toList());
 			if(canDelList.size()>0) {
-				if(canDelResult.size()>0){
-					xmMenuService.doBatchDelete(canDelResult);
- 				}
+				xmMenuService.doBatchDelete(canDelList);
 			}
 			List<String> msg=new ArrayList<>();
-			msg.add("成功删除"+canDelResult.size()+"个需求信息。");
+			msg.add("成功删除"+canDelList.size()+"个需求信息。");
 			if(hasChildMenus.size()>0 ) {
 				msg.add("以下"+hasChildMenus.size()+"个需求存在子需求，不允许删除,【"+StringUtils.arrayToDelimitedString(hasChildMenus.toArray(), ",")+"】.");
 			}
 			if(noQxResult.size()>0){
 				msg.add("无权限操作以下"+noQxResult.size()+"个需求,【"+noQxResult.stream().map(i->i.getMenuName()).collect(Collectors.joining(",")) +"】.");
 			}
-			if(canDelResult.size()==0){
+			if(canDelList.size()==0){
 				tips.setFailureMsg(msg.stream().collect(Collectors.joining(" ")));
 			}else{
 				tips.setOkMsg(msg.stream().collect(Collectors.joining(" ")));
