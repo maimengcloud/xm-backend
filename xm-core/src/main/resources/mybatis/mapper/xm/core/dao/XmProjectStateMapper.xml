@@ -21,6 +21,12 @@
 	</update>
 
 
+	<select id="selectPortalProjectStates" parameterType="HashMap" resultType="HashMap">
+		select * from XM.xm_project_state res
+		<where>
+			res.calc_time > DATE_SUB(now(),INTERVAL 7 DAY)
+		</where>
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 
