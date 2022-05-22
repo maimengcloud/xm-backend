@@ -434,5 +434,21 @@ public class XmRecordService extends BaseService {
 	public String createKey(String keyName) {
 		return "R"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
 	}
+
+    public List<String> selectChangeProjectIds() {
+		return selectList("selectChangeProjectIds",map());
+    }
+
+	public List<String> selectChangeProductIds() {
+		return selectList("selectChangeProductIds",map());
+	}
+
+	public List<String> selectChangeBranchIds() {
+		return selectList("selectChangeBranchIds",map());
+	}
+
+	public List<String> selectChangeIterationIds() {
+		return selectList("selectChangeIterationIds",map());
+	}
 }
 

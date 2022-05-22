@@ -15,6 +15,35 @@
     </sql>
 
 
+	<select id="selectChangeBranchIds" parameterType="HashMap" resultType="String">
+		SELECT DISTINCT
+			branch_id
+		FROM
+		xm_record
+		where oper_time &gt;= DATE_SUB(now(), INTERVAL 2 DAY)
+	</select>
+	<select id="selectChangeProjectIds" parameterType="HashMap" resultType="String">
+		SELECT DISTINCT
+			project_Id
+		FROM
+		xm_record
+		where oper_time &gt;= DATE_SUB(now(), INTERVAL 2 DAY)
+	</select>
+
+	<select id="selectChangeProductIds" parameterType="HashMap" resultType="String">
+		SELECT DISTINCT
+			product_id
+		FROM
+		xm_record
+		where oper_time &gt;= DATE_SUB(now(), INTERVAL 2 DAY)
+	</select>
+	<select id="selectChangeIterationIds" parameterType="HashMap" resultType="String">
+		SELECT DISTINCT
+		 m.iteration_id
+		FROM
+		xm_record r inner join xm_menu m on m.menu_id=r.biz_id and r.obj_type='menu'
+		where oper_time &gt;= DATE_SUB(now(), INTERVAL 2 DAY)
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 
