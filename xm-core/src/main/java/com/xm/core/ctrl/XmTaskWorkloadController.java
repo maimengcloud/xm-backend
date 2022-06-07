@@ -426,7 +426,7 @@ public class XmTaskWorkloadController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTaskWorkload_editSomeFields",name = "批量修改修改任务中的某些字段",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmTaskWorkload_editSomeFields",name = "批量修改修改任务中的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmTaskWorkloadMap) {
 		Map<String,Object> m = new HashMap<>();

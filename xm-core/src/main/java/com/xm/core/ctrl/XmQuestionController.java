@@ -157,7 +157,7 @@ public class XmQuestionController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmQuestion.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmQuestion_add",name = "新增bug",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmQuestion_add",name = "新增bug",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmQuestion(@RequestBody XmQuestionVo xmQuestionVo) {
 		Map<String,Object> m = new HashMap<>();
@@ -215,7 +215,7 @@ public class XmQuestionController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmQuestion.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmQuestion_edit",name = "修改bug",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmQuestion_edit",name = "修改bug",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmQuestion(@RequestBody XmQuestionVo xmQuestionVo) {
 		Map<String,Object> m = new HashMap<>();
@@ -243,7 +243,7 @@ public class XmQuestionController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmQuestion.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmQuestion_editStatus",name = "修改bug状态",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmQuestion_editStatus",name = "修改bug状态",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editStatus",method=RequestMethod.POST)
 	public Map<String,Object> editStatus(@RequestBody XmQuestion xmQuestion) {
 		Map<String,Object> m = new HashMap<>();
@@ -272,7 +272,7 @@ public class XmQuestionController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmQuestion_editSomeFields",name = "修改bug的某些字段",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmQuestion_editSomeFields",name = "修改bug的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmQuestionMap) {
 		Map<String,Object> m = new HashMap<>();

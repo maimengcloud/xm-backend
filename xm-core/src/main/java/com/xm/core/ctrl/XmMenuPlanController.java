@@ -121,7 +121,7 @@ public class XmMenuPlanController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmMenuPlan.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmMenuPlan_add",name = "新增需求计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenuPlan_add",name = "新增需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmMenuPlan(@RequestBody XmMenuPlan xmMenuPlan) {
 		Map<String,Object> m = new HashMap<>();
@@ -151,7 +151,7 @@ public class XmMenuPlanController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmMenuPlan_del",name = "删除需求计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenuPlan_del",name = "删除需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmMenuPlan(@RequestBody XmMenuPlan xmMenuPlan){
 		Map<String,Object> m = new HashMap<>();
@@ -177,7 +177,7 @@ public class XmMenuPlanController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmMenuPlan.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmMenuPlan_edit",name = "修改需求计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenuPlan_edit",name = "修改需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmMenuPlan(@RequestBody XmMenuPlan xmMenuPlan) {
 		Map<String,Object> m = new HashMap<>();
@@ -206,7 +206,7 @@ public class XmMenuPlanController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmMenuPlan_batchDel",name = "批量删除需求计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenuPlan_batchDel",name = "批量删除需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmMenuPlan(@RequestBody List<XmMenuPlan> xmMenuPlans) {
 		Map<String,Object> m = new HashMap<>();
@@ -227,7 +227,7 @@ public class XmMenuPlanController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmMenuPlan_batchEdit",name = "批量修改需求计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenuPlan_batchEdit",name = "批量修改需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchEdit",method=RequestMethod.POST)
 	public Map<String,Object> batchEditXmMenuPlan(@RequestBody List<XmMenuPlan> xmMenuPlans) {
 		Map<String,Object> m = new HashMap<>();
@@ -253,7 +253,7 @@ public class XmMenuPlanController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmMenuPlan_batchAddPlanByProjectIdAndMenuList",name = "由分配到项目的需求创建需求计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenuPlan_batchAddPlanByProjectIdAndMenuList",name = "由分配到项目的需求创建需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchAddPlanByProjectIdAndMenuList",method=RequestMethod.POST)
 	public Map<String,Object> batchAddPlanByProjectIdAndMenuList(@RequestBody XmMenuPlanVo vo) {
 		Map<String,Object> m = new HashMap<>();
@@ -275,7 +275,7 @@ public class XmMenuPlanController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmMenuPlan_loadTasksToXmMenuPlan",name = "计算需求对应的bug、task、测试案例等数据",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenuPlan_loadTasksToXmMenuPlan",name = "计算需求对应的bug、task、测试案例等数据",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/loadTasksToXmMenuPlan",method=RequestMethod.POST)
 	public Map<String,Object> loadTasksToXmMenuPlan(@RequestBody Map<String,Object> params) {
 		Map<String,Object> m = new HashMap<>();

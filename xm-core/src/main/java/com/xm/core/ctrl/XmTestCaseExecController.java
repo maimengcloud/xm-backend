@@ -107,7 +107,7 @@ public class XmTestCaseExecController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTestCaseExec.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTestCaseExec_add",name = "新增测试计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmTestCaseExec_add",name = "新增测试计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmTestCaseExec(@RequestBody XmTestCaseExec xmTestCaseExec) {
 		Map<String,Object> m = new HashMap<>();
@@ -142,7 +142,7 @@ public class XmTestCaseExecController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmTestCaseExec_del",name = "删除测试计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmTestCaseExec_del",name = "删除测试计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmTestCaseExec(@RequestBody XmTestCaseExec xmTestCaseExec){
 		Map<String,Object> m = new HashMap<>();
@@ -166,7 +166,7 @@ public class XmTestCaseExecController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTestCaseExec.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTestCaseExec_edit",name = "修改测试计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmTestCaseExec_edit",name = "修改测试计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmTestCaseExec(@RequestBody XmTestCaseExec xmTestCaseExec) {
 		Map<String,Object> m = new HashMap<>();
@@ -193,7 +193,7 @@ public class XmTestCaseExecController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmTestCaseExec_batchDel",name = "批量删除测试计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmTestCaseExec_batchDel",name = "批量删除测试计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmTestCaseExec(@RequestBody List<XmTestCaseExec> xmTestCaseExecs) {
 		Map<String,Object> m = new HashMap<>();
@@ -214,7 +214,7 @@ public class XmTestCaseExecController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmTestCaseExec_batchAdd",name = "批量新增测试计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmTestCaseExec_batchAdd",name = "批量新增测试计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
 	public Map<String,Object> batchAddXmTestCaseExec(@RequestBody List<XmTestCaseExec> xmTestCaseExecs) {
 		Map<String,Object> m = new HashMap<>();
@@ -262,7 +262,7 @@ public class XmTestCaseExecController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmTestCaseExec_batchEdit",name = "批量修改测试计划",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmTestCaseExec_batchEdit",name = "批量修改测试计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchEdit",method=RequestMethod.POST)
 	public Map<String,Object> batchEditXmTestCaseExec(@RequestBody List<XmTestCaseExec> xmTestCaseExecs) {
 		Map<String,Object> m = new HashMap<>();

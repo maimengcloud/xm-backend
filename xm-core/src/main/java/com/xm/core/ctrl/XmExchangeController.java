@@ -109,7 +109,7 @@ public class XmExchangeController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmExchange_del",name = "删除评论",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmExchange_del",name = "删除评论",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmExchange(@RequestBody XmExchange xmExchange){
 		Map<String,Object> m = new HashMap<>();

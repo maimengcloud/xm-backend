@@ -76,7 +76,7 @@ public class XmFileController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmFile.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmFile_add",name = "新增项目、产品文档",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmFile_add",name = "新增项目、产品文档",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmFile(@RequestBody XmFileVo xmFileVo) {
 		Map<String,Object> m = new HashMap<>();
@@ -99,7 +99,7 @@ public class XmFileController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmFile_del",name = "删除项目、产品文档",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmFile_del",name = "删除项目、产品文档",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmFile(@RequestBody XmFile xmFile){
 		Map<String,Object> m = new HashMap<>();
@@ -121,7 +121,7 @@ public class XmFileController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmFile.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmFile_edit",name = "修改项目、产品文档",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmFile_edit",name = "修改项目、产品文档",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmFile(@RequestBody XmFileVo xmFileVo) {
 		Map<String,Object> m = new HashMap<>();

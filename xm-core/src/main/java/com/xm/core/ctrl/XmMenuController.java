@@ -235,7 +235,7 @@ public class XmMenuController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmMenu.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmMenu_add",name = "新增用户需求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_add",name = "新增用户需求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmMenu(@RequestBody XmMenu xmMenu) {
 		Map<String,Object> m = new HashMap<>();
@@ -303,7 +303,7 @@ public class XmMenuController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmMenu_del",name = "删除用户需求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_del",name = "删除用户需求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmMenu(@RequestBody XmMenu xmMenu){
 		Map<String,Object> m = new HashMap<>();
@@ -346,7 +346,7 @@ public class XmMenuController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmMenu_edit",name = "修改用户需求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_edit",name = "修改用户需求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmMenu(@RequestBody XmMenu xmMenu) {
 		Map<String,Object> m = new HashMap<>();
@@ -391,7 +391,7 @@ public class XmMenuController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmMenu_editSomeFields",name = "修改用户需求中的某些字段",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_editSomeFields",name = "修改用户需求中的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmMenuMap) {
 		Map<String,Object> m = new HashMap<>();
@@ -446,7 +446,7 @@ public class XmMenuController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmMenu_batchDel",name = "批量删除用户需求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_batchDel",name = "批量删除用户需求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmMenu(@RequestBody List<XmMenu> xmMenus) {
 		Map<String,Object> m = new HashMap<>();
@@ -495,7 +495,7 @@ public class XmMenuController {
 		return m;
 	}
 
-	@HasQx(value = "xm_core_xmMenu_batchAdd",name = "批量新增用户需求",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_batchAdd",name = "批量新增用户需求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
 	public Map<String,Object> batchAddXmMenu(@RequestBody List<XmMenu> xmMenus) {
 		Map<String,Object> m = new HashMap<>();
@@ -535,7 +535,7 @@ public class XmMenuController {
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmMenu_batchChangeParentMenu",name = "批量修改需求的上级",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmMenu_batchChangeParentMenu",name = "批量修改需求的上级",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchChangeParentMenu",method=RequestMethod.POST)
 	public Map<String,Object> batchChangeParentMenu(@RequestBody BatchChangeParentMenuVo parentMenuVo) {
 		Map<String,Object> m = new HashMap<>();

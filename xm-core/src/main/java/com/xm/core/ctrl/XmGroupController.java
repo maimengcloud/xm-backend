@@ -74,7 +74,7 @@ public class XmGroupController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmGroup_updateGroup",name = "批量更新修改项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmGroup_updateGroup",name = "批量更新修改项目团队信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> updateGroup(@RequestBody XmGroup group) {
 
@@ -114,7 +114,7 @@ public class XmGroupController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmGroup_getGroups",name = "查找项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmGroup_getGroups",name = "查找项目团队信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/getGroups",method=RequestMethod.GET)
 	public Map<String,Object> getGroup(@ApiIgnore @RequestParam Map<String,Object> params) {
 		Map<String,Object> m = new HashMap<>();
@@ -177,7 +177,7 @@ public class XmGroupController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response= XmGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmGroup_add",name = "新增项目团队信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmGroup_add",name = "新增项目团队信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmProjectGroup(@RequestBody XmGroup xmGroup) {
 		Map<String,Object> m = new HashMap<>();

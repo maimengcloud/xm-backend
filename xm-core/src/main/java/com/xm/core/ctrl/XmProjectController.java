@@ -141,7 +141,7 @@ public class XmProjectController {
 		@ApiResponse(code = 200,response=XmProject.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	@HasQx(value = "xm_core_xmProject_add",name = "创建项目",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProject_add",name = "创建项目",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	public Map<String,Object> addXmProject(@RequestBody XmProjectVo xmProjectVo) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功创建项目");
@@ -176,7 +176,7 @@ public class XmProjectController {
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
 	@RequestMapping(value="/unDel",method=RequestMethod.POST)
-	@HasQx(value = "xm_core_xmProject_unDel",name = "从回收站恢复项目",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProject_unDel",name = "从回收站恢复项目",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	public Map<String,Object> unDelXmProject(@RequestBody XmProject xmProject){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功从回收站恢复项目");
@@ -220,7 +220,7 @@ public class XmProjectController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	@HasQx(value = "xm_core_xmProject_del",name = "删除项目",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProject_del",name = "删除项目",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	public Map<String,Object> delXmProject(@RequestBody XmProject xmProject){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
@@ -261,7 +261,7 @@ public class XmProjectController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProject_editAssess",name = "修改项目估算",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProject_editAssess",name = "修改项目估算",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editAssess",method=RequestMethod.POST)
 	public Map<String,Object> editXmProjectAssess(@RequestBody XmProject xmProject) {
 		Map<String,Object> m = new HashMap<>();
@@ -306,7 +306,7 @@ public class XmProjectController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProject_createProjectCode",name = "创建项目代号",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProject_createProjectCode",name = "创建项目代号",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/createProjectCode",method=RequestMethod.POST)
 	public Map<String,Object> createProjectCode() {
 		Map<String,Object> m = new HashMap<>();
@@ -329,7 +329,7 @@ public class XmProjectController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProject_editStatus",name = "修改项目状态",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProject_editStatus",name = "修改项目状态",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editStatus",method=RequestMethod.POST)
 	public Map<String,Object> editXmProjectStatus(@RequestBody XmProject xmProject) {
 		Map<String,Object> m = new HashMap<>();
@@ -377,7 +377,7 @@ public class XmProjectController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProject_editBudget",name = "修改项目预算",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProject_editBudget",name = "修改项目预算",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editBudget",method=RequestMethod.POST)
 	public Map<String,Object> editBudget(@RequestBody XmProject xmProject) {
 		Map<String,Object> m = new HashMap<>();
@@ -423,7 +423,7 @@ public class XmProjectController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProject_edit",name = "修改项目基础信息",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProject_edit",name = "修改项目基础信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmProject(@RequestBody XmProject xmProject) {
 		Map<String,Object> m = new HashMap<>();
@@ -469,7 +469,7 @@ public class XmProjectController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProject_copy_to",name = "存为新项目",categoryId = "admin-xm",categoryName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmProject_copy_to",name = "存为新项目",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/copyTo",method=RequestMethod.POST)
 	public Map<String,Object> copyTo(@RequestBody XmProjectCopyVo xmProject) {
 		Map<String,Object> m = new HashMap<>();
