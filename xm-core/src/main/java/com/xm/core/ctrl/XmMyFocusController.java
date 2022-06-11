@@ -95,7 +95,7 @@ public class XmMyFocusController {
 			}
 			xmMyFocus.setUserid(user.getUserid());
 			xmMyFocus.setUsername(user.getUsername());
-
+			xmMyFocus.setUbranchId(user.getBranchId());
 			if(xmMyFocusService.selectOneObject(xmMyFocus) !=null ){
 				return failed("pk-exists","编号重复，请修改编号再提交");
 			}
