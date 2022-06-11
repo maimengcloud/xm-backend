@@ -187,7 +187,7 @@ public class XmIterationMenuController {
 			if(menus==null || menus.size()==0){
 				return ResponseHelper.failed("no-qx-0","无权限操作");
 			}
- 			List<XmMenu> canOpList=new ArrayList<>();
+ 			List<XmMenu> canOpList=menus;
 			List<XmMenu> hadJoin=new ArrayList<>();
 			List<XmMenu> ntype1=new ArrayList<>();
 			List<XmMenu> status789=new ArrayList<>();
