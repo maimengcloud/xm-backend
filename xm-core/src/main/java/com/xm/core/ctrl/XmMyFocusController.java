@@ -1,8 +1,11 @@
 package com.xm.core.ctrl;
 
 import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmMyFocus;
 import com.xm.core.service.XmMyFocusService;
@@ -10,17 +13,19 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
+import static com.mdp.core.utils.BaseUtils.map;
 import static com.mdp.core.utils.BaseUtils.toMap;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_my_focus 我关注的项目或者任务的操作有增删改查,对应的url分别为:<br>
@@ -68,8 +73,7 @@ public class XmMyFocusController {
 	}
 	
  
-	
-	/**
+
 	@ApiOperation( value = "新增一条我关注的项目或者任务信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmMyFocus.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -77,29 +81,26 @@ public class XmMyFocusController {
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmMyFocus(@RequestBody XmMyFocus xmMyFocus) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功新增一条数据");
+		Tips tips=new Tips("关注成功");
 		try{
-		    boolean createPk=false;
-			if(!StringUtils.hasText(xmMyFocus.getUserid())) {
-			    createPk=true;
-				xmMyFocus.setUserid(xmMyFocusService.createKey("userid"));
-			}
+			User user = LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmMyFocus.getBizId())) {
-			    createPk=true;
-				xmMyFocus.setBizId(xmMyFocusService.createKey("bizId"));
+				return failed("bizId","业务编号不能为空");
 			}
 			if(!StringUtils.hasText(xmMyFocus.getPbizId())) {
-			    createPk=true;
-				xmMyFocus.setPbizId(xmMyFocusService.createKey("pbizId"));
+				return failed("pbizId","上级编号不能为空");
 			}
-			if(createPk==false){
-                 if(xmMyFocusService.selectOneObject(xmMyFocus) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
-                }
-            }
-			xmMyFocusService.insert(xmMyFocus);
+			if(!StringUtils.hasText(xmMyFocus.getFocusType())) {
+				return failed("focusType","关注类型不能为空");
+			}
+			xmMyFocus.setUserid(user.getUserid());
+			xmMyFocus.setUsername(user.getUsername());
+			if(xmMyFocusService.selectOneObject(xmMyFocus) !=null ){
+				return failed("pk-exists","编号重复，请修改编号再提交");
+			}
+			xmMyFocusService.focus(xmMyFocus);
 			m.put("data",xmMyFocus);
-		}catch (BizException e) { 
+		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
@@ -109,9 +110,7 @@ public class XmMyFocusController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
-	
-	/**
+
 	@ApiOperation( value = "删除一条我关注的项目或者任务信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -119,22 +118,21 @@ public class XmMyFocusController {
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmMyFocus(@RequestBody XmMyFocus xmMyFocus){
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功删除一条数据");
+		Tips tips=new Tips("成功取消关注");
 		try{
-            if(!StringUtils.hasText(xmMyFocus.getUserid())) {
-                 return failed("pk-not-exists","请上送主键参数userid");
-            }
+			User user = LoginUtils.getCurrentUserInfo();
             if(!StringUtils.hasText(xmMyFocus.getBizId())) {
                  return failed("pk-not-exists","请上送主键参数bizId");
             }
             if(!StringUtils.hasText(xmMyFocus.getPbizId())) {
                  return failed("pk-not-exists","请上送主键参数pbizId");
             }
+			xmMyFocus.setUserid(user.getUserid());
             XmMyFocus xmMyFocusDb = xmMyFocusService.selectOneObject(xmMyFocus);
             if( xmMyFocusDb == null ){
                 return failed("data-not-exists","数据不存在，无法删除");
             }
-			xmMyFocusService.deleteByPk(xmMyFocus);
+			xmMyFocusService.unfocus(xmMyFocusDb);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -145,7 +143,6 @@ public class XmMyFocusController {
 		m.put("tips", tips);
 		return m;
 	}
-	 */
 	
 	/**
 	@ApiOperation( value = "根据主键修改一条我关注的项目或者任务信息",notes=" ")
@@ -260,7 +257,6 @@ public class XmMyFocusController {
 	}
 	*/
 
-	/**
 	@ApiOperation( value = "根据主键列表批量删除我关注的项目或者任务信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -307,6 +303,5 @@ public class XmMyFocusController {
         }  
         m.put("tips", tips);
         return m;
-	} 
-	*/
+	}
 }
