@@ -71,7 +71,7 @@
 		insert into xm_my_focus(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{bizId},#{focusType},#{pbizId},#{bizName},#{pbizName},#{ftime}
+		#{userid},#{username},#{bizId},#{focusType},#{pbizId},#{bizName},#{pbizName},#{ftime},#{ubranchId}
 		)
 	</insert>
 	
@@ -146,7 +146,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,biz_id,focus_type,pbiz_id,biz_name,pbiz_name,ftime
+		userid,username,biz_id,focus_type,pbiz_id,biz_name,pbiz_name,ftime,ubranch_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -159,6 +159,7 @@
 		<if test="bizName != null and bizName != ''">      and res.biz_name = #{bizName}     </if>
 		<if test="pbizName != null and pbizName != ''">      and res.pbiz_name = #{pbizName}     </if>
 		<if test="ftime != null">      and date_format(res.ftime,'%Y-%m-%d') = date_format(#{ftime},'%Y-%m-%d')     </if>
+		<if test="ubranchId != null and ubranchId != ''">      and res.ubranch_id = #{ubranchId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -166,7 +167,8 @@
 		focus_type = #{focusType},
 		biz_name = #{bizName},
 		pbiz_name = #{pbizName},
-		ftime = #{ftime}
+		ftime = #{ftime},
+		ubranch_id = #{ubranchId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="username != null and username != ''"> username = #{username},     </if>
@@ -174,6 +176,7 @@
 		<if test="bizName != null and bizName != ''"> biz_name = #{bizName},     </if>
 		<if test="pbizName != null and pbizName != ''"> pbiz_name = #{pbizName},     </if>
 		<if test="ftime != null"> ftime = #{ftime},     </if>
+		<if test="ubranchId != null and ubranchId != ''"> ubranch_id = #{ubranchId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -181,6 +184,7 @@
 			focus_type = #{item.focusType},
 			biz_name = #{item.bizName},
 			pbiz_name = #{item.pbizName},
-			ftime = #{item.ftime}
+			ftime = #{item.ftime},
+			ubranch_id = #{item.ubranchId}
 	</sql>
 </mapper>
