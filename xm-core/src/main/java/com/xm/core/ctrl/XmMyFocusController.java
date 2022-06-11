@@ -4,6 +4,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.mdp.qx.HasRole;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -71,8 +72,30 @@ public class XmMyFocusController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
+
+	@ApiOperation( value = "查询我关注的项目或者任务信息列表",notes=" ")
+	@ApiEntityParams( XmMyFocus.class )
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="pageSize",value="每页大小，默认20条",required=false),
+			@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
+			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
+			@ApiImplicitParam(name="count",value="是否计算总记录条数，如果count=true,则计算计算总条数，如果count=false 则不计算",required=false),
+			@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student desc",required=false),
+	})
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmMyFocus.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@HasRole
+	@RequestMapping(value="/myFocusForIndex",method=RequestMethod.GET)
+	public Map<String,Object> myFocusForIndex( ){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		List<Map<String,Object>>	xmMyFocusList = xmMyFocusService.myFocusForIndex(LoginUtils.getCurrentUserInfo().getUserid());
+ 		m.put("data",xmMyFocusList);
+		m.put("tips", tips);
+		return m;
+	}
+
 
 	@ApiOperation( value = "新增一条我关注的项目或者任务信息",notes=" ")
 	@ApiResponses({

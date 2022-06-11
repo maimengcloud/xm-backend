@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -73,7 +75,11 @@ public class XmMyFocusService extends BaseService {
 		 } 
 		
 	}
-	
+
+	public List<Map<String, Object>> myFocusForIndex(String userid) {
+		return super.selectList("myFocusForIndex",userid);
+	}
+
 	/** 请在此类添加自定义函数 */
 
 }
