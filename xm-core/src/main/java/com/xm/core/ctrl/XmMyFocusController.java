@@ -120,7 +120,7 @@ public class XmMyFocusController {
 			xmMyFocus.setUsername(user.getUsername());
 			xmMyFocus.setUbranchId(user.getBranchId());
 			if(xmMyFocusService.selectOneObject(xmMyFocus) !=null ){
-				return failed("pk-exists","编号重复，请修改编号再提交");
+				return failed("pk-exists","已关注");
 			}
 			xmMyFocusService.focus(xmMyFocus);
 			m.put("data",xmMyFocus);

@@ -42,6 +42,9 @@ public class XmMyFocusService extends BaseService {
 		}else if("5".equals(xmMyFocus.getFocusType())) {
 			xmRecordService.addXmTaskRecord(xmMyFocus.getPbizId(), xmMyFocus.getBizId(), "项目-缺陷-取消关注缺陷", xmMyFocus.getUsername()+"取消关注了缺陷"+xmMyFocus.getBizName());
 
+		}else if("6".equals(xmMyFocus.getFocusType())) {
+			xmRecordService.addXmIterationRecord( xmMyFocus.getBizId(), "迭代-取消关注", xmMyFocus.getUsername()+"取消关注迭代"+xmMyFocus.getBizName());
+
 		}else {
 			throw new BizException("focusType参数必须上传，取值project/task");
 		}
@@ -70,8 +73,11 @@ public class XmMyFocusService extends BaseService {
 		}else if("5".equals(xmMyFocus.getFocusType())) {
 			xmRecordService.addXmTaskRecord(xmMyFocus.getPbizId(), xmMyFocus.getBizId(), "项目-缺陷-关注缺陷", xmMyFocus.getUsername()+"关注了缺陷"+xmMyFocus.getBizName());
 
+		}else if("6".equals(xmMyFocus.getFocusType())) {
+			xmRecordService.addXmIterationRecord( xmMyFocus.getBizId(), "迭代-关注", xmMyFocus.getUsername()+"关注了迭代"+xmMyFocus.getBizName());
+
 		}else {
-			 throw new BizException("focusType参数必须上传，取值project/task");
+			 throw new BizException("focusType参数必须上传，取值1、2、3、4、5、6");
 		 } 
 		
 	}
