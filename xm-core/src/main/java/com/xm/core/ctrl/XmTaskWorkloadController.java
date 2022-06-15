@@ -256,7 +256,7 @@ public class XmTaskWorkloadController {
 			xmTaskWorkload.setProjectId(xmTaskDb.getProjectId());
 			xmTaskWorkload.setBranchId(xmTaskDb.getCbranchId());
 			xmTaskWorkloadService.insert(xmTaskWorkload);
-			if(xmTaskWorkload.getRworkload()!=null && BigDecimal.ZERO.compareTo(xmTaskWorkload.getRworkload())<0){
+			if(xmTaskWorkload.getRworkload()!=null && BigDecimal.ZERO.compareTo(xmTaskWorkload.getRworkload())<=0){
 				BigDecimal newBudgetWorkload= xmTaskWorkload.getRworkload().add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)).add(NumberUtil.getBigDecimal(xmTaskDb.getActWorkload(),BigDecimal.ZERO));
 				List<String> ids=new ArrayList<>();
 				ids.add(xmTaskDb.getId());
