@@ -369,12 +369,24 @@ public class XmGroupUserController {
 				return ResponseHelper.failed("userid-or-groupId-0","请上送用户编号及小组编号");
 			}else{
 				for (XmGroupUser gu : gus) {
-					if(!"1".equals(gu.getPgClass())&&!StringUtils.hasText(gu.getProjectId())){
-						return ResponseHelper.failed("projectId-0","项目编号不能为空");
-					}else if("1".equals(gu.getPgClass())&&!StringUtils.hasText(gu.getProductId()))
-						return ResponseHelper.failed("productId-0","产品编号不能为空");
+					if (!"1".equals(gu.getPgClass()) && !StringUtils.hasText(gu.getProjectId())) {
+						return ResponseHelper.failed("projectId-0", "项目编号不能为空");
+					} else if ("1".equals(gu.getPgClass()) && !StringUtils.hasText(gu.getProductId())) {
+						return ResponseHelper.failed("productId-0", "产品编号不能为空");
 					}
-
+					if (!StringUtils.hasText(gu.getObranchId())) {
+						return ResponseHelper.failed("obranchId-0", "用户归属机构号不能为空");
+					}
+					if (!StringUtils.hasText(gu.getUserid())) {
+						return ResponseHelper.failed("userid-0", "用户编号不能为空");
+					}
+					if (!StringUtils.hasText(gu.getUsername())) {
+						return ResponseHelper.failed("username-0", "用户名称不能为空");
+					}
+					if (!StringUtils.hasText(gu.getGroupId())) {
+						return ResponseHelper.failed("groupId-0", "要加入的组编号不能为空");
+					}
+				}
 			}
 			List<XmGroupUser> gusDb=this.xmGroupUserService.selectListByIds(gus);
 			//过滤掉已经存在的

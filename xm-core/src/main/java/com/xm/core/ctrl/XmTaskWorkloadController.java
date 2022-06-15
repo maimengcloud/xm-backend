@@ -204,6 +204,13 @@ public class XmTaskWorkloadController {
 				return failed("taskId-0","请上送任务编号");
 			}
 
+			if(!StringUtils.hasText(xmTaskWorkload.getUserid())){
+				return failed("userid-0","请上送工作人员编号");
+			}
+			if(!StringUtils.hasText(xmTaskWorkload.getUbranchId())){
+				return failed("ubranchId-0","请上送工作人员归属机构");
+			}
+
 			if(!StringUtils.hasText(xmTaskWorkload.getBizDate())) {
 				return failed("bizDate-0","请上送日期");
 			}
@@ -232,7 +239,6 @@ public class XmTaskWorkloadController {
 			if("3".equals(xmTaskDb.getTaskState())){
 				return failed("taskState-3",xmTaskDb.getName()+"已结算完毕，不能再提交工时");
 			}
-
 			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
 				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
 				if(!isCreate.isOk()){
@@ -245,15 +251,10 @@ public class XmTaskWorkloadController {
 			}
 			xmTaskWorkload.setCtime(new Date());
 			xmTaskWorkload.setCuserid(user.getUserid());
-			if(!StringUtils.hasText(xmTaskWorkload.getUserid())){
-				xmTaskWorkload.setUserid(user.getUserid());
-				xmTaskWorkload.setUsername(user.getUsername());
-			}
 
 			xmTaskWorkload.setWstatus("0");
 			xmTaskWorkload.setProjectId(xmTaskDb.getProjectId());
 			xmTaskWorkload.setBranchId(xmTaskDb.getCbranchId());
-			xmTaskWorkload.setUbranchId(user.getBranchId());
 			xmTaskWorkloadService.insert(xmTaskWorkload);
 			if(xmTaskWorkload.getRworkload()!=null && BigDecimal.ZERO.compareTo(xmTaskWorkload.getRworkload())<0){
 				BigDecimal newBudgetWorkload= xmTaskWorkload.getRworkload().add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)).add(NumberUtil.getBigDecimal(xmTaskDb.getActWorkload(),BigDecimal.ZERO));

@@ -41,7 +41,7 @@
 		</if>
 		<!-- 我关注的 -->
 		<if test="myFocus != null and myFocus != ''">
-			and exists ( select 1 from xm_my_focus f where f.userid=#{userid} and f.project_id=res.project_id and f.task_id=res.id  )
+			and exists ( select 1 from xm_my_focus f where f.userid=#{userid} and f.pbiz_id=res.project_id and f.biz_id=res.id  )
 		</if>
 		<if test="skillIds != null and skillIds != ''">
 			and exists ( select 1 from xm_task_skill f where f.task_id=res.id and f.task_skill_id in
