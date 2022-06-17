@@ -604,26 +604,22 @@ public class XmTaskService extends BaseService {
 				Set<String> set=list.get(i);
 				set.add(pidPathss[i]);
 			}
-			if(list.size()<=0){
-				return;
-			}
-			Set<String> allSet=new HashSet<>();
-			for (int i = list.size() - 1; i >= 0; i--) {
-				Set<String> set=list.get(i);
-				if(set.size()>0){
-					List<String> ids=set.stream().filter(k->!allSet.contains(k)).collect(Collectors.toList());
-					if(ids.size()>0){
-						allSet.addAll(ids.stream().collect(Collectors.toSet()));
-						super.update("batchSumParents", ids);
-					}
 
+		}
+		if(list.size()<=0){
+			return;
+		}
+ 		for (int i = list.size() - 1; i >= 0; i--) {
+			Set<String> set=list.get(i);
+			if(set.size()>0){
+				List<String> ids=set.stream().collect(Collectors.toList());
+				if(ids.size()>0){
+ 					super.update("batchSumParents", ids);
 				}
 
 			}
 
-
 		}
-
 	}
 
 
