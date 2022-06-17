@@ -37,7 +37,7 @@ public class AutoCalcService{
     @Autowired
     XmGroupStateService xmGroupStateService;
 
-    @Scheduled(cron = "* * 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void load_tasks_to_xm_project_state(){
         List<String> projectIds=xmRecordService.selectChangeProjectIds();
         if(projectIds!=null && projectIds.size()>0){
@@ -53,7 +53,7 @@ public class AutoCalcService{
 
     }
 
-    @Scheduled(cron = "* * 0 * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     public void load_tasks_to_xm_product_state(){
         List<String> productIds=xmRecordService.selectChangeProductIds();
         if(productIds!=null && productIds.size()>0){
@@ -68,7 +68,7 @@ public class AutoCalcService{
         }
     }
 
-    @Scheduled(cron = "* * 3 * * ?")
+    @Scheduled(cron = "0 0 3 * * ?")
     public void load_tasks_to_xm_iteration_state(){
         List<String> iterationIds=xmRecordService.selectChangeIterationIds();
         if(iterationIds!=null && iterationIds.size()>0){
@@ -82,7 +82,7 @@ public class AutoCalcService{
         }
     }
 
-    @Scheduled(cron = "* * 4 * * ?")
+    @Scheduled(cron = "0 0 4 * * ?")
     public void load_project_state_to_xm_branch_state(){
         List<String> branchIds=xmRecordService.selectChangeBranchIds();
         if(branchIds!=null && branchIds.size()>0){

@@ -44,7 +44,7 @@ public class XmMenuSumParentsListener extends MessageListener<XmMenu> {
     /**
      * 每隔一段时间更新一次数据库
      */
-    @Scheduled(cron = "* 0/30 * * * ?")
+    @Scheduled(cron = "0 0/30 * * * ?")
     public void autoUpdateToDb(){
         Map<String,Map<String, XmMenu>> myMenusAllMap=new HashMap<>();
         synchronized (this.menusAllMap){
