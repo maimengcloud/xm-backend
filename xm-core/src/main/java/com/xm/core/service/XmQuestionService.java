@@ -56,7 +56,12 @@ public class XmQuestionService extends BaseService {
         this.insert(xmQuestion);
 
 		XmQuestionHandle handle=new XmQuestionHandle();
-		handle.setReceiptMessage(xmQuestionVo.getReceiptMessage());
+		if(StringUtils.hasText(xmQuestionVo.getRemarks())){
+			handle.setReceiptMessage(xmQuestionVo.getHandlerUsername()+"创建缺陷，缺陷处理意见："+xmQuestionVo.getReceiptMessage());
+		}else {
+			handle.setReceiptMessage(xmQuestionVo.getHandlerUsername()+"创建缺陷");
+		}
+
 		handle.setHandleStatus(xmQuestionVo.getBugStatus());
 		handle.setCreateTime(new Date());
 		handle.setReceiptTime(new Date());
@@ -83,13 +88,15 @@ public class XmQuestionService extends BaseService {
     public XmQuestionVo updateQuestion(XmQuestionVo xmQuestionVo) {
     	User currentUser=LoginUtils.getCurrentUserInfo();
 		xmQuestionVo.setLtime(new Date());
-
-		xmQuestionVo.setRemarks(xmQuestionVo.getReceiptMessage());
-
         this.updateSomeFieldByPk(xmQuestionVo);
         
         XmQuestionHandle handle=new XmQuestionHandle();
-        handle.setReceiptMessage(xmQuestionVo.getReceiptMessage());
+        if(StringUtils.hasText(xmQuestionVo.getReceiptMessage())){
+			handle.setReceiptMessage(currentUser.getUsername()+"修改了缺陷，修改意见"+xmQuestionVo.getReceiptMessage());
+		}else{
+			handle.setReceiptMessage(currentUser.getUsername()+"修改了缺陷");
+		}
+
         handle.setHandleStatus(xmQuestionVo.getBugStatus());
         handle.setCreateTime(new Date());
         handle.setReceiptTime(new Date());
@@ -209,5 +216,6 @@ public class XmQuestionService extends BaseService {
 	public String createKey(String keyName) {
 		return "Q"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
 	}
+
 }
 

@@ -13,7 +13,10 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmQuestion;
+import com.xm.core.entity.XmQuestionHandle;
+import com.xm.core.service.XmQuestionHandleService;
 import com.xm.core.service.XmQuestionService;
+import com.xm.core.service.XmRecordService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmQuestionVo;
 import io.swagger.annotations.*;
@@ -50,6 +53,12 @@ public class XmQuestionController {
 	 
 	@Autowired
 	private XmPushMsgService xmPushMsgService;
+
+	@Autowired
+	private XmRecordService xmRecordService;
+
+	@Autowired
+	XmQuestionHandleService xmQuestionHandleService;
 
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmQuestion());
 	
@@ -278,6 +287,7 @@ public class XmQuestionController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
+			User user=LoginUtils.getCurrentUserInfo();
 			List<String> ids= (List<String>) xmQuestionMap.get("ids");
 
 			if(ids==null || ids.size()==0){
@@ -297,6 +307,45 @@ public class XmQuestionController {
 					}
 				}
 				xmQuestionService.editSomeFields(xmQuestionMap);
+				String remarks= (String) xmQuestionMap.get("remarks");
+				String handlerUsername= (String) xmQuestionMap.get("handlerUsername");
+				String bugStatus= (String) xmQuestionMap.get("bugStatus");
+
+				List<XmQuestionHandle> handles=new ArrayList<>();
+				Map<String,Object> map=new HashMap<>();
+				map.putAll(xmQuestionMap);
+				map.remove("ids");
+				for (XmQuestion xmQuestionVo : xmQuestionsDb) {
+					Map<String,Object> m2=BaseUtils.toMap(xmQuestionVo);
+					m2.putAll(map);
+					xmQuestionVo=BaseUtils.fromMap(m2,XmQuestion.class);
+					XmQuestionHandle handle=new XmQuestionHandle();
+					if(StringUtils.hasText(remarks)){
+						handle.setReceiptMessage(user.getUsername()+"修改缺陷处理意见为："+xmQuestionVo.getRemarks());
+					}else if(StringUtils.hasText(handlerUsername)){
+						handle.setReceiptMessage(user.getUsername()+"将缺陷指派给"+handlerUsername);
+					}else if(StringUtils.hasText(bugStatus)){
+						handle.setReceiptMessage(user.getUsername()+"将缺陷状态改为"+bugStatus);
+					}else{
+						handle.setReceiptMessage(user.getUsername()+"修改了缺陷信息"+map.toString());
+					}
+
+					handle.setHandleStatus(xmQuestionVo.getBugStatus());
+					handle.setCreateTime(new Date());
+					handle.setReceiptTime(new Date());
+					handle.setHandlerUserid(xmQuestionVo.getCreateUserid());
+					handle.setHandlerUsername(xmQuestionVo.getCreateUsername());
+					handle.setLastUpdateTime(new Date());
+					handle.setHandleSolution(xmQuestionVo.getSolution());
+					handle.setQuestionId(xmQuestionVo.getId());
+					handle.setTargetUserid(xmQuestionVo.getHandlerUserid());
+					handle.setTargetUsername(xmQuestionVo.getHandlerUsername());
+					handle.setId(this.xmQuestionHandleService.createKey("id"));
+					handles.add(handle);
+				}
+
+				xmQuestionHandleService.batchAddAsync(handles);
+
 			}
 
 
@@ -320,8 +369,53 @@ public class XmQuestionController {
 	public Map<String,Object> batchDelXmQuestion(@RequestBody List<XmQuestion> xmQuestions) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除"+xmQuestions.size()+"条数据"); 
-		try{ 
-			xmQuestionService.batchDelete(xmQuestions);
+		try{
+			User user=LoginUtils.getCurrentUserInfo();
+			List<XmQuestion> xmQuestionsDb=xmQuestionService.selectListByIds(xmQuestions.stream().map(i->i.getId()).collect(Collectors.toList()));
+			List<XmQuestion> canDel=new ArrayList<>();
+			List<XmQuestion> noMyCreate=new ArrayList<>();
+			for (XmQuestion xmQuestion : xmQuestionsDb) {
+				if(!user.getUserid().equals(xmQuestion.getCreateUserid())){
+					noMyCreate.add(xmQuestion);
+				}else {
+					canDel.add(xmQuestion);
+				}
+			}
+			if(canDel.size()>0){
+				xmQuestionService.batchDelete(canDel);
+				List<XmQuestionHandle> handles=new ArrayList<>();
+				for (XmQuestion xmQuestionVo : canDel) {
+					XmQuestionHandle handle=new XmQuestionHandle();
+					handle.setReceiptMessage(user.getUsername()+"删除了缺陷:"+xmQuestionVo.getName());
+					handle.setHandleStatus(xmQuestionVo.getBugStatus());
+					handle.setCreateTime(new Date());
+					handle.setReceiptTime(new Date());
+					handle.setHandlerUserid(xmQuestionVo.getCreateUserid());
+					handle.setHandlerUsername(xmQuestionVo.getCreateUsername());
+					handle.setLastUpdateTime(new Date());
+					handle.setHandleSolution(xmQuestionVo.getSolution());
+					handle.setQuestionId(xmQuestionVo.getId());
+					handle.setTargetUserid(xmQuestionVo.getHandlerUserid());
+					handle.setTargetUsername(xmQuestionVo.getHandlerUsername());
+					handle.setId(this.xmQuestionHandleService.createKey("id"));
+					handles.add(handle);
+				}
+				xmQuestionHandleService.batchAddAsync(handles);
+			}
+
+			List<String> msgs=new ArrayList<>();
+			if(canDel.size()>0){
+				msgs.add(String.format("删除了%s个缺陷。",canDel.size()));
+			}
+			if(noMyCreate.size()>0){
+				msgs.add(String.format("以下%s个缺陷不属于您创建的缺陷，无权限删除。",noMyCreate.size()));
+			}
+			if(canDel.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+			}else{
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+			}
+
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);

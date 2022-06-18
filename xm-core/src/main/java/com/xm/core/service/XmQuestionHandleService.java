@@ -1,7 +1,11 @@
 package com.xm.core.service;
 
 import com.mdp.core.service.BaseService;
+import com.xm.core.entity.XmQuestionHandle;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -10,8 +14,13 @@ import org.springframework.stereotype.Service;
  ***/
 @Service("xm.core.xmQuestionHandleService")
 public class XmQuestionHandleService extends BaseService {
-	
-	/** 请在此类添加自定义函数 */
+
+    @Async
+    public void batchAddAsync(List<XmQuestionHandle> handles) {
+        super.batchInsert(handles);
+    }
+
+    /** 请在此类添加自定义函数 */
 
 }
 
