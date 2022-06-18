@@ -758,12 +758,8 @@ public class XmTaskController {
 			if(!StringUtils.hasText(batchImportVo.getPtype())){
 				return ResponseHelper.failed("ptype-0","请上送ptype,0代表项目计划（任务），1代表产品计划（任务）");
 			}
-			if("0".equals(batchImportVo.getPtype()) && !StringUtils.hasText(batchImportVo.getProjectId())){
+			if(!StringUtils.hasText(batchImportVo.getProjectId())){
 				return ResponseHelper.failed("projectId-0","请上送项目编号");
-			} else if("1".equals(batchImportVo.getPtype()) && !StringUtils.hasText(batchImportVo.getProductId())){
-				return ResponseHelper.failed("productId-0","请上送产品编号");
-			}else if(!"0".equals(batchImportVo.getPtype()) && !"1".equals(batchImportVo.getPtype())){
-				return ResponseHelper.failed("ptype-0","请上送ptype,0代表项目计划（任务），1代表产品计划（任务）");
 			}
 			String projectId=batchImportVo.getProjectId();
 			String productId=batchImportVo.getProductId();
@@ -851,7 +847,10 @@ public class XmTaskController {
 						if(task.getLvl()>1){
 							task.setNtype("0");
 						}else{
-							task.setNtype("1");
+							if(!StringUtils.hasText(task.getNtype())){
+								task.setNtype("1");
+							}
+
 						}
 					}
 				}
