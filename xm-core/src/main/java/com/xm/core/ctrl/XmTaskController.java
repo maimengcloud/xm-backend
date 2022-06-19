@@ -844,13 +844,8 @@ public class XmTaskController {
 					if(task.getChildrenCnt()>0){
 						task.setNtype("1");
 					}else{
-						if(task.getLvl()>1){
+						if(!StringUtils.hasText(task.getNtype())){
 							task.setNtype("0");
-						}else{
-							if(!StringUtils.hasText(task.getNtype())){
-								task.setNtype("1");
-							}
-
 						}
 					}
 				}
