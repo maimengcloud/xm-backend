@@ -415,7 +415,7 @@
 		insert into xm_task(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetAt},#{budgetWorkload},#{actAt},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl},#{initWorkload},#{shareFee},#{oshare},#{crowd}
+		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetAt},#{budgetWorkload},#{actAt},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl},#{initWorkload},#{shareFee},#{oshare},#{crowd},#{browseUsers},#{execUsers},#{cityId},#{cityName},#{regionType},#{browseTimes},#{capaLvls},#{tranMode},#{supRequires},#{hot},#{top},#{urgent},#{crmSup},#{bidStep}
 		)
 	</insert>
 	
@@ -497,7 +497,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_at,budget_workload,act_at,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload,share_fee,oshare,crowd
+		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_at,budget_workload,act_at,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload,share_fee,oshare,crowd,browse_users,exec_users,city_id,city_name,region_type,browse_times,capa_lvls,tran_mode,sup_requires,hot,top,urgent,crm_sup,bid_step
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -568,6 +568,20 @@
 		<if test="shareFee != null and shareFee != ''">      and res.share_fee = #{shareFee}     </if>
 		<if test="oshare != null and oshare != ''">      and res.oshare = #{oshare}     </if>
 		<if test="crowd != null and crowd != ''">      and res.crowd = #{crowd}     </if>
+		<if test="browseUsers != null and browseUsers != ''">      and res.browse_users = #{browseUsers}     </if>
+		<if test="execUsers != null and execUsers != ''">      and res.exec_users = #{execUsers}     </if>
+		<if test="cityId != null and cityId != ''">      and res.city_id = #{cityId}     </if>
+		<if test="cityName != null and cityName != ''">      and res.city_name = #{cityName}     </if>
+		<if test="regionType != null and regionType != ''">      and res.region_type = #{regionType}     </if>
+		<if test="browseTimes != null and browseTimes != ''">      and res.browse_times = #{browseTimes}     </if>
+		<if test="capaLvls != null and capaLvls != ''">      and res.capa_lvls = #{capaLvls}     </if>
+		<if test="tranMode != null and tranMode != ''">      and res.tran_mode = #{tranMode}     </if>
+		<if test="supRequires != null and supRequires != ''">      and res.sup_requires = #{supRequires}     </if>
+		<if test="hot != null and hot != ''">      and res.hot = #{hot}     </if>
+		<if test="top != null and top != ''">      and res.top = #{top}     </if>
+		<if test="urgent != null and urgent != ''">      and res.urgent = #{urgent}     </if>
+		<if test="crmSup != null and crmSup != ''">      and res.crm_sup = #{crmSup}     </if>
+		<if test="bidStep != null and bidStep != ''">      and res.bid_step = #{bidStep}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -635,7 +649,21 @@
 		init_workload = #{initWorkload},
 		share_fee = #{shareFee},
 		oshare = #{oshare},
-		crowd = #{crowd}
+		crowd = #{crowd},
+		browse_users = #{browseUsers},
+		exec_users = #{execUsers},
+		city_id = #{cityId},
+		city_name = #{cityName},
+		region_type = #{regionType},
+		browse_times = #{browseTimes},
+		capa_lvls = #{capaLvls},
+		tran_mode = #{tranMode},
+		sup_requires = #{supRequires},
+		hot = #{hot},
+		top = #{top},
+		urgent = #{urgent},
+		crm_sup = #{crmSup},
+		bid_step = #{bidStep}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -700,9 +728,23 @@
 		<if test="wtype != null and wtype != ''"> wtype = #{wtype},     </if>
 		<if test="bctrl != null and bctrl != ''"> bctrl = #{bctrl},     </if>
 		<if test="initWorkload != null and initWorkload != ''"> init_workload = #{initWorkload},     </if>
- 		<if test="shareFee != null and shareFee != ''"> share_fee = #{shareFee},     </if>
+		<if test="shareFee != null and shareFee != ''"> share_fee = #{shareFee},     </if>
 		<if test="oshare != null and oshare != ''"> oshare = #{oshare},     </if>
 		<if test="crowd != null and crowd != ''"> crowd = #{crowd},     </if>
+		<if test="browseUsers != null and browseUsers != ''"> browse_users = #{browseUsers},     </if>
+		<if test="execUsers != null and execUsers != ''"> exec_users = #{execUsers},     </if>
+		<if test="cityId != null and cityId != ''"> city_id = #{cityId},     </if>
+		<if test="cityName != null and cityName != ''"> city_name = #{cityName},     </if>
+		<if test="regionType != null and regionType != ''"> region_type = #{regionType},     </if>
+		<if test="browseTimes != null and browseTimes != ''"> browse_times = #{browseTimes},     </if>
+		<if test="capaLvls != null and capaLvls != ''"> capa_lvls = #{capaLvls},     </if>
+		<if test="tranMode != null and tranMode != ''"> tran_mode = #{tranMode},     </if>
+		<if test="supRequires != null and supRequires != ''"> sup_requires = #{supRequires},     </if>
+		<if test="hot != null and hot != ''"> hot = #{hot},     </if>
+		<if test="top != null and top != ''"> top = #{top},     </if>
+		<if test="urgent != null and urgent != ''"> urgent = #{urgent},     </if>
+		<if test="crmSup != null and crmSup != ''"> crm_sup = #{crmSup},     </if>
+		<if test="bidStep != null and bidStep != ''"> bid_step = #{bidStep},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -770,6 +812,20 @@
 			init_workload = #{item.initWorkload},
 			share_fee = #{item.shareFee},
 			oshare = #{item.oshare},
-			crowd = #{item.crowd}
+			crowd = #{item.crowd},
+			browse_users = #{item.browseUsers},
+			exec_users = #{item.execUsers},
+			city_id = #{item.cityId},
+			city_name = #{item.cityName},
+			region_type = #{item.regionType},
+			browse_times = #{item.browseTimes},
+			capa_lvls = #{item.capaLvls},
+			tran_mode = #{item.tranMode},
+			sup_requires = #{item.supRequires},
+			hot = #{item.hot},
+			top = #{item.top},
+			urgent = #{item.urgent},
+			crm_sup = #{item.crmSup},
+			bid_step = #{item.bidStep}
 	</sql>
 </mapper>
