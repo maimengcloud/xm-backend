@@ -4,6 +4,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -67,6 +68,10 @@ public class XmGroupController {
 	@Autowired
     XmPushMsgService pushMsgService;
 
+
+	@Autowired
+	PushNotifyMsgService notifyMsgService;
+
 	@Autowired
     XmRecordService xmRecordService;
 
@@ -97,8 +102,7 @@ public class XmGroupController {
 		tips= xmGroupService.updateGroup(group,groupDb);	//列出XmProjectGroup列表
 		xmGroupCacheService.clearProjectGroup(groupDb.getProjectId());
 		xmRecordService.addXmGroupRecord(groupDb.getProjectId(),groupDb.getId(),"团队-小组-修改小组","修改小组信息【"+groupDb.getGroupName()+"】");
-
-		m.put("tips", tips);
+ 		m.put("tips", tips);
 		return m;
 	}
 

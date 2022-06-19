@@ -7,6 +7,7 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -59,6 +60,10 @@ public class XmQuestionController {
 
 	@Autowired
 	XmQuestionHandleService xmQuestionHandleService;
+
+
+	@Autowired
+	PushNotifyMsgService notifyMsgService;
 
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmQuestion());
 	
@@ -183,6 +188,7 @@ public class XmQuestionController {
 			}
 			xmQuestionService.addQuestion(xmQuestionVo);
 			if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {
+				notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"5",xmQuestionVo.getProductId(),xmQuestionVo.getId(),"您有新的bug【"+xmQuestionVo.getName()+"】需要处理，请尽快修复！");
 				xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(), user.getUsername()+"创建bug【"+xmQuestionVo.getName()+"】并指派给"+xmQuestionVo.getHandlerUsername());
 			}
 			m.put("data",xmQuestionVo);
@@ -324,6 +330,8 @@ public class XmQuestionController {
 						handle.setReceiptMessage(user.getUsername()+"修改缺陷处理意见为："+xmQuestionVo.getRemarks());
 					}else if(StringUtils.hasText(handlerUsername)){
 						handle.setReceiptMessage(user.getUsername()+"将缺陷指派给"+handlerUsername);
+						notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"5",xmQuestionVo.getProductId(),xmQuestionVo.getId(),"您有新的bug【"+xmQuestionVo.getName()+"】需要处理，请尽快修复！");
+
 					}else if(StringUtils.hasText(bugStatus)){
 						handle.setReceiptMessage(user.getUsername()+"将缺陷状态改为"+bugStatus);
 					}else{
