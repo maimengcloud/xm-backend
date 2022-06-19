@@ -7,6 +7,7 @@ import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -70,6 +71,9 @@ public class XmMenuController {
 	@Autowired
 	XmMenuSumParentsPushService pushService;
 
+
+	@Autowired
+	PushNotifyMsgService notifyMsgService;
 
 	@Autowired
 	XmMenuOperQxService menuOperQxService;
@@ -284,6 +288,9 @@ public class XmMenuController {
 			xmMenu.setCtime(new Date());
 			xmMenu.setLtime(new Date());
 			xmMenuService.insert(xmMenu);
+			if("3".equals(xmMenu.getDclass())){
+				notifyMsgService.pushMsg(user,xmMenu.getMmUserid(),xmMenu.getMmUsername(),"4",xmMenu.getProductId(),xmMenu.getMenuId(),"您成为故事【"+xmMenu.getMenuName()+"】的负责人，请跟进需求！");
+			}
 			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"新增产品需求","新增需求"+xmMenu.getMenuName());
 			m.put("data",xmMenu);
 		}catch (BizException e) { 
@@ -426,6 +433,14 @@ public class XmMenuController {
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmMenuMap.get(i) )).collect(Collectors.toSet());
 			xmMenuMap.put("ltime",new Date());
 			xmMenuService.editSomeFields(xmMenuMap);
+			if(xmMenuMap.containsKey("mmUserid")){
+				if("3".equals(xmMenu.getDclass())){
+					for (XmMenu menu : can) {
+						notifyMsgService.pushMsg(user,xmMenu.getMmUserid(),xmMenu.getMmUsername(),"4",menu.getProductId(),menu.getMenuId(),"您成为故事【"+menu.getMenuName()+"】的负责人，请跟进需求！");
+					}
+
+				}
+			}
 			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"修改产品需求","修改产品需求"+xmMenu.getMenuName(),"", JSON.toJSONString(xmMenu));
 
 			//m.put("data",xmMenu);
