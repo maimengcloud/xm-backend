@@ -7,6 +7,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -57,6 +58,10 @@ public class XmProjectController {
 
 	@Autowired
 	private XmRecordService xmRecordService;
+
+
+	@Autowired
+	PushNotifyMsgService notifyMsgService;
 
 	@Value("${mdp.platform-branch-id:platform-branch-001}")
 	String platformBranchId="platform-branch-001";
@@ -156,7 +161,16 @@ public class XmProjectController {
 					}
 				}
 			}
+			User user = LoginUtils.getCurrentUserInfo();
 				xmProjectService.saveProject(xmProjectVo);
+				notifyMsgService.pushMsg(user,xmProjectVo.getPmUserid(),xmProjectVo.getPmUsername(),"1",xmProjectVo.getId(),xmProjectVo.getId(),"您成为项目【"+xmProjectVo.getName()+"】的项目经理，请及时跟进。");
+				if(StringUtils.hasText(xmProjectVo.getAssUserid()) && !xmProjectVo.getAssUserid().equals(xmProjectVo.getPmUserid())){
+					notifyMsgService.pushMsg(user,xmProjectVo.getAssUserid(),xmProjectVo.getAssUsername(),"1",xmProjectVo.getId(),xmProjectVo.getId(),"您成为项目【"+xmProjectVo.getName()+"】的副经理、助理，请及时跟进。");
+
+				}
+				if(StringUtils.hasText(xmProjectVo.getAdmUserid()) && !xmProjectVo.getAdmUserid().equals(xmProjectVo.getPmUserid())){
+					notifyMsgService.pushMsg(user,xmProjectVo.getAdmUserid(),xmProjectVo.getAdmUsername(),"1",xmProjectVo.getId(),xmProjectVo.getId(),"您成为项目【"+xmProjectVo.getName()+"】的项目总监，请及时跟进。");
+				}
 				xmProjectService.clearProject(xmProjectVo.getId());
 			xmProjectStateService.loadTasksToXmProjectState(xmProjectVo.getId());
 				m.put("data",xmProjectVo);
@@ -450,6 +464,17 @@ public class XmProjectController {
 				return m;
 			}
 			xmProjectService.updateProject(xmProject);
+			if(StringUtils.hasText(xmProject.getPmUserid()) && !xmProject.getPmUserid().equals(xmProjectDb.getPmUserid())){
+				notifyMsgService.pushMsg(user,xmProject.getPmUserid(),xmProject.getPmUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的项目经理，请及时跟进。");
+
+			}
+ 			if(StringUtils.hasText(xmProject.getAssUserid()) && !xmProject.getAssUserid().equals(xmProjectDb.getAssUserid())){
+				notifyMsgService.pushMsg(user,xmProject.getAssUserid(),xmProject.getAssUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的副经理、助理，请及时跟进。");
+
+			}
+			if(StringUtils.hasText(xmProject.getAdmUserid()) && !xmProject.getAdmUserid().equals(xmProjectDb.getAdmUserid())){
+				notifyMsgService.pushMsg(user,xmProject.getAdmUserid(),xmProject.getAdmUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的项目总监，请及时跟进。");
+			}
 			xmProjectService.clearProject(xmProject.getId());
 			xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-修改","修改项目【"+xmProjectDb.getName()+"】的基础信息", JSON.toJSONString(xmProject), JSON.toJSONString(xmProjectDb));
 

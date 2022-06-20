@@ -5,6 +5,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -58,6 +59,9 @@ public class XmProductController {
 
 	@Autowired
 	private XmRecordService xmRecordService;
+
+	@Autowired
+	PushNotifyMsgService notifyMsgService;
 
 	@Value("${mdp.platform-branch-id:platform-branch-001}")
 	String platformBranchId="platform-branch-001";
@@ -277,6 +281,14 @@ public class XmProductController {
 				}
 			}
 			xmProductService.addProduct(xmProduct);
+			notifyMsgService.pushMsg(user,xmProduct.getPmUserid(),xmProduct.getPmUsername(),"3",xmProduct.getId(),xmProduct.getId(),"您成为产品【"+xmProduct.getProductName()+"】的产品经理，请及时跟进。");
+			if(StringUtils.hasText(xmProduct.getAssUserid()) && !xmProduct.getAssUserid().equals(xmProduct.getPmUserid())){
+				notifyMsgService.pushMsg(user,xmProduct.getAssUserid(),xmProduct.getAssUsername(),"3",xmProduct.getId(),xmProduct.getId(),"您成为产品【"+xmProduct.getProductName()+"】的副经理、助理，请及时跟进。");
+
+			}
+			if(StringUtils.hasText(xmProduct.getAdmUserid()) && !xmProduct.getAdmUserid().equals(xmProduct.getPmUserid())){
+				notifyMsgService.pushMsg(user,xmProduct.getAdmUserid(),xmProduct.getAdmUsername(),"3",xmProduct.getId(),xmProduct.getId(),"您成为产品【"+xmProduct.getProductName()+"】的产品总监，请及时跟进。");
+			}
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"创建产品","创建产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】");
 			xmProductStateService.loadTasksToXmProductState(xmProduct.getId());
 			m.put("data",xmProduct);
@@ -446,6 +458,17 @@ public class XmProductController {
 			xmProductService.clearCache(xmProduct.getId());
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"修改产品","修改产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】",JSON.toJSONString(xmProduct),JSON.toJSONString(xmProductDb));
 
+			if(StringUtils.hasText(xmProduct.getPmUserid()) && !xmProduct.getPmUserid().equals(xmProductDb.getPmUserid())){
+				notifyMsgService.pushMsg(user,xmProduct.getPmUserid(),xmProduct.getPmUsername(),"3",xmProduct.getId(),xmProduct.getId(),"您成为产品【"+xmProduct.getProductName()+"】的产品经理，请及时跟进。");
+
+			}
+			if(StringUtils.hasText(xmProduct.getAssUserid()) && !xmProduct.getAssUserid().equals(xmProductDb.getAssUserid())){
+				notifyMsgService.pushMsg(user,xmProduct.getAssUserid(),xmProduct.getAssUsername(),"3",xmProduct.getId(),xmProduct.getId(),"您成为产品【"+xmProduct.getProductName()+"】的副经理、助理，请及时跟进。");
+
+			}
+			if(StringUtils.hasText(xmProduct.getAdmUserid()) && !xmProduct.getAdmUserid().equals(xmProductDb.getAdmUserid()) ){
+				notifyMsgService.pushMsg(user,xmProduct.getAdmUserid(),xmProduct.getAdmUsername(),"3",xmProduct.getId(),xmProduct.getId(),"您成为产品【"+xmProduct.getProductName()+"】的产品总监，请及时跟进。");
+			}
 			m.put("data",xmProduct);
 		}catch (BizException e) { 
 			tips=e.getTips();

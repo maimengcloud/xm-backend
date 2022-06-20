@@ -5,6 +5,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -63,6 +64,10 @@ public class XmIterationController {
 
 	@Autowired
 	XmMenuOperQxService operQxService;
+
+
+	@Autowired
+	PushNotifyMsgService notifyMsgService;
 
 
 	@ApiOperation( value = "查询迭代定义信息列表",notes="listXmIteration,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
@@ -179,6 +184,7 @@ public class XmIterationController {
 			if(!operQxService.checkIsProductAdmOrAss(xmProductService.getProductFromCache(xmIteration.getProductId()), user.getUserid())){
 				return ResponseHelper.failed("no-product-qx","您不是产品管理人员，无权将该产品与迭代关联");
 			};
+			notifyMsgService.pushMsg(user,xmIteration.getAdminUserid(),xmIteration.getAdminUsername(),"6",xmIteration.getProductId(),xmIteration.getId(),"您成为迭代【"+xmIteration.getIterationName()+"】管理员，请及时跟进。");
 			xmIterationService.addIteration(xmIteration);
 			xmIterationStateService.loadTasksToXmIterationState(xmIteration.getId());
 			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-新增","新增迭代"+xmIteration.getIterationName());
@@ -264,6 +270,9 @@ public class XmIterationController {
 				return ResponseHelper.failed("no-qx","您无权修改，迭代创建人、负责人可以修改");
 			}
 			xmIterationService.updateByPk(xmIteration);
+			if(!xmIteration.getAdminUserid().equals(iterationDb.getAdminUserid())){
+				notifyMsgService.pushMsg(user,xmIteration.getAdminUserid(),xmIteration.getAdminUsername(),"6",iterationDb.getProductId(),iterationDb.getId(),"您成为迭代【"+iterationDb.getIterationName()+"】管理员，请及时跟进。");
+			}
 			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-修改","修改迭代"+iterationDb.getIterationName(),JSON.toJSONString(xmIteration), JSON.toJSONString(iterationDb));
 			m.put("data",xmIteration);
 		}catch (BizException e) { 

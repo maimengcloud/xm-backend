@@ -9,6 +9,7 @@ import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
+import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -83,6 +84,10 @@ public class XmTaskController {
 
 	@Autowired
 	XmTaskSumParentsPushService pushService;
+
+
+	@Autowired
+	PushNotifyMsgService notifyMsgService;
 
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmTask());
 	Map<String,Object> fieldNameMap=map("id","任务编号","name","任务名称","parentTaskid","父任务编号","parentTaskname","父任务名称","projectId","项目编号","projectName","项目名称","level","任务级别","sortLevel","序号","executorUserid","任务执行人编号","executorUsername","任务执行人","preTaskid","前置任务编号","preTaskname","前置任务名称","startTime","任务开始时间","endTime","任务结束时间","milestone","里程碑","description","任务描述","remarks","备注","createUserid","任务创建人编号（谁创建谁负责）","createUsername","任务创建人（谁创建谁负责）","createTime","创建时间","rate","任务进度0-100（=实际工时/(实际工时+剩余工时)*100）","budgetAt","当前任务预算金额（calc_type=2时预算工时*单价，calc_type=1时下级汇总）","budgetWorkload","预算工时（calc_type=2时手工填写，calc_type=1时下级汇总）","actAt","当前任务实际费用金额（calc_type=2时，取实际工时*单价，calc_type=1时取下级汇总数据）待结算金额","actWorkload","任务取工时表报工工时汇总，","taskState","任务状态0待领取1已领取执行中2已完工3已结算4已关闭","taskType","0售前方案1投标2需求3设计4开发5测试6验收7部署8运维--来自基础数据表taskType","taskClass","1需结算0不需结算","toTaskCenter","是否发布到任务大厅0否1是,1时互联网可访问","actStartTime","实际开始时间-任务状态变成执行中的时间","actEndTime","实际结束时间-任务状态变成完工状态时的时间","bizProcInstId","当前流程实例编号","bizFlowState","当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除","phaseId","项目阶段编号(作废)","phaseName","项目阶段名称(作废)","taskSkillNames","技能列表,逗号分隔","exeUsernames","执行人列表逗号分隔如陈x(审核人),王x(监控人)","taskSkillIds","技能编号列表逗号分隔","exeUserids","执行人编号列表逗号分隔如u1(1),u2(2)","taskOut","执行方式-0内研1外购","planType","计划类型w1-周,w2-2周,w3-3周,m1-1月,m2-2月,q1-季,q2-半年，y1-年","settleSchemel","任务结算方案-来自数字字典xmTaskSettleSchemel","menuId","归属功能编号","menuName","归属功能名称","productId","产品编号根据功能变化带进","cbranchId","创建机构","cdeptid","创建部门","tagIds","标签编号，逗号分割","tagNames","标签名称，逗号分割","ntype","节点类型0-任务，1-计划。计划下可建立计划和任务，任务下不允许再扩展。也就是非叶子节点都是计划，叶子节点有可能是计划或者任务","childrenCnt","儿子节点个数","ltime","更新时间","pidPaths","父级id逗号分割，最后一个为本节点节点编号,以,号结尾","lvl","层级0-顶级，1-一级，2-二级，3-三级，4-四级。总共5级","isTpl","是否为模板","keyPath","是否为关键路径上的节点","uniInnerPrice","内部单位工时单价","uniOutPrice","外部单位工时单价","calcType","数据统计方式","ptype","计划分类0-项目，1产品,空为不区分","wtype","报工方式1-强制每日报工，2-工期内报工，0-无需报工","bctrl","报工限制0-不限制，1-不得超出预估工时","initWorkload","原始预估工作量，budget_workload发生变化后，进行备份","shareFee","分享赚佣金","oshare","开启分享赚功能0-否1是","crowd","是否众包0否1是，众包属于外购的一种");
@@ -274,7 +279,6 @@ public class XmTaskController {
 
 			List<XmTask> can=new ArrayList<>();
 			List<XmTask> no=new ArrayList<>();
-
 			for (XmTask xmTaskDb : xmTasksDb) {
 				if(StringUtils.hasText(xmTaskDb.getCreateUserid())){
 					tips=groupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
@@ -319,6 +323,13 @@ public class XmTaskController {
 					}
 				for (XmTask task : can) {
 					xmRecordService.addXmTaskRecord(task.getProjectId(),task.getId(),"项目-任务-批量修改","修改任务"+task.getName(),"", JSON.toJSONString(xmTask));
+				}
+				if(xmTaskMap.containsKey("createUserid")){
+					String createUserid= (String) xmTaskMap.get("createUserid");
+					String createUsername= (String) xmTaskMap.get("createUsername");
+					for (XmTask task : can) {
+						notifyMsgService.pushMsg(user,createUserid,createUsername,"2",task.getProjectId(),task.getId(),"您成为任务【"+task.getName()+"】的负责人，请注意跟进。");
+					}
 				}
 
 
@@ -851,6 +862,7 @@ public class XmTaskController {
 				}
 				xmTaskService.batchImportFromTemplate(xmTasks);
 				for (XmTask t : xmTasks) {
+					notifyMsgService.pushMsg(user,t.getCreateUserid(),t.getCreateUsername(),"2",t.getProjectId(),t.getId(),"您成为任务【"+t.getName()+"】的负责人，请注意跟进。");
 					xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量新增任务", "新增任务"+t.getName(),"",null);
 					
 				}

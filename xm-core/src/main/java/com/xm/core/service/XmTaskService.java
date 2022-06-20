@@ -7,6 +7,7 @@ import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.NumberUtil;
+import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
@@ -52,6 +53,10 @@ public class XmTaskService extends BaseService {
 
 	@Autowired
 	XmTaskSumParentsPushService pushService;
+
+
+	@Autowired
+	PushNotifyMsgService notifyMsgService;
 
 
 	@Autowired
@@ -213,8 +218,10 @@ public class XmTaskService extends BaseService {
 		//xmTaskSkillService.updateXmTaskSkillIdsAndNamesByTaskId(xmTaskVo.getId());
 		
 		//新增日志
-		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-新增任务", "新增任务"+xmTask.getName()); 
-		
+		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-新增任务", "新增任务"+xmTask.getName());
+
+		notifyMsgService.pushMsg(user,xmTask.getCreateUserid(),xmTask.getCreateUsername(),"2",xmTask.getProjectId(),xmTask.getId(),"您成为任务【"+xmTask.getName()+"】的负责人，请注意跟进。");
+
 		return xmTaskVo;
 	}
 	/**

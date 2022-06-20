@@ -330,7 +330,7 @@ public class XmQuestionController {
 						handle.setReceiptMessage(user.getUsername()+"修改缺陷处理意见为："+xmQuestionVo.getRemarks());
 					}else if(StringUtils.hasText(handlerUsername)){
 						handle.setReceiptMessage(user.getUsername()+"将缺陷指派给"+handlerUsername);
-						notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"5",xmQuestionVo.getProductId(),xmQuestionVo.getId(),"您有新的bug【"+xmQuestionVo.getName()+"】需要处理，请尽快修复！");
+						notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"5",xmQuestionVo.getProductId(),xmQuestionVo.getId(),user.getUsername()+"将bug【"+xmQuestionVo.getName()+"】指派给您，请及时跟进。");
 
 					}else if(StringUtils.hasText(bugStatus)){
 						handle.setReceiptMessage(user.getUsername()+"将缺陷状态改为"+bugStatus);
