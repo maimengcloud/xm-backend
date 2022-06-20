@@ -459,15 +459,15 @@ public class XmProductController {
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"修改产品","修改产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】",JSON.toJSONString(xmProduct),JSON.toJSONString(xmProductDb));
 
 			if(StringUtils.hasText(xmProduct.getPmUserid()) && !xmProduct.getPmUserid().equals(xmProductDb.getPmUserid())){
-				notifyMsgService.pushMsg(user,xmProduct.getPmUserid(),xmProduct.getPmUsername(),"3",xmProduct.getId(),xmProduct.getId(),"您成为产品【"+xmProduct.getProductName()+"】的产品经理，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProduct.getPmUserid(),xmProduct.getPmUsername(),"3",xmProductDb.getId(),xmProductDb.getId(),"您成为产品【"+xmProductDb.getProductName()+"】的产品经理，请及时跟进。");
 
 			}
 			if(StringUtils.hasText(xmProduct.getAssUserid()) && !xmProduct.getAssUserid().equals(xmProductDb.getAssUserid())){
-				notifyMsgService.pushMsg(user,xmProduct.getAssUserid(),xmProduct.getAssUsername(),"3",xmProduct.getId(),xmProduct.getId(),"您成为产品【"+xmProduct.getProductName()+"】的副经理、助理，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProduct.getAssUserid(),xmProduct.getAssUsername(),"3",xmProductDb.getId(),xmProductDb.getId(),"您成为产品【"+xmProductDb.getProductName()+"】的副经理、助理，请及时跟进。");
 
 			}
 			if(StringUtils.hasText(xmProduct.getAdmUserid()) && !xmProduct.getAdmUserid().equals(xmProductDb.getAdmUserid()) ){
-				notifyMsgService.pushMsg(user,xmProduct.getAdmUserid(),xmProduct.getAdmUsername(),"3",xmProduct.getId(),xmProduct.getId(),"您成为产品【"+xmProduct.getProductName()+"】的产品总监，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProduct.getAdmUserid(),xmProduct.getAdmUsername(),"3",xmProductDb.getId(),xmProductDb.getId(),"您成为产品【"+xmProductDb.getProductName()+"】的产品总监，请及时跟进。");
 			}
 			m.put("data",xmProduct);
 		}catch (BizException e) { 
