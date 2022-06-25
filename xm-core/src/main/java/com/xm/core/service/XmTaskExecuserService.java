@@ -60,7 +60,7 @@ public class XmTaskExecuserService extends BaseService {
 		xmTaskExecuser.setCreateUsername(user.getUsername());
 		xmTaskExecuser.setCreateTime(new Date());
 		xmTaskExecuser.setStartTime(new Date());
-		if(StringUtils.hasText(xmTaskExecuser.getStatus())){
+		if(!StringUtils.hasText(xmTaskExecuser.getStatus())){
 			xmTaskExecuser.setStatus("0");
 		}
 		this.insert(xmTaskExecuser);
