@@ -60,14 +60,24 @@ public class XmTaskExecuserService extends BaseService {
 		xmTaskExecuser.setCreateUsername(user.getUsername());
 		xmTaskExecuser.setCreateTime(new Date());
 		xmTaskExecuser.setStartTime(new Date());
-		xmTaskExecuser.setStatus("0");
+		if(StringUtils.hasText(xmTaskExecuser.getStatus())){
+			xmTaskExecuser.setStatus("0");
+		}
 		this.insert(xmTaskExecuser);
+
+		String imMsg="";
+		String notifyMsg="";
 		updateXmTaskExeUseridsAndUsernamesByTaskId(xmTaskExecuser.getTaskId()); 
-		
-		String imMsg=xmTaskExecuser.getUsername()+"成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的候选人";
+		if("0".equals(xmTaskExecuser.getStatus())){
+			imMsg=xmTaskExecuser.getUsername()+"成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的候选人，待雇主选标。";
+			notifyMsg="您成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的候选人，请等待雇主选标，在雇主选标前，您还可以修改报价，合理的报价更容易获得雇主的喜欢哦！";
+		}else {
+			imMsg=xmTaskExecuser.getUsername()+"成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的执行人，请及时跟进任务！";
+			notifyMsg="您成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的执行人，请及时跟进任务！";
+		}
 		this.pushMsgService.pushPrichatMsgToIm(user.getBranchId(),user.getUserid(),user.getUsername(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),imMsg);
 		this.pushMsgService.pushCreateCssGroupMsg(user.getBranchId(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), imMsg);
-		notifyMsgService.pushMsg(user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),"2",xmTaskExecuser.getProjectId(),xmTaskExecuser.getTaskId(),"您成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的候选人，请等待雇主选标，在雇主选标前，您还可以修改报价，合理的报价更容易获得雇主的喜欢哦！");
+		notifyMsgService.pushMsg(user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),"2",xmTaskExecuser.getProjectId(),xmTaskExecuser.getTaskId(),notifyMsg);
 
 		xmRecordService.addXmTaskRecord(xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), "项目-任务-增加候选人", "任务增加候选人"+xmTaskExecuser.getUsername(),JSONObject.toJSONString(xmTaskExecuser),null);
 	}

@@ -195,7 +195,24 @@ public class XmTaskExecuserController {
 				isBranch=!"0".equals(user.getMemType());
 				xmTaskExecuser.setExecUserBranchId(user.getBranchId());
 			}
-			if("1".equals(xmTask.getCrowd()) && "1".equals(xmTask.getTaskOut())){
+			boolean isPm=groupService.checkUserIsProjectAdm(xmTask.getProjectId(),user.getUserid());
+			boolean isTeamHeader=false;
+			List<XmGroupVo> myGgroups=groupService.getProjectGroupVoList(projectId);
+			if(!isPm){
+ 				isTeamHeader= groupService.checkUserIsOtherUserTeamHeadOrAss(myGgroups,user.getUserid(),xmTask.getCreateUserid());
+			}
+			if(!user.getUserid().equals(xmTaskExecuser.getUserid()) ){//只有上级可以拉人
+				if(!isPm && !isTeamHeader){
+					return ResponseHelper.failed("no-qx","您无权操作！只有任务负责人、组长、项目管理者可以给任务分配候选人。");
+				}
+			}else{
+				if(!"1".equals(xmTask.getCrowd())){//如果是众包任务，自己可以直接加入，如果不是众包任务，必须任务负责人、组长、经理等拉人作为执行人
+					if(!isPm && !isTeamHeader){
+						return ResponseHelper.failed("no-qx","您无权操作！只有任务负责人、组长、项目管理者可以给任务分配执行人。");
+					}
+				}
+			}
+			if("1".equals(xmTask.getCrowd())){
 				Map<String,Object> result=null;
 				if(isBranch){
 					result=mkClient.checkAndGetMemberInterests(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
@@ -213,37 +230,35 @@ public class XmTaskExecuserController {
 						xmTaskExecuser.setSfee(xmTaskExecuser.getQuoteAmount().multiply(BigDecimal.valueOf(xmTaskExecuser.getSfeeRate()/100)));
 					}
 				}
+				xmTaskExecuser.setStatus("0");   //如果是众包，智能添加为候选人
+			}else {
+				//如果不是众包，需要判断是否已加入项目组组织架构中，如未加入，需要提示其先加入
+				boolean exists=groupService.checkUserExistsGroup(myGgroups, xmTaskExecuser.getUserid());
+				if(!exists) {
+					tips.setFailureMsg(xmTaskExecuser.getUsername()+"不在项目组织架构中，请先将其拉入项目组织架构中");
+					return ResponseHelper.failed("user-not-in-project",xmTaskExecuser.getUsername()+"不在项目组织架构中，请先将其拉入项目组织架构中");
+				}
+				//检查是否已经存在执行人
+				XmTaskExecuser query=new XmTaskExecuser();
+				query.setTaskId(xmTask.getId());
+				List<XmTaskExecuser> xmTaskExecusersDb=this.xmTaskExecuserService.selectListByWhere(query);
+				if(xmTaskExecusersDb !=null && xmTaskExecusersDb.size()>0) {
+					for (XmTaskExecuser exe : xmTaskExecusersDb) {
+						if(!"0".equals(exe.getStatus()) && !"7".equals(exe.getStatus())) {
+							throw new BizException(exe.getUsername()+"是当前执行人，不允许再添加其它执行人。");
+						}
+					}
+				}
+				xmTaskExecuser.setStatus("1");//如果不是众包，则添加为执行人
+
 			}
-
-
-			 if(user.getUserid().equals(xmTaskExecuser.getUserid())){//自己作为候选人
-				 xmTaskExecuser.setExecUserBranchId(user.getBranchId());
-				 xmTaskExecuserService.addExecuser(xmTaskExecuser);
-				 if(isBranch){
-				 	sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getExecUserBranchId(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
-				 }else {
-					 mkClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
-				 }
-
-				 m.put("data",xmTaskExecuser);
-			 }else {
-				 boolean isPm=groupService.checkUserIsProjectAdm(xmTask.getProjectId(),user.getUserid());
-				 if(!isPm){
-					 List<XmGroupVo> myGgroups=groupService.getProjectGroupVoList(projectId);
-					 boolean isTeamHeader= groupService.checkUserIsOtherUserTeamHeadOrAss(myGgroups,user.getUserid(),xmTaskExecuser.getCreateUserid());
-					 if(!isTeamHeader){
-					 	return ResponseHelper.failed("no-qx","您无权操作！只有任务负责人、组长、项目管理者可以给任务分配候选人。");
-					 }
-				 }
-				 xmTaskExecuserService.addExecuser(xmTaskExecuser);
-				 if(isBranch){
-					 sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getExecUserBranchId(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
-				 }else {
-					 mkClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
-				 }
-				 m.put("data",xmTaskExecuser);
-			 }
-
+			xmTaskExecuserService.addExecuser(xmTaskExecuser);
+			if(isBranch){
+				sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getExecUserBranchId(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+			}else {
+				mkClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+			}
+			m.put("data",xmTaskExecuser);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
