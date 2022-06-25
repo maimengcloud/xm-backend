@@ -186,6 +186,14 @@ public class XmQuestionController {
 			if(!StringUtils.hasText(xmQuestionVo.getQtype())){
 				xmQuestionVo.setQtype("1");
 			}
+			xmQuestionVo.setCreateTime(new Date());
+			xmQuestionVo.setCreateUserid(user.getUserid());
+			xmQuestionVo.setCreateUsername(user.getUsername());
+			xmQuestionVo.setLtime(new Date());
+			if(!StringUtils.hasText(xmQuestionVo.getHandlerUserid())){
+				xmQuestionVo.setHandlerUserid(user.getUserid());
+				xmQuestionVo.setHandlerUsername(user.getUsername());
+			}
 			xmQuestionService.addQuestion(xmQuestionVo);
 			if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {
 				notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"5",xmQuestionVo.getProductId(),xmQuestionVo.getId(),"您有新的bug【"+xmQuestionVo.getName()+"】需要处理，请尽快修复！");
