@@ -1,20 +1,19 @@
 package  com.xm.core.entity;
 
+import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmIteration所有属性名: <br>
- *	id,branchId,iterationName,startTime,endTime,onlineTime,pid,adminUserid,adminUsername,ctime,budgetCost,budgetWorkload,seqNo,istatus,cuserid,cusername,remark,iphase,isTpl,productId;<br>
- * 表 xm_iteration 迭代定义的所有字段名: <br>
- *	id,branch_id,iteration_name,start_time,end_time,online_time,pid,admin_userid,admin_username,ctime,budget_cost,budget_workload,seq_no,istatus,cuserid,cusername,remark,iphase,is_tpl,product_id;<br>
+ *	"id","迭代编码","branchId","机构编号","iterationName","迭代名称","startTime","开始时间","endTime","结束时间","onlineTime","上线时间","pid","上级迭代-作废，不以树状结构","adminUserid","负责人","adminUsername","负责人姓名","ctime","创建时间","budgetCost","预算成本","budgetWorkload","预算工作量","seqNo","顺序号","istatus","迭代状态0未结束1已结束","cuserid","创建人编号","cusername","创建人人姓名","remark","备注","iphase","迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成7已关闭","isTpl","是否为模板","productId","产品编号";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
+ @Data
 @ApiModel(description="迭代定义")
 public class XmIteration  implements java.io.Serializable {
 	
@@ -72,7 +71,7 @@ public class XmIteration  implements java.io.Serializable {
 	@ApiModelProperty(notes="备注",allowEmptyValue=true,example="",allowableValues="")
 	String remark;
 	
-	@ApiModelProperty(notes="迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成7已关闭",allowEmptyValue=true,example="",allowableValues="")
 	String iphase;
 	
 	@ApiModelProperty(notes="是否为模板",allowEmptyValue=true,example="",allowableValues="")
@@ -81,255 +80,17 @@ public class XmIteration  implements java.io.Serializable {
 	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
 	String productId;
 
-	/**迭代编码**/
+	/**
+	 *迭代编码
+	 **/
 	public XmIteration(String id) {
 		this.id = id;
 	}
     
-    /**迭代定义**/
+    /**
+     * 迭代定义
+     **/
 	public XmIteration() {
-	}
-	
-	/**
-	 * 迭代编码
-	 **/
-	public void setId(String id) {
-		this.id = id;
-	}
-	/**
-	 * 机构编号
-	 **/
-	public void setBranchId(String branchId) {
-		this.branchId = branchId;
-	}
-	/**
-	 * 迭代名称
-	 **/
-	public void setIterationName(String iterationName) {
-		this.iterationName = iterationName;
-	}
-	/**
-	 * 开始时间
-	 **/
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
-	/**
-	 * 结束时间
-	 **/
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
-	/**
-	 * 上线时间
-	 **/
-	public void setOnlineTime(Date onlineTime) {
-		this.onlineTime = onlineTime;
-	}
-	/**
-	 * 上级迭代-作废，不以树状结构
-	 **/
-	public void setPid(String pid) {
-		this.pid = pid;
-	}
-	/**
-	 * 负责人
-	 **/
-	public void setAdminUserid(String adminUserid) {
-		this.adminUserid = adminUserid;
-	}
-	/**
-	 * 负责人姓名
-	 **/
-	public void setAdminUsername(String adminUsername) {
-		this.adminUsername = adminUsername;
-	}
-	/**
-	 * 创建时间
-	 **/
-	public void setCtime(Date ctime) {
-		this.ctime = ctime;
-	}
-	/**
-	 * 预算成本
-	 **/
-	public void setBudgetCost(BigDecimal budgetCost) {
-		this.budgetCost = budgetCost;
-	}
-	/**
-	 * 预算工作量
-	 **/
-	public void setBudgetWorkload(BigDecimal budgetWorkload) {
-		this.budgetWorkload = budgetWorkload;
-	}
-	/**
-	 * 顺序号
-	 **/
-	public void setSeqNo(String seqNo) {
-		this.seqNo = seqNo;
-	}
-	/**
-	 * 迭代状态0未结束1已结束
-	 **/
-	public void setIstatus(String istatus) {
-		this.istatus = istatus;
-	}
-	/**
-	 * 创建人编号
-	 **/
-	public void setCuserid(String cuserid) {
-		this.cuserid = cuserid;
-	}
-	/**
-	 * 创建人人姓名
-	 **/
-	public void setCusername(String cusername) {
-		this.cusername = cusername;
-	}
-	/**
-	 * 备注
-	 **/
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-	/**
-	 * 迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成
-	 **/
-	public void setIphase(String iphase) {
-		this.iphase = iphase;
-	}
-	/**
-	 * 是否为模板
-	 **/
-	public void setIsTpl(String isTpl) {
-		this.isTpl = isTpl;
-	}
-	/**
-	 * 产品编号
-	 **/
-	public void setProductId(String productId) {
-		this.productId = productId;
-	}
-	
-	/**
-	 * 迭代编码
-	 **/
-	public String getId() {
-		return this.id;
-	}
-	/**
-	 * 机构编号
-	 **/
-	public String getBranchId() {
-		return this.branchId;
-	}
-	/**
-	 * 迭代名称
-	 **/
-	public String getIterationName() {
-		return this.iterationName;
-	}
-	/**
-	 * 开始时间
-	 **/
-	public Date getStartTime() {
-		return this.startTime;
-	}
-	/**
-	 * 结束时间
-	 **/
-	public Date getEndTime() {
-		return this.endTime;
-	}
-	/**
-	 * 上线时间
-	 **/
-	public Date getOnlineTime() {
-		return this.onlineTime;
-	}
-	/**
-	 * 上级迭代-作废，不以树状结构
-	 **/
-	public String getPid() {
-		return this.pid;
-	}
-	/**
-	 * 负责人
-	 **/
-	public String getAdminUserid() {
-		return this.adminUserid;
-	}
-	/**
-	 * 负责人姓名
-	 **/
-	public String getAdminUsername() {
-		return this.adminUsername;
-	}
-	/**
-	 * 创建时间
-	 **/
-	public Date getCtime() {
-		return this.ctime;
-	}
-	/**
-	 * 预算成本
-	 **/
-	public BigDecimal getBudgetCost() {
-		return this.budgetCost;
-	}
-	/**
-	 * 预算工作量
-	 **/
-	public BigDecimal getBudgetWorkload() {
-		return this.budgetWorkload;
-	}
-	/**
-	 * 顺序号
-	 **/
-	public String getSeqNo() {
-		return this.seqNo;
-	}
-	/**
-	 * 迭代状态0未结束1已结束
-	 **/
-	public String getIstatus() {
-		return this.istatus;
-	}
-	/**
-	 * 创建人编号
-	 **/
-	public String getCuserid() {
-		return this.cuserid;
-	}
-	/**
-	 * 创建人人姓名
-	 **/
-	public String getCusername() {
-		return this.cusername;
-	}
-	/**
-	 * 备注
-	 **/
-	public String getRemark() {
-		return this.remark;
-	}
-	/**
-	 * 迭代阶段:0未开始,1需求评审,2计划会,3研发中,4测试中,5迭代上线,6已完成
-	 **/
-	public String getIphase() {
-		return this.iphase;
-	}
-	/**
-	 * 是否为模板
-	 **/
-	public String getIsTpl() {
-		return this.isTpl;
-	}
-	/**
-	 * 产品编号
-	 **/
-	public String getProductId() {
-		return this.productId;
 	}
 
 }

@@ -86,7 +86,7 @@ public class SwaggerConfig {
 
 
     private ApiInfo apiInfo() {
-        Contact contact = new Contact("广州擎勤网络科技有限公司", String.format("https://www.qingqinkj/api/m1/%s/swagger-ui.html",applicationName), "cyc58469@163.com");
+        Contact contact = new Contact("广州擎勤网络科技有限公司", String.format("https://www.qingqinkj.com/api/m1/%s/swagger-ui.html",applicationName), "cyc58469@163.com");
         return new ApiInfoBuilder()
                 .title("唛盟接口")
                 .description(String.format("接口文档 本地访问地址 http://localhost:%s/swagger-ui.html",serverPort))
