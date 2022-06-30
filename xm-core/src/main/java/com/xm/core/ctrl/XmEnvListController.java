@@ -70,6 +70,9 @@ public class XmEnvListController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmEnvList, "ids");
 		PageUtils.startPage(xmEnvList);
+		User user=LoginUtils.getCurrentUserInfo();
+		xmEnvList.put("userid",user.getUserid());
+		xmEnvList.put("branchId",user.getBranchId());
 		List<Map<String,Object>>	xmEnvListList = xmEnvListService.selectListMapByWhere(xmEnvList);	//列出XmEnvList列表
 		PageUtils.responePage(m, xmEnvListList);
 		m.put("data",xmEnvListList);

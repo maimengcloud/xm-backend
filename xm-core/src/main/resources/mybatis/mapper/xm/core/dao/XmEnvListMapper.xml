@@ -18,6 +18,7 @@
 		<if test="linkProductId!=null and linkProductId!=''">
 			and exists( select 1 from xm_product_project_link l where l.product_id=#{linkProductId} and l.project_id=res.project_id)
 		</if>
+		and ((res.create_userid=#{userid} and res.read_qx='9') or (res.branch_id=#{branchId} and res.read_qx='1') or res.read_qx in ('0','2'))
     </sql>
 
 
