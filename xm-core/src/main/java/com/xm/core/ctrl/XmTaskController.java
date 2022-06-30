@@ -246,6 +246,8 @@ public class XmTaskController {
 			fields.add("childrenCnt");
 			fields.add("ntype");
 			fields.add("pidPaths");
+			fields.add("parentTaskid");
+			fields.add("parentTaskname");
 			fields.add("executorUserid");
 			for (String fieldName : xmTaskMap.keySet()) {
 				if(fields.contains(fieldName)){

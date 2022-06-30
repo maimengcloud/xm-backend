@@ -712,7 +712,7 @@ public class XmTaskService extends BaseService {
 
 	@Transactional
 	public void batchChangeParent(List<XmTask> xmTasks,XmTask parentTask) {
-		super.update("batchChangeParent",map("taskIds",xmTasks.stream().map(i->i.getId()).collect(Collectors.toList()),"parentTaskid",parentTask.getId(),"parentPidPaths",parentTask.getPidPaths()));
+		super.update("batchChangeParent",map("taskIds",xmTasks.stream().map(i->i.getId()).collect(Collectors.toList()),"parentTaskid",parentTask.getId(),"parentTaskname",parentTask.getName(),"parentPidPaths",parentTask.getPidPaths()));
 		pushService.pushXmTask(parentTask);
 	}
 

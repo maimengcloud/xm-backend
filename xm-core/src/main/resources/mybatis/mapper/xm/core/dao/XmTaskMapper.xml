@@ -275,7 +275,7 @@
 
 	<update id="batchChangeParent" parameterType="HashMap">
 		update   xm_task res inner join (
-		select t.id,pid_paths,parent_taskid from xm_task t where t.id in
+		select t.id,pid_paths,parent_taskid,parent_taskname from xm_task t where t.id in
 			<foreach collection="taskIds" item="item" index="index" open="(" separator="," close=")" >
 				#{item}
 			</foreach>
@@ -283,6 +283,7 @@
 
 		set res.pid_paths = replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.id,',')),
 		res.parent_taskid=if(res.id=t1.id,#{parentTaskid},res.parent_taskid),
+		res.parent_taskname=if(res.id=t1.id,#{parentTaskname},res.parent_taskname),
 		res.lvl= LENGTH(replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.id,',')))-LENGTH(REPLACE(replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.id,',')),',',''))-1
 
 	</update>
