@@ -35,7 +35,11 @@
 				</foreach>
 			</if>
 			<if test="projectId !=null and projectId !=''"> and exists ( select 1 from xm_test_case_exec c where c.case_id=res.id and c.project_id=#{projectId} )</if>
-			<if test="productId != null and productId !='' ">    and exists( select 1 from xm_menu m where m.menu_id =res.menu_id and m.product_id=#{productId})  </if>
+			<if test="(productId != null and productId !='') or (iterationId!=null and iterationId!='')">    and exists( select 1 from xm_menu m where m.menu_id =res.menu_id
+				<if test="productId != null and productId !=''" >and m.product_id=#{productId}  </if>
+				<if test="iterationId != null and iterationId !=''" >and m.iteration_id=#{iterationId}  </if>
+				)
+			</if>
 			<if test="key != null and key !='' ">   and res.case_name like #{key}    </if>
 		</where>
 	</select>
