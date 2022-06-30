@@ -5,11 +5,15 @@ import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmEnvList;
 import com.xm.core.service.XmEnvListService;
+import com.xm.core.service.XmGroupService;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -42,8 +46,11 @@ public class XmEnvListController {
 	
 	@Autowired
 	private XmEnvListService xmEnvListService;
-	 
-		
+
+
+
+	@Autowired
+	XmGroupService xmGroupService;
  
 	
 	@ApiOperation( value = "查询xm_env_list信息列表",notes="listXmEnvList,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
@@ -83,8 +90,23 @@ public class XmEnvListController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-			if(StringUtils.hasText(xmEnvList.get)){
+			if(!StringUtils.hasText(xmEnvList.getProjectId())){
+				return ResponseHelper.failed("projectId-0","项目编号不能为空");
+			}
+			User user= LoginUtils.getCurrentUserInfo();
+			boolean inProjectGroup=xmGroupService.checkUserExistsGroup(xmEnvList.getProjectId(),user.getUserid());
+			if(!inProjectGroup){
+				return ResponseHelper.failed("no-in-project","您不在项目中【"+xmEnvList.getProjectId()+"】，不能添加环境清单");
+			}
+			if(!StringUtils.hasText(xmEnvList.getReadQx())){
+				return ResponseHelper.failed("readQx-0","请选中读权限");
+			}
+			if(!StringUtils.hasText(xmEnvList.getWriteQx())){
+				return ResponseHelper.failed("writeQx-0","请选中写权限");
+			}
 
+			if(!StringUtils.hasText(xmEnvList.getRemark())){
+				return ResponseHelper.failed("remark-0","请填写备注");
 			}
 			xmEnvListService.addEnv(xmEnvList);
 			m.put("data",xmEnvList);
@@ -109,6 +131,29 @@ public class XmEnvListController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
+			XmEnvList xmEnvListDb=this.xmEnvListService.selectOneById(xmEnvList.getId());
+			if(xmEnvListDb==null){
+				return ResponseHelper.failed("data-0","数据已不存在");
+			}
+			User user=LoginUtils.getCurrentUserInfo();
+			if(StringUtils.hasText(xmEnvListDb.getWriteQx()) && !"0".equals(xmEnvListDb.getWriteQx()) && user.getUserid().equals(xmEnvListDb.getCreateUserid())){
+				String writeQx=xmEnvListDb.getWriteQx();
+				if("1".equals(writeQx)){//同一机构可写
+					if(!user.getBranchId().equals(xmEnvListDb.getBranchId())){
+						return ResponseHelper.failed("writeQx-err-1","您无权更改");
+					}
+				}else if("2".equals(writeQx)){//同一机构同一项目可写
+					boolean inProject=this.xmGroupService.checkUserExistsGroup(xmEnvListDb.getProjectId(), user.getUserid());
+					if(!inProject){
+						return ResponseHelper.failed("writeQx-err-2","您不在项目【"+xmEnvListDb.getProjectId()+"】,无权更改");
+					}
+				}else if("3".equals(writeQx)){//同一机构同一项目可写
+					Tips isHeader=this.xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmEnvListDb.getCreateUserid(),xmEnvListDb.getProjectId());
+ 					if(!isHeader.isOk()){
+						return ResponseHelper.failed("writeQx-err-3","您不是【"+xmEnvListDb.getCreateUsername()+"】的上级,无权更改");
+					}
+				}
+			}
 			xmEnvListService.deleteByPk(xmEnvList);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -131,6 +176,29 @@ public class XmEnvListController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
+			XmEnvList xmEnvListDb=this.xmEnvListService.selectOneById(xmEnvList.getId());
+			if(xmEnvListDb==null){
+				return ResponseHelper.failed("data-0","数据已不存在");
+			}
+			User user=LoginUtils.getCurrentUserInfo();
+			if(StringUtils.hasText(xmEnvListDb.getWriteQx()) && !"0".equals(xmEnvListDb.getWriteQx()) && user.getUserid().equals(xmEnvListDb.getCreateUserid())){
+				String writeQx=xmEnvListDb.getWriteQx();
+				if("1".equals(writeQx)){//同一机构可写
+					if(!user.getBranchId().equals(xmEnvListDb.getBranchId())){
+						return ResponseHelper.failed("writeQx-err-1","您无权更改");
+					}
+				}else if("2".equals(writeQx)){//同一机构同一项目可写
+					boolean inProject=this.xmGroupService.checkUserExistsGroup(xmEnvListDb.getProjectId(), user.getUserid());
+					if(!inProject){
+						return ResponseHelper.failed("writeQx-err-2","您不在项目【"+xmEnvListDb.getProjectId()+"】,无权更改");
+					}
+				}else if("3".equals(writeQx)){//同一机构同一项目可写
+					Tips isHeader=this.xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmEnvListDb.getCreateUserid(),xmEnvListDb.getProjectId());
+					if(!isHeader.isOk()){
+						return ResponseHelper.failed("writeQx-err-3","您不是【"+xmEnvListDb.getCreateUsername()+"】的上级,无权更改");
+					}
+				}
+			}
 			xmEnvListService.updateByPk(xmEnvList);
 			m.put("data",xmEnvList);
 		}catch (BizException e) { 
@@ -145,7 +213,7 @@ public class XmEnvListController {
 	}
 
 
-	
+	/**
 	@ApiOperation( value = "根据主键列表批量删除xm_env_list信息",notes="batchDelXmEnvList,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -166,7 +234,8 @@ public class XmEnvListController {
 		}  
 		m.put("tips", tips);
 		return m;
-	} 
+	}
+	**/
 
 
 	/**
