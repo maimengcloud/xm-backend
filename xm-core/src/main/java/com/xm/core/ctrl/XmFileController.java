@@ -5,11 +5,16 @@ import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmFile;
 import com.xm.core.service.XmFileService;
+import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmProjectService;
 import com.xm.core.vo.XmFileVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
@@ -42,8 +47,12 @@ public class XmFileController {
 	
 	@Autowired
 	private XmFileService xmFileService;
-	 
-		
+
+	@Autowired
+	XmProjectService xmProjectService;
+
+	@Autowired
+	XmGroupService xmGroupService;
  
 	
 	@ApiOperation( value = "查询xm_file信息列表",notes="listXmFile,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
@@ -105,6 +114,19 @@ public class XmFileController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
+			User user= LoginUtils.getCurrentUserInfo();
+			XmFile file=this.xmFileService.selectOneById(xmFile.getId());
+			if(file==null){
+				return ResponseHelper.failed("data-0","数据已不存在");
+			}
+
+			if(!user.getUserid().equals(file.getCreateUserid()) ){
+				Tips isHead=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,file.getCreateUserid(),file.getProjectId());
+				if(!isHead.isOk()){
+					return ResponseHelper.failed("no-qx","您只能删除自己创建的文档");
+				}
+
+			}
 			xmFileService.deleteFile(xmFile);
 		}catch (BizException e) {
 			tips=e.getTips();

@@ -70,7 +70,7 @@
 		insert into xm_env_list(
 			<include refid="columns"/>
 		) values (
-		#{id},#{remark},#{ipAddress},#{port},#{branchId},#{accessUserid},#{accessPassword},#{effect},#{accessUrl},#{supplier},#{webIpAddress},#{webPort},#{otherRemark},#{createUserid},#{createUsername},#{createTime},#{envState},#{startTime},#{endTime},#{feeAmount},#{feeRule},#{bizProcInstId},#{bizFlowState}
+		#{id},#{remark},#{ipAddress},#{port},#{branchId},#{accessUserid},#{accessPassword},#{accessUrl},#{supplier},#{webIpAddress},#{webPort},#{createUserid},#{createUsername},#{createTime},#{envState},#{startTime},#{endTime},#{feeAmount},#{feeRule},#{projectId},#{readQx},#{writeQx},#{ltime},#{luserid},#{lusername}
 		)
 	</insert>
 	
@@ -145,7 +145,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,remark,ip_address,port,branch_id,access_userid,access_password,effect,access_url,supplier,web_ip_address,web_port,other_remark,create_userid,create_username,create_time,env_state,start_time,end_time,fee_amount,fee_rule,biz_proc_inst_id,biz_flow_state
+		id,remark,ip_address,port,branch_id,access_userid,access_password,access_url,supplier,web_ip_address,web_port,create_userid,create_username,create_time,env_state,start_time,end_time,fee_amount,fee_rule,project_id,read_qx,write_qx,ltime,luserid,lusername
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -157,12 +157,10 @@
 		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
 		<if test="accessUserid != null and accessUserid != ''">      and res.access_userid = #{accessUserid}     </if>
 		<if test="accessPassword != null and accessPassword != ''">      and res.access_password = #{accessPassword}     </if>
-		<if test="effect != null and effect != ''">      and res.effect = #{effect}     </if>
 		<if test="accessUrl != null and accessUrl != ''">      and res.access_url = #{accessUrl}     </if>
 		<if test="supplier != null and supplier != ''">      and res.supplier = #{supplier}     </if>
 		<if test="webIpAddress != null and webIpAddress != ''">      and res.web_ip_address = #{webIpAddress}     </if>
 		<if test="webPort != null and webPort != ''">      and res.web_port = #{webPort}     </if>
-		<if test="otherRemark != null and otherRemark != ''">      and res.other_remark = #{otherRemark}     </if>
 		<if test="createUserid != null and createUserid != ''">      and res.create_userid = #{createUserid}     </if>
 		<if test="createUsername != null and createUsername != ''">      and res.create_username = #{createUsername}     </if>
 		<if test="createTime != null">      and date_format(res.create_time,'%Y-%m-%d') = date_format(#{createTime},'%Y-%m-%d')     </if>
@@ -171,8 +169,12 @@
 		<if test="endTime != null">      and date_format(res.end_time,'%Y-%m-%d') = date_format(#{endTime},'%Y-%m-%d')     </if>
 		<if test="feeAmount != null and feeAmount != ''">      and res.fee_amount = #{feeAmount}     </if>
 		<if test="feeRule != null and feeRule != ''">      and res.fee_rule = #{feeRule}     </if>
-		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
-		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
+		<if test="readQx != null and readQx != ''">      and res.read_qx = #{readQx}     </if>
+		<if test="writeQx != null and writeQx != ''">      and res.write_qx = #{writeQx}     </if>
+		<if test="ltime != null">      and date_format(res.ltime,'%Y-%m-%d') = date_format(#{ltime},'%Y-%m-%d')     </if>
+		<if test="luserid != null and luserid != ''">      and res.luserid = #{luserid}     </if>
+		<if test="lusername != null and lusername != ''">      and res.lusername = #{lusername}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -182,12 +184,10 @@
 		branch_id = #{branchId},
 		access_userid = #{accessUserid},
 		access_password = #{accessPassword},
-		effect = #{effect},
 		access_url = #{accessUrl},
 		supplier = #{supplier},
 		web_ip_address = #{webIpAddress},
 		web_port = #{webPort},
-		other_remark = #{otherRemark},
 		create_userid = #{createUserid},
 		create_username = #{createUsername},
 		create_time = #{createTime},
@@ -196,8 +196,12 @@
 		end_time = #{endTime},
 		fee_amount = #{feeAmount},
 		fee_rule = #{feeRule},
-		biz_proc_inst_id = #{bizProcInstId},
-		biz_flow_state = #{bizFlowState}
+		project_id = #{projectId},
+		read_qx = #{readQx},
+		write_qx = #{writeQx},
+		ltime = #{ltime},
+		luserid = #{luserid},
+		lusername = #{lusername}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
@@ -206,12 +210,10 @@
 		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
 		<if test="accessUserid != null and accessUserid != ''"> access_userid = #{accessUserid},     </if>
 		<if test="accessPassword != null and accessPassword != ''"> access_password = #{accessPassword},     </if>
-		<if test="effect != null and effect != ''"> effect = #{effect},     </if>
 		<if test="accessUrl != null and accessUrl != ''"> access_url = #{accessUrl},     </if>
 		<if test="supplier != null and supplier != ''"> supplier = #{supplier},     </if>
 		<if test="webIpAddress != null and webIpAddress != ''"> web_ip_address = #{webIpAddress},     </if>
 		<if test="webPort != null and webPort != ''"> web_port = #{webPort},     </if>
-		<if test="otherRemark != null and otherRemark != ''"> other_remark = #{otherRemark},     </if>
 		<if test="createUserid != null and createUserid != ''"> create_userid = #{createUserid},     </if>
 		<if test="createUsername != null and createUsername != ''"> create_username = #{createUsername},     </if>
 		<if test="createTime != null"> create_time = #{createTime},     </if>
@@ -220,8 +222,12 @@
 		<if test="endTime != null"> end_time = #{endTime},     </if>
 		<if test="feeAmount != null and feeAmount != ''"> fee_amount = #{feeAmount},     </if>
 		<if test="feeRule != null and feeRule != ''"> fee_rule = #{feeRule},     </if>
-		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
-		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
+		<if test="readQx != null and readQx != ''"> read_qx = #{readQx},     </if>
+		<if test="writeQx != null and writeQx != ''"> write_qx = #{writeQx},     </if>
+		<if test="ltime != null"> ltime = #{ltime},     </if>
+		<if test="luserid != null and luserid != ''"> luserid = #{luserid},     </if>
+		<if test="lusername != null and lusername != ''"> lusername = #{lusername},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -231,12 +237,10 @@
 			branch_id = #{item.branchId},
 			access_userid = #{item.accessUserid},
 			access_password = #{item.accessPassword},
-			effect = #{item.effect},
 			access_url = #{item.accessUrl},
 			supplier = #{item.supplier},
 			web_ip_address = #{item.webIpAddress},
 			web_port = #{item.webPort},
-			other_remark = #{item.otherRemark},
 			create_userid = #{item.createUserid},
 			create_username = #{item.createUsername},
 			create_time = #{item.createTime},
@@ -245,7 +249,11 @@
 			end_time = #{item.endTime},
 			fee_amount = #{item.feeAmount},
 			fee_rule = #{item.feeRule},
-			biz_proc_inst_id = #{item.bizProcInstId},
-			biz_flow_state = #{item.bizFlowState}
+			project_id = #{item.projectId},
+			read_qx = #{item.readQx},
+			write_qx = #{item.writeQx},
+			ltime = #{item.ltime},
+			luserid = #{item.luserid},
+			lusername = #{item.lusername}
 	</sql>
 </mapper>

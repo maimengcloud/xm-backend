@@ -67,7 +67,7 @@
 		insert into xm_file(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{projectId},#{projectName},#{description},#{createUserid},#{createUsername},#{createTime},#{bizProcInstId},#{bizFlowState}
+		#{id},#{name},#{projectId},#{projectName},#{description},#{createUserid},#{createUsername},#{createTime},#{readQx},#{writeQx},#{ltime},#{luserid},#{lusername}
 		)
 	</insert>
 	
@@ -142,7 +142,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,project_id,project_name,description,create_userid,create_username,create_time,biz_proc_inst_id,biz_flow_state
+		id,name,project_id,project_name,description,create_userid,create_username,create_time,read_qx,write_qx,ltime,luserid,lusername
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -155,8 +155,11 @@
 		<if test="createUserid != null and createUserid != ''">      and res.create_userid = #{createUserid}     </if>
 		<if test="createUsername != null and createUsername != ''">      and res.create_username = #{createUsername}     </if>
 		<if test="createTime != null">      and date_format(res.create_time,'%Y-%m-%d') = date_format(#{createTime},'%Y-%m-%d')     </if>
-		<if test="bizProcInstId != null and bizProcInstId != ''">      and res.biz_proc_inst_id = #{bizProcInstId}     </if>
-		<if test="bizFlowState != null and bizFlowState != ''">      and res.biz_flow_state = #{bizFlowState}     </if>
+		<if test="readQx != null and readQx != ''">      and res.read_qx = #{readQx}     </if>
+		<if test="writeQx != null and writeQx != ''">      and res.write_qx = #{writeQx}     </if>
+		<if test="ltime != null">      and date_format(res.ltime,'%Y-%m-%d') = date_format(#{ltime},'%Y-%m-%d')     </if>
+		<if test="luserid != null and luserid != ''">      and res.luserid = #{luserid}     </if>
+		<if test="lusername != null and lusername != ''">      and res.lusername = #{lusername}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -167,8 +170,11 @@
 		create_userid = #{createUserid},
 		create_username = #{createUsername},
 		create_time = #{createTime},
-		biz_proc_inst_id = #{bizProcInstId},
-		biz_flow_state = #{bizFlowState}
+		read_qx = #{readQx},
+		write_qx = #{writeQx},
+		ltime = #{ltime},
+		luserid = #{luserid},
+		lusername = #{lusername}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -178,8 +184,11 @@
 		<if test="createUserid != null and createUserid != ''"> create_userid = #{createUserid},     </if>
 		<if test="createUsername != null and createUsername != ''"> create_username = #{createUsername},     </if>
 		<if test="createTime != null"> create_time = #{createTime},     </if>
-		<if test="bizProcInstId != null and bizProcInstId != ''"> biz_proc_inst_id = #{bizProcInstId},     </if>
-		<if test="bizFlowState != null and bizFlowState != ''"> biz_flow_state = #{bizFlowState},     </if>
+		<if test="readQx != null and readQx != ''"> read_qx = #{readQx},     </if>
+		<if test="writeQx != null and writeQx != ''"> write_qx = #{writeQx},     </if>
+		<if test="ltime != null"> ltime = #{ltime},     </if>
+		<if test="luserid != null and luserid != ''"> luserid = #{luserid},     </if>
+		<if test="lusername != null and lusername != ''"> lusername = #{lusername},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -190,7 +199,10 @@
 			create_userid = #{item.createUserid},
 			create_username = #{item.createUsername},
 			create_time = #{item.createTime},
-			biz_proc_inst_id = #{item.bizProcInstId},
-			biz_flow_state = #{item.bizFlowState}
+			read_qx = #{item.readQx},
+			write_qx = #{item.writeQx},
+			ltime = #{item.ltime},
+			luserid = #{item.luserid},
+			lusername = #{item.lusername}
 	</sql>
 </mapper>

@@ -14,6 +14,7 @@ import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -82,6 +83,9 @@ public class XmEnvListController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
+			if(StringUtils.hasText(xmEnvList.get)){
+
+			}
 			xmEnvListService.addEnv(xmEnvList);
 			m.put("data",xmEnvList);
 		}catch (BizException e) { 

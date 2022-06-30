@@ -45,7 +45,9 @@ public class XmFileService extends BaseService {
         XmFile xmFile = new XmFile();
         BeanUtils.copyProperties(xmFileVo,xmFile);
         this.updateSomeFieldByPk(xmFile);
-        xmAttachmentService.insertOrUpdate(xmFileVo.getId(),Type,xmFileVo.getAttachment());
+        if(xmFileVo.getAttachment()!=null && xmFileVo.getAttachment().size()>0){
+			xmAttachmentService.insertOrUpdate(xmFileVo.getId(),Type,xmFileVo.getAttachment());
+		}
         return null;
     }
 
@@ -70,9 +72,9 @@ public class XmFileService extends BaseService {
         XmFile xmFile = new XmFile();
         BeanUtils.copyProperties(xmFileVo,xmFile);
         this.insert(xmFile);
-        
-        xmAttachmentService.insertOrUpdate(xmFileVo.getId(),Type,xmFileVo.getAttachment());
-    
+        if(xmFileVo.getAttachment()!=null && xmFileVo.getAttachment().size()>0){
+			xmAttachmentService.insertOrUpdate(xmFileVo.getId(),Type,xmFileVo.getAttachment());
+		}
         xmRecordService.addXmProjectRecord(xmFileVo.getProjectId(), "项目-增加文档", "增加文档"+xmFile.getName());
         return xmFileVo;
     }
