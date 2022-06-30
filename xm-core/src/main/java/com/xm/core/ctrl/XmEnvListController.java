@@ -110,10 +110,6 @@ public class XmEnvListController {
 			if(!StringUtils.hasText(xmEnvList.getWriteQx())){
 				return ResponseHelper.failed("writeQx-0","请选中写权限");
 			}
-
-			if(!StringUtils.hasText(xmEnvList.getRemark())){
-				return ResponseHelper.failed("remark-0","请填写备注");
-			}
 			xmEnvListService.addEnv(xmEnvList);
 			m.put("data",xmEnvList);
 		}catch (BizException e) { 
