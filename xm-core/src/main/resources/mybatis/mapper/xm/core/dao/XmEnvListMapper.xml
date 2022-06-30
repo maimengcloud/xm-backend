@@ -15,6 +15,9 @@
 		<if test="fuzzy != null and fuzzy != ''">
 			and (res.ip_address like #{fuzzy} or res.web_ip_address like #{fuzzy} or res.access_url like #{fuzzy})
 		</if>
+		<if test="linkProductId!=null and linkProductId!=''">
+			and exists( select 1 from xm_product_project_link l where l.product_id=#{linkProductId} and l.project_id=res.project_id)
+		</if>
     </sql>
 
 
