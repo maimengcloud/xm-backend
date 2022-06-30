@@ -1,21 +1,20 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
+import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
- * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmEnvList所有属性名: <br>
- *	id,remark,ipAddress,port,branchId,accessUserid,accessPassword,effect,accessUrl,supplier,webIpAddress,webPort,otherRemark,createUserid,createUsername,createTime,envState,startTime,endTime,feeAmount,feeRule;<br>
- * 表 XM.xm_env_list xm_env_list的所有字段名: <br>
- *	id,remark,ip_address,port,branch_id,access_userid,access_password,effect,access_url,supplier,web_ip_address,web_port,other_remark,create_userid,create_username,create_time,env_state,start_time,end_time,fee_amount,fee_rule;<br>
+ *	"id","主键","remark","备注说明","ipAddress","内网ip地址","port","内网访问端口","branchId","归属机构","accessUserid","访问用户编号","accessPassword","访问密码","effect","作用说明","accessUrl","访问链接","supplier","供应商","webIpAddress","外网ip地址","webPort","外网端口","otherRemark","其它说明","createUserid","添加人员","createUsername","添加人员姓名","createTime","添加时间","envState","状态0不可用1已启用2已过期","startTime","有效日期开始","endTime","有效日期结束","feeAmount","费用","feeRule","计费规则","bizProcInstId","当前流程实例编号","bizFlowState","当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
-@ApiModel(description="xm_env_list")
+ @Data
+@ApiModel(description="项目环境清单")
 public class XmEnvList  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
@@ -83,268 +82,24 @@ public class XmEnvList  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="计费规则",allowEmptyValue=true,example="",allowableValues="")
 	String feeRule;
+	
+	@ApiModelProperty(notes="当前流程实例编号",allowEmptyValue=true,example="",allowableValues="")
+	String bizProcInstId;
+	
+	@ApiModelProperty(notes="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",allowEmptyValue=true,example="",allowableValues="")
+	String bizFlowState;
 
-	/**主键**/
+	/**
+	 *主键
+	 **/
 	public XmEnvList(String id) {
 		this.id = id;
 	}
     
-    /**xm_env_list**/
+    /**
+     * 项目环境清单
+     **/
 	public XmEnvList() {
-	}
-	
-	/**
-	 * 主键
-	 **/
-	public void setId(String id) {
-		this.id = id;
-	}
-	/**
-	 * 备注说明
-	 **/
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-	/**
-	 * 内网ip地址
-	 **/
-	public void setIpAddress(String ipAddress) {
-		this.ipAddress = ipAddress;
-	}
-	/**
-	 * 内网访问端口
-	 **/
-	public void setPort(String port) {
-		this.port = port;
-	}
-	/**
-	 * 归属机构
-	 **/
-	public void setBranchId(String branchId) {
-		this.branchId = branchId;
-	}
-	/**
-	 * 访问用户编号
-	 **/
-	public void setAccessUserid(String accessUserid) {
-		this.accessUserid = accessUserid;
-	}
-	/**
-	 * 访问密码
-	 **/
-	public void setAccessPassword(String accessPassword) {
-		this.accessPassword = accessPassword;
-	}
-	/**
-	 * 作用说明
-	 **/
-	public void setEffect(String effect) {
-		this.effect = effect;
-	}
-	/**
-	 * 访问链接
-	 **/
-	public void setAccessUrl(String accessUrl) {
-		this.accessUrl = accessUrl;
-	}
-	/**
-	 * 供应商
-	 **/
-	public void setSupplier(String supplier) {
-		this.supplier = supplier;
-	}
-	/**
-	 * 外网ip地址
-	 **/
-	public void setWebIpAddress(String webIpAddress) {
-		this.webIpAddress = webIpAddress;
-	}
-	/**
-	 * 外网端口
-	 **/
-	public void setWebPort(String webPort) {
-		this.webPort = webPort;
-	}
-	/**
-	 * 其它说明
-	 **/
-	public void setOtherRemark(String otherRemark) {
-		this.otherRemark = otherRemark;
-	}
-	/**
-	 * 添加人员
-	 **/
-	public void setCreateUserid(String createUserid) {
-		this.createUserid = createUserid;
-	}
-	/**
-	 * 添加人员姓名
-	 **/
-	public void setCreateUsername(String createUsername) {
-		this.createUsername = createUsername;
-	}
-	/**
-	 * 添加时间
-	 **/
-	public void setCreateTime(Date createTime) {
-		this.createTime = createTime;
-	}
-	/**
-	 * 状态0不可用1已启用2已过期
-	 **/
-	public void setEnvState(String envState) {
-		this.envState = envState;
-	}
-	/**
-	 * 有效日期开始
-	 **/
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
-	}
-	/**
-	 * 有效日期结束
-	 **/
-	public void setEndTime(Date endTime) {
-		this.endTime = endTime;
-	}
-	/**
-	 * 费用
-	 **/
-	public void setFeeAmount(BigDecimal feeAmount) {
-		this.feeAmount = feeAmount;
-	}
-	/**
-	 * 计费规则
-	 **/
-	public void setFeeRule(String feeRule) {
-		this.feeRule = feeRule;
-	}
-	
-	/**
-	 * 主键
-	 **/
-	public String getId() {
-		return this.id;
-	}
-	/**
-	 * 备注说明
-	 **/
-	public String getRemark() {
-		return this.remark;
-	}
-	/**
-	 * 内网ip地址
-	 **/
-	public String getIpAddress() {
-		return this.ipAddress;
-	}
-	/**
-	 * 内网访问端口
-	 **/
-	public String getPort() {
-		return this.port;
-	}
-	/**
-	 * 归属机构
-	 **/
-	public String getBranchId() {
-		return this.branchId;
-	}
-	/**
-	 * 访问用户编号
-	 **/
-	public String getAccessUserid() {
-		return this.accessUserid;
-	}
-	/**
-	 * 访问密码
-	 **/
-	public String getAccessPassword() {
-		return this.accessPassword;
-	}
-	/**
-	 * 作用说明
-	 **/
-	public String getEffect() {
-		return this.effect;
-	}
-	/**
-	 * 访问链接
-	 **/
-	public String getAccessUrl() {
-		return this.accessUrl;
-	}
-	/**
-	 * 供应商
-	 **/
-	public String getSupplier() {
-		return this.supplier;
-	}
-	/**
-	 * 外网ip地址
-	 **/
-	public String getWebIpAddress() {
-		return this.webIpAddress;
-	}
-	/**
-	 * 外网端口
-	 **/
-	public String getWebPort() {
-		return this.webPort;
-	}
-	/**
-	 * 其它说明
-	 **/
-	public String getOtherRemark() {
-		return this.otherRemark;
-	}
-	/**
-	 * 添加人员
-	 **/
-	public String getCreateUserid() {
-		return this.createUserid;
-	}
-	/**
-	 * 添加人员姓名
-	 **/
-	public String getCreateUsername() {
-		return this.createUsername;
-	}
-	/**
-	 * 添加时间
-	 **/
-	public Date getCreateTime() {
-		return this.createTime;
-	}
-	/**
-	 * 状态0不可用1已启用2已过期
-	 **/
-	public String getEnvState() {
-		return this.envState;
-	}
-	/**
-	 * 有效日期开始
-	 **/
-	public Date getStartTime() {
-		return this.startTime;
-	}
-	/**
-	 * 有效日期结束
-	 **/
-	public Date getEndTime() {
-		return this.endTime;
-	}
-	/**
-	 * 费用
-	 **/
-	public BigDecimal getFeeAmount() {
-		return this.feeAmount;
-	}
-	/**
-	 * 计费规则
-	 **/
-	public String getFeeRule() {
-		return this.feeRule;
 	}
 
 }
