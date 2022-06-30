@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmEnvList所有属性名: <br>
- *	"id","主键","remark","备注说明","ipAddress","内网ip地址","port","内网访问端口","branchId","归属机构","accessUserid","访问用户编号","accessPassword","访问密码","accessUrl","访问链接","supplier","供应商","webIpAddress","外网ip地址","webPort","外网端口","createUserid","添加人员","createUsername","添加人员姓名","createTime","添加时间","envState","状态0不可用1已启用2已过期","startTime","有效日期开始","endTime","有效日期结束","feeAmount","费用","feeRule","计费规则","projectId","归属项目编号","readQx","0-全部可看，1-同机构可看，2-同机构同项目可看，3-同项目上级可看，9-仅自己可看","writeQx","0-全部可写，1-同机构可写，2-同机构同项目可写，3-同项目上级可写，9-仅自己可修改","ltime","修改时间","luserid","修改人编号","lusername","修改人姓名";<br>
+ *	"id","主键","remark","备注说明","ipAddress","内网ip地址","port","内网访问端口","branchId","归属机构","accessUserid","访问用户编号","accessPassword","访问密码","accessUrl","访问链接","supplier","供应商","webIpAddress","外网ip地址","webPort","外网端口","createUserid","添加人员","createUsername","添加人员姓名","createTime","添加时间","envState","状态0不可用1已启用2已过期","startTime","有效日期开始","endTime","有效日期结束","feeAmount","费用","feeRule","计费规则","projectId","归属项目编号","readQx","0-全部可看，1-同机构可看，2-同机构同项目可看，3-同项目上级可看，9-仅自己可看","writeQx","0-全部可写，1-同机构可写，2-同机构同项目可写，3-同项目上级可写，9-仅自己可修改","ltime","修改时间","luserid","修改人编号","lusername","修改人姓名","name","名称";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -94,6 +94,9 @@ public class XmEnvList  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="修改人姓名",allowEmptyValue=true,example="",allowableValues="")
 	String lusername;
+	
+	@ApiModelProperty(notes="名称",allowEmptyValue=true,example="",allowableValues="")
+	String name;
 
 	/**
 	 *主键

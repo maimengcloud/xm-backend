@@ -70,7 +70,7 @@
 		insert into xm_env_list(
 			<include refid="columns"/>
 		) values (
-		#{id},#{remark},#{ipAddress},#{port},#{branchId},#{accessUserid},#{accessPassword},#{accessUrl},#{supplier},#{webIpAddress},#{webPort},#{createUserid},#{createUsername},#{createTime},#{envState},#{startTime},#{endTime},#{feeAmount},#{feeRule},#{projectId},#{readQx},#{writeQx},#{ltime},#{luserid},#{lusername}
+		#{id},#{remark},#{ipAddress},#{port},#{branchId},#{accessUserid},#{accessPassword},#{accessUrl},#{supplier},#{webIpAddress},#{webPort},#{createUserid},#{createUsername},#{createTime},#{envState},#{startTime},#{endTime},#{feeAmount},#{feeRule},#{projectId},#{readQx},#{writeQx},#{ltime},#{luserid},#{lusername},#{name}
 		)
 	</insert>
 	
@@ -145,7 +145,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,remark,ip_address,port,branch_id,access_userid,access_password,access_url,supplier,web_ip_address,web_port,create_userid,create_username,create_time,env_state,start_time,end_time,fee_amount,fee_rule,project_id,read_qx,write_qx,ltime,luserid,lusername
+		id,remark,ip_address,port,branch_id,access_userid,access_password,access_url,supplier,web_ip_address,web_port,create_userid,create_username,create_time,env_state,start_time,end_time,fee_amount,fee_rule,project_id,read_qx,write_qx,ltime,luserid,lusername,name
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -175,6 +175,7 @@
 		<if test="ltime != null">      and date_format(res.ltime,'%Y-%m-%d') = date_format(#{ltime},'%Y-%m-%d')     </if>
 		<if test="luserid != null and luserid != ''">      and res.luserid = #{luserid}     </if>
 		<if test="lusername != null and lusername != ''">      and res.lusername = #{lusername}     </if>
+		<if test="name != null and name != ''">      and res.name = #{name}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -201,7 +202,8 @@
 		write_qx = #{writeQx},
 		ltime = #{ltime},
 		luserid = #{luserid},
-		lusername = #{lusername}
+		lusername = #{lusername},
+		name = #{name}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
@@ -228,6 +230,7 @@
 		<if test="ltime != null"> ltime = #{ltime},     </if>
 		<if test="luserid != null and luserid != ''"> luserid = #{luserid},     </if>
 		<if test="lusername != null and lusername != ''"> lusername = #{lusername},     </if>
+		<if test="name != null and name != ''"> name = #{name},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -254,6 +257,7 @@
 			write_qx = #{item.writeQx},
 			ltime = #{item.ltime},
 			luserid = #{item.luserid},
-			lusername = #{item.lusername}
+			lusername = #{item.lusername},
+			name = #{item.name}
 	</sql>
 </mapper>
