@@ -93,6 +93,9 @@ public class XmEnvListController {
 			if(!StringUtils.hasText(xmEnvList.getProjectId())){
 				return ResponseHelper.failed("projectId-0","项目编号不能为空");
 			}
+			if(!StringUtils.hasText(xmEnvList.getName())){
+				return ResponseHelper.failed("name-0","名称不能为空");
+			}
 			User user= LoginUtils.getCurrentUserInfo();
 			boolean inProjectGroup=xmGroupService.checkUserExistsGroup(xmEnvList.getProjectId(),user.getUserid());
 			if(!inProjectGroup){
