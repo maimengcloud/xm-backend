@@ -4,7 +4,6 @@ import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmRecordVisit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -18,7 +17,6 @@ import java.util.*;
 public class XmRecordVisitService extends BaseService {
 	static Logger logger =LoggerFactory.getLogger(XmRecordVisitService.class);
 
-	@Autowired
 	public void batchAddAndCalc(List<XmRecordVisit> datas) {
 		Map<String, Integer> timesMap=new HashMap<>();
 		Map<String,Set<String> > usersMap=new HashMap<>();

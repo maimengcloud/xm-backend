@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -101,10 +102,13 @@ public class XmRecordVisitController {
 
 			this.datas.add(xmRecordVisit);
 			if(this.datas.size()>100){
-				xmRecordVisitService.batchAddAndCalc(this.datas);
+				List<XmRecordVisit> newDatas=new ArrayList<>();
+				newDatas.addAll(this.datas);
 				this.datas.clear();
+				xmRecordVisitService.batchAddAndCalc(newDatas);
+
 			}
-			m.put("data",xmRecordVisit);
+			//m.put("data",xmRecordVisit);
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -114,6 +118,16 @@ public class XmRecordVisitController {
 		}  
 		m.put("tips", tips);
 		return m;
+	}
+
+	@Scheduled(cron = "0 0 */3 * * ?")
+	public void batchAddAndCalc(){
+		if(this.datas.size()>0){
+			List<XmRecordVisit> newDatas=new ArrayList<>();
+			newDatas.addAll(this.datas);
+			this.datas.clear();
+			xmRecordVisitService.batchAddAndCalc(newDatas);
+		}
 	}
 
 	
