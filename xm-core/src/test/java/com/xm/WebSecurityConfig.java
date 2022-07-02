@@ -2,14 +2,11 @@ package com.xm;
 
 import com.mdp.oauth2.client.resource.MdpJwtAuthenticationConverter;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
-import org.springframework.web.client.RestOperations;
 
 /**
  * com.qqkj.WebSecurityConfig
@@ -41,7 +38,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().antMatchers("/**/xm/core/xmTask/shareTaskDetail",
-
+                "/**/core/xmRecordVisit/add",
                 "/swagger-ui.html",
                 "/webjars/**",
                 "/swagger-ui/**",

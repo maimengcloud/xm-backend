@@ -42,6 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/**/xm/core/xmTask/getOutTask",
                 "/**/xm/core/xmBranchState/list/portal/allBranchSum",
                 "/**/xm/core/xmProjectState/list/portal",
+                "/**/core/xmRecordVisit/add",
 
                 "/swagger-ui.html",
                 "/webjars/**",
