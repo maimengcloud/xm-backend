@@ -1,32 +1,27 @@
 package com.xm.core.ctrl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import io.swagger.annotations.*;
-
-import static com.mdp.core.utils.ResponseHelper.*;
-import static com.mdp.core.utils.BaseUtils.*;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.NumberUtil;
+import com.mdp.core.utils.ResponseHelper;
+import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmRecordVisit;
+import com.xm.core.service.XmRecordVisitService;
+import io.swagger.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import com.xm.core.service.XmRecordVisitService;
-import com.xm.core.entity.XmRecordVisit;
+import java.util.*;
+
+import static com.mdp.core.utils.BaseUtils.toMap;
 
 /**
  * url编制采用rest风格,如对xm_record_visit 重要页面访问记录的操作有增删改查,对应的url分别为:<br>
@@ -42,6 +37,8 @@ public class XmRecordVisitController {
 	
 	@Autowired
 	private XmRecordVisitService xmRecordVisitService;
+
+	List<XmRecordVisit> datas=new ArrayList<>();
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmRecordVisit());
@@ -74,8 +71,7 @@ public class XmRecordVisitController {
 	}
 	
  
-	
-	/**
+
 	@ApiOperation( value = "新增一条重要页面访问记录信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmRecordVisit.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -85,19 +81,31 @@ public class XmRecordVisitController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-		    boolean createPk=false;
-			if(!StringUtils.hasText(xmRecordVisit.getId())) {
-			    createPk=true;
-				xmRecordVisit.setId(xmRecordVisitService.createKey("id"));
+			if(!StringUtils.hasText(xmRecordVisit.getBizId())){
+				return ResponseHelper.failed("bizId-0","bizId不能为空");
 			}
-			if(createPk==false){
-                 if(xmRecordVisitService.selectOneObject(xmRecordVisit) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
-                }
-            }
-			xmRecordVisitService.insert(xmRecordVisit);
+			if(!StringUtils.hasText(xmRecordVisit.getPbizId())){
+				return ResponseHelper.failed("pbizId-0","pbizId不能为空");
+			}
+			if(!StringUtils.hasText(xmRecordVisit.getObjType())){
+				return ResponseHelper.failed("objType-0","objType不能为空");
+			}
+			User user= LoginUtils.getCurrentUserInfo();
+			xmRecordVisit.setId(this.xmRecordVisitService.createKey("id"));
+			xmRecordVisit.setGloNo(MDC.get("gloNo"));
+			xmRecordVisit.setOperTime(new Date());
+			xmRecordVisit.setOperUserid(user.getUserid());
+			xmRecordVisit.setOperUsername(user.getUsername());
+			xmRecordVisit.setBranchId(user.getBranchId());
+			xmRecordVisit.setIp(RequestUtils.getIpAddr(RequestUtils.getRequest()));
+
+			this.datas.add(xmRecordVisit);
+			if(this.datas.size()>100){
+				xmRecordVisitService.batchAddAndCalc(this.datas);
+				this.datas.clear();
+			}
 			m.put("data",xmRecordVisit);
-		}catch (BizException e) { 
+		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
@@ -107,7 +115,7 @@ public class XmRecordVisitController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
+
 	
 	/**
 	@ApiOperation( value = "删除一条重要页面访问记录信息",notes=" ")
