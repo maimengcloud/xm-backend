@@ -249,6 +249,16 @@ public class XmTaskController {
 			fields.add("parentTaskid");
 			fields.add("parentTaskname");
 			fields.add("executorUserid");
+			fields.add("oshare");
+			fields.add("shareFee");
+			fields.add("top");
+			fields.add("hot");
+			fields.add("urgent");
+			fields.add("topFee");
+			fields.add("hotFee");
+			fields.add("urgent");
+			fields.add("efunds");
+			fields.add("estate");
 			for (String fieldName : xmTaskMap.keySet()) {
 				if(fields.contains(fieldName)){
 					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
