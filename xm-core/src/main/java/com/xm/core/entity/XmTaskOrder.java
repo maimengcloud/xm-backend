@@ -1,0 +1,168 @@
+package  com.xm.core.entity;
+
+import lombok.Data;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.util.Date;
+import java.math.BigDecimal;
+
+/**
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
+ * 实体 XmTaskOrder所有属性名: <br>
+ *	"userid","用户编号","branchId","公司ID-下单客户对应的企业","ostatus","订单状态0-初始，1-待确认，2-待付款，3-已付款，4-已完成，5-已取消-未付款前可取消，取消后可删除，6-退单-退单后变为已取消，8已关闭-售后完成后可以关闭订单","ctime","创建时间","ltime","更新时间","payType","支付方式","payStatus","支付状态0待付款，1已付款","payTime","支付时间","prepayId","第三方支付订单编号","id","订单编号","finalFee","最终总费用=origin_fee","othFee","其它费用","originFee","原始价格=top_fee+urgent_fee+crm_sup_fee+hot_fee+efunds","payAt","最终付款金额-客户付款后回填","payAuthId","支付授权码","payOpenid","支付账户对应的第三方openid,注意，下单根付款不一定是同一个人","payUserid","付款用户编号","payUsername","付款用户名称","discount","折扣率0-199","topFee","置顶费用","topStime","置顶开始时间","topEtime","置顶结束时间","hotFee","热搜费用","hotStime","热搜开始时间","hotEtime","热搜结束时间","top","是否置顶","hot","是否热搜","crmSupFee","客服包办费用","urgentFee","加急费用","urgent","是否加急","crmSup","是否客服包办","efunds","托管金额","estate","资金托管状况0-无须托管，1-已托管，2-已付款给服务商，3-已退款","etoPlatTime","托管资金付款给平台的时间","etoDevTime","托管资金支付给服务商的时间","ebackTime","托管资金退回甲方时间","taskId","任务编号","topDays","置顶天数","hotDays","热搜天数","urgentDays","加急天数","urgentStime","加急开始时间","urgentEtime","加急结束时间","calcStatus","定时检查日期是否已过期，已过期则取消任务中的置顶、加急、热搜状态计算状态0-无须计算，1-本周期已计算待下周期计算，2-结束","calcTime","计算时间";<br>
+ * 当前主键(包括多主键):<br>
+ *	id;<br>
+ */
+ @Data
+@ApiModel(description="任务相关费用订单表")
+public class XmTaskOrder  implements java.io.Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	
+	@ApiModelProperty(notes="订单编号,主键",allowEmptyValue=true,example="",allowableValues="")
+	String id;
+  	
+	
+	@ApiModelProperty(notes="用户编号",allowEmptyValue=true,example="",allowableValues="")
+	String userid;
+	
+	@ApiModelProperty(notes="公司ID-下单客户对应的企业",allowEmptyValue=true,example="",allowableValues="")
+	String branchId;
+	
+	@ApiModelProperty(notes="订单状态0-初始，1-待确认，2-待付款，3-已付款，4-已完成，5-已取消-未付款前可取消，取消后可删除，6-退单-退单后变为已取消，8已关闭-售后完成后可以关闭订单",allowEmptyValue=true,example="",allowableValues="")
+	String ostatus;
+	
+	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
+	Date ctime;
+	
+	@ApiModelProperty(notes="更新时间",allowEmptyValue=true,example="",allowableValues="")
+	Date ltime;
+	
+	@ApiModelProperty(notes="支付方式",allowEmptyValue=true,example="",allowableValues="")
+	String payType;
+	
+	@ApiModelProperty(notes="支付状态0待付款，1已付款",allowEmptyValue=true,example="",allowableValues="")
+	String payStatus;
+	
+	@ApiModelProperty(notes="支付时间",allowEmptyValue=true,example="",allowableValues="")
+	Date payTime;
+	
+	@ApiModelProperty(notes="第三方支付订单编号",allowEmptyValue=true,example="",allowableValues="")
+	String prepayId;
+	
+	@ApiModelProperty(notes="最终总费用=origin_fee",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal finalFee;
+	
+	@ApiModelProperty(notes="其它费用",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal othFee;
+	
+	@ApiModelProperty(notes="原始价格=top_fee+urgent_fee+crm_sup_fee+hot_fee+efunds",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal originFee;
+	
+	@ApiModelProperty(notes="最终付款金额-客户付款后回填",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal payAt;
+	
+	@ApiModelProperty(notes="支付授权码",allowEmptyValue=true,example="",allowableValues="")
+	String payAuthId;
+	
+	@ApiModelProperty(notes="支付账户对应的第三方openid,注意，下单根付款不一定是同一个人",allowEmptyValue=true,example="",allowableValues="")
+	String payOpenid;
+	
+	@ApiModelProperty(notes="付款用户编号",allowEmptyValue=true,example="",allowableValues="")
+	String payUserid;
+	
+	@ApiModelProperty(notes="付款用户名称",allowEmptyValue=true,example="",allowableValues="")
+	String payUsername;
+	
+	@ApiModelProperty(notes="折扣率0-199",allowEmptyValue=true,example="",allowableValues="")
+	Integer discount;
+	
+	@ApiModelProperty(notes="置顶费用",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal topFee;
+	
+	@ApiModelProperty(notes="置顶开始时间",allowEmptyValue=true,example="",allowableValues="")
+	Date topStime;
+	
+	@ApiModelProperty(notes="置顶结束时间",allowEmptyValue=true,example="",allowableValues="")
+	Date topEtime;
+	
+	@ApiModelProperty(notes="热搜费用",allowEmptyValue=true,example="",allowableValues="")
+	String hotFee;
+	
+	@ApiModelProperty(notes="热搜开始时间",allowEmptyValue=true,example="",allowableValues="")
+	Date hotStime;
+	
+	@ApiModelProperty(notes="热搜结束时间",allowEmptyValue=true,example="",allowableValues="")
+	Date hotEtime;
+	
+	@ApiModelProperty(notes="是否置顶",allowEmptyValue=true,example="",allowableValues="")
+	String top;
+	
+	@ApiModelProperty(notes="是否热搜",allowEmptyValue=true,example="",allowableValues="")
+	String hot;
+	
+	@ApiModelProperty(notes="客服包办费用",allowEmptyValue=true,example="",allowableValues="")
+	String crmSupFee;
+	
+	@ApiModelProperty(notes="加急费用",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal urgentFee;
+	
+	@ApiModelProperty(notes="是否加急",allowEmptyValue=true,example="",allowableValues="")
+	String urgent;
+	
+	@ApiModelProperty(notes="是否客服包办",allowEmptyValue=true,example="",allowableValues="")
+	String crmSup;
+	
+	@ApiModelProperty(notes="托管金额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal efunds;
+	
+	@ApiModelProperty(notes="资金托管状况0-无须托管，1-已托管，2-已付款给服务商，3-已退款",allowEmptyValue=true,example="",allowableValues="")
+	String estate;
+	
+	@ApiModelProperty(notes="托管资金付款给平台的时间",allowEmptyValue=true,example="",allowableValues="")
+	Date etoPlatTime;
+	
+	@ApiModelProperty(notes="托管资金支付给服务商的时间",allowEmptyValue=true,example="",allowableValues="")
+	Date etoDevTime;
+	
+	@ApiModelProperty(notes="托管资金退回甲方时间",allowEmptyValue=true,example="",allowableValues="")
+	Date ebackTime;
+	
+	@ApiModelProperty(notes="任务编号",allowEmptyValue=true,example="",allowableValues="")
+	String taskId;
+	
+	@ApiModelProperty(notes="置顶天数",allowEmptyValue=true,example="",allowableValues="")
+	Integer topDays;
+	
+	@ApiModelProperty(notes="热搜天数",allowEmptyValue=true,example="",allowableValues="")
+	Integer hotDays;
+	
+	@ApiModelProperty(notes="加急天数",allowEmptyValue=true,example="",allowableValues="")
+	Integer urgentDays;
+	
+	@ApiModelProperty(notes="加急开始时间",allowEmptyValue=true,example="",allowableValues="")
+	Date urgentStime;
+	
+	@ApiModelProperty(notes="加急结束时间",allowEmptyValue=true,example="",allowableValues="")
+	Date urgentEtime;
+	
+	@ApiModelProperty(notes="定时检查日期是否已过期，已过期则取消任务中的置顶、加急、热搜状态计算状态0-无须计算，1-本周期已计算待下周期计算，2-结束",allowEmptyValue=true,example="",allowableValues="")
+	String calcStatus;
+	
+	@ApiModelProperty(notes="计算时间",allowEmptyValue=true,example="",allowableValues="")
+	Date calcTime;
+
+	/**
+	 *订单编号
+	 **/
+	public XmTaskOrder(String id) {
+		this.id = id;
+	}
+    
+    /**
+     * 任务相关费用订单表
+     **/
+	public XmTaskOrder() {
+	}
+
+}

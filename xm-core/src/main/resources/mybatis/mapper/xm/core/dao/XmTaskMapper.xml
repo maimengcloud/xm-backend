@@ -416,7 +416,7 @@
 		insert into xm_task(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetAt},#{budgetWorkload},#{actAt},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl},#{initWorkload},#{shareFee},#{oshare},#{crowd},#{browseUsers},#{execUsers},#{cityId},#{cityName},#{regionType},#{browseTimes},#{capaLvls},#{tranMode},#{supRequires},#{hot},#{top},#{urgent},#{crmSup},#{bidStep},#{interestLvls}
+		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetAt},#{budgetWorkload},#{actAt},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl},#{initWorkload},#{shareFee},#{oshare},#{crowd},#{browseUsers},#{execUsers},#{cityId},#{cityName},#{regionType},#{browseTimes},#{capaLvls},#{tranMode},#{supRequires},#{hot},#{top},#{urgent},#{crmSup},#{bidStep},#{interestLvls},#{filePaths},#{estate},#{efunds},#{etoPlatTime},#{etoDevTime},#{ebackTime},#{topStime},#{topEtime},#{hotStime},#{hotEtime},#{urgentStime},#{urgentEtime}
 		)
 	</insert>
 	
@@ -498,7 +498,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_at,budget_workload,act_at,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload,share_fee,oshare,crowd,browse_users,exec_users,city_id,city_name,region_type,browse_times,capa_lvls,tran_mode,sup_requires,hot,top,urgent,crm_sup,bid_step,interest_lvls
+		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_at,budget_workload,act_at,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload,share_fee,oshare,crowd,browse_users,exec_users,city_id,city_name,region_type,browse_times,capa_lvls,tran_mode,sup_requires,hot,top,urgent,crm_sup,bid_step,interest_lvls,file_paths,estate,efunds,eto_plat_time,eto_dev_time,eback_time,top_stime,top_etime,hot_stime,hot_etime,urgent_stime,urgent_etime
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -584,6 +584,18 @@
 		<if test="crmSup != null and crmSup != ''">      and res.crm_sup = #{crmSup}     </if>
 		<if test="bidStep != null and bidStep != ''">      and res.bid_step = #{bidStep}     </if>
 		<if test="interestLvls != null and interestLvls != ''">      and res.interest_lvls = #{interestLvls}     </if>
+		<if test="filePaths != null and filePaths != ''">      and res.file_paths = #{filePaths}     </if>
+		<if test="estate != null and estate != ''">      and res.estate = #{estate}     </if>
+		<if test="efunds != null and efunds != ''">      and res.efunds = #{efunds}     </if>
+		<if test="etoPlatTime != null">      and date_format(res.eto_plat_time,'%Y-%m-%d') = date_format(#{etoPlatTime},'%Y-%m-%d')     </if>
+		<if test="etoDevTime != null">      and date_format(res.eto_dev_time,'%Y-%m-%d') = date_format(#{etoDevTime},'%Y-%m-%d')     </if>
+		<if test="ebackTime != null">      and date_format(res.eback_time,'%Y-%m-%d') = date_format(#{ebackTime},'%Y-%m-%d')     </if>
+		<if test="topStime != null">      and date_format(res.top_stime,'%Y-%m-%d') = date_format(#{topStime},'%Y-%m-%d')     </if>
+		<if test="topEtime != null">      and date_format(res.top_etime,'%Y-%m-%d') = date_format(#{topEtime},'%Y-%m-%d')     </if>
+		<if test="hotStime != null">      and date_format(res.hot_stime,'%Y-%m-%d') = date_format(#{hotStime},'%Y-%m-%d')     </if>
+		<if test="hotEtime != null">      and date_format(res.hot_etime,'%Y-%m-%d') = date_format(#{hotEtime},'%Y-%m-%d')     </if>
+		<if test="urgentStime != null">      and date_format(res.urgent_stime,'%Y-%m-%d') = date_format(#{urgentStime},'%Y-%m-%d')     </if>
+		<if test="urgentEtime != null">      and date_format(res.urgent_etime,'%Y-%m-%d') = date_format(#{urgentEtime},'%Y-%m-%d')     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -666,7 +678,19 @@
 		urgent = #{urgent},
 		crm_sup = #{crmSup},
 		bid_step = #{bidStep},
-		interest_lvls = #{interestLvls}
+		interest_lvls = #{interestLvls},
+		file_paths = #{filePaths},
+		estate = #{estate},
+		efunds = #{efunds},
+		eto_plat_time = #{etoPlatTime},
+		eto_dev_time = #{etoDevTime},
+		eback_time = #{ebackTime},
+		top_stime = #{topStime},
+		top_etime = #{topEtime},
+		hot_stime = #{hotStime},
+		hot_etime = #{hotEtime},
+		urgent_stime = #{urgentStime},
+		urgent_etime = #{urgentEtime}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -749,6 +773,18 @@
 		<if test="crmSup != null and crmSup != ''"> crm_sup = #{crmSup},     </if>
 		<if test="bidStep != null and bidStep != ''"> bid_step = #{bidStep},     </if>
 		<if test="interestLvls != null and interestLvls != ''"> interest_lvls = #{interestLvls},     </if>
+		<if test="filePaths != null and filePaths != ''"> file_paths = #{filePaths},     </if>
+		<if test="estate != null and estate != ''"> estate = #{estate},     </if>
+		<if test="efunds != null and efunds != ''"> efunds = #{efunds},     </if>
+		<if test="etoPlatTime != null"> eto_plat_time = #{etoPlatTime},     </if>
+		<if test="etoDevTime != null"> eto_dev_time = #{etoDevTime},     </if>
+		<if test="ebackTime != null"> eback_time = #{ebackTime},     </if>
+		<if test="topStime != null"> top_stime = #{topStime},     </if>
+		<if test="topEtime != null"> top_etime = #{topEtime},     </if>
+		<if test="hotStime != null"> hot_stime = #{hotStime},     </if>
+		<if test="hotEtime != null"> hot_etime = #{hotEtime},     </if>
+		<if test="urgentStime != null"> urgent_stime = #{urgentStime},     </if>
+		<if test="urgentEtime != null"> urgent_etime = #{urgentEtime},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -831,6 +867,18 @@
 			urgent = #{item.urgent},
 			crm_sup = #{item.crmSup},
 			bid_step = #{item.bidStep},
-			interest_lvls = #{item.interestLvls}
+			interest_lvls = #{item.interestLvls},
+			file_paths = #{item.filePaths},
+			estate = #{item.estate},
+			efunds = #{item.efunds},
+			eto_plat_time = #{item.etoPlatTime},
+			eto_dev_time = #{item.etoDevTime},
+			eback_time = #{item.ebackTime},
+			top_stime = #{item.topStime},
+			top_etime = #{item.topEtime},
+			hot_stime = #{item.hotStime},
+			hot_etime = #{item.hotEtime},
+			urgent_stime = #{item.urgentStime},
+			urgent_etime = #{item.urgentEtime}
 	</sql>
 </mapper>

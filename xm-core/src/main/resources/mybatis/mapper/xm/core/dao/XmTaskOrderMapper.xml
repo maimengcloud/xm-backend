@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xm.core.entity.XmTaskOrder">
+	
+	
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
+
+
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from xm_task_order res
+		<where>
+		    <include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmTaskOrder" resultType="com.xm.core.entity.XmTaskOrder">
+		select * from xm_task_order res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.xm.core.entity.XmTaskOrder" resultType="com.xm.core.entity.XmTaskOrder">
+		select * from xm_task_order res
+		where 
+			res.id = #{id}
+	</select>
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmTaskOrder">
+        select * from xm_task_order res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from xm_task_order res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.xm.core.entity.XmTaskOrder" resultType="long">
+		select count(*) from xm_task_order res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.xm.core.entity.XmTaskOrder" useGeneratedKeys="false"   keyProperty="id">
+		insert into xm_task_order(
+			<include refid="columns"/>
+		) values (
+		#{userid},#{branchId},#{ostatus},#{ctime},#{ltime},#{payType},#{payStatus},#{payTime},#{prepayId},#{id},#{finalFee},#{othFee},#{originFee},#{payAt},#{payAuthId},#{payOpenid},#{payUserid},#{payUsername},#{discount},#{topFee},#{topStime},#{topEtime},#{hotFee},#{hotStime},#{hotEtime},#{top},#{hot},#{crmSupFee},#{urgentFee},#{urgent},#{crmSup},#{efunds},#{estate},#{etoPlatTime},#{etoDevTime},#{ebackTime},#{taskId},#{topDays},#{hotDays},#{urgentDays},#{urgentStime},#{urgentEtime},#{calcStatus},#{calcTime}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmTaskOrder">
+		delete from xm_task_order res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmTaskOrder">
+		delete from xm_task_order 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmTaskOrder">
+		update  xm_task_order 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.xm.core.entity.XmTaskOrder">
+		update  xm_task_order 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  xm_task_order 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_task_order
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from xm_task_order 
+			where
+			(id) in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    (  #{item.id} )
+                </foreach>
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		userid,branch_id,ostatus,ctime,ltime,pay_type,pay_status,pay_time,prepay_id,id,final_fee,oth_fee,origin_fee,pay_at,pay_auth_id,pay_openid,pay_userid,pay_username,discount,top_fee,top_stime,top_etime,hot_fee,hot_stime,hot_etime,top,hot,crm_sup_fee,urgent_fee,urgent,crm_sup,efunds,estate,eto_plat_time,eto_dev_time,eback_time,task_id,top_days,hot_days,urgent_days,urgent_stime,urgent_etime,calc_status,calc_time
+	</sql>
+
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="userid != null and userid != ''">      and res.userid = #{userid}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="ostatus != null and ostatus != ''">      and res.ostatus = #{ostatus}     </if>
+		<if test="ctime != null">      and date_format(res.ctime,'%Y-%m-%d') = date_format(#{ctime},'%Y-%m-%d')     </if>
+		<if test="ltime != null">      and date_format(res.ltime,'%Y-%m-%d') = date_format(#{ltime},'%Y-%m-%d')     </if>
+		<if test="payType != null and payType != ''">      and res.pay_type = #{payType}     </if>
+		<if test="payStatus != null and payStatus != ''">      and res.pay_status = #{payStatus}     </if>
+		<if test="payTime != null">      and date_format(res.pay_time,'%Y-%m-%d') = date_format(#{payTime},'%Y-%m-%d')     </if>
+		<if test="prepayId != null and prepayId != ''">      and res.prepay_id = #{prepayId}     </if>
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="finalFee != null and finalFee != ''">      and res.final_fee = #{finalFee}     </if>
+		<if test="othFee != null and othFee != ''">      and res.oth_fee = #{othFee}     </if>
+		<if test="originFee != null and originFee != ''">      and res.origin_fee = #{originFee}     </if>
+		<if test="payAt != null and payAt != ''">      and res.pay_at = #{payAt}     </if>
+		<if test="payAuthId != null and payAuthId != ''">      and res.pay_auth_id = #{payAuthId}     </if>
+		<if test="payOpenid != null and payOpenid != ''">      and res.pay_openid = #{payOpenid}     </if>
+		<if test="payUserid != null and payUserid != ''">      and res.pay_userid = #{payUserid}     </if>
+		<if test="payUsername != null and payUsername != ''">      and res.pay_username = #{payUsername}     </if>
+		<if test="discount != null and discount != ''">      and res.discount = #{discount}     </if>
+		<if test="topFee != null and topFee != ''">      and res.top_fee = #{topFee}     </if>
+		<if test="topStime != null">      and date_format(res.top_stime,'%Y-%m-%d') = date_format(#{topStime},'%Y-%m-%d')     </if>
+		<if test="topEtime != null">      and date_format(res.top_etime,'%Y-%m-%d') = date_format(#{topEtime},'%Y-%m-%d')     </if>
+		<if test="hotFee != null and hotFee != ''">      and res.hot_fee = #{hotFee}     </if>
+		<if test="hotStime != null">      and date_format(res.hot_stime,'%Y-%m-%d') = date_format(#{hotStime},'%Y-%m-%d')     </if>
+		<if test="hotEtime != null">      and date_format(res.hot_etime,'%Y-%m-%d') = date_format(#{hotEtime},'%Y-%m-%d')     </if>
+		<if test="top != null and top != ''">      and res.top = #{top}     </if>
+		<if test="hot != null and hot != ''">      and res.hot = #{hot}     </if>
+		<if test="crmSupFee != null and crmSupFee != ''">      and res.crm_sup_fee = #{crmSupFee}     </if>
+		<if test="urgentFee != null and urgentFee != ''">      and res.urgent_fee = #{urgentFee}     </if>
+		<if test="urgent != null and urgent != ''">      and res.urgent = #{urgent}     </if>
+		<if test="crmSup != null and crmSup != ''">      and res.crm_sup = #{crmSup}     </if>
+		<if test="efunds != null and efunds != ''">      and res.efunds = #{efunds}     </if>
+		<if test="estate != null and estate != ''">      and res.estate = #{estate}     </if>
+		<if test="etoPlatTime != null">      and date_format(res.eto_plat_time,'%Y-%m-%d') = date_format(#{etoPlatTime},'%Y-%m-%d')     </if>
+		<if test="etoDevTime != null">      and date_format(res.eto_dev_time,'%Y-%m-%d') = date_format(#{etoDevTime},'%Y-%m-%d')     </if>
+		<if test="ebackTime != null">      and date_format(res.eback_time,'%Y-%m-%d') = date_format(#{ebackTime},'%Y-%m-%d')     </if>
+		<if test="taskId != null and taskId != ''">      and res.task_id = #{taskId}     </if>
+		<if test="topDays != null and topDays != ''">      and res.top_days = #{topDays}     </if>
+		<if test="hotDays != null and hotDays != ''">      and res.hot_days = #{hotDays}     </if>
+		<if test="urgentDays != null and urgentDays != ''">      and res.urgent_days = #{urgentDays}     </if>
+		<if test="urgentStime != null">      and date_format(res.urgent_stime,'%Y-%m-%d') = date_format(#{urgentStime},'%Y-%m-%d')     </if>
+		<if test="urgentEtime != null">      and date_format(res.urgent_etime,'%Y-%m-%d') = date_format(#{urgentEtime},'%Y-%m-%d')     </if>
+		<if test="calcStatus != null and calcStatus != ''">      and res.calc_status = #{calcStatus}     </if>
+		<if test="calcTime != null">      and date_format(res.calc_time,'%Y-%m-%d') = date_format(#{calcTime},'%Y-%m-%d')     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		userid = #{userid},
+		branch_id = #{branchId},
+		ostatus = #{ostatus},
+		ctime = #{ctime},
+		ltime = #{ltime},
+		pay_type = #{payType},
+		pay_status = #{payStatus},
+		pay_time = #{payTime},
+		prepay_id = #{prepayId},
+		final_fee = #{finalFee},
+		oth_fee = #{othFee},
+		origin_fee = #{originFee},
+		pay_at = #{payAt},
+		pay_auth_id = #{payAuthId},
+		pay_openid = #{payOpenid},
+		pay_userid = #{payUserid},
+		pay_username = #{payUsername},
+		discount = #{discount},
+		top_fee = #{topFee},
+		top_stime = #{topStime},
+		top_etime = #{topEtime},
+		hot_fee = #{hotFee},
+		hot_stime = #{hotStime},
+		hot_etime = #{hotEtime},
+		top = #{top},
+		hot = #{hot},
+		crm_sup_fee = #{crmSupFee},
+		urgent_fee = #{urgentFee},
+		urgent = #{urgent},
+		crm_sup = #{crmSup},
+		efunds = #{efunds},
+		estate = #{estate},
+		eto_plat_time = #{etoPlatTime},
+		eto_dev_time = #{etoDevTime},
+		eback_time = #{ebackTime},
+		task_id = #{taskId},
+		top_days = #{topDays},
+		hot_days = #{hotDays},
+		urgent_days = #{urgentDays},
+		urgent_stime = #{urgentStime},
+		urgent_etime = #{urgentEtime},
+		calc_status = #{calcStatus},
+		calc_time = #{calcTime}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="ostatus != null and ostatus != ''"> ostatus = #{ostatus},     </if>
+		<if test="ctime != null"> ctime = #{ctime},     </if>
+		<if test="ltime != null"> ltime = #{ltime},     </if>
+		<if test="payType != null and payType != ''"> pay_type = #{payType},     </if>
+		<if test="payStatus != null and payStatus != ''"> pay_status = #{payStatus},     </if>
+		<if test="payTime != null"> pay_time = #{payTime},     </if>
+		<if test="prepayId != null and prepayId != ''"> prepay_id = #{prepayId},     </if>
+		<if test="finalFee != null and finalFee != ''"> final_fee = #{finalFee},     </if>
+		<if test="othFee != null and othFee != ''"> oth_fee = #{othFee},     </if>
+		<if test="originFee != null and originFee != ''"> origin_fee = #{originFee},     </if>
+		<if test="payAt != null and payAt != ''"> pay_at = #{payAt},     </if>
+		<if test="payAuthId != null and payAuthId != ''"> pay_auth_id = #{payAuthId},     </if>
+		<if test="payOpenid != null and payOpenid != ''"> pay_openid = #{payOpenid},     </if>
+		<if test="payUserid != null and payUserid != ''"> pay_userid = #{payUserid},     </if>
+		<if test="payUsername != null and payUsername != ''"> pay_username = #{payUsername},     </if>
+		<if test="discount != null and discount != ''"> discount = #{discount},     </if>
+		<if test="topFee != null and topFee != ''"> top_fee = #{topFee},     </if>
+		<if test="topStime != null"> top_stime = #{topStime},     </if>
+		<if test="topEtime != null"> top_etime = #{topEtime},     </if>
+		<if test="hotFee != null and hotFee != ''"> hot_fee = #{hotFee},     </if>
+		<if test="hotStime != null"> hot_stime = #{hotStime},     </if>
+		<if test="hotEtime != null"> hot_etime = #{hotEtime},     </if>
+		<if test="top != null and top != ''"> top = #{top},     </if>
+		<if test="hot != null and hot != ''"> hot = #{hot},     </if>
+		<if test="crmSupFee != null and crmSupFee != ''"> crm_sup_fee = #{crmSupFee},     </if>
+		<if test="urgentFee != null and urgentFee != ''"> urgent_fee = #{urgentFee},     </if>
+		<if test="urgent != null and urgent != ''"> urgent = #{urgent},     </if>
+		<if test="crmSup != null and crmSup != ''"> crm_sup = #{crmSup},     </if>
+		<if test="efunds != null and efunds != ''"> efunds = #{efunds},     </if>
+		<if test="estate != null and estate != ''"> estate = #{estate},     </if>
+		<if test="etoPlatTime != null"> eto_plat_time = #{etoPlatTime},     </if>
+		<if test="etoDevTime != null"> eto_dev_time = #{etoDevTime},     </if>
+		<if test="ebackTime != null"> eback_time = #{ebackTime},     </if>
+		<if test="taskId != null and taskId != ''"> task_id = #{taskId},     </if>
+		<if test="topDays != null and topDays != ''"> top_days = #{topDays},     </if>
+		<if test="hotDays != null and hotDays != ''"> hot_days = #{hotDays},     </if>
+		<if test="urgentDays != null and urgentDays != ''"> urgent_days = #{urgentDays},     </if>
+		<if test="urgentStime != null"> urgent_stime = #{urgentStime},     </if>
+		<if test="urgentEtime != null"> urgent_etime = #{urgentEtime},     </if>
+		<if test="calcStatus != null and calcStatus != ''"> calc_status = #{calcStatus},     </if>
+		<if test="calcTime != null"> calc_time = #{calcTime},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			userid = #{item.userid},
+			branch_id = #{item.branchId},
+			ostatus = #{item.ostatus},
+			ctime = #{item.ctime},
+			ltime = #{item.ltime},
+			pay_type = #{item.payType},
+			pay_status = #{item.payStatus},
+			pay_time = #{item.payTime},
+			prepay_id = #{item.prepayId},
+			final_fee = #{item.finalFee},
+			oth_fee = #{item.othFee},
+			origin_fee = #{item.originFee},
+			pay_at = #{item.payAt},
+			pay_auth_id = #{item.payAuthId},
+			pay_openid = #{item.payOpenid},
+			pay_userid = #{item.payUserid},
+			pay_username = #{item.payUsername},
+			discount = #{item.discount},
+			top_fee = #{item.topFee},
+			top_stime = #{item.topStime},
+			top_etime = #{item.topEtime},
+			hot_fee = #{item.hotFee},
+			hot_stime = #{item.hotStime},
+			hot_etime = #{item.hotEtime},
+			top = #{item.top},
+			hot = #{item.hot},
+			crm_sup_fee = #{item.crmSupFee},
+			urgent_fee = #{item.urgentFee},
+			urgent = #{item.urgent},
+			crm_sup = #{item.crmSup},
+			efunds = #{item.efunds},
+			estate = #{item.estate},
+			eto_plat_time = #{item.etoPlatTime},
+			eto_dev_time = #{item.etoDevTime},
+			eback_time = #{item.ebackTime},
+			task_id = #{item.taskId},
+			top_days = #{item.topDays},
+			hot_days = #{item.hotDays},
+			urgent_days = #{item.urgentDays},
+			urgent_stime = #{item.urgentStime},
+			urgent_etime = #{item.urgentEtime},
+			calc_status = #{item.calcStatus},
+			calc_time = #{item.calcTime}
+	</sql>
+</mapper>
