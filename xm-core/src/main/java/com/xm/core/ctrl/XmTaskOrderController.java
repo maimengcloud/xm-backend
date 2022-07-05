@@ -1,32 +1,36 @@
 package com.xm.core.ctrl;
 
-import java.util.*;
-import java.util.stream.Collectors;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import io.swagger.annotations.*;
-
-import static com.mdp.core.utils.ResponseHelper.*;
-import static com.mdp.core.utils.BaseUtils.*;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
-import com.mdp.mybatis.PageUtils;
-import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.NumberUtil;
+import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
+import com.mdp.meta.client.entity.ItemVo;
+import com.mdp.meta.client.service.ItemService;
+import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmTask;
+import com.xm.core.entity.XmTaskOrder;
+import com.xm.core.service.XmTaskOrderService;
+import com.xm.core.service.XmTaskService;
+import com.xm.core.vo.AddXmTaskOrderVo;
+import io.swagger.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import com.xm.core.service.XmTaskOrderService;
-import com.xm.core.entity.XmTaskOrder;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.mdp.core.utils.BaseUtils.toMap;
 
 /**
  * url编制采用rest风格,如对xm_task_order 任务相关费用订单表的操作有增删改查,对应的url分别为:<br>
@@ -42,6 +46,12 @@ public class XmTaskOrderController {
 	
 	@Autowired
 	private XmTaskOrderService xmTaskOrderService;
+
+	@Autowired
+	XmTaskService xmTaskService;
+
+	@Autowired
+	ItemService itemService;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTaskOrder());
@@ -74,27 +84,71 @@ public class XmTaskOrderController {
 	}
 	
  
-	
-	/**
+
 	@ApiOperation( value = "新增一条任务相关费用订单表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTaskOrder.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmTaskOrder(@RequestBody XmTaskOrder xmTaskOrder) {
+	public Map<String,Object> addXmTaskOrder(@RequestBody AddXmTaskOrderVo xmTaskOrder) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-		    boolean createPk=false;
-			if(!StringUtils.hasText(xmTaskOrder.getId())) {
-			    createPk=true;
-				xmTaskOrder.setId(xmTaskOrderService.createKey("id"));
+			if(!StringUtils.hasText(xmTaskOrder.getTaskId())){
+				return ResponseHelper.failed("taskId-0","任务编号不能为空");
 			}
-			if(createPk==false){
-                 if(xmTaskOrderService.selectOneObject(xmTaskOrder) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
-                }
-            }
+			XmTask xmTaskDb=this.xmTaskService.selectOneById(xmTaskOrder.getTaskId());
+			if(xmTaskDb==null){
+				return ResponseHelper.failed("data-0","任务已不存在");
+			}
+			if(!"1".equals(xmTaskDb.getTaskOut())){
+				return ResponseHelper.failed("taskOut-0","不是外包任务，无须付款");
+			}
+
+			if(!"1".equals(xmTaskDb.getCrowd())){
+				return ResponseHelper.failed("taskOut-0","不是众包任务，无须付款");
+			}
+			if(!"1".equals(xmTaskDb.getTop()) && !"1".equals(xmTaskDb.getOshare()) && !"1".equals(xmTaskDb.getUrgent()) && !"1".equals(xmTaskDb.getCrmSup()) && !"1".equals(xmTaskDb.getHot()) && !"1".equals(xmTaskDb.getEstate())){
+				return ResponseHelper.failed("no-need-pay","该任务无须付款");
+			}
+			User user= LoginUtils.getCurrentUserInfo();
+			XmTaskOrder order=new XmTaskOrder();
+			BeanUtils.copyProperties(xmTaskDb,order);
+			order.setId(this.xmTaskOrderService.createKey("id"));
+			order.setTaskId(xmTaskDb.getId());
+			order.setUserid(user.getUserid());
+			order.setBranchId(user.getBranchId());
+			BigDecimal originFee=BigDecimal.ZERO;
+			if("1".equals(xmTaskDb.getEstate())){
+				order.setEfunds(xmTaskDb.getBudgetAt());
+				originFee=originFee.add(xmTaskDb.getBudgetAt());
+			}
+			ItemVo itemVo=itemService.getDict("sysParam","crowd_task_market");
+			if("1".equals(xmTaskDb.getTop())){
+				order.setTopFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
+				order.setTopDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
+				originFee=originFee.add(order.getTopFee());
+			}
+			if("1".equals(xmTaskDb.getHot())){
+				order.setHotFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
+				order.setHotDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
+				originFee=originFee.add(order.getTopFee());
+			}
+			if("1".equals(xmTaskDb.getTop())){
+				order.setTopFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
+				order.setTopDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
+				originFee=originFee.add(order.getTopFee());
+			}
+			if("1".equals(xmTaskDb.getTop())){
+				order.setTopFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
+				order.setTopDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
+				originFee=originFee.add(order.getTopFee());
+			}
+			if("1".equals(xmTaskDb.getTop())){
+				order.setTopFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
+				order.setTopDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
+				originFee=originFee.add(order.getTopFee());
+			}
 			xmTaskOrderService.insert(xmTaskOrder);
 			m.put("data",xmTaskOrder);
 		}catch (BizException e) { 
@@ -107,7 +161,6 @@ public class XmTaskOrderController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 	
 	/**
 	@ApiOperation( value = "删除一条任务相关费用订单表信息",notes=" ")
