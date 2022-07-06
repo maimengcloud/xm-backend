@@ -214,7 +214,7 @@ public class XmTaskExecuserController {
 			}
 			if("1".equals(xmTask.getCrowd())){
 				Map<String,Object> result=null;
-				if(isBranch){
+				if(!isBranch){
 					result=mkClient.checkAndGetMemberInterests(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
 				}else{
 					result= sysClient.checkAndGetBranchInterests(xmTaskExecuser.getExecUserBranchId(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
