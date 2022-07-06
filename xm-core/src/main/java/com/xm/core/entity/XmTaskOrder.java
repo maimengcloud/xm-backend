@@ -87,7 +87,7 @@ public class XmTaskOrder  implements java.io.Serializable {
 	Date topEtime;
 	
 	@ApiModelProperty(notes="热搜费用",allowEmptyValue=true,example="",allowableValues="")
-	String hotFee;
+	BigDecimal hotFee;
 	
 	@ApiModelProperty(notes="热搜开始时间",allowEmptyValue=true,example="",allowableValues="")
 	Date hotStime;
@@ -102,7 +102,7 @@ public class XmTaskOrder  implements java.io.Serializable {
 	String hot;
 	
 	@ApiModelProperty(notes="客服包办费用",allowEmptyValue=true,example="",allowableValues="")
-	String crmSupFee;
+	BigDecimal crmSupFee;
 	
 	@ApiModelProperty(notes="加急费用",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal urgentFee;
