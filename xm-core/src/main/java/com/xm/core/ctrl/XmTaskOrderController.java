@@ -118,8 +118,8 @@ public class XmTaskOrderController {
 			BeanUtils.copyProperties(xmTaskDb,order);
 			order.setId(this.xmTaskOrderService.createKey("id"));
 			order.setTaskId(xmTaskDb.getId());
-			order.setUserid(user.getUserid());
-			order.setBranchId(user.getBranchId());
+			order.setOuserid(user.getUserid());
+			order.setObranchId(user.getBranchId());
 			BigDecimal originFee=BigDecimal.ZERO;
 			if("1".equals(xmTaskDb.getEstate())){
 				order.setEfunds(xmTaskDb.getBudgetAt());
