@@ -89,7 +89,7 @@
 		t.bid_step=
 			case when t.crowd='0' then t.bid_step
 				 when t.crowd='1' and t.estate in('0','4')  and e1.executor_userid is not null and t.bid_step in('0','1','2','3') then '4'
-			     when t.crowd='1' and t.estate ='2' and e1.executor_userid is not  and t.bid_step in('0','1','2','3','4') then '5'
+			     when t.crowd='1' and t.estate ='2' and e1.executor_userid is not null and t.bid_step in('0','1','2','3','4') then '5'
 		         when t.crowd='1' and e1.executor_userid is null and t.task_state in('0') then '2'
 				 else t.bid_step end,
 		t.quote_final_at=ifnull(e1.quote_amount,t.quote_final_at)

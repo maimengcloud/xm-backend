@@ -473,10 +473,9 @@
         <set>
             <include refid="someFieldSet"/>
 			<if test="taskState!=null and taskState!=''">
-				res.rate=case when res.task_state in('2','3','4') then 100
-				when res.budget_workload>0 then ifnull(res.act_workload,0)*100/ res.budget_workload
-				when res.act_workload>0 then 100
-				else res.rate end
+				bid_step=case when crowd='1' and #{taskState}='2' and bid_step in('5') then '6'
+				when crowd='1' and #{taskState} in('0','1') and bid_step in('6') then '5'
+				else bid_step end
 			</if>
         </set>
         where  (id) in
