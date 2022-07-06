@@ -30,6 +30,15 @@
 		WHEN e.STATUS != '7'
 		AND e.STATUS != '0'
 		AND e.STATUS != '8' THEN
+		e.quote_amount ELSE NULL
+		END
+		) AS quote_amount,
+		max(
+		CASE
+
+		WHEN e.STATUS != '7'
+		AND e.STATUS != '0'
+		AND e.STATUS != '8' THEN
 		e.userid ELSE NULL
 		END
 		) AS executor_userid,
@@ -76,7 +85,14 @@
 		t.exe_usernames = e1.exe_usernames,
 		t.executor_userid = e1.executor_userid,
 		t.executor_username = e1.executor_username,
-		t.task_state=case when e1.executor_userid is null and t.task_state='1' then '0' when e1.executor_userid is not null and t.task_state='0' then '1' else t.task_state end
+		t.task_state=case when e1.executor_userid is null and t.task_state='1' then '0' when e1.executor_userid is not null and t.task_state='0' then '1' else t.task_state end,
+		t.bid_step=
+			case when t.crowd='0' then t.bid_step
+				 when t.crowd='1' and t.estate in('0','4')  and e1.executor_userid is not null and t.bid_step in('0','1','2','3') then '4'
+			     when t.crowd='1' and t.estate ='2' and e1.executor_userid is not  and t.bid_step in('0','1','2','3','4') then '5'
+		         when t.crowd='1' and e1.executor_userid is null and t.task_state in('0') then '2'
+				 else t.bid_step end,
+		t.quote_final_at=ifnull(e1.quote_amount,t.quote_final_at)
 		WHERE t.id = #{taskId}
 	</update>
 	<select id="selectListMapByWhereWithTask" parameterType="HashMap" resultType="HashMap">
