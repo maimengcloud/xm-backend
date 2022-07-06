@@ -2,10 +2,13 @@ package com.xm.core.service;
 
 import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
+import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskOrder;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -22,6 +25,9 @@ import java.util.Date;
 public class XmTaskOrderService extends BaseService {
 	static Logger logger =LoggerFactory.getLogger(XmTaskOrderService.class);
 
+	@Autowired
+	XmTaskService xmTaskService;
+
 
 	@Transactional
 	public void orderPaySuccess(String orderId, String payId, String prepayId, String tranId, BigDecimal payAt, String remarks) {
@@ -31,6 +37,8 @@ public class XmTaskOrderService extends BaseService {
 			throw new BizException("payId-0", "参数不正确，payId不能为空");
 		}
 		XmTaskOrder taskOrderDb = this.selectOneById(orderId);
+		XmTask xmTaskUpdate=new XmTask();
+		xmTaskUpdate.setId(taskOrderDb.getTaskId());
 		if (!payId.equals(taskOrderDb.getPayId())) {
 			throw new BizException("payId-err", "参数不正确，payId与实际不匹配");
 		}
@@ -72,6 +80,10 @@ public class XmTaskOrderService extends BaseService {
 		if("1".equals(taskOrderDb.getCrmSup())){
 			order.setCrmSup("2");
 		}
+
+		BeanUtils.copyProperties(order,xmTaskUpdate);
+		xmTaskUpdate.setId(taskOrderDb.getTaskId());
+		this.xmTaskService.updateSomeFieldByPk(xmTaskUpdate);
 		this.updateSomeFieldByPk(order);
 	}
 

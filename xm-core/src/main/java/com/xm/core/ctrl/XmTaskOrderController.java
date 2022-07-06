@@ -84,8 +84,16 @@ public class XmTaskOrderController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
+
+	@ApiOperation( value = "计算订单金额",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response= AddXmTaskOrderVo.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@RequestMapping(value="/calcOrder",method= RequestMethod.GET)
+	public Map<String,Object> calcOrder(  AddXmTaskOrderVo xmTaskOrder) {
+		xmTaskOrder.setCalc(true);
+		return  addXmTaskOrder(xmTaskOrder);
+	}
 
 	@ApiOperation( value = "新增一条任务相关费用订单表信息",notes=" ")
 	@ApiResponses({
@@ -151,7 +159,10 @@ public class XmTaskOrderController {
 			order.setOriginFee(originFee);
 			order.setDiscount(100);
 			order.setFinalFee(originFee.add(order.getOthFee()));
-			xmTaskOrderService.insert(order);
+			order.setPayType(xmTaskOrder.getPayType());
+			if(!xmTaskOrder.isCalc()){
+				xmTaskOrderService.insert(order);
+			}
 			m.put("data",order);
 		}catch (BizException e) { 
 			tips=e.getTips();
