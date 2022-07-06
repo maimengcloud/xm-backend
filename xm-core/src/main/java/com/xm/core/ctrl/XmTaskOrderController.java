@@ -155,7 +155,6 @@ public class XmTaskOrderController {
 			order.setOuserid(user.getUserid());
 			order.setObranchId(user.getBranchId());
 			BigDecimal originFee=BigDecimal.ZERO;
-
 			if("1".equals(xmTaskOrder.getBizType())){
 				if("1".equals(xmTaskDb.getEstate())){
 					order.setEfunds(xmTaskDb.getQuoteFinalAt());
