@@ -160,6 +160,10 @@ public class XmTaskOrderController {
 			order.setDiscount(100);
 			order.setFinalFee(originFee.add(order.getOthFee()));
 			order.setPayType(xmTaskOrder.getPayType());
+			order.setOstatus("2");
+			order.setPayStatus("0");
+			order.setCtime(new Date());
+			order.setLtime(new Date());
 			if(!xmTaskOrder.isCalc()){
 				xmTaskOrderService.insert(order);
 			}
