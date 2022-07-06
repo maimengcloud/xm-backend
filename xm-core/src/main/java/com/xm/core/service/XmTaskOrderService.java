@@ -3,6 +3,7 @@ package com.xm.core.service;
 import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmTaskOrder;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -29,23 +30,49 @@ public class XmTaskOrderService extends BaseService {
 		if (!StringUtils.hasText(payId)) {
 			throw new BizException("payId-0", "参数不正确，payId不能为空");
 		}
-		XmTaskOrder moOrder = this.selectOneById(orderId);
-		if (!payId.equals(moOrder.getPayId())) {
+		XmTaskOrder taskOrderDb = this.selectOneById(orderId);
+		if (!payId.equals(taskOrderDb.getPayId())) {
 			throw new BizException("payId-err", "参数不正确，payId与实际不匹配");
 		}
-		if (!"2".equals(moOrder.getOstatus())) {
+		if (!"2".equals(taskOrderDb.getOstatus())) {
 			throw new BizException("该订单状态出错");
 		}
-
+		XmTaskOrder order=new XmTaskOrder();
 		//设置第三方付款号
-		moOrder.setTranId(tranId);
-		moOrder.setPayAt(payAt);
+		order.setTranId(tranId);
+		order.setPayAt(payAt);
 		//设置结算状态为已结算
-		moOrder.setPayStatus("1");
+		order.setPayStatus("1");
 		//设置状态为已付款
-		moOrder.setOstatus("3");
+		order.setOstatus("3");
 		//设置付款确认时间
-		moOrder.setPayTime(new Date());
+		order.setPayTime(new Date());
+
+
+		order.setId(taskOrderDb.getId());
+		if("1".equals(taskOrderDb.getEstate())){
+			order.setEstate("2");
+
+		}
+		if("1".equals(taskOrderDb.getTop())){
+			order.setTop("2");
+			order.setTopStime(new Date());
+			order.setTopEtime(DateUtils.addDays(new Date(),taskOrderDb.getTopDays()));
+		}
+		if("1".equals(taskOrderDb.getHot())){
+			order.setHot("2");
+			order.setHotStime(new Date());
+			order.setHotEtime(DateUtils.addDays(new Date(),taskOrderDb.getHotDays()));
+		}
+		if("1".equals(taskOrderDb.getUrgent())){
+			order.setUrgent("2");
+			order.setUrgentStime(new Date());
+			order.setUrgentEtime(DateUtils.addDays(new Date(),taskOrderDb.getUrgentDays()));
+		}
+		if("1".equals(taskOrderDb.getCrmSup())){
+			order.setCrmSup("2");
+		}
+		this.updateSomeFieldByPk(order);
 	}
 
 
