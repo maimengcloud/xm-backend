@@ -67,7 +67,7 @@
 		insert into xm_task_order(
 			<include refid="columns"/>
 		) values (
-		#{ouserid},#{obranchId},#{ostatus},#{ctime},#{ltime},#{payType},#{payStatus},#{payTime},#{prepayId},#{id},#{finalFee},#{othFee},#{originFee},#{payAt},#{payAuthId},#{payOpenid},#{payUserid},#{payUsername},#{discount},#{topFee},#{topStime},#{topEtime},#{hotFee},#{hotStime},#{hotEtime},#{top},#{hot},#{crmSupFee},#{urgentFee},#{urgent},#{crmSup},#{efunds},#{estate},#{etoPlatTime},#{etoDevTime},#{ebackTime},#{taskId},#{topDays},#{hotDays},#{urgentDays},#{urgentStime},#{urgentEtime},#{calcStatus},#{calcTime},#{oshare},#{shareFee},#{payId},#{tranId},#{remark},#{name}
+		#{ouserid},#{obranchId},#{ostatus},#{ctime},#{ltime},#{payType},#{payStatus},#{payTime},#{prepayId},#{id},#{finalFee},#{othFee},#{originFee},#{payAt},#{payAuthId},#{payOpenid},#{payUserid},#{payUsername},#{discount},#{topFee},#{topStime},#{topEtime},#{hotFee},#{hotStime},#{hotEtime},#{top},#{hot},#{crmSupFee},#{urgentFee},#{urgent},#{crmSup},#{efunds},#{estate},#{etoPlatTime},#{etoDevTime},#{ebackTime},#{taskId},#{topDays},#{hotDays},#{urgentDays},#{urgentStime},#{urgentEtime},#{calcStatus},#{calcTime},#{oshare},#{shareFee},#{payId},#{tranId},#{remark},#{name},#{bizType}
 		)
 	</insert>
 	
@@ -142,7 +142,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		ouserid,obranch_id,ostatus,ctime,ltime,pay_type,pay_status,pay_time,prepay_id,id,final_fee,oth_fee,origin_fee,pay_at,pay_auth_id,pay_openid,pay_userid,pay_username,discount,top_fee,top_stime,top_etime,hot_fee,hot_stime,hot_etime,top,hot,crm_sup_fee,urgent_fee,urgent,crm_sup,efunds,estate,eto_plat_time,eto_dev_time,eback_time,task_id,top_days,hot_days,urgent_days,urgent_stime,urgent_etime,calc_status,calc_time,oshare,share_fee,pay_id,tran_id,remark,name
+		ouserid,obranch_id,ostatus,ctime,ltime,pay_type,pay_status,pay_time,prepay_id,id,final_fee,oth_fee,origin_fee,pay_at,pay_auth_id,pay_openid,pay_userid,pay_username,discount,top_fee,top_stime,top_etime,hot_fee,hot_stime,hot_etime,top,hot,crm_sup_fee,urgent_fee,urgent,crm_sup,efunds,estate,eto_plat_time,eto_dev_time,eback_time,task_id,top_days,hot_days,urgent_days,urgent_stime,urgent_etime,calc_status,calc_time,oshare,share_fee,pay_id,tran_id,remark,name,biz_type
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -197,6 +197,7 @@
 		<if test="tranId != null and tranId != ''">      and res.tran_id = #{tranId}     </if>
 		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
 		<if test="name != null and name != ''">      and res.name = #{name}     </if>
+		<if test="bizType != null and bizType != ''">      and res.biz_type = #{bizType}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -248,7 +249,8 @@
 		pay_id = #{payId},
 		tran_id = #{tranId},
 		remark = #{remark},
-		name = #{name}
+		name = #{name},
+		biz_type = #{bizType}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="ouserid != null and ouserid != ''"> ouserid = #{ouserid},     </if>
@@ -300,6 +302,7 @@
 		<if test="tranId != null and tranId != ''"> tran_id = #{tranId},     </if>
 		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
 		<if test="name != null and name != ''"> name = #{name},     </if>
+		<if test="bizType != null and bizType != ''"> biz_type = #{bizType},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -351,6 +354,7 @@
 			pay_id = #{item.payId},
 			tran_id = #{item.tranId},
 			remark = #{item.remark},
-			name = #{item.name}
+			name = #{item.name},
+			biz_type = #{item.bizType}
 	</sql>
 </mapper>
