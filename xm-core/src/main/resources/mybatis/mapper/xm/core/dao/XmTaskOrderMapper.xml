@@ -67,7 +67,7 @@
 		insert into xm_task_order(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{branchId},#{ostatus},#{ctime},#{ltime},#{payType},#{payStatus},#{payTime},#{prepayId},#{id},#{finalFee},#{othFee},#{originFee},#{payAt},#{payAuthId},#{payOpenid},#{payUserid},#{payUsername},#{discount},#{topFee},#{topStime},#{topEtime},#{hotFee},#{hotStime},#{hotEtime},#{top},#{hot},#{crmSupFee},#{urgentFee},#{urgent},#{crmSup},#{efunds},#{estate},#{etoPlatTime},#{etoDevTime},#{ebackTime},#{taskId},#{topDays},#{hotDays},#{urgentDays},#{urgentStime},#{urgentEtime},#{calcStatus},#{calcTime},#{oshare},#{shareFee}
+		#{userid},#{branchId},#{ostatus},#{ctime},#{ltime},#{payType},#{payStatus},#{payTime},#{prepayId},#{id},#{finalFee},#{othFee},#{originFee},#{payAt},#{payAuthId},#{payOpenid},#{payUserid},#{payUsername},#{discount},#{topFee},#{topStime},#{topEtime},#{hotFee},#{hotStime},#{hotEtime},#{top},#{hot},#{crmSupFee},#{urgentFee},#{urgent},#{crmSup},#{efunds},#{estate},#{etoPlatTime},#{etoDevTime},#{ebackTime},#{taskId},#{topDays},#{hotDays},#{urgentDays},#{urgentStime},#{urgentEtime},#{calcStatus},#{calcTime},#{oshare},#{shareFee},#{payId}
 		)
 	</insert>
 	
@@ -142,7 +142,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,branch_id,ostatus,ctime,ltime,pay_type,pay_status,pay_time,prepay_id,id,final_fee,oth_fee,origin_fee,pay_at,pay_auth_id,pay_openid,pay_userid,pay_username,discount,top_fee,top_stime,top_etime,hot_fee,hot_stime,hot_etime,top,hot,crm_sup_fee,urgent_fee,urgent,crm_sup,efunds,estate,eto_plat_time,eto_dev_time,eback_time,task_id,top_days,hot_days,urgent_days,urgent_stime,urgent_etime,calc_status,calc_time,oshare,share_fee
+		userid,branch_id,ostatus,ctime,ltime,pay_type,pay_status,pay_time,prepay_id,id,final_fee,oth_fee,origin_fee,pay_at,pay_auth_id,pay_openid,pay_userid,pay_username,discount,top_fee,top_stime,top_etime,hot_fee,hot_stime,hot_etime,top,hot,crm_sup_fee,urgent_fee,urgent,crm_sup,efunds,estate,eto_plat_time,eto_dev_time,eback_time,task_id,top_days,hot_days,urgent_days,urgent_stime,urgent_etime,calc_status,calc_time,oshare,share_fee,pay_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -193,6 +193,7 @@
 		<if test="calcTime != null">      and date_format(res.calc_time,'%Y-%m-%d') = date_format(#{calcTime},'%Y-%m-%d')     </if>
 		<if test="oshare != null and oshare != ''">      and res.oshare = #{oshare}     </if>
 		<if test="shareFee != null and shareFee != ''">      and res.share_fee = #{shareFee}     </if>
+		<if test="payId != null and payId != ''">      and res.pay_id = #{payId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -240,7 +241,8 @@
 		calc_status = #{calcStatus},
 		calc_time = #{calcTime},
 		oshare = #{oshare},
-		share_fee = #{shareFee}
+		share_fee = #{shareFee},
+		pay_id = #{payId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
@@ -288,6 +290,7 @@
 		<if test="calcTime != null"> calc_time = #{calcTime},     </if>
 		<if test="oshare != null and oshare != ''"> oshare = #{oshare},     </if>
 		<if test="shareFee != null and shareFee != ''"> share_fee = #{shareFee},     </if>
+		<if test="payId != null and payId != ''"> pay_id = #{payId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -335,6 +338,7 @@
 			calc_status = #{item.calcStatus},
 			calc_time = #{item.calcTime},
 			oshare = #{item.oshare},
-			share_fee = #{item.shareFee}
+			share_fee = #{item.shareFee},
+			pay_id = #{item.payId}
 	</sql>
 </mapper>
