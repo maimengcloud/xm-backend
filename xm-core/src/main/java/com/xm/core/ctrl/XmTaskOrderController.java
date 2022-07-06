@@ -145,8 +145,12 @@ public class XmTaskOrderController {
 				order.setCrmSupFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("crmSupFee").getValue(),BigDecimal.ZERO));
  				originFee=originFee.add(order.getCrmSupFee());
 			}
+			if(order.getOthFee()==null){
+				order.setOthFee(BigDecimal.ZERO);
+			}
 			order.setOriginFee(originFee);
 			order.setDiscount(100);
+			order.setFinalFee(originFee.add(order.getOthFee()));
 			xmTaskOrderService.insert(order);
 			m.put("data",order);
 		}catch (BizException e) { 
