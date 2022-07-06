@@ -58,32 +58,36 @@ public class XmTaskOrderService extends BaseService {
 
 
 		order.setId(taskOrderDb.getId() );
-		if("1".equals(taskOrderDb.getEstate()) && taskOrderDb.getEfunds()!=null && taskOrderDb.getEfunds().compareTo(BigDecimal.ZERO)>0){
-			order.setEstate("2");
+		if("1".equals(taskOrderDb.getBizType())){
+			if("1".equals(taskOrderDb.getEstate()) && taskOrderDb.getEfunds()!=null && taskOrderDb.getEfunds().compareTo(BigDecimal.ZERO)>0){
+				order.setEstate("2");
+			}
+		}else if("2".equals(taskOrderDb.getBizType())){
+			if("1".equals(taskOrderDb.getTop())){
+				order.setTop("2");
+				order.setTopStime(new Date());
+				order.setTopEtime(DateUtils.addDays(new Date(),taskOrderDb.getTopDays()));
+			}
+			if("1".equals(taskOrderDb.getHot())){
+				order.setHot("2");
+				order.setHotStime(new Date());
+				order.setHotEtime(DateUtils.addDays(new Date(),taskOrderDb.getHotDays()));
+			}
+			if("1".equals(taskOrderDb.getUrgent())){
+				order.setUrgent("2");
+				order.setUrgentStime(new Date());
+				order.setUrgentEtime(DateUtils.addDays(new Date(),taskOrderDb.getUrgentDays()));
+			}
+			if("1".equals(taskOrderDb.getCrmSup())){
+				order.setCrmSup("2");
+			}
 
-		}
-		if("1".equals(taskOrderDb.getTop())){
-			order.setTop("2");
-			order.setTopStime(new Date());
-			order.setTopEtime(DateUtils.addDays(new Date(),taskOrderDb.getTopDays()));
-		}
-		if("1".equals(taskOrderDb.getHot())){
-			order.setHot("2");
-			order.setHotStime(new Date());
-			order.setHotEtime(DateUtils.addDays(new Date(),taskOrderDb.getHotDays()));
-		}
-		if("1".equals(taskOrderDb.getUrgent())){
-			order.setUrgent("2");
-			order.setUrgentStime(new Date());
-			order.setUrgentEtime(DateUtils.addDays(new Date(),taskOrderDb.getUrgentDays()));
-		}
-		if("1".equals(taskOrderDb.getCrmSup())){
-			order.setCrmSup("2");
+			if("1".equals(taskOrderDb.getOshare())&& taskOrderDb.getShareFee()!=null && taskOrderDb.getShareFee().compareTo(BigDecimal.ZERO)>0){
+				order.setOshare("2");
+			}
 		}
 
-		if("1".equals(taskOrderDb.getOshare())&& taskOrderDb.getShareFee()!=null && taskOrderDb.getShareFee().compareTo(BigDecimal.ZERO)>0){
-			order.setOshare("2");
-		}
+		order.setPayAt(payAt);
 		BeanUtils.copyProperties(order,xmTaskUpdate);
 		xmTaskUpdate.setId(taskOrderDb.getTaskId());
 		this.xmTaskService.updateSomeFieldByPk(xmTaskUpdate);

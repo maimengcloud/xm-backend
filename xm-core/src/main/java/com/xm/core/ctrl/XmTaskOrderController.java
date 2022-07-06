@@ -118,8 +118,25 @@ public class XmTaskOrderController {
 			if(!"1".equals(xmTaskDb.getCrowd())){
 				return ResponseHelper.failed("taskOut-0","不是众包任务，无须付款");
 			}
-			if(!"1".equals(xmTaskDb.getTop()) && !"1".equals(xmTaskDb.getOshare()) && !"1".equals(xmTaskDb.getUrgent()) && !"1".equals(xmTaskDb.getCrmSup()) && !"1".equals(xmTaskDb.getHot()) && !"1".equals(xmTaskDb.getEstate())){
-				return ResponseHelper.failed("no-need-pay","该任务无须付款");
+			if(!StringUtils.hasText(xmTaskOrder.getBizType())){
+				return ResponseHelper.failed("bizType-0","业务类型不能为空bizType:1-保证金，2-营销推广");
+			}
+			if("1".equals(xmTaskOrder.getBizType())){
+				if(!"4".equals(xmTaskDb.getBidStep())){
+					return ResponseHelper.failed("bidStep-not-4","当前任务未到缴纳保证金步骤");
+				}
+				if(!"1".equals(xmTaskDb.getEstate())){
+					return ResponseHelper.failed("estate-not-1","当前任务不是待缴纳保证金状态");
+				}
+				if(xmTaskDb.getQuoteFinalAt()==null || xmTaskDb.getQuoteFinalAt().compareTo(BigDecimal.ZERO)<=0){
+					return ResponseHelper.failed("quoteFinalAt-0","最终任务价格不能为空");
+				}
+			}else if("2".equals(xmTaskOrder.getBizType())){
+				if(!"1".equals(xmTaskDb.getTop()) && !"1".equals(xmTaskDb.getOshare()) && !"1".equals(xmTaskDb.getUrgent()) && !"1".equals(xmTaskDb.getCrmSup()) && !"1".equals(xmTaskDb.getHot()) ) {
+					return ResponseHelper.failed("no-need-pay", "没有选中任何推广活动，无须缴款");
+				}
+			}else{
+				return ResponseHelper.failed("bizType-0", "业务类型错误bizType:1-保证金，2-营销推广");
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			XmTaskOrder order=new XmTaskOrder();
@@ -129,38 +146,44 @@ public class XmTaskOrderController {
 			order.setOuserid(user.getUserid());
 			order.setObranchId(user.getBranchId());
 			BigDecimal originFee=BigDecimal.ZERO;
-			if("1".equals(xmTaskDb.getEstate())){
-				order.setEfunds(xmTaskDb.getBudgetAt());
-				originFee=originFee.add(xmTaskDb.getBudgetAt());
-			}
-			ItemVo itemVo=itemService.getDict("sysParam","crowd_task_market");
-			if("1".equals(xmTaskDb.getTop())){
-				order.setTopFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
-				order.setTopDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
-				originFee=originFee.add(order.getTopFee());
-			}
-			if("1".equals(xmTaskDb.getHot())){
-				order.setHotFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("hotFee").getValue(),BigDecimal.ZERO));
-				order.setHotDays(NumberUtil.getInteger(itemVo.getExtInfo("hotDays").getValue(),3));
-				originFee=originFee.add(order.getTopFee());
-			}
-			if("1".equals(xmTaskDb.getUrgent())){
-				order.setUrgentFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("urgentFee").getValue(),BigDecimal.ZERO));
-				order.setUrgentDays(NumberUtil.getInteger(itemVo.getExtInfo("urgentDays").getValue(),3));
-				originFee=originFee.add(order.getUrgentFee());
-			}
-			if("1".equals(xmTaskDb.getCrmSup())){
-				order.setCrmSupFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("crmSupFee").getValue(),BigDecimal.ZERO));
- 				originFee=originFee.add(order.getCrmSupFee());
+
+			if("1".equals(xmTaskOrder.getBizType())){
+				if("1".equals(xmTaskDb.getEstate())){
+					order.setEfunds(xmTaskDb.getQuoteFinalAt());
+					originFee=originFee.add(order.getEfunds());
+				}
+			}else if("2".equals(xmTaskOrder.getBizType())){
+				ItemVo itemVo=itemService.getDict("sysParam","crowd_task_market");
+				if("1".equals(xmTaskDb.getTop())){
+					order.setTopFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
+					order.setTopDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
+					originFee=originFee.add(order.getTopFee());
+				}
+				if("1".equals(xmTaskDb.getHot())){
+					order.setHotFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("hotFee").getValue(),BigDecimal.ZERO));
+					order.setHotDays(NumberUtil.getInteger(itemVo.getExtInfo("hotDays").getValue(),3));
+					originFee=originFee.add(order.getTopFee());
+				}
+				if("1".equals(xmTaskDb.getUrgent())){
+					order.setUrgentFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("urgentFee").getValue(),BigDecimal.ZERO));
+					order.setUrgentDays(NumberUtil.getInteger(itemVo.getExtInfo("urgentDays").getValue(),3));
+					originFee=originFee.add(order.getUrgentFee());
+				}
+				if("1".equals(xmTaskDb.getCrmSup())){
+					order.setCrmSupFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("crmSupFee").getValue(),BigDecimal.ZERO));
+					originFee=originFee.add(order.getCrmSupFee());
+				}
+
+				if("1".equals(xmTaskDb.getOshare())){
+					order.setShareFee(xmTaskDb.getShareFee());
+					if(order.getShareFee()==null || order.getShareFee().compareTo(BigDecimal.ZERO)<0){
+						return ResponseHelper.failed("shareFee-0","分享佣金不能为空");
+					}
+					originFee=originFee.add(order.getShareFee());
+				}
 			}
 
-			if("1".equals(xmTaskDb.getOshare())){
-				order.setShareFee(xmTaskDb.getShareFee());
-				if(order.getShareFee()==null || order.getShareFee().compareTo(BigDecimal.ZERO)<0){
-					return ResponseHelper.failed("shareFee-0","分享佣金不能为空");
-				}
-				originFee=originFee.add(order.getShareFee());
-			}
+
 			if(order.getOthFee()==null){
 				order.setOthFee(BigDecimal.ZERO);
 			}
@@ -170,6 +193,7 @@ public class XmTaskOrderController {
 			order.setPayType(xmTaskOrder.getPayType());
 			order.setOstatus("2");
 			order.setPayStatus("0");
+			order.setBizType(xmTaskOrder.getBizType());
 			order.setCtime(new Date());
 			order.setLtime(new Date());
 			if(!xmTaskOrder.isCalc()){

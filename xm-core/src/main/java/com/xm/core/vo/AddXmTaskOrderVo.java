@@ -24,6 +24,10 @@ public class AddXmTaskOrderVo implements java.io.Serializable {
 	@ApiModelProperty(notes="付款方式1微信2支付宝",allowEmptyValue=true,example="",allowableValues="")
 	String payType;
 
+
+	@ApiModelProperty(notes="订单业务类型1-保证金，2-营销推广",allowEmptyValue=true,example="",allowableValues="")
+	String bizType;
+
 	boolean calc=false;
 
     /**
