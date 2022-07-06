@@ -26,11 +26,13 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import static com.mdp.core.utils.BaseUtils.toMap;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_task_order 任务相关费用订单表的操作有增删改查,对应的url分别为:<br>
@@ -130,27 +132,23 @@ public class XmTaskOrderController {
 				originFee=originFee.add(order.getTopFee());
 			}
 			if("1".equals(xmTaskDb.getHot())){
-				order.setHotFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
-				order.setHotDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
+				order.setHotFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("hotFee").getValue(),BigDecimal.ZERO));
+				order.setHotDays(NumberUtil.getInteger(itemVo.getExtInfo("hotDays").getValue(),3));
 				originFee=originFee.add(order.getTopFee());
 			}
-			if("1".equals(xmTaskDb.getTop())){
-				order.setTopFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
-				order.setTopDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
-				originFee=originFee.add(order.getTopFee());
+			if("1".equals(xmTaskDb.getUrgent())){
+				order.setUrgentFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("urgentFee").getValue(),BigDecimal.ZERO));
+				order.setUrgentDays(NumberUtil.getInteger(itemVo.getExtInfo("urgentDays").getValue(),3));
+				originFee=originFee.add(order.getUrgentFee());
 			}
-			if("1".equals(xmTaskDb.getTop())){
-				order.setTopFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
-				order.setTopDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
-				originFee=originFee.add(order.getTopFee());
+			if("1".equals(xmTaskDb.getCrmSup())){
+				order.setCrmSupFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("crmSupFee").getValue(),BigDecimal.ZERO));
+ 				originFee=originFee.add(order.getCrmSupFee());
 			}
-			if("1".equals(xmTaskDb.getTop())){
-				order.setTopFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
-				order.setTopDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
-				originFee=originFee.add(order.getTopFee());
-			}
-			xmTaskOrderService.insert(xmTaskOrder);
-			m.put("data",xmTaskOrder);
+			order.setOriginFee(originFee);
+			order.setDiscount(100);
+			xmTaskOrderService.insert(order);
+			m.put("data",order);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -346,4 +344,68 @@ public class XmTaskOrderController {
         return m;
 	} 
 	*/
+
+
+	@ApiOperation( value = "通过Id获取订单",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@RequestMapping(value="/getOrderById",method=RequestMethod.GET)
+	public Map<String,Object> batchDelXmTaskOrder(String orderId) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		if(!StringUtils.hasText(orderId)) {
+			return failed("data-0","订单Id不能为空");
+		}
+		XmTaskOrder moOrder = xmTaskOrderService.selectOneById(orderId);
+		m.put("tips", tips);
+		m.put("data", moOrder);
+		return m;
+	}
+
+	@ApiOperation( value = "通过Id获取订单",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@RequestMapping(value="/orderPaySuccess",method=RequestMethod.POST)
+	public Map<String,Object> orderPaySuccess(@RequestBody XmTaskOrder order) {
+		Map<String,Object> m = new HashMap<>();
+		try {
+			Tips tips=new Tips("操作成功");
+			if(!StringUtils.hasText(order.getId())) {
+				return failed("data-0","订单Id不能为空");
+			}
+			xmTaskOrderService.orderPaySuccess(order.getId(),order.getPayId(),order.getPrepayId(), order.getTranId(), order.getPayAt(), order.getRemark());
+			m.put("tips", tips);
+			return m;
+		}catch (BizException e) {
+			logger.error("",e);
+			return failed("data-0",e.getMessage());
+		} catch (Exception e) {
+			logger.error("",e);
+			return failed("data-0", "开通模块失败");
+		}
+	}
+
+	@ApiOperation( value = "修改订单的第三方流水号",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@RequestMapping(value="/updatePrepayId",method=RequestMethod.POST)
+	public Map<String,Object> updatePrepayId(@RequestBody  XmTaskOrder order) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		if(!StringUtils.hasText(order.getId())) {
+			return failed("data-0","订单Id不能为空");
+		}
+		XmTaskOrder moOrder = new XmTaskOrder();
+		moOrder.setId(order.getId());
+		moOrder.setPayId(order.getPayId());
+		moOrder.setPrepayId(order.getPrepayId());
+		moOrder.setPayTime(new Date());
+		xmTaskOrderService.updateSomeFieldByPk(moOrder);
+		m.put("tips", tips);
+		m.put("data", moOrder);
+		return m;
+	}
 }
