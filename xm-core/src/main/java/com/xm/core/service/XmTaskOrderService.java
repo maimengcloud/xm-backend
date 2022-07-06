@@ -57,8 +57,8 @@ public class XmTaskOrderService extends BaseService {
 		order.setPayTime(new Date());
 
 
-		order.setId(taskOrderDb.getId());
-		if("1".equals(taskOrderDb.getEstate())){
+		order.setId(taskOrderDb.getId() );
+		if("1".equals(taskOrderDb.getEstate()) && taskOrderDb.getEfunds()!=null && taskOrderDb.getEfunds().compareTo(BigDecimal.ZERO)>0){
 			order.setEstate("2");
 
 		}
@@ -81,6 +81,9 @@ public class XmTaskOrderService extends BaseService {
 			order.setCrmSup("2");
 		}
 
+		if("1".equals(taskOrderDb.getOshare())&& taskOrderDb.getShareFee()!=null && taskOrderDb.getShareFee().compareTo(BigDecimal.ZERO)>0){
+			order.setOshare("2");
+		}
 		BeanUtils.copyProperties(order,xmTaskUpdate);
 		xmTaskUpdate.setId(taskOrderDb.getTaskId());
 		this.xmTaskService.updateSomeFieldByPk(xmTaskUpdate);
