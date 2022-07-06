@@ -153,6 +153,14 @@ public class XmTaskOrderController {
 				order.setCrmSupFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("crmSupFee").getValue(),BigDecimal.ZERO));
  				originFee=originFee.add(order.getCrmSupFee());
 			}
+
+			if("1".equals(xmTaskDb.getOshare())){
+				order.setShareFee(xmTaskDb.getShareFee());
+				if(order.getShareFee()==null || order.getShareFee().compareTo(BigDecimal.ZERO)<0){
+					return ResponseHelper.failed("shareFee-0","分享佣金不能为空");
+				}
+				originFee=originFee.add(order.getShareFee());
+			}
 			if(order.getOthFee()==null){
 				order.setOthFee(BigDecimal.ZERO);
 			}
