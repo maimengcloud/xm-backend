@@ -2,6 +2,7 @@ package com.xm.core.service;
 
 import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
+import com.mdp.msg.client.PushNotifyMsgService;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskOrder;
 import org.apache.commons.lang3.time.DateUtils;
@@ -14,7 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -27,6 +31,12 @@ public class XmTaskOrderService extends BaseService {
 
 	@Autowired
 	XmTaskService xmTaskService;
+
+	@Autowired
+	PushNotifyMsgService msgService;
+
+	@Autowired
+	XmRecordService xmRecordService;
 
 
 	@Transactional
@@ -56,42 +66,60 @@ public class XmTaskOrderService extends BaseService {
 		//设置付款确认时间
 		order.setPayTime(new Date());
 
-
+		List<String> marketNames=new ArrayList<>();
 		order.setId(taskOrderDb.getId() );
 		if("1".equals(taskOrderDb.getBizType())){
 			if("1".equals(taskOrderDb.getEstate()) && taskOrderDb.getEfunds()!=null && taskOrderDb.getEfunds().compareTo(BigDecimal.ZERO)>0){
 				order.setEstate("2");
+				order.setEtoPlatTime(new Date());
 			}
 		}else if("2".equals(taskOrderDb.getBizType())){
 			if("1".equals(taskOrderDb.getTop())){
 				order.setTop("2");
 				order.setTopStime(new Date());
 				order.setTopEtime(DateUtils.addDays(new Date(),taskOrderDb.getTopDays()));
+				marketNames.add("置顶");
 			}
 			if("1".equals(taskOrderDb.getHot())){
 				order.setHot("2");
 				order.setHotStime(new Date());
 				order.setHotEtime(DateUtils.addDays(new Date(),taskOrderDb.getHotDays()));
+				marketNames.add("上热门");
 			}
 			if("1".equals(taskOrderDb.getUrgent())){
 				order.setUrgent("2");
 				order.setUrgentStime(new Date());
 				order.setUrgentEtime(DateUtils.addDays(new Date(),taskOrderDb.getUrgentDays()));
+				marketNames.add("加急");
 			}
 			if("1".equals(taskOrderDb.getCrmSup())){
 				order.setCrmSup("2");
+				marketNames.add("客服包办");
 			}
 
 			if("1".equals(taskOrderDb.getOshare())&& taskOrderDb.getShareFee()!=null && taskOrderDb.getShareFee().compareTo(BigDecimal.ZERO)>0){
 				order.setOshare("2");
+				marketNames.add("分享赚");
 			}
 		}
 
 		order.setPayAt(payAt);
 		BeanUtils.copyProperties(order,xmTaskUpdate);
 		xmTaskUpdate.setId(taskOrderDb.getTaskId());
+		//托管资金后用户开始工作
+		if("1".equals(taskOrderDb.getBizType()) && "2".equals(xmTaskUpdate.getEstate()) && "1".equals(taskOrderDb.getEstate())){
+			xmTaskUpdate.setBidStep("5");
+		}
 		this.xmTaskService.updateSomeFieldByPk(xmTaskUpdate);
 		this.updateSomeFieldByPk(order);
+
+		if("1".equals(taskOrderDb.getBizType()) && "5".equals(xmTaskUpdate.getBidStep())){
+			XmTask xmTaskDb=this.xmTaskService.selectOneById(taskOrderDb.getTaskId());
+			msgService.pushMsg(taskOrderDb.getObranchId(),taskOrderDb.getOuserid(),xmTaskDb.getExecutorUserid(),"2",xmTaskDb.getProjectId(),xmTaskDb.getId(),"雇主成功托管佣金【"+taskOrderDb.getEfunds()+"】，实际到账金额【"+payAt+"】，当前任务进入用户工作阶段，请尽快开展工作。");
+			xmRecordService.addXmTaskRecord(taskOrderDb.getProjectId(),taskOrderDb.getTaskId(),"托管佣金","成功托管佣金【"+taskOrderDb.getEfunds()+"】，实际到账金额【"+payAt+"】");
+		}else{
+			xmRecordService.addXmTaskRecord(taskOrderDb.getProjectId(),taskOrderDb.getTaskId(),"营销活动","成功缴纳活动费用金额【"+taskOrderDb.getFinalFee()+"】，实际到账金额【"+payAt+"】。参加的活动为【"+marketNames.stream().collect(Collectors.joining(","))+"】");
+		}
 	}
 
 

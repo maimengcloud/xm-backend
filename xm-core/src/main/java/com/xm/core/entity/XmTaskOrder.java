@@ -173,6 +173,9 @@ public class XmTaskOrder  implements java.io.Serializable {
 	@ApiModelProperty(notes="订单业务类型1-保证金，2-营销推广活动",allowEmptyValue=true,example="",allowableValues="")
 	String bizType;
 
+	@ApiModelProperty(notes="订单业务类型1-保证金，2-营销推广活动",allowEmptyValue=true,example="",allowableValues="")
+	String projectId;
+
 	/**
 	 *订单编号
 	 **/

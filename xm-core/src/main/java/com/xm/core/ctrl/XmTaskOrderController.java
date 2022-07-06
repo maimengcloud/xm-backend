@@ -7,12 +7,14 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.meta.client.entity.ItemVo;
 import com.mdp.meta.client.service.ItemService;
+import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskOrder;
+import com.xm.core.service.XmRecordService;
 import com.xm.core.service.XmTaskOrderService;
 import com.xm.core.service.XmTaskService;
 import com.xm.core.vo.AddXmTaskOrderVo;
@@ -54,6 +56,13 @@ public class XmTaskOrderController {
 
 	@Autowired
 	ItemService itemService;
+
+
+	@Autowired
+	PushNotifyMsgService msgService;
+
+	@Autowired
+	XmRecordService xmRecordService;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTaskOrder());
@@ -427,6 +436,7 @@ public class XmTaskOrderController {
 				return failed("data-0","订单Id不能为空");
 			}
 			xmTaskOrderService.orderPaySuccess(order.getId(),order.getPayId(),order.getPrepayId(), order.getTranId(), order.getPayAt(), order.getRemark());
+
 			m.put("tips", tips);
 			return m;
 		}catch (BizException e) {
