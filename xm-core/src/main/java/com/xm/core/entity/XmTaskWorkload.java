@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskWorkload所有属性名: <br>
- *	"userid","员工编号","username","姓名","ctime","创建日期","taskId","业务对象主键任务编号","cuserid","创建人编号","bizDate","业务日期yyyy-MM-dd","wstatus","状态0-待确认，1-已确认，2-无效","remark","备注","ttype","任务类型-关联字典taskType","id","主键","stime","结算提交时间","sstatus","结算状态0-无需结算，1-待结算2-已提交3-已通过4-已结算","workload","工时，一个task_id可多次提交，小时","rworkload","剩余工时（同一天取最后日期更新到task表budget_workload中）","cusername","创建人姓名","projectId","归属项目","branchId","项目归属机构","ubranchId","用户归属机构","sbillId","结算单编号","sbillName","结算单名称","samt","结算工时对应结算金额-根据结算方案计算结算金额","sworkload","结算工时，用于结算，默认=workload","taskOut","是否外购0否1是","crowd","是否众包","feeRemark","费用说明","subjectId","费用科目编号","subjectName","费用科目名称","sschemel","任务结算方案,来自task表、来自数字字典xmTaskSettleSchemel","uniPrice","工时单价，来自task表，根据task_out判断取内部还是外部单价";<br>
+ *	"userid","员工编号","username","姓名","ctime","创建日期","taskId","业务对象主键任务编号","cuserid","创建人编号","bizDate","业务日期yyyy-MM-dd","wstatus","状态0-待确认，1-已确认，2-无效","remark","备注","ttype","任务类型-关联字典taskType","id","主键","stime","结算提交时间","sstatus","结算状态0-无需结算，1-待结算2-已提交3-已通过4-已结算","workload","工时，一个task_id可多次提交，小时","rworkload","剩余工时（同一天取最后日期更新到task表budget_workload中）","cusername","创建人姓名","projectId","归属项目","branchId","项目归属机构","ubranchId","用户归属机构","sbillId","结算单编号","sbillName","结算单名称","detailId","结算单明细表id";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -80,32 +80,8 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	@ApiModelProperty(notes="结算单名称",allowEmptyValue=true,example="",allowableValues="")
 	String sbillName;
 	
-	@ApiModelProperty(notes="结算工时对应结算金额-根据结算方案计算结算金额",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal samt;
-	
-	@ApiModelProperty(notes="结算工时，用于结算，默认=workload",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal sworkload;
-	
-	@ApiModelProperty(notes="是否外购0否1是",allowEmptyValue=true,example="",allowableValues="")
-	String taskOut;
-	
-	@ApiModelProperty(notes="是否众包",allowEmptyValue=true,example="",allowableValues="")
-	String crowd;
-	
-	@ApiModelProperty(notes="费用说明",allowEmptyValue=true,example="",allowableValues="")
-	String feeRemark;
-	
-	@ApiModelProperty(notes="费用科目编号",allowEmptyValue=true,example="",allowableValues="")
-	String subjectId;
-	
-	@ApiModelProperty(notes="费用科目名称",allowEmptyValue=true,example="",allowableValues="")
-	String subjectName;
-	
-	@ApiModelProperty(notes="任务结算方案,来自task表、来自数字字典xmTaskSettleSchemel",allowEmptyValue=true,example="",allowableValues="")
-	String sschemel;
-	
-	@ApiModelProperty(notes="工时单价，来自task表，根据task_out判断取内部还是外部单价",allowEmptyValue=true,example="",allowableValues="")
-	BigDecimal uniPrice;
+	@ApiModelProperty(notes="结算单明细表id",allowEmptyValue=true,example="",allowableValues="")
+	String detailId;
 
 	/**
 	 *主键

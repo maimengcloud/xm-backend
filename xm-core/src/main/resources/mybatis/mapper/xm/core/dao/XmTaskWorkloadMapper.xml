@@ -284,7 +284,7 @@
 		insert into xm_task_workload(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{branchId},#{ubranchId},#{sbillId},#{sbillName},#{samt},#{sworkload},#{taskOut},#{crowd},#{feeRemark},#{subjectId},#{subjectName},#{sschemel},#{uniPrice}
+		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{branchId},#{ubranchId},#{sbillId},#{sbillName},#{detailId}
 		)
 	</insert>
 	
@@ -359,7 +359,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,branch_id,ubranch_id,sbill_id,sbill_name,samt,sworkload,task_out,crowd,fee_remark,subject_id,subject_name,sschemel,uni_price
+		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,branch_id,ubranch_id,sbill_id,sbill_name,detail_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -384,15 +384,7 @@
 		<if test="ubranchId != null and ubranchId != ''">      and res.ubranch_id = #{ubranchId}     </if>
 		<if test="sbillId != null and sbillId != ''">      and res.sbill_id = #{sbillId}     </if>
 		<if test="sbillName != null and sbillName != ''">      and res.sbill_name = #{sbillName}     </if>
-		<if test="samt != null and samt != ''">      and res.samt = #{samt}     </if>
-		<if test="sworkload != null and sworkload != ''">      and res.sworkload = #{sworkload}     </if>
-		<if test="taskOut != null and taskOut != ''">      and res.task_out = #{taskOut}     </if>
-		<if test="crowd != null and crowd != ''">      and res.crowd = #{crowd}     </if>
-		<if test="feeRemark != null and feeRemark != ''">      and res.fee_remark = #{feeRemark}     </if>
-		<if test="subjectId != null and subjectId != ''">      and res.subject_id = #{subjectId}     </if>
-		<if test="subjectName != null and subjectName != ''">      and res.subject_name = #{subjectName}     </if>
-		<if test="sschemel != null and sschemel != ''">      and res.sschemel = #{sschemel}     </if>
-		<if test="uniPrice != null and uniPrice != ''">      and res.uni_price = #{uniPrice}     </if>
+		<if test="detailId != null and detailId != ''">      and res.detail_id = #{detailId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -415,15 +407,7 @@
 		ubranch_id = #{ubranchId},
 		sbill_id = #{sbillId},
 		sbill_name = #{sbillName},
-		samt = #{samt},
-		sworkload = #{sworkload},
-		task_out = #{taskOut},
-		crowd = #{crowd},
-		fee_remark = #{feeRemark},
-		subject_id = #{subjectId},
-		subject_name = #{subjectName},
-		sschemel = #{sschemel},
-		uni_price = #{uniPrice}
+		detail_id = #{detailId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
@@ -445,15 +429,7 @@
 		<if test="ubranchId != null and ubranchId != ''"> ubranch_id = #{ubranchId},     </if>
 		<if test="sbillId != null and sbillId != ''"> sbill_id = #{sbillId},     </if>
 		<if test="sbillName != null and sbillName != ''"> sbill_name = #{sbillName},     </if>
-		<if test="samt != null and samt != ''"> samt = #{samt},     </if>
-		<if test="sworkload != null and sworkload != ''"> sworkload = #{sworkload},     </if>
-		<if test="taskOut != null and taskOut != ''"> task_out = #{taskOut},     </if>
-		<if test="crowd != null and crowd != ''"> crowd = #{crowd},     </if>
-		<if test="feeRemark != null and feeRemark != ''"> fee_remark = #{feeRemark},     </if>
-		<if test="subjectId != null and subjectId != ''"> subject_id = #{subjectId},     </if>
-		<if test="subjectName != null and subjectName != ''"> subject_name = #{subjectName},     </if>
-		<if test="sschemel != null and sschemel != ''"> sschemel = #{sschemel},     </if>
-		<if test="uniPrice != null and uniPrice != ''"> uni_price = #{uniPrice},     </if>
+		<if test="detailId != null and detailId != ''"> detail_id = #{detailId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -476,14 +452,6 @@
 			ubranch_id = #{item.ubranchId},
 			sbill_id = #{item.sbillId},
 			sbill_name = #{item.sbillName},
-			samt = #{item.samt},
-			sworkload = #{item.sworkload},
-			task_out = #{item.taskOut},
-			crowd = #{item.crowd},
-			fee_remark = #{item.feeRemark},
-			subject_id = #{item.subjectId},
-			subject_name = #{item.subjectName},
-			sschemel = #{item.sschemel},
-			uni_price = #{item.uniPrice}
+			detail_id = #{item.detailId}
 	</sql>
 </mapper>
