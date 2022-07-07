@@ -212,7 +212,7 @@
 	</select>
 	<update id="updateStatusAfterJoinSbill" parameterType="List">
 		<foreach collection="list" item="item" index="index" separator=";" >
-			update xm_task_workload res set res.sstatus='2',res.detail_id=#{item.id},res.sbill_id=#{item.sbillId},res.sbill_name=#{item.sbillName}
+			update xm_task_workload res set res.sstatus='2',res.detail_id=#{item.id},res.sbill_id=#{item.sbillId}
 			where res.sstatus='1' and res.userid=#{item.userid} and res.task_id=#{item.taskId}
 		</foreach>
 	</update>
@@ -284,7 +284,7 @@
 		insert into xm_task_workload(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{branchId},#{ubranchId},#{sbillId},#{sbillName},#{detailId}
+		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{branchId},#{ubranchId},#{sbillId},#{detailId}
 		)
 	</insert>
 	
@@ -359,7 +359,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,branch_id,ubranch_id,sbill_id,sbill_name,detail_id
+		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,branch_id,ubranch_id,sbill_id,detail_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -383,7 +383,6 @@
 		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
 		<if test="ubranchId != null and ubranchId != ''">      and res.ubranch_id = #{ubranchId}     </if>
 		<if test="sbillId != null and sbillId != ''">      and res.sbill_id = #{sbillId}     </if>
-		<if test="sbillName != null and sbillName != ''">      and res.sbill_name = #{sbillName}     </if>
 		<if test="detailId != null and detailId != ''">      and res.detail_id = #{detailId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
@@ -406,7 +405,6 @@
 		branch_id = #{branchId},
 		ubranch_id = #{ubranchId},
 		sbill_id = #{sbillId},
-		sbill_name = #{sbillName},
 		detail_id = #{detailId}
 	</sql>
 	<sql id="someFieldSet">
@@ -428,7 +426,6 @@
 		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
 		<if test="ubranchId != null and ubranchId != ''"> ubranch_id = #{ubranchId},     </if>
 		<if test="sbillId != null and sbillId != ''"> sbill_id = #{sbillId},     </if>
-		<if test="sbillName != null and sbillName != ''"> sbill_name = #{sbillName},     </if>
 		<if test="detailId != null and detailId != ''"> detail_id = #{detailId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
@@ -451,7 +448,6 @@
 			branch_id = #{item.branchId},
 			ubranch_id = #{item.ubranchId},
 			sbill_id = #{item.sbillId},
-			sbill_name = #{item.sbillName},
 			detail_id = #{item.detailId}
 	</sql>
 </mapper>
