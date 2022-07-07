@@ -43,6 +43,9 @@
 		<if test="linkBranchId!=null and linkBranchId!=''">
 			and (res.branch_id = #{linkBranchId} or res.ubranch_id=#{linkBranchId})
 		</if>
+		<if test="bizMonth!=null and bizMonth!=''">
+			and res.biz_date  like #{bizMonth})
+		</if>
     </sql>
 	<update id="updateStatusBySbillIdBySbillDel" parameterType="String">
 		update xm_task_workload res set detail_id=null,sstaus='1'
