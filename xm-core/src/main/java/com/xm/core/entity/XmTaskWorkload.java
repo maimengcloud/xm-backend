@@ -1,20 +1,19 @@
 package  com.xm.core.entity;
 
+import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
-import java.math.BigDecimal;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskWorkload所有属性名: <br>
- *	userid,username,ctime,taskId,cuserid,bizDate,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,projectId,detailId,branchId,ubranchId;<br>
- * 表 xm_task_workload 工时登记表的所有字段名: <br>
- *	userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,detail_id,branch_id,ubranch_id;<br>
+ *	"userid","员工编号","username","姓名","ctime","创建日期","taskId","业务对象主键任务编号","cuserid","创建人编号","bizDate","业务日期yyyy-MM-dd","wstatus","状态0-待确认，1-已确认，2-无效","remark","备注","ttype","任务类型-关联字典taskType","id","主键","stime","结算提交时间","sstatus","结算状态0-无需结算，1-待结算2-已提交3-已通过4-已结算","workload","工时，一个task_id可多次提交，小时","rworkload","剩余工时（同一天取最后日期更新到task表budget_workload中）","cusername","创建人姓名","projectId","归属项目","branchId","项目归属机构","ubranchId","用户归属机构","sbillId","结算单编号","sbillName","结算单名称","samt","结算工时对应结算金额-根据结算方案计算结算金额","sworkload","结算工时，用于结算，默认=workload","taskOut","是否外购0否1是","crowd","是否众包","feeRemark","费用说明","subjectId","费用科目编号","subjectName","费用科目名称","sschemel","任务结算方案,来自task表、来自数字字典xmTaskSettleSchemel","uniPrice","工时单价，来自task表，根据task_out判断取内部还是外部单价";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
+ @Data
 @ApiModel(description="工时登记表")
 public class XmTaskWorkload  implements java.io.Serializable {
 	
@@ -69,252 +68,56 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	@ApiModelProperty(notes="归属项目",allowEmptyValue=true,example="",allowableValues="")
 	String projectId;
 	
-	@ApiModelProperty(notes="结算明细编号，指向xm_task_sbill_detail.id",allowEmptyValue=true,example="",allowableValues="")
-	String detailId;
-	
 	@ApiModelProperty(notes="项目归属机构",allowEmptyValue=true,example="",allowableValues="")
 	String branchId;
 	
 	@ApiModelProperty(notes="用户归属机构",allowEmptyValue=true,example="",allowableValues="")
 	String ubranchId;
+	
+	@ApiModelProperty(notes="结算单编号",allowEmptyValue=true,example="",allowableValues="")
+	String sbillId;
+	
+	@ApiModelProperty(notes="结算单名称",allowEmptyValue=true,example="",allowableValues="")
+	String sbillName;
+	
+	@ApiModelProperty(notes="结算工时对应结算金额-根据结算方案计算结算金额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal samt;
+	
+	@ApiModelProperty(notes="结算工时，用于结算，默认=workload",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal sworkload;
+	
+	@ApiModelProperty(notes="是否外购0否1是",allowEmptyValue=true,example="",allowableValues="")
+	String taskOut;
+	
+	@ApiModelProperty(notes="是否众包",allowEmptyValue=true,example="",allowableValues="")
+	String crowd;
+	
+	@ApiModelProperty(notes="费用说明",allowEmptyValue=true,example="",allowableValues="")
+	String feeRemark;
+	
+	@ApiModelProperty(notes="费用科目编号",allowEmptyValue=true,example="",allowableValues="")
+	String subjectId;
+	
+	@ApiModelProperty(notes="费用科目名称",allowEmptyValue=true,example="",allowableValues="")
+	String subjectName;
+	
+	@ApiModelProperty(notes="任务结算方案,来自task表、来自数字字典xmTaskSettleSchemel",allowEmptyValue=true,example="",allowableValues="")
+	String sschemel;
+	
+	@ApiModelProperty(notes="工时单价，来自task表，根据task_out判断取内部还是外部单价",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal uniPrice;
 
-	/**主键**/
+	/**
+	 *主键
+	 **/
 	public XmTaskWorkload(String id) {
 		this.id = id;
 	}
     
-    /**工时登记表**/
+    /**
+     * 工时登记表
+     **/
 	public XmTaskWorkload() {
-	}
-	
-	/**
-	 * 员工编号
-	 **/
-	public void setUserid(String userid) {
-		this.userid = userid;
-	}
-	/**
-	 * 姓名
-	 **/
-	public void setUsername(String username) {
-		this.username = username;
-	}
-	/**
-	 * 创建日期
-	 **/
-	public void setCtime(Date ctime) {
-		this.ctime = ctime;
-	}
-	/**
-	 * 业务对象主键任务编号
-	 **/
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-	/**
-	 * 创建人编号
-	 **/
-	public void setCuserid(String cuserid) {
-		this.cuserid = cuserid;
-	}
-	/**
-	 * 业务日期yyyy-MM-dd
-	 **/
-	public void setBizDate(String bizDate) {
-		this.bizDate = bizDate;
-	}
-	/**
-	 * 状态0-待确认，1-已确认，2-无效
-	 **/
-	public void setWstatus(String wstatus) {
-		this.wstatus = wstatus;
-	}
-	/**
-	 * 备注
-	 **/
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
-	/**
-	 * 任务类型-关联字典taskType
-	 **/
-	public void setTtype(String ttype) {
-		this.ttype = ttype;
-	}
-	/**
-	 * 主键
-	 **/
-	public void setId(String id) {
-		this.id = id;
-	}
-	/**
-	 * 结算提交时间
-	 **/
-	public void setStime(Date stime) {
-		this.stime = stime;
-	}
-	/**
-	 * 结算状态0-无需结算，1-待结算2-已提交3-已通过4-已结算
-	 **/
-	public void setSstatus(String sstatus) {
-		this.sstatus = sstatus;
-	}
-	/**
-	 * 工时，一个task_id可多次提交，小时
-	 **/
-	public void setWorkload(BigDecimal workload) {
-		this.workload = workload;
-	}
-	/**
-	 * 剩余工时（同一天取最后日期更新到task表budget_workload中）
-	 **/
-	public void setRworkload(BigDecimal rworkload) {
-		this.rworkload = rworkload;
-	}
-	/**
-	 * 创建人姓名
-	 **/
-	public void setCusername(String cusername) {
-		this.cusername = cusername;
-	}
-	/**
-	 * 归属项目
-	 **/
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
-	/**
-	 * 结算明细编号，指向xm_task_sbill_detail.id
-	 **/
-	public void setDetailId(String detailId) {
-		this.detailId = detailId;
-	}
-	/**
-	 * 项目归属机构
-	 **/
-	public void setBranchId(String branchId) {
-		this.branchId = branchId;
-	}
-	/**
-	 * 用户归属机构
-	 **/
-	public void setUbranchId(String ubranchId) {
-		this.ubranchId = ubranchId;
-	}
-	
-	/**
-	 * 员工编号
-	 **/
-	public String getUserid() {
-		return this.userid;
-	}
-	/**
-	 * 姓名
-	 **/
-	public String getUsername() {
-		return this.username;
-	}
-	/**
-	 * 创建日期
-	 **/
-	public Date getCtime() {
-		return this.ctime;
-	}
-	/**
-	 * 业务对象主键任务编号
-	 **/
-	public String getTaskId() {
-		return this.taskId;
-	}
-	/**
-	 * 创建人编号
-	 **/
-	public String getCuserid() {
-		return this.cuserid;
-	}
-	/**
-	 * 业务日期yyyy-MM-dd
-	 **/
-	public String getBizDate() {
-		return this.bizDate;
-	}
-	/**
-	 * 状态0-待确认，1-已确认，2-无效
-	 **/
-	public String getWstatus() {
-		return this.wstatus;
-	}
-	/**
-	 * 备注
-	 **/
-	public String getRemark() {
-		return this.remark;
-	}
-	/**
-	 * 任务类型-关联字典taskType
-	 **/
-	public String getTtype() {
-		return this.ttype;
-	}
-	/**
-	 * 主键
-	 **/
-	public String getId() {
-		return this.id;
-	}
-	/**
-	 * 结算提交时间
-	 **/
-	public Date getStime() {
-		return this.stime;
-	}
-	/**
-	 * 结算状态0-无需结算，1-待结算2-已提交3-已通过4-已结算
-	 **/
-	public String getSstatus() {
-		return this.sstatus;
-	}
-	/**
-	 * 工时，一个task_id可多次提交，小时
-	 **/
-	public BigDecimal getWorkload() {
-		return this.workload;
-	}
-	/**
-	 * 剩余工时（同一天取最后日期更新到task表budget_workload中）
-	 **/
-	public BigDecimal getRworkload() {
-		return this.rworkload;
-	}
-	/**
-	 * 创建人姓名
-	 **/
-	public String getCusername() {
-		return this.cusername;
-	}
-	/**
-	 * 归属项目
-	 **/
-	public String getProjectId() {
-		return this.projectId;
-	}
-	/**
-	 * 结算明细编号，指向xm_task_sbill_detail.id
-	 **/
-	public String getDetailId() {
-		return this.detailId;
-	}
-	/**
-	 * 项目归属机构
-	 **/
-	public String getBranchId() {
-		return this.branchId;
-	}
-	/**
-	 * 用户归属机构
-	 **/
-	public String getUbranchId() {
-		return this.ubranchId;
 	}
 
 }
