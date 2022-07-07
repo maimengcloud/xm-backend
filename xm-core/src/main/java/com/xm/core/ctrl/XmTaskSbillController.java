@@ -218,7 +218,7 @@ public class XmTaskSbillController {
 			if(xmTasksDb==null || xmTasksDb.size()==0){
 				return ResponseHelper.failed("xmTasksDb-0","相关任务已不存在。");
 			}
-			List<XmTask> xmTasksDb2=xmTasksDb.stream().filter(i->!"2".equals(i.getTaskState())).collect(Collectors.toList());
+			List<XmTask> xmTasksDb2=xmTasksDb.stream().filter(i->"2".equals(i.getTaskState())).collect(Collectors.toList());
 			if(xmTasksDb2==null || xmTasksDb2.size()==0){
 				return ResponseHelper.failed("taskState-not-2","任务必须是已完工状态才能结算。");
 			}
