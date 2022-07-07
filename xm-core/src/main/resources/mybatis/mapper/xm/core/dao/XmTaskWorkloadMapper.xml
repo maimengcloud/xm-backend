@@ -44,7 +44,7 @@
 			and (res.branch_id = #{linkBranchId} or res.ubranch_id=#{linkBranchId})
 		</if>
 		<if test="bizMonth!=null and bizMonth!=''">
-			and res.biz_date  like #{bizMonth})
+			and res.biz_date  like concat(#{bizMonth},'%')
 		</if>
     </sql>
 	<update id="updateStatusBySbillIdBySbillDel" parameterType="String">
@@ -212,7 +212,7 @@
 	</select>
 	<update id="updateStatusAfterJoinSbill" parameterType="List">
 		<foreach collection="list" item="item" index="index" separator=";" >
-			update xm_task_workload res set res.sstatus='2',res.detail_id=#{item.id}
+			update xm_task_workload res set res.sstatus='2',res.detail_id=#{item.id},res.sbill_id=#{item.sbillId},res.sbill_name=#{item.sbillName}
 			where res.sstatus='1' and res.userid=#{item.userid} and res.task_id=#{item.taskId}
 		</foreach>
 	</update>
@@ -236,7 +236,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.* ,task.project_name,task.name as task_name,task.budget_workload,task.act_workload from xm_task_workload res
+		select res.* ,task.project_name,task.name as task_name,task.budget_workload,task.act_workload,task.task_state from xm_task_workload res
 		inner join xm_task task
 		on res.task_id = task.id
 		<where>
