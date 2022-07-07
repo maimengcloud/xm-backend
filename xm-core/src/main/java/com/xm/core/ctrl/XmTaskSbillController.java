@@ -6,8 +6,10 @@ import com.mdp.core.utils.*;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskSbill;
 import com.xm.core.entity.XmTaskSbillDetail;
+import com.xm.core.entity.XmTaskWorkload;
 import com.xm.core.service.XmTaskSbillDetailService;
 import com.xm.core.service.XmTaskSbillService;
 import com.xm.core.service.XmTaskService;
@@ -19,6 +21,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -180,8 +183,8 @@ public class XmTaskSbillController {
 		if(!StringUtils.hasText(batchJoinToSbill.getSbillId())){
 			return ResponseHelper.failed("sbillId-0","请上送结算单编号");
 		}
-		if(batchJoinToSbill.getUserTasks()==null){
-			return ResponseHelper.failed("userTasks-0","请上送userTasks");
+		if(batchJoinToSbill.getWorkloadIds()==null){
+			return ResponseHelper.failed("workloadIds-0","请上送workloadIds");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
 		try{
@@ -195,21 +198,37 @@ public class XmTaskSbillController {
 			if(!user.getUserid().equals(sbillDb.getCuserid())){
 				return ResponseHelper.failed("cuserid-0","结算单不是您的结算单，您不能操作");
 			}
- 			List<Map<String,Object>> toSetUserTasks=xmTaskWorkloadService.ListGroupByTaskIdAndUseridToSet(map("userTasks",batchJoinToSbill.getUserTasks()));
-			if(toSetUserTasks==null && toSetUserTasks.size()==0){
-				return ResponseHelper.failed("userTasks-0","不存在需要结算的用户列表");
+			List<XmTaskWorkload> workloadsDb=xmTaskWorkloadService.selectListByIds(batchJoinToSbill.getWorkloadIds());
+			if(workloadsDb==null || workloadsDb.size()<=0){
+				return ResponseHelper.failed("workloadsDb-0","工时单已不存在");
 			}
-			if(toSetUserTasks.stream().filter(i->!"2".equals(i.get("taskState"))).findAny().isPresent()){
-				return ResponseHelper.failed("taskState-not-2","任务不是完工状态，不允许结算");
+			List<XmTaskWorkload> workloadsDb2=workloadsDb.stream().filter(i->!StringUtils.hasText(i.getSbillId()) && "1".equals(i.getSstatus())&&"1".equals(i.getWstatus())).collect(Collectors.toList());
+ 			if(workloadsDb2==null || workloadsDb2.size()<=0){
+				return ResponseHelper.failed("workloadsDb-0","不存在可以结算的工时单。");
+			}
+
+			if(workloadsDb2.stream().map(i->i.getProjectId()).collect(Collectors.toSet()).size()>1){
+				return ResponseHelper.failed("projectId-not-1","不能一次性处理多个项目的工时单，请选择同一个项目的工时单再尝试。");
 			}
 			String projectId= sbillDb.getProjectId();
-			if(toSetUserTasks.stream().filter(i->!projectId.equals(i.get("projectId"))).findAny().isPresent()){
-				return ResponseHelper.failed("projectId-not-same","请选择同一个项目的任务加入工时单");
+			if(workloadsDb2.stream().filter(k->!k.getProjectId().equals(projectId)).findAny().isPresent()){
+				return ResponseHelper.failed("projectId-0",String.format("结算单项目编号为%s,请选择同项目的工时单加入结算单。",projectId));
 			}
+			List<XmTask> xmTasksDb=this.xmTaskService.selectListByIds(workloadsDb2.stream().map(i->i.getTaskId()).collect(Collectors.toList()));
+			if(xmTasksDb==null || xmTasksDb.size()==0){
+				return ResponseHelper.failed("xmTasksDb-0","相关任务已不存在。");
+			}
+			List<XmTask> xmTasksDb2=xmTasksDb.stream().filter(i->!"2".equals(i.getTaskState())).collect(Collectors.toList());
+			if(xmTasksDb2==null || xmTasksDb2.size()==0){
+				return ResponseHelper.failed("taskState-not-2","任务必须是已完工状态才能结算。");
+			}
+			List<XmTaskWorkload> workloadsDb3=workloadsDb2.stream().filter(i->xmTasksDb2.stream().filter(k->k.getId().equals(i.getTaskId())).findAny().isPresent()).collect(Collectors.toList());
+
+
 			//检查是否已有同样的数据加入了结算单，如果有，需要合并
-			BatchJoinToSbillVo batchJoinToSbillQuery=new BatchJoinToSbillVo();
-			batchJoinToSbillQuery.setUserTasks(batchJoinToSbill.getUserTasks());
-			List<XmTaskSbillDetail> details=xmTaskSbillDetailService.selectListByUserTasks(batchJoinToSbillQuery);
+			List<Map<String,Object>> userTasks=workloadsDb3.stream().map(i->map("userid",i.getUserid(),"taskId",i.getTaskId())).collect(Collectors.toList());
+			Map<String,Object> userTasksMap=map("userTasks",userTasks);
+			List<XmTaskSbillDetail> details=xmTaskSbillDetailService.selectListByUserTasks(userTasksMap);
 			List<XmTaskSbillDetail> sameSbillDetails=details.stream().filter(i->sbillDb.getId().equals(i.getSbillId())).collect(Collectors.toList());
 			List<XmTaskSbillDetail> othSbillDetails=details.stream().filter(i->!sbillDb.getId().equals(i.getSbillId())).collect(Collectors.toList());
  			for (XmTaskSbillDetail i : othSbillDetails) {
@@ -220,30 +239,48 @@ public class XmTaskSbillController {
 			if(sameSbillDetails!=null && sameSbillDetails.size()>0){
 				for (XmTaskSbillDetail detail : sameSbillDetails) {
 					//进行合并操作
-					for (Map<String, Object> toSetUserTask : toSetUserTasks) {
-						if(detail.getUserid().equals(toSetUserTask.get("userid")) && detail.getTaskId().equals(toSetUserTask.get("taskId"))){
-							detail.setWorkload(NumberUtil.getBigDecimal(detail.getWorkload(),BigDecimal.ZERO).add(NumberUtil.getBigDecimal(toSetUserTask.get("workload"),BigDecimal.ZERO)));
-							detail.setSworkload(NumberUtil.getBigDecimal(detail.getSworkload(),BigDecimal.ZERO).add(NumberUtil.getBigDecimal(toSetUserTask.get("workload"),BigDecimal.ZERO)));
+					for (XmTaskWorkload xmTaskWorkload : workloadsDb3) {
+						if(detail.getUserid().equals(xmTaskWorkload.getUserid()) && detail.getTaskId().equals(xmTaskWorkload.getTaskId())){
+							detail.setWorkload(NumberUtil.getBigDecimal(detail.getWorkload(),BigDecimal.ZERO).add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)));
+							detail.setSworkload(NumberUtil.getBigDecimal(detail.getSworkload(),BigDecimal.ZERO).add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)));
 						}
 					}
 				}
 			}
 
-			List<XmTaskSbillDetail> canAdd=new ArrayList<>();
-			for (Map<String,Object> userTask : toSetUserTasks) {
-				XmTaskSbillDetail detail= BaseUtils.fromMap(userTask,XmTaskSbillDetail.class);
-				if(sameSbillDetails.stream().filter(i->i.getTaskId().equals(detail.getTaskId()) && i.getUserid().equals(detail.getUserid())).findAny().isPresent()){
-					continue;
+
+			List<XmTaskWorkload> workloadsDb4=workloadsDb3.stream().filter(i->!sameSbillDetails.stream().filter(k->k.getUserid().equals(i.getUserid()) && k.getTaskId().equals(i.getTaskId())).findAny().isPresent()).collect(Collectors.toList());
+			Map<String,XmTaskSbillDetail> detailMap=new HashMap<>();
+			for (XmTaskWorkload xmTaskWorkload : workloadsDb4) {
+				XmTaskSbillDetail detail=detailMap.get(xmTaskWorkload.getUserid()+"-"+xmTaskWorkload.getTaskId());
+				if(detail==null){
+					detail=new XmTaskSbillDetail();
+					BeanUtils.copyProperties(xmTaskWorkload,detail);
+					XmTask xmTask=xmTasksDb2.stream().filter(i->i.getId().equals(xmTaskWorkload.getTaskId())).findAny().get();
+					detail.setSworkload(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO));
+					detail.setId(this.xmTaskSbillDetailService.createKey("id"));
+					detail.setBizDate(DateUtils.getDate("yyyy-MM-dd"));
+					detail.setBizMonth(DateUtils.getDate("yyyy-MM"));
+					detail.setSbillId(batchJoinToSbill.getSbillId());
+					detail.setProjectId(projectId);
+					detail.setBranchId(user.getBranchId());
+					detail.setCtime(new Date());
+					detail.setBudgetAt(xmTask.getBudgetAt());
+					detail.setBudgetWorkload(xmTask.getBudgetWorkload());
+					detail.setQuoteAt(xmTask.getQuoteFinalAt());
+					detail.setTaskOut(xmTask.getTaskOut());
+					detail.setCrowd(xmTask.getCrowd());
+					detail.setSschemel(xmTask.getSettleSchemel());
+					detail.setShareFee(xmTask.getShareFee());
+					detail.setOshare(xmTask.getOshare());
+					detailMap.put(xmTaskWorkload.getUserid()+"-"+xmTaskWorkload.getTaskId(),detail);
+				}else{
+					detail.setWorkload(detail.getWorkload().add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)));
+					detail.setSworkload(detail.getSworkload().add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)));
 				}
-				detail.setId(this.xmTaskSbillDetailService.createKey("id"));
-				detail.setBizDate(DateUtils.getDate("yyyy-MM-dd"));
-				detail.setBizMonth(DateUtils.getDate("yyyy-MM"));
-				detail.setSbillId(batchJoinToSbill.getSbillId());
-				detail.setProjectId(projectId);
-				detail.setBranchId(user.getBranchId());
-				detail.setCtime(new Date());
-				canAdd.add(detail);
+
 			}
+			List<XmTaskSbillDetail> canAdd= detailMap.values().stream().collect(Collectors.toList());
 			for (XmTaskSbillDetail d : canAdd) {
 				List<XmTaskSbillDetail> othDetails=othSbillDetails.stream().filter(i->i.getTaskId().equals(d.getTaskId()) && i.getUserid().equals(d.getUserid())).collect(Collectors.toList());
 				BigDecimal tactAt=BigDecimal.ZERO;
@@ -254,7 +291,7 @@ public class XmTaskSbillController {
 				this.xmTaskSbillDetailService.preCalcSamt(d);
 
 			}
-			this.xmTaskSbillService.batchJoinToSbill(canAdd,sameSbillDetails);
+			this.xmTaskSbillService.batchJoinToSbill(workloadsDb4.stream().map(i->i.getId()).collect(Collectors.toList()), canAdd,sameSbillDetails);
 
 
 		}catch (BizException e) {

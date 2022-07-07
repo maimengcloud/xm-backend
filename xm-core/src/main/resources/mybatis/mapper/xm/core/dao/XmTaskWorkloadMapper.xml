@@ -210,12 +210,13 @@
 		</where>
 
 	</select>
-	<update id="updateStatusAfterJoinSbill" parameterType="List">
-		<foreach collection="list" item="item" index="index" separator=";" >
-			update xm_task_workload res set res.sstatus='2',res.detail_id=#{item.id},res.sbill_id=#{item.sbillId}
-			where res.sstatus='1' and res.userid=#{item.userid} and res.task_id=#{item.taskId}
-		</foreach>
-	</update>
+	<update id="updateStatusAfterJoinSbill" parameterType="HashMap">
+			update xm_task_workload res set res.sstatus='2',res.detail_id=#{detailId},res.sbill_id=#{sbillId}
+			where  res.id in
+			<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+ 	</update>
 	<update id="updateStatusAfterDetailDel" parameterType="List">
 		update xm_task_workload res set res.sstatus='1',res.detail_id=null
 		where  res.detail_id in

@@ -1,7 +1,6 @@
 package com.xm.core.service;
 
 import com.mdp.core.service.BaseService;
-import com.xm.core.entity.XmTaskSbillDetail;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,7 +58,7 @@ public class XmTaskWorkloadService extends BaseService {
 		return super.selectList("ListGroupByTaskIdAndUseridToSet",xmTaskWorkload);
 	}
 
-    public void updateStatusAfterJoinSbill(List<XmTaskSbillDetail> details) {
+    public void updateStatusAfterJoinSbill(Map<String,Object> details) {
 		super.update("updateStatusAfterJoinSbill",details);
     }
 

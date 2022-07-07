@@ -17,7 +17,7 @@
 			and (res.branch_id = #{linkBranchId} or res.cp_id=#{linkBranchId})
 		</if>
      </sql>
-	<select id="selectListByUserTasks" parameterType="com.xm.core.vo.BatchJoinToSbillVo" resultType="com.xm.core.entity.XmTaskSbillDetail">
+	<select id="selectListByUserTasks" parameterType="HashMap" resultType="com.xm.core.entity.XmTaskSbillDetail">
 		select * from xm_task_sbill_detail res
 		<where>
 			<if test="sbillId!=null and sbillId!=''">

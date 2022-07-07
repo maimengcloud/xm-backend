@@ -2,7 +2,6 @@ package com.xm.core.service;
 
 import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmTaskSbillDetail;
-import com.xm.core.vo.BatchJoinToSbillVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,8 +29,8 @@ public class XmTaskSbillDetailService extends BaseService {
     @Autowired
     XmTaskSbillService  xmTaskSbillService;
 
-    public List<XmTaskSbillDetail> selectListByUserTasks(BatchJoinToSbillVo batchJoinToSbillVo) {
-        return super.selectList("selectListByUserTasks",batchJoinToSbillVo);
+    public List<XmTaskSbillDetail> selectListByUserTasks(Map<String,Object> userTasks) {
+        return super.selectList("selectListByUserTasks",userTasks);
     }
 
     @Transactional

@@ -1,28 +1,18 @@
 package com.xm.core.vo;
 
-import java.util.List;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import lombok.Data;
 
+import java.util.List;
+@Data
+@ApiModel(description="批量将工时记录加入结算单")
 public class BatchJoinToSbillVo {
 
-    List<UserTaskVo> userTasks;
+    @ApiModelProperty(notes="工时单主键列表",allowEmptyValue=true,example="",allowableValues="")
+    List<String> workloadIds;
 
+    @ApiModelProperty(notes="结算单主键",allowEmptyValue=true,example="",allowableValues="")
     String sbillId;
-
-
-    public void setSbillId(String sbillId) {
-        this.sbillId = sbillId;
-    }
-
-    public String getSbillId() {
-        return sbillId;
-    }
-
-    public List<UserTaskVo> getUserTasks() {
-        return userTasks;
-    }
-
-    public void setUserTasks(List<UserTaskVo> userTasks) {
-        this.userTasks = userTasks;
-    }
 }
 

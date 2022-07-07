@@ -149,7 +149,7 @@ public class XmTaskSbillService extends BaseService {
 	}
 
 	@Transactional
-    public void batchJoinToSbill(List<XmTaskSbillDetail> canAdd, List<XmTaskSbillDetail> details) {
+    public void batchJoinToSbill(List<String> workloadIds,List<XmTaskSbillDetail> canAdd, List<XmTaskSbillDetail> details) {
 
 		if(canAdd.size()>0){
 			xmTaskSbillDetailService.batchInsert(canAdd);
@@ -161,9 +161,13 @@ public class XmTaskSbillService extends BaseService {
 		List<XmTaskSbillDetail> detailsAll=new ArrayList<>();
 		detailsAll.addAll(canAdd);
 		detailsAll.addAll(details);
-		this.xmTaskWorkloadService.updateStatusAfterJoinSbill(detailsAll);
+		if(detailsAll.size()>0){
+			this.xmTaskWorkloadService.updateStatusAfterJoinSbill(map("ids",workloadIds,"sbillId",details.get(0).getSbillId(),"detailId",details.get(0).getId()));
+			this.updateBySbillDetailList(detailsAll.stream().map(i->i.getSbillId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+		}
 
-		this.updateBySbillDetailList(detailsAll.stream().map(i->i.getSbillId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
+
+
     }
 }
 
