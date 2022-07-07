@@ -33,6 +33,7 @@
 		e.quote_amount ELSE NULL
 		END
 		) AS quote_amount,
+		sum(*) as exec_users,
 		max(
 		CASE
 
@@ -82,6 +83,7 @@
 		e.task_id = #{taskId} ) e1
 		on t.id=e1.task_id
 		SET t.exe_userids = e1.exe_userids,
+		t.exec_users=e1.exec_users,
 		t.exe_usernames = e1.exe_usernames,
 		t.executor_userid = e1.executor_userid,
 		t.executor_username = e1.executor_username,
