@@ -33,7 +33,7 @@
 		e.quote_amount ELSE NULL
 		END
 		) AS quote_amount,
-		sum(*) as exec_users,
+		count(*) as exec_users,
 		max(
 		CASE
 
