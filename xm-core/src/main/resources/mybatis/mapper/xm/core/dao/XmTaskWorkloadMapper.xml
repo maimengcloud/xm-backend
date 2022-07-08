@@ -218,7 +218,7 @@
 			</foreach>
  	</update>
 	<update id="updateStatusAfterDetailDel" parameterType="List">
-		update xm_task_workload res set res.sstatus='1',res.detail_id=null
+		update xm_task_workload res set res.sstatus='1',res.detail_id=null,res.sbill_id=null
 		where  res.detail_id in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
 			#{item}

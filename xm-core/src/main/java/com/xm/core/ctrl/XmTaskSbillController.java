@@ -273,6 +273,8 @@ public class XmTaskSbillController {
 					detail.setSschemel(xmTask.getSettleSchemel());
 					detail.setShareFee(xmTask.getShareFee());
 					detail.setOshare(xmTask.getOshare());
+					detail.setTaskName(xmTask.getName());
+					detail.setUniPrice("1".equals(xmTask.getTaskOut())?xmTask.getUniOutPrice():xmTask.getUniInnerPrice());
 					detailMap.put(xmTaskWorkload.getUserid()+"-"+xmTaskWorkload.getTaskId(),detail);
 				}else{
 					detail.setWorkload(detail.getWorkload().add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)));
