@@ -145,19 +145,25 @@ public class XmTaskSbillController {
 	public Map<String,Object> delXmTaskSbill(@RequestBody XmTaskSbill xmTaskSbill){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
-		if(!"0".equals(xmTaskSbill.getStatus())){
+		if( xmTaskSbill==null || !StringUtils.hasText(xmTaskSbill.getId())){
+			tips.setFailureMsg("请上送结算单编号");
+			m.put("tips", tips);
+			return m;
+		}
+		XmTaskSbill sbillDb=this.xmTaskSbillService.selectOneById(xmTaskSbill.getId());
+		if(!"0".equals(sbillDb.getStatus())){
 			tips.setFailureMsg("只有待提交的结算单才能删除");
 			m.put("tips", tips);
 			return m;
 		}
-		if(!("0".equals(xmTaskSbill.getBizFlowState()) || "4".equals(xmTaskSbill.getBizFlowState()))){
+		if(!("0".equals(sbillDb.getBizFlowState()) || "4".equals(sbillDb.getBizFlowState()))){
 			tips.setFailureMsg("已发审数据不允许删除");
 			m.put("tips", tips);
 			return m;
 		}
 		try{
 			//删除结算单时候，要一起恢复工时单为未加入结算状态
-			xmTaskSbillService.deleteByPkAndReturnWorkload(xmTaskSbill);
+			xmTaskSbillService.deleteByPkAndReturnWorkload(sbillDb);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -315,12 +321,19 @@ public class XmTaskSbillController {
 	public Map<String,Object> editXmTaskSbill(@RequestBody XmTaskSbill xmTaskSbill) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
-		if(!"0".equals(xmTaskSbill.getStatus())){
+		if( xmTaskSbill==null || !StringUtils.hasText(xmTaskSbill.getId())){
+			tips.setFailureMsg("请上送结算单编号");
+			m.put("tips", tips);
+			return m;
+		}
+		XmTaskSbill sbillDb=this.xmTaskSbillService.selectOneById(xmTaskSbill.getId());
+
+		if(!"0".equals(sbillDb.getStatus())){
 			tips.setFailureMsg("只能修改待提交的结算单");
 			m.put("tips", tips);
 			return m;
 		}
-		if(!("0".equals(xmTaskSbill.getBizFlowState()) || "4".equals(xmTaskSbill.getBizFlowState()))){
+		if(!("0".equals(sbillDb.getBizFlowState()) || "4".equals(sbillDb.getBizFlowState()))){
 			tips.setFailureMsg("已发审数据不允许修改");
 			m.put("tips", tips);
 			return m;
