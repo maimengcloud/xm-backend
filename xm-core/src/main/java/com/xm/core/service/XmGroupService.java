@@ -1,8 +1,10 @@
 package com.xm.core.service;
 
 import com.alibaba.fastjson.JSON;
+import com.github.pagehelper.Page;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
+import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.*;
@@ -92,6 +94,8 @@ public class XmGroupService extends BaseService {
 			
 		    XmGroup group = new XmGroup();
 		    group.setProjectId(projectId);
+			Page page=PageUtils.getLocalPage();
+			PageUtils.clearPage();
 		    List<XmGroup> groupList = this.selectListByWhere(group);
 		     if(groupList==null || groupList.size()==0) {
 		    	 groupCacheService.putProjectGroups(projectId, groupVoList);
@@ -115,6 +119,10 @@ public class XmGroupService extends BaseService {
 	            groupVoList.add(gvo);
 	        });
 		    groupCacheService.putProjectGroups(projectId, groupVoList);
+		    if(page.getPageNum()>0||page.getPageSize()>0){
+				PageUtils.startPage(page.getPageNum(), page.getPageSize(),page.getOrderBy());
+			}
+
 		    return groupVoList;
 		}else {
 			return groupVoList2;
