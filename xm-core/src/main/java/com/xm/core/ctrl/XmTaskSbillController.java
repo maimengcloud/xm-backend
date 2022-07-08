@@ -293,7 +293,7 @@ public class XmTaskSbillController {
 				this.xmTaskSbillDetailService.preCalcSamt(d);
 
 			}
-			this.xmTaskSbillService.batchJoinToSbill(workloadsDb4.stream().map(i->i.getId()).collect(Collectors.toList()), canAdd,sameSbillDetails);
+			this.xmTaskSbillService.batchJoinToSbill(workloadsDb3.stream().map(i->i.getId()).collect(Collectors.toList()), canAdd,sameSbillDetails);
 
 
 		}catch (BizException e) {
