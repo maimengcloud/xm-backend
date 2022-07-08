@@ -27,7 +27,7 @@
 			</foreach>
 		</if>
 		<if test="compete !=null and compete!=''">
-			and exists ( select 1 from xm_group_user gu where gu.userid=#{compete} and (gu.project_id=res.project_id or gu.product_id=res.product_id))
+			and (res.handler_userid=#{compete} or res.create_userid=#{compete} or exists ( select 1 from xm_group_user gu where gu.userid=#{compete} and (gu.project_id=res.project_id or gu.product_id=res.product_id)))
 		</if>
 		<if test="key != null and key !='' ">  and res.name like #{key}     </if>
 		<if test="work != null and work != ''"> and res.status in ('1','2','3','4','7') </if>
