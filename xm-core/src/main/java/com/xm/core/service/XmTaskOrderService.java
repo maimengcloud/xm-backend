@@ -103,12 +103,12 @@ public class XmTaskOrderService extends BaseService {
 			}
 		}
 
-		order.setPayAt(payAt);
 		BeanUtils.copyProperties(order,xmTaskUpdate);
 		xmTaskUpdate.setId(taskOrderDb.getTaskId());
 		//托管资金后用户开始工作
 		if("1".equals(taskOrderDb.getBizType()) && "2".equals(xmTaskUpdate.getEstate()) && "1".equals(taskOrderDb.getEstate())){
 			xmTaskUpdate.setBidStep("5");
+			xmTaskUpdate.setEfunds(payAt);
 		}
 		this.xmTaskService.updateSomeFieldByPk(xmTaskUpdate);
 		this.updateSomeFieldByPk(order);

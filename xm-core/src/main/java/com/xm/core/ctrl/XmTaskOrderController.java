@@ -21,7 +21,6 @@ import com.xm.core.vo.AddXmTaskOrderVo;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -149,15 +148,18 @@ public class XmTaskOrderController {
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			XmTaskOrder order=new XmTaskOrder();
-			BeanUtils.copyProperties(xmTaskDb,order);
 			order.setId(this.xmTaskOrderService.createKey("id"));
 			order.setTaskId(xmTaskDb.getId());
 			order.setOuserid(user.getUserid());
 			order.setObranchId(user.getBranchId());
+			order.setProjectId(xmTaskDb.getProjectId());
+			order.setName(xmTaskDb.getName());
+			order.setBizType(xmTaskOrder.getBizType());
 			BigDecimal originFee=BigDecimal.ZERO;
 			if("1".equals(xmTaskOrder.getBizType())){
 				if("1".equals(xmTaskDb.getEstate())||"0".equals(xmTaskDb.getEstate())||"4".equals(xmTaskDb.getEstate())){
 					order.setEfunds(xmTaskDb.getQuoteFinalAt());
+					order.setEstate("1");
 					originFee=originFee.add(order.getEfunds());
 					if(xmTaskDb.getQuoteFinalAt()==null || xmTaskDb.getQuoteFinalAt().compareTo(BigDecimal.ZERO)<=0){
 						return ResponseHelper.failed("quoteFinalAt-0","保证金金额计算错误，原因为中标人报价金额为空。");
@@ -168,26 +170,31 @@ public class XmTaskOrderController {
 			}else if("2".equals(xmTaskOrder.getBizType())){
 				ItemVo itemVo=itemService.getDict("sysParam","crowd_task_market");
 				if("1".equals(xmTaskDb.getTop())){
+					order.setTop("1");
 					order.setTopFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
 					order.setTopDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
 					originFee=originFee.add(order.getTopFee());
 				}
 				if("1".equals(xmTaskDb.getHot())){
+					order.setTop("1");
 					order.setHotFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("hotFee").getValue(),BigDecimal.ZERO));
 					order.setHotDays(NumberUtil.getInteger(itemVo.getExtInfo("hotDays").getValue(),3));
 					originFee=originFee.add(order.getTopFee());
 				}
 				if("1".equals(xmTaskDb.getUrgent())){
+					order.setUrgent("1");
 					order.setUrgentFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("urgentFee").getValue(),BigDecimal.ZERO));
 					order.setUrgentDays(NumberUtil.getInteger(itemVo.getExtInfo("urgentDays").getValue(),3));
 					originFee=originFee.add(order.getUrgentFee());
 				}
 				if("1".equals(xmTaskDb.getCrmSup())){
+					order.setCrmSup("1");
 					order.setCrmSupFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("crmSupFee").getValue(),BigDecimal.ZERO));
 					originFee=originFee.add(order.getCrmSupFee());
 				}
 
 				if("1".equals(xmTaskDb.getOshare())){
+					order.setOshare("1");
 					order.setShareFee(xmTaskDb.getShareFee());
 					if(order.getShareFee()==null || order.getShareFee().compareTo(BigDecimal.ZERO)<0){
 						return ResponseHelper.failed("shareFee-0","分享佣金不能为空");
