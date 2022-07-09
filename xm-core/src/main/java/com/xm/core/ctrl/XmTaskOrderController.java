@@ -134,7 +134,7 @@ public class XmTaskOrderController {
 				if(!"4".equals(xmTaskDb.getBidStep())){
 					return ResponseHelper.failed("bidStep-not-4","当前任务未到缴纳保证金步骤");
 				}
-				if(!"1".equals(xmTaskDb.getEstate())){
+				if(!"1".equals(xmTaskDb.getEstate()) && !"0".equals(xmTaskDb.getEstate()) && !StringUtils.hasText(xmTaskDb.getEstate())){
 					return ResponseHelper.failed("estate-not-1","当前任务不是待缴纳保证金状态");
 				}
 				if(xmTaskDb.getQuoteFinalAt()==null || xmTaskDb.getQuoteFinalAt().compareTo(BigDecimal.ZERO)<=0){

@@ -6,6 +6,7 @@ import com.mdp.core.service.BaseService;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskExecuser;
 import com.xm.core.service.client.CashOperateServie;
 import com.xm.core.service.push.XmPushMsgService;
@@ -133,9 +134,10 @@ public class XmTaskExecuserService extends BaseService {
 	/**
 	 * 一个任务只能有一个执行人，如果要把候选人变成执行人，必须把其它执行人变更为候选人
 	 * 本人或者组长可以变更
+	 * @param xmTaskDb
 	 * @param xmTaskExecuser
 	 */
-	public void becomeExecute(XmTaskExecuser xmTaskExecuser){
+	public void becomeExecute(XmTask xmTaskDb,XmTaskExecuser xmTaskExecuser){
 		String projectId=xmTaskExecuser.getProjectId();
 		String taskId=xmTaskExecuser.getTaskId();
  		 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
@@ -144,6 +146,7 @@ public class XmTaskExecuserService extends BaseService {
  		List<XmGroupVo> userGroups=groupService.getUserGroups(pgroups, xmTaskExecuser.getUserid());
  		XmTaskExecuser query=new XmTaskExecuser(); 
  		query.setTaskId(taskId);
+		XmTaskExecuser xmTaskExecuserDb=null;
  		 List<XmTaskExecuser> xmTaskExecusersDb=this.selectListByWhere(query);
  		 if(xmTaskExecusersDb !=null && xmTaskExecusersDb.size()>0) {
  			 for (XmTaskExecuser exe : xmTaskExecusersDb) {
@@ -154,11 +157,21 @@ public class XmTaskExecuserService extends BaseService {
 				}else {
 					if(!"0".equals(exe.getStatus())) {
 						throw new BizException(exe.getUsername()+"不是候选人，不允许变更为执行人");
-					} 
+					}
+					xmTaskExecuserDb=exe;
 				}
 			}
  		 }
-  			XmTaskExecuser xmTaskExecuser2=new XmTaskExecuser();
+
+ 		 if(xmTaskExecuserDb==null){
+			 throw new BizException(xmTaskExecuser.getUsername()+"不是候选人，不允许变更为执行人");
+		 }
+ 		 if( "1".equals(xmTaskDb.getCrowd()) && "1".equals(xmTaskDb.getTaskOut()) ){
+			 if(xmTaskExecuserDb.getQuoteAmount()==null){
+				 throw new BizException(xmTaskExecuserDb.getUsername()+"没有填写报价金额，不允许变更为执行人。");
+			 }
+		 }
+ 		 XmTaskExecuser xmTaskExecuser2=new XmTaskExecuser();
 		xmTaskExecuser2.setTaskId(xmTaskExecuser.getTaskId());
 		xmTaskExecuser2.setUserid(xmTaskExecuser.getUserid());
 			xmTaskExecuser2.setStatus("1");
