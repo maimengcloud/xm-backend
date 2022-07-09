@@ -249,6 +249,7 @@ public class XmTaskController {
 			fields.add("parentTaskid");
 			fields.add("parentTaskname");
 			fields.add("executorUserid");
+			fields.add("quoteFinalAt");
 			for (String fieldName : xmTaskMap.keySet()) {
 				if(fields.contains(fieldName)){
 					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
