@@ -416,7 +416,7 @@ public class XmTaskExecuserController {
 				if(exists) {
 					
 					//一个任务只能一个执行人
-					xmTaskExecuserService.becomeExecute(xmTaskExecuser); 
+					xmTaskExecuserService.becomeExecute(xmTask,xmTaskExecuser);
 				}
 				if(!exists) {
 					tips.setFailureMsg("变更不成功，原因：候选人不在项目组中，请先将候选人加入项目团队中。");
@@ -460,8 +460,8 @@ public class XmTaskExecuserController {
 				m.put("tips", tips);
 				return m;
 			}
-			if(!"0".equals(xmTask.getTaskState())){
-				return ResponseHelper.failed("taskState-not-0","当前任务状态不是候选、待领取状态，不能修改报价信息");
+			if("2".equals(xmTask.getEstate())||"3".equals(xmTask.getEstate())){
+				return ResponseHelper.failed("estate-not-0-1-3","当前任务已缴纳保证金，无法再变更报价信息。");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
@@ -479,7 +479,7 @@ public class XmTaskExecuserController {
 					xmTaskExecuserService.quotePrice(xmTaskExecuser);
 					m.put("data",xmTaskExecuser);
 				}else {
-					tips.setFailureMsg("只有任务处于候选状态时可以修改报价信息");
+					tips.setFailureMsg("只有修改处于候选状态的投标人的报价信息");
 				}
 				
 
