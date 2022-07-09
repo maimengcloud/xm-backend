@@ -156,9 +156,14 @@ public class XmTaskOrderController {
 			order.setObranchId(user.getBranchId());
 			BigDecimal originFee=BigDecimal.ZERO;
 			if("1".equals(xmTaskOrder.getBizType())){
-				if("1".equals(xmTaskDb.getEstate())){
+				if("1".equals(xmTaskDb.getEstate())||"0".equals(xmTaskDb.getEstate())||"4".equals(xmTaskDb.getEstate())){
 					order.setEfunds(xmTaskDb.getQuoteFinalAt());
 					originFee=originFee.add(order.getEfunds());
+					if(xmTaskDb.getQuoteFinalAt()==null || xmTaskDb.getQuoteFinalAt().compareTo(BigDecimal.ZERO)<=0){
+						return ResponseHelper.failed("quoteFinalAt-0","保证金金额计算错误，原因为中标人报价金额为空。");
+					}
+				}else{
+					return ResponseHelper.failed("estate-not-2-3","保证金已支付过，不能重复缴纳");
 				}
 			}else if("2".equals(xmTaskOrder.getBizType())){
 				ItemVo itemVo=itemService.getDict("sysParam","crowd_task_market");
