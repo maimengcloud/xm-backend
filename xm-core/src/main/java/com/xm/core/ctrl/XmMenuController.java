@@ -567,8 +567,8 @@ public class XmMenuController {
 			if(parentDb==null){
 				return ResponseHelper.failed("no-qx-parent","您无权限将需求挂到别人负责的需求下");
 			}
-			if(!"1".equals(parentDb.getNtype())){
-				return ResponseHelper.failed("parentMenu-ntype-not-1", "【"+parentDb.getMenuName()+"】为故事，不能作为上级节点。请另选上级。");
+			if( !"1".equals(parentDb.getDclass()) && !"2".equals(parentDb.getDclass()) && !"0".equals(parentDb.getDclass())){
+				return ResponseHelper.failed("parentMenu-dclass-not-1", "【"+parentDb.getMenuName()+"】为故事，不能作为上级节点。请另选上级。");
 			}
 			List<String> ids=parentMenuVo.getMenuIds().stream().collect(Collectors.toList());
 			ids.add(parentMenuVo.getPmenuId());
