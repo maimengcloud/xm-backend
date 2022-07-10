@@ -321,9 +321,9 @@ public class XmTaskController {
 			List<XmTask> noExecs=new ArrayList<>();
 			if(can.size()>0 && xmTaskMap.containsKey("taskState")){
 				String taskState= (String) xmTaskMap.get("taskState");
-				if("1".equals(taskState)){
+				if( StringUtils.hasText(taskState)  && !"0".equals(taskState) && !"9".equals(taskState) ){
 					for (XmTask task : can) {
-						if(!StringUtils.hasText(task.getExecutorUserid()) && ("0".equals(task.getTaskState())||StringUtils.hasText(task.getTaskState()))){
+						if(!StringUtils.hasText(task.getExecutorUserid()) && ("0".equals(task.getTaskState())||!StringUtils.hasText(task.getTaskState()))){
 							noExecs.add(task);
 						}
 					}
