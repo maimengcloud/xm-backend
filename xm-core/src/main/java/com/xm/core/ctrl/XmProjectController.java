@@ -7,6 +7,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
@@ -146,6 +147,8 @@ public class XmProjectController {
 
 			Set<String> fields=new HashSet<>();
 			fields.add("id");
+			fields.add("code");
+			fields.add("bizFlowState");
 			for (String fieldName : xmProjectMap.keySet()) {
 				if(fields.contains(fieldName)){
 					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
@@ -167,6 +170,9 @@ public class XmProjectController {
 			User user = LoginUtils.getCurrentUserInfo();
 			for (XmProject xmProjectDb : xmProjectsDb) {
 				Tips tips2 = new Tips("检查通过");
+				if(!groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
+					return ResponseHelper.failed("not-project-pm","您不是项目管理人员，无权限更新项目信息。");
+				};
 				if(!tips2.isOk()){
 					no.add(xmProjectDb);
 				}else{
