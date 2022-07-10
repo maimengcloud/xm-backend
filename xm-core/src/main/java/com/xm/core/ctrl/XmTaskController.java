@@ -302,6 +302,11 @@ public class XmTaskController {
 				XmTask taskDb=can.get(0);
 				XmProject xmProject=xmProjectService.getProjectFromCache(taskDb.getProjectId());
 				BigDecimal budgetAt=NumberUtil.getBigDecimal(xmTaskMap.get("budgetAt"),BigDecimal.ZERO);
+				if(xmProject.getMaxTaskAmt()!=null && xmProject.getMaxTaskAmt().compareTo(BigDecimal.ZERO)>0){
+					if(budgetAt.compareTo(xmProject.getMaxTaskAmt())>0){
+						return ResponseHelper.failed("budgetAt-maxTaskAmt-0",String.format("单个任务的金额超出预算。每个任务的预算最大为%s元",xmProject.getMaxTaskAmt()));
+					}
+				}
 				if("1".equals(xmProject.getBudgetCtrl())){
 					if(taskDb.getLvl()<=1){
 						tips=this.xmTaskService.judgetProjectBudget(taskDb.getProjectId(),budgetAt,Arrays.asList(taskDb.getId()));
