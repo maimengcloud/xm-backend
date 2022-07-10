@@ -318,6 +318,19 @@ public class XmTaskController {
 					}
 				}
 			}
+			List<XmTask> noExecs=new ArrayList<>();
+			if(can.size()>0 && xmTaskMap.containsKey("taskState")){
+				String taskState= (String) xmTaskMap.get("taskState");
+				if("1".equals(taskState)){
+					for (XmTask task : can) {
+						if(!StringUtils.hasText(task.getExecutorUserid()) && ("0".equals(task.getTaskState())||StringUtils.hasText(task.getTaskState()))){
+							noExecs.add(task);
+						}
+					}
+				}
+			}
+			can=can.stream().filter(i->!noExecs.stream().filter(k->k.getId().equals(i.getId())).findAny().isPresent()).collect(Collectors.toList());
+
 			if(can.size()>0){
 				xmTaskMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
 
@@ -348,6 +361,9 @@ public class XmTaskController {
 			}
 			if(no.size()>0){
 				msgs.add(String.format("以下%s个任务无权限更新,【%s】。",no.size(),no.stream().map(i->i.getName()).collect(Collectors.joining(","))));
+			}
+			if(noExecs.size()>0){
+				msgs.add(String.format("以下%s个任务未设置执行人，不能变更为待执行状态,【%s】。",noExecs.size(),noExecs.stream().map(i->i.getName()).collect(Collectors.joining(","))));
 			}
 			if(can.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
