@@ -185,10 +185,10 @@ public class XmProjectController {
 			}
 			List<String> msgs=new ArrayList<>();
 			if(can.size()>0){
-				msgs.add(String.format("成功更新以下%s条数据",can.size()));
+				msgs.add(String.format("成功更新%s条数据",can.size()));
 			}
 			if(no.size()>0){
-				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
+				msgs.add(String.format("有%s个数据无权限更新",no.size()));
 			}
 			if(can.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
