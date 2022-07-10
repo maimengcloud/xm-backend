@@ -129,7 +129,7 @@
 		insert into xm_project(
 			<include refid="columns"/>
 		) values (
-		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planIuserAt},#{planOuserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planIuserPrice},#{planOuserPrice},#{planOuserCnt},#{planIuserCnt},#{planWorkingHours},#{taxRate},#{planIuserWorkload},#{planOuserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut},#{isTpl},#{pmUserid},#{pmUsername},#{assUserid},#{assUsername},#{admUserid},#{admUsername},#{budgetEarly},#{phaseActCtrl},#{del},#{ltime},#{ostatus},#{workType},#{wtype},#{earlyAmt}
+		#{id},#{code},#{name},#{xmType},#{startTime},#{endTime},#{urgent},#{priority},#{description},#{createUserid},#{createUsername},#{createTime},#{assess},#{assessRemarks},#{status},#{branchId},#{planTotalCost},#{bizProcInstId},#{bizFlowState},#{planNouserAt},#{planIuserAt},#{planOuserAt},#{locked},#{baseTime},#{baseRemark},#{baselineId},#{planWorkload},#{totalReceivables},#{budgetMarginRate},#{contractAmt},#{planIuserPrice},#{planOuserPrice},#{planOuserCnt},#{planIuserCnt},#{planWorkingHours},#{taxRate},#{planIuserWorkload},#{planOuserWorkload},#{fromTplId},#{budgetCtrl},#{deptid},#{showOut},#{isTpl},#{pmUserid},#{pmUsername},#{assUserid},#{assUsername},#{admUserid},#{admUsername},#{budgetEarly},#{phaseActCtrl},#{del},#{ltime},#{ostatus},#{workType},#{wtype},#{earlyAmt},#{maxTaskAmt}
 		)
 	</insert>
 	
@@ -204,7 +204,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_iuser_at,plan_ouser_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_iuser_price,plan_ouser_price,plan_ouser_cnt,plan_iuser_cnt,plan_working_hours,tax_rate,plan_iuser_workload,plan_ouser_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,budget_early,phase_act_ctrl,del,ltime,ostatus,work_type,wtype,early_amt
+		id,code,name,xm_type,start_time,end_time,urgent,priority,description,create_userid,create_username,create_time,assess,assess_remarks,status,branch_id,plan_total_cost,biz_proc_inst_id,biz_flow_state,plan_nouser_at,plan_iuser_at,plan_ouser_at,locked,base_time,base_remark,baseline_id,plan_workload,total_receivables,budget_margin_rate,contract_amt,plan_iuser_price,plan_ouser_price,plan_ouser_cnt,plan_iuser_cnt,plan_working_hours,tax_rate,plan_iuser_workload,plan_ouser_workload,from_tpl_id,budget_ctrl,deptid,show_out,is_tpl,pm_userid,pm_username,ass_userid,ass_username,adm_userid,adm_username,budget_early,phase_act_ctrl,del,ltime,ostatus,work_type,wtype,early_amt,max_task_amt
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -266,6 +266,7 @@
 		<if test="workType != null and workType != ''">      and res.work_type = #{workType}     </if>
 		<if test="wtype != null and wtype != ''">      and res.wtype = #{wtype}     </if>
 		<if test="earlyAmt != null and earlyAmt != ''">      and res.early_amt = #{earlyAmt}     </if>
+		<if test="maxTaskAmt != null and maxTaskAmt != ''">      and res.max_task_amt = #{maxTaskAmt}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -324,7 +325,8 @@
 		ostatus = #{ostatus},
 		work_type = #{workType},
 		wtype = #{wtype},
-		early_amt = #{earlyAmt}
+		early_amt = #{earlyAmt},
+		max_task_amt = #{maxTaskAmt}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="code != null and code != ''"> code = #{code},     </if>
@@ -383,6 +385,7 @@
 		<if test="workType != null and workType != ''"> work_type = #{workType},     </if>
 		<if test="wtype != null and wtype != ''"> wtype = #{wtype},     </if>
 		<if test="earlyAmt != null and earlyAmt != ''"> early_amt = #{earlyAmt},     </if>
+		<if test="maxTaskAmt != null and maxTaskAmt != ''"> max_task_amt = #{maxTaskAmt},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -441,6 +444,7 @@
 			ostatus = #{item.ostatus},
 			work_type = #{item.workType},
 			wtype = #{item.wtype},
-			early_amt = #{item.earlyAmt}
+			early_amt = #{item.earlyAmt},
+			max_task_amt = #{item.maxTaskAmt}
 	</sql>
 </mapper>
