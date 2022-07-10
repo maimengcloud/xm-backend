@@ -5,13 +5,14 @@ import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmProductProjectLink;
 import com.xm.core.entity.XmProject;
 import com.xm.core.service.*;
@@ -27,10 +28,11 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.mdp.core.utils.BaseUtils.fromMap;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对XM.xm_project xm_project的操作有增删改查,对应的url分别为:<br>
@@ -72,30 +74,16 @@ public class XmProjectController {
 	@Autowired
 	private XmTaskService xmTaskService;
 
+
+	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmProject());
+
 	@ApiOperation( value = "查询xm_project信息列表",notes="listXmProject,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="项目编号,主键",required=false),
-		@ApiImplicitParam(name="code",value="项目代号",required=false),
-		@ApiImplicitParam(name="name",value="项目名称",required=false),
-		@ApiImplicitParam(name="xmType",value="项目类型",required=false),
-		@ApiImplicitParam(name="startTime",value="项目开始时间",required=false),
-		@ApiImplicitParam(name="endTime",value="项目结束时间",required=false),
-		@ApiImplicitParam(name="urgent",value="紧急程度",required=false),
-		@ApiImplicitParam(name="priority",value="优先程度",required=false),
-		@ApiImplicitParam(name="description",value="项目描述",required=false),
-		@ApiImplicitParam(name="createUserid",value="项目创建人编号",required=false),
-		@ApiImplicitParam(name="createUsername",value="项目创建人",required=false),
-		@ApiImplicitParam(name="createTime",value="创建时间",required=false),
-		@ApiImplicitParam(name="assess",value="项目考核",required=false),
-		@ApiImplicitParam(name="assessRemarks",value="考核备注",required=false),
-		@ApiImplicitParam(name="status",value="项目状态，0立项中，1审批中，2已退回，3进行中，4已结束",required=false),
-		@ApiImplicitParam(name="branchId",value="机构编号",required=false),
-		@ApiImplicitParam(name="totalBudgetCost",value="总预算",required=false),
-		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
-		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
-		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-		@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student_id desc",required=false),
-		@ApiImplicitParam(name="count",value="是否进行总条数计算,count=true|false",required=false) 
+	@ApiEntityParams(XmProject.class)
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
+			@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
+			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
+			@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderyBy = sex desc, student_id desc",required=false)
 	})
 	@ApiResponses({
 		@ApiResponse(code = 200,response= XmProject.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
@@ -139,7 +127,79 @@ public class XmProjectController {
 		m.put("tips", tips);
 		return m;
 	}
-	
+
+
+	@ApiOperation( value = "批量修改某些字段",notes="")
+	@ApiEntityParams( value = XmProject.class, props={ }, remark = "项目表", paramType = "body" )
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
+	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmProjectMap) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新");
+		try{
+			List<String> ids= (List<String>) xmProjectMap.get("ids");
+			if(ids==null || ids.size()==0){
+				return failed("ids-0","ids不能为空");
+			}
+
+			Set<String> fields=new HashSet<>();
+			fields.add("id");
+			for (String fieldName : xmProjectMap.keySet()) {
+				if(fields.contains(fieldName)){
+					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+				}
+			}
+			Set<String> fieldKey=xmProjectMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
+			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmProjectMap.get(i) )).collect(Collectors.toSet());
+
+			if(fieldKey.size()<=0) {
+				return failed("fieldKey-0","没有需要更新的字段");
+			}
+			XmProject xmProject = fromMap(xmProjectMap,XmProject.class);
+			List<XmProject> xmProjectsDb=xmProjectService.selectListByIds(ids);
+			if(xmProjectsDb==null ||xmProjectsDb.size()==0){
+				return failed("data-0","记录已不存在");
+			}
+			List<XmProject> can=new ArrayList<>();
+			List<XmProject> no=new ArrayList<>();
+			User user = LoginUtils.getCurrentUserInfo();
+			for (XmProject xmProjectDb : xmProjectsDb) {
+				Tips tips2 = new Tips("检查通过");
+				if(!tips2.isOk()){
+					no.add(xmProjectDb);
+				}else{
+					can.add(xmProjectDb);
+				}
+			}
+			if(can.size()>0){
+				xmProjectMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
+				xmProjectService.editSomeFields(xmProjectMap);
+			}
+			List<String> msgs=new ArrayList<>();
+			if(can.size()>0){
+				msgs.add(String.format("成功更新以下%s条数据",can.size()));
+			}
+			if(no.size()>0){
+				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
+			}
+			if(can.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+			}else {
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+			}
+			//m.put("data",xmMenu);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 
 	@ApiOperation( value = "新增一条xm_project信息",notes="addXmProject,主键如果为空，后台自动生成")
 	@ApiResponses({
@@ -152,12 +212,12 @@ public class XmProjectController {
 		Tips tips=new Tips("成功创建项目");
 		try{
 			if(!StringUtils.hasText(xmProjectVo.getName())){
-				return ResponseHelper.failed("name-0","项目名称不能为空");
+				return failed("name-0","项目名称不能为空");
 			}
 			if(xmProjectVo.getLinks()!=null && xmProjectVo.getLinks().size()>0){
 				for (XmProductProjectLink link : xmProjectVo.getLinks()) {
 					if(!StringUtils.hasText(link.getProductId())){
-						return ResponseHelper.failed("productId-0","关联的产品编号不能为空");
+						return failed("productId-0","关联的产品编号不能为空");
 					}
 				}
 			}
@@ -201,10 +261,10 @@ public class XmProjectController {
 				tips.setFailureMsg("项目不存在");
 			}
 			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
-				return ResponseHelper.failed("branchId-not-right","该项目不属于您的组织，不允许您进行恢复");
+				return failed("branchId-not-right","该项目不属于您的组织，不允许您进行恢复");
 			}
 			if(!"1".equals(xmProjectDb.getDel())){
-				return ResponseHelper.failed("status-not-0","该项目不属于删除状态，不允许恢复");
+				return failed("status-not-0","该项目不属于删除状态，不允许恢复");
 			}
 			if(this.groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
 				XmProject xmProjectUpdate=new XmProject();
@@ -245,7 +305,7 @@ public class XmProjectController {
 				tips.setFailureMsg("项目不存在");
 			}
 			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
-				return ResponseHelper.failed("branchId-not-right","该项目不属于您的组织，不允许您进行删除");
+				return failed("branchId-not-right","该项目不属于您的组织，不允许您进行删除");
 			}
 			if(this.groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
 				XmProject xmProjectUpdate=new XmProject();
@@ -502,10 +562,10 @@ public class XmProjectController {
 		try{
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
-				return ResponseHelper.failed("id-0","请上送原项目编号参数id");
+				return failed("id-0","请上送原项目编号参数id");
 			}
 			if( !StringUtils.hasText(xmProject.getName())){
-				return ResponseHelper.failed("name-0","请上送新项目名称");
+				return failed("name-0","请上送新项目名称");
 			}
 			if(StringUtils.hasText(xmProject.getCode())){
 				XmProject pq=new XmProject();
@@ -513,7 +573,7 @@ public class XmProjectController {
 				pq.setCode(xmProject.getCode());
 				List<XmProject> xmProjectList=this.xmProjectService.selectListByWhere(pq);
 				if(xmProjectList!=null && xmProjectList.size()>0){
-					return ResponseHelper.failed("code-exists","项目代号【"+xmProject.getCode()+"】已存在，，请重新输入新的项目代号，如果为空，后台自动生成");
+					return failed("code-exists","项目代号【"+xmProject.getCode()+"】已存在，，请重新输入新的项目代号，如果为空，后台自动生成");
 				}
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
