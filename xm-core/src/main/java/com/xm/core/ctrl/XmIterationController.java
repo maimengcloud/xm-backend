@@ -3,8 +3,8 @@ package com.xm.core.ctrl;
 import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
@@ -23,10 +23,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.mdp.core.utils.BaseUtils.fromMap;
+import static com.mdp.core.utils.ResponseHelper.failed;
+
 /**
  * url编制采用rest风格,如对XM.xm_iteration 迭代定义的操作有增删改查,对应的url分别为:<br>
  *  新增: xm/xmIteration/add <br>
@@ -68,6 +70,8 @@ public class XmIterationController {
 
 	@Autowired
 	PushNotifyMsgService notifyMsgService;
+
+	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmIteration());
 
 
 	@ApiOperation( value = "查询迭代定义信息列表",notes="listXmIteration,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
@@ -182,7 +186,7 @@ public class XmIterationController {
 			xmIteration.setAdminUsername(user.getUsername());
 
 			if(!operQxService.checkIsProductAdmOrAss(xmProductService.getProductFromCache(xmIteration.getProductId()), user.getUserid())){
-				return ResponseHelper.failed("no-product-qx","您不是产品管理人员，无权将该产品与迭代关联");
+				return failed("no-product-qx","您不是产品管理人员，无权将该产品与迭代关联");
 			};
 			notifyMsgService.pushMsg(user,xmIteration.getAdminUserid(),xmIteration.getAdminUsername(),"6",xmIteration.getProductId(),xmIteration.getId(),"您成为迭代【"+xmIteration.getIterationName()+"】管理员，请及时跟进。");
 			xmIterationService.addIteration(xmIteration);
@@ -213,22 +217,22 @@ public class XmIterationController {
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			if(!StringUtils.hasText(xmIteration.getId())){
-				return ResponseHelper.failed("id-0","请上送迭代编号");
+				return failed("id-0","请上送迭代编号");
 			}
 			XmIteration iterationDb=this.xmIterationService.selectOneObject(xmIteration);
 			if(iterationDb==null){
-				return ResponseHelper.failed("data-0","迭代不存在");
+				return failed("data-0","迭代不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			boolean isPm= this.operQxService.checkIsProductAdmOrAss(xmProductService.getProductFromCache(iterationDb.getProductId()), user.getUserid());
 			if( !isPm && !user.getUserid().equals(iterationDb.getAdminUserid()) && !user.getUserid().equals(iterationDb.getCuserid())){
-				return ResponseHelper.failed("no-qx","您无权删除，迭代创建人、负责人可以删除");
+				return failed("no-qx","您无权删除，迭代创建人、负责人可以删除");
 			}
 
 			XmIterationLink linkQ=new XmIterationLink();
 			linkQ.setIterationId(iterationDb.getId());
 			if(xmIterationLinkService.countByWhere(linkQ)>0){
-				return ResponseHelper.failed("links-no-0","该迭代具有产品或者项目关联，请先移除关联关系");
+				return failed("links-no-0","该迭代具有产品或者项目关联，请先移除关联关系");
 			}
 			xmIterationService.deleteByPk(xmIteration);
 			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-删除","删除迭代"+iterationDb.getIterationName(),"", JSON.toJSONString(iterationDb));
@@ -257,17 +261,17 @@ public class XmIterationController {
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			if(!StringUtils.hasText(xmIteration.getId())){
-				return ResponseHelper.failed("id-0","请上送迭代编号");
+				return failed("id-0","请上送迭代编号");
 			}
 			XmIteration iterationDb=this.xmIterationService.selectOneObject(xmIteration);
 			if(iterationDb==null){
-				return ResponseHelper.failed("data-0","迭代不存在");
+				return failed("data-0","迭代不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			boolean isPm= this.operQxService.checkIsProductAdmOrAss(xmProductService.getProductFromCache(iterationDb.getProductId()), user.getUserid());
 
 			if( !isPm && !user.getUserid().equals(iterationDb.getAdminUserid()) && user.getUserid().equals(iterationDb.getAdminUserid())){
-				return ResponseHelper.failed("no-qx","您无权修改，迭代创建人、负责人可以修改");
+				return failed("no-qx","您无权修改，迭代创建人、负责人可以修改");
 			}
 			xmIterationService.updateByPk(xmIteration);
 			if(!xmIteration.getAdminUserid().equals(iterationDb.getAdminUserid())){
@@ -286,7 +290,77 @@ public class XmIterationController {
 		return m;
 	}
 
+	@ApiOperation( value = "批量修改某些字段",notes="")
+	@ApiEntityParams( value = XmIteration.class, props={ }, remark = "迭代定义", paramType = "body" )
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmIteration.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
+	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmIterationMap) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新一条数据");
+		try{
+			List<String> ids= (List<String>) xmIterationMap.get("ids");
+			if(ids==null || ids.size()==0){
+				return failed("ids-0","ids不能为空");
+			}
 
+			Set<String> fields=new HashSet<>();
+			fields.add("id");
+			for (String fieldName : xmIterationMap.keySet()) {
+				if(fields.contains(fieldName)){
+					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+				}
+			}
+			Set<String> fieldKey=xmIterationMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
+			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmIterationMap.get(i) )).collect(Collectors.toSet());
+
+			if(fieldKey.size()<=0) {
+				return failed("fieldKey-0","没有需要更新的字段");
+			}
+			XmIteration xmIteration = fromMap(xmIterationMap,XmIteration.class);
+			List<XmIteration> xmIterationsDb=xmIterationService.selectListByIds(ids);
+			if(xmIterationsDb==null ||xmIterationsDb.size()==0){
+				return failed("data-0","记录已不存在");
+			}
+			List<XmIteration> can=new ArrayList<>();
+			List<XmIteration> no=new ArrayList<>();
+			User user = LoginUtils.getCurrentUserInfo();
+			for (XmIteration xmIterationDb : xmIterationsDb) {
+				Tips tips2 = new Tips("检查通过");
+				if(!tips2.isOk()){
+					no.add(xmIterationDb);
+				}else{
+					can.add(xmIterationDb);
+				}
+			}
+			if(can.size()>0){
+				xmIterationMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
+				xmIterationService.editSomeFields(xmIterationMap);
+			}
+			List<String> msgs=new ArrayList<>();
+			if(can.size()>0){
+				msgs.add(String.format("成功更新以下%s条数据",can.size()));
+			}
+			if(no.size()>0){
+				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
+			}
+			if(can.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+			}else {
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+			}
+			//m.put("data",xmMenu);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 
 	@HasQx(value = "xm_core_xmIteration_loadTasksToXmIterationState",name = "计算迭代的bug、工作量、人员投入、进度等",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/loadTasksToXmIterationState",method=RequestMethod.POST)
@@ -295,14 +369,14 @@ public class XmIterationController {
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			if(!StringUtils.hasText(xmIteration.getId())){
-				return ResponseHelper.failed("id-0","请上送迭代编号");
+				return failed("id-0","请上送迭代编号");
 			}
 			if(xmIteration==null || StringUtils.isEmpty(xmIteration.getId())) {
 				tips.setFailureMsg("请输入迭代编号id");
 			}else {
 				XmIteration iterationDb=this.xmIterationService.selectOneObject(xmIteration);
 				if(iterationDb==null){
-					return ResponseHelper.failed("data-0","迭代不存在");
+					return failed("data-0","迭代不存在");
 				}
 				xmIterationService.loadTasksToXmIterationState(xmIteration.getId());
 				xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-汇总","汇总计算迭代数据"+iterationDb.getIterationName());
