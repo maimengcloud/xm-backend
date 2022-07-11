@@ -4,12 +4,12 @@ import com.alibaba.fastjson.JSON;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProductCopyVo;
 import com.xm.core.entity.XmProductProjectLink;
@@ -27,10 +27,12 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.mdp.core.utils.BaseUtils.fromMap;
+import static com.mdp.core.utils.BaseUtils.toMap;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对XM.xm_product 产品表的操作有增删改查,对应的url分别为:<br>
@@ -63,10 +65,14 @@ public class XmProductController {
 	@Autowired
 	PushNotifyMsgService notifyMsgService;
 
+
+	Map<String,Object> fieldsMap = toMap(new XmProduct());
+
 	@Value("${mdp.platform-branch-id:platform-branch-001}")
 	String platformBranchId="platform-branch-001";
 	@Autowired
 	XmProductStateService xmProductStateService;
+
 	@ApiOperation( value = "查询产品表信息列表",notes="listXmProduct,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
 	@ApiImplicitParams({  
 		@ApiImplicitParam(name="id",value="菜单编号,主键",required=false),
@@ -193,10 +199,10 @@ public class XmProductController {
 		try{
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProduct.getId())){
-				return ResponseHelper.failed("id-0","请上送原产品编号参数id");
+				return failed("id-0","请上送原产品编号参数id");
 			}
 			if( !StringUtils.hasText(xmProduct.getProductName())){
-				return ResponseHelper.failed("productName-0","请上送新产品名称");
+				return failed("productName-0","请上送新产品名称");
 			}
 			if(StringUtils.hasText(xmProduct.getCode())){
 				XmProduct pq=new XmProduct();
@@ -204,7 +210,7 @@ public class XmProductController {
 				pq.setCode(xmProduct.getCode());
 				List<XmProduct> xmProductList=this.xmProductService.selectListByWhere(pq);
 				if(xmProductList!=null && xmProductList.size()>0){
-					return ResponseHelper.failed("code-exists","产品编码【"+xmProduct.getCode()+"】已存在，，请重新输入新的产品编码，如果为空，后台自动生成");
+					return failed("code-exists","产品编码【"+xmProduct.getCode()+"】已存在，，请重新输入新的产品编码，如果为空，后台自动生成");
 				}
 			}
 
@@ -236,7 +242,7 @@ public class XmProductController {
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
 			if(StringUtils.isEmpty(xmProduct.getCode())) {
-				return ResponseHelper.failed("code-0","","产品代号不能为空");
+				return failed("code-0","","产品代号不能为空");
 			}else{
 				 XmProduct xmProductQuery = new  XmProduct();
 				xmProductQuery.setBranchId(user.getBranchId());
@@ -250,12 +256,12 @@ public class XmProductController {
 			if(xmProduct.getLinks()!=null && xmProduct.getLinks().size()>0){
 				for (XmProductProjectLink link : xmProduct.getLinks()) {
 					if(!StringUtils.hasText(link.getProjectId())) {
-						return ResponseHelper.failed("projectId-0", "", "关联项目编号不能为空");
+						return failed("projectId-0", "", "关联项目编号不能为空");
 					}
 				}
 			}
 			if(!StringUtils.hasText(xmProduct.getProductName())){
-				return ResponseHelper.failed("productName-0","","产品名称不能为空");
+				return failed("productName-0","","产品名称不能为空");
 			}
 			if(StringUtils.isEmpty(xmProduct.getPmUserid())) {
 				xmProduct.setPmUserid(user.getUserid());
@@ -314,18 +320,18 @@ public class XmProductController {
 		Tips tips=new Tips("成功从回收站恢复产品");
 		try{
 			if(!StringUtils.hasText(xmProduct.getId())){
-				return ResponseHelper.failed("id-0","","产品编号不能为空");
+				return failed("id-0","","产品编号不能为空");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=xmProductService.getProductFromCache(xmProduct.getId());
 			if(xmProductDb==null){
-				return ResponseHelper.failed("data-0","产品已不存在");
+				return failed("data-0","产品已不存在");
 			}else if(!"1".equals(xmProductDb.getDel())){
-				return ResponseHelper.failed("del-not-1","该产品不是已删除状态");
+				return failed("del-not-1","该产品不是已删除状态");
 			}else if(!user.getBranchId().equals(xmProductDb.getBranchId())){
-				return ResponseHelper.failed("branchId-not-right","该产品不属于您所在的机构，不允许操作");
+				return failed("branchId-not-right","该产品不属于您所在的机构，不允许操作");
 			}else if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
-				return ResponseHelper.failed("pmUserid-not-right","您不是该产品产品负责人,也不是产品助理，不允许操作");
+				return failed("pmUserid-not-right","您不是该产品产品负责人,也不是产品助理，不允许操作");
 			}
 			/**
 			 if(!"1".equals(xmProductDb.getIsTpl())){
@@ -367,18 +373,18 @@ public class XmProductController {
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			if(!StringUtils.hasText(xmProduct.getId())){
-				return ResponseHelper.failed("id-0","","产品编号不能为空");
+				return failed("id-0","","产品编号不能为空");
 			}
  			User user=LoginUtils.getCurrentUserInfo();
 			 XmProduct xmProductDb=xmProductService.getProductFromCache(xmProduct.getId());
 			 if(xmProductDb==null){
-				return ResponseHelper.failed("data-0","产品已不存在");
+				return failed("data-0","产品已不存在");
 			 }else if(!"0".equals(xmProductDb.getPstatus())&&!"3".equals(xmProductDb.getPstatus())){
-				 return ResponseHelper.failed("pstatus-not-0-3","该产品不是初始、已关闭状态，不允许删除");
+				 return failed("pstatus-not-0-3","该产品不是初始、已关闭状态，不允许删除");
 			 }else if(!user.getBranchId().equals(xmProductDb.getBranchId())){
-				 return ResponseHelper.failed("branchId-not-right","该产品不属于您所在的机构，不允许删除");
+				 return failed("branchId-not-right","该产品不属于您所在的机构，不允许删除");
 			 }else if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
-				 return ResponseHelper.failed("pmUserid-not-right","您不是该产品产品负责人,也不是产品助理，不允许删除");
+				 return failed("pmUserid-not-right","您不是该产品产品负责人,也不是产品助理，不允许删除");
 			 }
 			 /**
 			 if(!"1".equals(xmProductDb.getIsTpl())){
@@ -407,7 +413,78 @@ public class XmProductController {
 		m.put("tips", tips);
 		return m;
 	}
+	@ApiOperation( value = "批量修改某些字段",notes="")
+	@ApiEntityParams( value = XmProduct.class, props={ }, remark = "产品", paramType = "body" )
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmProduct.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
+	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmProductMap) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新");
+		try{
+			List<String> ids= (List<String>) xmProductMap.get("ids");
+			if(ids==null || ids.size()==0){
+				return failed("ids-0","ids不能为空");
+			}
 
+			Set<String> fields=new HashSet<>();
+			fields.add("id");
+			for (String fieldName : xmProductMap.keySet()) {
+				if(fields.contains(fieldName)){
+					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+				}
+			}
+			Set<String> fieldKey=xmProductMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
+			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmProductMap.get(i) )).collect(Collectors.toSet());
+
+			if(fieldKey.size()<=0) {
+				return failed("fieldKey-0","没有需要更新的字段");
+			}
+			XmProduct xmProduct = fromMap(xmProductMap,XmProduct.class);
+			List<XmProduct> xmProductsDb=xmProductService.selectListByIds(ids);
+			if(xmProductsDb==null ||xmProductsDb.size()==0){
+				return failed("data-0","记录已不存在");
+			}
+			List<XmProduct> can=new ArrayList<>();
+			List<XmProduct> no=new ArrayList<>();
+			User user = LoginUtils.getCurrentUserInfo();
+			for (XmProduct xmProductDb : xmProductsDb) {
+				Tips tips2 = new Tips("检查通过");
+				if(!tips2.isOk()){
+					no.add(xmProductDb);
+				}else{
+					can.add(xmProductDb);
+				}
+			}
+			if(can.size()>0){
+				xmProductMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
+				xmProductService.editSomeFields(xmProductMap);
+			}
+			List<String> msgs=new ArrayList<>();
+			if(can.size()>0){
+				msgs.add(String.format("成功更新以下%s条数据",can.size()));
+			}
+			if(no.size()>0){
+				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
+			}
+			if(can.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+			}else {
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+			}
+			//m.put("data",xmMenu);
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
+	
 	/***/
 	@ApiOperation( value = "创建产品代号",notes="createProductCode")
 	@ApiResponses({
@@ -447,11 +524,11 @@ public class XmProductController {
 		try{
 			XmProduct xmProductDb=xmProductService.getProductFromCache(xmProduct.getId());
 			if(xmProductDb==null){
-				return ResponseHelper.failed("product-0","产品已不存在");
+				return failed("product-0","产品已不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
-				return ResponseHelper.failed("no-qx-0","您无权修改该产品");
+				return failed("no-qx-0","您无权修改该产品");
 			}
 			xmProduct.setLtime(new Date());
 			xmProductService.updateSomeFieldByPk(xmProduct);
