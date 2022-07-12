@@ -106,7 +106,7 @@ public class XmIterationLinkController {
 	@RequestMapping(value="/listWithProjectInfo",method=RequestMethod.GET)
 	public Map<String,Object> listWithProjectInfo( @ApiIgnore @RequestParam Map<String,Object> xmIterationLink){
 		Map<String,Object> m = new HashMap<>();
-		RequestUtils.transformArray(xmIterationLink, "iterationIdsproductIds");
+		RequestUtils.transformArray(xmIterationLink, "pkList");
 		PageUtils.startPage(xmIterationLink);
 		List<Map<String,Object>>	xmIterationLinkList = xmIterationLinkService.listWithProjectInfo(xmIterationLink);	//列出XmIterationLink列表
 		PageUtils.responePage(m, xmIterationLinkList);
