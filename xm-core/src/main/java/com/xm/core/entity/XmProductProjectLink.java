@@ -1,19 +1,18 @@
 package  com.xm.core.entity;
 
+import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.util.Date;
 
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmProductProjectLink所有属性名: <br>
- *	projectId,productId,ctime,cuserid,cusername,linkStatus,seq;<br>
- * 表 xm_product_project_link 产品与项目的关联关系表，一般由产品经理挂接项目到产品上的所有字段名: <br>
- *	project_id,product_id,ctime,cuserid,cusername,link_status,seq;<br>
+ *	"projectId","项目表中的主键","productId","产品表中的主键","ctime","创建时间","cuserid","创建人编号","cusername","创建人姓名","linkStatus","关联状态1关联0取消关联","seq","显示顺序0-999,从小到大排序";<br>
  * 当前主键(包括多主键):<br>
  *	project_id,product_id;<br>
  */
+ @Data
 @ApiModel(description="产品与项目的关联关系表，一般由产品经理挂接项目到产品上")
 public class XmProductProjectLink  implements java.io.Serializable {
 	
@@ -41,100 +40,18 @@ public class XmProductProjectLink  implements java.io.Serializable {
 	@ApiModelProperty(notes="显示顺序0-999,从小到大排序",allowEmptyValue=true,example="",allowableValues="")
 	Integer seq;
 
-	/**项目表中的主键,产品表中的主键**/
+	/**
+	 *项目表中的主键,产品表中的主键
+	 **/
 	public XmProductProjectLink(String projectId,String productId) {
 		this.projectId = projectId;
 		this.productId = productId;
 	}
     
-    /**产品与项目的关联关系表，一般由产品经理挂接项目到产品上**/
+    /**
+     * 产品与项目的关联关系表，一般由产品经理挂接项目到产品上
+     **/
 	public XmProductProjectLink() {
-	}
-	
-	/**
-	 * 项目表中的主键
-	 **/
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
-	/**
-	 * 产品表中的主键
-	 **/
-	public void setProductId(String productId) {
-		this.productId = productId;
-	}
-	/**
-	 * 创建时间
-	 **/
-	public void setCtime(Date ctime) {
-		this.ctime = ctime;
-	}
-	/**
-	 * 创建人编号
-	 **/
-	public void setCuserid(String cuserid) {
-		this.cuserid = cuserid;
-	}
-	/**
-	 * 创建人姓名
-	 **/
-	public void setCusername(String cusername) {
-		this.cusername = cusername;
-	}
-	/**
-	 * 关联状态1关联0取消关联
-	 **/
-	public void setLinkStatus(String linkStatus) {
-		this.linkStatus = linkStatus;
-	}
-	/**
-	 * 显示顺序0-999,从小到大排序
-	 **/
-	public void setSeq(Integer seq) {
-		this.seq = seq;
-	}
-	
-	/**
-	 * 项目表中的主键
-	 **/
-	public String getProjectId() {
-		return this.projectId;
-	}
-	/**
-	 * 产品表中的主键
-	 **/
-	public String getProductId() {
-		return this.productId;
-	}
-	/**
-	 * 创建时间
-	 **/
-	public Date getCtime() {
-		return this.ctime;
-	}
-	/**
-	 * 创建人编号
-	 **/
-	public String getCuserid() {
-		return this.cuserid;
-	}
-	/**
-	 * 创建人姓名
-	 **/
-	public String getCusername() {
-		return this.cusername;
-	}
-	/**
-	 * 关联状态1关联0取消关联
-	 **/
-	public String getLinkStatus() {
-		return this.linkStatus;
-	}
-	/**
-	 * 显示顺序0-999,从小到大排序
-	 **/
-	public Integer getSeq() {
-		return this.seq;
 	}
 
 }
