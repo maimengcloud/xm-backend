@@ -2,7 +2,6 @@ package com.xm.core.service;
 
 import com.mdp.core.service.BaseService;
 import com.xm.core.vo.XmIterationVo;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,8 +16,6 @@ import java.util.Map;
 @Service("xm.core.xmIterationService")
 public class XmIterationService extends BaseService {
 
-	@Autowired
-	XmIterationLinkService xmIterationLinkService;
 
 
 
@@ -44,11 +41,6 @@ public class XmIterationService extends BaseService {
 	@Transactional
     public void addIteration(XmIterationVo xmIteration) {
 		super.insert(xmIteration);
-		if(xmIteration.getLinks()!=null && xmIteration.getLinks().size()>0){
-
-			this.xmIterationLinkService.batchInsert(xmIteration.getLinks());
-		}
-
     }
 
 	public String createIterationId( Long count){

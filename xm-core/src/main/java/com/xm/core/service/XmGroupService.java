@@ -41,8 +41,6 @@ public class XmGroupService extends BaseService {
     @Autowired
 	XmGroupCacheService groupCacheService;
 
-	@Autowired
-    XmIterationLinkService xmIterationLinkService;
 
 	@Autowired
 	XmProductProjectLinkService xmProductProjectLinkService;
