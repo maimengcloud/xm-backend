@@ -96,6 +96,7 @@ public class XmIterationController {
 		String menuId= (String) xmIteration.get("menuId");
 		String queryScope=(String) xmIteration.get("queryScope");
 		String branchId=(String) xmIteration.get("branchId");
+		String linkProjectId=(String) xmIteration.get("linkProjectId");
 		User user = LoginUtils.getCurrentUserInfo();
 		xmIteration.put("userid",user.getUserid());
 		if(  !( StringUtils.hasText(branchId)|| StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
@@ -103,7 +104,11 @@ public class XmIterationController {
 			if(LoginUtils.isBranchAdmin()){
 				xmIteration.put("branchId",user.getBranchId());
 			}else{
-				xmIteration.put("compete",user.getUserid());
+				if(!StringUtils.hasText(productId) && !StringUtils.hasText(linkProjectId)){
+					xmIteration.put("compete",user.getUserid());
+				}else{
+					xmIteration.put("branchId",user.getBranchId());
+				}
 			}
 		}
 		if("branchId".equals(queryScope)){
