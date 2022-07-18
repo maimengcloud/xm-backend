@@ -1,0 +1,240 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xm.core.entity.XmTestPlan">
+	
+	
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
+
+
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from xm_test_plan res
+		<where>
+		    <include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmTestPlan" resultType="com.xm.core.entity.XmTestPlan">
+		select * from xm_test_plan res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.xm.core.entity.XmTestPlan" resultType="com.xm.core.entity.XmTestPlan">
+		select * from xm_test_plan res
+		where 
+			res.id = #{id}
+	</select>
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmTestPlan">
+        select * from xm_test_plan res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from xm_test_plan res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.xm.core.entity.XmTestPlan" resultType="long">
+		select count(*) from xm_test_plan res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.xm.core.entity.XmTestPlan" useGeneratedKeys="false"   keyProperty="id">
+		insert into xm_test_plan(
+			<include refid="columns"/>
+		) values (
+		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{productId},#{productName},#{flowState}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmTestPlan">
+		delete from xm_test_plan res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmTestPlan">
+		delete from xm_test_plan 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmTestPlan">
+		update  xm_test_plan 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.xm.core.entity.XmTestPlan">
+		update  xm_test_plan 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  xm_test_plan 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_test_plan
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from xm_test_plan 
+			where
+			(id) in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    (  #{item.id} )
+                </foreach>
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,product_id,product_name,flow_state
+	</sql>
+
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="name != null and name != ''">      and res.name = #{name}     </if>
+		<if test="casedbId != null and casedbId != ''">      and res.casedb_id = #{casedbId}     </if>
+		<if test="casedbName != null and casedbName != ''">      and res.casedb_name = #{casedbName}     </if>
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
+		<if test="projectName != null and projectName != ''">      and res.project_name = #{projectName}     </if>
+		<if test="cuserid != null and cuserid != ''">      and res.cuserid = #{cuserid}     </if>
+		<if test="cusername != null and cusername != ''">      and res.cusername = #{cusername}     </if>
+		<if test="ctime != null">      and date_format(res.ctime,'%Y-%m-%d') = date_format(#{ctime},'%Y-%m-%d')     </if>
+		<if test="stime != null">      and date_format(res.stime,'%Y-%m-%d') = date_format(#{stime},'%Y-%m-%d')     </if>
+		<if test="etime != null">      and date_format(res.etime,'%Y-%m-%d') = date_format(#{etime},'%Y-%m-%d')     </if>
+		<if test="status != null and status != ''">      and res.status = #{status}     </if>
+		<if test="tcode != null and tcode != ''">      and res.tcode = #{tcode}     </if>
+		<if test="totalCases != null and totalCases != ''">      and res.total_cases = #{totalCases}     </if>
+		<if test="okCases != null and okCases != ''">      and res.ok_cases = #{okCases}     </if>
+		<if test="errCases != null and errCases != ''">      and res.err_cases = #{errCases}     </if>
+		<if test="igCases != null and igCases != ''">      and res.ig_cases = #{igCases}     </if>
+		<if test="blCases != null and blCases != ''">      and res.bl_cases = #{blCases}     </if>
+		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
+		<if test="productName != null and productName != ''">      and res.product_name = #{productName}     </if>
+		<if test="flowState != null and flowState != ''">      and res.flow_state = #{flowState}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		name = #{name},
+		casedb_id = #{casedbId},
+		casedb_name = #{casedbName},
+		project_id = #{projectId},
+		project_name = #{projectName},
+		cuserid = #{cuserid},
+		cusername = #{cusername},
+		ctime = #{ctime},
+		stime = #{stime},
+		etime = #{etime},
+		status = #{status},
+		tcode = #{tcode},
+		total_cases = #{totalCases},
+		ok_cases = #{okCases},
+		err_cases = #{errCases},
+		ig_cases = #{igCases},
+		bl_cases = #{blCases},
+		product_id = #{productId},
+		product_name = #{productName},
+		flow_state = #{flowState}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="name != null and name != ''"> name = #{name},     </if>
+		<if test="casedbId != null and casedbId != ''"> casedb_id = #{casedbId},     </if>
+		<if test="casedbName != null and casedbName != ''"> casedb_name = #{casedbName},     </if>
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
+		<if test="projectName != null and projectName != ''"> project_name = #{projectName},     </if>
+		<if test="cuserid != null and cuserid != ''"> cuserid = #{cuserid},     </if>
+		<if test="cusername != null and cusername != ''"> cusername = #{cusername},     </if>
+		<if test="ctime != null"> ctime = #{ctime},     </if>
+		<if test="stime != null"> stime = #{stime},     </if>
+		<if test="etime != null"> etime = #{etime},     </if>
+		<if test="status != null and status != ''"> status = #{status},     </if>
+		<if test="tcode != null and tcode != ''"> tcode = #{tcode},     </if>
+		<if test="totalCases != null and totalCases != ''"> total_cases = #{totalCases},     </if>
+		<if test="okCases != null and okCases != ''"> ok_cases = #{okCases},     </if>
+		<if test="errCases != null and errCases != ''"> err_cases = #{errCases},     </if>
+		<if test="igCases != null and igCases != ''"> ig_cases = #{igCases},     </if>
+		<if test="blCases != null and blCases != ''"> bl_cases = #{blCases},     </if>
+		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
+		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
+		<if test="flowState != null and flowState != ''"> flow_state = #{flowState},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			name = #{item.name},
+			casedb_id = #{item.casedbId},
+			casedb_name = #{item.casedbName},
+			project_id = #{item.projectId},
+			project_name = #{item.projectName},
+			cuserid = #{item.cuserid},
+			cusername = #{item.cusername},
+			ctime = #{item.ctime},
+			stime = #{item.stime},
+			etime = #{item.etime},
+			status = #{item.status},
+			tcode = #{item.tcode},
+			total_cases = #{item.totalCases},
+			ok_cases = #{item.okCases},
+			err_cases = #{item.errCases},
+			ig_cases = #{item.igCases},
+			bl_cases = #{item.blCases},
+			product_id = #{item.productId},
+			product_name = #{item.productName},
+			flow_state = #{item.flowState}
+	</sql>
+</mapper>

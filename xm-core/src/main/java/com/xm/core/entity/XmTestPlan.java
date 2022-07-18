@@ -1,0 +1,98 @@
+package  com.xm.core.entity;
+
+import lombok.Data;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import java.util.Date;
+
+/**
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
+ * 实体 XmTestPlan所有属性名: <br>
+ *	"id","测试计划编号","name","计划名称","casedbId","用例库编号","casedbName","用例库名称","projectId","项目编号","projectName","项目名称","cuserid","创建人编号","cusername","创建人名称","ctime","创建时间","stime","开始时间","etime","结束时间","status","状态0-未开始，1-进行中，2已结束","tcode","测试结果0未通过，1已通过","totalCases","总用例数","okCases","通过用例数","errCases","失败用例数","igCases","忽略用例数","blCases","阻塞用例数","productId","产品编号","productName","产品名称","flowState","评审结果0-待评审，1-已评审通过，2-已拒绝";<br>
+ * 当前主键(包括多主键):<br>
+ *	id;<br>
+ */
+ @Data
+@ApiModel(description="测试计划")
+public class XmTestPlan  implements java.io.Serializable {
+	
+	private static final long serialVersionUID = 1L;
+	
+	@ApiModelProperty(notes="测试计划编号,主键",allowEmptyValue=true,example="",allowableValues="")
+	String id;
+  	
+	
+	@ApiModelProperty(notes="计划名称",allowEmptyValue=true,example="",allowableValues="")
+	String name;
+	
+	@ApiModelProperty(notes="用例库编号",allowEmptyValue=true,example="",allowableValues="")
+	String casedbId;
+	
+	@ApiModelProperty(notes="用例库名称",allowEmptyValue=true,example="",allowableValues="")
+	String casedbName;
+	
+	@ApiModelProperty(notes="项目编号",allowEmptyValue=true,example="",allowableValues="")
+	String projectId;
+	
+	@ApiModelProperty(notes="项目名称",allowEmptyValue=true,example="",allowableValues="")
+	String projectName;
+	
+	@ApiModelProperty(notes="创建人编号",allowEmptyValue=true,example="",allowableValues="")
+	String cuserid;
+	
+	@ApiModelProperty(notes="创建人名称",allowEmptyValue=true,example="",allowableValues="")
+	String cusername;
+	
+	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
+	Date ctime;
+	
+	@ApiModelProperty(notes="开始时间",allowEmptyValue=true,example="",allowableValues="")
+	Date stime;
+	
+	@ApiModelProperty(notes="结束时间",allowEmptyValue=true,example="",allowableValues="")
+	Date etime;
+	
+	@ApiModelProperty(notes="状态0-未开始，1-进行中，2已结束",allowEmptyValue=true,example="",allowableValues="")
+	String status;
+	
+	@ApiModelProperty(notes="测试结果0未通过，1已通过",allowEmptyValue=true,example="",allowableValues="")
+	String tcode;
+	
+	@ApiModelProperty(notes="总用例数",allowEmptyValue=true,example="",allowableValues="")
+	Integer totalCases;
+	
+	@ApiModelProperty(notes="通过用例数",allowEmptyValue=true,example="",allowableValues="")
+	Integer okCases;
+	
+	@ApiModelProperty(notes="失败用例数",allowEmptyValue=true,example="",allowableValues="")
+	Integer errCases;
+	
+	@ApiModelProperty(notes="忽略用例数",allowEmptyValue=true,example="",allowableValues="")
+	Integer igCases;
+	
+	@ApiModelProperty(notes="阻塞用例数",allowEmptyValue=true,example="",allowableValues="")
+	Integer blCases;
+	
+	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
+	String productId;
+	
+	@ApiModelProperty(notes="产品名称",allowEmptyValue=true,example="",allowableValues="")
+	String productName;
+	
+	@ApiModelProperty(notes="评审结果0-待评审，1-已评审通过，2-已拒绝",allowEmptyValue=true,example="",allowableValues="")
+	String flowState;
+
+	/**
+	 *测试计划编号
+	 **/
+	public XmTestPlan(String id) {
+		this.id = id;
+	}
+    
+    /**
+     * 测试计划
+     **/
+	public XmTestPlan() {
+	}
+
+}
