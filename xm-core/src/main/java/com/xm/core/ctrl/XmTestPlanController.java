@@ -1,32 +1,28 @@
 package com.xm.core.ctrl;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
+import com.mdp.core.utils.RequestUtils;
+import com.mdp.mybatis.PageUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmTestPlan;
+import com.xm.core.service.XmTestPlanService;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import io.swagger.annotations.*;
-
-import static com.mdp.core.utils.ResponseHelper.*;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-import com.mdp.mybatis.PageUtils;
-import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.NumberUtil;
-import com.mdp.safe.client.entity.User;
-import com.mdp.safe.client.utils.LoginUtils;
-import com.mdp.swagger.ApiEntityParams;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import com.xm.core.service.XmTestPlanService;
-import com.xm.core.entity.XmTestPlan;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.mdp.core.utils.BaseUtils.fromMap;
+import static com.mdp.core.utils.BaseUtils.toMap;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_test_plan 测试计划的操作有增删改查,对应的url分别为:<br>
@@ -74,8 +70,7 @@ public class XmTestPlanController {
 	}
 	
  
-	
-	/**
+
 	@ApiOperation( value = "新增一条测试计划信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTestPlan.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -107,9 +102,7 @@ public class XmTestPlanController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
-	
-	/**
+
 	@ApiOperation( value = "删除一条测试计划信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -137,9 +130,7 @@ public class XmTestPlanController {
 		m.put("tips", tips);
 		return m;
 	}
-	 */
-	
-	/**
+
 	@ApiOperation( value = "根据主键修改一条测试计划信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTestPlan.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -168,9 +159,7 @@ public class XmTestPlanController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 
-	/**
     @ApiOperation( value = "批量修改某些字段",notes="")
     @ApiEntityParams( value = XmTestPlan.class, props={ }, remark = "测试计划", paramType = "body" )
 	@ApiResponses({
@@ -242,9 +231,7 @@ public class XmTestPlanController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 
-	/**
 	@ApiOperation( value = "根据主键列表批量删除测试计划信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -292,5 +279,5 @@ public class XmTestPlanController {
         m.put("tips", tips);
         return m;
 	} 
-	*/
+
 }
