@@ -3,11 +3,35 @@
 <mapper namespace="com.xm.core.entity.XmTestCase">
 	
 	
-	<!--开始 自定sql函数区域 -->
-		<!--请在此区域添加自定义函数-->
-		
-		
-		
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+		<if test=" ctimeStart !=null "> and res.ctime &gt; #{ctimeStart} </if>
+		<if test=" ctimeTimeEnd !=null "> and res.ctime &lt; #{ctimeTimeEnd} </if>
+
+		<if test=" myUserid!=null and myUserid!='' "> and (res.luserid=#{myUserid} or res.cuserid=#{myUserid})</if>
+		<if test=" compete!=null and compete!='' "> and (res.luserid=#{compete} or res.cuserid=#{compete})</if>
+		<if test="menuIds != null">  and
+			res.menu_id in
+			<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+		</if>
+		<if test="projectId !=null and projectId !=''"> and exists ( select 1 from xm_test_case_exec c where c.case_id=res.id and c.project_id=#{projectId} )</if>
+		<if test="(productId != null and productId !='') or (iterationId!=null and iterationId!='')">    and exists( select 1 from xm_menu m where m.menu_id =res.menu_id
+			<if test="productId != null and productId !=''" >and m.product_id=#{productId}  </if>
+			<if test="iterationId != null and iterationId !=''" >and m.iteration_id=#{iterationId}  </if>
+			)
+		</if>
+		<if test="key != null and key !='' ">   and res.case_name like #{key}    </if>
+    </sql>
+
+
 	<!--结束 自定义sql函数区域-->
 	
 
@@ -15,32 +39,9 @@
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
 		select * from xm_test_case res
-		<where> 
-			<if test="ids != null">  and     
-				id in
-				    <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >  
-				        #{item}  
-				    </foreach>  
-			 </if>
-
-			<if test=" ctimeStart !=null "> and res.ctime &gt; #{ctimeStart} </if>
-			<if test=" ctimeTimeEnd !=null "> and res.ctime &lt; #{ctimeTimeEnd} </if>
+		<where>
+		    <include refid="whereForMap"/>
 			<include refid="where"/>
-			<if test=" myUserid!=null and myUserid!='' "> and (res.luserid=#{myUserid} or res.cuserid=#{myUserid})</if>
-			<if test=" compete!=null and compete!='' "> and (res.luserid=#{compete} or res.cuserid=#{compete})</if>
-			<if test="menuIds != null">  and
-				res.menu_id in
-				<foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
-					#{item}
-				</foreach>
-			</if>
-			<if test="projectId !=null and projectId !=''"> and exists ( select 1 from xm_test_case_exec c where c.case_id=res.id and c.project_id=#{projectId} )</if>
-			<if test="(productId != null and productId !='') or (iterationId!=null and iterationId!='')">    and exists( select 1 from xm_menu m where m.menu_id =res.menu_id
-				<if test="productId != null and productId !=''" >and m.product_id=#{productId}  </if>
-				<if test="iterationId != null and iterationId !=''" >and m.iteration_id=#{iterationId}  </if>
-				)
-			</if>
-			<if test="key != null and key !='' ">   and res.case_name like #{key}    </if>
 		</where>
 	</select>
 	
@@ -58,7 +59,13 @@
 		where 
 			res.id = #{id}
 	</select>
-	
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmTestCase">
+        select * from xm_test_case res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
 		select * from xm_test_case res
@@ -67,17 +74,17 @@
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmTestCase" resultType="long">
-		select count(1) from xm_test_case res
+		select count(*) from xm_test_case res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmTestCase" useGeneratedKeys="false" keyProperty="id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmTestCase" useGeneratedKeys="false"   keyProperty="id">
 		insert into xm_test_case(
 			<include refid="columns"/>
 		) values (
-		#{id},#{caseName},#{caseRemark},#{testStep},#{expectResult},#{menuId},#{menuName},#{ctime},#{ltime},#{luserid},#{lusername},#{cbranchId},#{moduleId},#{moduleName},#{caseStatus}
+		#{id},#{caseName},#{caseRemark},#{testStep},#{expectResult},#{menuId},#{menuName},#{ctime},#{ltime},#{luserid},#{lusername},#{cbranchId},#{moduleId},#{moduleName},#{caseStatus},#{cuserid},#{cusername},#{productId},#{verNum},#{casedbId},#{casedbName}
 		)
 	</insert>
 	
@@ -91,13 +98,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmTestCase">
-		delete from xm_test_case
+		delete from xm_test_case 
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmTestCase">
-		update  xm_test_case
+		update  xm_test_case 
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -106,7 +113,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmTestCase">
-		update  xm_test_case
+		update  xm_test_case 
 		<set>
 			<include refid="set"/>
 		</set>
@@ -121,27 +128,40 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_test_case
+   		update  xm_test_case 
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
 		</foreach> 
 	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_test_case
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_test_case
-			where id in
-			    <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >  
-			        #{item.id }  
-			    </foreach>  
+		delete from xm_test_case 
+			where
+			(id) in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    (  #{item.id} )
+                </foreach>
 	</delete>
 	
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,case_name,case_remark,test_step,expect_result,menu_id,menu_name,ctime,ltime,luserid,lusername,cbranch_id,module_id,module_name,case_status
+		id,case_name,case_remark,test_step,expect_result,menu_id,menu_name,ctime,ltime,luserid,lusername,cbranch_id,module_id,module_name,case_status,cuserid,cusername,product_id,ver_num,casedb_id,casedb_name
 	</sql>
-	
+
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
 	<sql id="where">
 		<if test="id != null and id != ''">      and res.id = #{id}     </if>
@@ -151,14 +171,20 @@
 		<if test="expectResult != null and expectResult != ''">      and res.expect_result = #{expectResult}     </if>
 		<if test="menuId != null and menuId != ''">      and res.menu_id = #{menuId}     </if>
 		<if test="menuName != null and menuName != ''">      and res.menu_name = #{menuName}     </if>
-		<if test="ctime != null">      and TO_CHAR(res.ctime,'YYYY-MM-DD') = TO_CHAR(#{ctime},'YYYY-MM-DD')     </if>
-		<if test="ltime != null">      and TO_CHAR(res.ltime,'YYYY-MM-DD') = TO_CHAR(#{ltime},'YYYY-MM-DD')     </if>
+		<if test="ctime != null">      and date_format(res.ctime,'%Y-%m-%d') = date_format(#{ctime},'%Y-%m-%d')     </if>
+		<if test="ltime != null">      and date_format(res.ltime,'%Y-%m-%d') = date_format(#{ltime},'%Y-%m-%d')     </if>
 		<if test="luserid != null and luserid != ''">      and res.luserid = #{luserid}     </if>
 		<if test="lusername != null and lusername != ''">      and res.lusername = #{lusername}     </if>
 		<if test="cbranchId != null and cbranchId != ''">      and res.cbranch_id = #{cbranchId}     </if>
 		<if test="moduleId != null and moduleId != ''">      and res.module_id = #{moduleId}     </if>
 		<if test="moduleName != null and moduleName != ''">      and res.module_name = #{moduleName}     </if>
 		<if test="caseStatus != null and caseStatus != ''">      and res.case_status = #{caseStatus}     </if>
+		<if test="cuserid != null and cuserid != ''">      and res.cuserid = #{cuserid}     </if>
+		<if test="cusername != null and cusername != ''">      and res.cusername = #{cusername}     </if>
+		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
+		<if test="verNum != null and verNum != ''">      and res.ver_num = #{verNum}     </if>
+		<if test="casedbId != null and casedbId != ''">      and res.casedb_id = #{casedbId}     </if>
+		<if test="casedbName != null and casedbName != ''">      and res.casedb_name = #{casedbName}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -175,7 +201,13 @@
 		cbranch_id = #{cbranchId},
 		module_id = #{moduleId},
 		module_name = #{moduleName},
-		case_status = #{caseStatus}
+		case_status = #{caseStatus},
+		cuserid = #{cuserid},
+		cusername = #{cusername},
+		product_id = #{productId},
+		ver_num = #{verNum},
+		casedb_id = #{casedbId},
+		casedb_name = #{casedbName}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="caseName != null and caseName != ''"> case_name = #{caseName},     </if>
@@ -192,6 +224,12 @@
 		<if test="moduleId != null and moduleId != ''"> module_id = #{moduleId},     </if>
 		<if test="moduleName != null and moduleName != ''"> module_name = #{moduleName},     </if>
 		<if test="caseStatus != null and caseStatus != ''"> case_status = #{caseStatus},     </if>
+		<if test="cuserid != null and cuserid != ''"> cuserid = #{cuserid},     </if>
+		<if test="cusername != null and cusername != ''"> cusername = #{cusername},     </if>
+		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
+		<if test="verNum != null and verNum != ''"> ver_num = #{verNum},     </if>
+		<if test="casedbId != null and casedbId != ''"> casedb_id = #{casedbId},     </if>
+		<if test="casedbName != null and casedbName != ''"> casedb_name = #{casedbName},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -208,6 +246,12 @@
 			cbranch_id = #{item.cbranchId},
 			module_id = #{item.moduleId},
 			module_name = #{item.moduleName},
-			case_status = #{item.caseStatus}
+			case_status = #{item.caseStatus},
+			cuserid = #{item.cuserid},
+			cusername = #{item.cusername},
+			product_id = #{item.productId},
+			ver_num = #{item.verNum},
+			casedb_id = #{item.casedbId},
+			casedb_name = #{item.casedbName}
 	</sql>
 </mapper>

@@ -1,19 +1,18 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
+import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-
 import java.util.Date;
 
 /**
- * 组织 com.qqkj  顶级模块 xm 大模块 core  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTestCase所有属性名: <br>
- *	id,caseName,caseRemark,testStep,expectResult,menuId,menuName,ctime,ltime,luserid,lusername,cbranchId,moduleId,moduleName,caseStatus;<br>
- * 表 XM.xm_test_case 测试用例的所有字段名: <br>
- *	id,case_name,case_remark,test_step,expect_result,menu_id,menu_name,ctime,ltime,luserid,lusername,cbranch_id,module_id,module_name,case_status;<br>
+ *	"id","主键","caseName","标题","caseRemark","备注","testStep","测试步骤","expectResult","期望结果","menuId","关联的故事","menuName","关联故事名","ctime","创建时间","ltime","更新时间","luserid","更新人编号","lusername","更新人姓名","cbranchId","创建机构","moduleId","模块编号","moduleName","模块名称","caseStatus","用例状态1正常0废弃","cuserid","创建人编号","cusername","创建人姓名","productId","产品编号","verNum","版本号","casedbId","用例库编号","casedbName","用例库名称";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
+ @Data
 @ApiModel(description="测试用例")
 public class XmTestCase  implements java.io.Serializable {
 	
@@ -35,10 +34,10 @@ public class XmTestCase  implements java.io.Serializable {
 	@ApiModelProperty(notes="期望结果",allowEmptyValue=true,example="",allowableValues="")
 	String expectResult;
 	
-	@ApiModelProperty(notes="关联的需求",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="关联的故事",allowEmptyValue=true,example="",allowableValues="")
 	String menuId;
 	
-	@ApiModelProperty(notes="关联需求名",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="关联故事名",allowEmptyValue=true,example="",allowableValues="")
 	String menuName;
 	
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
@@ -64,196 +63,36 @@ public class XmTestCase  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="用例状态1正常0废弃",allowEmptyValue=true,example="",allowableValues="")
 	String caseStatus;
+	
+	@ApiModelProperty(notes="创建人编号",allowEmptyValue=true,example="",allowableValues="")
+	String cuserid;
+	
+	@ApiModelProperty(notes="创建人姓名",allowEmptyValue=true,example="",allowableValues="")
+	String cusername;
+	
+	@ApiModelProperty(notes="产品编号",allowEmptyValue=true,example="",allowableValues="")
+	String productId;
+	
+	@ApiModelProperty(notes="版本号",allowEmptyValue=true,example="",allowableValues="")
+	String verNum;
+	
+	@ApiModelProperty(notes="用例库编号",allowEmptyValue=true,example="",allowableValues="")
+	String casedbId;
+	
+	@ApiModelProperty(notes="用例库名称",allowEmptyValue=true,example="",allowableValues="")
+	String casedbName;
 
-	/**主键**/
+	/**
+	 *主键
+	 **/
 	public XmTestCase(String id) {
 		this.id = id;
 	}
     
-    /**测试用例**/
+    /**
+     * 测试用例
+     **/
 	public XmTestCase() {
-	}
-	
-	/**
-	 * 主键
-	 **/
-	public void setId(String id) {
-		this.id = id;
-	}
-	/**
-	 * 标题
-	 **/
-	public void setCaseName(String caseName) {
-		this.caseName = caseName;
-	}
-	/**
-	 * 备注
-	 **/
-	public void setCaseRemark(String caseRemark) {
-		this.caseRemark = caseRemark;
-	}
-	/**
-	 * 测试步骤
-	 **/
-	public void setTestStep(String testStep) {
-		this.testStep = testStep;
-	}
-	/**
-	 * 期望结果
-	 **/
-	public void setExpectResult(String expectResult) {
-		this.expectResult = expectResult;
-	}
-	/**
-	 * 关联的需求
-	 **/
-	public void setMenuId(String menuId) {
-		this.menuId = menuId;
-	}
-	/**
-	 * 关联需求名
-	 **/
-	public void setMenuName(String menuName) {
-		this.menuName = menuName;
-	}
-	/**
-	 * 创建时间
-	 **/
-	public void setCtime(Date ctime) {
-		this.ctime = ctime;
-	}
-	/**
-	 * 更新时间
-	 **/
-	public void setLtime(Date ltime) {
-		this.ltime = ltime;
-	}
-	/**
-	 * 更新人编号
-	 **/
-	public void setLuserid(String luserid) {
-		this.luserid = luserid;
-	}
-	/**
-	 * 更新人姓名
-	 **/
-	public void setLusername(String lusername) {
-		this.lusername = lusername;
-	}
-	/**
-	 * 创建机构
-	 **/
-	public void setCbranchId(String cbranchId) {
-		this.cbranchId = cbranchId;
-	}
-	/**
-	 * 模块编号
-	 **/
-	public void setModuleId(String moduleId) {
-		this.moduleId = moduleId;
-	}
-	/**
-	 * 模块名称
-	 **/
-	public void setModuleName(String moduleName) {
-		this.moduleName = moduleName;
-	}
-	/**
-	 * 用例状态1正常0废弃
-	 **/
-	public void setCaseStatus(String caseStatus) {
-		this.caseStatus = caseStatus;
-	}
-	
-	/**
-	 * 主键
-	 **/
-	public String getId() {
-		return this.id;
-	}
-	/**
-	 * 标题
-	 **/
-	public String getCaseName() {
-		return this.caseName;
-	}
-	/**
-	 * 备注
-	 **/
-	public String getCaseRemark() {
-		return this.caseRemark;
-	}
-	/**
-	 * 测试步骤
-	 **/
-	public String getTestStep() {
-		return this.testStep;
-	}
-	/**
-	 * 期望结果
-	 **/
-	public String getExpectResult() {
-		return this.expectResult;
-	}
-	/**
-	 * 关联的需求
-	 **/
-	public String getMenuId() {
-		return this.menuId;
-	}
-	/**
-	 * 关联需求名
-	 **/
-	public String getMenuName() {
-		return this.menuName;
-	}
-	/**
-	 * 创建时间
-	 **/
-	public Date getCtime() {
-		return this.ctime;
-	}
-	/**
-	 * 更新时间
-	 **/
-	public Date getLtime() {
-		return this.ltime;
-	}
-	/**
-	 * 更新人编号
-	 **/
-	public String getLuserid() {
-		return this.luserid;
-	}
-	/**
-	 * 更新人姓名
-	 **/
-	public String getLusername() {
-		return this.lusername;
-	}
-	/**
-	 * 创建机构
-	 **/
-	public String getCbranchId() {
-		return this.cbranchId;
-	}
-	/**
-	 * 模块编号
-	 **/
-	public String getModuleId() {
-		return this.moduleId;
-	}
-	/**
-	 * 模块名称
-	 **/
-	public String getModuleName() {
-		return this.moduleName;
-	}
-	/**
-	 * 用例状态1正常0废弃
-	 **/
-	public String getCaseStatus() {
-		return this.caseStatus;
 	}
 
 }
