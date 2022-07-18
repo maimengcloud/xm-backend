@@ -824,8 +824,8 @@ public class XmTaskController {
 				}
 				g.setCreateUserid(user.getUserid());
 				g.setCreateUsername(user.getUsername());
-				g.setExecutorUserid(user.getUserid());
-				g.setExecutorUsername(user.getUsername());
+				g.setExecutorUserid(null);
+				g.setExecutorUsername(null);
 				g.setCbranchId(user.getBranchId());
 				g.setExeUserids(null);
 				g.setExeUsernames(null);
