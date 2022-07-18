@@ -30,7 +30,9 @@
 		<if test=" createTimeStart !=null "> and res.create_time &gt; #{createTimeStart} </if>
 		<if test=" createTimeEnd !=null "> and res.create_time &lt; #{createTimeEnd} </if>
 		<if test="parent != null and parent != ''"> and (res.parent_taskid = '' or res.parent_taskid IS NULL)</if>
-
+		<if test="pidPathsLike">
+			and res.pid_paths like concat(#{pidPathsLike},'%')
+		</if>
 		<!-- 我参与的-->
 		<if test=" (myExecuserStatus != null and myExecuserStatus) != '' or ( isMy !=null and isMy !='' )">
 			and  exists ( select 1 from xm_task_execuser exe where exe.task_id=res.id and exe.userid=#{userid}

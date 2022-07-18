@@ -16,6 +16,9 @@
 				( #{item})
 			</foreach>
 		</if>
+		<if test="pidPathsLike">
+			and res.pid_paths like concat(#{pidPathsLike},'%')
+		</if>
 		<if test=" pidPathsList != null">  and
 			<foreach collection="pidPathsList" item="item" index="index" open="(" separator=" or " close=")" >
 				#{item} like concat(res.pid_paths,'%')
