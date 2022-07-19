@@ -20,8 +20,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.mdp.core.utils.BaseUtils.fromMap;
-import static com.mdp.core.utils.BaseUtils.toMap;
+import static com.mdp.core.utils.BaseUtils.*;
 import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
@@ -90,6 +89,7 @@ public class XmFuncController {
                     return failed("pk-exists","编号重复，请修改编号再提交");
                 }
             }
+			xmFuncService.parentIdPathsCalcBeforeSave(xmFunc);
 			xmFuncService.insert(xmFunc);
 			m.put("data",xmFunc);
 		}catch (BizException e) { 
@@ -119,6 +119,10 @@ public class XmFuncController {
             if( xmFuncDb == null ){
                 return failed("data-not-exists","数据不存在，无法删除");
             }
+            Long childcnt=xmFuncService.countByWhere(map("pid",xmFuncDb.getId()));
+            if(childcnt>0){
+				return failed("childcnt-not-0","至少还有"+childcnt+"个子节点,请先删除子节点，再删除父节点");
+			}
 			xmFuncService.deleteByPk(xmFunc);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -177,6 +181,7 @@ public class XmFuncController {
 
 			Set<String> fields=new HashSet<>();
             fields.add("id");
+			fields.add("pidPaths");
 			for (String fieldName : xmFuncMap.keySet()) {
 				if(fields.contains(fieldName)){
 					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
@@ -205,6 +210,13 @@ public class XmFuncController {
 				}
 			}
 			if(can.size()>0){
+				if(xmFuncMap.containsKey("pid")){
+					if(can.size()>1){
+						return failed("pid-1","修改上级归属只能一个个节点修改，不能批量修改");
+					}
+					xmFuncService.parentIdPathsCalcBeforeSave(can.get(0));
+					xmFuncMap.put("pidPaths",can.get(0).getPidPaths());
+				}
                 xmFuncMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
 			    xmFuncService.editSomeFields(xmFuncMap); 
 			}
