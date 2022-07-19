@@ -101,6 +101,14 @@ public class XmTestCaseController {
                     return failed("pk-exists","编号重复，请修改编号再提交");
                 }
             }
+			User user=LoginUtils.getCurrentUserInfo();
+			xmTestCase.setCuserid(user.getUserid());
+			xmTestCase.setLuserid(user.getUserid());
+			xmTestCase.setLusername(user.getUsername());
+			xmTestCase.setCusername(user.getUsername());
+			xmTestCase.setCtime(new Date());
+			xmTestCase.setLtime(new Date());
+			xmTestCase.setCbranchId(user.getBranchId());
 			xmTestCaseService.insert(xmTestCase);
 			m.put("data",xmTestCase);
 		}catch (BizException e) { 
@@ -158,6 +166,10 @@ public class XmTestCaseController {
             if( xmTestCaseDb == null ){
                 return failed("data-not-exists","数据不存在，无法修改");
             }
+			User user=LoginUtils.getCurrentUserInfo();
+			xmTestCase.setLuserid(user.getUserid());
+			xmTestCase.setLusername(user.getUsername());
+			xmTestCase.setLtime(new Date());
 			xmTestCaseService.updateSomeFieldByPk(xmTestCase);
 			m.put("data",xmTestCase);
 		}catch (BizException e) { 
