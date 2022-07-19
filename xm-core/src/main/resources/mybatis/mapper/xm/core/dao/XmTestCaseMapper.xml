@@ -30,6 +30,10 @@
 		</if>
 		<if test="key != null and key !='' ">   and res.case_name like #{key}    </if>
 		<if test="notJoinPlanId != null and notJoinPlanId !='' ">  and not exists(select 1 from xm_test_plan_case c where c.plan_id=#{notJoinPlanId} and c.case_id=res.id)     </if>
+
+		<if test="funcPidPathsLike!=null and funcPidPathsLike!=''">
+			and exists( select 1 from xm_func f where f.pid_paths like concat(#{funcPidPathsLike},'%') and res.func_id=f.id)
+		</if>
     </sql>
 
 
