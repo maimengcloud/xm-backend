@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTestCase所有属性名: <br>
- *	"id","主键","caseName","标题","caseRemark","备注","testStep","测试步骤","expectResult","期望结果","menuId","关联的故事","menuName","关联故事名","ctime","创建时间","ltime","更新时间","luserid","更新人编号","lusername","更新人姓名","cbranchId","创建机构","moduleId","模块编号","moduleName","模块名称","caseStatus","用例状态1正常0废弃","cuserid","创建人编号","cusername","创建人姓名","productId","产品编号","verNum","版本号","casedbId","用例库编号","casedbName","用例库名称";<br>
+ *	"id","主键","caseName","标题","caseRemark","备注","testStep","测试步骤","expectResult","期望结果","menuId","关联的故事","menuName","关联故事名","ctime","创建时间","ltime","更新时间","luserid","更新人编号","lusername","更新人姓名","cbranchId","创建机构","moduleId","模块编号","moduleName","模块名称","caseStatus","用例状态1正常0废弃","cuserid","创建人编号","cusername","创建人姓名","productId","产品编号","verNum","版本号","casedbId","用例库编号","casedbName","用例库名称","funcId","功能菜单编号","funcName","功能菜单名称","funcPnames","上级菜单名称列表逗号分割";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -81,6 +81,15 @@ public class XmTestCase  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="用例库名称",allowEmptyValue=true,example="",allowableValues="")
 	String casedbName;
+	
+	@ApiModelProperty(notes="功能菜单编号",allowEmptyValue=true,example="",allowableValues="")
+	String funcId;
+	
+	@ApiModelProperty(notes="功能菜单名称",allowEmptyValue=true,example="",allowableValues="")
+	String funcName;
+	
+	@ApiModelProperty(notes="上级菜单名称列表逗号分割",allowEmptyValue=true,example="",allowableValues="")
+	String funcPnames;
 
 	/**
 	 *主键
