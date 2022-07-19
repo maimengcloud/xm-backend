@@ -14,7 +14,7 @@
         <if test="key != null and key !='' ">       </if>
     </sql>
 
-	<select id="selectListByCaseIdsAndPlanId" parameterType="HashMap">
+	<select id="selectListByCaseIdsAndPlanId" parameterType="HashMap"  resultType="com.xm.core.entity.XmTestPlanCase">
 		select * from xm_test_plan_case res where  res.plan_id=#{planId} and res.case_id in
 		<foreach collection="caseIds" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
