@@ -3,15 +3,22 @@ package com.xm.core.ctrl;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.ImportFromTestCaseVo;
+import com.xm.core.entity.XmTestCase;
+import com.xm.core.entity.XmTestPlan;
 import com.xm.core.entity.XmTestPlanCase;
+import com.xm.core.service.XmTestCaseService;
 import com.xm.core.service.XmTestPlanCaseService;
+import com.xm.core.service.XmTestPlanService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -37,6 +44,13 @@ public class XmTestPlanCaseController {
 	
 	@Autowired
 	private XmTestPlanCaseService xmTestPlanCaseService;
+
+
+	@Autowired
+	private XmTestPlanService xmTestPlanService;
+
+	@Autowired
+	XmTestCaseService xmTestCaseService;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTestPlanCase());
@@ -107,6 +121,70 @@ public class XmTestPlanCaseController {
 		return m;
 	}
 
+	@ApiOperation( value = "从用例库导入用例列表到测试计划中",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTestPlanCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@RequestMapping(value="/importFromTestCase",method=RequestMethod.POST)
+	public Map<String,Object> importFromTestCase(@RequestBody ImportFromTestCaseVo importFromTestCaseVo) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功新增一条数据");
+		try{
+			if(importFromTestCaseVo.getCaseIds()==null || importFromTestCaseVo.getCaseIds().size()==0){
+				return ResponseHelper.failed("caseIds-0","测试用例编号不能为空");
+			}
+			if(!StringUtils.hasText(importFromTestCaseVo.getPlanId())){
+				return ResponseHelper.failed("planId-0","测试计划编号不能为空");
+			}
+			List<XmTestCase> casesDb=xmTestCaseService.selectListByIds(importFromTestCaseVo.getCaseIds());
+			if(casesDb==null || casesDb.size()<=0){
+				return ResponseHelper.failed("cases-0","测试用例不存在");
+			}
+
+			XmTestPlan xmTestPlanDb=this.xmTestPlanService.selectOneById(importFromTestCaseVo.getPlanId());
+			if(xmTestPlanDb==null){
+				return ResponseHelper.failed("testPlan-0","测试计划不存在");
+			}
+			if("2".equals(xmTestPlanDb.getStatus())){
+				return ResponseHelper.failed("status-2","测试计划已结束");
+			}
+
+			//过滤掉已存在的测试用例 同一个用例不能重复添加到同一个计划中
+			List<XmTestPlanCase> planCasesDb=this.xmTestPlanCaseService.selectListByCaseIdsAndPlanId(importFromTestCaseVo.getPlanId(),importFromTestCaseVo.getCaseIds()	);
+			if(planCasesDb!=null && planCasesDb.size()>0){
+				casesDb=casesDb.stream().filter(k->!planCasesDb.stream().filter(i->i.getCaseId().equals(k.getId())).findAny().isPresent()).collect(Collectors.toList());
+			}
+			if(casesDb.size()>0){
+				User user=LoginUtils.getCurrentUserInfo();
+				List<XmTestPlanCase> planCases=new ArrayList<>();
+				for (XmTestCase xmTestCase : casesDb) {
+					XmTestPlanCase xmTestPlanCase=new XmTestPlanCase();
+					BeanUtils.copyProperties(xmTestCase,xmTestPlanCase);
+					xmTestPlanCase.setPlanId(xmTestPlanDb.getId());
+					xmTestPlanCase.setBugs(0);
+					xmTestPlanCase.setExecStatus("0");
+					xmTestPlanCase.setCaseId(xmTestCase.getId());
+					xmTestPlanCase.setCaseName(xmTestCase.getCaseName());
+					xmTestPlanCase.setCtime(new Date());
+					xmTestPlanCase.setLtime(new Date());
+					xmTestPlanCase.setExecUserid(user.getUserid());
+					xmTestPlanCase.setExecUsername(user.getUsername());
+					xmTestPlanCase.setPriority("0");
+					planCases.add(xmTestPlanCase);
+				}
+				this.xmTestPlanCaseService.batchInsert(planCases);
+			}
+
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 	@ApiOperation( value = "删除一条测试计划与用例关系表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
