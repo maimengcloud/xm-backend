@@ -164,7 +164,6 @@ public class XmTestPlanCaseController {
 					xmTestPlanCase.setBugs(0);
 					xmTestPlanCase.setExecStatus("0");
 					xmTestPlanCase.setCaseId(xmTestCase.getId());
-					xmTestPlanCase.setCaseName(xmTestCase.getCaseName());
 					xmTestPlanCase.setCtime(new Date());
 					xmTestPlanCase.setLtime(new Date());
 					xmTestPlanCase.setExecUserid(user.getUserid());
