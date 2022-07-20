@@ -76,7 +76,7 @@
 		insert into xm_test_plan_case(
 			<include refid="columns"/>
 		) values (
-		#{bugs},#{execUserid},#{caseId},#{ltime},#{ctime},#{execStatus},#{execUsername},#{planId},#{caseName},#{priority},#{remark},#{testStep}
+		#{bugs},#{execUserid},#{caseId},#{ltime},#{ctime},#{execStatus},#{execUsername},#{priority},#{remark},#{testStep},#{planId}
 		)
 	</insert>
 	
@@ -151,7 +151,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		bugs,exec_userid,case_id,ltime,ctime,exec_status,exec_username,plan_id,case_name,priority,remark,test_step
+		bugs,exec_userid,case_id,ltime,ctime,exec_status,exec_username,priority,remark,test_step,plan_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -163,11 +163,10 @@
 		<if test="ctime != null">      and date_format(res.ctime,'%Y-%m-%d') = date_format(#{ctime},'%Y-%m-%d')     </if>
 		<if test="execStatus != null and execStatus != ''">      and res.exec_status = #{execStatus}     </if>
 		<if test="execUsername != null and execUsername != ''">      and res.exec_username = #{execUsername}     </if>
-		<if test="planId != null and planId != ''">      and res.plan_id = #{planId}     </if>
-		<if test="caseName != null and caseName != ''">      and res.case_name = #{caseName}     </if>
 		<if test="priority != null and priority != ''">      and res.priority = #{priority}     </if>
 		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
 		<if test="testStep != null and testStep != ''">      and res.test_step = #{testStep}     </if>
+		<if test="planId != null and planId != ''">      and res.plan_id = #{planId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -177,7 +176,6 @@
 		ctime = #{ctime},
 		exec_status = #{execStatus},
 		exec_username = #{execUsername},
-		case_name = #{caseName},
 		priority = #{priority},
 		remark = #{remark},
 		test_step = #{testStep}
@@ -189,7 +187,6 @@
 		<if test="ctime != null"> ctime = #{ctime},     </if>
 		<if test="execStatus != null and execStatus != ''"> exec_status = #{execStatus},     </if>
 		<if test="execUsername != null and execUsername != ''"> exec_username = #{execUsername},     </if>
-		<if test="caseName != null and caseName != ''"> case_name = #{caseName},     </if>
 		<if test="priority != null and priority != ''"> priority = #{priority},     </if>
 		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
 		<if test="testStep != null and testStep != ''"> test_step = #{testStep},     </if>
@@ -202,7 +199,6 @@
 			ctime = #{item.ctime},
 			exec_status = #{item.execStatus},
 			exec_username = #{item.execUsername},
-			case_name = #{item.caseName},
 			priority = #{item.priority},
 			remark = #{item.remark},
 			test_step = #{item.testStep}

@@ -89,7 +89,7 @@
 		insert into xm_test_case(
 			<include refid="columns"/>
 		) values (
-		#{id},#{caseName},#{caseRemark},#{testStep},#{expectResult},#{menuId},#{menuName},#{ctime},#{ltime},#{luserid},#{lusername},#{cbranchId},#{moduleId},#{moduleName},#{caseStatus},#{cuserid},#{cusername},#{productId},#{verNum},#{casedbId},#{casedbName},#{funcId},#{funcName},#{funcPnames}
+		#{id},#{caseName},#{caseRemark},#{testStep},#{expectResult},#{menuId},#{menuName},#{ctime},#{ltime},#{luserid},#{lusername},#{cbranchId},#{moduleId},#{moduleName},#{caseStatus},#{cuserid},#{cusername},#{productId},#{verNum},#{casedbId},#{casedbName},#{funcId},#{funcName},#{funcPnames},#{preRemark}
 		)
 	</insert>
 	
@@ -164,7 +164,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,case_name,case_remark,test_step,expect_result,menu_id,menu_name,ctime,ltime,luserid,lusername,cbranch_id,module_id,module_name,case_status,cuserid,cusername,product_id,ver_num,casedb_id,casedb_name,func_id,func_name,func_pnames
+		id,case_name,case_remark,test_step,expect_result,menu_id,menu_name,ctime,ltime,luserid,lusername,cbranch_id,module_id,module_name,case_status,cuserid,cusername,product_id,ver_num,casedb_id,casedb_name,func_id,func_name,func_pnames,pre_remark
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -193,6 +193,7 @@
 		<if test="funcId != null and funcId != ''">      and res.func_id = #{funcId}     </if>
 		<if test="funcName != null and funcName != ''">      and res.func_name = #{funcName}     </if>
 		<if test="funcPnames != null and funcPnames != ''">      and res.func_pnames = #{funcPnames}     </if>
+		<if test="preRemark != null and preRemark != ''">      and res.pre_remark = #{preRemark}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -218,7 +219,8 @@
 		casedb_name = #{casedbName},
 		func_id = #{funcId},
 		func_name = #{funcName},
-		func_pnames = #{funcPnames}
+		func_pnames = #{funcPnames},
+		pre_remark = #{preRemark}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="caseName != null and caseName != ''"> case_name = #{caseName},     </if>
@@ -244,6 +246,7 @@
 		<if test="funcId != null and funcId != ''"> func_id = #{funcId},     </if>
 		<if test="funcName != null and funcName != ''"> func_name = #{funcName},     </if>
 		<if test="funcPnames != null and funcPnames != ''"> func_pnames = #{funcPnames},     </if>
+		<if test="preRemark != null and preRemark != ''"> pre_remark = #{preRemark},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -269,6 +272,7 @@
 			casedb_name = #{item.casedbName},
 			func_id = #{item.funcId},
 			func_name = #{item.funcName},
-			func_pnames = #{item.funcPnames}
+			func_pnames = #{item.funcPnames},
+			pre_remark = #{item.preRemark}
 	</sql>
 </mapper>
