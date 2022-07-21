@@ -67,7 +67,7 @@
 		insert into xm_test_plan(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{productId},#{productName},#{flowState}
+		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{productId},#{productName},#{flowState},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{menus},#{funcs}
 		)
 	</insert>
 	
@@ -142,7 +142,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,product_id,product_name,flow_state
+		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,product_id,product_name,flow_state,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,menus,funcs
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -168,6 +168,13 @@
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
 		<if test="productName != null and productName != ''">      and res.product_name = #{productName}     </if>
 		<if test="flowState != null and flowState != ''">      and res.flow_state = #{flowState}     </if>
+		<if test="bugCnt != null and bugCnt != ''">      and res.bug_cnt = #{bugCnt}     </if>
+		<if test="closedBugs != null and closedBugs != ''">      and res.closed_bugs = #{closedBugs}     </if>
+		<if test="resolvedBugs != null and resolvedBugs != ''">      and res.resolved_bugs = #{resolvedBugs}     </if>
+		<if test="activeBugs != null and activeBugs != ''">      and res.active_bugs = #{activeBugs}     </if>
+		<if test="confirmedBugs != null and confirmedBugs != ''">      and res.confirmed_bugs = #{confirmedBugs}     </if>
+		<if test="menus != null and menus != ''">      and res.menus = #{menus}     </if>
+		<if test="funcs != null and funcs != ''">      and res.funcs = #{funcs}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -190,7 +197,14 @@
 		bl_cases = #{blCases},
 		product_id = #{productId},
 		product_name = #{productName},
-		flow_state = #{flowState}
+		flow_state = #{flowState},
+		bug_cnt = #{bugCnt},
+		closed_bugs = #{closedBugs},
+		resolved_bugs = #{resolvedBugs},
+		active_bugs = #{activeBugs},
+		confirmed_bugs = #{confirmedBugs},
+		menus = #{menus},
+		funcs = #{funcs}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -213,6 +227,13 @@
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
 		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
 		<if test="flowState != null and flowState != ''"> flow_state = #{flowState},     </if>
+		<if test="bugCnt != null and bugCnt != ''"> bug_cnt = #{bugCnt},     </if>
+		<if test="closedBugs != null and closedBugs != ''"> closed_bugs = #{closedBugs},     </if>
+		<if test="resolvedBugs != null and resolvedBugs != ''"> resolved_bugs = #{resolvedBugs},     </if>
+		<if test="activeBugs != null and activeBugs != ''"> active_bugs = #{activeBugs},     </if>
+		<if test="confirmedBugs != null and confirmedBugs != ''"> confirmed_bugs = #{confirmedBugs},     </if>
+		<if test="menus != null and menus != ''"> menus = #{menus},     </if>
+		<if test="funcs != null and funcs != ''"> funcs = #{funcs},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -235,6 +256,13 @@
 			bl_cases = #{item.blCases},
 			product_id = #{item.productId},
 			product_name = #{item.productName},
-			flow_state = #{item.flowState}
+			flow_state = #{item.flowState},
+			bug_cnt = #{item.bugCnt},
+			closed_bugs = #{item.closedBugs},
+			resolved_bugs = #{item.resolvedBugs},
+			active_bugs = #{item.activeBugs},
+			confirmed_bugs = #{item.confirmedBugs},
+			menus = #{item.menus},
+			funcs = #{item.funcs}
 	</sql>
 </mapper>

@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTestPlan所有属性名: <br>
- *	"id","测试计划编号","name","计划名称","casedbId","用例库编号","casedbName","用例库名称","projectId","项目编号","projectName","项目名称","cuserid","创建人编号","cusername","创建人名称","ctime","创建时间","stime","开始时间","etime","结束时间","status","状态0-未开始，1-进行中，2已结束","tcode","测试结果0未通过，1已通过","totalCases","总用例数","okCases","通过用例数","errCases","失败用例数","igCases","忽略用例数","blCases","阻塞用例数","productId","产品编号","productName","产品名称","flowState","评审结果0-待评审，1-已评审通过，2-已拒绝";<br>
+ *	"id","测试计划编号","name","计划名称","casedbId","用例库编号","casedbName","用例库名称","projectId","项目编号","projectName","项目名称","cuserid","创建人编号","cusername","创建人名称","ctime","创建时间","stime","开始时间","etime","结束时间","status","状态0-未开始，1-进行中，2已结束","tcode","测试结果0未通过，1已通过","totalCases","总用例数","okCases","通过用例数","errCases","失败用例数","igCases","忽略用例数","blCases","阻塞用例数","productId","产品编号","productName","产品名称","flowState","评审结果0-待评审，1-已评审通过，2-已拒绝","bugCnt","bug数目","closedBugs","已关闭bug总数","resolvedBugs","已解决bug总数","activeBugs","激活的bug总数","confirmedBugs","已解决bug总数","menus","需求数目","funcs","功能模块数";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -81,6 +81,27 @@ public class XmTestPlan  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="评审结果0-待评审，1-已评审通过，2-已拒绝",allowEmptyValue=true,example="",allowableValues="")
 	String flowState;
+	
+	@ApiModelProperty(notes="bug数目",allowEmptyValue=true,example="",allowableValues="")
+	Integer bugCnt;
+	
+	@ApiModelProperty(notes="已关闭bug总数",allowEmptyValue=true,example="",allowableValues="")
+	Integer closedBugs;
+	
+	@ApiModelProperty(notes="已解决bug总数",allowEmptyValue=true,example="",allowableValues="")
+	Integer resolvedBugs;
+	
+	@ApiModelProperty(notes="激活的bug总数",allowEmptyValue=true,example="",allowableValues="")
+	Integer activeBugs;
+	
+	@ApiModelProperty(notes="已解决bug总数",allowEmptyValue=true,example="",allowableValues="")
+	Integer confirmedBugs;
+	
+	@ApiModelProperty(notes="需求数目",allowEmptyValue=true,example="",allowableValues="")
+	Integer menus;
+	
+	@ApiModelProperty(notes="功能模块数",allowEmptyValue=true,example="",allowableValues="")
+	Integer funcs;
 
 	/**
 	 *测试计划编号

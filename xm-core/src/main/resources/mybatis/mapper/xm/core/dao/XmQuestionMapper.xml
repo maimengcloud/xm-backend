@@ -121,7 +121,7 @@
 		insert into xm_question(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{projectId},#{projectName},#{caseId},#{caseName},#{endTime},#{askUserid},#{askUsername},#{handlerUserid},#{handlerUsername},#{priority},#{solution},#{description},#{createUserid},#{createUsername},#{createTime},#{bugStatus},#{bizProcInstId},#{bizFlowState},#{menuId},#{menuName},#{budgetWorkload},#{budgetAt},#{actWorkload},#{actAt},#{expectResult},#{opStep},#{currResult},#{refRequire},#{bugSeverity},#{bugType},#{tagIds},#{tagNames},#{urls},#{ltime},#{qtype},#{caseExecId},#{remarks},#{productId},#{repRate},#{verNum},#{vpath},#{pverNum},#{bugReason},#{rate},#{initWorkload},#{taskOut},#{taskId}
+		#{id},#{name},#{projectId},#{projectName},#{caseId},#{caseName},#{endTime},#{askUserid},#{askUsername},#{handlerUserid},#{handlerUsername},#{priority},#{solution},#{description},#{createUserid},#{createUsername},#{createTime},#{bugStatus},#{bizProcInstId},#{bizFlowState},#{menuId},#{menuName},#{budgetWorkload},#{budgetAt},#{actWorkload},#{actAt},#{expectResult},#{opStep},#{currResult},#{refRequire},#{bugSeverity},#{bugType},#{tagIds},#{tagNames},#{urls},#{ltime},#{qtype},#{caseExecId},#{remarks},#{productId},#{repRate},#{verNum},#{vpath},#{pverNum},#{bugReason},#{rate},#{initWorkload},#{taskOut},#{taskId},#{funcId},#{funcName},#{funcPnames},#{planId},#{casedbId}
 		)
 	</insert>
 	
@@ -196,7 +196,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,budget_workload,budget_at,act_workload,act_at,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,case_exec_id,remarks,product_id,rep_rate,ver_num,vpath,pver_num,bug_reason,rate,init_workload,task_out,task_id
+		id,name,project_id,project_name,case_id,case_name,end_time,ask_userid,ask_username,handler_userid,handler_username,priority,solution,description,create_userid,create_username,create_time,bug_status,biz_proc_inst_id,biz_flow_state,menu_id,menu_name,budget_workload,budget_at,act_workload,act_at,expect_result,op_step,curr_result,ref_require,bug_severity,bug_type,tag_ids,tag_names,urls,ltime,qtype,case_exec_id,remarks,product_id,rep_rate,ver_num,vpath,pver_num,bug_reason,rate,init_workload,task_out,task_id,func_id,func_name,func_pnames,plan_id,casedb_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -250,6 +250,11 @@
 		<if test="initWorkload != null and initWorkload != ''">      and res.init_workload = #{initWorkload}     </if>
 		<if test="taskOut != null and taskOut != ''">      and res.task_out = #{taskOut}     </if>
 		<if test="taskId != null and taskId != ''">      and res.task_id = #{taskId}     </if>
+		<if test="funcId != null and funcId != ''">      and res.func_id = #{funcId}     </if>
+		<if test="funcName != null and funcName != ''">      and res.func_name = #{funcName}     </if>
+		<if test="funcPnames != null and funcPnames != ''">      and res.func_pnames = #{funcPnames}     </if>
+		<if test="planId != null and planId != ''">      and res.plan_id = #{planId}     </if>
+		<if test="casedbId != null and casedbId != ''">      and res.casedb_id = #{casedbId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -300,7 +305,12 @@
 		rate = #{rate},
 		init_workload = #{initWorkload},
 		task_out = #{taskOut},
-		task_id = #{taskId}
+		task_id = #{taskId},
+		func_id = #{funcId},
+		func_name = #{funcName},
+		func_pnames = #{funcPnames},
+		plan_id = #{planId},
+		casedb_id = #{casedbId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -351,6 +361,11 @@
 		<if test="initWorkload != null and initWorkload != ''"> init_workload = #{initWorkload},     </if>
 		<if test="taskOut != null and taskOut != ''"> task_out = #{taskOut},     </if>
 		<if test="taskId != null and taskId != ''"> task_id = #{taskId},     </if>
+		<if test="funcId != null and funcId != ''"> func_id = #{funcId},     </if>
+		<if test="funcName != null and funcName != ''"> func_name = #{funcName},     </if>
+		<if test="funcPnames != null and funcPnames != ''"> func_pnames = #{funcPnames},     </if>
+		<if test="planId != null and planId != ''"> plan_id = #{planId},     </if>
+		<if test="casedbId != null and casedbId != ''"> casedb_id = #{casedbId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -401,6 +416,11 @@
 			rate = #{item.rate},
 			init_workload = #{item.initWorkload},
 			task_out = #{item.taskOut},
-			task_id = #{item.taskId}
+			task_id = #{item.taskId},
+			func_id = #{item.funcId},
+			func_name = #{item.funcName},
+			func_pnames = #{item.funcPnames},
+			plan_id = #{item.planId},
+			casedb_id = #{item.casedbId}
 	</sql>
 </mapper>
