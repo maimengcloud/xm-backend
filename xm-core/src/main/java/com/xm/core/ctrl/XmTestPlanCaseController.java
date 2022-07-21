@@ -168,7 +168,7 @@ public class XmTestPlanCaseController {
 					xmTestPlanCase.setLtime(new Date());
 					xmTestPlanCase.setExecUserid(user.getUserid());
 					xmTestPlanCase.setExecUsername(user.getUsername());
-					xmTestPlanCase.setPriority("0");
+					xmTestPlanCase.setPriority(xmTestCase.getCpriority());
 					planCases.add(xmTestPlanCase);
 				}
 				this.xmTestPlanCaseService.batchInsert(planCases);
