@@ -28,7 +28,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.*,c.case_name,c.ver_num,c.case_remark,c.func_id,c.func_name,c.menu_id,c.menu_name,c.product_id,c.case_type,c.case_status from xm_test_plan_case res left join xm_test_case c on res.case_id=c.id
+		select res.*,c.case_name,c.ver_num,c.case_remark,c.func_id,c.func_name,c.menu_id,c.menu_name,c.product_id,c.case_type,c.case_status,c.casedb_id,c.casedb_name,c.pre_remark,cpriority from xm_test_plan_case res left join xm_test_case c on res.case_id=c.id
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
