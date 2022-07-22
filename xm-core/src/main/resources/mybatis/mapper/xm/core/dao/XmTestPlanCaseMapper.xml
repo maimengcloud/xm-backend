@@ -76,7 +76,7 @@
 		insert into xm_test_plan_case(
 			<include refid="columns"/>
 		) values (
-		#{bugs},#{execUserid},#{caseId},#{ltime},#{ctime},#{execStatus},#{execUsername},#{priority},#{remark},#{testStep},#{planId}
+		#{bugs},#{execUserid},#{caseId},#{ltime},#{ctime},#{execStatus},#{execUsername},#{priority},#{remark},#{testStep},#{planId},#{projectId}
 		)
 	</insert>
 	
@@ -151,7 +151,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		bugs,exec_userid,case_id,ltime,ctime,exec_status,exec_username,priority,remark,test_step,plan_id
+		bugs,exec_userid,case_id,ltime,ctime,exec_status,exec_username,priority,remark,test_step,plan_id,project_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -167,6 +167,7 @@
 		<if test="remark != null and remark != ''">      and res.remark = #{remark}     </if>
 		<if test="testStep != null and testStep != ''">      and res.test_step = #{testStep}     </if>
 		<if test="planId != null and planId != ''">      and res.plan_id = #{planId}     </if>
+		<if test="projectId != null and projectId != ''">      and res.project_id = #{projectId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -178,7 +179,8 @@
 		exec_username = #{execUsername},
 		priority = #{priority},
 		remark = #{remark},
-		test_step = #{testStep}
+		test_step = #{testStep},
+		project_id = #{projectId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="bugs != null and bugs != ''"> bugs = #{bugs},     </if>
@@ -190,6 +192,7 @@
 		<if test="priority != null and priority != ''"> priority = #{priority},     </if>
 		<if test="remark != null and remark != ''"> remark = #{remark},     </if>
 		<if test="testStep != null and testStep != ''"> test_step = #{testStep},     </if>
+		<if test="projectId != null and projectId != ''"> project_id = #{projectId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -201,6 +204,7 @@
 			exec_username = #{item.execUsername},
 			priority = #{item.priority},
 			remark = #{item.remark},
-			test_step = #{item.testStep}
+			test_step = #{item.testStep},
+			project_id = #{item.projectId}
 	</sql>
 </mapper>
