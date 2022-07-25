@@ -833,6 +833,25 @@ public class XmTaskController {
 				g.setPtype(batchImportVo.getPtype());
 				g.setProjectId(projectId);
 				g.setProductId(productId);
+
+
+				g.setCrmSup("0");
+				g.setBidStep("0");
+				g.setTaskOut("0");
+				g.setCrowd("0");
+				g.setEtoPlatTime(null);
+				g.setEtoDevTime(null);
+				g.setEbackTime(null);
+				g.setHotEtime(null);
+				g.setHotStime(null);
+				g.setBrowseTimes(null);
+				g.setActStartTime(null);
+				g.setActEndTime(null);
+				g.setOshare("0");
+				g.setQuoteFinalAt(BigDecimal.ZERO);
+				g.setTopEtime(null);
+				g.setTopStime(null);
+
 				if(g.getBudgetAt()==null)g.setBudgetAt(BigDecimal.ZERO);
 			}
 			xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
