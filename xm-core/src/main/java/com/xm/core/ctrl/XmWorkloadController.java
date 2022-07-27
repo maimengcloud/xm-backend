@@ -34,21 +34,21 @@ import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_workload 工时登记表的操作有增删改查,对应的url分别为:<br>
- *  新增: core/xmTaskWorkload/add <br>
- *  查询: core/xmTaskWorkload/list<br>
- *  模糊查询: core/xmTaskWorkload/listKey<br>
- *  修改: core/xmTaskWorkload/edit <br>
- *  删除: core/xmTaskWorkload/del<br>
- *  批量删除: core/xmTaskWorkload/batchDel<br>
+ *  新增: core/xmWorkload/add <br>
+ *  查询: core/xmWorkload/list<br>
+ *  模糊查询: core/xmWorkload/listKey<br>
+ *  修改: core/xmWorkload/edit <br>
+ *  删除: core/xmWorkload/del<br>
+ *  批量删除: core/xmWorkload/batchDel<br>
  * 组织 com  顶级模块 xm 大模块 core 小模块 <br>
- * 实体 XmTaskWorkload 表 xm_workload 当前主键(包括多主键): id; 
+ * 实体 XmWorkload 表 xm_workload 当前主键(包括多主键): id; 
  ***/
-@RestController("xm.core.xmTaskWorkloadController")
-@RequestMapping(value="/**/core/xmTaskWorkload")
+@RestController("xm.core.xmWorkloadController")
+@RequestMapping(value="/**/core/xmWorkload")
 @Api(tags={"工时登记表操作接口"})
-public class XmTaskWorkloadController {
+public class XmWorkloadController {
 	
-	static Logger logger =LoggerFactory.getLogger(XmTaskWorkloadController.class);
+	static Logger logger =LoggerFactory.getLogger(XmWorkloadController.class);
 	
 	@Autowired
 	private XmWorkloadService xmWorkloadService;
@@ -75,22 +75,22 @@ public class XmTaskWorkloadController {
 		@ApiResponse(code = 200,response= XmWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTaskWorkload( @ApiIgnore @RequestParam Map<String,Object> xmTaskWorkload){
+	public Map<String,Object> listXmWorkload( @ApiIgnore @RequestParam Map<String,Object> xmWorkload){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmTaskWorkload, "ids");
-		RequestUtils.transformArray( xmTaskWorkload, "wstatuses");
-		RequestUtils.transformArray( xmTaskWorkload, "sstatuses");
-		PageUtils.startPage(xmTaskWorkload);
-		String taskId= (String) xmTaskWorkload.get("taskId");
-		String sbillId= (String) xmTaskWorkload.get("sbillId");
-		String projectId= (String) xmTaskWorkload.get("projectId");
-		String userid= (String) xmTaskWorkload.get("userid");
+		RequestUtils.transformArray(xmWorkload, "ids");
+		RequestUtils.transformArray( xmWorkload, "wstatuses");
+		RequestUtils.transformArray( xmWorkload, "sstatuses");
+		PageUtils.startPage(xmWorkload);
+		String taskId= (String) xmWorkload.get("taskId");
+		String sbillId= (String) xmWorkload.get("sbillId");
+		String projectId= (String) xmWorkload.get("projectId");
+		String userid= (String) xmWorkload.get("userid");
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskWorkload.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	xmTaskWorkloadList = xmWorkloadService.selectListMapByWhere(xmTaskWorkload);	//列出XmTaskWorkload列表
-		PageUtils.responePage(m, xmTaskWorkloadList);
-		m.put("data",xmTaskWorkloadList);
+		xmWorkload.put("linkBranchId",user.getBranchId());
+		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.selectListMapByWhere(xmWorkload);	//列出XmWorkload列表
+		PageUtils.responePage(m, xmWorkloadList);
+		m.put("data",xmWorkloadList);
 
 		m.put("tips", tips);
 		return m;
@@ -100,15 +100,15 @@ public class XmTaskWorkloadController {
 			@ApiResponse(code = 200,response= XmWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listProjectWorkloadSetDay",method=RequestMethod.GET)
-	public Map<String,Object> listProjectWorkloadSetDay( @ApiIgnore @RequestParam Map<String,Object> xmTaskWorkload){
+	public Map<String,Object> listProjectWorkloadSetDay( @ApiIgnore @RequestParam Map<String,Object> xmWorkload){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
-		PageUtils.startPage(xmTaskWorkload);
+		PageUtils.startPage(xmWorkload);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskWorkload.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	xmTaskWorkloadList = xmWorkloadService.listProjectWorkloadSetDay(xmTaskWorkload);	//列出XmTaskWorkload列表
-		PageUtils.responePage(m, xmTaskWorkloadList);
-		m.put("data",xmTaskWorkloadList);
+		xmWorkload.put("linkBranchId",user.getBranchId());
+		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.listProjectWorkloadSetDay(xmWorkload);	//列出XmWorkload列表
+		PageUtils.responePage(m, xmWorkloadList);
+		m.put("data",xmWorkloadList);
 
 		m.put("tips", tips);
 		return m;
@@ -120,15 +120,15 @@ public class XmTaskWorkloadController {
 			@ApiResponse(code = 200,response= XmWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listProjectWorkloadSetMonth",method=RequestMethod.GET)
-	public Map<String,Object> listProjectWorkloadSetMonth( @ApiIgnore @RequestParam Map<String,Object> xmTaskWorkload){
+	public Map<String,Object> listProjectWorkloadSetMonth( @ApiIgnore @RequestParam Map<String,Object> xmWorkload){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
-		PageUtils.startPage(xmTaskWorkload);
+		PageUtils.startPage(xmWorkload);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskWorkload.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	xmTaskWorkloadList = xmWorkloadService.listProjectWorkloadSetMonth(xmTaskWorkload);	//列出XmTaskWorkload列表
-		PageUtils.responePage(m, xmTaskWorkloadList);
-		m.put("data",xmTaskWorkloadList);
+		xmWorkload.put("linkBranchId",user.getBranchId());
+		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.listProjectWorkloadSetMonth(xmWorkload);	//列出XmWorkload列表
+		PageUtils.responePage(m, xmWorkloadList);
+		m.put("data",xmWorkloadList);
 
 		m.put("tips", tips);
 		return m;
@@ -140,22 +140,22 @@ public class XmTaskWorkloadController {
 			@ApiResponse(code = 200,response= XmWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/ListGroupByTaskIdAndUserid",method=RequestMethod.GET)
-	public Map<String,Object> ListGroupByTaskIdAndUserid( @ApiIgnore @RequestParam Map<String,Object> xmTaskWorkload){
+	public Map<String,Object> ListGroupByTaskIdAndUserid( @ApiIgnore @RequestParam Map<String,Object> xmWorkload){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmTaskWorkload, "ids");
-		RequestUtils.transformArray( xmTaskWorkload, "wstatuses");
-		RequestUtils.transformArray( xmTaskWorkload, "sstatuses");
-		PageUtils.startPage(xmTaskWorkload);
+		RequestUtils.transformArray(xmWorkload, "ids");
+		RequestUtils.transformArray( xmWorkload, "wstatuses");
+		RequestUtils.transformArray( xmWorkload, "sstatuses");
+		PageUtils.startPage(xmWorkload);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskWorkload.put("linkBranchId",user.getBranchId());
-		String queryScope= (String) xmTaskWorkload.get("queryScope");
+		xmWorkload.put("linkBranchId",user.getBranchId());
+		String queryScope= (String) xmWorkload.get("queryScope");
 		if("my".equals(queryScope)){
-			xmTaskWorkload.put("userid",user.getUserid());
+			xmWorkload.put("userid",user.getUserid());
 		}
-		List<Map<String,Object>>	xmTaskWorkloadList = xmWorkloadService.ListGroupByTaskIdAndUserid(xmTaskWorkload);	//列出XmTaskWorkload列表
-		PageUtils.responePage(m, xmTaskWorkloadList);
-		m.put("data",xmTaskWorkloadList);
+		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.ListGroupByTaskIdAndUserid(xmWorkload);	//列出XmWorkload列表
+		PageUtils.responePage(m, xmWorkloadList);
+		m.put("data",xmWorkloadList);
 
 		m.put("tips", tips);
 		return m;
@@ -166,22 +166,22 @@ public class XmTaskWorkloadController {
 			@ApiResponse(code = 200,response= XmWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/ListGroupByTaskIdAndUseridToSet",method=RequestMethod.GET)
-	public Map<String,Object> ListGroupByTaskIdAndUseridToSet( @ApiIgnore @RequestParam Map<String,Object> xmTaskWorkload){
+	public Map<String,Object> ListGroupByTaskIdAndUseridToSet( @ApiIgnore @RequestParam Map<String,Object> xmWorkload){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmTaskWorkload, "ids");
-		RequestUtils.transformArray( xmTaskWorkload, "wstatuses");
-		RequestUtils.transformArray( xmTaskWorkload, "sstatuses");
-		PageUtils.startPage(xmTaskWorkload);
-		String queryScope= (String) xmTaskWorkload.get("queryScope");
+		RequestUtils.transformArray(xmWorkload, "ids");
+		RequestUtils.transformArray( xmWorkload, "wstatuses");
+		RequestUtils.transformArray( xmWorkload, "sstatuses");
+		PageUtils.startPage(xmWorkload);
+		String queryScope= (String) xmWorkload.get("queryScope");
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskWorkload.put("linkBranchId",user.getBranchId());
+		xmWorkload.put("linkBranchId",user.getBranchId());
 		if("my".equals(queryScope)){
-			xmTaskWorkload.put("userid",user.getUserid());
+			xmWorkload.put("userid",user.getUserid());
 		}
-		List<Map<String,Object>>	xmTaskWorkloadList = xmWorkloadService.ListGroupByTaskIdAndUseridToSet(xmTaskWorkload);	//列出XmTaskWorkload列表
-		PageUtils.responePage(m, xmTaskWorkloadList);
-		m.put("data",xmTaskWorkloadList);
+		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.ListGroupByTaskIdAndUseridToSet(xmWorkload);	//列出XmWorkload列表
+		PageUtils.responePage(m, xmWorkloadList);
+		m.put("data",xmWorkloadList);
 
 		m.put("tips", tips);
 		return m;
@@ -193,43 +193,43 @@ public class XmTaskWorkloadController {
 		@ApiResponse(code = 200,response= XmWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmTaskWorkload(@RequestBody XmWorkload xmTaskWorkload) {
+	public Map<String,Object> addXmWorkload(@RequestBody XmWorkload xmWorkload) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			User user= LoginUtils.getCurrentUserInfo();
-			xmTaskWorkload.setId(xmWorkloadService.createKey("id"));
+			xmWorkload.setId(xmWorkloadService.createKey("id"));
 
-			if(!StringUtils.hasText(xmTaskWorkload.getTaskId())) {
+			if(!StringUtils.hasText(xmWorkload.getTaskId())) {
 				return failed("taskId-0","请上送任务编号");
 			}
 
-			if(!StringUtils.hasText(xmTaskWorkload.getUserid())){
+			if(!StringUtils.hasText(xmWorkload.getUserid())){
 				return failed("userid-0","请上送工作人员编号");
 			}
-			if(!StringUtils.hasText(xmTaskWorkload.getUbranchId())){
+			if(!StringUtils.hasText(xmWorkload.getUbranchId())){
 				return failed("ubranchId-0","请上送工作人员归属机构");
 			}
 
-			if(!StringUtils.hasText(xmTaskWorkload.getBizDate())) {
+			if(!StringUtils.hasText(xmWorkload.getBizDate())) {
 				return failed("bizDate-0","请上送日期");
 			}
-			if(xmTaskWorkload.getWorkload()==null) {
+			if(xmWorkload.getWorkload()==null) {
 				return failed("workload-0","工时不能为空");
 			}
 
-			if(xmTaskWorkload.getWorkload().compareTo(BigDecimal.ZERO)==0) {
+			if(xmWorkload.getWorkload().compareTo(BigDecimal.ZERO)==0) {
 				return failed("workload-0","工时不能为0");
 			}
-			XmWorkload xmTaskWorkloadCount=new XmWorkload();
-			//xmTaskWorkloadCount.setUserid(user.getUserid());
-			xmTaskWorkloadCount.setBizDate(xmTaskWorkload.getBizDate());
-			xmTaskWorkloadCount.setTaskId(xmTaskWorkload.getTaskId());
-			long count=this.xmWorkloadService.countByWhere(xmTaskWorkloadCount);
+			XmWorkload xmWorkloadCount=new XmWorkload();
+			//xmWorkloadCount.setUserid(user.getUserid());
+			xmWorkloadCount.setBizDate(xmWorkload.getBizDate());
+			xmWorkloadCount.setTaskId(xmWorkload.getTaskId());
+			long count=this.xmWorkloadService.countByWhere(xmWorkloadCount);
 			if(count>0){
 				return failed("data-1","当前任务今天已经报工");
 			}
-			XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmTaskWorkload.getTaskId()));
+			XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmWorkload.getTaskId()));
 			if(xmTaskDb==null ){
 				return failed("data-0","任务已不存在");
 			}
@@ -249,22 +249,22 @@ public class XmTaskWorkloadController {
 
 				}
 			}
-			xmTaskWorkload.setCtime(new Date());
-			xmTaskWorkload.setCuserid(user.getUserid());
+			xmWorkload.setCtime(new Date());
+			xmWorkload.setCuserid(user.getUserid());
 
-			xmTaskWorkload.setWstatus("0");
-			xmTaskWorkload.setProjectId(xmTaskDb.getProjectId());
-			xmTaskWorkload.setBranchId(xmTaskDb.getCbranchId());
-			xmWorkloadService.insert(xmTaskWorkload);
-			if(xmTaskWorkload.getRworkload()!=null && BigDecimal.ZERO.compareTo(xmTaskWorkload.getRworkload())<=0){
-				BigDecimal newBudgetWorkload= xmTaskWorkload.getRworkload().add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)).add(NumberUtil.getBigDecimal(xmTaskDb.getActWorkload(),BigDecimal.ZERO));
+			xmWorkload.setWstatus("0");
+			xmWorkload.setProjectId(xmTaskDb.getProjectId());
+			xmWorkload.setBranchId(xmTaskDb.getCbranchId());
+			xmWorkloadService.insert(xmWorkload);
+			if(xmWorkload.getRworkload()!=null && BigDecimal.ZERO.compareTo(xmWorkload.getRworkload())<=0){
+				BigDecimal newBudgetWorkload= xmWorkload.getRworkload().add(NumberUtil.getBigDecimal(xmWorkload.getWorkload(),BigDecimal.ZERO)).add(NumberUtil.getBigDecimal(xmTaskDb.getActWorkload(),BigDecimal.ZERO));
 				List<String> ids=new ArrayList<>();
 				ids.add(xmTaskDb.getId());
 				this.xmTaskService.batchUpdateBudgetWorkloadAndRate(ids,newBudgetWorkload );
 			}
 			this.xmTaskService.calcWorkloadByRecord(xmTaskDb.getId());
 			pushService.pushXmTask(xmTaskDb);
-			m.put("data",xmTaskWorkload);
+			m.put("data",xmWorkload);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -280,18 +280,18 @@ public class XmTaskWorkloadController {
 		@ApiResponse(code = 200,response= XmWorkload.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmTaskWorkload(@RequestBody XmWorkload xmTaskWorkload) {
+	public Map<String,Object> editXmWorkload(@RequestBody XmWorkload xmWorkload) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
-            if(!StringUtils.hasText(xmTaskWorkload.getId())) {
+            if(!StringUtils.hasText(xmWorkload.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
-            XmWorkload xmTaskWorkloadDb = xmWorkloadService.selectOneObject(xmTaskWorkload);
-            if( xmTaskWorkloadDb == null ){
+            XmWorkload xmWorkloadDb = xmWorkloadService.selectOneObject(xmWorkload);
+            if( xmWorkloadDb == null ){
                 return failed("data-not-exists","数据不存在，无法修改");
             }
-			XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmTaskWorkloadDb.getTaskId()));
+			XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmWorkloadDb.getTaskId()));
 			if(xmTaskDb==null ){
 				return failed("data-0","任务已不存在");
 			}
@@ -309,11 +309,11 @@ public class XmTaskWorkloadController {
 
 				}
 			}
-			xmWorkloadService.updateSomeFieldByPk(xmTaskWorkload);
+			xmWorkloadService.updateSomeFieldByPk(xmWorkload);
 			pushService.pushXmTask(xmTaskDb);
-			this.xmTaskService.calcWorkloadByRecord(xmTaskWorkload.getTaskId());
+			this.xmTaskService.calcWorkloadByRecord(xmWorkload.getTaskId());
 
-			m.put("data",xmTaskWorkload);
+			m.put("data",xmWorkload);
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
@@ -331,19 +331,19 @@ public class XmTaskWorkloadController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmTaskWorkload(@RequestBody List<XmWorkload> xmTaskWorkloads) {
+	public Map<String,Object> batchDelXmWorkload(@RequestBody List<XmWorkload> xmWorkloads) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功删除"+xmTaskWorkloads.size()+"条数据"); 
+		Tips tips=new Tips("成功删除"+xmWorkloads.size()+"条数据"); 
 		try{
-			if(xmTaskWorkloads.stream().filter(i->!StringUtils.hasText(i.getId())).findAny().isPresent()){
+			if(xmWorkloads.stream().filter(i->!StringUtils.hasText(i.getId())).findAny().isPresent()){
 				return ResponseHelper.failed("id-0","主键不能为空");
 			}
-			xmTaskWorkloads = xmWorkloadService.selectListByIds(xmTaskWorkloads.stream().map(i->i.getId()).collect(Collectors.toList()));
-			if(xmTaskWorkloads==null || xmTaskWorkloads.size()==0){
+			xmWorkloads = xmWorkloadService.selectListByIds(xmWorkloads.stream().map(i->i.getId()).collect(Collectors.toList()));
+			if(xmWorkloads==null || xmWorkloads.size()==0){
 				return ResponseHelper.failed("data-0","工时已不存在");
 			}
 			User user= LoginUtils.getCurrentUserInfo();
-			List<String> taskIds=xmTaskWorkloads.stream().map(i->i.getTaskId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+			List<String> taskIds=xmWorkloads.stream().map(i->i.getTaskId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
 			List<XmTask> tasksDb=this.xmTaskService.selectListByIds(taskIds);
 			Map<String,XmTask> taskMap=new HashMap<>();
 			Map<String,XmTask> canDelTaskMap=new HashMap<>();
@@ -370,22 +370,22 @@ public class XmTaskWorkloadController {
 			List<XmWorkload> canDel=new ArrayList<>();
 			List<XmWorkload> state1Ndel=new ArrayList<>();
 			List<XmWorkload> noQxDel=new ArrayList<>();
-			for (XmWorkload xmTaskWorkload : xmTaskWorkloads) {
-				 if(canDelTaskMap.containsKey(xmTaskWorkload.getTaskId())){
-				 	if(!"1".equals(xmTaskWorkload.getWstatus())){
-				 		canDel.add(xmTaskWorkload);
+			for (XmWorkload xmWorkload : xmWorkloads) {
+				 if(canDelTaskMap.containsKey(xmWorkload.getTaskId())){
+				 	if(!"1".equals(xmWorkload.getWstatus())){
+				 		canDel.add(xmWorkload);
 					} else{
-						state1Ndel.add(xmTaskWorkload);
+						state1Ndel.add(xmWorkload);
 					}
 				 }else{
-				 	if(!taskMap.containsKey(xmTaskWorkload.getTaskId())){//对应任务已被删除，不存在了
-				 		if(!"1".equals(xmTaskWorkload.getWstatus())){
-							canDel.add(xmTaskWorkload);
+				 	if(!taskMap.containsKey(xmWorkload.getTaskId())){//对应任务已被删除，不存在了
+				 		if(!"1".equals(xmWorkload.getWstatus())){
+							canDel.add(xmWorkload);
 						}else{
-							state1Ndel.add(xmTaskWorkload);
+							state1Ndel.add(xmWorkload);
 						}
 					}else{
-						noQxDel.add(xmTaskWorkload);
+						noQxDel.add(xmWorkload);
 					}
 				 }
 			}
@@ -423,17 +423,17 @@ public class XmTaskWorkloadController {
 
 
 
-	@ApiOperation( value = "批量更新工时表状态各个字段",notes="xmTaskWorkloadMap")
+	@ApiOperation( value = "批量更新工时表状态各个字段",notes="xmWorkloadMap")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTaskWorkload_editSomeFields",name = "批量修改修改任务中的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	@HasQx(value = "xm_core_xmWorkload_editSomeFields",name = "批量修改修改任务中的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmTaskWorkloadMap) {
+	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmWorkloadMap) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
-			List<String> ids= (List<String>) xmTaskWorkloadMap.get("ids");
+			List<String> ids= (List<String>) xmWorkloadMap.get("ids");
 
 			if(ids==null || ids.size()==0){
 				return ResponseHelper.failed("ids-0","ids不能为空");
@@ -445,17 +445,17 @@ public class XmTaskWorkloadController {
 			fields.add("projectId");
 			fields.add("sbillId");
 
-			for (String fieldName : xmTaskWorkloadMap.keySet()) {
+			for (String fieldName : xmWorkloadMap.keySet()) {
 				if(fields.contains(fieldName)){
 					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
-			List<XmWorkload> xmTaskWorkloadsDb= xmWorkloadService.selectListByIds(ids);
-			if(xmTaskWorkloadsDb==null ||xmTaskWorkloadsDb.size()==0){
+			List<XmWorkload> xmWorkloadsDb= xmWorkloadService.selectListByIds(ids);
+			if(xmWorkloadsDb==null ||xmWorkloadsDb.size()==0){
 				return ResponseHelper.failed("tasks-0","该工时已不存在");
 			}
-			String wstatus= (String) xmTaskWorkloadMap.get("wstatus");
-			String sstatus= (String) xmTaskWorkloadMap.get("sstatus");
+			String wstatus= (String) xmWorkloadMap.get("wstatus");
+			String sstatus= (String) xmWorkloadMap.get("sstatus");
 			if(StringUtils.hasText(sstatus)){
 				if(!"0".equals(sstatus) && !"1".equals(sstatus)){
 					return ResponseHelper.failed("sstatus-not-01","只能修改为无需结算或者待结算");
@@ -466,10 +466,10 @@ public class XmTaskWorkloadController {
 					return ResponseHelper.failed("wstatus-not-01","工时状态不正确");
 				}
 			}
-			List<String> taskIds=xmTaskWorkloadsDb.stream().map(i->i.getTaskId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+			List<String> taskIds=xmWorkloadsDb.stream().map(i->i.getTaskId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
 
 			Map<String,XmTask> taskMap=new HashMap<>();
-			if(xmTaskWorkloadMap.containsKey("sstatus") && "1".equals(sstatus)){
+			if(xmWorkloadMap.containsKey("sstatus") && "1".equals(sstatus)){
 				List<XmTask> tasks=this.xmTaskService.selectListByIds(taskIds);
 				for (XmTask task : tasks) {
 					taskMap.put(task.getId(),task);
@@ -479,30 +479,30 @@ public class XmTaskWorkloadController {
 			List<XmWorkload> canChanges=new ArrayList<>();
 			List<XmWorkload> sstatusNot01=new ArrayList<>();
 			List<XmWorkload> taskStateNot34=new ArrayList<>();
-			for (XmWorkload xmTaskWorkload : xmTaskWorkloadsDb) {
-				if(!"1".equals(xmTaskWorkload.getSstatus()) && !"0".equals(xmTaskWorkload.getSstatus()) &&StringUtils.hasText(xmTaskWorkload.getSstatus())){
-					sstatusNot01.add(xmTaskWorkload);
+			for (XmWorkload xmWorkload : xmWorkloadsDb) {
+				if(!"1".equals(xmWorkload.getSstatus()) && !"0".equals(xmWorkload.getSstatus()) &&StringUtils.hasText(xmWorkload.getSstatus())){
+					sstatusNot01.add(xmWorkload);
 				}else{
-					if(xmTaskWorkloadMap.containsKey("sstatus") && "1".equals(sstatus)){
-						XmTask task=taskMap.get(xmTaskWorkload.getTaskId());
+					if(xmWorkloadMap.containsKey("sstatus") && "1".equals(sstatus)){
+						XmTask task=taskMap.get(xmWorkload.getTaskId());
 						if(task==null || (!"2".equals(task.getTaskState()) && !"3".equals(task.getTaskState()))){
-							taskStateNot34.add(xmTaskWorkload);
+							taskStateNot34.add(xmWorkload);
 							continue;
 						}
 					}
-					canChanges.add(xmTaskWorkload);
+					canChanges.add(xmWorkload);
 				}
 			}
 
 
 
 			if(canChanges.size()>0){
-				xmTaskWorkloadMap.put("ids",canChanges.stream().map(i->i.getId()).collect(Collectors.toList()));
-				Set<String> fieldKey=xmTaskWorkloadMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
-				fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskWorkloadMap.get(i) )).collect(Collectors.toSet());
+				xmWorkloadMap.put("ids",canChanges.stream().map(i->i.getId()).collect(Collectors.toList()));
+				Set<String> fieldKey=xmWorkloadMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
+				fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmWorkloadMap.get(i) )).collect(Collectors.toSet());
 
 				if(fieldKey.size()>0){
-					xmWorkloadService.editSomeFieldsWithSbillIds(xmTaskWorkloadMap,null);
+					xmWorkloadService.editSomeFieldsWithSbillIds(xmWorkloadMap,null);
 				}
 			}
 			List<String> msgs=new ArrayList<>();

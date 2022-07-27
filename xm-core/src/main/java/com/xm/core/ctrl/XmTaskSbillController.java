@@ -245,10 +245,10 @@ public class XmTaskSbillController {
 			if(sameSbillDetails!=null && sameSbillDetails.size()>0){
 				for (XmTaskSbillDetail detail : sameSbillDetails) {
 					//进行合并操作
-					for (XmWorkload xmTaskWorkload : workloadsDb3) {
-						if(detail.getUserid().equals(xmTaskWorkload.getUserid()) && detail.getTaskId().equals(xmTaskWorkload.getTaskId())){
-							detail.setWorkload(NumberUtil.getBigDecimal(detail.getWorkload(),BigDecimal.ZERO).add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)));
-							detail.setSworkload(NumberUtil.getBigDecimal(detail.getSworkload(),BigDecimal.ZERO).add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)));
+					for (XmWorkload xmWorkload : workloadsDb3) {
+						if(detail.getUserid().equals(xmWorkload.getUserid()) && detail.getTaskId().equals(xmWorkload.getTaskId())){
+							detail.setWorkload(NumberUtil.getBigDecimal(detail.getWorkload(),BigDecimal.ZERO).add(NumberUtil.getBigDecimal(xmWorkload.getWorkload(),BigDecimal.ZERO)));
+							detail.setSworkload(NumberUtil.getBigDecimal(detail.getSworkload(),BigDecimal.ZERO).add(NumberUtil.getBigDecimal(xmWorkload.getWorkload(),BigDecimal.ZERO)));
 						}
 					}
 				}
@@ -257,13 +257,13 @@ public class XmTaskSbillController {
 
 			List<XmWorkload> workloadsDb4=workloadsDb3.stream().filter(i->!sameSbillDetails.stream().filter(k->k.getUserid().equals(i.getUserid()) && k.getTaskId().equals(i.getTaskId())).findAny().isPresent()).collect(Collectors.toList());
 			Map<String,XmTaskSbillDetail> detailMap=new HashMap<>();
-			for (XmWorkload xmTaskWorkload : workloadsDb4) {
-				XmTaskSbillDetail detail=detailMap.get(xmTaskWorkload.getUserid()+"-"+xmTaskWorkload.getTaskId());
+			for (XmWorkload xmWorkload : workloadsDb4) {
+				XmTaskSbillDetail detail=detailMap.get(xmWorkload.getUserid()+"-"+xmWorkload.getTaskId());
 				if(detail==null){
 					detail=new XmTaskSbillDetail();
-					BeanUtils.copyProperties(xmTaskWorkload,detail);
-					XmTask xmTask=xmTasksDb2.stream().filter(i->i.getId().equals(xmTaskWorkload.getTaskId())).findAny().get();
-					detail.setSworkload(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO));
+					BeanUtils.copyProperties(xmWorkload,detail);
+					XmTask xmTask=xmTasksDb2.stream().filter(i->i.getId().equals(xmWorkload.getTaskId())).findAny().get();
+					detail.setSworkload(NumberUtil.getBigDecimal(xmWorkload.getWorkload(),BigDecimal.ZERO));
 					detail.setId(this.xmTaskSbillDetailService.createKey("id"));
 					detail.setBizDate(DateUtils.getDate("yyyy-MM-dd"));
 					detail.setBizMonth(DateUtils.getDate("yyyy-MM"));
@@ -281,10 +281,10 @@ public class XmTaskSbillController {
 					detail.setOshare(xmTask.getOshare());
 					detail.setTaskName(xmTask.getName());
 					detail.setUniPrice("1".equals(xmTask.getTaskOut())?xmTask.getUniOutPrice():xmTask.getUniInnerPrice());
-					detailMap.put(xmTaskWorkload.getUserid()+"-"+xmTaskWorkload.getTaskId(),detail);
+					detailMap.put(xmWorkload.getUserid()+"-"+xmWorkload.getTaskId(),detail);
 				}else{
-					detail.setWorkload(detail.getWorkload().add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)));
-					detail.setSworkload(detail.getSworkload().add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)));
+					detail.setWorkload(detail.getWorkload().add(NumberUtil.getBigDecimal(xmWorkload.getWorkload(),BigDecimal.ZERO)));
+					detail.setSworkload(detail.getSworkload().add(NumberUtil.getBigDecimal(xmWorkload.getWorkload(),BigDecimal.ZERO)));
 				}
 
 			}

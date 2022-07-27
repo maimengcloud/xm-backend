@@ -13,9 +13,9 @@ import java.util.Map;
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
  * 组织 com  顶级模块 xm 大模块 core 小模块 <br>
- * 实体 XmTaskWorkload 表 xm_workload 当前主键(包括多主键): id; 
+ * 实体 XmWorkload 表 xm_workload 当前主键(包括多主键): id; 
  ***/
-@Service("xm.core.xmTaskWorkloadService")
+@Service("xm.core.xmWorkloadService")
 public class XmWorkloadService extends BaseService {
 	static Logger logger =LoggerFactory.getLogger(XmWorkloadService.class);
 
@@ -24,11 +24,11 @@ public class XmWorkloadService extends BaseService {
 
 
 
-	public List<Map<String, Object>> listProjectWorkloadSetDay(Map<String, Object> xmTaskWorkload) {
-		return super.selectList("listProjectWorkloadSetDay",xmTaskWorkload);
+	public List<Map<String, Object>> listProjectWorkloadSetDay(Map<String, Object> xmWorkload) {
+		return super.selectList("listProjectWorkloadSetDay",xmWorkload);
 	}
-	public List<Map<String, Object>> listProjectWorkloadSetMonth(Map<String, Object> xmTaskWorkload) {
-		return super.selectList("listProjectWorkloadSetMonth",xmTaskWorkload);
+	public List<Map<String, Object>> listProjectWorkloadSetMonth(Map<String, Object> xmWorkload) {
+		return super.selectList("listProjectWorkloadSetMonth",xmWorkload);
 	}
 
 
@@ -42,20 +42,20 @@ public class XmWorkloadService extends BaseService {
 
 
 	@Transactional
-	public void editSomeFieldsWithSbillIds(Map<String, Object> xmTaskWorkloadMap, List<String> sbillIds) {
-		super.editSomeFields(xmTaskWorkloadMap);
+	public void editSomeFieldsWithSbillIds(Map<String, Object> xmWorkloadMap, List<String> sbillIds) {
+		super.editSomeFields(xmWorkloadMap);
 	}
 
 	public void updateStatusBySbillIdByFlowState(String sbillId,String sstatus) {
 		super.update("updateStatusBySbillIdByFlowState",map("sbillId",sbillId,"sstatus",sstatus));
 	}
 
-	public List<Map<String, Object>> ListGroupByTaskIdAndUserid(Map<String, Object> xmTaskWorkload) {
-		return super.selectList("selectListMapGroupByTaskIdAndUserid",xmTaskWorkload);
+	public List<Map<String, Object>> ListGroupByTaskIdAndUserid(Map<String, Object> xmWorkload) {
+		return super.selectList("selectListMapGroupByTaskIdAndUserid",xmWorkload);
 	}
 
-	public List<Map<String, Object>> ListGroupByTaskIdAndUseridToSet(Map<String, Object> xmTaskWorkload) {
-		return super.selectList("ListGroupByTaskIdAndUseridToSet",xmTaskWorkload);
+	public List<Map<String, Object>> ListGroupByTaskIdAndUseridToSet(Map<String, Object> xmWorkload) {
+		return super.selectList("ListGroupByTaskIdAndUseridToSet",xmWorkload);
 	}
 
     public void updateStatusAfterJoinSbill(Map<String,Object> details) {
