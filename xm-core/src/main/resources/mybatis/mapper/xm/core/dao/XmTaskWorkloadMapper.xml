@@ -285,7 +285,7 @@
 		insert into xm_task_workload(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{branchId},#{ubranchId},#{sbillId},#{detailId}
+		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{branchId},#{ubranchId},#{sbillId},#{detailId},#{menuId},#{productId},#{caseId},#{planId},#{bugId},#{bizType}
 		)
 	</insert>
 	
@@ -360,7 +360,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,branch_id,ubranch_id,sbill_id,detail_id
+		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,branch_id,ubranch_id,sbill_id,detail_id,menu_id,product_id,case_id,plan_id,bug_id,biz_type
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -385,6 +385,12 @@
 		<if test="ubranchId != null and ubranchId != ''">      and res.ubranch_id = #{ubranchId}     </if>
 		<if test="sbillId != null and sbillId != ''">      and res.sbill_id = #{sbillId}     </if>
 		<if test="detailId != null and detailId != ''">      and res.detail_id = #{detailId}     </if>
+		<if test="menuId != null and menuId != ''">      and res.menu_id = #{menuId}     </if>
+		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
+		<if test="caseId != null and caseId != ''">      and res.case_id = #{caseId}     </if>
+		<if test="planId != null and planId != ''">      and res.plan_id = #{planId}     </if>
+		<if test="bugId != null and bugId != ''">      and res.bug_id = #{bugId}     </if>
+		<if test="bizType != null and bizType != ''">      and res.biz_type = #{bizType}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -406,7 +412,13 @@
 		branch_id = #{branchId},
 		ubranch_id = #{ubranchId},
 		sbill_id = #{sbillId},
-		detail_id = #{detailId}
+		detail_id = #{detailId},
+		menu_id = #{menuId},
+		product_id = #{productId},
+		case_id = #{caseId},
+		plan_id = #{planId},
+		bug_id = #{bugId},
+		biz_type = #{bizType}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
@@ -428,6 +440,12 @@
 		<if test="ubranchId != null and ubranchId != ''"> ubranch_id = #{ubranchId},     </if>
 		<if test="sbillId != null and sbillId != ''"> sbill_id = #{sbillId},     </if>
 		<if test="detailId != null and detailId != ''"> detail_id = #{detailId},     </if>
+		<if test="menuId != null and menuId != ''"> menu_id = #{menuId},     </if>
+		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
+		<if test="caseId != null and caseId != ''"> case_id = #{caseId},     </if>
+		<if test="planId != null and planId != ''"> plan_id = #{planId},     </if>
+		<if test="bugId != null and bugId != ''"> bug_id = #{bugId},     </if>
+		<if test="bizType != null and bizType != ''"> biz_type = #{bizType},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -449,6 +467,12 @@
 			branch_id = #{item.branchId},
 			ubranch_id = #{item.ubranchId},
 			sbill_id = #{item.sbillId},
-			detail_id = #{item.detailId}
+			detail_id = #{item.detailId},
+			menu_id = #{item.menuId},
+			product_id = #{item.productId},
+			case_id = #{item.caseId},
+			plan_id = #{item.planId},
+			bug_id = #{item.bugId},
+			biz_type = #{item.bizType}
 	</sql>
 </mapper>
