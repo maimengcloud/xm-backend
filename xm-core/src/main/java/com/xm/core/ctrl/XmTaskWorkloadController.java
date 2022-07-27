@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
- * url编制采用rest风格,如对xm_task_workload 工时登记表的操作有增删改查,对应的url分别为:<br>
+ * url编制采用rest风格,如对xm_workload 工时登记表的操作有增删改查,对应的url分别为:<br>
  *  新增: core/xmTaskWorkload/add <br>
  *  查询: core/xmTaskWorkload/list<br>
  *  模糊查询: core/xmTaskWorkload/listKey<br>
@@ -41,7 +41,7 @@ import static com.mdp.core.utils.ResponseHelper.failed;
  *  删除: core/xmTaskWorkload/del<br>
  *  批量删除: core/xmTaskWorkload/batchDel<br>
  * 组织 com  顶级模块 xm 大模块 core 小模块 <br>
- * 实体 XmTaskWorkload 表 xm_task_workload 当前主键(包括多主键): id; 
+ * 实体 XmTaskWorkload 表 xm_workload 当前主键(包括多主键): id; 
  ***/
 @RestController("xm.core.xmTaskWorkloadController")
 @RequestMapping(value="/**/core/xmTaskWorkload")

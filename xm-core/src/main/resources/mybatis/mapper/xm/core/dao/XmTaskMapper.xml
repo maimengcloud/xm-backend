@@ -301,7 +301,7 @@
 	</update>
 	<update id="calcWorkloadByRecord" parameterType="List">
 		update xm_task res left join
-		(select w.task_id, sum(ifnull(w.workload,0)) as workload  from xm_task_workload w where w.task_id  in
+		(select w.task_id, sum(ifnull(w.workload,0)) as workload  from xm_workload w where w.task_id  in
 			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
 				#{item}
 			</foreach>

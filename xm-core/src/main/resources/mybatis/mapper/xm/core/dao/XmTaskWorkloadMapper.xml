@@ -48,11 +48,11 @@
 		</if>
     </sql>
 	<update id="updateStatusBySbillIdBySbillDel" parameterType="String">
-		update xm_task_workload res set detail_id=null,sbill_id=null,sstatus='1'
+		update xm_workload res set detail_id=null,sbill_id=null,sstatus='1'
 		where exists (select 1 from xm_task_sbill_detail d where d.id=res.detail_id and d.sbill_id=#{sbillId})
 	</update>
 	<update id="updateStatusBySbillId" parameterType="HashMap">
-		update xm_task_workload res set sstatus=#{sstatus}
+		update xm_workload res set sstatus=#{sstatus}
 		where exists (select 1 from xm_task_sbill_detail d where d.id=res.detail_id and d.sbill_id=#{sbillId})
 	</update>
 
@@ -68,7 +68,7 @@
 		sum(if(res.sstatus='3',ifnull(res.workload,0),0)) as had_agree_sworkload,
 		sum(if(res.sstatus='4',ifnull(res.workload,0),0)) as had_set_sworkload,
 		count(distinct res.userid) as user_num
-		from xm_task_workload res
+		from xm_workload res
 		<where>
 			<include refid="whereForMap"/>
 			<include refid="where"/>
@@ -89,7 +89,7 @@
 		sum(if(res.sstatus='3',ifnull(res.workload,0),0)) as had_agree_sworkload,
 		sum(if(res.sstatus='4',ifnull(res.workload,0),0)) as had_set_sworkload,
 		count(distinct res.userid) as user_num
-		from xm_task_workload res
+		from xm_workload res
 		<where>
 			<include refid="whereForMap"/>
 			<include refid="where"/>
@@ -100,7 +100,7 @@
 
 	<select id="listTaskWorkloadBySbillIdGroupByUseridAndTaskId" parameterType="String" resultType="HashMap">
 		select sum(ifnull(res.workload,0)) as workload,
-		sum(ifnull(res.workload,0)) as sworkload,res.task_id ,max(res.username) as username,max(t.name) as task_name from xm_task_workload res inner join xm_task t on res.task_id=t.id
+		sum(ifnull(res.workload,0)) as sworkload,res.task_id ,max(res.username) as username,max(t.name) as task_name from xm_workload res inner join xm_task t on res.task_id=t.id
 		where
 		exists (select 1 from xm_task_sbill_detail d where d.id=res.detail_id and d.sbill_id=#{sbillId})
 		and res.sstatus='4'
@@ -121,7 +121,7 @@
 		sum(if(res.sstatus='2',ifnull(res.workload,0),0)) as had_commit_sworkload,
 		sum(if(res.sstatus='3',ifnull(res.workload,0),0)) as had_agree_sworkload,
 		sum(if(res.sstatus='4',ifnull(res.workload,0),0)) as had_set_sworkload
-		from xm_task_workload res
+		from xm_workload res
 		<where>
 			<include refid="whereForMap"/>
 			<include refid="where"/>
@@ -161,7 +161,7 @@
 		sum(if(res.sstatus='2',ifnull(res.workload,0),0)) as had_commit_sworkload,
 		sum(if(res.sstatus='3',ifnull(res.workload,0),0)) as had_agree_sworkload,
 		sum(if(res.sstatus='4',ifnull(res.workload,0),0)) as had_set_sworkload
-		from xm_task_workload res
+		from xm_workload res
 		<where>
 			<if test="projectId!=null and projectId!=''">
 				and res.project_id=#{projectId}
@@ -211,14 +211,14 @@
 
 	</select>
 	<update id="updateStatusAfterJoinSbill" parameterType="HashMap">
-			update xm_task_workload res set res.sstatus='2',res.detail_id=#{detailId},res.sbill_id=#{sbillId}
+			update xm_workload res set res.sstatus='2',res.detail_id=#{detailId},res.sbill_id=#{sbillId}
 			where  res.id in
 			<foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
 				#{item}
 			</foreach>
  	</update>
 	<update id="updateStatusAfterDetailDel" parameterType="List">
-		update xm_task_workload res set res.sstatus='1',res.detail_id=null,res.sbill_id=null
+		update xm_workload res set res.sstatus='1',res.detail_id=null,res.sbill_id=null
 		where  res.detail_id in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
 			#{item}
@@ -226,7 +226,7 @@
 	</update>
 
 	<update id="updateStatusBySbillIdByFlowStatea" parameterType="HashMap">
-		update xm_task_workload res inner join xm_task_sbill_detail d on d.id=res.detail_id
+		update xm_workload res inner join xm_task_sbill_detail d on d.id=res.detail_id
 		set res.sstatus=#{sstatus},d.sstatus=#{sstatus}
 		where d.sbill_id=#{sbillId}
 	</update>
@@ -237,7 +237,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.* ,task.project_name,task.name as task_name,task.budget_workload,task.act_workload,task.task_state from xm_task_workload res
+		select res.* ,task.project_name,task.name as task_name,task.budget_workload,task.act_workload,task.task_state from xm_workload res
 		inner join xm_task task
 		on res.task_id = task.id
 		<where>
@@ -248,7 +248,7 @@
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
 	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmTaskWorkload" resultType="com.xm.core.entity.XmTaskWorkload">
-		select * from xm_task_workload res
+		select * from xm_workload res
 		<where>
 			<include refid="where"/>
 		</where>
@@ -256,12 +256,12 @@
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
 	<select id="selectOneObject" parameterType="com.xm.core.entity.XmTaskWorkload" resultType="com.xm.core.entity.XmTaskWorkload">
-		select * from xm_task_workload res
+		select * from xm_workload res
 		where 
 			res.id = #{id}
 	</select>
     <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmTaskWorkload">
-        select * from xm_task_workload res
+        select * from xm_workload res
         where  (res.id) in
              <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
                  ( #{item})
@@ -269,20 +269,20 @@
     </select>
 	<!-- 通过主键查询获取数据对象 返回map-->
 	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
-		select * from xm_task_workload res
+		select * from xm_workload res
 		where 
 			 res.id = #{id}
 	</select>
 	<!-- 获取数据条目 返回long -->
 	<select id="countByWhere" parameterType="com.xm.core.entity.XmTaskWorkload" resultType="long">
-		select count(*) from xm_task_workload res
+		select count(*) from xm_workload res
 		<where>
 			<include refid="where"/>
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
 	<insert id="insert" parameterType="com.xm.core.entity.XmTaskWorkload" useGeneratedKeys="false"   keyProperty="id">
-		insert into xm_task_workload(
+		insert into xm_workload(
 			<include refid="columns"/>
 		) values (
 		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{branchId},#{ubranchId},#{sbillId},#{detailId},#{menuId},#{productId},#{caseId},#{planId},#{bugId},#{bizType}
@@ -291,7 +291,7 @@
 	
 	<!-- 按条件删除若干条记录-->
 	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmTaskWorkload">
-		delete from xm_task_workload res
+		delete from xm_workload res
 		<where>  
 			<include refid="where"/>
 		</where>
@@ -299,13 +299,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmTaskWorkload">
-		delete from xm_task_workload 
+		delete from xm_workload
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmTaskWorkload">
-		update  xm_task_workload 
+		update  xm_workload
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -314,7 +314,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmTaskWorkload">
-		update  xm_task_workload 
+		update  xm_workload
 		<set>
 			<include refid="set"/>
 		</set>
@@ -329,7 +329,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_task_workload 
+   		update  xm_workload
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -338,7 +338,7 @@
 
 	<!-- 批量修改某几个字段 -->
 	<delete id="editSomeFields" parameterType="HashMap">
-		update  xm_task_workload
+		update  xm_workload
         <set>
             <include refid="someFieldSet"/>
         </set>
@@ -349,7 +349,7 @@
 	</delete>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_task_workload 
+		delete from xm_workload
 			where
 			(id) in
                 <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
