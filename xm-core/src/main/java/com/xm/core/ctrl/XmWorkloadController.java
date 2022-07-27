@@ -313,7 +313,9 @@ public class XmWorkloadController {
 				if(!(xmWorkload.getUserid().equals(xmTaskDb.getCreateUserid())|| xmWorkload.getUserid().equals(xmTaskDb.getExecutorUserid()))){
 					return failed("no-create-or-not-exec",xmWorkload.getUserid()+"不是任务的负责人也不是执行人，不能报工。");
 				}
-
+				xmWorkload.setBizName(xmTaskDb.getName());
+				xmWorkload.setMenuId(xmTaskDb.getMenuId());
+				xmWorkload.setProductId(xmTaskDb.getProductId());
 				xmWorkload.setCtime(new Date());
 				xmWorkload.setWstatus("0");
 				xmWorkload.setProjectId(xmTaskDb.getProjectId());
@@ -347,11 +349,12 @@ public class XmWorkloadController {
 					return failed("userid-err",xmWorkload.getUserid()+"不是当前缺陷的负责人或者创建人，无须报工。");
 				}
 
+				xmWorkload.setBizName(xmQuestionDb.getName());
 				xmWorkload.setCtime(new Date());
 				xmWorkload.setCuserid(user.getUserid());
 				xmWorkload.setWstatus("0");
 				xmWorkload.setProjectId(xmQuestionDb.getProjectId());
-				xmWorkload.setProjectId(xmQuestionDb.getProductId());
+				xmWorkload.setProductId(xmQuestionDb.getProductId());
 				xmWorkload.setMenuId(xmQuestionDb.getMenuId());
 				xmWorkload.setFuncId(xmQuestionDb.getFuncId());
 				xmWorkload.setCaseId(xmQuestionDb.getCaseId());
@@ -365,6 +368,8 @@ public class XmWorkloadController {
 				if(!(xmWorkload.getUserid().equals(xmTestCaseDb.getCuserid())||xmWorkload.getUserid().equals(xmTestCaseDb.getLuserid()))){
 					return failed("userid-err",xmWorkload.getUserid()+"不是当前用例的负责人或者责任人，无须报工。");
 				}
+
+				xmWorkload.setBizName(xmTestCaseDb.getCaseName());
 				xmWorkload.setCtime(new Date());
 				xmWorkload.setWstatus("0");
 				xmWorkload.setProductId(xmTestCaseDb.getProductId());
@@ -394,6 +399,7 @@ public class XmWorkloadController {
 					return failed("projectId-0","项目编号不能为空");
 				}
 
+				xmWorkload.setBizName((String) xmTestPlanCaseDb.get("caseName"));
 				xmWorkload.setCtime(new Date());
 				xmWorkload.setCuserid(user.getUserid());
 				xmWorkload.setWstatus("0");
