@@ -28,7 +28,7 @@ public class XmTaskSbillService extends BaseService {
 	static Logger logger =LoggerFactory.getLogger(XmTaskSbillService.class);
 
 	@Autowired
-	XmTaskWorkloadService xmTaskWorkloadService;
+    XmWorkloadService xmWorkloadService;
 	@Autowired
 	XmTaskSbillDetailService xmTaskSbillDetailService;
 
@@ -38,7 +38,7 @@ public class XmTaskSbillService extends BaseService {
 	@Transactional(rollbackFor = Exception.class)
 	public void deleteByPkAndReturnWorkload(XmTaskSbill xmTaskSbill){
 
-		xmTaskWorkloadService.updateStatusBySbillIdBySbillDel(xmTaskSbill.getId());
+		xmWorkloadService.updateStatusBySbillIdBySbillDel(xmTaskSbill.getId());
 		this.deleteByPk(xmTaskSbill);
 	}
 
@@ -127,18 +127,18 @@ public class XmTaskSbillService extends BaseService {
 		if("1".equals(bizFlowState)){
 			//发起审核，更新sbill表状态，工时登记表状态无需更新
 			xmTaskSbill.setStatus("1");
-			xmTaskWorkloadService.updateStatusBySbillIdByFlowState(xmTaskSbill.getId(),"2");
+			xmWorkloadService.updateStatusBySbillIdByFlowState(xmTaskSbill.getId(),"2");
 		}else if("2".equals(bizFlowState)){
 			//审核通过，工时登记表更新为已通过-3
 			xmTaskSbill.setStatus("2");//结算单状态-已通过
-			xmTaskWorkloadService.updateStatusBySbillIdByFlowState(xmTaskSbill.getId(),"4");
+			xmWorkloadService.updateStatusBySbillIdByFlowState(xmTaskSbill.getId(),"4");
 		}else if("3".equals(bizFlowState)){
 			//3为审批不通过，退回发起人，可继续向上提交。工时表无需修改
 			xmTaskSbill.setStatus("1");//结算单状态-已提交
 		}else if("4".equals(bizFlowState)){
 			//4为流程删除或者取消，sbill可重新发起审批/删除。工时表无需修改
 			xmTaskSbill.setStatus("0");//结算单状态-待提交
-			xmTaskWorkloadService.updateStatusBySbillIdByFlowState(xmTaskSbill.getId(),"1");
+			xmWorkloadService.updateStatusBySbillIdByFlowState(xmTaskSbill.getId(),"1");
 		}
 
 		this.updateSomeFieldByPk(xmTaskSbill);
@@ -162,7 +162,7 @@ public class XmTaskSbillService extends BaseService {
 		detailsAll.addAll(canAdd);
 		detailsAll.addAll(details);
 		if(detailsAll.size()>0){
-			this.xmTaskWorkloadService.updateStatusAfterJoinSbill(map("ids",workloadIds,"sbillId",detailsAll.get(0).getSbillId(),"detailId",detailsAll.get(0).getId()));
+			this.xmWorkloadService.updateStatusAfterJoinSbill(map("ids",workloadIds,"sbillId",detailsAll.get(0).getSbillId(),"detailId",detailsAll.get(0).getId()));
 			this.updateBySbillDetailList(detailsAll.stream().map(i->i.getSbillId()).collect(Collectors.toSet()).stream().collect(Collectors.toList()));
 		}
 

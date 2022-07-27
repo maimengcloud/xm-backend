@@ -9,11 +9,11 @@ import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskSbill;
 import com.xm.core.entity.XmTaskSbillDetail;
-import com.xm.core.entity.XmTaskWorkload;
+import com.xm.core.entity.XmWorkload;
 import com.xm.core.service.XmTaskSbillDetailService;
 import com.xm.core.service.XmTaskSbillService;
 import com.xm.core.service.XmTaskService;
-import com.xm.core.service.XmTaskWorkloadService;
+import com.xm.core.service.XmWorkloadService;
 import com.xm.core.vo.BatchJoinToSbillVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -60,7 +60,7 @@ public class XmTaskSbillController {
 
 
 	@Autowired
-	XmTaskWorkloadService xmTaskWorkloadService;
+	XmWorkloadService xmWorkloadService;
 
 	
 	@ApiOperation( value = "查询任务结算表信息列表",notes=" ") 
@@ -204,11 +204,11 @@ public class XmTaskSbillController {
 			if(!user.getUserid().equals(sbillDb.getCuserid())){
 				return ResponseHelper.failed("cuserid-0","结算单不是您的结算单，您不能操作");
 			}
-			List<XmTaskWorkload> workloadsDb=xmTaskWorkloadService.selectListByIds(batchJoinToSbill.getWorkloadIds());
+			List<XmWorkload> workloadsDb= xmWorkloadService.selectListByIds(batchJoinToSbill.getWorkloadIds());
 			if(workloadsDb==null || workloadsDb.size()<=0){
 				return ResponseHelper.failed("workloadsDb-0","工时单已不存在");
 			}
-			List<XmTaskWorkload> workloadsDb2=workloadsDb.stream().filter(i->!StringUtils.hasText(i.getSbillId()) && "1".equals(i.getSstatus())&&"1".equals(i.getWstatus())).collect(Collectors.toList());
+			List<XmWorkload> workloadsDb2=workloadsDb.stream().filter(i->!StringUtils.hasText(i.getSbillId()) && "1".equals(i.getSstatus())&&"1".equals(i.getWstatus())).collect(Collectors.toList());
  			if(workloadsDb2==null || workloadsDb2.size()<=0){
 				return ResponseHelper.failed("workloadsDb-0","不存在可以结算的工时单。");
 			}
@@ -228,7 +228,7 @@ public class XmTaskSbillController {
 			if(xmTasksDb2==null || xmTasksDb2.size()==0){
 				return ResponseHelper.failed("taskState-not-2","任务必须是已完工状态才能结算。");
 			}
-			List<XmTaskWorkload> workloadsDb3=workloadsDb2.stream().filter(i->xmTasksDb2.stream().filter(k->k.getId().equals(i.getTaskId())).findAny().isPresent()).collect(Collectors.toList());
+			List<XmWorkload> workloadsDb3=workloadsDb2.stream().filter(i->xmTasksDb2.stream().filter(k->k.getId().equals(i.getTaskId())).findAny().isPresent()).collect(Collectors.toList());
 
 
 			//检查是否已有同样的数据加入了结算单，如果有，需要合并
@@ -245,7 +245,7 @@ public class XmTaskSbillController {
 			if(sameSbillDetails!=null && sameSbillDetails.size()>0){
 				for (XmTaskSbillDetail detail : sameSbillDetails) {
 					//进行合并操作
-					for (XmTaskWorkload xmTaskWorkload : workloadsDb3) {
+					for (XmWorkload xmTaskWorkload : workloadsDb3) {
 						if(detail.getUserid().equals(xmTaskWorkload.getUserid()) && detail.getTaskId().equals(xmTaskWorkload.getTaskId())){
 							detail.setWorkload(NumberUtil.getBigDecimal(detail.getWorkload(),BigDecimal.ZERO).add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)));
 							detail.setSworkload(NumberUtil.getBigDecimal(detail.getSworkload(),BigDecimal.ZERO).add(NumberUtil.getBigDecimal(xmTaskWorkload.getWorkload(),BigDecimal.ZERO)));
@@ -255,9 +255,9 @@ public class XmTaskSbillController {
 			}
 
 
-			List<XmTaskWorkload> workloadsDb4=workloadsDb3.stream().filter(i->!sameSbillDetails.stream().filter(k->k.getUserid().equals(i.getUserid()) && k.getTaskId().equals(i.getTaskId())).findAny().isPresent()).collect(Collectors.toList());
+			List<XmWorkload> workloadsDb4=workloadsDb3.stream().filter(i->!sameSbillDetails.stream().filter(k->k.getUserid().equals(i.getUserid()) && k.getTaskId().equals(i.getTaskId())).findAny().isPresent()).collect(Collectors.toList());
 			Map<String,XmTaskSbillDetail> detailMap=new HashMap<>();
-			for (XmTaskWorkload xmTaskWorkload : workloadsDb4) {
+			for (XmWorkload xmTaskWorkload : workloadsDb4) {
 				XmTaskSbillDetail detail=detailMap.get(xmTaskWorkload.getUserid()+"-"+xmTaskWorkload.getTaskId());
 				if(detail==null){
 					detail=new XmTaskSbillDetail();

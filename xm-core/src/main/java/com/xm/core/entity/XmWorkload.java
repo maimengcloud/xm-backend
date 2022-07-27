@@ -15,7 +15,7 @@ import java.math.BigDecimal;
  */
  @Data
 @ApiModel(description="工时登记表")
-public class XmTaskWorkload  implements java.io.Serializable {
+public class XmWorkload implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
@@ -101,14 +101,14 @@ public class XmTaskWorkload  implements java.io.Serializable {
 	/**
 	 *主键
 	 **/
-	public XmTaskWorkload(String id) {
+	public XmWorkload(String id) {
 		this.id = id;
 	}
     
     /**
      * 工时登记表
      **/
-	public XmTaskWorkload() {
+	public XmWorkload() {
 	}
 
 }

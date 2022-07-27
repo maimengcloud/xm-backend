@@ -24,7 +24,7 @@ public class XmTaskSbillDetailService extends BaseService {
 	static Logger logger =LoggerFactory.getLogger(XmTaskSbillDetailService.class);
 
 	@Autowired
-	XmTaskWorkloadService xmTaskWorkloadService;
+    XmWorkloadService xmWorkloadService;
 
     @Autowired
     XmTaskSbillService  xmTaskSbillService;
@@ -38,7 +38,7 @@ public class XmTaskSbillDetailService extends BaseService {
         String sbillId=xmTaskSbillDetails.get(0).getSbillId();
         super.batchDelete(xmTaskSbillDetails);
         //更新工时表数据状态
-        xmTaskWorkloadService.updateStatusAfterDetailDel(xmTaskSbillDetails.stream().map(i->i.getId()).collect(Collectors.toList()));
+        xmWorkloadService.updateStatusAfterDetailDel(xmTaskSbillDetails.stream().map(i->i.getId()).collect(Collectors.toList()));
 
         //更新结算单数据
         xmTaskSbillService.updateBySbillDetailList(Arrays.asList(sbillId));
