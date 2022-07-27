@@ -10,9 +10,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmTask;
-import com.xm.core.entity.XmWorkload;
+import com.xm.core.entity.*;
 import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.service.*;
 import io.swagger.annotations.Api;
@@ -30,6 +28,7 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.mdp.core.utils.BaseUtils.map;
 import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
@@ -60,6 +59,21 @@ public class XmWorkloadController {
 	XmGroupService xmGroupService;
 	@Autowired
 	XmMenuService xmMenuService;
+
+
+	@Autowired
+	XmTestCaseService xmTestCaseService;
+
+	@Autowired
+	XmProjectService xmProjectService;
+
+	@Autowired
+	XmTestPlanCaseService xmTestPlanCaseService;
+
+
+	@Autowired
+	XmQuestionService xmQuestionService;
+
 	@Autowired
 	XmTaskSbillService xmTaskSbillService;
 
@@ -199,9 +213,43 @@ public class XmWorkloadController {
 		try{
 			User user= LoginUtils.getCurrentUserInfo();
 			xmWorkload.setId(xmWorkloadService.createKey("id"));
-
-			if(!StringUtils.hasText(xmWorkload.getTaskId())) {
-				return failed("taskId-0","请上送任务编号");
+			xmWorkload.setCuserid(user.getUserid());
+			xmWorkload.setCusername(user.getUsername());
+			if(!StringUtils.hasText(xmWorkload.getUserid())||xmWorkload.getUserid().equals(user.getUserid())){
+				xmWorkload.setUserid(user.getUserid());
+				xmWorkload.setUsername(user.getUsername());
+				xmWorkload.setUbranchId(user.getBranchId());
+			}else{
+				if(!StringUtils.hasText(xmWorkload.getUbranchId())){
+					return failed("ubranchId-0","请上送用户归属机构号");
+				}
+			}
+			//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
+			if(!StringUtils.hasText(xmWorkload.getBizType())) {
+				return failed("bizType-0","请上送报工类型");
+			}
+			if("1".equals(xmWorkload.getBizType())){
+				if(!StringUtils.hasText(xmWorkload.getTaskId())){
+					return failed("taskId-0","请上送任务编号");
+				}
+			}
+			if("2".equals(xmWorkload.getBizType())){
+				if(!StringUtils.hasText(xmWorkload.getBugId())){
+					return failed("bugId-0","请上送缺陷编号");
+				}
+			}
+			if("3".equals(xmWorkload.getBizType())){
+				if(!StringUtils.hasText(xmWorkload.getCaseId())){
+					return failed("caseId-0","请上送测试用例编号");
+				}
+			}
+			if("4".equals(xmWorkload.getBizType())){
+				if(!StringUtils.hasText(xmWorkload.getPlanId())){
+					return failed("planId-0","请上送测试计划编号");
+				}
+				if(!StringUtils.hasText(xmWorkload.getCaseId())){
+					return failed("caseId-0","请上送测试用例编号");
+				}
 			}
 
 			if(!StringUtils.hasText(xmWorkload.getUserid())){
@@ -224,46 +272,138 @@ public class XmWorkloadController {
 			XmWorkload xmWorkloadCount=new XmWorkload();
 			//xmWorkloadCount.setUserid(user.getUserid());
 			xmWorkloadCount.setBizDate(xmWorkload.getBizDate());
-			xmWorkloadCount.setTaskId(xmWorkload.getTaskId());
+			//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
+			if("1".equals(xmWorkload.getBizType())){
+				xmWorkloadCount.setTaskId(xmWorkload.getTaskId());
+			}
+			if("2".equals(xmWorkload.getBizType())){
+				xmWorkloadCount.setBugId(xmWorkload.getBugId());
+			}
+			if("3".equals(xmWorkload.getBizType())){
+				xmWorkloadCount.setCaseId(xmWorkload.getCaseId());
+			}
+			if("4".equals(xmWorkload.getBizType())){
+				xmWorkloadCount.setPlanId(xmWorkload.getPlanId());
+				xmWorkloadCount.setCaseId(xmWorkload.getCaseId());
+			}
+			xmWorkloadCount.setBizType(xmWorkload.getBizType());
 			long count=this.xmWorkloadService.countByWhere(xmWorkloadCount);
 			if(count>0){
-				return failed("data-1","当前任务今天已经报工");
+				return failed("data-1","当前工作项今天已经报工");
 			}
-			XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmWorkload.getTaskId()));
-			if(xmTaskDb==null ){
-				return failed("data-0","任务已不存在");
-			}
-			if("1".equals(xmTaskDb.getNtype())){
-				return failed("ntype-1",xmTaskDb.getName()+"为计划，不是任务，不用登记工时");
-			}
-			if("3".equals(xmTaskDb.getTaskState())){
-				return failed("taskState-3",xmTaskDb.getName()+"已结算完毕，不能再提交工时");
-			}
-			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
-				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
-				if(!isCreate.isOk()){
-					Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
-					if(!isExec.isOk()){
-						return failed("noqx-0","你无权针对该业务进行报工");
+			//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
+			if("1".equals(xmWorkload.getBizType())){
+				XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmWorkload.getTaskId()));
+				if(xmTaskDb==null ){
+					return failed("data-0","任务已不存在");
+				}
+				if("1".equals(xmTaskDb.getNtype())){
+					return failed("ntype-1",xmTaskDb.getName()+"为计划，不是任务，不用登记工时");
+				}
+				if("3".equals(xmTaskDb.getTaskState())){
+					return failed("taskState-3",xmTaskDb.getName()+"已结算完毕，不能再提交工时");
+				}
+				//待他人报工，需要检查我的权限，需要项目管理人员才有权限代他人报工。
+				if(!xmWorkload.getUserid().equals(user.getUserid())){
+					Tips tips3=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmWorkload.getUserid(),xmTaskDb.getProjectId());
+					if(!tips3.isOk()){
+						return failed("no-qx-for-oth-user","无权限代他人报工。只有项目管理人员可以代他人报工。");
+					}
+				}
+				if(!(xmWorkload.getUserid().equals(xmTaskDb.getCreateUserid())|| xmWorkload.getUserid().equals(xmTaskDb.getExecutorUserid()))){
+					return failed("no-create-or-not-exec",xmWorkload.getUserid()+"不是任务的负责人也不是执行人，不能报工。");
+				}
+
+				xmWorkload.setCtime(new Date());
+				xmWorkload.setWstatus("0");
+				xmWorkload.setProjectId(xmTaskDb.getProjectId());
+				xmWorkload.setBranchId(xmTaskDb.getCbranchId());
+				xmWorkloadService.insert(xmWorkload);
+				if(xmWorkload.getRworkload()!=null && BigDecimal.ZERO.compareTo(xmWorkload.getRworkload())<=0){
+					BigDecimal newBudgetWorkload= xmWorkload.getRworkload().add(NumberUtil.getBigDecimal(xmWorkload.getWorkload(),BigDecimal.ZERO)).add(NumberUtil.getBigDecimal(xmTaskDb.getActWorkload(),BigDecimal.ZERO));
+					List<String> ids=new ArrayList<>();
+					ids.add(xmTaskDb.getId());
+					this.xmTaskService.batchUpdateBudgetWorkloadAndRate(ids,newBudgetWorkload );
+				}
+				this.xmTaskService.calcWorkloadByRecord(xmTaskDb.getId());
+				pushService.pushXmTask(xmTaskDb);
+
+
+			}else if("2".equals(xmWorkload.getBizType())){//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
+				XmQuestion xmQuestionDb=xmQuestionService.selectOneById(xmWorkload.getBugId());
+				if(xmQuestionDb==null){
+					return failed("bug-0","缺陷已不存在");
+				}
+				if(StringUtils.hasText(xmQuestionDb.getProjectId())){
+					XmProject xmProject=xmProjectService.getProjectFromCache(xmQuestionDb.getProjectId());
+					if(xmProject==null){
+						return failed("project-0","项目已不存在");
+					}
+					xmWorkload.setProjectId(xmProject.getId());
+					xmWorkload.setBranchId(xmProject.getBranchId());
+				}
+
+				if (!(xmWorkload.getUserid().equals(xmQuestionDb.getCreateUserid())||xmWorkload.getUserid().equals(xmQuestionDb.getHandlerUserid()))) {
+					return failed("userid-err",xmWorkload.getUserid()+"不是当前缺陷的负责人或者创建人，无须报工。");
+				}
+
+				xmWorkload.setCtime(new Date());
+				xmWorkload.setCuserid(user.getUserid());
+				xmWorkload.setWstatus("0");
+				xmWorkload.setProjectId(xmQuestionDb.getProjectId());
+				xmWorkload.setProjectId(xmQuestionDb.getProductId());
+				xmWorkload.setMenuId(xmQuestionDb.getMenuId());
+				xmWorkload.setFuncId(xmQuestionDb.getFuncId());
+				xmWorkload.setCaseId(xmQuestionDb.getCaseId());
+				xmWorkload.setPlanId(xmQuestionDb.getPlanId());
+				xmWorkloadService.insert(xmWorkload);
+			}else if("3".equals(xmWorkload.getBizType())){//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
+				XmTestCase xmTestCaseDb=this.xmTestCaseService.selectOneById(xmWorkload.getCaseId());
+				if(xmTestCaseDb==null){
+					return failed("case-0","用例已不存在");
+				}
+				if(!(xmWorkload.getUserid().equals(xmTestCaseDb.getCuserid())||xmWorkload.getUserid().equals(xmTestCaseDb.getLuserid()))){
+					return failed("userid-err",xmWorkload.getUserid()+"不是当前用例的负责人或者责任人，无须报工。");
+				}
+				xmWorkload.setCtime(new Date());
+				xmWorkload.setWstatus("0");
+				xmWorkload.setProductId(xmTestCaseDb.getProductId());
+				xmWorkload.setMenuId(xmTestCaseDb.getMenuId());
+				xmWorkload.setFuncId(xmTestCaseDb.getFuncId());
+ 				xmWorkload.setBranchId(xmTestCaseDb.getCbranchId());
+ 				xmWorkloadService.insert(xmWorkload);
+			}else if("4".equals(xmWorkload.getBizType())){//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
+ 				List<Map<String,Object>> xmTestPlanCaseDbs=this.xmTestPlanCaseService.selectListMapByWhere(map("planId",xmWorkload.getPlanId(),"caseId",xmWorkload.getCaseId()));
+				if(xmTestPlanCaseDbs==null||xmTestPlanCaseDbs.size()==0){
+					return failed("xmTestPlanCaseDb-0","执行用例已不存在");
+				}
+				Map<String,Object> xmTestPlanCaseDb=xmTestPlanCaseDbs.get(0);
+				if(!(xmWorkload.getUserid().equals(xmTestPlanCaseDb.get("execUserid")))){
+					return failed("userid-err",xmWorkload.getUserid()+"不是当前用例的执行人，无须报工。");
+				}
+				String projectId= (String) xmTestPlanCaseDb.get("projectId");
+				if(StringUtils.hasText(projectId)){
+					XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
+					if(xmProject==null){
+						return failed("project-0","项目已不存在");
 					}
 
+					xmWorkload.setProjectId(xmProject.getId());
+					xmWorkload.setBranchId(xmProject.getBranchId());
+				}else{
+					return failed("projectId-0","项目编号不能为空");
 				}
-			}
-			xmWorkload.setCtime(new Date());
-			xmWorkload.setCuserid(user.getUserid());
 
-			xmWorkload.setWstatus("0");
-			xmWorkload.setProjectId(xmTaskDb.getProjectId());
-			xmWorkload.setBranchId(xmTaskDb.getCbranchId());
-			xmWorkloadService.insert(xmWorkload);
-			if(xmWorkload.getRworkload()!=null && BigDecimal.ZERO.compareTo(xmWorkload.getRworkload())<=0){
-				BigDecimal newBudgetWorkload= xmWorkload.getRworkload().add(NumberUtil.getBigDecimal(xmWorkload.getWorkload(),BigDecimal.ZERO)).add(NumberUtil.getBigDecimal(xmTaskDb.getActWorkload(),BigDecimal.ZERO));
-				List<String> ids=new ArrayList<>();
-				ids.add(xmTaskDb.getId());
-				this.xmTaskService.batchUpdateBudgetWorkloadAndRate(ids,newBudgetWorkload );
+				xmWorkload.setCtime(new Date());
+				xmWorkload.setCuserid(user.getUserid());
+				xmWorkload.setWstatus("0");
+				xmWorkload.setProductId((String) xmTestPlanCaseDb.get("productId"));
+				xmWorkload.setFuncId((String) xmTestPlanCaseDb.get("funcId"));
+				xmWorkload.setMenuId((String) xmTestPlanCaseDb.get("menuId"));
+				xmWorkload.setCaseId((String) xmTestPlanCaseDb.get("caseId"));
+				xmWorkload.setPlanId((String) xmTestPlanCaseDb.get("planId"));
+				xmWorkloadService.insert(xmWorkload);
 			}
-			this.xmTaskService.calcWorkloadByRecord(xmTaskDb.getId());
-			pushService.pushXmTask(xmTaskDb);
 			m.put("data",xmWorkload);
 		}catch (BizException e) { 
 			tips=e.getTips();

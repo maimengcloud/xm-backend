@@ -111,4 +111,6 @@ public class XmWorkload implements java.io.Serializable {
 	public XmWorkload() {
 	}
 
+	public void setFuncId(String funcId) {
+	}
 }
