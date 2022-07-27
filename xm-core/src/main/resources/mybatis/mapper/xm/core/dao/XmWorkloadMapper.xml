@@ -237,9 +237,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.* ,task.project_name,task.name as task_name,task.budget_workload,task.act_workload,task.task_state from xm_workload res
-		inner join xm_task task
-		on res.task_id = task.id
+		select * from xm_workload res
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
@@ -285,7 +283,7 @@
 		insert into xm_workload(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{branchId},#{ubranchId},#{sbillId},#{detailId},#{menuId},#{productId},#{caseId},#{planId},#{bugId},#{bizType},#{funcId}
+		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{branchId},#{ubranchId},#{sbillId},#{detailId},#{menuId},#{productId},#{caseId},#{planId},#{bugId},#{bizType},#{funcId},#{bizName}
 		)
 	</insert>
 	
@@ -360,7 +358,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,branch_id,ubranch_id,sbill_id,detail_id,menu_id,product_id,case_id,plan_id,bug_id,biz_type,func_id
+		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,branch_id,ubranch_id,sbill_id,detail_id,menu_id,product_id,case_id,plan_id,bug_id,biz_type,func_id,biz_name
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -392,6 +390,7 @@
 		<if test="bugId != null and bugId != ''">      and res.bug_id = #{bugId}     </if>
 		<if test="bizType != null and bizType != ''">      and res.biz_type = #{bizType}     </if>
 		<if test="funcId != null and funcId != ''">      and res.func_id = #{funcId}     </if>
+		<if test="bizName != null and bizName != ''">      and res.biz_name = #{bizName}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -420,7 +419,8 @@
 		plan_id = #{planId},
 		bug_id = #{bugId},
 		biz_type = #{bizType},
-		func_id = #{funcId}
+		func_id = #{funcId},
+		biz_name = #{bizName}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
@@ -449,6 +449,7 @@
 		<if test="bugId != null and bugId != ''"> bug_id = #{bugId},     </if>
 		<if test="bizType != null and bizType != ''"> biz_type = #{bizType},     </if>
 		<if test="funcId != null and funcId != ''"> func_id = #{funcId},     </if>
+		<if test="bizName != null and bizName != ''"> biz_name = #{bizName},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -477,6 +478,7 @@
 			plan_id = #{item.planId},
 			bug_id = #{item.bugId},
 			biz_type = #{item.bizType},
-			func_id = #{item.funcId}
+			func_id = #{item.funcId},
+			biz_name = #{item.bizName}
 	</sql>
 </mapper>
