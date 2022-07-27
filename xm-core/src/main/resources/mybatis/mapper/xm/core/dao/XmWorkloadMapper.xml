@@ -281,11 +281,11 @@
 		</where>
 	</select>
 	<!-- 新增一条记录  主键id,-->
-	<insert id="insert" parameterType="com.xm.core.entity.XmWorkload" useGeneratedKeys="false" keyProperty="id">
+	<insert id="insert" parameterType="com.xm.core.entity.XmWorkload" useGeneratedKeys="false"   keyProperty="id">
 		insert into xm_workload(
 			<include refid="columns"/>
 		) values (
-		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{branchId},#{ubranchId},#{sbillId},#{detailId},#{menuId},#{productId},#{caseId},#{planId},#{bugId},#{bizType}
+		#{userid},#{username},#{ctime},#{taskId},#{cuserid},#{bizDate},#{wstatus},#{remark},#{ttype},#{id},#{stime},#{sstatus},#{workload},#{rworkload},#{cusername},#{projectId},#{branchId},#{ubranchId},#{sbillId},#{detailId},#{menuId},#{productId},#{caseId},#{planId},#{bugId},#{bizType},#{funcId}
 		)
 	</insert>
 	
@@ -299,13 +299,13 @@
 	
 	<!-- 按主键删除一条记录-->
 	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmWorkload">
-		delete from xm_workload
+		delete from xm_workload 
 		where id = #{id} 
 	</delete>
 	
 	<!-- 根据条件修改若干条记录 -->
 	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmWorkload">
-		update  xm_workload
+		update  xm_workload 
 		<set>
 			<include refid="someFieldSet"/>
 		</set>
@@ -314,7 +314,7 @@
 	
 		<!-- 根据主键修改一条记录 -->
 	<update id="updateByPk" parameterType="com.xm.core.entity.XmWorkload">
-		update  xm_workload
+		update  xm_workload 
 		<set>
 			<include refid="set"/>
 		</set>
@@ -329,7 +329,7 @@
 	<!-- 批量更新 -->
 	<update id="batchUpdate" parameterType="List">   
 		<foreach collection="list" item="item" index="index" separator=";" >
-   		update  xm_workload
+   		update  xm_workload 
 		set 
 			<include refid="batchSet"/>
 			where id = #{item.id}  
@@ -349,7 +349,7 @@
 	</delete>
 	<!-- 批量删除 -->
 	<delete id="batchDelete" parameterType="List">  
-		delete from xm_workload
+		delete from xm_workload 
 			where
 			(id) in
                 <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
@@ -360,7 +360,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,branch_id,ubranch_id,sbill_id,detail_id,menu_id,product_id,case_id,plan_id,bug_id,biz_type
+		userid,username,ctime,task_id,cuserid,biz_date,wstatus,remark,ttype,id,stime,sstatus,workload,rworkload,cusername,project_id,branch_id,ubranch_id,sbill_id,detail_id,menu_id,product_id,case_id,plan_id,bug_id,biz_type,func_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -391,6 +391,7 @@
 		<if test="planId != null and planId != ''">      and res.plan_id = #{planId}     </if>
 		<if test="bugId != null and bugId != ''">      and res.bug_id = #{bugId}     </if>
 		<if test="bizType != null and bizType != ''">      and res.biz_type = #{bizType}     </if>
+		<if test="funcId != null and funcId != ''">      and res.func_id = #{funcId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -418,7 +419,8 @@
 		case_id = #{caseId},
 		plan_id = #{planId},
 		bug_id = #{bugId},
-		biz_type = #{bizType}
+		biz_type = #{bizType},
+		func_id = #{funcId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
@@ -446,6 +448,7 @@
 		<if test="planId != null and planId != ''"> plan_id = #{planId},     </if>
 		<if test="bugId != null and bugId != ''"> bug_id = #{bugId},     </if>
 		<if test="bizType != null and bizType != ''"> biz_type = #{bizType},     </if>
+		<if test="funcId != null and funcId != ''"> func_id = #{funcId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -473,6 +476,7 @@
 			case_id = #{item.caseId},
 			plan_id = #{item.planId},
 			bug_id = #{item.bugId},
-			biz_type = #{item.bizType}
+			biz_type = #{item.bizType},
+			func_id = #{item.funcId}
 	</sql>
 </mapper>
