@@ -22,6 +22,17 @@
 
 	</select>
 
+
+	<select id="getXmTestPlanCaseExecStatusDist" parameterType="HashMap"  resultType="HashMap">
+		select count(*) as total_cnt,res.exec_status from xm_test_plan_case res where  res.plan_id=#{planId}
+		group by res.exec_status
+	</select>
+
+	<select id="getXmTestPlanCaseUserDist" parameterType="HashMap"  resultType="HashMap">
+		select count(*) as total_cnt,sum(case when res.exec_status>='1' then 1 else 0 end) as had_exec,sum(case when res.exec_status='0' then 1 else 0 end) as not_exec from xm_test_plan_case res where  res.plan_id=#{planId}
+		group by res.exec_userid
+
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 
