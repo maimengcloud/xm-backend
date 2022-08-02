@@ -29,7 +29,10 @@
 	</select>
 
 	<select id="getXmTestPlanCaseUserDist" parameterType="HashMap"  resultType="HashMap">
-		select count(*) as total_cnt,sum(case when res.exec_status>='1' then 1 else 0 end) as had_exec,sum(case when res.exec_status='0' then 1 else 0 end) as not_exec from xm_test_plan_case res where  res.plan_id=#{planId}
+		select count(*) as total_cnt,sum(case when res.exec_status>='1' then 1 else 0 end) as had_exec,sum(case when res.exec_status='0' then 1 else 0 end) as not_exec
+		,res.exec_userid,max(res.exec_username) as exec_username
+		from xm_test_plan_case res where  res.plan_id=#{planId}
+
 		group by res.exec_userid
 
 	</select>
