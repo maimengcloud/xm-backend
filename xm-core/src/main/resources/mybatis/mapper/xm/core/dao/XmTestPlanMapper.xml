@@ -67,7 +67,7 @@
 		insert into xm_test_plan(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{productId},#{productName},#{flowState},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{menus},#{funcs}
+		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{productId},#{productName},#{flowState},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{menus},#{funcs},#{budgetWorkload},#{actWorkload},#{summaryRemark}
 		)
 	</insert>
 	
@@ -142,7 +142,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,product_id,product_name,flow_state,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,menus,funcs
+		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,product_id,product_name,flow_state,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,menus,funcs,budget_workload,act_workload,summary_remark
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -175,6 +175,9 @@
 		<if test="confirmedBugs != null and confirmedBugs != ''">      and res.confirmed_bugs = #{confirmedBugs}     </if>
 		<if test="menus != null and menus != ''">      and res.menus = #{menus}     </if>
 		<if test="funcs != null and funcs != ''">      and res.funcs = #{funcs}     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
+		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
+		<if test="summaryRemark != null and summaryRemark != ''">      and res.summary_remark = #{summaryRemark}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -204,7 +207,10 @@
 		active_bugs = #{activeBugs},
 		confirmed_bugs = #{confirmedBugs},
 		menus = #{menus},
-		funcs = #{funcs}
+		funcs = #{funcs},
+		budget_workload = #{budgetWorkload},
+		act_workload = #{actWorkload},
+		summary_remark = #{summaryRemark}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -234,6 +240,9 @@
 		<if test="confirmedBugs != null and confirmedBugs != ''"> confirmed_bugs = #{confirmedBugs},     </if>
 		<if test="menus != null and menus != ''"> menus = #{menus},     </if>
 		<if test="funcs != null and funcs != ''"> funcs = #{funcs},     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
+		<if test="actWorkload != null and actWorkload != ''"> act_workload = #{actWorkload},     </if>
+		<if test="summaryRemark != null and summaryRemark != ''"> summary_remark = #{summaryRemark},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -263,6 +272,9 @@
 			active_bugs = #{item.activeBugs},
 			confirmed_bugs = #{item.confirmedBugs},
 			menus = #{item.menus},
-			funcs = #{item.funcs}
+			funcs = #{item.funcs},
+			budget_workload = #{item.budgetWorkload},
+			act_workload = #{item.actWorkload},
+			summary_remark = #{item.summaryRemark}
 	</sql>
 </mapper>
