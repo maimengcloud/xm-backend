@@ -60,6 +60,10 @@ public class XmTestPlanController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTestPlan, "ids");
+		User user=LoginUtils.getCurrentUserInfo();
+		if(!user.getBranchId().equals(xmTestCasedbDb.getCbranchId())){
+			return failed("cbranchId-err","该测试库不属于您企业，不能修改");
+		}
 		PageUtils.startPage(xmTestPlan);
 		List<Map<String,Object>>	xmTestPlanList = xmTestPlanService.selectListMapByWhere(xmTestPlan);	//列出XmTestPlan列表
 		PageUtils.responePage(m, xmTestPlanList);
@@ -90,6 +94,21 @@ public class XmTestPlanController {
                     return failed("pk-exists","编号重复，请修改编号再提交");
                 }
             }
+			if(!StringUtils.hasText(xmTestPlan.getProjectId())){
+				return failed("projectId-0","项目编号不能为空");
+			}
+
+			if(!StringUtils.hasText(xmTestPlan.getProductId())){
+				return failed("productId-0","产品编号不能为空");
+			}
+
+			if(!StringUtils.hasText(xmTestPlan.getCasedbId())){
+				return failed("casedbId-0","测试用例库编号不能为空");
+			}
+			User user=LoginUtils.getCurrentUserInfo();
+			xmTestPlan.setCuserid(user.getUserid());
+			xmTestPlan.setCusername(user.getUsername());
+			xmTestPlan.setCtime(new Date());
 			xmTestPlanService.insert(xmTestPlan);
 			m.put("data",xmTestPlan);
 		}catch (BizException e) { 

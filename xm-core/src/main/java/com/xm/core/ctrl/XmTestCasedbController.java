@@ -60,6 +60,8 @@ public class XmTestCasedbController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTestCasedb, "ids");
+		User user=LoginUtils.getCurrentUserInfo();
+		xmTestCasedb.put("cbranchId",user.getBranchId());
 		PageUtils.startPage(xmTestCasedb);
 		List<Map<String,Object>>	xmTestCasedbList = xmTestCasedbService.selectListMapByWhere(xmTestCasedb);	//列出XmTestCasedb列表
 		PageUtils.responePage(m, xmTestCasedbList);
@@ -90,6 +92,14 @@ public class XmTestCasedbController {
                     return failed("pk-exists","编号重复，请修改编号再提交");
                 }
             }
+			if(!StringUtils.hasText(xmTestCasedb.getProductId())){
+				return failed("productId-0","产品编号不能为空");
+			}
+			User user=LoginUtils.getCurrentUserInfo();
+			xmTestCasedb.setCtime(new Date());
+			xmTestCasedb.setCuserid(user.getUserid());
+			xmTestCasedb.setCusername(user.getUsername());
+			xmTestCasedb.setCbranchId(user.getBranchId());
 			xmTestCasedbService.insert(xmTestCasedb);
 			m.put("data",xmTestCasedb);
 		}catch (BizException e) { 
@@ -119,6 +129,10 @@ public class XmTestCasedbController {
             if( xmTestCasedbDb == null ){
                 return failed("data-not-exists","数据不存在，无法删除");
             }
+			User user=LoginUtils.getCurrentUserInfo();
+            if(!user.getBranchId().equals(xmTestCasedbDb.getCbranchId())){
+				return failed("cbranchId-err","该测试库不属于您企业，不能删除");
+			}
 			xmTestCasedbService.deleteByPk(xmTestCasedb);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -147,6 +161,11 @@ public class XmTestCasedbController {
             if( xmTestCasedbDb == null ){
                 return failed("data-not-exists","数据不存在，无法修改");
             }
+
+			User user=LoginUtils.getCurrentUserInfo();
+			if(!user.getBranchId().equals(xmTestCasedbDb.getCbranchId())){
+				return failed("cbranchId-err","该测试库不属于您企业，不能修改");
+			}
 			xmTestCasedbService.updateSomeFieldByPk(xmTestCasedb);
 			m.put("data",xmTestCasedb);
 		}catch (BizException e) { 
@@ -197,7 +216,10 @@ public class XmTestCasedbController {
 			List<XmTestCasedb> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			for (XmTestCasedb xmTestCasedbDb : xmTestCasedbsDb) {
-				Tips tips2 = new Tips("检查通过"); 
+				Tips tips2 = new Tips("检查通过");
+				if(!user.getBranchId().equals(xmTestCasedbDb.getCbranchId())){
+					return failed("cbranchId-err","该测试库不属于您企业，不能修改");
+				}
 				if(!tips2.isOk()){
 				    no.add(xmTestCasedbDb); 
 				}else{
@@ -248,7 +270,12 @@ public class XmTestCasedbController {
 
             List<XmTestCasedb> can=new ArrayList<>();
             List<XmTestCasedb> no=new ArrayList<>();
+
+			User user=LoginUtils.getCurrentUserInfo();
             for (XmTestCasedb data : datasDb) {
+				if(!user.getBranchId().equals(data.getCbranchId())){
+					return failed("cbranchId-err","该测试库不属于您企业，不能删除");
+				}
                 if(true){
                     can.add(data);
                 }else{
