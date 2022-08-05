@@ -273,10 +273,7 @@ public class XmTestCasedbController {
 
 			User user=LoginUtils.getCurrentUserInfo();
             for (XmTestCasedb data : datasDb) {
-				if(!user.getBranchId().equals(data.getCbranchId())){
-					return failed("cbranchId-err","该测试库不属于您企业，不能删除");
-				}
-                if(true){
+                if(user.getBranchId().equals(data.getCbranchId())){
                     can.add(data);
                 }else{
                     no.add(data);

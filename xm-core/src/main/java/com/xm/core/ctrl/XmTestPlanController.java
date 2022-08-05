@@ -61,9 +61,7 @@ public class XmTestPlanController {
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTestPlan, "ids");
 		User user=LoginUtils.getCurrentUserInfo();
-		if(!user.getBranchId().equals(xmTestCasedbDb.getCbranchId())){
-			return failed("cbranchId-err","该测试库不属于您企业，不能修改");
-		}
+		xmTestPlan.put("cbranchId",user.getBranchId());
 		PageUtils.startPage(xmTestPlan);
 		List<Map<String,Object>>	xmTestPlanList = xmTestPlanService.selectListMapByWhere(xmTestPlan);	//列出XmTestPlan列表
 		PageUtils.responePage(m, xmTestPlanList);
@@ -109,6 +107,7 @@ public class XmTestPlanController {
 			xmTestPlan.setCuserid(user.getUserid());
 			xmTestPlan.setCusername(user.getUsername());
 			xmTestPlan.setCtime(new Date());
+			xmTestPlan.setCbranchId(user.getBranchId());
 			xmTestPlanService.insert(xmTestPlan);
 			m.put("data",xmTestPlan);
 		}catch (BizException e) { 
@@ -138,6 +137,10 @@ public class XmTestPlanController {
             if( xmTestPlanDb == null ){
                 return failed("data-not-exists","数据不存在，无法删除");
             }
+            User user=LoginUtils.getCurrentUserInfo();
+            if(!user.getBranchId().equals(xmTestPlanDb.getCbranchId())){
+            	return failed("cbranchId-err","该计划不属于您的企业创建，无权删除");
+			}
 			xmTestPlanService.deleteByPk(xmTestPlan);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -166,6 +169,10 @@ public class XmTestPlanController {
             if( xmTestPlanDb == null ){
                 return failed("data-not-exists","数据不存在，无法修改");
             }
+			User user=LoginUtils.getCurrentUserInfo();
+			if(!user.getBranchId().equals(xmTestPlanDb.getCbranchId())){
+				return failed("cbranchId-err","该计划不属于您的企业创建，无权修改");
+			}
 			xmTestPlanService.updateSomeFieldByPk(xmTestPlan);
 			m.put("data",xmTestPlan);
 		}catch (BizException e) { 
@@ -216,7 +223,11 @@ public class XmTestPlanController {
 			List<XmTestPlan> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			for (XmTestPlan xmTestPlanDb : xmTestPlansDb) {
-				Tips tips2 = new Tips("检查通过"); 
+				Tips tips2 = new Tips("检查通过");
+
+				if(!user.getBranchId().equals(xmTestPlanDb.getCbranchId())){
+					return failed("cbranchId-err","该计划不属于您的企业创建，无权修改");
+				}
 				if(!tips2.isOk()){
 				    no.add(xmTestPlanDb); 
 				}else{
@@ -267,8 +278,9 @@ public class XmTestPlanController {
 
             List<XmTestPlan> can=new ArrayList<>();
             List<XmTestPlan> no=new ArrayList<>();
-            for (XmTestPlan data : datasDb) {
-                if(true){
+			User user=LoginUtils.getCurrentUserInfo();
+			for (XmTestPlan data : datasDb) {
+                if(user.getBranchId().equals(data.getCbranchId())){
                     can.add(data);
                 }else{
                     no.add(data);
