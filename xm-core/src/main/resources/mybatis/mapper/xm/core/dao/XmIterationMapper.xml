@@ -52,7 +52,7 @@
 			<include refid="whereForMap"/>
 			<include refid="where"/>
 		</where>
-		order by res.seq_no desc
+		order by res.online_time desc
 	</select>
 	<!--结束 自定义sql函数区域-->
 	
@@ -65,7 +65,7 @@
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
 		</where>
-		order by res.seq_no desc
+		order by res.online_time desc
 	</select>
 	
 	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
@@ -74,7 +74,7 @@
 		<where>
 			<include refid="where"/>
 		</where>
-		order by res.seq_no desc
+		order by res.online_time desc
 	</select>
 	
 		<!-- 通过主键查询获取数据对象 返回object -->
