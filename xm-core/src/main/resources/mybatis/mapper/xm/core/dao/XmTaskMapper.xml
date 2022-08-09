@@ -27,8 +27,14 @@
 				find_in_set(#{item},res.tag_ids)
 			</foreach>
 		</if>
-		<if test=" createTimeStart !=null "> and res.create_time &gt; #{createTimeStart} </if>
-		<if test=" createTimeEnd !=null "> and res.create_time &lt; #{createTimeEnd} </if>
+		<if test=" planStartTimeStart !=null "> and res.start_time &gt; #{planStartTimeStart} </if>
+		<if test=" planStartTimeEnd !=null "> and res.start_time &lt; #{planStartTimeEnd} </if>
+		<if test=" planEndTimeStart !=null "> and res.end_time &gt; #{planEndTimeStart} </if>
+		<if test=" planEndTimeEnd !=null "> and res.end_time &lt; #{planEndTimeEnd} </if>
+		<if test=" actStartTimeStart !=null "> and res.act_start_time &gt; #{actStartTimeStart} </if>
+		<if test=" actStartTimeEnd !=null "> and res.act_start_time &lt; #{actStartTimeEnd} </if>
+		<if test=" actEndTimeStart !=null "> and res.act_end_time &gt; #{actEndTimeStart} </if>
+		<if test=" actEndTimeEnd !=null "> and res.act_end_time &lt; #{actEndTimeEnd} </if>
 		<if test="parent != null and parent != ''"> and (res.parent_taskid = '' or res.parent_taskid IS NULL)</if>
 		<if test="pidPathsLike">
 			and res.pid_paths like concat(#{pidPathsLike},'%')

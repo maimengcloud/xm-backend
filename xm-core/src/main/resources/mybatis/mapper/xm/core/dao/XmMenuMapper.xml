@@ -49,6 +49,10 @@
 				and exists(select 1 from xm_task t where  t.menu_id=res.menu_id and t.project_id=#{projectId})
 			</if>
 		</if>
+		<if test=" planStartTimeStart !=null "> and res.start_time &gt; #{planStartTimeStart} </if>
+		<if test=" planStartTimeEnd !=null "> and res.start_time &lt; #{planStartTimeEnd} </if>
+		<if test=" planEndTimeStart !=null "> and res.end_time &gt; #{planEndTimeStart} </if>
+		<if test=" planEndTimeEnd !=null "> and res.end_time &lt; #{planEndTimeEnd} </if>
 		<if test="key != null and key !='' ">  and res.menu_name like #{key}     </if>
 		<if test="isTop!=null and isTop!=''">  and (res.pmenu_id is null )</if>
 		<if test=" linkProjectId!=null and linkProjectId!=''">  and
