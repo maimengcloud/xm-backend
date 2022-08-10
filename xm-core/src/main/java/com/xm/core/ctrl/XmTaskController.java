@@ -19,6 +19,7 @@ import com.xm.core.PubTool;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmTask;
+import com.xm.core.entity.XmTaskExecuser;
 import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.service.*;
 import com.xm.core.service.cache.XmTaskCacheService;
@@ -84,6 +85,9 @@ public class XmTaskController {
 
 	@Autowired
 	XmTaskSumParentsPushService pushService;
+
+	@Autowired
+	XmTaskExecuserController execuserController;
 
 
 	@Autowired
@@ -241,7 +245,16 @@ public class XmTaskController {
 			if(ids==null || ids.size()==0){
 				ResponseHelper.failed("ids-0","ids不能为空");
 			}
-
+			if(xmTaskMap.containsKey("executorUserid")){
+				if(ids.size()>1){
+					ResponseHelper.failed("ids-2","不能批量设置执行人，一次只能设置一个任务的执行人。");
+				}
+				XmTaskExecuser xmTaskExecuser=new XmTaskExecuser();
+				xmTaskExecuser.setTaskId(ids.get(0));
+				xmTaskExecuser.setUserid((String)xmTaskMap.get("executorUserid"));
+				xmTaskExecuser.setUsername((String)xmTaskMap.get("executorUsername"));
+				return execuserController.addXmTaskExecuser(xmTaskExecuser);
+			}
 			Set<String> fields=new HashSet<>();
 			fields.add("childrenCnt");
 			fields.add("ntype");
