@@ -1230,13 +1230,13 @@ public class XmTaskController {
 			List<String> msgs=new ArrayList<>();
 			msgs.add("删除了"+canDelNodes.size()+"个任务。");
 			if(hadChildNodes.size()>0){
-				msgs.add("以下"+hadChildNodes.size()+"个任务存在未删除的子任务，不能删除。【"+hadChildNodes.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+				msgs.add("以下"+hadChildNodes.size()+"个任务存在未删除的子任务，不能删除。如确实需要删除任务，请先删除子任务。【"+hadChildNodes.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			if(noAllowNodes.size()>0){
 				msgs.add("以下"+noAllowNodes.size()+"个任务您无权删除。 【"+noAllowNodes.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			if(existsExecuserList.size()>0){
-				msgs.add("以下"+existsExecuserList.size()+"个任务存在待结算的执行人，不能删除。【"+existsExecuserList.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+				msgs.add("以下"+existsExecuserList.size()+"个任务存在待结算的执行人，不能删除。如确实需要删除，请在【任务编辑->执行人】中删除执行人后再删除任务【"+existsExecuserList.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			if(canDelNodes.size()==0){
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
