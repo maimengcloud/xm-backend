@@ -243,11 +243,11 @@ public class XmTaskController {
 			List<String> ids= (List<String>) xmTaskMap.get("ids");
 
 			if(ids==null || ids.size()==0){
-				ResponseHelper.failed("ids-0","ids不能为空");
+				return ResponseHelper.failed("ids-0","ids不能为空");
 			}
 			if(xmTaskMap.containsKey("executorUserid")){
 				if(ids.size()>1){
-					ResponseHelper.failed("ids-2","不能批量设置执行人，一次只能设置一个任务的执行人。");
+					return ResponseHelper.failed("ids-2","不能批量设置执行人，一次只能设置一个任务的执行人。");
 				}
 				XmTaskExecuser xmTaskExecuser=new XmTaskExecuser();
 				xmTaskExecuser.setTaskId(ids.get(0));

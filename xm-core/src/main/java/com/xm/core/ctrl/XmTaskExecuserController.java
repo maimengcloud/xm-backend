@@ -10,12 +10,10 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskExecuser;
-import com.xm.core.service.XmGroupService;
-import com.xm.core.service.XmGroupUserService;
-import com.xm.core.service.XmTaskExecuserService;
-import com.xm.core.service.XmTaskService;
+import com.xm.core.service.*;
 import com.xm.core.service.client.MkClient;
 import com.xm.core.service.client.SysClient;
 import com.xm.core.vo.XmGroupVo;
@@ -59,6 +57,9 @@ public class XmTaskExecuserController {
 
 	@Autowired
 	private XmTaskService xmTaskService;
+
+	@Autowired
+	private XmProjectService xmProjectService;
 	 
 	@Autowired
 	XmGroupUserService xmGroupUserService;
@@ -194,6 +195,9 @@ public class XmTaskExecuserController {
 				return m;
 			}
 			String projectId=xmTask.getProjectId();
+			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(projectId);
+			xmTaskExecuser.setProjectId(projectId);
+			xmTaskExecuser.setBranchId(xmProjectDb.getBranchId());
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
 				tips.setFailureMsg("该任务已经处于完工、结算状态，不允许再修改");
 				m.put("tips", tips);
@@ -261,7 +265,7 @@ public class XmTaskExecuserController {
 				if(xmTaskExecusersDb !=null && xmTaskExecusersDb.size()>0) {
 					for (XmTaskExecuser exe : xmTaskExecusersDb) {
 						if(!"0".equals(exe.getStatus()) && !"7".equals(exe.getStatus())) {
-							throw new BizException(exe.getUsername()+"是当前执行人，不允许再添加其它执行人。");
+							throw new BizException(exe.getUsername()+"是当前执行人，不允许再添加其它执行人。如需更换，请在【执行人管理】变更【"+exe.getUsername()+"】的执行人身份");
 						}
 					}
 				}
