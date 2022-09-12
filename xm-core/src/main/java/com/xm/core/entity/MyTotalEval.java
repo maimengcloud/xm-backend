@@ -29,6 +29,12 @@ public class MyTotalEval implements java.io.Serializable {
 	@ApiModelProperty(notes="总体评价0-5分",allowEmptyValue=true,example="",allowableValues="")
 	Integer totalStar;
 
+	@ApiModelProperty(notes="付款速度0-5分",allowEmptyValue=true,example="",allowableValues="")
+	Integer paySpeed;
+
+	@ApiModelProperty(notes="合作愉快度0-5分",allowEmptyValue=true,example="",allowableValues="")
+	Integer coopHappy;
+
 	@ApiModelProperty(notes="评价人数",allowEmptyValue=true,example="",allowableValues="")
 	Integer evalUserCnt;
 
