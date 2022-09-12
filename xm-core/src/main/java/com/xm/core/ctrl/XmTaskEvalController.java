@@ -1,32 +1,30 @@
 package com.xm.core.ctrl;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
+import com.mdp.core.utils.RequestUtils;
+import com.mdp.mybatis.PageUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.MyTotalEval;
+import com.xm.core.entity.XmTaskEval;
+import com.xm.core.service.XmTaskEvalService;
+import com.xm.core.service.client.SysClient;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import io.swagger.annotations.*;
-
-import static com.mdp.core.utils.ResponseHelper.*;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-import com.mdp.mybatis.PageUtils;
-import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.NumberUtil;
-import com.mdp.safe.client.entity.User;
-import com.mdp.safe.client.utils.LoginUtils;
-import com.mdp.swagger.ApiEntityParams;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import com.xm.core.service.XmTaskEvalService;
-import com.xm.core.entity.XmTaskEval;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static com.mdp.core.utils.BaseUtils.fromMap;
+import static com.mdp.core.utils.BaseUtils.toMap;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_task_eval xm_task_eval的操作有增删改查,对应的url分别为:<br>
@@ -42,6 +40,9 @@ public class XmTaskEvalController {
 	
 	@Autowired
 	private XmTaskEvalService xmTaskEvalService;
+
+	@Autowired
+	SysClient sysClient;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTaskEval());
@@ -72,10 +73,37 @@ public class XmTaskEvalController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
-	
-	/**
+
+
+	@ApiOperation( value = "服务商中心交易评价汇总信息",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response= MyTotalEval.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/getServiceProviderEval",method=RequestMethod.GET)
+	public Map<String,Object> getMyEval(){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		User user = LoginUtils.getCurrentUserInfo();
+		MyTotalEval myTotalEval = xmTaskEvalService.getServiceProviderEval(user);	//列出XmTaskEval列表
+		m.put("data",myTotalEval);
+		m.put("tips", tips);
+		return m;
+	}
+
+	@ApiOperation( value = "个人中心交易评价汇总信息",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response= MyTotalEval.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/getPersonEval",method=RequestMethod.GET)
+	public Map<String,Object> getPersonEval(){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		User user = LoginUtils.getCurrentUserInfo();
+		MyTotalEval myTotalEval = xmTaskEvalService.getPersonEval(user);	//列出XmTaskEval列表
+		m.put("data",myTotalEval);
+		m.put("tips", tips);
+		return m;
+	}
 	@ApiOperation( value = "新增一条xm_task_eval信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTaskEval.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -95,6 +123,24 @@ public class XmTaskEvalController {
                     return failed("pk-exists","编号重复，请修改编号再提交");
                 }
             }
+			if(!StringUtils.hasText(xmTaskEval.getTaskId())){
+				return failed("taskId-0","任务编号不能为空");
+			}
+
+			if(!StringUtils.hasText(xmTaskEval.getToUserid())){
+				return failed("toUserid-0","被评价人编号不能为空");
+			}
+			User user = LoginUtils.getCurrentUserInfo();
+			User toUser=sysClient.getUserByUserid(xmTaskEval.getToUserid());
+			if(toUser==null){
+				return failed("toUser-0","被评价人不存在");
+			}
+			xmTaskEval.setEvalTime(new Date());
+			xmTaskEval.setEvalUserid(user.getUserid());
+			xmTaskEval.setEvalUsername(user.getUsername());
+			xmTaskEval.setEvalBranchId(user.getBranchId());
+			xmTaskEval.setToUsername(toUser.getUsername());
+			xmTaskEval.setToBranchId(toUser.getBranchId());
 			xmTaskEvalService.insert(xmTaskEval);
 			m.put("data",xmTaskEval);
 		}catch (BizException e) { 
@@ -107,9 +153,7 @@ public class XmTaskEvalController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
-	
-	/**
+
 	@ApiOperation( value = "删除一条xm_task_eval信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -137,9 +181,7 @@ public class XmTaskEvalController {
 		m.put("tips", tips);
 		return m;
 	}
-	 */
-	
-	/**
+
 	@ApiOperation( value = "根据主键修改一条xm_task_eval信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTaskEval.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -168,9 +210,7 @@ public class XmTaskEvalController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 
-	/**
     @ApiOperation( value = "批量修改某些字段",notes="")
     @ApiEntityParams( value = XmTaskEval.class, props={ }, remark = "xm_task_eval", paramType = "body" )
 	@ApiResponses({
@@ -242,9 +282,7 @@ public class XmTaskEvalController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 
-	/**
 	@ApiOperation( value = "根据主键列表批量删除xm_task_eval信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -292,5 +330,5 @@ public class XmTaskEvalController {
         m.put("tips", tips);
         return m;
 	} 
-	*/
+
 }

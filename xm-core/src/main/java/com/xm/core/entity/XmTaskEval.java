@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskEval所有属性名: <br>
- *	"id","评价","type","评价类型1-雇主对服务商的评价，2-服务商对雇主的评价，3-组长对组员的评价","wspeed","工作速度0-5分","wattit","工作态度0-5分","wquality","工作质量0-5分","totalStar","总体评价0-5分","remark","评价内容","evalUserid","评价人编号","evalUsername","评价人姓名","toUserid","被评价人编号","toUsername","被评价人姓名","evalBranchId","评价人归属机构","toBranchId","被评价人归属机构号","taskId","任务编号","evalTime","评价时间";<br>
+ *	"id","评价","type","评价类型1-雇主对服务商的评价，2-服务商对雇主的评价，3-组长对组员的评价","wspeed","工作速度0-5分","wattit","工作态度0-5分","wquality","工作质量0-5分","totalStar","总体评价0-5分","remark","评价内容","evalUserid","评价人编号","evalUsername","评价人姓名","toUserid","被评价人编号","toUsername","被评价人姓名","evalBranchId","评价人归属机构","toBranchId","被评价人归属机构号","taskId","任务编号","evalTime","评价时间","paySpeed","付款及时度0-5分","coopHappy","合作愉快度0-5分";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -63,6 +63,12 @@ public class XmTaskEval  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="评价时间",allowEmptyValue=true,example="",allowableValues="")
 	Date evalTime;
+	
+	@ApiModelProperty(notes="付款及时度0-5分",allowEmptyValue=true,example="",allowableValues="")
+	Integer paySpeed;
+	
+	@ApiModelProperty(notes="合作愉快度0-5分",allowEmptyValue=true,example="",allowableValues="")
+	Integer coopHappy;
 
 	/**
 	 *评价
