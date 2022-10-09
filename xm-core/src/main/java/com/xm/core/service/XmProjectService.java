@@ -64,6 +64,9 @@ public class XmProjectService extends BaseService {
 
 	@Autowired
 	XmGroupUserService groupUserService;
+
+	@Autowired
+	XmProductService xmProductService;
     
     
     public XmProject getProjectFromCache(String projectId) {
@@ -88,7 +91,7 @@ public class XmProjectService extends BaseService {
 			}
 		}else{
 			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
-				if(!platformBranchId.equals(xmProjectDb.getBranchId())){
+				if(!platformBranchId.equals(xmProjectDb.getBranchId()) && !"1".equals(xmProjectDb.getTplType())){
 					throw new BizException("您无权复制其它组织的项目");
 				}
 			}
@@ -113,8 +116,9 @@ public class XmProjectService extends BaseService {
 		xmProjectTo.setAssUsername(user.getUsername());
 		xmProjectTo.setPmUserid(user.getUserid());
 		xmProjectTo.setPmUsername(user.getUsername());
+		xmProjectTo.setTplType(xmProject.getTplType());
 		this.saveProject(xmProjectTo);
-
+		Map<String,XmProduct> productsMap=new HashMap<>();
 		if("1".equals(xmProject.getCopyTask())){
 			XmTask taskQ=new XmTask();
 			taskQ.setProjectId(xmProjectDb.getId());
@@ -137,9 +141,12 @@ public class XmProjectService extends BaseService {
 					node.setCreateTime(new Date());
 					node.setPreTaskid(newTaskIdMap.get(node.getPreTaskid()));
 					node.setIsTpl(isTpl);
-					node.setMenuId(null);
-					node.setMenuName(null);
-					node.setProductId(null);
+					if(!"1".equals(xmProject.getCopyProduct())){
+						node.setMenuId(null);
+						node.setMenuName(null);
+						node.setProductId(null);
+					}
+
 					node.setExeUsernames(null);
 					node.setExeUserids(null);
 					node.setRate(0);
@@ -148,11 +155,30 @@ public class XmProjectService extends BaseService {
 					node.setExecutorUserid(null);
 					node.setExecutorUsername(null);
 				}
+				if("1".equals(xmProject.getCopyProduct())){
+					productsMap=this.xmProductService.copyTo(user,xmTasks);
+				}
+
 				this.xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
 				this.xmTaskService.batchImportFromTemplate(xmTasks);
 			}
 		}
-
+		if(productsMap!=null && productsMap.size()>0){
+			//构建项目与产品的关联关系
+			List<XmProductProjectLink> links=new ArrayList<>();
+			for (XmProduct product : productsMap.values()) {
+				XmProductProjectLink link=new XmProductProjectLink();
+				link.setSeq(999);
+				link.setProductId(product.getId());
+				link.setProjectId(xmProjectTo.getId());
+				link.setLinkStatus("1");
+				link.setCtime(new Date());
+				link.setCusername(user.getUsername());
+				link.setCuserid(user.getUserid());
+				links.add(link);
+			}
+			this.linkService.batchInsert(links);
+		}
 		List<XmGroup> groupsDb=new ArrayList<>();
 		Map<String, String> newGroupIdMap = new HashMap<>();
 		if( "1".equals(xmProject.getCopyGroup())||"1".equals(xmProject.getCopyGroupUser())) {
@@ -199,6 +225,8 @@ public class XmProjectService extends BaseService {
 				this.groupUserService.batchInsert(usersDb);
 			}
 		}
+
+
 		return xmProjectTo;
 	}
     

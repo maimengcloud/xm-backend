@@ -11,6 +11,9 @@
                  ( #{item})
              </foreach>
          </if><!-- 筛选属于当前年份的项目 -->
+		<if test='tplType!="1" and linkBranchId !=null  and linkBranchId!=""'>
+			and (  res.branch_id=#{linkBranchId})
+		</if>
 		<if test="startYear != null and startYear != ''" >and (
 			date_format(start_time,'%Y') = #{startYear}
 			or date_format(end_time,'%Y') = #{startYear}
@@ -57,6 +60,7 @@
 		<if test='isTpl!=null and isTpl=="1" and tplType=="2"'>
 			and (res.branch_id =#{linkBranchId} and res.is_tpl='1' and res.tpl_type='2')
 		</if>
+
 		<if test='isTpl!=null and isTpl=="1" and tplType=="1"'>
 			and (  res.is_tpl='1' and res.tpl_type='1')
 		</if>

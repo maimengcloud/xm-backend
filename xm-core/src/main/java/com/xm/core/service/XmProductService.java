@@ -249,6 +249,101 @@ public class XmProductService extends BaseService {
 		return xmProductTo;
     }
 
+	@Transactional
+	public Map<String,XmProduct> copyTo(User user, List<XmTask> xmTasks) {
+
+		Set<String> products = xmTasks.stream().map(i->i.getProductId()).collect(Collectors.toSet());
+		products.remove(null);
+		Map<String,XmProduct> productsMap=new HashMap<>();
+		if(products==null || products.size()==0){
+			return productsMap;
+		}
+		for (String productId : products) {
+			XmProductCopyVo xmProduct=new XmProductCopyVo();
+			xmProduct.setId(productId);
+			xmProduct.setCode(this.createProductCode(user.getBranchId()));
+			xmProduct.setCopyMenu("1");
+			XmProduct pq=new XmProduct();
+			pq.setId(xmProduct.getId());
+			XmProduct xmProductDb=this.selectOneObject(pq);
+			if(xmProductDb==null){
+				throw new BizException("产品不存在");
+			}
+			xmProduct.setProductName(xmProductDb.getProductName()+"(复制)");
+
+			String isTpl=xmProduct.getIsTpl();
+			XmProduct xmProductTo=new XmProduct();
+			BeanUtils.copyProperties(xmProductDb,xmProductTo);
+			xmProductTo.setProductName(xmProduct.getProductName());
+			xmProductTo.setCode(xmProduct.getCode());
+			if(!StringUtils.hasText(xmProduct.getCode())){
+				xmProductTo.setCode(createProductCode(user.getBranchId()));
+			}
+			xmProductTo.setId(this.createProductId(xmProductTo.getCode()));
+			xmProductTo.setBranchId(user.getBranchId());
+			xmProductTo.setDeptid(user.getDeptid());
+			xmProductTo.setDeptName(user.getDeptName());
+			xmProductTo.setAdmUserid(user.getUserid());
+			xmProductTo.setAdmUsername(user.getUsername());
+			xmProductTo.setPmUserid(user.getUserid());
+			xmProductTo.setPmUsername(user.getUsername());
+			xmProductTo.setCtime(new Date());
+			xmProductTo.setPstatus("0");
+			xmProductTo.setIsTpl(isTpl);
+			xmProductTo.setAssUserid(user.getUserid());
+			xmProductTo.setAssUsername(user.getUsername());
+			xmProductTo.setBizProcInstId(null);
+			xmProductTo.setBizFlowState("0");
+			xmProductTo.setLtime(new Date());
+			xmProductTo.setDel("0");
+			xmProductTo.setLocked("0");
+			if(xmProduct.getProductName().equals(xmProductDb.getProductName())){
+				xmProductTo.setProductName(xmProduct.getProductName()+"(复制)");
+			}
+			this.insert(xmProductTo);
+			productsMap.put(productId,xmProductTo);
+			Map<String,String>	newMenuIdMap=new HashMap<>();
+			Map<String,XmMenu> menusMap=new HashMap<>();
+			if("1".equals(xmProduct.getCopyMenu())){
+				XmMenu mq=new XmMenu();
+				mq.setProductId(xmProduct.getId());
+				List<XmMenu> xmMenus=this.xmMenuService.selectListByWhere(mq);
+
+				if(xmMenus!=null && xmMenus.size()>0){
+					for (XmMenu node : xmMenus) {
+						newMenuIdMap.put(node.getMenuId(),this.xmMenuService.createKey("id"));
+					}
+					for (XmMenu node : xmMenus) {
+						String oldId=node.getMenuId();
+						String newId=newMenuIdMap.get(oldId);
+						node.setMenuId(newId);
+						node.setProductId(xmProductTo.getId());
+						node.setPmenuId(newMenuIdMap.get(node.getPmenuId()));
+						node.setCtime(new Date());
+						node.setMmUserid(user.getUserid());
+						node.setMmUsername(user.getUsername());
+						node.setIterationId(null);
+						menusMap.put(node.getMenuId(),node);
+					}
+					this.xmMenuService.parentIdPathsCalcBeforeSave(xmMenus);
+					this.xmMenuService.doBatchInsert(xmMenus);
+				}
+			}
+
+			if(xmTasks!=null && xmTasks.size()>0){
+				for (XmTask node : xmTasks) {
+					if(StringUtils.hasText(node.getMenuId()) && newMenuIdMap.containsKey(node.getMenuId())){
+						node.setProductId(xmProductTo.getId());
+						node.setMenuId(newMenuIdMap.get(node.getMenuId()));
+						XmMenu xmMenu=menusMap.get(node.getMenuId());
+						node.setMenuName(xmMenu.getMenuName());
+					}
+				}
+			}
+		}
+
+		return productsMap;
+	}
 	public String createProductCode(String branchId){
 		XmProduct product=new XmProduct();
 		product.setBranchId(branchId);
