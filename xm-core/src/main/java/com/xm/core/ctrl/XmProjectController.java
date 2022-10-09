@@ -110,14 +110,11 @@ public class XmProjectController {
 				xmProject.put("compete",user.getUserid());
 			}
 		}
-		if(!StringUtils.hasText((String) xmProject.get("isTpl"))){
-			xmProject.put("isTpl","0");
-		}else{
-			if("1".equals(xmProject.get("isTpl"))){
-				xmProject.remove("branchId");
-				xmProject.put("linkBranchId",user.getBranchId());
-				xmProject.put("platformBranchId",platformBranchId);
-			}
+
+		if("1".equals(xmProject.get("isTpl"))){
+			xmProject.remove("branchId");
+			xmProject.put("linkBranchId",user.getBranchId());
+			xmProject.put("platformBranchId",platformBranchId);
 		}
 		xmProject.put("linkBranchId",user.getBranchId());
 		xmProject.put("platformBranchId",platformBranchId);

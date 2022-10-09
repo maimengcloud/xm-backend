@@ -54,17 +54,14 @@
 			)
 		</if>
 		<if test="key != null and key !='' ">  and res.name like concat('%',#{key} ,'%')   </if>
-		<if test="isTpl!=null and isTpl=='1'">
-			and (res.branch_id in( #{platformBranchId},#{linkBranchId}) and res.is_tpl='1')
+		<if test='isTpl!=null and isTpl=="1" and tplType=="2"'>
+			and (res.branch_id =#{linkBranchId} and res.is_tpl='1' and res.tpl_type='2')
+		</if>
+		<if test='isTpl!=null and isTpl=="1" and tplType=="1"'>
+			and (  res.is_tpl='1' and res.tpl_type='1')
 		</if>
 		<if test="del==null or del==''">
 			and res.del!="1"
-		</if>
-		<if test="linkBranchId!=null and linkBranchId!=''">
-			and ( res.branch_id=#{linkBranchId}
-			<if test="isTpl!=null and isTpl=='1'">
-				or (res.branch_id in( #{platformBranchId},#{linkBranchId}) and res.is_tpl='1')
-			</if>)
 		</if>
     </sql>
 

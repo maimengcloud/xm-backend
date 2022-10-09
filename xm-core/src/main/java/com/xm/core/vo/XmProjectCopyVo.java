@@ -9,6 +9,8 @@ public class XmProjectCopyVo {
     String copyTask;//是否复制任务  0否1是
     String copyGroup;//是否复制组织架构 0否1是
     String copyGroupUser;//是否复制组织架构中用户 0否1是
+    String copyProduct;//是否复制关联的产品及需求明细
+    String tplType;//模版公开范围 1-全网公开，2-本企业公开
 
     public String getId() {
         return id;
@@ -72,5 +74,21 @@ public class XmProjectCopyVo {
 
     public void setCopyGroupUser(String copyGroupUser) {
         this.copyGroupUser = copyGroupUser;
+    }
+
+    public String getCopyProduct() {
+        return copyProduct;
+    }
+
+    public void setCopyProduct(String copyProduct) {
+        this.copyProduct = copyProduct;
+    }
+
+    public String getTplType() {
+        return tplType;
+    }
+
+    public void setTplType(String tplType) {
+        this.tplType = tplType;
     }
 }
