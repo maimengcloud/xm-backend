@@ -247,13 +247,36 @@ public class XmTaskController {
 			}
 			if(xmTaskMap.containsKey("executorUserid")){
 				if(ids.size()>1){
-					return ResponseHelper.failed("ids-2","不能批量设置执行人，一次只能设置一个任务的执行人。");
+					List<Tips> errs=new ArrayList<>();
+					List<Tips> oks=new ArrayList<>();
+					for (String id : ids) {
+						XmTaskExecuser xmTaskExecuser=new XmTaskExecuser();
+						xmTaskExecuser.setTaskId(id);
+						xmTaskExecuser.setUserid((String)xmTaskMap.get("executorUserid"));
+						xmTaskExecuser.setUsername((String)xmTaskMap.get("executorUsername"));
+						Map<String,Object> result=execuserController.addXmTaskExecuser(xmTaskExecuser);
+						Tips tips3= (Tips) result.get("tips");
+						tips3.put("taskId",id);
+						if(!tips3.isOk()){
+							errs.add(tips3);
+						}else{
+							oks.add(tips3);
+						}
+						String msg="";
+						if(oks.size()>0){
+							msg="成功设置"+oks.size()+"个任务的执行人。";
+						}
+						if(errs.size()>0){
+							msg=msg+"以下"+errs.size()+"个任务更新不成功："+errs.stream().map(i->"["+i.get("taskId")+"]"+i.getMsg()).collect(Collectors.joining(";"));
+						}
+					}
+				}else if(ids.size()==1){
+					XmTaskExecuser xmTaskExecuser=new XmTaskExecuser();
+					xmTaskExecuser.setTaskId(ids.get(0));
+					xmTaskExecuser.setUserid((String)xmTaskMap.get("executorUserid"));
+					xmTaskExecuser.setUsername((String)xmTaskMap.get("executorUsername"));
+					return execuserController.addXmTaskExecuser(xmTaskExecuser);
 				}
-				XmTaskExecuser xmTaskExecuser=new XmTaskExecuser();
-				xmTaskExecuser.setTaskId(ids.get(0));
-				xmTaskExecuser.setUserid((String)xmTaskMap.get("executorUserid"));
-				xmTaskExecuser.setUsername((String)xmTaskMap.get("executorUsername"));
-				return execuserController.addXmTaskExecuser(xmTaskExecuser);
 			}
 			Set<String> fields=new HashSet<>();
 			fields.add("childrenCnt");
