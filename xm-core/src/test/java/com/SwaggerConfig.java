@@ -1,4 +1,4 @@
-package com.xm;
+package com;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -19,7 +19,8 @@ import java.util.List;
 /**
  * api 文档,
  * 生产环境需要禁止访问,每个项目需要单独引入swagger包，不能继承
- *
+ * 如果要mdp swagger enhance生效，必须 把启动文件置于com.mdp的上层或者顶层目录下，否则加载不到升级文件
+ * mdp swagger enhance主要解决的是接收参数是map的时候的文档输出问题。参考 https://blog.csdn.net/x11819130/article/details/111608470
  * 需要将下面路径放到 WebSecurityConfig 中
  *
  *                 "/swagger-ui.html",

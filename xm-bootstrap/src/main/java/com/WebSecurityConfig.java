@@ -1,4 +1,4 @@
-package com.xm;
+package com;
 
 import com.mdp.oauth2.client.resource.MdpJwtAuthenticationConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +37,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
      */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.authorizeRequests().antMatchers("/**/xm/core/xmTask/shareTaskDetail",
+        http.authorizeRequests().antMatchers(
+                "/**/xm/core/xmTask/shareTaskDetail",
+                "/**/xm/core/xmTask/getOutTask",
+                "/**/xm/core/xmBranchState/list/portal/allBranchSum",
+                "/**/xm/core/xmProjectState/list/portal",
                 "/**/core/xmRecordVisit/add",
+
                 "/swagger-ui.html",
                 "/webjars/**",
                 "/swagger-ui/**",
@@ -47,7 +52,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 "/csrf",
                 "/"
 
-        ).permitAll().anyRequest().authenticated();
+                ).permitAll().
+
+                anyRequest().authenticated();
         http.oauth2Client().and().logout().disable();
         http.formLogin().usernameParameter("userloginid");
         http.oauth2Login();
