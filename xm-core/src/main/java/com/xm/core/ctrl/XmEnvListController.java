@@ -99,10 +99,13 @@ public class XmEnvListController {
 				return ResponseHelper.failed("name-0","名称不能为空");
 			}
 			User user= LoginUtils.getCurrentUserInfo();
-			boolean inProjectGroup=xmGroupService.checkUserExistsGroup(xmEnvList.getProjectId(),user.getUserid());
-			if(!inProjectGroup){
-				return ResponseHelper.failed("no-in-project","您不在项目中【"+xmEnvList.getProjectId()+"】，不能添加环境清单");
+			if(StringUtils.hasText(xmEnvList.getProjectId())){
+				boolean inProjectGroup=xmGroupService.checkUserExistsGroup(xmEnvList.getProjectId(),user.getUserid());
+				if(!inProjectGroup){
+					return ResponseHelper.failed("no-in-project","您不在项目中【"+xmEnvList.getProjectId()+"】，不能添加环境清单");
+				}
 			}
+
 			if(!StringUtils.hasText(xmEnvList.getReadQx())){
 				return ResponseHelper.failed("readQx-0","请选中读权限");
 			}

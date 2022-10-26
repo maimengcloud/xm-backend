@@ -117,7 +117,7 @@ public class XmGroupService extends BaseService {
 	            groupVoList.add(gvo);
 	        });
 		    groupCacheService.putProjectGroups(projectId, groupVoList);
-		    if(page.getPageNum()>0||page.getPageSize()>0){
+		    if(page!=null && page.getPageNum()>0||page.getPageSize()>0){
 				PageUtils.startPage(page.getPageNum(), page.getPageSize(),page.getOrderBy());
 			}
 
