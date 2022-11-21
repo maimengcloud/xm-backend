@@ -208,6 +208,14 @@ public class XmTaskController {
 	}
 
 
+	@ApiOperation("更新任务的浏览量+1")
+	@RequestMapping(value="/upBrowseTimes",method=RequestMethod.POST)
+	public Map<String,Object> upBrowseTimes( @ApiIgnore @RequestBody XmTask xmTask){
+		User user=LoginUtils.getCurrentUserInfo();
+		this.xmTaskService.upBrowseTimes(xmTask.getId());
+		return ResponseHelper.ok("成功");
+	}
+
 	@ApiOperation("统计所有上级的进度情况")
 	@RequestMapping(value="/calcProgress",method=RequestMethod.POST)
 	public Map<String,Object> calcProgress( @ApiIgnore @RequestBody XmTask xmTask){

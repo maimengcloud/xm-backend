@@ -378,6 +378,12 @@
 		</where>
 		group by ${groupBy}
 	</select>
+	<update id="upBrowseTimes" parameterType="String">
+		update  xm_task
+		 set browse_times=browse_times+1
+		where id = #{id}
+	</update>
+
 	<!--结束 自定义sql函数区域-->
 	
 

@@ -760,5 +760,9 @@ public class XmTaskService extends BaseService {
 	public String createKey(String keyName) {
 		return "T"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
 	}
+
+    public void upBrowseTimes(String id) {
+		super.update("upBrowseTimes",id);
+    }
 }
 
