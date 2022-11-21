@@ -183,6 +183,8 @@ public class XmTaskController {
 		RequestUtils.transformArray(xmTask, "skillIds");
 		PageUtils.startPage(xmTask);
 		xmTask.put("taskOut","1");
+		xmTask.put("ntype","0");
+		xmTask.put("toTaskCenter","1");
 		List<Map<String,Object>> tasks=xmTaskService.getTask(xmTask);
 		PageUtils.responePage(m,tasks);
 		m.put("data",tasks);
