@@ -209,6 +209,9 @@ public class XmTaskController {
 
 
 	@ApiOperation("更新任务的浏览量+1")
+	@ApiImplicitParams({
+			@ApiImplicitParam(name="id",value="任务编号",required=true)
+	})
 	@RequestMapping(value="/upBrowseTimes",method=RequestMethod.POST)
 	public Map<String,Object> upBrowseTimes( @ApiIgnore @RequestBody XmTask xmTask){
 		User user=LoginUtils.getCurrentUserInfo();
@@ -442,11 +445,24 @@ public class XmTaskController {
 			tips.setFailureMsg("任务编号id必传");
 		}
 		if(!StringUtils.hasText(shareKey)){
-			tips.setFailureMsg("分享码shareKey必传");
+			//tips.setFailureMsg("分享码shareKey必传");
 		}
-		//todo 检测分析妈的正确性
+
 		if(tips.isOk()){
 			Map<String,Object> taskDb= xmTaskService.shareTaskDetail(xmTask);
+			//  检测任务是否可被查询
+			if(taskDb==null|| taskDb.isEmpty()){
+				return ResponseHelper.failed("data-0","数据不存在");
+			}
+			String toTaskCenter= (String) taskDb.get("toTaskCenter");
+			String crowd= (String) taskDb.get("crowd");
+
+			if( ! "1".equals(crowd) ){
+				return ResponseHelper.failed("crowd-0","非众包任务，无权查看");
+			}
+			if( ! "1".equals(toTaskCenter)){
+				return ResponseHelper.failed("toTaskCenter-0","未开放互联网访问权限");
+			}
 			m.put("data",taskDb);
 			m.put("tips", tips);
 		}

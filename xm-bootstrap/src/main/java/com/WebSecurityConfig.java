@@ -40,6 +40,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers(
                 "/**/xm/core/xmTask/shareTaskDetail",
                 "/**/xm/core/xmTask/getOutTask",
+                "/**/xm/core/xmTask/upBrowseTimes",
                 "/**/xm/core/xmBranchState/list/portal/allBranchSum",
                 "/**/xm/core/xmProjectState/list/portal",
                 "/**/core/xmRecordVisit/add",

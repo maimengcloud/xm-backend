@@ -39,6 +39,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.authorizeRequests().antMatchers("/**/xm/core/xmTask/shareTaskDetail",
                 "/**/core/xmRecordVisit/add",
+                "/**/xm/core/xmTask/upBrowseTimes",
+                "/**/xm/core/xmTask/getOutTask",
                 "/swagger-ui.html",
                 "/webjars/**",
                 "/swagger-ui/**",
