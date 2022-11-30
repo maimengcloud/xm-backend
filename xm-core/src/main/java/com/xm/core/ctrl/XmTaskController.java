@@ -510,8 +510,7 @@ public class XmTaskController {
 			xmTaskVo.setCbranchId(user.getBranchId());
 			xmTaskVo.setCdeptid(user.getDeptid());
 			xmTaskVo.setTaskState("0");
-
-
+			xmTaskVo.setEstate("0");
 			xmTaskVo.setRate(0);
 			if( !StringUtils.hasText(xmTaskVo.getMilestone()) ){
 				xmTaskVo.setMilestone("0");
@@ -913,7 +912,7 @@ public class XmTaskController {
 				g.setQuoteFinalAt(BigDecimal.ZERO);
 				g.setTopEtime(null);
 				g.setTopStime(null);
-
+				g.setEstate("0");
 				if(g.getBudgetAt()==null)g.setBudgetAt(BigDecimal.ZERO);
 			}
 			xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
