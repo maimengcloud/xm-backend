@@ -6,6 +6,7 @@ import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.meta.client.service.ItemService;
+import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
@@ -63,6 +64,10 @@ public class XmTaskExecuserController {
 	 
 	@Autowired
 	XmGroupUserService xmGroupUserService;
+
+
+	@Autowired
+	PushNotifyMsgService notifyMsgService;
 
 	@Autowired
 	ItemService itemService;
@@ -481,6 +486,8 @@ public class XmTaskExecuserController {
 				XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getTaskId(),xmTaskExecuser.getUserid()));
 				if("0".equals(xmTaskExecuserDb.getStatus())) {
 					xmTaskExecuserService.quotePrice(xmTaskExecuser);
+					notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTask.getProjectId(), xmTask.getId(), user.getUsername()+"修改任务【" + xmTask.getId() + "-" + xmTask.getName() + "】的报价信息，请尽快选标！");
+
 					m.put("data",xmTaskExecuser);
 				}else {
 					tips.setFailureMsg("只有修改处于候选状态的投标人的报价信息");
@@ -533,6 +540,8 @@ public class XmTaskExecuserController {
 			} 
 			if(tips.isOk()) {
 				xmTaskExecuserService.becomeCandidate(xmTaskExecuser);
+				notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTask.getProjectId(), xmTask.getId(), user.getUsername()+"投标任务【" + xmTask.getId() + "-" + xmTask.getName() + "】，请尽快选标！");
+
 				m.put("data",xmTaskExecuser);
 
 			}
@@ -580,7 +589,10 @@ public class XmTaskExecuserController {
 				XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getTaskId(),xmTaskExecuser.getUserid()));
 				if(xmTaskExecuserDb !=null ) {
 					if( "0".equals( xmTaskExecuserDb.getStatus() )  || "7".equals( xmTaskExecuserDb.getStatus() ) || "8".equals( xmTaskExecuserDb.getStatus() ) ) {
-						xmTaskExecuserService.delete(xmTaskExecuser); 
+						xmTaskExecuserService.delete(xmTaskExecuser);
+						notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTask.getProjectId(), xmTask.getId(), xmTaskExecuserDb.getUsername()+"离开任务【" + xmTask.getId() + "-" + xmTask.getName() + "】！");
+						notifyMsgService.pushMsg(user, xmTaskExecuserDb.getUserid(), xmTaskExecuserDb.getUsername(), "2", xmTask.getProjectId(), xmTask.getId(), "您已离开任务【" + xmTask.getId() + "-" + xmTask.getName() + "】！");
+
 						m.put("data",xmTaskExecuser);
 					}else {
 						tips.setFailureMsg("只有候选、放弃任务、黑名单中的数据可以被删除");

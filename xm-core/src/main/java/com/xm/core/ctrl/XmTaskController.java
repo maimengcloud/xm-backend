@@ -398,7 +398,9 @@ public class XmTaskController {
 					String createUserid= (String) xmTaskMap.get("createUserid");
 					String createUsername= (String) xmTaskMap.get("createUsername");
 					for (XmTask task : can) {
-						notifyMsgService.pushMsg(user,createUserid,createUsername,"2",task.getProjectId(),task.getId(),"您成为任务【"+task.getName()+"】的负责人，请注意跟进。");
+						if(!user.getUserid().equals(createUserid)) {
+							notifyMsgService.pushMsg(user, createUserid, createUsername, "2", task.getProjectId(), task.getId(), "您成为任务【" + task.getName() + "】的负责人，请注意跟进。");
+						}
 					}
 				}
 
@@ -966,7 +968,10 @@ public class XmTaskController {
 				}
 				xmTaskService.batchImportFromTemplate(xmTasks);
 				for (XmTask t : xmTasks) {
-					notifyMsgService.pushMsg(user,t.getCreateUserid(),t.getCreateUsername(),"2",t.getProjectId(),t.getId(),"您成为任务【"+t.getName()+"】的负责人，请注意跟进。");
+
+					if(!user.getUserid().equals(t.getCreateUserid())) {
+						notifyMsgService.pushMsg(user, t.getCreateUserid(), t.getCreateUsername(), "2", t.getProjectId(), t.getId(), "您成为任务【" + t.getName() + "】的负责人，请注意跟进。");
+					}
 					xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量新增任务", "新增任务"+t.getName(),"",null);
 					
 				}

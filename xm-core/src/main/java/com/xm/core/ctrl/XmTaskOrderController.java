@@ -218,6 +218,13 @@ public class XmTaskOrderController {
 			order.setLtime(new Date());
 			if(!xmTaskOrder.isCalc()){
 				xmTaskOrderService.insert(order);
+				String remark="任务保证金";
+				if("1".equals(xmTaskOrder.getBizType())){
+					remark="任务保证金";
+				}else{
+					remark="任务推广佣金";
+				}
+				msgService.pushMsg(user,user.getUserid(),user.getUsername(),"2",order.getProjectId(),order.getTaskId(),"您为任务支付"+remark+order.getFinalFee()+"元订单提交成功，请及时付款");
 			}
 			m.put("data",order);
 		}catch (BizException e) { 
