@@ -11,7 +11,9 @@
                  ( #{item})
              </foreach>
          </if>
-
+		<if test="bidEtimeStart!=null">
+			and res.bid_etime &gt; #{bidEtimeStart}
+		</if>
 		<if test=" lvls != null">  and (res.lvl) in
 			<foreach collection="lvls" item="item" index="index" open="(" separator="," close=")" >
 				( #{item})

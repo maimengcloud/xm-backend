@@ -433,13 +433,16 @@ public class XmTaskController {
 		m.put("tips", tips);
 		return m;
 	}
-	@ApiOperation( value = "查询任务的信息详情，免登录",notes="taskDetail,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiEntityParams(value = XmTask.class,props = {"id","shareKey"}) 
+
+
+
+	@ApiOperation( value = "查询互联网开放的任务的信息详情，免登录",notes="taskDetail,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiEntityParams(value = XmTask.class,props = {"id","shareKey"})
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/shareTaskDetail",method=RequestMethod.GET)
-	public Map<String,Object> taskDetail( @ApiIgnore @RequestParam Map<String,Object> xmTask){
+	public Map<String,Object> shareTaskDetail( @ApiIgnore @RequestParam Map<String,Object> xmTask){
 		Tips tips=new Tips("查询成功");
 		Map<String,Object> m = new HashMap<>();
 		String id=(String) xmTask.get("id");
@@ -466,6 +469,36 @@ public class XmTaskController {
 			if( ! "1".equals(toTaskCenter)){
 				return ResponseHelper.failed("toTaskCenter-0","未开放互联网访问权限");
 			}
+			XmTaskCalcService.putReadNum((String) taskDb.get("id"),1);
+			m.put("data",taskDb);
+			m.put("tips", tips);
+		}
+		m.put("tips", tips);
+		return m;
+	}
+
+
+	@ApiOperation( value = "查询任务的信息详情，必须登录",notes="taskDetail,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
+	@ApiEntityParams(value = XmTask.class,props = {"id","shareKey"}) 
+	@ApiResponses({
+			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/taskDetail",method=RequestMethod.GET)
+	public Map<String,Object> taskDetail( @ApiIgnore @RequestParam Map<String,Object> xmTask){
+		Tips tips=new Tips("查询成功");
+		Map<String,Object> m = new HashMap<>();
+		String id=(String) xmTask.get("id");
+		if(!StringUtils.hasText(id)){
+			tips.setFailureMsg("任务编号id必传");
+		}
+
+		if(tips.isOk()){
+			Map<String,Object> taskDb= xmTaskService.shareTaskDetail(xmTask);
+			//  检测任务是否可被查询
+			if(taskDb==null|| taskDb.isEmpty()){
+				return ResponseHelper.failed("data-0","数据不存在");
+			}
+			XmTaskCalcService.putReadNum((String) taskDb.get("id"),1);
 			m.put("data",taskDb);
 			m.put("tips", tips);
 		}
