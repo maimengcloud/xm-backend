@@ -1,6 +1,7 @@
 package com.xm.core.ctrl;
 
 import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.xm.core.entity.XmQuestionHandle;
@@ -9,10 +10,8 @@ import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.util.StringUtils;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.HashMap;
@@ -85,8 +84,7 @@ public class XmQuestionHandleController {
 	}
 	
  
-	
-	/**
+
 	@ApiOperation( value = "新增一条xm_question_handle信息",notes="addXmQuestionHandle,主键如果为空，后台自动生成")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmQuestionHandle.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -108,7 +106,7 @@ public class XmQuestionHandleController {
 			}
 			xmQuestionHandleService.insert(xmQuestionHandle);
 			m.put("data",xmQuestionHandle);
-		}catch (BizException e) { 
+		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
@@ -118,7 +116,6 @@ public class XmQuestionHandleController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 	
 	/**
 	@ApiOperation( value = "删除一条xm_question_handle信息",notes="delXmQuestionHandle,仅需要上传主键字段")

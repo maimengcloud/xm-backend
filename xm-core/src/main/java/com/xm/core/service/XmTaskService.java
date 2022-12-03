@@ -252,6 +252,12 @@ public class XmTaskService extends BaseService {
 		}
 		xmTask.setLtime(new Date());
 		this.updateSomeFieldByPk(xmTask);
+		if(xmTaskVo.getSkills()!=null && xmTaskVo.getSkills().size()>0){
+			for (XmTaskSkill skill : xmTaskVo.getSkills()) {
+				skill.setTaskId(xmTaskVo.getId());
+			}
+			this.xmTaskSkillService.insertOrDelete(xmTaskVo.getSkills());
+		}
 		if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
 			pushService.pushXmTask(xmTaskDb);
 		}
