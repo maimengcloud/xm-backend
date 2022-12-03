@@ -1,107 +1,47 @@
-package com.xm.core.entity;
+package  com.xm.core.entity;
 
+import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 
 /**
- * 组织 com.qqkj  顶级模块 oa 大模块 xm  小模块 <br> 
+ * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskSkill所有属性名: <br>
- *	id,taskId,taskSkillId,taskSkillName,skillRemarks;<br>
- * 表 XM.xm_task_skill xm_task_skill的所有字段名: <br>
- *	id,task_id,task_skill_id,task_skill_name,skill_remarks;<br>
+ *	"taskId","任务编号","skillId","技能要求","skillName","技能名称","categoryId","技能分类";<br>
  * 当前主键(包括多主键):<br>
- *	id;<br>
+ *	task_id,skill_id;<br>
  */
-@ApiModel(description="xm_task_skill")
+ @Data
+@ApiModel(description="任务技能关联表")
 public class XmTaskSkill  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	@ApiModelProperty(notes="主键,主键",allowEmptyValue=true,example="",allowableValues="")
-	String id;
-  	
-	
-	@ApiModelProperty(notes="任务编号",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="任务编号,主键",allowEmptyValue=true,example="",allowableValues="")
 	String taskId;
 	
-	@ApiModelProperty(notes="技能要求",allowEmptyValue=true,example="",allowableValues="")
-	String taskSkillId;
+	@ApiModelProperty(notes="技能要求,主键",allowEmptyValue=true,example="",allowableValues="")
+	String skillId;
+  	
 	
 	@ApiModelProperty(notes="技能名称",allowEmptyValue=true,example="",allowableValues="")
-	String taskSkillName;
+	String skillName;
 	
-	@ApiModelProperty(notes="技能描述",allowEmptyValue=true,example="",allowableValues="")
-	String skillRemarks;
+	@ApiModelProperty(notes="技能分类",allowEmptyValue=true,example="",allowableValues="")
+	String categoryId;
 
-	/**主键**/
-	public XmTaskSkill(String id) {
-		this.id = id;
+	/**
+	 *任务编号,技能要求
+	 **/
+	public XmTaskSkill(String taskId,String skillId) {
+		this.taskId = taskId;
+		this.skillId = skillId;
 	}
     
-    /**xm_task_skill**/
+    /**
+     * 任务技能关联表
+     **/
 	public XmTaskSkill() {
-	}
-	
-	/**
-	 * 主键
-	 **/
-	public void setId(String id) {
-		this.id = id;
-	}
-	/**
-	 * 任务编号
-	 **/
-	public void setTaskId(String taskId) {
-		this.taskId = taskId;
-	}
-	/**
-	 * 技能要求
-	 **/
-	public void setTaskSkillId(String taskSkillId) {
-		this.taskSkillId = taskSkillId;
-	}
-	/**
-	 * 技能名称
-	 **/
-	public void setTaskSkillName(String taskSkillName) {
-		this.taskSkillName = taskSkillName;
-	}
-	/**
-	 * 技能描述
-	 **/
-	public void setSkillRemarks(String skillRemarks) {
-		this.skillRemarks = skillRemarks;
-	}
-	
-	/**
-	 * 主键
-	 **/
-	public String getId() {
-		return this.id;
-	}
-	/**
-	 * 任务编号
-	 **/
-	public String getTaskId() {
-		return this.taskId;
-	}
-	/**
-	 * 技能要求
-	 **/
-	public String getTaskSkillId() {
-		return this.taskSkillId;
-	}
-	/**
-	 * 技能名称
-	 **/
-	public String getTaskSkillName() {
-		return this.taskSkillName;
-	}
-	/**
-	 * 技能描述
-	 **/
-	public String getSkillRemarks() {
-		return this.skillRemarks;
 	}
 
 }
