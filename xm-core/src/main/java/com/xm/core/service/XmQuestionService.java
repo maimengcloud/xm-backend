@@ -57,9 +57,9 @@ public class XmQuestionService extends BaseService {
 
 		XmQuestionHandle handle=new XmQuestionHandle();
 		if(StringUtils.hasText(xmQuestionVo.getRemarks())){
-			handle.setReceiptMessage(xmQuestionVo.getHandlerUsername()+"创建缺陷，缺陷处理意见："+xmQuestionVo.getReceiptMessage());
+			handle.setReceiptMessage(xmQuestionVo.getCreateUsername()+"创建缺陷，缺陷处理意见："+xmQuestionVo.getReceiptMessage());
 		}else {
-			handle.setReceiptMessage(xmQuestionVo.getHandlerUsername()+"创建缺陷");
+			handle.setReceiptMessage(xmQuestionVo.getCreateUsername()+"创建缺陷");
 		}
 
 		handle.setHandleStatus(xmQuestionVo.getBugStatus());
