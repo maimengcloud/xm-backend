@@ -17,7 +17,7 @@
 	<update id="updateXmTaskSkillIdsAndNamesByTaskId"
 			parameterType="String">
 		update xm_task t,(select task_id, group_concat(e.skill_id  Separator ',') as  task_skill_ids,group_concat(e.skill_name  Separator ',') as task_skill_names from  xm_task_skill e where e.task_id=#{taskId}) e1
-		set t.skill_ids=  e1.task_skill_ids , t.task_skill_names =  e1.task_skill_names
+		set t.task_skill_ids=  e1.task_skill_ids , t.task_skill_names =  e1.task_skill_names
 
 		where e1.task_id=#{taskId}  and t.id=e1.task_id
 	</update>
