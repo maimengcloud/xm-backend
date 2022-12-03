@@ -207,14 +207,16 @@ public class XmTaskController {
 	}
 
 
-	@ApiOperation("更新任务的浏览量+1")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name="id",value="任务编号",required=true)
-	})
+	@ApiOperation("批量更新任务的浏览量")
 	@RequestMapping(value="/upBrowseTimes",method=RequestMethod.POST)
-	public Map<String,Object> upBrowseTimes( @ApiIgnore @RequestBody XmTask xmTask){
+	public Map<String,Object> upBrowseTimes(  @RequestBody List<UpBrowseTimesVo> browseTimesVos){
 		User user=LoginUtils.getCurrentUserInfo();
-		XmTaskCalcService.putReadNum(xmTask.getId());
+		if(browseTimesVos!=null && browseTimesVos.size()>0){
+			for (UpBrowseTimesVo browseTimesVo : browseTimesVos) {
+				XmTaskCalcService.putReadNum(browseTimesVo.getTaskId(),browseTimesVo.getNums());
+			}
+		}
+
 		return ResponseHelper.ok("成功");
 	}
 

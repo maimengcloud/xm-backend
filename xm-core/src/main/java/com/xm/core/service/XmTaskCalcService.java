@@ -25,12 +25,12 @@ public class XmTaskCalcService {
 	XmTaskService xmTaskService;
 
 
-	public static void putReadNum(String taskId){
+	public static void putReadNum(String taskId,int nums){
 		Integer c=readMap.get(taskId);
 		if(c==null){
-			readMap.put(taskId,new Integer(1));
+			readMap.put(taskId,new Integer(nums));
 		}else{
-			readMap.put(taskId,new Integer(c+1));
+			readMap.put(taskId,new Integer(c+nums));
 		}
 	}
 
