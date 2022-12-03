@@ -2,12 +2,15 @@ package com.xm.core.ctrl;
 
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
-import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmTaskSkill;
 import com.xm.core.service.XmTaskSkillService;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,25 +46,13 @@ public class XmTaskSkillController {
  
 	
 	@ApiOperation( value = "查询xm_task_skill信息列表",notes="listXmTaskSkill,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="主键,主键",required=false),
-		@ApiImplicitParam(name="taskId",value="任务编号",required=false),
-		@ApiImplicitParam(name="taskSkillId",value="技能要求",required=false),
-		@ApiImplicitParam(name="taskSkillName",value="技能名称",required=false),
-		@ApiImplicitParam(name="skillRemarks",value="技能描述",required=false),
-		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
-		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
-		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-		@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student_id desc",required=false),
-		@ApiImplicitParam(name="count",value="是否进行总条数计算,count=true|false",required=false) 
-	})
+	@ApiEntityParams(XmTaskSkill.class)
 	@ApiResponses({
 		@ApiResponse(code = 200,response= XmTaskSkill.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Map<String,Object> listXmTaskSkill( @ApiIgnore @RequestParam Map<String,Object> xmTaskSkill){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmTaskSkill, "ids");
+		Map<String,Object> m = new HashMap<>();
 		PageUtils.startPage(xmTaskSkill);
 		List<Map<String,Object>>	xmTaskSkillList = xmTaskSkillService.selectListMapByWhere(xmTaskSkill);	//列出XmTaskSkill列表
 		PageUtils.responePage(m, xmTaskSkillList);
