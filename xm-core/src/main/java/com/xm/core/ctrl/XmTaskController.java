@@ -16,10 +16,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.PubTool;
-import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmProject;
-import com.xm.core.entity.XmTask;
-import com.xm.core.entity.XmTaskExecuser;
+import com.xm.core.entity.*;
 import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.service.*;
 import com.xm.core.service.cache.XmTaskCacheService;
@@ -542,6 +539,23 @@ public class XmTaskController {
 			}
 
 			if(tips.isOk()) {
+				//新增任务技能
+				if(xmTaskVo.getSkills()!=null && xmTaskVo.getSkills().size()>0){
+					for (XmTaskSkill skill : xmTaskVo.getSkills()) {
+						if(!StringUtils.hasText(skill.getSkillId())){
+							return ResponseHelper.failed("skillId-0","标签编号不能为空");
+						}
+						if(!StringUtils.hasText(skill.getSkillName())){
+							return ResponseHelper.failed("skillName-0","标签名称不能为空");
+						}
+						/**
+						 *  这个不控制
+						if(!StringUtils.hasText(skill.getCategoryId())){
+							return ResponseHelper.failed("categoryId-0","标签分类不能为空");
+						}
+						 */
+					}
+				}
 				xmTaskVo = xmTaskService.addTask(xmTaskVo);
 			}
 			m.put("data",xmTaskVo);

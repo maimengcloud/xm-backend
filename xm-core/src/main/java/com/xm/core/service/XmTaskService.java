@@ -12,6 +12,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
+import com.xm.core.entity.XmTaskSkill;
 import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.vo.BatchRelTasksWithMenu;
 import com.xm.core.vo.BatchRelTasksWithPhase;
@@ -211,8 +212,14 @@ public class XmTaskService extends BaseService {
 		//新增/更新附件
 		//xmAttachmentService.insertOrUpdate(xmTaskVo.getId(),TYPE,xmTaskVo.getAttachment());
 		
-//		新增任务技能
-//		xmTaskSkillService.addSkill(xmTaskVo.getSkill());
+		//新增任务技能
+		if(xmTaskVo.getSkills()!=null && xmTaskVo.getSkills().size()>0){
+			for (XmTaskSkill skill : xmTaskVo.getSkills()) {
+				skill.setTaskId(xmTaskVo.getId());
+			}
+			xmTaskSkillService.addSkill(xmTaskVo.getSkills());
+		}
+
 		//xmTaskExecuserService.updateXmTaskExeUseridsAndUsernamesByTaskId(xmTaskVo.getId());
 		
 		//xmTaskSkillService.updateXmTaskSkillIdsAndNamesByTaskId(xmTaskVo.getId());
