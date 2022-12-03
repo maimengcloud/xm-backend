@@ -203,6 +203,11 @@ public class XmTaskService extends BaseService {
 		if(StringUtils.isEmpty(xmTaskVo.getMilestone())){
 			xmTaskVo.setMilestone("0");
 		}
+		//新增任务技能
+		if(xmTaskVo.getSkills()!=null && xmTaskVo.getSkills().size()>0){
+			xmTaskVo.setTaskSkillNames(xmTaskVo.getSkills().stream().map(k->k.getSkillName()).collect(Collectors.joining(",")));
+			xmTaskVo.setTaskSkillIds(xmTaskVo.getSkills().stream().map(k->k.getSkillId()).collect(Collectors.joining(",")));
+		}
 		XmTask xmTask = new XmTask();
 		BeanUtils.copyProperties(xmTaskVo,xmTask);
 		this.insert(xmTask);
