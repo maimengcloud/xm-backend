@@ -378,9 +378,9 @@
 		</where>
 		group by ${groupBy}
 	</select>
-	<update id="upBrowseTimes" parameterType="String">
+	<update id="upBrowseTimes" parameterType="HashMap">
 		update  xm_task
-		 set browse_times=ifnull(browse_times,0)+1
+		 set browse_times=ifnull(browse_times,0)+#{nums}
 		where id = #{id}
 	</update>
 

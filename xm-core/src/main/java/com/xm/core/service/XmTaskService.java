@@ -779,8 +779,8 @@ public class XmTaskService extends BaseService {
 		return "T"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
 	}
 
-    public void upBrowseTimes(String id) {
-		super.update("upBrowseTimes",id);
+    public void upBrowseTimes(String id,Integer nums) {
+		super.update("upBrowseTimes",map("id",id,"nums",nums));
     }
 }
 
