@@ -380,7 +380,7 @@
 	</select>
 	<update id="upBrowseTimes" parameterType="String">
 		update  xm_task
-		 set browse_times=browse_times+1
+		 set browse_times=ifnull(browse_times,0)+1
 		where id = #{id}
 	</update>
 
