@@ -247,6 +247,7 @@ public class XmTaskService extends BaseService {
 				xmTaskVo.setEstate("1");
 				xmTaskVo.setQuoteFinalAt(svrVo.getPrice());
 				xmTaskVo.setBidEtime(new Date());
+
 			}
 		}
 
