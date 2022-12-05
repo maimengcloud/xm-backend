@@ -10,16 +10,10 @@ import com.mdp.core.utils.NumberUtil;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmTask;
-import com.xm.core.entity.XmTaskExecuser;
-import com.xm.core.entity.XmTaskSkill;
+import com.xm.core.entity.*;
 import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.service.client.SysClient;
-import com.xm.core.vo.BatchRelTasksWithMenu;
-import com.xm.core.vo.BatchRelTasksWithPhase;
-import com.xm.core.vo.UserSvrVo;
-import com.xm.core.vo.XmTaskVo;
+import com.xm.core.vo.*;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -234,6 +228,23 @@ public class XmTaskService extends BaseService {
 				xmTaskExecuser.setQuoteAmount(svrVo.getPrice());
 				xmTaskExecuser.setQuoteWorkload(xmTaskVo.getBudgetWorkload());
 				xmTaskExecuser.setSkillRemark((String)userServiceData.get("skills"));
+
+
+				XmGroupVo xmGroupVo=new XmGroupVo();
+				xmGroupVo.setId(groupService.createKey("id"));
+				XmGroupUser xmGroupUser=new XmGroupUser();
+				xmGroupUser.setUserid(exeUser.getUserid());
+				xmGroupUser.setUsername(exeUser.getUsername());
+				xmGroupVo.setBranchId(xmTaskVo.getCbranchId());
+				xmGroupVo.setAssUserid(xmTaskVo.getCreateUserid());
+				xmGroupVo.setAssUsername(xmTaskVo.getCreateUsername());
+				List<XmGroupUser> gusers=new ArrayList<>();
+				gusers.add(xmGroupUser);
+				xmGroupVo.setGroupUsers(gusers);
+				List<XmGroupVo> gs=new ArrayList<>();
+				gs.add(xmGroupVo);
+				groupService.addGroups(xmTaskVo.getProjectId(),gs);
+
 				xmTaskExecuserService.addExecuser(xmTaskExecuser);
 				xmTaskVo.setExeUserids(exeUser.getUserid());
 				xmTaskVo.setExeUsernames(exeUser.getUsername());
