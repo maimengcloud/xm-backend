@@ -216,6 +216,7 @@ public class XmTaskService extends BaseService {
 			xmTaskVo.setTaskSkillIds(xmTaskVo.getSkills().stream().map(k->k.getSkillId()).collect(Collectors.joining(",")));
 		}
 
+		//如果是由服务商提供服务构建的任务
 		if(StringUtils.hasText(xmTaskVo.getServiceId())){
 			Map<String,Object> userServiceData=sysClient.getUserSvrByServiceId(xmTaskVo.getServiceId());
 			if(userServiceData!=null && !userServiceData.isEmpty()){
@@ -234,6 +235,18 @@ public class XmTaskService extends BaseService {
 				xmTaskExecuser.setQuoteWorkload(xmTaskVo.getBudgetWorkload());
 				xmTaskExecuser.setSkillRemark((String)userServiceData.get("skills"));
 				xmTaskExecuserService.addExecuser(xmTaskExecuser);
+				xmTaskVo.setExeUserids(exeUser.getUserid());
+				xmTaskVo.setExeUsernames(exeUser.getUsername());
+				xmTaskVo.setExecutorUserid(exeUser.getUserid());
+				xmTaskVo.setExecutorUsername(exeUser.getUsername());
+				xmTaskVo.setExecUsers(1);
+				xmTaskVo.setStatus("1");
+				xmTaskVo.setBidStep("4");
+				xmTaskVo.setTaskState("1");
+				xmTaskVo.setTaskClass("1");
+				xmTaskVo.setEstate("1");
+				xmTaskVo.setQuoteFinalAt(svrVo.getPrice());
+				xmTaskVo.setBidEtime(new Date());
 			}
 		}
 
