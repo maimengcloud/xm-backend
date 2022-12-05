@@ -42,6 +42,24 @@ public class SysClient {
         return user;
 
     }
+
+    /**
+     * 查询用户服务明细及用户基本信息
+     * @param serviceId
+     * @return
+     */
+    public Map<String,Object> getUserSvrByServiceId(String serviceId){
+        String url="/sys/sys/userSvr/detail?id={serviceId}";
+        Map<String,Object> re=callBizService.getForMap(url,map("serviceId",serviceId));
+        Map<String,Object> data= (Map<String, Object>) re.get("data");
+        if(data==null || data.isEmpty()){
+            return null;
+        }
+
+        return data;
+
+    }
+
     /**
      * 检查用户归属企业是否可以投标等等
      * @param branchId

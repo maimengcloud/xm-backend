@@ -12,10 +12,13 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmTask;
+import com.xm.core.entity.XmTaskExecuser;
 import com.xm.core.entity.XmTaskSkill;
 import com.xm.core.queue.XmTaskSumParentsPushService;
+import com.xm.core.service.client.SysClient;
 import com.xm.core.vo.BatchRelTasksWithMenu;
 import com.xm.core.vo.BatchRelTasksWithPhase;
+import com.xm.core.vo.UserSvrVo;
 import com.xm.core.vo.XmTaskVo;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,6 +61,10 @@ public class XmTaskService extends BaseService {
 
 	@Autowired
 	PushNotifyMsgService notifyMsgService;
+
+
+	@Autowired
+	SysClient sysClient;
 
 
 	@Autowired
@@ -208,6 +215,28 @@ public class XmTaskService extends BaseService {
 			xmTaskVo.setTaskSkillNames(xmTaskVo.getSkills().stream().map(k->k.getSkillName()).collect(Collectors.joining(",")));
 			xmTaskVo.setTaskSkillIds(xmTaskVo.getSkills().stream().map(k->k.getSkillId()).collect(Collectors.joining(",")));
 		}
+
+		if(StringUtils.hasText(xmTaskVo.getServiceId())){
+			Map<String,Object> userServiceData=sysClient.getUserSvrByServiceId(xmTaskVo.getServiceId());
+			if(userServiceData!=null && !userServiceData.isEmpty()){
+				User exeUser=BaseUtils.fromMap(userServiceData,User.class);
+				UserSvrVo svrVo=BaseUtils.fromMap(userServiceData,UserSvrVo.class);
+				XmTaskExecuser xmTaskExecuser=new XmTaskExecuser();
+				xmTaskExecuser.setTaskId(xmTaskVo.getId());
+				xmTaskExecuser.setTaskName(xmTaskVo.getName());
+				xmTaskExecuser.setProjectId(xmTaskVo.getProjectId());
+				xmTaskExecuser.setUserid(exeUser.getUserid());
+				xmTaskExecuser.setUsername(exeUser.getUsername());
+				xmTaskExecuser.setExecUserBranchId(exeUser.getBranchId());
+				xmTaskExecuser.setBranchId(xmTaskVo.getCbranchId());
+				xmTaskExecuser.setStatus("1");
+				xmTaskExecuser.setQuoteAmount(svrVo.getPrice());
+				xmTaskExecuser.setQuoteWorkload(xmTaskVo.getBudgetWorkload());
+				xmTaskExecuser.setSkillRemark((String)userServiceData.get("skills"));
+				xmTaskExecuserService.addExecuser(xmTaskExecuser);
+			}
+		}
+
 		XmTask xmTask = new XmTask();
 		BeanUtils.copyProperties(xmTaskVo,xmTask);
 		this.insert(xmTask);
@@ -225,6 +254,8 @@ public class XmTaskService extends BaseService {
 			xmTaskSkillService.addSkill(xmTaskVo.getSkills());
 		}
 
+
+
 		//xmTaskExecuserService.updateXmTaskExeUseridsAndUsernamesByTaskId(xmTaskVo.getId());
 		
 		//xmTaskSkillService.updateXmTaskSkillIdsAndNamesByTaskId(xmTaskVo.getId());
@@ -233,6 +264,10 @@ public class XmTaskService extends BaseService {
 		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-新增任务", "新增任务"+xmTask.getName());
 
 		notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTask.getProjectId(), xmTask.getId(), "您成为任务【" + xmTask.getName() + "】的负责人，请注意跟进。");
+
+		return xmTaskVo;
+	}
+	public XmTaskVo createByService(XmTaskVo xmTaskVo){
 
 		return xmTaskVo;
 	}
