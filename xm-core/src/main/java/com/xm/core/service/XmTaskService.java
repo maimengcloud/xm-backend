@@ -245,7 +245,7 @@ public class XmTaskService extends BaseService {
 				gs.add(xmGroupVo);
 				groupService.addGroups(xmTaskVo.getProjectId(),gs);
 
-				xmTaskExecuserService.addExecuser(xmTaskExecuser);
+				xmTaskExecuserService.addExecuser(xmTaskExecuser,!"0".equals(xmTaskVo.getStatus()));
 				xmTaskVo.setExeUserids(exeUser.getUserid());
 				xmTaskVo.setExeUsernames(exeUser.getUsername());
 				xmTaskVo.setExecutorUserid(exeUser.getUserid());

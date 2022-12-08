@@ -277,7 +277,7 @@ public class XmTaskExecuserController {
 				xmTaskExecuser.setStatus("1");//如果不是众包，则添加为执行人
 
 			}
-			xmTaskExecuserService.addExecuser(xmTaskExecuser);
+			xmTaskExecuserService.addExecuser(xmTaskExecuser,!"0".equals(xmTask.getStatus()));
 			if(isBranch){
 				sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getExecUserBranchId(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
 			}else {

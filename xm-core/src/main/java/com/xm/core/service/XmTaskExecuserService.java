@@ -47,8 +47,13 @@ public class XmTaskExecuserService extends BaseService {
 	@Autowired
 	PushNotifyMsgService notifyMsgService;
 
-	
-	public void addExecuser(XmTaskExecuser xmTaskExecuser){
+
+	/**
+	 *
+	 * @param xmTaskExecuser
+	 * @param sendMsg 草稿不提醒
+	 */
+	public void addExecuser(XmTaskExecuser xmTaskExecuser,boolean sendMsg){
 		User user = LoginUtils.getCurrentUserInfo();
 		XmTaskExecuser xmTaskExecuserQuery=new XmTaskExecuser();
 		xmTaskExecuserQuery.setTaskId(xmTaskExecuser.getTaskId());
@@ -68,18 +73,20 @@ public class XmTaskExecuserService extends BaseService {
 
 		String imMsg="";
 		String notifyMsg="";
-		updateXmTaskExeUseridsAndUsernamesByTaskId(xmTaskExecuser.getTaskId()); 
-		if("0".equals(xmTaskExecuser.getStatus())){
-			imMsg=xmTaskExecuser.getUsername()+"成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的候选人，待雇主选标。";
-			notifyMsg="您成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的候选人，请等待雇主选标，在雇主选标前，您还可以修改报价，合理的报价更容易获得雇主的喜欢哦！";
-		}else {
-			imMsg=xmTaskExecuser.getUsername()+"成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的执行人，请及时跟进任务！";
-			notifyMsg="您成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的执行人，请及时跟进任务！";
-		}
-		this.pushMsgService.pushPrichatMsgToIm(user.getBranchId(),user.getUserid(),user.getUsername(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),imMsg);
-		this.pushMsgService.pushCreateCssGroupMsg(user.getBranchId(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), imMsg);
+		updateXmTaskExeUseridsAndUsernamesByTaskId(xmTaskExecuser.getTaskId());
+		if(sendMsg){//草稿任务不要提醒
+			if("0".equals(xmTaskExecuser.getStatus())){
+				imMsg=xmTaskExecuser.getUsername()+"成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的候选人，待雇主选标。";
+				notifyMsg="您成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的候选人，请等待雇主选标，在雇主选标前，您还可以修改报价，合理的报价更容易获得雇主的喜欢哦！";
+			}else {
+				imMsg=xmTaskExecuser.getUsername()+"成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的执行人，请及时跟进任务！";
+				notifyMsg="您成为任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】的执行人，请及时跟进任务！";
+			}
+			this.pushMsgService.pushPrichatMsgToIm(user.getBranchId(),user.getUserid(),user.getUsername(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),imMsg);
+			this.pushMsgService.pushCreateCssGroupMsg(user.getBranchId(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), imMsg);
 			notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), "2", xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), notifyMsg);
 
+		}
 		xmRecordService.addXmTaskRecord(xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), "项目-任务-增加候选人", "任务增加候选人"+xmTaskExecuser.getUsername(),JSONObject.toJSONString(xmTaskExecuser),null);
 	}
 	/**
