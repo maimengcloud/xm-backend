@@ -399,7 +399,7 @@ public class XmTaskController {
 					String createUserid= (String) xmTaskMap.get("createUserid");
 					String createUsername= (String) xmTaskMap.get("createUsername");
 					for (XmTask task : can) {
-						if(!user.getUserid().equals(createUserid)) {
+						if(!user.getUserid().equals(createUserid) && "1".equals(task.getStatus())) {
 							notifyMsgService.pushMsg(user, createUserid, createUsername, "2", task.getProjectId(), task.getId(), "您成为任务【" + task.getName() + "】的负责人，请注意跟进。");
 						}
 					}
