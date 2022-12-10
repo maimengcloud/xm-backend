@@ -287,8 +287,10 @@ public class XmTaskService extends BaseService {
 		
 		//新增日志
 		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-新增任务", "新增任务"+xmTask.getName());
-
-		notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTask.getProjectId(), xmTask.getId(), "您成为任务【" + xmTask.getName() + "】的负责人，请注意跟进。");
+		//草稿不提醒
+		if(!"0".equals(xmTaskVo.getStatus())){
+			notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTask.getProjectId(), xmTask.getId(), "您成为任务【" + xmTask.getName() + "】的负责人，请注意跟进。");
+		}
 
 		return xmTaskVo;
 	}
