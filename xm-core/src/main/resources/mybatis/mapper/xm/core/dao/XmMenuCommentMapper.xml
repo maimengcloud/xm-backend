@@ -38,7 +38,7 @@
 		where id = #{id}
 	</update>
 
-	<select id="selectListByPids" parameterType="List" resultType="com.mdp.arc.archive.entity.ArchiveComment">
+	<select id="selectListByPids" parameterType="List" resultType="com.xm.core.entity.XmMenuComment">
 		select * from xm_menu_comment res
 		where res.pid in
 		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
