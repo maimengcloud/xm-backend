@@ -12,8 +12,43 @@
              </foreach>
          </if>
         <if test="key != null and key !='' ">       </if>
-    </sql>
+		<if test="pidIsNull!=null and pidIsNull!=''"> and pid is null</if>
+	</sql>
+	<update id="showComment">
+		update  xm_menu_comment
+		set is_show='1'
+		where id in
+		<foreach collection="array" item="item" index="index" open="(" separator="," close=")" >
+			#{item }
+		</foreach>
+	</update>
+	<!-- 批量关闭评论 -->
+	<update id="unShowComment">
+		update  xm_menu_comment
+		set is_show='0'
+		where id in
+		<foreach collection="array" item="item" index="index" open="(" separator="," close=")" >
+			#{item }
+		</foreach>
+	</update>
+	<!-- 批量关闭评论 -->
+	<update id="praiseComment">
+		update  xm_menu_comment
+		set ups=ifnull(ups,0)+1
+		where id = #{id}
+	</update>
 
+	<select id="selectListByPids" parameterType="List" resultType="com.mdp.arc.archive.entity.ArchiveComment">
+		select * from xm_menu_comment res
+		where res.pid in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			#{item }
+		</foreach>
+	</select>
+	<update id="updateChildrenSum" parameterType="HashMap">
+		update xm_menu_comment res set res.child_nums=ifnull(res.child_nums,0) + #{addCount}
+		where id=#{pid}
+	</update>
 
 	<!--结束 自定义sql函数区域-->
 	

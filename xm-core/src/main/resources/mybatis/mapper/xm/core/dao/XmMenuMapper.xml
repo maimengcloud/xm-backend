@@ -238,6 +238,44 @@
 			or exists( select 1 from xm_menu m where m.mm_userid=#{mmUserid} and res.pid_paths like concat(m.pid_paths,'%')  )
 		    )
 	</select>
+
+
+
+
+	<update id="upReads" parameterType="HashMap">
+		update xm_menu res set reads=ifnull(reads,0)+#{reads}
+		where menu_id=#{menuId}
+	</update>
+
+	<update id="updateUps" parameterType="List">
+		update xm_menu res left join
+		(select count(*) ups,up.menu_id from xm_menu_up up
+		where up.menu_id in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			#{item }
+		</foreach>
+		group by up.menu_id
+		) as up_sum on res.menu_id=up_sum.menu_id set res.ups=up_sum.ups
+		where res.menu_id in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			#{item }
+		</foreach>
+	</update>
+
+	<update id="updateComments" parameterType="List">
+		update xm_menu res left join
+		(select count(*) ups,up.menu_id from xm_menu_comment up
+		where up.menu_id in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			#{item }
+		</foreach>
+		group by up.menu_id
+		) as up_sum on res.menu_id=up_sum.menu_id set res.comments=up_sum.ups
+		where res.menu_id in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			#{item }
+		</foreach>
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

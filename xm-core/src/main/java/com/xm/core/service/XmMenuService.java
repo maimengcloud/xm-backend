@@ -404,5 +404,16 @@ public class XmMenuService extends BaseService {
 	public String createKey(String keyName) {
 		return "M"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
  	}
+
+	public void updateUps(List<String> menuIds) {
+		super.update("updateUps",menuIds);
+	}
+
+	public void updateComments(List<String> menuIds) {
+		super.update("updateComments",menuIds);
+	}
+	public void upReads(String menuId,Integer reads) {
+		super.update("upReads",map("menuId",menuId,"reads",reads));
+	}
 }
 
