@@ -322,6 +322,7 @@ public class XmQuestionController {
 				}
 				xmQuestionService.editSomeFields(xmQuestionMap);
 				String remarks= (String) xmQuestionMap.get("remarks");
+				String description= (String) xmQuestionMap.get("description");
 				String handlerUsername= (String) xmQuestionMap.get("handlerUsername");
 				String bugStatus= (String) xmQuestionMap.get("bugStatus");
 
@@ -342,8 +343,10 @@ public class XmQuestionController {
 
 					}else if(StringUtils.hasText(bugStatus)){
 						handle.setReceiptMessage(user.getUsername()+"将缺陷状态改为"+bugStatus);
+					}else  if(StringUtils.hasText(description)){
+						handle.setReceiptMessage(user.getUsername()+"修改了缺陷描述："+description);
 					}else{
-						handle.setReceiptMessage(user.getUsername()+"修改了缺陷信息"+map.toString());
+						handle.setReceiptMessage(user.getUsername()+"修改了缺陷信息："+map.toString());
 					}
 
 					handle.setHandleStatus(xmQuestionVo.getBugStatus());

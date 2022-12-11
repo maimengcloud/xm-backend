@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xm.core.entity.XmMenuComment">
+	
+	
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
+
+
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from xm_menu_comment res
+		<where>
+		    <include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmMenuComment" resultType="com.xm.core.entity.XmMenuComment">
+		select * from xm_menu_comment res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.xm.core.entity.XmMenuComment" resultType="com.xm.core.entity.XmMenuComment">
+		select * from xm_menu_comment res
+		where 
+			res.id = #{id}
+	</select>
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmMenuComment">
+        select * from xm_menu_comment res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from xm_menu_comment res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.xm.core.entity.XmMenuComment" resultType="long">
+		select count(*) from xm_menu_comment res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.xm.core.entity.XmMenuComment" useGeneratedKeys="false"   keyProperty="id">
+		insert into xm_menu_comment(
+			<include refid="columns"/>
+		) values (
+		#{id},#{userid},#{username},#{star},#{cdate},#{menuId},#{pid},#{ups},#{isShow},#{toUserid},#{toUsername},#{lvl},#{context},#{branchId},#{ip},#{cityId},#{cityName},#{status},#{childNums}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmMenuComment">
+		delete from xm_menu_comment res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmMenuComment">
+		delete from xm_menu_comment 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmMenuComment">
+		update  xm_menu_comment 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.xm.core.entity.XmMenuComment">
+		update  xm_menu_comment 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  xm_menu_comment 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_menu_comment
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from xm_menu_comment 
+			where
+			(id) in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    (  #{item.id} )
+                </foreach>
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,userid,username,star,cdate,menu_id,pid,ups,is_show,to_userid,to_username,lvl,context,branch_id,ip,city_id,city_name,status,child_nums
+	</sql>
+
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="userid != null and userid != ''">      and res.userid = #{userid}     </if>
+		<if test="username != null and username != ''">      and res.username = #{username}     </if>
+		<if test="star != null and star != ''">      and res.star = #{star}     </if>
+		<if test="cdate != null">      and date_format(res.cdate,'%Y-%m-%d') = date_format(#{cdate},'%Y-%m-%d')     </if>
+		<if test="menuId != null and menuId != ''">      and res.menu_id = #{menuId}     </if>
+		<if test="pid != null and pid != ''">      and res.pid = #{pid}     </if>
+		<if test="ups != null and ups != ''">      and res.ups = #{ups}     </if>
+		<if test="isShow != null and isShow != ''">      and res.is_show = #{isShow}     </if>
+		<if test="toUserid != null and toUserid != ''">      and res.to_userid = #{toUserid}     </if>
+		<if test="toUsername != null and toUsername != ''">      and res.to_username = #{toUsername}     </if>
+		<if test="lvl != null and lvl != ''">      and res.lvl = #{lvl}     </if>
+		<if test="context != null and context != ''">      and res.context = #{context}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="ip != null and ip != ''">      and res.ip = #{ip}     </if>
+		<if test="cityId != null and cityId != ''">      and res.city_id = #{cityId}     </if>
+		<if test="cityName != null and cityName != ''">      and res.city_name = #{cityName}     </if>
+		<if test="status != null and status != ''">      and res.status = #{status}     </if>
+		<if test="childNums != null and childNums != ''">      and res.child_nums = #{childNums}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		userid = #{userid},
+		username = #{username},
+		star = #{star},
+		cdate = #{cdate},
+		menu_id = #{menuId},
+		pid = #{pid},
+		ups = #{ups},
+		is_show = #{isShow},
+		to_userid = #{toUserid},
+		to_username = #{toUsername},
+		lvl = #{lvl},
+		context = #{context},
+		branch_id = #{branchId},
+		ip = #{ip},
+		city_id = #{cityId},
+		city_name = #{cityName},
+		status = #{status},
+		child_nums = #{childNums}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="userid != null and userid != ''"> userid = #{userid},     </if>
+		<if test="username != null and username != ''"> username = #{username},     </if>
+		<if test="star != null and star != ''"> star = #{star},     </if>
+		<if test="cdate != null"> cdate = #{cdate},     </if>
+		<if test="menuId != null and menuId != ''"> menu_id = #{menuId},     </if>
+		<if test="pid != null and pid != ''"> pid = #{pid},     </if>
+		<if test="ups != null and ups != ''"> ups = #{ups},     </if>
+		<if test="isShow != null and isShow != ''"> is_show = #{isShow},     </if>
+		<if test="toUserid != null and toUserid != ''"> to_userid = #{toUserid},     </if>
+		<if test="toUsername != null and toUsername != ''"> to_username = #{toUsername},     </if>
+		<if test="lvl != null and lvl != ''"> lvl = #{lvl},     </if>
+		<if test="context != null and context != ''"> context = #{context},     </if>
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="ip != null and ip != ''"> ip = #{ip},     </if>
+		<if test="cityId != null and cityId != ''"> city_id = #{cityId},     </if>
+		<if test="cityName != null and cityName != ''"> city_name = #{cityName},     </if>
+		<if test="status != null and status != ''"> status = #{status},     </if>
+		<if test="childNums != null and childNums != ''"> child_nums = #{childNums},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			userid = #{item.userid},
+			username = #{item.username},
+			star = #{item.star},
+			cdate = #{item.cdate},
+			menu_id = #{item.menuId},
+			pid = #{item.pid},
+			ups = #{item.ups},
+			is_show = #{item.isShow},
+			to_userid = #{item.toUserid},
+			to_username = #{item.toUsername},
+			lvl = #{item.lvl},
+			context = #{item.context},
+			branch_id = #{item.branchId},
+			ip = #{item.ip},
+			city_id = #{item.cityId},
+			city_name = #{item.cityName},
+			status = #{item.status},
+			child_nums = #{item.childNums}
+	</sql>
+</mapper>
