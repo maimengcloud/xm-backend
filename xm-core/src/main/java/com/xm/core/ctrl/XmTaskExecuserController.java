@@ -277,7 +277,11 @@ public class XmTaskExecuserController {
 				xmTaskExecuser.setStatus("1");//如果不是众包，则添加为执行人
 
 			}
-			xmTaskExecuserService.addExecuser(xmTaskExecuser,!"0".equals(xmTask.getStatus()));
+			boolean sendMsg=!"0".equals(xmTask.getStatus());
+			xmTaskExecuserService.addExecuser(xmTaskExecuser,sendMsg);
+			if(sendMsg){
+				notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), "用户【"+xmTaskExecuser.getUsername()+"】投标任务【"+xmTask.getName()+"】，请及时跟进！");
+			}
 			if(isBranch){
 				sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getExecUserBranchId(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
 			}else {
