@@ -77,6 +77,12 @@
 		<if test="linkProductId!=null and linkProductId!=''">
 			and exists( select 1 from xm_product_project_link link where and link.product_id=#{linkProductId} and link.project_id=res.project_id)
 		</if>
+		<if test="minSupRequires!=null">
+			and res.sup_requires &gt;= #{minSupRequires}
+		</if>
+		<if test="minCapaLvls!=null">
+			and res.capa_lvls &gt;= #{minCapaLvls}
+		</if>
     </sql>
 	<select id="getAvgRate" parameterType="String" resultType="long" >
 		select avg(res.rate) from xm_task res where res.parent_taskid = #{parentTaskid}
