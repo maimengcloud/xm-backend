@@ -46,9 +46,7 @@ public class XmProjectService extends BaseService {
 
     @Autowired
     XmFileService xmFileService;
-    
-    @Autowired
-    XmExchangeService xmExchangeService;
+
     
     @Autowired
     XmRecordService xmRecordService;

@@ -178,7 +178,7 @@ public class XmGroupService extends BaseService {
 	 * @param xmGroupVoList
 	 */
 	@Transactional
-	public void addGroups(String projectId,List<XmGroupVo> xmGroupVoList) {
+		public void addGroups(String projectId,List<XmGroupVo> xmGroupVoList) {
 		List<XmGroup> groups=new ArrayList<>();
 		List<XmGroupUser> groupUsers=new ArrayList<>();
 		for (XmGroupVo xmGroupVo : xmGroupVoList) {

@@ -39,9 +39,7 @@ public class XmTaskService extends BaseService {
 	
 	@Autowired
 	XmAttachmentService xmAttachmentService;
-	
-	@Autowired
-    XmExchangeService xmExchangeService;
+
 	
 	@Autowired
 	XmRecordService xmRecordService;

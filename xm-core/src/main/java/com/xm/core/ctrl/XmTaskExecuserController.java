@@ -8,12 +8,9 @@ import com.mdp.core.utils.ResponseHelper;
 import com.mdp.meta.client.service.ItemService;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
-import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.XmProject;
-import com.xm.core.entity.XmTask;
-import com.xm.core.entity.XmTaskExecuser;
+import com.xm.core.entity.*;
 import com.xm.core.service.*;
 import com.xm.core.service.client.MkClient;
 import com.xm.core.service.client.SysClient;
@@ -27,10 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.map;
@@ -185,7 +179,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTaskExecuser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTaskExecuser_add",name = "新增任务执行者",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTaskExecuser_add",name = "新增任务执行者",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmTaskExecuser(@RequestBody XmTaskExecuser xmTaskExecuser) {
 		Map<String,Object> m = new HashMap<>();
@@ -303,7 +297,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTaskExecuser_leave",name = "执行人离开任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTaskExecuser_leave",name = "执行人离开任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/leave",method=RequestMethod.POST)
 	public Map<String,Object> leave(@RequestBody List<XmTaskExecuser> xmTaskExecusers) {
 		Map<String,Object> m = new HashMap<>();
@@ -386,7 +380,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTaskExecuser_execute",name = "修改任务执行人基础信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTaskExecuser_execute",name = "修改任务执行人基础信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/execute",method=RequestMethod.POST)
 	public Map<String,Object> execute(@RequestBody  XmTaskExecuser xmTaskExecuser) {
 		Map<String,Object> m = new HashMap<>();
@@ -425,14 +419,43 @@ public class XmTaskExecuserController {
 			if(tips.isOk()) {
 
 				boolean exists=groupService.checkUserExistsGroup(pgroups, xmTaskExecuser.getUserid());
-				 
-				if(exists) {
-					
+				  //如果还未加入项目组，自动加入项目组
+				if(!exists) {
+					if(pgroups!=null && pgroups.size()>0){
+						XmGroupVo xg=pgroups.get(0);
+						XmGroupUser xmGroupUser=new XmGroupUser();
+						xmGroupUser.setGroupId(xg.getId());
+						xmGroupUser.setUsername(xmTaskExecuser.getUsername());
+						xmGroupUser.setUserid(xmTaskExecuser.getUserid());
+						xmGroupUser.setJoinTime(new Date());
+						xmGroupUser.setStatus("1");
+						xmGroupUser.setIsPri("1");
+						xmGroupUser.setObranchId(xmTaskExecuser.getExecUserBranchId());
+						this.xmGroupUserService.insert(xmGroupUser);
+						groupService.clearProjectGroup(projectId);
+					}else{
+ 						XmGroupVo xmGroupVo=new XmGroupVo();
+						xmGroupVo.setProjectId(projectId);
+ 						xmGroupVo.setAssUsername(user.getUsername());
+						xmGroupVo.setAssUserid(user.getUserid());
+						xmGroupVo.setBranchId(user.getBranchId());
+						xmGroupVo.setChildrenCnt(1);
+						xmGroupVo.setCtime(new Date());
+						xmGroupVo.setGroupName("默认管理小组");
+						XmGroupUser xmGroupUser=new XmGroupUser();
+ 						xmGroupUser.setUsername(xmTaskExecuser.getUsername());
+						xmGroupUser.setUserid(xmTaskExecuser.getUserid());
+						xmGroupUser.setJoinTime(new Date());
+						xmGroupUser.setStatus("1");
+						xmGroupUser.setIsPri("1");
+						xmGroupUser.setObranchId(xmTaskExecuser.getExecUserBranchId());
+						xmGroupVo.setGroupUsers(Arrays.asList(xmGroupUser));
+						groupService.addGroups(projectId,Arrays.asList(xmGroupVo));
+					}
 					//一个任务只能一个执行人
 					xmTaskExecuserService.becomeExecute(xmTask,xmTaskExecuser);
-				}
-				if(!exists) {
-					tips.setFailureMsg("变更不成功，原因：候选人不在项目组中，请先将候选人加入项目团队中。");
+					tips.setOkMsg("变更成功");
+					//tips.setFailureMsg("变更不成功，原因：候选人不在项目组中，请先将候选人加入项目团队中。");
 				}else {
 					tips.setOkMsg("变更成功");
 				}
@@ -455,7 +478,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTaskExecuser_quotePrice",name = "项目中的任务报价",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTaskExecuser_quotePrice",name = "项目中的任务报价",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/quotePrice",method=RequestMethod.POST)
 	public Map<String,Object> quotePrice(@RequestBody XmTaskExecuser xmTaskExecuser) {
 		Map<String,Object> m = new HashMap<>();
@@ -513,7 +536,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTaskExecuser_candidate",name = "变更成为任务候选人",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTaskExecuser_candidate",name = "变更成为任务候选人",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/candidate",method=RequestMethod.POST)
 	public Map<String,Object> becomeCandidate(@RequestBody XmTaskExecuser xmTaskExecuser) {
 		Map<String,Object> m = new HashMap<>();
@@ -566,7 +589,7 @@ public class XmTaskExecuserController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmTaskExecuser_del",name = "删除项目中任务的执行人",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTaskExecuser_del",name = "删除项目中任务的执行人",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmTaskExecuser(@RequestBody XmTaskExecuser xmTaskExecuser){
 		Map<String,Object> m = new HashMap<>();
