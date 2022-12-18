@@ -29,6 +29,9 @@
 				find_in_set(#{item},res.tag_ids)
 			</foreach>
 		</if>
+
+		<if test=" ltimeStart !=null "> and res.ltime &gt; #{ltimeStart} </if>
+		<if test=" ltimeEnd !=null "> and res.ltime &lt; #{ltimeEnd} </if>
 		<if test=" planStartTimeStart !=null "> and res.start_time &gt; #{planStartTimeStart} </if>
 		<if test=" planStartTimeEnd !=null "> and res.start_time &lt; #{planStartTimeEnd} </if>
 		<if test=" planEndTimeStart !=null "> and res.end_time &gt; #{planEndTimeStart} </if>
