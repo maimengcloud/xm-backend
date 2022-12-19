@@ -389,7 +389,6 @@ public class XmTaskExecuserController {
 			/**
 			 * 如果是候选人变更为执行人，需要检查该候选人是否已加入项目中的某个组
 			 */
-			String projectId=xmTaskExecuser.getProjectId();
 			String taskId=xmTaskExecuser.getTaskId();
 			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
 			if(xmTask==null ){
@@ -404,6 +403,8 @@ public class XmTaskExecuserController {
 				return m;
 			}
 			User user=LoginUtils.getCurrentUserInfo();
+
+			String projectId=xmTask.getProjectId();
 			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
 			 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
  			boolean isHead= groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups, user.getUserid(), xmTaskExecuser.getUserid());

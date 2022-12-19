@@ -145,7 +145,7 @@ public class XmTaskExecuserService extends BaseService {
 	 * @param xmTaskExecuser
 	 */
 	public void becomeExecute(XmTask xmTaskDb,XmTaskExecuser xmTaskExecuser){
-		String projectId=xmTaskExecuser.getProjectId();
+		String projectId=xmTaskDb.getProjectId();
 		String taskId=xmTaskExecuser.getTaskId();
  		 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
 		 User user=LoginUtils.getCurrentUserInfo();
@@ -186,14 +186,14 @@ public class XmTaskExecuserService extends BaseService {
 			/** 
 			 * 下面为推送任务执行人变更im通知消息
 			 */
- 			String imMsg=xmTaskExecuser.getUsername()+"变更为任务["+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"]执行人"; 
+ 			String imMsg=xmTaskExecuser.getUsername()+"变更为任务["+xmTaskDb.getId()+"-"+xmTaskDb.getName()+"]执行人";
 			for (XmGroupVo g : userGroups) {
 				this.pushMsgService.pushGroupMsg(user.getBranchId(),g.getId(),  xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),imMsg );
 				this.pushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(),user.getUsername(),xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),imMsg);
 			}
 			this.pushMsgService.pushCssMsg(user.getBranchId(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), imMsg);
 
-			notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), "2", xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), "恭喜您被雇主选为任务【" + xmTaskExecuser.getTaskId() + "-" + xmTaskExecuser.getTaskName() + "】的中标人,请尽快开展工作。");
+			notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), "2", xmTaskDb.getProjectId(), xmTaskExecuser.getTaskId(), "恭喜您被雇主选为任务【" + xmTaskExecuser.getTaskId() + "-" + xmTaskDb.getName() + "】的中标人,请尽快开展工作。");
 
 			updateXmTaskExeUseridsAndUsernamesByTaskId(taskId);
  		xmRecordService.addXmTaskRecord(projectId, taskId, "项目-任务-变更为执行人", xmTaskExecuser.getUsername()+"变更为任务执行人",null,null);
