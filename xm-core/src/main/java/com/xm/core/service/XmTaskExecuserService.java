@@ -162,7 +162,7 @@ public class XmTaskExecuserService extends BaseService {
 						throw new BizException(exe.getUsername()+"是当前执行人，不允许再添加其它执行人");
 					}
 				}else {
-					if(!"0".equals(exe.getStatus())) {
+					if(!"0".equals(exe.getStatus()) && !"7".equals(exe.getStatus())) {
 						throw new BizException(exe.getUsername()+"不是候选人，不允许变更为执行人");
 					}
 					xmTaskExecuserDb=exe;
