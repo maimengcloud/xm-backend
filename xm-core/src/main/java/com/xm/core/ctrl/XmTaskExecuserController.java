@@ -10,11 +10,15 @@ import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.*;
+import com.xm.core.entity.XmGroupUser;
+import com.xm.core.entity.XmProject;
+import com.xm.core.entity.XmTask;
+import com.xm.core.entity.XmTaskExecuser;
 import com.xm.core.service.*;
 import com.xm.core.service.client.MkClient;
 import com.xm.core.service.client.SysClient;
 import com.xm.core.vo.XmGroupVo;
+import com.xm.core.vo.XmTaskAcceptanceVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -375,7 +379,9 @@ public class XmTaskExecuserController {
 		}
 		m.put("tips", tips);
 		return m;
-	} 
+	}
+
+
 	@ApiOperation( value = "候选人变更为执行人",notes="editXmTaskExecuser")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -475,6 +481,73 @@ public class XmTaskExecuserController {
 		m.put("tips", tips);
 		return m;
 	}
+
+	@ApiOperation( value = "验收付款",notes="acceptance")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTaskExecuser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	//@HasQx(value = "xm_core_xmTaskExecuser_execute",name = "修改任务执行人基础信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	@RequestMapping(value="/acceptance",method=RequestMethod.POST)
+	public Map<String,Object> acceptance(@RequestBody XmTaskAcceptanceVo xmTaskAcceptanceVo) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功更新一条数据");
+		try{
+			String taskId=xmTaskAcceptanceVo.getTaskId();
+			if(!StringUtils.hasText(taskId)){
+				tips.setFailureMsg("taskId-0");
+				return ResponseHelper.failed("taskId-0","任务编号不能为空");
+			}
+			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
+			if(xmTask==null ){
+				tips.setFailureMsg("任务已不存在");
+				return ResponseHelper.failed(tips);
+			}
+			if("3".equals(xmTask.getTaskState()) ||"4".equals(xmTask.getTaskState()) || "9".equals(xmTask.getTaskState())){
+				tips.setFailureMsg("该任务已验收，不能重复验收");
+				return ResponseHelper.failed(tips);
+			}
+
+
+			User user=LoginUtils.getCurrentUserInfo();
+
+			String projectId=xmTask.getProjectId();
+			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
+  			boolean isPm=groupService.checkUserIsProjectAdm(projectId,user.getUserid());
+			if(  !isTaskCreater && !isPm ) {
+				tips.setFailureMsg("您无权验收该任务！");
+				return ResponseHelper.failed(tips);
+			}
+
+			boolean needPay=false;
+			if("1".equals(xmTask.getCrowd())){
+				if("2".equals(xmTask.getEstate()) && xmTask.getEfunds()!=null && xmTask.getEfunds().compareTo(BigDecimal.ZERO)>0){
+					needPay=true;
+				}
+			}
+			XmTask xmTaskUpdate=new XmTask();
+			xmTaskUpdate.setId(xmTask.getId());
+			xmTaskUpdate.setTaskState("4");
+			if(needPay){
+				//调用ac系统付款给服务商
+				xmTaskUpdate.setEtoDevTime(new Date());
+				xmTaskUpdate.setBidStep("7");
+				xmTaskUpdate.setEstate("3");
+			}
+
+			xmTaskService.updateSomeFieldByPk(xmTaskUpdate);
+
+
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
+
 
 	@ApiOperation( value = "候选人报价",notes="quotePrice")
 	@ApiResponses({
