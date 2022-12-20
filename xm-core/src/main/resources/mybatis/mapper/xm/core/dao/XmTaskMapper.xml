@@ -395,6 +395,29 @@
 		where id = #{id}
 	</update>
 
+	<update id="updateSomeFieldByPkAfterPaySuccess" parameterType="com.xm.core.entity.XmTask">
+		update  xm_task
+		<set>
+			<if test="hot != null and hot != ''"> hot = #{hot},     </if>
+			<if test="top != null and top != ''"> top = #{top},     </if>
+			<if test="urgent != null and urgent != ''"> urgent = #{urgent},     </if>
+			<if test="crmSup != null and crmSup != ''"> crm_sup = #{crmSup},     </if>
+			<if test="bidStep != null and bidStep != ''"> bid_step = #{bidStep},     </if>
+			<if test="interestLvls != null and interestLvls != ''"> interest_lvls = #{interestLvls},     </if>
+			<if test="estate != null and estate != ''"> estate = #{estate},     </if>
+			<if test="efunds != null and efunds != ''"> efunds = ( select sum(ifnull(efunds,0)) as efunds from xm_task_order o where o.task_id=#{id} and o.estate='2' ),     </if>
+			<if test="etoPlatTime != null"> eto_plat_time = #{etoPlatTime},     </if>
+			<if test="etoDevTime != null"> eto_dev_time = #{etoDevTime},     </if>
+			<if test="ebackTime != null"> eback_time = #{ebackTime},     </if>
+			<if test="topStime != null"> top_stime = #{topStime},     </if>
+			<if test="topEtime != null"> top_etime = #{topEtime},     </if>
+			<if test="hotStime != null"> hot_stime = #{hotStime},     </if>
+			<if test="hotEtime != null"> hot_etime = #{hotEtime},     </if>
+			<if test="urgentStime != null"> urgent_stime = #{urgentStime},     </if>
+			<if test="urgentEtime != null"> urgent_etime = #{urgentEtime},     </if>
+		</set>
+		where id=#{id}
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

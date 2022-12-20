@@ -842,5 +842,9 @@ public class XmTaskService extends BaseService {
     public void upBrowseTimes(String id,Integer nums) {
 		super.update("upBrowseTimes",map("id",id,"nums",nums));
     }
+
+	public void updateSomeFieldByPkAfterPaySuccess(XmTask xmTaskUpdate) {
+		super.update("updateSomeFieldByPkAfterPaySuccess",xmTaskUpdate);
+	}
 }
 

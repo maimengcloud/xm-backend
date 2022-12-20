@@ -110,9 +110,8 @@ public class XmTaskOrderService extends BaseService {
 			xmTaskUpdate.setBidStep("5");
 			xmTaskUpdate.setEfunds(payAt);
 		}
-		this.xmTaskService.updateSomeFieldByPk(xmTaskUpdate);
 		this.updateSomeFieldByPk(order);
-
+		this.xmTaskService.updateSomeFieldByPkAfterPaySuccess(xmTaskUpdate);
 		if("1".equals(taskOrderDb.getBizType()) && "5".equals(xmTaskUpdate.getBidStep())){
 			XmTask xmTaskDb=this.xmTaskService.selectOneById(taskOrderDb.getTaskId());
 			msgService.pushMsg(taskOrderDb.getObranchId(),taskOrderDb.getOuserid(),xmTaskDb.getExecutorUserid(),"2",xmTaskDb.getProjectId(),xmTaskDb.getId(),"雇主成功托管佣金【"+taskOrderDb.getEfunds()+"】，实际到账金额【"+payAt+"】，当前任务进入用户工作阶段，请尽快开展工作。");

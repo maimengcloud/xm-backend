@@ -164,6 +164,17 @@ public class XmTaskOrderController {
 					if(xmTaskDb.getQuoteFinalAt()==null || xmTaskDb.getQuoteFinalAt().compareTo(BigDecimal.ZERO)<=0){
 						return ResponseHelper.failed("quoteFinalAt-0","保证金金额计算错误，原因为中标人报价金额为空。");
 					}
+				}else if("2".equals(xmTaskDb.getEstate()) ){
+					if(xmTaskDb.getQuoteFinalAt()==null || xmTaskDb.getQuoteFinalAt().compareTo(BigDecimal.ZERO)<=0){
+						return ResponseHelper.failed("quoteFinalAt-0","保证金金额计算错误，原因为中标人报价金额为空。");
+					}
+					if(xmTaskDb.getEfunds().compareTo(xmTaskDb.getQuoteFinalAt())>=0){
+						return ResponseHelper.failed("estate-not-2-3","保证金已支付过，不能重复缴纳");
+					}else{
+						order.setEfunds(xmTaskDb.getQuoteFinalAt().subtract(xmTaskDb.getEfunds()));
+						order.setEstate("1");
+						originFee=originFee.add(order.getEfunds());
+					}
 				}else{
 					return ResponseHelper.failed("estate-not-2-3","保证金已支付过，不能重复缴纳");
 				}
