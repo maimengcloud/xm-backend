@@ -490,7 +490,7 @@ public class XmTaskExecuserController {
 	@RequestMapping(value="/acceptance",method=RequestMethod.POST)
 	public Map<String,Object> acceptance(@RequestBody XmTaskAcceptanceVo xmTaskAcceptanceVo) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功更新一条数据");
+		Tips tips=new Tips("成功验收");
 		try{
 			String taskId=xmTaskAcceptanceVo.getTaskId();
 			if(!StringUtils.hasText(taskId)){
