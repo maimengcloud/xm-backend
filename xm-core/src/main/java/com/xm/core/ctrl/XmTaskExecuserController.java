@@ -458,6 +458,7 @@ public class XmTaskExecuserController {
 					tips.setOkMsg("变更成功");
 					//tips.setFailureMsg("变更不成功，原因：候选人不在项目组中，请先将候选人加入项目团队中。");
 				}else {
+					xmTaskExecuserService.becomeExecute(xmTask,xmTaskExecuser);
 					tips.setOkMsg("变更成功");
 				}
 				m.put("data",xmTaskExecuser);
