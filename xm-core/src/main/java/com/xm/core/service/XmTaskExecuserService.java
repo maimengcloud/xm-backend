@@ -8,7 +8,6 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskExecuser;
-import com.xm.core.service.client.CashOperateServie;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,9 +38,6 @@ public class XmTaskExecuserService extends BaseService {
 	
 	@Autowired
     XmPushMsgService pushMsgService ;
-
-	@Autowired
-	CashOperateServie cashOperateServie;
 
 
 	@Autowired
