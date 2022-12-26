@@ -75,7 +75,7 @@ public class AcClient {
 	 */
 	public Map<String,Object> platformRecharge(String payUserid,  BigDecimal rechargeAmount, String refsn,String remark ){
 
-		String urls = "/accore/accore/acct/account/platform";
+		String urls = "/accore/accore/acct/account/platform/recharge";
 		Map<String,Object> m=new HashMap<>();
 		m.put("payUserid", payUserid);
 		m.put("rechargeAmount", rechargeAmount);
