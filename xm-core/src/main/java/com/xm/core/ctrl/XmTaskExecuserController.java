@@ -15,6 +15,7 @@ import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskExecuser;
 import com.xm.core.service.*;
+import com.xm.core.service.client.AcClient;
 import com.xm.core.service.client.MkClient;
 import com.xm.core.service.client.SysClient;
 import com.xm.core.vo.XmGroupVo;
@@ -23,6 +24,7 @@ import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -74,7 +76,13 @@ public class XmTaskExecuserController {
 	MkClient mkClient;
 
 	@Autowired
+	AcClient acClient;
+
+	@Autowired
 	SysClient sysClient;
+
+	@Value(value = "${mdp.platform-branch-id:platform-branch-001}")
+	String platformBranchId;
 	
 
 	@Autowired
@@ -528,10 +536,15 @@ public class XmTaskExecuserController {
 			xmTaskUpdate.setId(xmTask.getId());
 			xmTaskUpdate.setTaskState("4");
 			if(needPay){
+				XmTaskExecuser xmTaskExecuserDb=this.xmTaskExecuserService.selectOneById(map("taskId",xmTask.getId(),"userid",xmTask.getExecutorUserid()));
+				acClient.shopBalancePayToClient("plaftform-branch-001","platfrom",
+						xmTask.getId(),xmTask.getQuoteFinalAt(),"任务【"+xmTask.getName()+"】验收完毕，发放佣金.",xmTask.getExecutorUserid(),xmTaskExecuserDb.getExecUserBranchId());
 				//调用ac系统付款给服务商
 				xmTaskUpdate.setEtoDevTime(new Date());
 				xmTaskUpdate.setBidStep("7");
 				xmTaskUpdate.setEstate("3");
+				acClient.shopBalancePayToClient(platformBranchId,"platform",xmTask.getId(),xmTask.getEfunds(),
+						"任务【"+xmTask.getName()+"】验收完毕，发放佣金.",xmTaskExecuserDb.getUserid(),xmTaskExecuserDb.getExecUserBranchId());
 			}
 
 			xmTaskService.updateSomeFieldByPk(xmTaskUpdate);

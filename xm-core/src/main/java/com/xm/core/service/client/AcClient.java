@@ -19,7 +19,7 @@ import java.util.Map;
 import java.util.Set;
 
 @Service
-public class AcClientServie {
+public class AcClient {
 	@Autowired
 	CallBizService restTemplate;
 	
@@ -65,6 +65,29 @@ public class AcClientServie {
 		return tipMap;
 	}
 
+	/**
+	 * 给平台充值，登记到平台账户中，用于下一步支付给第三方
+	 * @param payUserid 订单号 如没有，调用者自行编码一个订单号
+	 * @param rechargeAmount 订单总金额 如果有多次付款，即为所有子单总金额之和
+	 * @param refsn 关联流水号
+	 * @param remark 备注
+	 * @return
+	 */
+	public Map<String,Object> platformRecharge(String payUserid,  BigDecimal rechargeAmount, String refsn,String remark ){
+
+		String urls = "/accore/accore/acct/account/platform";
+		Map<String,Object> m=new HashMap<>();
+		m.put("payUserid", payUserid);
+		m.put("rechargeAmount", rechargeAmount);
+		m.put("refsn", refsn);
+		m.put("remark",remark);
+		Map<String,Object> tipMap = restTemplate.postForMap(urls,m);
+		Tips tips= BaseUtils.mapToTips(tipMap);
+		if(!tips.isOk()){
+			throw new BizException(tips);
+		}
+		return tipMap;
+	}
 
 	/**
 	 * 结算商家付款给客户。不适用第三方支付、而是直接使用本系统账户余额支付。登记流水及记账一次性完成
