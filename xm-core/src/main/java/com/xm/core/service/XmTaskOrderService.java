@@ -120,12 +120,9 @@ public class XmTaskOrderService extends BaseService {
 		this.xmTaskService.updateSomeFieldByPkAfterPaySuccess(xmTaskUpdate);
 		if("1".equals(taskOrderDb.getBizType()) && "5".equals(xmTaskUpdate.getBidStep())){
 			XmTask xmTaskDb=this.xmTaskService.selectOneById(taskOrderDb.getTaskId());
-			acClient.platformRecharge(xmTaskDb.getCreateUserid(),xmTaskUpdate.getEfunds(),xmTaskDb.getId(),"任务【"+xmTaskDb.getName()+"】，成功托管佣金【"+taskOrderDb.getEfunds()+"】，实际到账金额【"+payAt+"】");
-
 			msgService.pushMsg(taskOrderDb.getObranchId(),taskOrderDb.getOuserid(),xmTaskDb.getExecutorUserid(),"2",xmTaskDb.getProjectId(),xmTaskDb.getId(),"雇主成功托管佣金【"+taskOrderDb.getEfunds()+"】，实际到账金额【"+payAt+"】，当前任务进入用户工作阶段，请尽快开展工作。");
 			xmRecordService.addXmTaskRecord(taskOrderDb.getProjectId(),taskOrderDb.getTaskId(),"托管佣金","成功托管佣金【"+taskOrderDb.getEfunds()+"】，实际到账金额【"+payAt+"】");
 		}else{
-			acClient.platformRecharge(taskOrderDb.getOuserid(),payAt,taskOrderDb.getTaskId(),"成功缴纳活动费用金额【"+taskOrderDb.getFinalFee()+"】，实际到账金额【"+payAt+"】。参加的活动为【"+marketNames.stream().collect(Collectors.joining(","))+"】");
 
 			xmRecordService.addXmTaskRecord(taskOrderDb.getProjectId(),taskOrderDb.getTaskId(),"营销活动","成功缴纳活动费用金额【"+taskOrderDb.getFinalFee()+"】，实际到账金额【"+payAt+"】。参加的活动为【"+marketNames.stream().collect(Collectors.joining(","))+"】");
 		}
