@@ -10,6 +10,7 @@ import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmGroupUser;
 import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmTask;
@@ -69,6 +70,10 @@ public class XmTaskExecuserController {
 	@Autowired
 	PushNotifyMsgService notifyMsgService;
 
+
+	@Autowired
+	XmRecordService xmRecordService;
+
 	@Autowired
 	ItemService itemService;
 
@@ -89,28 +94,7 @@ public class XmTaskExecuserController {
     XmGroupService groupService;
 	
 	@ApiOperation( value = "查询xm_task_execuser信息列表",notes="listXmTaskExecuser,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="编号,主键",required=false),
-		@ApiImplicitParam(name="createTime",value="创建时间",required=false),
-		@ApiImplicitParam(name="taskId",value="任务id",required=false),
-		@ApiImplicitParam(name="userid",value="执行人id",required=false),
-		@ApiImplicitParam(name="startTime",value="加入时间",required=false),
-		@ApiImplicitParam(name="endTime",value="离开时间",required=false),
-		@ApiImplicitParam(name="status",value="执行人状态0候选排队中1执行任务中1离开任务",required=false),
-		@ApiImplicitParam(name="remarks",value="备注",required=false),
-		@ApiImplicitParam(name="settleAmount",value="结算金额",required=false),
-		@ApiImplicitParam(name="settleHour",value="结算工时",required=false),
-		@ApiImplicitParam(name="settleStatus",value="结算状态0未结算1已结算2无需结算",required=false),
-		@ApiImplicitParam(name="settleTime",value="结算时间",required=false),
-		@ApiImplicitParam(name="createUserid",value="创建人",required=false),
-		@ApiImplicitParam(name="createUsername",value="创建人姓名",required=false),
-		@ApiImplicitParam(name="username",value="执行人姓名",required=false),
-		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
-		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
-		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-		@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student_id desc",required=false),
-		@ApiImplicitParam(name="count",value="是否进行总条数计算,count=true|false",required=false) 
-	})
+	@ApiEntityParams(value = XmTaskExecuser.class)
 	@ApiResponses({
 		@ApiResponse(code = 200,response= XmTaskExecuser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
@@ -140,28 +124,7 @@ public class XmTaskExecuserController {
 
 
 	@ApiOperation( value = "查询xm_task_execuser信息列表",notes="listXmTaskExecuser,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({
-			@ApiImplicitParam(name="id",value="编号,主键",required=false),
-			@ApiImplicitParam(name="createTime",value="创建时间",required=false),
-			@ApiImplicitParam(name="taskId",value="任务id",required=false),
-			@ApiImplicitParam(name="userid",value="执行人id",required=false),
-			@ApiImplicitParam(name="startTime",value="加入时间",required=false),
-			@ApiImplicitParam(name="endTime",value="离开时间",required=false),
-			@ApiImplicitParam(name="status",value="执行人状态0候选排队中1执行任务中1离开任务",required=false),
-			@ApiImplicitParam(name="remarks",value="备注",required=false),
-			@ApiImplicitParam(name="settleAmount",value="结算金额",required=false),
-			@ApiImplicitParam(name="settleHour",value="结算工时",required=false),
-			@ApiImplicitParam(name="settleStatus",value="结算状态0未结算1已结算2无需结算",required=false),
-			@ApiImplicitParam(name="settleTime",value="结算时间",required=false),
-			@ApiImplicitParam(name="createUserid",value="创建人",required=false),
-			@ApiImplicitParam(name="createUsername",value="创建人姓名",required=false),
-			@ApiImplicitParam(name="username",value="执行人姓名",required=false),
-			@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
-			@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
-			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-			@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student_id desc",required=false),
-			@ApiImplicitParam(name="count",value="是否进行总条数计算,count=true|false",required=false)
-	})
+	@ApiEntityParams(value = XmTaskExecuser.class)
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmTaskExecuser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
@@ -505,12 +468,12 @@ public class XmTaskExecuserController {
 				tips.setFailureMsg("taskId-0");
 				return ResponseHelper.failed("taskId-0","任务编号不能为空");
 			}
-			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
-			if(xmTask==null ){
+			XmTask xmTaskDb= xmTaskService.selectOneById(taskId);
+			if(xmTaskDb==null ){
 				tips.setFailureMsg("任务已不存在");
 				return ResponseHelper.failed(tips);
 			}
-			if("3".equals(xmTask.getTaskState()) ||"4".equals(xmTask.getTaskState()) || "9".equals(xmTask.getTaskState())){
+			if("3".equals(xmTaskDb.getTaskState()) ||"4".equals(xmTaskDb.getTaskState()) || "9".equals(xmTaskDb.getTaskState())){
 				tips.setFailureMsg("该任务已验收，不能重复验收");
 				return ResponseHelper.failed(tips);
 			}
@@ -518,8 +481,8 @@ public class XmTaskExecuserController {
 
 			User user=LoginUtils.getCurrentUserInfo();
 
-			String projectId=xmTask.getProjectId();
-			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
+			String projectId=xmTaskDb.getProjectId();
+			boolean isTaskCreater=user.getUserid().equals(xmTaskDb.getCreateUserid());
   			boolean isPm=groupService.checkUserIsProjectAdm(projectId,user.getUserid());
 			if(  !isTaskCreater && !isPm ) {
 				tips.setFailureMsg("您无权验收该任务！");
@@ -527,25 +490,36 @@ public class XmTaskExecuserController {
 			}
 
 			boolean needPay=false;
-			if("1".equals(xmTask.getCrowd())){
-				if("2".equals(xmTask.getEstate()) && xmTask.getEfunds()!=null && xmTask.getEfunds().compareTo(BigDecimal.ZERO)>0){
+			if("1".equals(xmTaskDb.getCrowd())){
+				if("2".equals(xmTaskDb.getEstate()) && xmTaskDb.getEfunds()!=null && xmTaskDb.getEfunds().compareTo(BigDecimal.ZERO)>0){
 					needPay=true;
 				}
 			}
 			XmTask xmTaskUpdate=new XmTask();
-			xmTaskUpdate.setId(xmTask.getId());
+			xmTaskUpdate.setId(xmTaskDb.getId());
 			xmTaskUpdate.setTaskState("4");
 			if(needPay){
-				//XmTaskExecuser xmTaskExecuserDb=this.xmTaskExecuserService.selectOneById(map("taskId",xmTask.getId(),"userid",xmTask.getExecutorUserid()));
+				//XmTaskExecuser xmTaskExecuserDb=this.xmTaskExecuserService.selectOneById(map("taskId",xmTaskDb.getId(),"userid",xmTaskDb.getExecutorUserid()));
 				//调用ac系统付款给服务商
-				acClient.platformBalancePayToClient(xmTask.getExecutorUserid(),xmTask.getId(),xmTask.getQuoteFinalAt(),"任务【"+xmTask.getName()+"】验收完毕，发放佣金.");
-
-				xmTaskUpdate.setEtoDevTime(new Date());
-				xmTaskUpdate.setBidStep("7");
-				xmTaskUpdate.setEstate("3");
+				Tips payTips=acClient.platformBalancePayToClient(xmTaskDb.getExecutorUserid(),xmTaskDb.getId(),xmTaskDb.getQuoteFinalAt(),"任务【"+xmTaskDb.getName()+"】验收完毕，发放佣金.");
+				if(payTips.isOk()){
+					xmTaskUpdate.setEtoDevTime(new Date());
+					xmTaskUpdate.setBidStep("7");
+					xmTaskUpdate.setEstate("3");
+				}else{
+					return ResponseHelper.failed(tips);
+				}
 			}
 
 			xmTaskService.updateSomeFieldByPk(xmTaskUpdate);
+			if(needPay){
+				notifyMsgService.pushMsg(user, xmTaskDb.getExecutorUserid(), xmTaskDb.getExecutorUsername(), "2", xmTaskDb.getProjectId(), xmTaskDb.getId(), "您执行的任务【" + xmTaskDb.getName() + "】已验收通过，已发放佣金【"+xmTaskDb.getEfunds()+"】。");
+				xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(), xmTaskDb.getId(), "项目-任务-验收任务", "验收任务【"+xmTaskDb.getName()+"】，验收通过。已发放佣金【"+xmTaskDb.getEfunds()+"】元");
+			}else{
+				notifyMsgService.pushMsg(user, xmTaskDb.getExecutorUserid(), xmTaskDb.getExecutorUsername(), "2", xmTaskDb.getProjectId(), xmTaskDb.getId(), "您执行的任务【" + xmTaskDb.getName() + "】已验收通过");
+				xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(), xmTaskDb.getId(), "项目-任务-验收任务", "验收任务【"+xmTaskDb.getName()+"】，验收通过。");
+			}
+
 
 
 		}catch (BizException e) {

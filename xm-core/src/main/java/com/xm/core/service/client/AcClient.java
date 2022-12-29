@@ -2,8 +2,6 @@ package com.xm.core.service.client;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.SequenceFormat;
 import com.mdp.micro.client.CallBizService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,12 +42,9 @@ public class AcClient {
 		m.put("orderId",orderId);
 		m.put("payAt", payAt);
 		m.put("remarks", remarks);
-		Map<String,Object> tipMap = restTemplate.postForMap(urls,m);
-		Tips tips= BaseUtils.mapToTips(tipMap);
-		if(!tips.isOk()){
-			throw new BizException(tips);
-		}
-		return tipMap;
+		Tips tips  = restTemplate.postForTips(urls,m);
+
+		return tips;
 	}
 
 	/**
@@ -60,7 +55,7 @@ public class AcClient {
 	 * @param remarks 备注
 	 * @return
 	 */
-	public Map<String,Object> platformBalancePayToClient(String incomeUserid,String orderId,  BigDecimal payAt, String remarks ){
+	public Tips platformBalancePayToClient(String incomeUserid,String orderId,  BigDecimal payAt, String remarks ){
 
 		String urls = "/accore/accore/tpa/pay/platformBalancePayToClient";
 		Map<String,Object> m=new HashMap<>();
@@ -68,12 +63,8 @@ public class AcClient {
 		m.put("payAt", payAt);
 		m.put("orderId", orderId);
 		m.put("remarks",remarks);
-		Map<String,Object> tipMap = restTemplate.postForMap(urls,m);
-		Tips tips= BaseUtils.mapToTips(tipMap);
-		if(!tips.isOk()){
-			throw new BizException(tips);
-		}
-		return tipMap;
+		Tips tips = restTemplate.postForTips(urls,m);
+		return tips;
 	}
 
 	/**
@@ -93,12 +84,9 @@ public class AcClient {
 		m.put("orderId",orderId);
 		m.put("payAt", payAt);
 		m.put("remarks", remarks);
-		Map<String,Object> tipMap = restTemplate.postForMap(urls,m);
-		Tips tips= BaseUtils.mapToTips(tipMap);
-		if(!tips.isOk()){
-			throw new BizException(tips);
-		}
-		return tipMap;
+		Tips tips = restTemplate.postForTips(urls,m);
+
+		return tips;
 	}
 	public String getOrderId(){
 		String s= SequenceFormat.parse("{date:yyMMddHH}{rands:2}{rand:2}");
