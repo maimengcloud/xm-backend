@@ -536,15 +536,13 @@ public class XmTaskExecuserController {
 			xmTaskUpdate.setId(xmTask.getId());
 			xmTaskUpdate.setTaskState("4");
 			if(needPay){
-				XmTaskExecuser xmTaskExecuserDb=this.xmTaskExecuserService.selectOneById(map("taskId",xmTask.getId(),"userid",xmTask.getExecutorUserid()));
-				acClient.shopBalancePayToClient("plaftform-branch-001","platfrom",
-						xmTask.getId(),xmTask.getQuoteFinalAt(),"任务【"+xmTask.getName()+"】验收完毕，发放佣金.",xmTask.getExecutorUserid(),xmTaskExecuserDb.getExecUserBranchId());
+				//XmTaskExecuser xmTaskExecuserDb=this.xmTaskExecuserService.selectOneById(map("taskId",xmTask.getId(),"userid",xmTask.getExecutorUserid()));
 				//调用ac系统付款给服务商
+				acClient.platformBalancePayToClient(xmTask.getExecutorUserid(),xmTask.getId(),xmTask.getQuoteFinalAt(),"任务【"+xmTask.getName()+"】验收完毕，发放佣金.");
+
 				xmTaskUpdate.setEtoDevTime(new Date());
 				xmTaskUpdate.setBidStep("7");
 				xmTaskUpdate.setEstate("3");
-				acClient.shopBalancePayToClient(platformBranchId,"platform",xmTask.getId(),xmTask.getEfunds(),
-						"任务【"+xmTask.getName()+"】验收完毕，发放佣金.",xmTaskExecuserDb.getUserid(),xmTaskExecuserDb.getExecUserBranchId());
 			}
 
 			xmTaskService.updateSomeFieldByPk(xmTaskUpdate);
