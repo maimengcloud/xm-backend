@@ -5,6 +5,7 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.utils.SequenceFormat;
 import com.mdp.micro.client.CallBizService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -12,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class AcClient {
@@ -20,7 +22,9 @@ public class AcClient {
 	
 	@Autowired
 	ObjectMapper om;
- 
+
+	@Autowired
+	RedisTemplate redisTemplate;
 	
 	Set<String> userCardCodeSet=new HashSet<String>(1000);
 	 
@@ -36,14 +40,20 @@ public class AcClient {
 	 */ 
 	public Map<String,Object> companyBalancePayToClient(String payCompanyId,String incomeUserid,  String orderId, BigDecimal payAt, String remarks){
 		String urls = "/accore/accore/tpa/pay/companyBalancePayToClient";
+
 		Map<String,Object> m=new HashMap<>();
 		m.put("payCompanyId", payCompanyId);
 		m.put("incomeUserid", incomeUserid);
 		m.put("orderId",orderId);
 		m.put("payAt", payAt);
 		m.put("remarks", remarks);
-		Tips tips  = restTemplate.postForTips(urls,m);
 
+		String payId=this.getOrderId();
+		redisTemplate.opsForValue().set(payId,"1",1, TimeUnit.HOURS);
+		m.put("payId",payId);
+
+		Tips tips  = restTemplate.postForTips(urls,m);
+		tips.put("payId",payId);
 		return tips;
 	}
 
@@ -63,7 +73,14 @@ public class AcClient {
 		m.put("payAt", payAt);
 		m.put("orderId", orderId);
 		m.put("remarks",remarks);
+
+
+		String payId=this.getOrderId();
+		redisTemplate.opsForValue().set(payId,"1",1, TimeUnit.HOURS);
+		m.put("payId",payId);
+
 		Tips tips = restTemplate.postForTips(urls,m);
+		tips.put("payId",payId);
 		return tips;
 	}
 
@@ -84,7 +101,13 @@ public class AcClient {
 		m.put("orderId",orderId);
 		m.put("payAt", payAt);
 		m.put("remarks", remarks);
+
+		String payId=this.getOrderId();
+		redisTemplate.opsForValue().set(payId,"1",1, TimeUnit.HOURS);
+		m.put("payId",payId);
+
 		Tips tips = restTemplate.postForTips(urls,m);
+		tips.put("payId",payId);
 
 		return tips;
 	}
