@@ -501,7 +501,7 @@ public class XmTaskExecuserController {
 			if(needPay){
 				//XmTaskExecuser xmTaskExecuserDb=this.xmTaskExecuserService.selectOneById(map("taskId",xmTaskDb.getId(),"userid",xmTaskDb.getExecutorUserid()));
 				//调用ac系统付款给服务商
-				Tips payTips=acClient.platformBalancePayToClient(xmTaskDb.getExecutorUserid(),xmTaskDb.getId(),xmTaskDb.getQuoteFinalAt(),"任务【"+xmTaskDb.getName()+"】验收完毕，发放佣金.");
+				Tips payTips=acClient.platformBalancePayToClient(xmTaskDb.getExecutorUserid(),"3","1",xmTaskDb.getId(),xmTaskDb.getQuoteFinalAt(),"任务【"+xmTaskDb.getName()+"】验收完毕，发放佣金.");
 				if(payTips.isOk()){
 					xmTaskUpdate.setEtoDevTime(new Date());
 					xmTaskUpdate.setBidStep("7");
