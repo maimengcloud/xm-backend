@@ -27,10 +27,8 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.toMap;
 import static com.mdp.core.utils.ResponseHelper.failed;
@@ -178,33 +176,46 @@ public class XmTaskOrderController {
 				}else{
 					return ResponseHelper.failed("estate-not-2-3","保证金已支付过，不能重复缴纳");
 				}
+
+				order.setName("托管任务赏金【"+xmTaskDb.getName()+"】");
+				order.setRemark(order.getName());
 			}else if("2".equals(xmTaskOrder.getBizType())){
 				ItemVo itemVo=itemService.getDict("sysParam","crowd_task_market");
+				List<String> marketNames=new ArrayList<>();
 				if("1".equals(xmTaskDb.getTop())){
+					marketNames.add("置顶");
 					order.setTop("1");
 					order.setTopFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("topFee").getValue(),BigDecimal.ZERO));
 					order.setTopDays(NumberUtil.getInteger(itemVo.getExtInfo("topDays").getValue(),3));
 					originFee=originFee.add(order.getTopFee());
 				}
 				if("1".equals(xmTaskDb.getHot())){
+
+					marketNames.add("火热");
 					order.setTop("1");
 					order.setHotFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("hotFee").getValue(),BigDecimal.ZERO));
 					order.setHotDays(NumberUtil.getInteger(itemVo.getExtInfo("hotDays").getValue(),3));
 					originFee=originFee.add(order.getTopFee());
 				}
 				if("1".equals(xmTaskDb.getUrgent())){
+
+					marketNames.add("加急");
 					order.setUrgent("1");
 					order.setUrgentFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("urgentFee").getValue(),BigDecimal.ZERO));
 					order.setUrgentDays(NumberUtil.getInteger(itemVo.getExtInfo("urgentDays").getValue(),3));
 					originFee=originFee.add(order.getUrgentFee());
 				}
 				if("1".equals(xmTaskDb.getCrmSup())){
+
+					marketNames.add("客服包办");
 					order.setCrmSup("1");
 					order.setCrmSupFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("crmSupFee").getValue(),BigDecimal.ZERO));
 					originFee=originFee.add(order.getCrmSupFee());
 				}
 
 				if("1".equals(xmTaskDb.getOshare())){
+
+					marketNames.add("分享赚");
 					order.setOshare("1");
 					order.setShareFee(xmTaskDb.getShareFee());
 					if(order.getShareFee()==null || order.getShareFee().compareTo(BigDecimal.ZERO)<0){
@@ -212,6 +223,8 @@ public class XmTaskOrderController {
 					}
 					originFee=originFee.add(order.getShareFee());
 				}
+				order.setName("参加任务推广活动【"+marketNames.stream().collect(Collectors.joining(","))+"】");
+				order.setRemark(order.getName());
 			}
 
 
