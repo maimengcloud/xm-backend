@@ -127,7 +127,17 @@ public class XmTaskOrderService extends BaseService {
 			xmRecordService.addXmTaskRecord(taskOrderDb.getProjectId(),taskOrderDb.getTaskId(),"营销活动","成功缴纳活动费用金额【"+taskOrderDb.getFinalFee()+"】，实际到账金额【"+payAt+"】。参加的活动为【"+marketNames.stream().collect(Collectors.joining(","))+"】");
 		}
 	}
-
+	public void payCancel(String orderId, String payId, String remark) {
+		XmTaskOrder orderDb = this.selectOneById(orderId);
+		if(StringUtils.isEmpty(orderDb.getPayId()) ||orderDb.getPayId().equals(payId)){
+			XmTaskOrder orderUpdate=new XmTaskOrder();
+			orderUpdate.setId(orderId);
+			orderUpdate.setRemark(remark);
+			orderUpdate.setPayStatus("2");
+			orderUpdate.setLtime(new Date());
+			super.updateSomeFieldByPk(orderUpdate);
+		}
+	}
 
 }
 

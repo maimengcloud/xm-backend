@@ -490,6 +490,29 @@ public class XmTaskOrderController {
 		}
 	}
 
+	@ApiOperation( value = "订单支付取消判断",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@RequestMapping(value="/payCancel",method=RequestMethod.POST)
+	public Map<String,Object> payCancel(@RequestBody XmTaskOrder order) {
+		Map<String,Object> m = new HashMap<>();
+		try {
+			Tips tips=new Tips("操作成功");
+			if(!StringUtils.hasText(order.getId())) {
+				return failed("data-0","订单Id不能为空");
+			}
+			this.xmTaskOrderService.payCancel(order.getId(),order.getPayId(), order.getRemark());
+			m.put("tips", tips);
+			return m;
+		}catch (BizException e) {
+			logger.error("",e);
+			return failed("data-0",e.getMessage());
+		} catch (Exception e) {
+			logger.error("",e);
+			return failed("data-0", "付款取消操作失败");
+		}
+	}
 	@ApiOperation( value = "修改订单的第三方流水号",notes=" ")
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
