@@ -99,4 +99,15 @@ public class SysClient {
         // strRedisTemplate.convertAndSend("xm_task_settle", JSON.toJSONString(params));
         return tips;
     }
+
+    /**
+     * 任务验收后，推送任务金额到sys
+     * @return
+     */
+    public Tips pushPayAtAfterTaskAcceptanceSuccess(String userid,String taskId,BigDecimal at){
+        Tips tips = new Tips("推送订单成功");
+        push.leftPush("xm_task_acceptance_success_for_person",map("userid",userid  ,"taskId",taskId,"at",at));
+        // strRedisTemplate.convertAndSend("xm_task_settle", JSON.toJSONString(params));
+        return tips;
+    }
 }

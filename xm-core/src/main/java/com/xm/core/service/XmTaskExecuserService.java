@@ -8,12 +8,14 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskExecuser;
+import com.xm.core.service.client.MkClient;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.*;
 
 /**
@@ -42,6 +44,10 @@ public class XmTaskExecuserService extends BaseService {
 
 	@Autowired
 	PushNotifyMsgService notifyMsgService;
+
+
+	@Autowired
+	MkClient mkClient;
 
 
 	/**
@@ -192,6 +198,10 @@ public class XmTaskExecuserService extends BaseService {
 			notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), "2", xmTaskDb.getProjectId(), xmTaskExecuser.getTaskId(), "恭喜您被雇主选为任务【" + xmTaskExecuser.getTaskId() + "-" + xmTaskDb.getName() + "】的中标人,请尽快开展工作。");
 
 			updateXmTaskExeUseridsAndUsernamesByTaskId(taskId);
+			if("1".equals(xmTaskDb.getOshare()) && xmTaskDb.getShareFee()!=null && xmTaskDb.getShareFee().compareTo(BigDecimal.ZERO)>0){
+				mkClient.pushAfterTaskExecSuccess(xmTaskExecuserDb.getUserid(),xmTaskExecuserDb.getUsername(),xmTaskDb.getProjectId(),xmTaskDb.getId(),xmTaskDb.getShareFee());
+			}
+
  		xmRecordService.addXmTaskRecord(projectId, taskId, "项目-任务-变更为执行人", xmTaskExecuser.getUsername()+"变更为任务执行人",null,null);
 	}
 

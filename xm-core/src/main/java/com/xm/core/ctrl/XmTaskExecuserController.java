@@ -505,7 +505,12 @@ public class XmTaskExecuserController {
 			}
 
 			xmTaskService.updateSomeFieldByPk(xmTaskUpdate);
+			if("1".equals(xmTaskDb.getOshare()) && xmTaskDb.getShareFee()!=null && xmTaskDb.getShareFee().compareTo(BigDecimal.ZERO)>0){
+				 mkClient.pushAfterTaskAcceptanceSuccess(xmTaskDb.getExecutorUserid(),xmTaskDb.getExecutorUsername(),xmTaskDb.getProjectId(),xmTaskDb.getId(),xmTaskDb.getShareFee());
+			}
 			if(needPay){
+				sysClient.pushPayAtAfterTaskAcceptanceSuccess(xmTaskDb.getExecutorUserid(),xmTaskDb.getId(),xmTaskDb.getQuoteFinalAt());
+
 				notifyMsgService.pushMsg(user, xmTaskDb.getExecutorUserid(), xmTaskDb.getExecutorUsername(), "2", xmTaskDb.getProjectId(), xmTaskDb.getId(), "您执行的任务【" + xmTaskDb.getName() + "】已验收通过，已发放佣金【"+xmTaskDb.getEfunds()+"】。");
 				xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(), xmTaskDb.getId(), "项目-任务-验收任务", "验收任务【"+xmTaskDb.getName()+"】，验收通过。已发放佣金【"+xmTaskDb.getEfunds()+"】元");
 			}else{
