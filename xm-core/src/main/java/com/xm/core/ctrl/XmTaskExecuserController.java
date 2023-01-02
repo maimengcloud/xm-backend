@@ -207,12 +207,8 @@ public class XmTaskExecuserController {
 				}
 			}
 			if("1".equals(xmTask.getCrowd())){
-				Map<String,Object> result=null;
-				if(!isBranch){
-					result=mkClient.checkAndGetMemberInterests(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
-				}else{
-					result= sysClient.checkAndGetBranchInterests(xmTaskExecuser.getExecUserBranchId(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
-				}
+				Map<String,Object>  result=sysClient.checkUserInterests(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+
 				Tips tips2= (Tips) result.get("tips");
 				if(!tips2.isOk()){
 					return ResponseHelper.failed(tips2);
@@ -251,11 +247,8 @@ public class XmTaskExecuserController {
 			if(sendMsg){
 				notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), "用户【"+xmTaskExecuser.getUsername()+"】投标任务【"+xmTask.getName()+"】，请及时跟进！");
 			}
-			if(isBranch){
-				sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getExecUserBranchId(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
-			}else {
-				mkClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
-			}
+			sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+
 			m.put("data",xmTaskExecuser);
 		}catch (BizException e) { 
 			tips=e.getTips();
