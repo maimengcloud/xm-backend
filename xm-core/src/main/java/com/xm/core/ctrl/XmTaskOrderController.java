@@ -22,6 +22,7 @@ import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
@@ -60,6 +61,9 @@ public class XmTaskOrderController {
 
 	@Autowired
 	XmRecordService xmRecordService;
+
+	@Autowired
+	RedisTemplate redisTemplate;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTaskOrder());
@@ -477,6 +481,10 @@ public class XmTaskOrderController {
 			if(!StringUtils.hasText(order.getId())) {
 				return failed("data-0","订单Id不能为空");
 			}
+			String flag= (String) this.redisTemplate.opsForValue().get("pay-notify-success-"+order.getPayId());
+			if(!StringUtils.hasText(flag)|| !"1".equals(flag)){
+				return failed("pay-notify-success-flag-0","验证码错误");
+			}
 			xmTaskOrderService.orderPaySuccess(order.getId(),order.getPayId(),order.getPrepayId(), order.getTranId(), order.getPayAt(), order.getRemark());
 
 			m.put("tips", tips);
@@ -501,6 +509,10 @@ public class XmTaskOrderController {
 			Tips tips=new Tips("操作成功");
 			if(!StringUtils.hasText(order.getId())) {
 				return failed("data-0","订单Id不能为空");
+			}
+			String flag= (String) this.redisTemplate.opsForValue().get("pay-notify-cancel-"+order.getPayId());
+			if(!StringUtils.hasText(flag)|| !"1".equals(flag)){
+				return failed("pay-notify-cancel-flag-0","验证码错误");
 			}
 			this.xmTaskOrderService.payCancel(order.getId(),order.getPayId(), order.getRemark());
 			m.put("tips", tips);
