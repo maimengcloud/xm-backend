@@ -6,6 +6,7 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.MyTotalEval;
 import com.xm.core.entity.XmTaskEval;
@@ -43,6 +44,9 @@ public class XmTaskEvalController {
 
 	@Autowired
 	SysClient sysClient;
+
+	@Autowired
+	SensitiveWordService sensitiveWordService;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTaskEval());
@@ -114,6 +118,7 @@ public class XmTaskEvalController {
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 		    boolean createPk=false;
+
 			if(!StringUtils.hasText(xmTaskEval.getId())) {
 			    createPk=true;
 				xmTaskEval.setId(xmTaskEvalService.createKey("id"));
@@ -129,6 +134,10 @@ public class XmTaskEvalController {
 
 			if(!StringUtils.hasText(xmTaskEval.getToUserid())){
 				return failed("toUserid-0","被评价人编号不能为空");
+			}
+			Set<String> sensitiveWords=sensitiveWordService.getSensitiveWord(xmTaskEval.getRemark());
+			if(sensitiveWords!=null && sensitiveWords.size()>0){
+				return failed("remark-sensitive-word","评论存在敏感词，请修改再提交");
 			}
 			User user = LoginUtils.getCurrentUserInfo();
 			User toUser=sysClient.getUserByUserid(xmTaskEval.getToUserid());
