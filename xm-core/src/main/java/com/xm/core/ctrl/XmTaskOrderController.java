@@ -196,7 +196,7 @@ public class XmTaskOrderController {
 				if("1".equals(xmTaskDb.getHot())){
 
 					marketNames.add("火热");
-					order.setTop("1");
+					order.setHot("1");
 					order.setHotFee(NumberUtil.getBigDecimal(itemVo.getExtInfo("hotFee").getValue(),BigDecimal.ZERO));
 					order.setHotDays(NumberUtil.getInteger(itemVo.getExtInfo("hotDays").getValue(),3));
 					originFee=originFee.add(order.getTopFee());

@@ -127,7 +127,7 @@
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-json:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.11.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.module:jackson-module-parameter-names:2.11.3" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-swagger-enhance:M.1.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-sensitive-word:M.1.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.mdp:mdp-ds:M.1.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.alibaba:druid:1.2.4" level="project" />
     <orderEntry type="library" name="Maven: javax.annotation:javax.annotation-api:1.3.2" level="project" />
@@ -213,6 +213,7 @@
     <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-websocket:9.0.41" level="project" />
     <orderEntry type="library" name="Maven: com.mdp:mdp-spring-enhance:M.1.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:5.3.2" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-swagger-enhance:M.1.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.mdp:mdp-dao-mybatis:M.1.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.mdp:mdp-mybatis-enhance:M.1.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.github.pagehelper:pagehelper:5.2.0" level="project" />
