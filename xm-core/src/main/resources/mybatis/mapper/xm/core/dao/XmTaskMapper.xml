@@ -398,6 +398,8 @@
 	<update id="updateSomeFieldByPkAfterPaySuccess" parameterType="com.xm.core.entity.XmTask">
 		update  xm_task
 		<set>
+			<if test="oshare != null and oshare != ''"> oshare = #{oshare},     </if>
+			<if test="shareFee != null and shareFee != ''"> share_fee = #{shareFee},     </if>
 			<if test="hot != null and hot != ''"> hot = #{hot},     </if>
 			<if test="top != null and top != ''"> top = #{top},     </if>
 			<if test="urgent != null and urgent != ''"> urgent = #{urgent},     </if>
