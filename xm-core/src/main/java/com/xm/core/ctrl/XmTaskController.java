@@ -548,6 +548,10 @@ public class XmTaskController {
 			if(words!=null && words.size()>0){
 				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
+			words=sensitiveWordService.getSensitiveWord(xmTaskVo.getDescription());
+			if(words!=null && words.size()>0){
+				return failed("description-sensitive-word","详情中有敏感词"+words+",请修改后再提交");
+			}
 			xmTaskVo.setExecutorUserid(null);
 			xmTaskVo.setExecutorUsername(null);
 			xmTaskVo.setExeUserids(null);
