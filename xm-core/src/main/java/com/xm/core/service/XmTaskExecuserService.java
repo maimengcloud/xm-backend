@@ -198,7 +198,7 @@ public class XmTaskExecuserService extends BaseService {
 			notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), "2", xmTaskDb.getProjectId(), xmTaskExecuser.getTaskId(), "恭喜您被雇主选为任务【" + xmTaskExecuser.getTaskId() + "-" + xmTaskDb.getName() + "】的中标人,请尽快开展工作。");
 
 			updateXmTaskExeUseridsAndUsernamesByTaskId(taskId);
-			if("1".equals(xmTaskDb.getOshare()) && xmTaskDb.getShareFee()!=null && xmTaskDb.getShareFee().compareTo(BigDecimal.ZERO)>0){
+			if("2".equals(xmTaskDb.getOshare()) && xmTaskDb.getShareFee()!=null && xmTaskDb.getShareFee().compareTo(BigDecimal.ZERO)>0){
 				mkClient.pushAfterTaskExecSuccess(xmTaskExecuserDb.getUserid(),xmTaskExecuserDb.getUsername(),xmTaskDb.getProjectId(),xmTaskDb.getId(),xmTaskDb.getShareFee());
 			}
 
