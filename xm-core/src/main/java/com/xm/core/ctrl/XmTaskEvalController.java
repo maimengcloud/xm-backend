@@ -135,9 +135,9 @@ public class XmTaskEvalController {
 			if(!StringUtils.hasText(xmTaskEval.getToUserid())){
 				return failed("toUserid-0","被评价人编号不能为空");
 			}
-			Set<String> sensitiveWords=sensitiveWordService.getSensitiveWord(xmTaskEval.getRemark());
-			if(sensitiveWords!=null && sensitiveWords.size()>0){
-				return failed("remark-sensitive-word","评论存在敏感词，请修改再提交");
+			Set<String> words=sensitiveWordService.getSensitiveWord(xmTaskEval.getRemark());
+			if(words!=null && words.size()>0){
+				return failed("remark-sensitive-word","评论存在敏感词"+words+"，请修改再提交");
 			}
 			User user = LoginUtils.getCurrentUserInfo();
 			User toUser=sysClient.getUserByUserid(xmTaskEval.getToUserid());
