@@ -10,6 +10,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.service.*;
@@ -67,6 +68,8 @@ public class XmIterationController {
 
 	@Autowired
 	PushNotifyMsgService notifyMsgService;
+	@Autowired
+	SensitiveWordService sensitiveWordService;
 
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmIteration());
 
@@ -179,6 +182,14 @@ public class XmIterationController {
 			XmIteration q=new XmIteration();
 			User user= LoginUtils.getCurrentUserInfo();
 
+			Set<String> words=sensitiveWordService.getSensitiveWord(xmIteration.getIterationName());
+			if(words!=null && words.size()>0){
+				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+			}
+			words=sensitiveWordService.getSensitiveWord(xmIteration.getRemark());
+			if(words!=null && words.size()>0){
+				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
+			}
 			q.setBranchId(user.getBranchId());
 			Long count=this.xmIterationService.countByWhere(q);
 			xmIteration.setId(this.xmIterationService.createIterationId(count));

@@ -13,6 +13,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmProductProjectLink;
 import com.xm.core.entity.XmProject;
@@ -74,6 +75,8 @@ public class XmProjectController {
 
 	@Autowired
 	private XmTaskService xmTaskService;
+	@Autowired
+	SensitiveWordService sensitiveWordService;
 
 
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmProject());
@@ -223,6 +226,19 @@ public class XmProjectController {
 						return failed("productId-0","关联的产品编号不能为空");
 					}
 				}
+			}
+			Set<String> words=sensitiveWordService.getSensitiveWord(xmProjectVo.getName());
+			if(words!=null && words.size()>0){
+				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+			}
+			words=sensitiveWordService.getSensitiveWord(xmProjectVo.getBaseRemark());
+			if(words!=null && words.size()>0){
+				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
+			}
+
+			words=sensitiveWordService.getSensitiveWord(xmProjectVo.getAssessRemarks());
+			if(words!=null && words.size()>0){
+				return failed("assessRemarks-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
 			User user = LoginUtils.getCurrentUserInfo();
 				xmProjectService.saveProject(xmProjectVo);

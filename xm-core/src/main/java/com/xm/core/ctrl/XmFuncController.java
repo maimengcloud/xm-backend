@@ -6,6 +6,7 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmFunc;
 import com.xm.core.service.XmFuncService;
@@ -37,6 +38,9 @@ public class XmFuncController {
 	
 	@Autowired
 	private XmFuncService xmFuncService;
+
+	@Autowired
+	SensitiveWordService sensitiveWordService;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmFunc());
@@ -89,6 +93,10 @@ public class XmFuncController {
                     return failed("pk-exists","编号重复，请修改编号再提交");
                 }
             }
+			Set<String> words=sensitiveWordService.getSensitiveWord(xmFunc.getName());
+			if(words!=null && words.size()>0){
+				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+			}
 			xmFuncService.parentIdPathsCalcBeforeSave(xmFunc);
 			xmFuncService.insert(xmFunc);
 			m.put("data",xmFunc);

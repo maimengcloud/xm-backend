@@ -12,6 +12,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.sensitive.SensitiveWordService;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmQuestion;
 import com.xm.core.entity.XmQuestionHandle;
@@ -30,6 +31,8 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对XM.xm_question xm_question的操作有增删改查,对应的url分别为:<br>
@@ -60,6 +63,9 @@ public class XmQuestionController {
 
 	@Autowired
 	XmQuestionHandleService xmQuestionHandleService;
+
+	@Autowired
+	SensitiveWordService sensitiveWordService;
 
 
 	@Autowired
@@ -193,6 +199,14 @@ public class XmQuestionController {
 			if(!StringUtils.hasText(xmQuestionVo.getHandlerUserid())){
 				xmQuestionVo.setHandlerUserid(user.getUserid());
 				xmQuestionVo.setHandlerUsername(user.getUsername());
+			}
+			Set<String> words=sensitiveWordService.getSensitiveWord(xmQuestionVo.getName());
+			if(words!=null && words.size()>0){
+				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+			}
+			words=sensitiveWordService.getSensitiveWord(xmQuestionVo.getRemarks());
+			if(words!=null && words.size()>0){
+				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
 			xmQuestionService.addQuestion(xmQuestionVo);
 			if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {

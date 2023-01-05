@@ -9,6 +9,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProductCopyVo;
@@ -65,6 +66,8 @@ public class XmProductController {
 	@Autowired
 	PushNotifyMsgService notifyMsgService;
 
+	@Autowired
+	SensitiveWordService sensitiveWordService;
 
 	Map<String,Object> fieldsMap = toMap(new XmProduct());
 
@@ -262,6 +265,15 @@ public class XmProductController {
 			}
 			if(!StringUtils.hasText(xmProduct.getProductName())){
 				return failed("productName-0","","产品名称不能为空");
+			}
+
+			Set<String> words=sensitiveWordService.getSensitiveWord(xmProduct.getProductName());
+			if(words!=null && words.size()>0){
+				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+			}
+			words=sensitiveWordService.getSensitiveWord(xmProduct.getRemark());
+			if(words!=null && words.size()>0){
+				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
 			if(StringUtils.isEmpty(xmProduct.getPmUserid())) {
 				xmProduct.setPmUserid(user.getUserid());

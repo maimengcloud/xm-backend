@@ -14,6 +14,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.PubTool;
 import com.xm.core.entity.*;
@@ -35,6 +36,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.map;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对XM.xm_task xm_task的操作有增删改查,对应的url分别为:<br>
@@ -85,6 +87,9 @@ public class XmTaskController {
 
 	@Autowired
 	XmTaskExecuserController execuserController;
+
+	@Autowired
+	SensitiveWordService sensitiveWordService;
 
 
 	@Autowired
@@ -533,6 +538,15 @@ public class XmTaskController {
 			if(!StringUtils.hasText(xmTaskVo.getCreateUserid())){
 				xmTaskVo.setCreateUserid(user.getUserid());
 				xmTaskVo.setCreateUsername(user.getUsername());
+			}
+
+			Set<String> words=sensitiveWordService.getSensitiveWord(xmTaskVo.getName());
+			if(words!=null && words.size()>0){
+				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+			}
+			words=sensitiveWordService.getSensitiveWord(xmTaskVo.getRemarks());
+			if(words!=null && words.size()>0){
+				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
 			xmTaskVo.setExecutorUserid(null);
 			xmTaskVo.setExecutorUsername(null);

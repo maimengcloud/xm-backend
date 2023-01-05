@@ -12,6 +12,7 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.sensitive.SensitiveWordService;
 import com.xm.core.PubTool;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmProduct;
@@ -31,6 +32,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.map;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对XM.xm_menu 项目菜单表的操作有增删改查,对应的url分别为:<br>
@@ -77,6 +79,8 @@ public class XmMenuController {
 
 	@Autowired
 	XmMenuOperQxService menuOperQxService;
+	@Autowired
+	SensitiveWordService sensitiveWordService;
 
 
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmMenu());
@@ -254,6 +258,14 @@ public class XmMenuController {
 					m.put("tips", tips);
 					return m;
 				}
+			}
+			Set<String> words=sensitiveWordService.getSensitiveWord(xmMenu.getMenuName());
+			if(words!=null && words.size()>0){
+				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+			}
+			words=sensitiveWordService.getSensitiveWord(xmMenu.getRemark());
+			if(words!=null && words.size()>0){
+				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			if(StringUtils.isEmpty(xmMenu.getMmUserid())) {
