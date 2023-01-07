@@ -162,17 +162,17 @@ public class XmTaskExecuserController {
 		try{
 
 			 User user=LoginUtils.getCurrentUserInfo();
-			XmTask xmTask=xmTaskService.selectOneObject(new XmTask(xmTaskExecuser.getTaskId()));
-			if(xmTask==null){
+			XmTask xmTaskDb=xmTaskService.selectOneObject(new XmTask(xmTaskExecuser.getTaskId()));
+			if(xmTaskDb==null){
 				tips.setFailureMsg("任务已不存在");
 				m.put("tips", tips);
 				return m;
 			}
-			String projectId=xmTask.getProjectId();
+			String projectId=xmTaskDb.getProjectId();
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(projectId);
 			xmTaskExecuser.setProjectId(projectId);
 			xmTaskExecuser.setBranchId(xmProjectDb.getBranchId());
-			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
+			if(!"0".equals(xmTaskDb.getTaskState()) && !"1".equals(xmTaskDb.getTaskState()) ){
 				tips.setFailureMsg("该任务已经处于完工、结算状态，不允许再修改");
 				m.put("tips", tips);
 				return m;
@@ -189,25 +189,25 @@ public class XmTaskExecuserController {
 				isBranch=!"0".equals(user.getMemType());
 				xmTaskExecuser.setExecUserBranchId(user.getBranchId());
 			}
-			boolean isPm=groupService.checkUserIsProjectAdm(xmTask.getProjectId(),user.getUserid());
+			boolean isPm=groupService.checkUserIsProjectAdm(xmTaskDb.getProjectId(),user.getUserid());
 			boolean isTeamHeader=false;
 			List<XmGroupVo> myGgroups=groupService.getProjectGroupVoList(projectId);
 			if(!isPm){
- 				isTeamHeader= groupService.checkUserIsOtherUserTeamHeadOrAss(myGgroups,user.getUserid(),xmTask.getCreateUserid());
+ 				isTeamHeader= groupService.checkUserIsOtherUserTeamHeadOrAss(myGgroups,user.getUserid(),xmTaskDb.getCreateUserid());
 			}
 			if(!user.getUserid().equals(xmTaskExecuser.getUserid()) ){//只有上级可以拉人
 				if(!isPm && !isTeamHeader){
 					return ResponseHelper.failed("no-qx","您无权操作！只有任务负责人、组长、项目管理者可以给任务分配候选人。");
 				}
 			}else{
-				if(!"1".equals(xmTask.getCrowd())){//如果是众包任务，自己可以直接加入，如果不是众包任务，必须任务负责人、组长、经理等拉人作为执行人
+				if(!"1".equals(xmTaskDb.getCrowd())){//如果是众包任务，自己可以直接加入，如果不是众包任务，必须任务负责人、组长、经理等拉人作为执行人
 					if(!isPm && !isTeamHeader){
 						return ResponseHelper.failed("no-qx","您无权操作！只有任务负责人、组长、项目管理者可以给任务分配执行人。");
 					}
 				}
 			}
-			if("1".equals(xmTask.getCrowd())){
-				Map<String,Object>  result=sysClient.checkUserInterests(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+			if("1".equals(xmTaskDb.getCrowd())){
+				Map<String,Object>  result=sysClient.checkUserInterests(xmTaskExecuser.getUserid(),xmTaskDb.getBudgetAt(),xmTaskDb.getBudgetWorkload(),1);
 
 				Tips tips2= (Tips) result.get("tips");
 				if(!tips2.isOk()){
@@ -230,7 +230,7 @@ public class XmTaskExecuserController {
 				}
 				//检查是否已经存在执行人
 				XmTaskExecuser query=new XmTaskExecuser();
-				query.setTaskId(xmTask.getId());
+				query.setTaskId(xmTaskDb.getId());
 				List<XmTaskExecuser> xmTaskExecusersDb=this.xmTaskExecuserService.selectListByWhere(query);
 				if(xmTaskExecusersDb !=null && xmTaskExecusersDb.size()>0) {
 					for (XmTaskExecuser exe : xmTaskExecusersDb) {
@@ -242,12 +242,12 @@ public class XmTaskExecuserController {
 				xmTaskExecuser.setStatus("1");//如果不是众包，则添加为执行人
 
 			}
-			boolean sendMsg=!"0".equals(xmTask.getStatus());
+			boolean sendMsg=!"0".equals(xmTaskDb.getStatus());
 			xmTaskExecuserService.addExecuser(xmTaskExecuser,sendMsg);
 			if(sendMsg){
-				notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), "用户【"+xmTaskExecuser.getUsername()+"】投标任务【"+xmTask.getName()+"】，请及时跟进！");
+				notifyMsgService.pushMsg(user, xmTaskDb.getCreateUserid(), xmTaskDb.getCreateUsername(), "2", xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), "用户【"+xmTaskExecuser.getUsername()+"】投标任务【"+xmTaskDb.getName()+"】，请及时跟进！");
 			}
-			sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTask.getBudgetAt(),xmTask.getBudgetWorkload(),1);
+			sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTaskDb.getId(),xmTaskDb.getBudgetAt(),xmTaskDb.getBudgetWorkload(),1);
 
 			m.put("data",xmTaskExecuser);
 		}catch (BizException e) { 
@@ -509,7 +509,7 @@ public class XmTaskExecuserController {
 				 mkClient.pushAfterTaskAcceptanceSuccess(xmTaskDb.getExecutorUserid(),xmTaskDb.getExecutorUsername(),xmTaskDb.getProjectId(),xmTaskDb.getId(),xmTaskDb.getShareFee());
 			}
 			if(needPay){
-				sysClient.pushPayAtAfterTaskAcceptanceSuccess(xmTaskDb.getExecutorUserid(),xmTaskDb.getId(),xmTaskDb.getQuoteFinalAt());
+				sysClient.pushPayAtAfterTaskAcceptanceSuccess(xmTaskDb.getExecutorUserid(),xmTaskDb.getId(),xmTaskDb.getQuoteFinalAt(),xmTaskDb.getBudgetWorkload());
 
 				notifyMsgService.pushMsg(user, xmTaskDb.getExecutorUserid(), xmTaskDb.getExecutorUsername(), "2", xmTaskDb.getProjectId(), xmTaskDb.getId(), "您执行的任务【" + xmTaskDb.getName() + "】已验收通过，已发放佣金【"+xmTaskDb.getEfunds()+"】。");
 				xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(), xmTaskDb.getId(), "项目-任务-验收任务", "验收任务【"+xmTaskDb.getName()+"】，验收通过。已发放佣金【"+xmTaskDb.getEfunds()+"】元");

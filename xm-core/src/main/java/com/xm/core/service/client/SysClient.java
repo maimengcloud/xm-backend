@@ -93,9 +93,9 @@ public class SysClient {
      * 投标成功后登记投标次数-登记企业的投标次数
      * @return
      */
-    public Tips pushBidsAfterBidSuccess(String userid,BigDecimal at,BigDecimal exp,Integer bids){
+    public Tips pushBidsAfterBidSuccess(String userid,String bizId,BigDecimal at,BigDecimal exp,Integer bids){
         Tips tips = new Tips("推送订单成功");
-        push.leftPush("xm_task_bid_for_person",map("userid",userid  ,"at",at,"exp",exp,"bids",bids));
+        push.leftPush("xm_task_bid_for_person",map("userid",userid  ,"bizId",bizId,"at",at,"exp",exp,"bids",bids));
         // strRedisTemplate.convertAndSend("xm_task_settle", JSON.toJSONString(params));
         return tips;
     }
@@ -104,9 +104,9 @@ public class SysClient {
      * 任务验收后，推送任务金额到sys
      * @return
      */
-    public Tips pushPayAtAfterTaskAcceptanceSuccess(String userid,String taskId,BigDecimal at){
+    public Tips pushPayAtAfterTaskAcceptanceSuccess(String userid,String bizId,BigDecimal at,BigDecimal exp){
         Tips tips = new Tips("推送订单成功");
-        push.leftPush("xm_task_acceptance_success_for_person",map("userid",userid  ,"taskId",taskId,"at",at));
+        push.leftPush("xm_task_acceptance_success_for_person",map("userid",userid  ,"bizId",bizId,"at",at,"exp",exp,"bids",1));
         // strRedisTemplate.convertAndSend("xm_task_settle", JSON.toJSONString(params));
         return tips;
     }
