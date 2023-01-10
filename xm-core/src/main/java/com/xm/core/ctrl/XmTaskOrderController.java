@@ -457,7 +457,7 @@ public class XmTaskOrderController {
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
 	@RequestMapping(value="/getOrderById",method=RequestMethod.GET)
-	public Map<String,Object> batchDelXmTaskOrder(String orderId) {
+	public Map<String,Object> getOrderById(String orderId) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		if(!StringUtils.hasText(orderId)) {

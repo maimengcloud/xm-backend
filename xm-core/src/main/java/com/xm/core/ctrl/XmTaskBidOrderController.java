@@ -1,32 +1,41 @@
 package com.xm.core.ctrl;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.alibaba.fastjson.JSON;
+import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
+import com.mdp.core.utils.NumberUtil;
+import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
+import com.mdp.meta.client.entity.ItemVo;
+import com.mdp.meta.client.service.ItemService;
+import com.mdp.msg.client.PushNotifyMsgService;
+import com.mdp.mybatis.PageUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
+import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmTask;
+import com.xm.core.entity.XmTaskBidOrder;
+import com.xm.core.service.XmTaskBidOrderService;
+import com.xm.core.service.XmTaskService;
+import com.xm.core.vo.AddXmTaskBidOrderVo;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import io.swagger.annotations.*;
-
-import static com.mdp.core.utils.ResponseHelper.*;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-import com.mdp.mybatis.PageUtils;
-import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.NumberUtil;
-import com.mdp.safe.client.entity.User;
-import com.mdp.safe.client.utils.LoginUtils;
-import io.swagger.annotations.*;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import com.xm.core.service.XmTaskBidOrderService;
-import com.xm.core.entity.XmTaskBidOrder;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
+import static com.mdp.core.utils.BaseUtils.toMap;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_task_bid_order 任务相关费用订单表的操作有增删改查,对应的url分别为:<br>
@@ -42,6 +51,18 @@ public class XmTaskBidOrderController {
 	
 	@Autowired
 	private XmTaskBidOrderService xmTaskBidOrderService;
+	
+	@Autowired
+	XmTaskService xmTaskService;
+	
+	@Autowired
+	ItemService itemService;
+	
+	@Autowired
+	PushNotifyMsgService msgService;
+
+	@Autowired
+	RedisTemplate redisTemplate;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTaskBidOrder());
@@ -72,166 +93,85 @@ public class XmTaskBidOrderController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
-	
-	/**
+
+
+
+	@ApiOperation( value = "计算订单金额",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response= AddXmTaskBidOrderVo.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@RequestMapping(value="/calcOrder",method= RequestMethod.GET)
+	public Map<String,Object> calcOrder(  AddXmTaskBidOrderVo xmTaskBidOrder) {
+		xmTaskBidOrder.setCalc(true);
+		return  addXmTaskBidOrder(xmTaskBidOrder);
+	}
+
 	@ApiOperation( value = "新增一条任务相关费用订单表信息",notes=" ")
 	@ApiResponses({
-		@ApiResponse(code = 200,response=XmTaskBidOrder.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
+			@ApiResponse(code = 200,response= XmTaskBidOrder.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmTaskBidOrder(@RequestBody XmTaskBidOrder xmTaskBidOrder) {
+	public Map<String,Object> addXmTaskBidOrder(@RequestBody AddXmTaskBidOrderVo bidOrderVo) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-		    boolean createPk=false;
-			if(!StringUtils.hasText(xmTaskBidOrder.getId())) {
-			    createPk=true;
-				xmTaskBidOrder.setId(xmTaskBidOrderService.createKey("id"));
+			if(!StringUtils.hasText(bidOrderVo.getTaskId())){
+				return ResponseHelper.failed("taskId-0","任务编号不能为空");
 			}
-			if(createPk==false){
-                 if(xmTaskBidOrderService.selectOneObject(xmTaskBidOrder) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
-                }
-            }
-			xmTaskBidOrderService.insert(xmTaskBidOrder);
-			m.put("data",xmTaskBidOrder);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
-	}
-	*/
-	
-	/**
-	@ApiOperation( value = "删除一条任务相关费用订单表信息",notes=" ")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
-	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmTaskBidOrder(@RequestBody XmTaskBidOrder xmTaskBidOrder){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功删除一条数据");
-		try{
-            if(!StringUtils.hasText(xmTaskBidOrder.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
-            }
-            XmTaskBidOrder xmTaskBidOrderDb = xmTaskBidOrderService.selectOneObject(xmTaskBidOrder);
-            if( xmTaskBidOrderDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
-            }
-			xmTaskBidOrderService.deleteByPk(xmTaskBidOrder);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
-	}
-	 */
-	
-	/**
-	@ApiOperation( value = "根据主键修改一条任务相关费用订单表信息",notes=" ")
-	@ApiResponses({
-		@ApiResponse(code = 200,response=XmTaskBidOrder.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
-	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmTaskBidOrder(@RequestBody XmTaskBidOrder xmTaskBidOrder) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功更新一条数据");
-		try{
-            if(!StringUtils.hasText(xmTaskBidOrder.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
-            }
-            XmTaskBidOrder xmTaskBidOrderDb = xmTaskBidOrderService.selectOneObject(xmTaskBidOrder);
-            if( xmTaskBidOrderDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
-            }
-			xmTaskBidOrderService.updateSomeFieldByPk(xmTaskBidOrder);
-			m.put("data",xmTaskBidOrder);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
-	}
-	*/
-
-	/**
-    @ApiOperation( value = "批量修改某些字段",notes="")
-    @ApiEntityParams( value = XmTaskBidOrder.class, props={ }, remark = "任务相关费用订单表", paramType = "body" )
-	@ApiResponses({
-			@ApiResponse(code = 200,response=XmTaskBidOrder.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	})
-	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTaskBidOrderMap) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功更新一条数据");
-		try{
-            List<String> ids= (List<String>) xmTaskBidOrderMap.get("ids");
-			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+			XmTask xmTaskDb=this.xmTaskService.selectOneById(bidOrderVo.getTaskId());
+			if(xmTaskDb==null){
+				return ResponseHelper.failed("data-0","任务已不存在");
+			}
+			if(!"1".equals(xmTaskDb.getTaskOut())){
+				return ResponseHelper.failed("taskOut-0","不是外包任务，无须付款");
 			}
 
-			Set<String> fields=new HashSet<>();
-            fields.add("id");
-			for (String fieldName : xmTaskBidOrderMap.keySet()) {
-				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
-				}
+			if(!"1".equals(xmTaskDb.getCrowd())){
+				return ResponseHelper.failed("taskOut-0","不是众包任务，无须付款");
 			}
-			Set<String> fieldKey=xmTaskBidOrderMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
-			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskBidOrderMap.get(i) )).collect(Collectors.toSet());
-
-			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
- 			}
-			XmTaskBidOrder xmTaskBidOrder = fromMap(xmTaskBidOrderMap,XmTaskBidOrder.class);
-			List<XmTaskBidOrder> xmTaskBidOrdersDb=xmTaskBidOrderService.selectListByIds(ids);
-			if(xmTaskBidOrdersDb==null ||xmTaskBidOrdersDb.size()==0){
-				return failed("data-0","记录已不存在");
+			if(!"2".equals(xmTaskDb.getBidStep()) ){
+				return ResponseHelper.failed("bidStep-no-2","当前任务不是投标阶段，无须购买投标直通车");
 			}
-			List<XmTaskBidOrder> can=new ArrayList<>();
-			List<XmTaskBidOrder> no=new ArrayList<>();
-			User user = LoginUtils.getCurrentUserInfo();
-			for (XmTaskBidOrder xmTaskBidOrderDb : xmTaskBidOrdersDb) {
-				Tips tips2 = new Tips("检查通过"); 
-				if(!tips2.isOk()){
-				    no.add(xmTaskBidOrderDb); 
-				}else{
-					can.add(xmTaskBidOrderDb);
-				}
+			User user= LoginUtils.getCurrentUserInfo();
+			bidOrderVo.setExecUserBranchId(user.getBranchId());
+			bidOrderVo.setUsername(user.getUsername());
+			bidOrderVo.setBranchId(xmTaskDb.getCbranchId());
+			bidOrderVo.setProjectId(xmTaskDb.getProjectId());
+			XmTaskBidOrder order=new XmTaskBidOrder();
+			order.setId(this.xmTaskBidOrderService.createKey("id"));
+			order.setTaskId(xmTaskDb.getId());
+			order.setOuserid(user.getUserid());
+			order.setObranchId(user.getBranchId());
+			order.setProjectId(xmTaskDb.getProjectId());
+			order.setTaskBudgetAt(xmTaskDb.getBudgetAt());
+			order.setName(xmTaskDb.getName());
+			order.setBizType("1");
+			BigDecimal originFee=BigDecimal.ZERO; 
+				ItemVo itemVo=itemService.getDict("sysParam","crowd_task_bid_sfee");
+  				int bidFeeRate=NumberUtil.getInteger(itemVo.getExtInfo("bidFeeRate").getValue(),0);
+  				originFee=originFee.add(order.getTaskBudgetAt().multiply(BigDecimal.valueOf(bidFeeRate).multiply(BigDecimal.valueOf(100))));
+				 
+				order.setName("购买投标直通车，任务【"+xmTaskDb.getName()+"】");
+				order.setRemark(order.getName());
+			 
+			if(order.getOthFee()==null){
+				order.setOthFee(BigDecimal.ZERO);
 			}
-			if(can.size()>0){
-                xmTaskBidOrderMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
-			    xmTaskBidOrderService.editSomeFields(xmTaskBidOrderMap); 
+			order.setOriginFee(originFee);
+			order.setFinalFee(originFee.add(order.getOthFee()));
+			order.setPayType(bidOrderVo.getPayType());
+			order.setOstatus("2");
+			order.setPayStatus("0");
+			order.setBizType("1");
+			order.setCtime(new Date());
+			order.setLtime(new Date());
+			if(!bidOrderVo.isCalc()){
+				xmTaskBidOrderService.insert(order);
+				redisTemplate.opsForValue().set(XmTaskBidOrder.class.getSimpleName()+"-"+order.getId(), JSON.toJSONString(bidOrderVo),1, TimeUnit.HOURS);
+				String remark="投标直通车费用";
+				msgService.pushMsg(user,user.getUserid(),user.getUsername(),"2",order.getProjectId(),order.getTaskId(),"您为任务支付"+remark+order.getFinalFee()+"元订单提交成功，请及时付款");
 			}
-			List<String> msgs=new ArrayList<>();
-			if(can.size()>0){
-				msgs.add(String.format("成功更新以下%s条数据",can.size()));
-			}
-			if(no.size()>0){
-				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
-			}
-			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
-			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
-			}
-			//m.put("data",xmMenu);
+			m.put("data",order);
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -242,55 +182,100 @@ public class XmTaskBidOrderController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
 
-	/**
-	@ApiOperation( value = "根据主键列表批量删除任务相关费用订单表信息",notes=" ")
+
+	@ApiOperation( value = "通过Id获取订单",notes=" ")
 	@ApiResponses({
-		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
-	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmTaskBidOrder(@RequestBody List<XmTaskBidOrder> xmTaskBidOrders) {
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@RequestMapping(value="/getOrderById",method=RequestMethod.GET)
+	public Map<String,Object> getOrderById(String orderId) {
 		Map<String,Object> m = new HashMap<>();
-        Tips tips=new Tips("成功删除"); 
-        try{ 
-            if(xmTaskBidOrders.size()<=0){
-                return failed("data-0","请上送待删除数据列表");
-            }
-             List<XmTaskBidOrder> datasDb=xmTaskBidOrderService.selectListByIds(xmTaskBidOrders.stream().map(i-> i.getId() ).collect(Collectors.toList()));
+		Tips tips=new Tips("查询成功");
+		if(!StringUtils.hasText(orderId)) {
+			return failed("data-0","订单Id不能为空");
+		}
+		XmTaskBidOrder moOrder = xmTaskBidOrderService.selectOneById(orderId);
+		m.put("tips", tips);
+		m.put("data", moOrder);
+		return m;
+	}
 
-            List<XmTaskBidOrder> can=new ArrayList<>();
-            List<XmTaskBidOrder> no=new ArrayList<>();
-            for (XmTaskBidOrder data : datasDb) {
-                if(true){
-                    can.add(data);
-                }else{
-                    no.add(data);
-                } 
-            }
-            List<String> msgs=new ArrayList<>();
-            if(can.size()>0){
-                xmTaskBidOrderService.batchDelete(can);
-                msgs.add(String.format("成功删除%s条数据.",can.size()));
-            }
-    
-            if(no.size()>0){ 
-                msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
-            }
-            if(can.size()>0){
-                 tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
-            }else {
-                tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
-            }
-        }catch (BizException e) { 
-            tips=e.getTips();
-            logger.error("",e);
-        }catch (Exception e) {
-            tips.setFailureMsg(e.getMessage());
-            logger.error("",e);
-        }  
-        m.put("tips", tips);
-        return m;
-	} 
-	*/
+	@ApiOperation( value = "通过Id获取订单",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@RequestMapping(value="/orderPaySuccess",method=RequestMethod.POST)
+	public Map<String,Object> orderPaySuccess(@RequestBody XmTaskBidOrder order) {
+		Map<String,Object> m = new HashMap<>();
+		try {
+			Tips tips=new Tips("操作成功");
+			if(!StringUtils.hasText(order.getId())) {
+				return failed("data-0","订单Id不能为空");
+			}
+			String flag= (String) this.redisTemplate.opsForValue().get("pay-notify-success-"+order.getPayId());
+			if(!StringUtils.hasText(flag)|| !"1".equals(flag)){
+				return failed("pay-notify-success-flag-0","验证码错误");
+			}
+			xmTaskBidOrderService.orderPaySuccess(order.getId(),order.getPayId(),order.getPrepayId(), order.getTranId(), order.getPayAt(), order.getRemark());
+
+			m.put("tips", tips);
+			return m;
+		}catch (BizException e) {
+			logger.error("",e);
+			return failed("data-0",e.getMessage());
+		} catch (Exception e) {
+			logger.error("",e);
+			return failed("data-0", "开通模块失败");
+		}
+	}
+
+	@ApiOperation( value = "订单支付取消判断",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@RequestMapping(value="/payCancel",method=RequestMethod.POST)
+	public Map<String,Object> payCancel(@RequestBody XmTaskBidOrder order) {
+		Map<String,Object> m = new HashMap<>();
+		try {
+			Tips tips=new Tips("操作成功");
+			if(!StringUtils.hasText(order.getId())) {
+				return failed("data-0","订单Id不能为空");
+			}
+			String flag= (String) this.redisTemplate.opsForValue().get("pay-notify-cancel-"+order.getPayId());
+			if(!StringUtils.hasText(flag)|| !"1".equals(flag)){
+				return failed("pay-notify-cancel-flag-0","验证码错误");
+			}
+			this.xmTaskBidOrderService.payCancel(order.getId(),order.getPayId(), order.getRemark());
+			m.put("tips", tips);
+			return m;
+		}catch (BizException e) {
+			logger.error("",e);
+			return failed("data-0",e.getMessage());
+		} catch (Exception e) {
+			logger.error("",e);
+			return failed("data-0", "付款取消操作失败");
+		}
+	}
+	@ApiOperation( value = "修改订单的第三方流水号",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
+	})
+	@RequestMapping(value="/updatePrepayId",method=RequestMethod.POST)
+	public Map<String,Object> updatePrepayId(@RequestBody XmTaskBidOrder order) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		if(!StringUtils.hasText(order.getId())) {
+			return failed("data-0","订单Id不能为空");
+		}
+		XmTaskBidOrder moOrder = new XmTaskBidOrder();
+		moOrder.setId(order.getId());
+		moOrder.setPayId(order.getPayId());
+		moOrder.setPrepayId(order.getPrepayId());
+		moOrder.setPayTime(new Date());
+		xmTaskBidOrderService.updateSomeFieldByPk(moOrder);
+		m.put("tips", tips);
+		m.put("data", moOrder);
+		return m;
+	}
 }
