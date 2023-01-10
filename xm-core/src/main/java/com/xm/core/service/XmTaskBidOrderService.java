@@ -10,7 +10,6 @@ import com.xm.core.service.client.AcClient;
 import com.xm.core.vo.AddXmTaskBidOrderVo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -21,8 +20,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -89,22 +86,8 @@ public class XmTaskBidOrderService extends BaseService {
 		AddXmTaskBidOrderVo bidOrderVo=JSON.parseObject(json,AddXmTaskBidOrderVo.class);
 		execuserService.addExecuser(bidOrderVo,true);
 
-		BeanUtils.copyProperties(order,xmTaskUpdate);
-		xmTaskUpdate.setId(taskOrderDb.getTaskId());
-		//托管资金后用户开始工作
-		if("1".equals(taskOrderDb.getBizType()) && "2".equals(xmTaskUpdate.getEstate()) && "1".equals(taskOrderDb.getEstate())){
-			xmTaskUpdate.setBidStep("5");
-			xmTaskUpdate.setEfunds(payAt);
-		}
 		this.updateSomeFieldByPk(order);
-		if("1".equals(taskOrderDb.getBizType()) && "5".equals(xmTaskUpdate.getBidStep())){
-			XmTask xmTaskDb=this.xmTaskService.selectOneById(taskOrderDb.getTaskId());
-			msgService.pushMsg(taskOrderDb.getObranchId(),taskOrderDb.getOuserid(),xmTaskDb.getExecutorUserid(),"2",xmTaskDb.getProjectId(),xmTaskDb.getId(),"雇主成功托管佣金【"+taskOrderDb.getEfunds()+"】，实际到账金额【"+payAt+"】，当前任务进入用户工作阶段，请尽快开展工作。");
-			xmRecordService.addXmTaskRecord(taskOrderDb.getProjectId(),taskOrderDb.getTaskId(),"托管佣金","成功托管佣金【"+taskOrderDb.getEfunds()+"】，实际到账金额【"+payAt+"】");
-		}else{
 
-			xmRecordService.addXmTaskRecord(taskOrderDb.getProjectId(),taskOrderDb.getTaskId(),"营销活动","成功缴纳活动费用金额【"+taskOrderDb.getFinalFee()+"】，实际到账金额【"+payAt+"】。参加的活动为【"+marketNames.stream().collect(Collectors.joining(","))+"】");
-		}
 	}
 	public void payCancel(String orderId, String payId, String remark) {
 		XmTaskBidOrder orderDb = this.selectOneById(orderId);

@@ -26,6 +26,24 @@ public class SysClient {
     @Autowired
     Push push;
 
+
+    /**
+     * 查询用户详细资料
+     * @param userid
+     * @return
+     */
+    public User getUserInterestsByUserid(String userid){
+        String url="/sys/sys/user/noauth/detail?userid={userid}";
+        Map<String,Object> re=callBizService.getForMap(url,map("userid",userid));
+        Map<String,Object> data= (Map<String, Object>) re.get("data");
+        if(data==null || data.isEmpty()){
+            return null;
+        }
+        User user=BaseUtils.fromMap(data,User.class);
+        return user;
+
+    }
+
     /**
      * 查询用户详细资料
      * @param userid

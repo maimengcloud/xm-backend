@@ -17,6 +17,7 @@ import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskBidOrder;
 import com.xm.core.service.XmTaskBidOrderService;
 import com.xm.core.service.XmTaskService;
+import com.xm.core.service.client.SysClient;
 import com.xm.core.vo.AddXmTaskBidOrderVo;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -63,6 +64,9 @@ public class XmTaskBidOrderController {
 
 	@Autowired
 	RedisTemplate redisTemplate;
+
+	@Autowired
+	SysClient sysClient;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTaskBidOrder());
@@ -133,10 +137,21 @@ public class XmTaskBidOrderController {
 				return ResponseHelper.failed("bidStep-no-2","当前任务不是投标阶段，无须购买投标直通车");
 			}
 			User user= LoginUtils.getCurrentUserInfo();
+			User userInterests=sysClient.getUserInterestsByUserid(user.getUserid());
+
 			bidOrderVo.setExecUserBranchId(user.getBranchId());
 			bidOrderVo.setUsername(user.getUsername());
 			bidOrderVo.setBranchId(xmTaskDb.getCbranchId());
 			bidOrderVo.setProjectId(xmTaskDb.getProjectId());
+			bidOrderVo.setBidDirect("1");
+			bidOrderVo.setCmonthBids(NumberUtil.getInteger(userInterests.get("cmonthBids"),0));
+			bidOrderVo.setCmonthExp(NumberUtil.getBigDecimal(userInterests.get("cmonthExp"),BigDecimal.ZERO));
+			bidOrderVo.setSrvTimes(NumberUtil.getInteger(userInterests.get("srvTimes"),0));
+			bidOrderVo.setIlvlId(userInterests.getIlvlId());
+			bidOrderVo.setGradeId(userInterests.getGradeId());
+			bidOrderVo.setGuardId(userInterests.getGuardId());
+			bidOrderVo.setCreditId(userInterests.getCreditId());
+
 			XmTaskBidOrder order=new XmTaskBidOrder();
 			order.setId(this.xmTaskBidOrderService.createKey("id"));
 			order.setTaskId(xmTaskDb.getId());
