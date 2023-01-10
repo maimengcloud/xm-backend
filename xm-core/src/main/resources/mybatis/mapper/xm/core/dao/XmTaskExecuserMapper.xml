@@ -158,7 +158,7 @@
 		insert into xm_task_execuser(
 			<include refid="columns"/>
 		) values (
-		#{createTime},#{taskId},#{userid},#{startTime},#{endTime},#{status},#{remarks},#{createUserid},#{createUsername},#{username},#{matchScore},#{quoteWeekday},#{quoteAmount},#{quoteTime},#{projectId},#{phaseId},#{skillRemark},#{quoteWorkload},#{quoteStartTime},#{quoteEndTime},#{branchId},#{phaseName},#{taskName},#{distUserid},#{distUsername},#{execUserBranchId},#{shareKey},#{sfeeRate},#{sfee}
+		#{createTime},#{taskId},#{userid},#{startTime},#{endTime},#{status},#{remarks},#{createUserid},#{createUsername},#{username},#{matchScore},#{quoteWeekday},#{quoteAmount},#{quoteTime},#{projectId},#{phaseId},#{skillRemark},#{quoteWorkload},#{quoteStartTime},#{quoteEndTime},#{branchId},#{phaseName},#{taskName},#{distUserid},#{distUsername},#{execUserBranchId},#{shareKey},#{sfeeRate},#{sfee},#{provinceId},#{provinceName},#{cityId},#{cityName},#{areaId},#{areaName},#{gradeId},#{guardId},#{ilvlId},#{creditId},#{ctotalBids},#{srvTimes},#{cmonthExp},#{cmonthBids},#{bidDirect}
 		)
 	</insert>
 	
@@ -233,7 +233,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branch_id,share_key,sfee_rate,sfee
+		create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branch_id,share_key,sfee_rate,sfee,province_id,province_name,city_id,city_name,area_id,area_name,grade_id,guard_id,ilvl_id,credit_id,ctotal_bids,srv_times,cmonth_exp,cmonth_bids,bid_direct
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -267,6 +267,21 @@
 		<if test="shareKey != null and shareKey != ''">      and res.share_key = #{shareKey}     </if>
 		<if test="sfeeRate != null and sfeeRate != ''">      and res.sfee_rate = #{sfeeRate}     </if>
 		<if test="sfee != null and sfee != ''">      and res.sfee = #{sfee}     </if>
+		<if test="provinceId != null and provinceId != ''">      and res.province_id = #{provinceId}     </if>
+		<if test="provinceName != null and provinceName != ''">      and res.province_name = #{provinceName}     </if>
+		<if test="cityId != null and cityId != ''">      and res.city_id = #{cityId}     </if>
+		<if test="cityName != null and cityName != ''">      and res.city_name = #{cityName}     </if>
+		<if test="areaId != null and areaId != ''">      and res.area_id = #{areaId}     </if>
+		<if test="areaName != null and areaName != ''">      and res.area_name = #{areaName}     </if>
+		<if test="gradeId != null and gradeId != ''">      and res.grade_id = #{gradeId}     </if>
+		<if test="guardId != null and guardId != ''">      and res.guard_id = #{guardId}     </if>
+		<if test="ilvlId != null and ilvlId != ''">      and res.ilvl_id = #{ilvlId}     </if>
+		<if test="creditId != null and creditId != ''">      and res.credit_id = #{creditId}     </if>
+		<if test="ctotalBids != null and ctotalBids != ''">      and res.ctotal_bids = #{ctotalBids}     </if>
+		<if test="srvTimes != null and srvTimes != ''">      and res.srv_times = #{srvTimes}     </if>
+		<if test="cmonthExp != null and cmonthExp != ''">      and res.cmonth_exp = #{cmonthExp}     </if>
+		<if test="cmonthBids != null and cmonthBids != ''">      and res.cmonth_bids = #{cmonthBids}     </if>
+		<if test="bidDirect != null and bidDirect != ''">      and res.bid_direct = #{bidDirect}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -296,7 +311,22 @@
 		exec_user_branch_id = #{execUserBranchId},
 		share_key = #{shareKey},
 		sfee_rate = #{sfeeRate},
-		sfee = #{sfee}
+		sfee = #{sfee},
+		province_id = #{provinceId},
+		province_name = #{provinceName},
+		city_id = #{cityId},
+		city_name = #{cityName},
+		area_id = #{areaId},
+		area_name = #{areaName},
+		grade_id = #{gradeId},
+		guard_id = #{guardId},
+		ilvl_id = #{ilvlId},
+		credit_id = #{creditId},
+		ctotal_bids = #{ctotalBids},
+		srv_times = #{srvTimes},
+		cmonth_exp = #{cmonthExp},
+		cmonth_bids = #{cmonthBids},
+		bid_direct = #{bidDirect}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="createTime != null"> create_time = #{createTime},     </if>
@@ -326,6 +356,21 @@
 		<if test="shareKey != null and shareKey != ''"> share_key = #{shareKey},     </if>
 		<if test="sfeeRate != null and sfeeRate != ''"> sfee_rate = #{sfeeRate},     </if>
 		<if test="sfee != null and sfee != ''"> sfee = #{sfee},     </if>
+		<if test="provinceId != null and provinceId != ''"> province_id = #{provinceId},     </if>
+		<if test="provinceName != null and provinceName != ''"> province_name = #{provinceName},     </if>
+		<if test="cityId != null and cityId != ''"> city_id = #{cityId},     </if>
+		<if test="cityName != null and cityName != ''"> city_name = #{cityName},     </if>
+		<if test="areaId != null and areaId != ''"> area_id = #{areaId},     </if>
+		<if test="areaName != null and areaName != ''"> area_name = #{areaName},     </if>
+		<if test="gradeId != null and gradeId != ''"> grade_id = #{gradeId},     </if>
+		<if test="guardId != null and guardId != ''"> guard_id = #{guardId},     </if>
+		<if test="ilvlId != null and ilvlId != ''"> ilvl_id = #{ilvlId},     </if>
+		<if test="creditId != null and creditId != ''"> credit_id = #{creditId},     </if>
+		<if test="ctotalBids != null and ctotalBids != ''"> ctotal_bids = #{ctotalBids},     </if>
+		<if test="srvTimes != null and srvTimes != ''"> srv_times = #{srvTimes},     </if>
+		<if test="cmonthExp != null and cmonthExp != ''"> cmonth_exp = #{cmonthExp},     </if>
+		<if test="cmonthBids != null and cmonthBids != ''"> cmonth_bids = #{cmonthBids},     </if>
+		<if test="bidDirect != null and bidDirect != ''"> bid_direct = #{bidDirect},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -355,6 +400,21 @@
 			exec_user_branch_id = #{item.execUserBranchId},
 			share_key = #{item.shareKey},
 			sfee_rate = #{item.sfeeRate},
-			sfee = #{item.sfee}
+			sfee = #{item.sfee},
+			province_id = #{item.provinceId},
+			province_name = #{item.provinceName},
+			city_id = #{item.cityId},
+			city_name = #{item.cityName},
+			area_id = #{item.areaId},
+			area_name = #{item.areaName},
+			grade_id = #{item.gradeId},
+			guard_id = #{item.guardId},
+			ilvl_id = #{item.ilvlId},
+			credit_id = #{item.creditId},
+			ctotal_bids = #{item.ctotalBids},
+			srv_times = #{item.srvTimes},
+			cmonth_exp = #{item.cmonthExp},
+			cmonth_bids = #{item.cmonthBids},
+			bid_direct = #{item.bidDirect}
 	</sql>
 </mapper>
