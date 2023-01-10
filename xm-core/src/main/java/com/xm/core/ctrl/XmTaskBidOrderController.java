@@ -163,9 +163,25 @@ public class XmTaskBidOrderController {
 			order.setBizType("1");
 			BigDecimal originFee=BigDecimal.ZERO; 
 				ItemVo itemVo=itemService.getDict("sysParam","crowd_task_bid_sfee");
-  				int bidFeeRate=NumberUtil.getInteger(itemVo.getExtInfo("bidFeeRate").getValue(),0);
-  				originFee=originFee.add(order.getTaskBudgetAt().multiply(BigDecimal.valueOf(bidFeeRate).multiply(BigDecimal.valueOf(100))));
-				 
+				BigDecimal bidFeeRate=BigDecimal.valueOf(0.1);
+				BigDecimal maxFee=BigDecimal.valueOf(1000);
+				BigDecimal minFee=BigDecimal.valueOf(0.1);
+				if(itemVo!=null && itemVo.getExtInfos()!=null){
+					bidFeeRate=NumberUtil.getBigDecimal(itemVo.getExtInfo("bidFeeRate").getValue(),BigDecimal.valueOf(0.1));
+					maxFee=NumberUtil.getBigDecimal(itemVo.getExtInfo("maxFee").getValue(),BigDecimal.valueOf(1000));
+
+					minFee=NumberUtil.getBigDecimal(itemVo.getExtInfo("minFee").getValue(),BigDecimal.valueOf(0.1));
+
+				}
+
+				originFee=originFee.add(order.getTaskBudgetAt().multiply( bidFeeRate ).divide(BigDecimal.valueOf(100)));
+  				if(originFee.compareTo(maxFee)>0){
+					originFee=maxFee;
+				}
+  				if(originFee.compareTo(minFee)<0){
+  					originFee=minFee;
+				}
+			    originFee=originFee.setScale(2,BigDecimal.ROUND_HALF_UP);
 				order.setName("购买投标直通车，任务【"+xmTaskDb.getName()+"】");
 				order.setRemark(order.getName());
 			 
