@@ -41,7 +41,7 @@
 		<if test=" actEndTimeStart !=null "> and res.act_end_time &gt; #{actEndTimeStart} </if>
 		<if test=" actEndTimeEnd !=null "> and res.act_end_time &lt; #{actEndTimeEnd} </if>
 		<if test=" startBudgetAt !=null "> and res.budget_at &gt;= #{startBudgetAt} </if>
-		<if test=" endBudgetAt !=null "> and res.budget_at &lt; #{endBudgetAt} </if>
+		<if test=" endBudgetAt !=null "> and res.budget_at &lt;= #{endBudgetAt} </if>
 		<if test="parent != null and parent != ''"> and (res.parent_taskid = '' or res.parent_taskid IS NULL)</if>
 		<if test="pidPathsLike">
 			and res.pid_paths like concat(#{pidPathsLike},'%')
