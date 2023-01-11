@@ -161,6 +161,7 @@ public class XmTaskBidOrderController {
 			order.setTaskBudgetAt(xmTaskDb.getBudgetAt());
 			order.setName(xmTaskDb.getName());
 			order.setBizType("1");
+			order.setOtype("7");
 			BigDecimal originFee=BigDecimal.ZERO; 
 				ItemVo itemVo=itemService.getDict("sysParam","crowd_task_bid_sfee");
 				BigDecimal bidFeeRate=BigDecimal.valueOf(0.1);
