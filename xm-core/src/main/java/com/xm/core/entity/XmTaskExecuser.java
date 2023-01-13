@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTaskExecuser所有属性名: <br>
- *	"createTime","创建时间","taskId","任务id","userid","执行人id","startTime","加入时间","endTime","离开时间","status","执行人状态0候选排队中1执行任务中7放弃任务8黑名单","remarks","备注","createUserid","创建人","createUsername","创建人姓名","username","执行人姓名","matchScore","任务能力匹配分数","quoteWeekday","报价天数，不包括周六日","quoteAmount","报价金额","quoteTime","报价时间","projectId","项目编号","phaseId","阶段计划编号","skillRemark","技能说明","quoteWorkload","报价工作量单位人时","quoteStartTime","报价-开始工作日期","quoteEndTime","报价-结束工作日期","branchId","项目所属机构","phaseName","阶段计划名称","taskName","任务名称","distUserid","推荐人编号","distUsername","推荐人姓名","execUserBranchId","执行人归属公司","shareKey","分享码","sfeeRate","服务费率","sfee","众包服务费","provinceId","省编号","provinceName","省名称","cityId","城市编号","cityName","城市名称","areaId","区县编号","areaName","区县名称","gradeId","能力等级编号","guardId","保障等级编号","ilvlId","会员等级编号","creditId","信用等级编号","ctotalBids","投标总数","srvTimes","服务总次数","cmonthExp","本月获得经验值","cmonthBids","本月投标数","bidDirect","是否开启投标直通车";<br>
+ *	"createTime","创建时间","taskId","任务id","userid","执行人id","startTime","加入时间","endTime","离开时间","status","执行人状态0候选排队中1执行任务中7放弃任务8黑名单","remarks","备注","createUserid","创建人","createUsername","创建人姓名","username","执行人姓名","matchScore","任务能力匹配分数100分，占比50%","quoteWeekday","报价天数，不包括周六日","quoteAmount","报价金额","quoteTime","报价时间","projectId","项目编号","phaseId","阶段计划编号","skillRemark","技能说明","quoteWorkload","报价工作量单位人时","quoteStartTime","报价-开始工作日期","quoteEndTime","报价-结束工作日期","branchId","项目所属机构","phaseName","阶段计划名称","taskName","任务名称","distUserid","推荐人编号","distUsername","推荐人姓名","execUserBranchId","执行人归属公司","shareKey","分享码","sfeeRate","服务费率","sfee","众包服务费","provinceId","省编号","provinceName","省名称","cityId","城市编号","cityName","城市名称","areaId","区县编号","areaName","区县名称","gradeId","能力等级编号","guardId","保障等级编号","ilvlId","会员等级编号","creditId","信用等级编号","ctotalBids","投标总数","srvTimes","服务总次数","cmonthExp","本月获得经验值","cmonthBids","本月投标数","bidDirect","是否开启投标直通车","skillIds","技能编号列表","skillNames","技能名称列表","upRate","好评率","adjustScore","雇主打分100分，占比50%,默认60分","finalScore","总得分(100分)=match_score*50%+adjust_score*50","adjustRemark","打分说明","csixBids","最近6个月投标次数","csixExp","最近6个月经验值总额","csixAt","最近6个月收入总额";<br>
  * 当前主键(包括多主键):<br>
  *	task_id,userid;<br>
  */
@@ -50,7 +50,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	@ApiModelProperty(notes="执行人姓名",allowEmptyValue=true,example="",allowableValues="")
 	String username;
 	
-	@ApiModelProperty(notes="任务能力匹配分数",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="任务能力匹配分数100分，占比50%",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal matchScore;
 	
 	@ApiModelProperty(notes="报价天数，不包括周六日",allowEmptyValue=true,example="",allowableValues="")
@@ -151,6 +151,33 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="是否开启投标直通车",allowEmptyValue=true,example="",allowableValues="")
 	String bidDirect;
+	
+	@ApiModelProperty(notes="技能编号列表",allowEmptyValue=true,example="",allowableValues="")
+	String skillIds;
+	
+	@ApiModelProperty(notes="技能名称列表",allowEmptyValue=true,example="",allowableValues="")
+	String skillNames;
+	
+	@ApiModelProperty(notes="好评率",allowEmptyValue=true,example="",allowableValues="")
+	Integer upRate;
+	
+	@ApiModelProperty(notes="雇主打分100分，占比50%,默认60分",allowEmptyValue=true,example="",allowableValues="")
+	Integer adjustScore;
+	
+	@ApiModelProperty(notes="总得分(100分)=match_score*50%+adjust_score*50",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal finalScore;
+	
+	@ApiModelProperty(notes="打分说明",allowEmptyValue=true,example="",allowableValues="")
+	String adjustRemark;
+	
+	@ApiModelProperty(notes="最近6个月投标次数",allowEmptyValue=true,example="",allowableValues="")
+	Integer csixBids;
+	
+	@ApiModelProperty(notes="最近6个月经验值总额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal csixExp;
+	
+	@ApiModelProperty(notes="最近6个月收入总额",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal csixAt;
 
 	/**
 	 *任务id,执行人id

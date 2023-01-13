@@ -158,7 +158,7 @@
 		insert into xm_task_execuser(
 			<include refid="columns"/>
 		) values (
-		#{createTime},#{taskId},#{userid},#{startTime},#{endTime},#{status},#{remarks},#{createUserid},#{createUsername},#{username},#{matchScore},#{quoteWeekday},#{quoteAmount},#{quoteTime},#{projectId},#{phaseId},#{skillRemark},#{quoteWorkload},#{quoteStartTime},#{quoteEndTime},#{branchId},#{phaseName},#{taskName},#{distUserid},#{distUsername},#{execUserBranchId},#{shareKey},#{sfeeRate},#{sfee},#{provinceId},#{provinceName},#{cityId},#{cityName},#{areaId},#{areaName},#{gradeId},#{guardId},#{ilvlId},#{creditId},#{ctotalBids},#{srvTimes},#{cmonthExp},#{cmonthBids},#{bidDirect}
+		#{createTime},#{taskId},#{userid},#{startTime},#{endTime},#{status},#{remarks},#{createUserid},#{createUsername},#{username},#{matchScore},#{quoteWeekday},#{quoteAmount},#{quoteTime},#{projectId},#{phaseId},#{skillRemark},#{quoteWorkload},#{quoteStartTime},#{quoteEndTime},#{branchId},#{phaseName},#{taskName},#{distUserid},#{distUsername},#{execUserBranchId},#{shareKey},#{sfeeRate},#{sfee},#{provinceId},#{provinceName},#{cityId},#{cityName},#{areaId},#{areaName},#{gradeId},#{guardId},#{ilvlId},#{creditId},#{ctotalBids},#{srvTimes},#{cmonthExp},#{cmonthBids},#{bidDirect},#{skillIds},#{skillNames},#{upRate},#{adjustScore},#{finalScore},#{adjustRemark},#{csixBids},#{csixExp},#{csixAt}
 		)
 	</insert>
 	
@@ -233,7 +233,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branch_id,share_key,sfee_rate,sfee,province_id,province_name,city_id,city_name,area_id,area_name,grade_id,guard_id,ilvl_id,credit_id,ctotal_bids,srv_times,cmonth_exp,cmonth_bids,bid_direct
+		create_time,task_id,userid,start_time,end_time,status,remarks,create_userid,create_username,username,match_score,quote_weekday,quote_amount,quote_time,project_id,phase_id,skill_remark,quote_workload,quote_start_time,quote_end_time,branch_id,phase_name,task_name,dist_userid,dist_username,exec_user_branch_id,share_key,sfee_rate,sfee,province_id,province_name,city_id,city_name,area_id,area_name,grade_id,guard_id,ilvl_id,credit_id,ctotal_bids,srv_times,cmonth_exp,cmonth_bids,bid_direct,skill_ids,skill_names,up_rate,adjust_score,final_score,adjust_remark,csix_bids,csix_exp,csix_at
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -282,6 +282,15 @@
 		<if test="cmonthExp != null and cmonthExp != ''">      and res.cmonth_exp = #{cmonthExp}     </if>
 		<if test="cmonthBids != null and cmonthBids != ''">      and res.cmonth_bids = #{cmonthBids}     </if>
 		<if test="bidDirect != null and bidDirect != ''">      and res.bid_direct = #{bidDirect}     </if>
+		<if test="skillIds != null and skillIds != ''">      and res.skill_ids = #{skillIds}     </if>
+		<if test="skillNames != null and skillNames != ''">      and res.skill_names = #{skillNames}     </if>
+		<if test="upRate != null and upRate != ''">      and res.up_rate = #{upRate}     </if>
+		<if test="adjustScore != null and adjustScore != ''">      and res.adjust_score = #{adjustScore}     </if>
+		<if test="finalScore != null and finalScore != ''">      and res.final_score = #{finalScore}     </if>
+		<if test="adjustRemark != null and adjustRemark != ''">      and res.adjust_remark = #{adjustRemark}     </if>
+		<if test="csixBids != null and csixBids != ''">      and res.csix_bids = #{csixBids}     </if>
+		<if test="csixExp != null and csixExp != ''">      and res.csix_exp = #{csixExp}     </if>
+		<if test="csixAt != null and csixAt != ''">      and res.csix_at = #{csixAt}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -326,7 +335,16 @@
 		srv_times = #{srvTimes},
 		cmonth_exp = #{cmonthExp},
 		cmonth_bids = #{cmonthBids},
-		bid_direct = #{bidDirect}
+		bid_direct = #{bidDirect},
+		skill_ids = #{skillIds},
+		skill_names = #{skillNames},
+		up_rate = #{upRate},
+		adjust_score = #{adjustScore},
+		final_score = #{finalScore},
+		adjust_remark = #{adjustRemark},
+		csix_bids = #{csixBids},
+		csix_exp = #{csixExp},
+		csix_at = #{csixAt}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="createTime != null"> create_time = #{createTime},     </if>
@@ -371,6 +389,15 @@
 		<if test="cmonthExp != null and cmonthExp != ''"> cmonth_exp = #{cmonthExp},     </if>
 		<if test="cmonthBids != null and cmonthBids != ''"> cmonth_bids = #{cmonthBids},     </if>
 		<if test="bidDirect != null and bidDirect != ''"> bid_direct = #{bidDirect},     </if>
+		<if test="skillIds != null and skillIds != ''"> skill_ids = #{skillIds},     </if>
+		<if test="skillNames != null and skillNames != ''"> skill_names = #{skillNames},     </if>
+		<if test="upRate != null and upRate != ''"> up_rate = #{upRate},     </if>
+		<if test="adjustScore != null and adjustScore != ''"> adjust_score = #{adjustScore},     </if>
+		<if test="finalScore != null and finalScore != ''"> final_score = #{finalScore},     </if>
+		<if test="adjustRemark != null and adjustRemark != ''"> adjust_remark = #{adjustRemark},     </if>
+		<if test="csixBids != null and csixBids != ''"> csix_bids = #{csixBids},     </if>
+		<if test="csixExp != null and csixExp != ''"> csix_exp = #{csixExp},     </if>
+		<if test="csixAt != null and csixAt != ''"> csix_at = #{csixAt},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -415,6 +442,15 @@
 			srv_times = #{item.srvTimes},
 			cmonth_exp = #{item.cmonthExp},
 			cmonth_bids = #{item.cmonthBids},
-			bid_direct = #{item.bidDirect}
+			bid_direct = #{item.bidDirect},
+			skill_ids = #{item.skillIds},
+			skill_names = #{item.skillNames},
+			up_rate = #{item.upRate},
+			adjust_score = #{item.adjustScore},
+			final_score = #{item.finalScore},
+			adjust_remark = #{item.adjustRemark},
+			csix_bids = #{item.csixBids},
+			csix_exp = #{item.csixExp},
+			csix_at = #{item.csixAt}
 	</sql>
 </mapper>
