@@ -12,6 +12,10 @@
              </foreach>
          </if>
 		<if test="key != null and key !='' "> and c.case_name like  concat('%',#{key},'%')    </if>
+
+		<if test="funcPidPathsLike!=null and funcPidPathsLike!=''">
+			and exists( select 1 from xm_func f where f.pid_paths like concat(#{funcPidPathsLike},'%') and c.func_id=f.id)
+		</if>
     </sql>
 
 	<select id="selectListByCaseIdsAndPlanId" parameterType="HashMap"  resultType="com.xm.core.entity.XmTestPlanCase">
