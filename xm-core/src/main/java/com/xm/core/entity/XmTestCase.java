@@ -4,11 +4,12 @@ import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTestCase所有属性名: <br>
- *	"id","主键","caseName","标题","caseRemark","备注","testStep","测试步骤","expectResult","期望结果","menuId","关联的故事","menuName","关联故事名","ctime","创建时间","ltime","更新时间","luserid","更新人编号","lusername","更新人姓名","cbranchId","创建机构","moduleId","模块编号","moduleName","模块名称","caseStatus","用例状态1正常0废弃","cuserid","创建人编号","cusername","创建人姓名","productId","产品编号","verNum","版本号","casedbId","用例库编号","casedbName","用例库名称","funcId","功能菜单编号","funcName","功能菜单名称","funcPnames","上级菜单名称列表逗号分割","preRemark","前置条件描述","caseType","用例类型","cpriority","优先级";<br>
+ *	"id","主键","caseName","标题","caseRemark","备注","testStep","测试步骤","expectResult","期望结果","menuId","关联的故事","menuName","关联故事名","ctime","创建时间","ltime","更新时间","luserid","更新人编号","lusername","更新人姓名","cbranchId","创建机构","moduleId","模块编号","moduleName","模块名称","caseStatus","用例状态1正常0废弃","cuserid","创建人编号","cusername","创建人姓名","productId","产品编号","verNum","版本号","casedbId","用例库编号","casedbName","用例库名称","funcId","功能菜单编号","funcName","功能菜单名称","funcPnames","上级菜单名称列表逗号分割","preRemark","前置条件描述","caseType","用例类型","cpriority","优先级","budgetWorkload","预算工时","actWorkload","实际工时","initWorkload","原估工时";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -99,6 +100,15 @@ public class XmTestCase  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="优先级",allowEmptyValue=true,example="",allowableValues="")
 	String cpriority;
+	
+	@ApiModelProperty(notes="预算工时",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal budgetWorkload;
+	
+	@ApiModelProperty(notes="实际工时",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal actWorkload;
+	
+	@ApiModelProperty(notes="原估工时",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal initWorkload;
 
 	/**
 	 *主键

@@ -4,11 +4,12 @@ import lombok.Data;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
+import java.math.BigDecimal;
 
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTestPlanCase所有属性名: <br>
- *	"bugs","bug数目","execUserid","执行人","caseId","测试用例编号","ltime","更新时间","ctime","创建时间","execStatus","0-未测，1-通过，2-受阻，3-忽略，4-失败","execUsername","执行人姓名","priority","优先级","remark","执行备注","testStep","测试步骤","planId","计划编号","projectId","项目编号";<br>
+ *	"bugs","bug数目","execUserid","执行人","caseId","测试用例编号","ltime","更新时间","ctime","创建时间","execStatus","0-未测，1-通过，2-受阻，3-忽略，4-失败","execUsername","执行人姓名","priority","优先级","remark","执行备注","testStep","测试步骤","planId","计划编号","projectId","项目编号","budgetWorkload","预算工时","actWorkload","实际工时","initWorkload","原估工时";<br>
  * 当前主键(包括多主键):<br>
  *	case_id,plan_id;<br>
  */
@@ -54,6 +55,15 @@ public class XmTestPlanCase  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="项目编号",allowEmptyValue=true,example="",allowableValues="")
 	String projectId;
+	
+	@ApiModelProperty(notes="预算工时",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal budgetWorkload;
+	
+	@ApiModelProperty(notes="实际工时",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal actWorkload;
+	
+	@ApiModelProperty(notes="原估工时",allowEmptyValue=true,example="",allowableValues="")
+	BigDecimal initWorkload;
 
 	/**
 	 *测试用例编号,计划编号

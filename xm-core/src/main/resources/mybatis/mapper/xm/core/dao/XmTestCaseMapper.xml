@@ -89,7 +89,7 @@
 		insert into xm_test_case(
 			<include refid="columns"/>
 		) values (
-		#{id},#{caseName},#{caseRemark},#{testStep},#{expectResult},#{menuId},#{menuName},#{ctime},#{ltime},#{luserid},#{lusername},#{cbranchId},#{moduleId},#{moduleName},#{caseStatus},#{cuserid},#{cusername},#{productId},#{verNum},#{casedbId},#{casedbName},#{funcId},#{funcName},#{funcPnames},#{preRemark},#{caseType},#{cpriority}
+		#{id},#{caseName},#{caseRemark},#{testStep},#{expectResult},#{menuId},#{menuName},#{ctime},#{ltime},#{luserid},#{lusername},#{cbranchId},#{moduleId},#{moduleName},#{caseStatus},#{cuserid},#{cusername},#{productId},#{verNum},#{casedbId},#{casedbName},#{funcId},#{funcName},#{funcPnames},#{preRemark},#{caseType},#{cpriority},#{budgetWorkload},#{actWorkload},#{initWorkload}
 		)
 	</insert>
 	
@@ -164,7 +164,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,case_name,case_remark,test_step,expect_result,menu_id,menu_name,ctime,ltime,luserid,lusername,cbranch_id,module_id,module_name,case_status,cuserid,cusername,product_id,ver_num,casedb_id,casedb_name,func_id,func_name,func_pnames,pre_remark,case_type,cpriority
+		id,case_name,case_remark,test_step,expect_result,menu_id,menu_name,ctime,ltime,luserid,lusername,cbranch_id,module_id,module_name,case_status,cuserid,cusername,product_id,ver_num,casedb_id,casedb_name,func_id,func_name,func_pnames,pre_remark,case_type,cpriority,budget_workload,act_workload,init_workload
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -196,6 +196,9 @@
 		<if test="preRemark != null and preRemark != ''">      and res.pre_remark = #{preRemark}     </if>
 		<if test="caseType != null and caseType != ''">      and res.case_type = #{caseType}     </if>
 		<if test="cpriority != null and cpriority != ''">      and res.cpriority = #{cpriority}     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
+		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
+		<if test="initWorkload != null and initWorkload != ''">      and res.init_workload = #{initWorkload}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -224,7 +227,10 @@
 		func_pnames = #{funcPnames},
 		pre_remark = #{preRemark},
 		case_type = #{caseType},
-		cpriority = #{cpriority}
+		cpriority = #{cpriority},
+		budget_workload = #{budgetWorkload},
+		act_workload = #{actWorkload},
+		init_workload = #{initWorkload}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="caseName != null and caseName != ''"> case_name = #{caseName},     </if>
@@ -253,6 +259,9 @@
 		<if test="preRemark != null and preRemark != ''"> pre_remark = #{preRemark},     </if>
 		<if test="caseType != null and caseType != ''"> case_type = #{caseType},     </if>
 		<if test="cpriority != null and cpriority != ''"> cpriority = #{cpriority},     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
+		<if test="actWorkload != null and actWorkload != ''"> act_workload = #{actWorkload},     </if>
+		<if test="initWorkload != null and initWorkload != ''"> init_workload = #{initWorkload},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -281,6 +290,9 @@
 			func_pnames = #{item.funcPnames},
 			pre_remark = #{item.preRemark},
 			case_type = #{item.caseType},
-			cpriority = #{item.cpriority}
+			cpriority = #{item.cpriority},
+			budget_workload = #{item.budgetWorkload},
+			act_workload = #{item.actWorkload},
+			init_workload = #{item.initWorkload}
 	</sql>
 </mapper>
