@@ -67,7 +67,7 @@
 		insert into xm_test_casedb(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{cuserid},#{cusername},#{ctime},#{cbranchId},#{productId},#{productName}
+		#{id},#{name},#{cuserid},#{cusername},#{ctime},#{cbranchId},#{productId},#{productName},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{testPlans},#{menus},#{funcs},#{status},#{budgetWorkload},#{actWorkload}
 		)
 	</insert>
 	
@@ -142,7 +142,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,cuserid,cusername,ctime,cbranch_id,product_id,product_name
+		id,name,cuserid,cusername,ctime,cbranch_id,product_id,product_name,total_cases,ok_cases,err_cases,ig_cases,bl_cases,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,test_plans,menus,funcs,status,budget_workload,act_workload
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -155,6 +155,22 @@
 		<if test="cbranchId != null and cbranchId != ''">      and res.cbranch_id = #{cbranchId}     </if>
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
 		<if test="productName != null and productName != ''">      and res.product_name = #{productName}     </if>
+		<if test="totalCases != null and totalCases != ''">      and res.total_cases = #{totalCases}     </if>
+		<if test="okCases != null and okCases != ''">      and res.ok_cases = #{okCases}     </if>
+		<if test="errCases != null and errCases != ''">      and res.err_cases = #{errCases}     </if>
+		<if test="igCases != null and igCases != ''">      and res.ig_cases = #{igCases}     </if>
+		<if test="blCases != null and blCases != ''">      and res.bl_cases = #{blCases}     </if>
+		<if test="bugCnt != null and bugCnt != ''">      and res.bug_cnt = #{bugCnt}     </if>
+		<if test="closedBugs != null and closedBugs != ''">      and res.closed_bugs = #{closedBugs}     </if>
+		<if test="resolvedBugs != null and resolvedBugs != ''">      and res.resolved_bugs = #{resolvedBugs}     </if>
+		<if test="activeBugs != null and activeBugs != ''">      and res.active_bugs = #{activeBugs}     </if>
+		<if test="confirmedBugs != null and confirmedBugs != ''">      and res.confirmed_bugs = #{confirmedBugs}     </if>
+		<if test="testPlans != null and testPlans != ''">      and res.test_plans = #{testPlans}     </if>
+		<if test="menus != null and menus != ''">      and res.menus = #{menus}     </if>
+		<if test="funcs != null and funcs != ''">      and res.funcs = #{funcs}     </if>
+		<if test="status != null and status != ''">      and res.status = #{status}     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
+		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -164,7 +180,23 @@
 		ctime = #{ctime},
 		cbranch_id = #{cbranchId},
 		product_id = #{productId},
-		product_name = #{productName}
+		product_name = #{productName},
+		total_cases = #{totalCases},
+		ok_cases = #{okCases},
+		err_cases = #{errCases},
+		ig_cases = #{igCases},
+		bl_cases = #{blCases},
+		bug_cnt = #{bugCnt},
+		closed_bugs = #{closedBugs},
+		resolved_bugs = #{resolvedBugs},
+		active_bugs = #{activeBugs},
+		confirmed_bugs = #{confirmedBugs},
+		test_plans = #{testPlans},
+		menus = #{menus},
+		funcs = #{funcs},
+		status = #{status},
+		budget_workload = #{budgetWorkload},
+		act_workload = #{actWorkload}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -174,6 +206,22 @@
 		<if test="cbranchId != null and cbranchId != ''"> cbranch_id = #{cbranchId},     </if>
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
 		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
+		<if test="totalCases != null and totalCases != ''"> total_cases = #{totalCases},     </if>
+		<if test="okCases != null and okCases != ''"> ok_cases = #{okCases},     </if>
+		<if test="errCases != null and errCases != ''"> err_cases = #{errCases},     </if>
+		<if test="igCases != null and igCases != ''"> ig_cases = #{igCases},     </if>
+		<if test="blCases != null and blCases != ''"> bl_cases = #{blCases},     </if>
+		<if test="bugCnt != null and bugCnt != ''"> bug_cnt = #{bugCnt},     </if>
+		<if test="closedBugs != null and closedBugs != ''"> closed_bugs = #{closedBugs},     </if>
+		<if test="resolvedBugs != null and resolvedBugs != ''"> resolved_bugs = #{resolvedBugs},     </if>
+		<if test="activeBugs != null and activeBugs != ''"> active_bugs = #{activeBugs},     </if>
+		<if test="confirmedBugs != null and confirmedBugs != ''"> confirmed_bugs = #{confirmedBugs},     </if>
+		<if test="testPlans != null and testPlans != ''"> test_plans = #{testPlans},     </if>
+		<if test="menus != null and menus != ''"> menus = #{menus},     </if>
+		<if test="funcs != null and funcs != ''"> funcs = #{funcs},     </if>
+		<if test="status != null and status != ''"> status = #{status},     </if>
+		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
+		<if test="actWorkload != null and actWorkload != ''"> act_workload = #{actWorkload},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -183,6 +231,22 @@
 			ctime = #{item.ctime},
 			cbranch_id = #{item.cbranchId},
 			product_id = #{item.productId},
-			product_name = #{item.productName}
+			product_name = #{item.productName},
+			total_cases = #{item.totalCases},
+			ok_cases = #{item.okCases},
+			err_cases = #{item.errCases},
+			ig_cases = #{item.igCases},
+			bl_cases = #{item.blCases},
+			bug_cnt = #{item.bugCnt},
+			closed_bugs = #{item.closedBugs},
+			resolved_bugs = #{item.resolvedBugs},
+			active_bugs = #{item.activeBugs},
+			confirmed_bugs = #{item.confirmedBugs},
+			test_plans = #{item.testPlans},
+			menus = #{item.menus},
+			funcs = #{item.funcs},
+			status = #{item.status},
+			budget_workload = #{item.budgetWorkload},
+			act_workload = #{item.actWorkload}
 	</sql>
 </mapper>
