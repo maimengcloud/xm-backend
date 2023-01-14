@@ -11,7 +11,7 @@
                 ( #{item.caseId},  #{item.planId})
              </foreach>
          </if>
-        <if test="key != null and key !='' ">       </if>
+		<if test="key != null and key !='' "> and c.case_name like  concat('%',#{key},'%')    </if>
     </sql>
 
 	<select id="selectListByCaseIdsAndPlanId" parameterType="HashMap"  resultType="com.xm.core.entity.XmTestPlanCase">

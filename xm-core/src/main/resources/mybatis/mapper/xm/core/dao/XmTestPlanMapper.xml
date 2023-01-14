@@ -11,7 +11,7 @@
                  ( #{item})
              </foreach>
          </if>
-        <if test="key != null and key !='' ">       </if>
+		<if test="key != null and key !='' "> and res.name like  concat('%',#{key},'%')    </if>
     </sql>
 
 

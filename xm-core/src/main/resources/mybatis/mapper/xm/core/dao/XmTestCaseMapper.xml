@@ -28,7 +28,7 @@
 			<if test="iterationId != null and iterationId !=''" >and m.iteration_id=#{iterationId}  </if>
 			)
 		</if>
-		<if test="key != null and key !='' ">   and res.case_name like #{key}    </if>
+		<if test="key != null and key !='' ">   and res.case_name like concat('%',#{key},'%')    </if>
 		<if test="notJoinPlanId != null and notJoinPlanId !='' ">  and not exists(select 1 from xm_test_plan_case c where c.plan_id=#{notJoinPlanId} and c.case_id=res.id)     </if>
 
 		<if test="funcPidPathsLike!=null and funcPidPathsLike!=''">
