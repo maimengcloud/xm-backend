@@ -321,7 +321,16 @@ public class XmGroupService extends BaseService {
     	List<XmGroupVo> xmGroupVoList=this.getProjectGroupVoList(projectId);
     	return this.getUserGroups(xmGroupVoList, userid);
     }
-
+	/**
+	 * 获取用户在某个产品中的组
+	 * @param productId
+	 * @param userid
+	 * @return
+	 */
+	public List<XmGroupVo> getUserGroupsByProductId(String productId, String userid){
+		List<XmGroupVo> xmGroupVoList=this.getProductGroupVoList(productId);
+		return this.getUserGroups(xmGroupVoList, userid);
+	}
 
 	/**
 	 * 检查用户是否在一些组中任意个组当组长
@@ -401,7 +410,11 @@ public class XmGroupService extends BaseService {
 		return userGroups!=null && userGroups.size()>0;
 
     }
+	public boolean checkUserExistsProductGroup(String productId, String userid){
+		List<XmGroupVo> userGroups= getUserGroupsByProductId(productId,userid);
+		return userGroups!=null && userGroups.size()>0;
 
+	}
 	public boolean checkUserExistsGroup(List<XmGroupVo> userGroups, String userid){
 		List<XmGroupVo> userGroups2= this.getUserGroups(userGroups, userid);
 		return userGroups2!=null && userGroups2.size()>0;

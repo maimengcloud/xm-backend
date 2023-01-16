@@ -284,16 +284,19 @@ public class XmMenuController {
 					return ResponseHelper.failed("dclass-not-1","一级需求目录只能是史诗");
 				}
 			}
-			if(StringUtils.hasText(xmMenu.getPmenuId()) && !xmMenu.getPmenuId().equals("0")){
-				XmMenu parentMenu= menuOperQxService.getUserCanOpMenuById(xmMenu.getPmenuId(),user.getUserid(),false);
-				if(parentMenu==null){
-					return ResponseHelper.failed("noqx","您无权新增需求。");
+			/**
+			 * 检查权限，如果是产品经理、助理、副经理->通过
+			 * 如果是产品组员->通过
+			 * 如果都不是，拒绝
+			 */
+			XmProduct xmProduct= productService.getProductFromCache(xmMenu.getProductId());
+			if(xmProduct==null){
+				return ResponseHelper.failed("data-0","产品已不存在");
+			}
+			if(!groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
+				if(!groupService.checkUserExistsProductGroup(xmMenu.getProductId(),user.getUserid())){
+					return ResponseHelper.failed("noqx","只有产品团队成员可以新增需求");
 				}
-			}else{
-				XmProduct xmProduct=productService.getProductFromCache(xmMenu.getProductId());
-				if(!this.menuOperQxService.checkIsProductAdmOrAss(xmProduct,user.getUserid())){
-					return ResponseHelper.failed("noqx","产品级管理人员(产品经理、产品助理等)才能创建史诗。");
-				};
 			}
 
 
@@ -336,22 +339,41 @@ public class XmMenuController {
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
 			XmTask xmTask = new XmTask();
+			if(StringUtils.isEmpty(xmMenu.getMenuId())){
+				return ResponseHelper.failed("menuId-0","需求编号不能为空");
+			}
 			xmTask.setMenuId(xmMenu.getMenuId());
 			long taskCount=xmTaskService.countByWhere(xmTask);
 			if(taskCount>0) {
 				tips.setFailureMsg("存在"+taskCount+"个任务关联该需求，不允许删除");
+				return ResponseHelper.failed(tips);
 			}else {
-				List<String> ids=new ArrayList<>();
-				ids.add(xmMenu.getMenuId());
-				XmMenu xmMenuDb=menuOperQxService.getUserCanOpMenuById(xmMenu.getMenuId(),user.getUserid(),true);
+				XmMenu xmMenuDb=this.xmMenuService.selectOneById(xmMenu.getMenuId());
 				if(xmMenuDb==null){
-					return ResponseHelper.failed("no-qx-0","无权限操作该需求");
+					return ResponseHelper.failed("data-0","该需求已不存在");
 				}
-				if(xmMenuDb.getChildrenCnt()!=null && xmMenuDb.getChildrenCnt()>0){
-					return ResponseHelper.failed("hadChild","该需求有子需求，不能删除");
+				XmMenu xmMenuCount=new XmMenu();
+				xmMenuCount.setPmenuId(xmMenu.getMenuId());
+				long childrenCnt=this.xmMenuService.countByWhere(xmMenuCount);
+				if(childrenCnt>0){
+					return ResponseHelper.failed("childrenCnt-1","存在"+childrenCnt+"个子需求，不允许删除,请先删除子需求");
+				}
+				/**
+				 * 检查权限，如果是产品经理、助理、副经理->通过
+				 * 如果是产品组员->通过
+				 * 如果都不是，拒绝
+				 */
+				XmProduct xmProduct= productService.getProductFromCache(xmMenuDb.getProductId());
+				if(xmProduct==null){
+					return ResponseHelper.failed("product-data-0","产品已不存在");
+				}
+				if(!groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
+					if(!groupService.checkUserExistsProductGroup(xmMenuDb.getProductId(),user.getUserid())){
+						return ResponseHelper.failed("noqx","只有产品团队成员可以删除需求");
+					}
 				}
 				xmMenuService.deleteByPk(xmMenu);
-				xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"删除产品需求","删除需求"+xmMenu.getMenuName(),"",JSON.toJSONString(xmMenu));
+				xmRecordService.addXmMenuRecord(xmMenuDb.getProductId(),xmMenu.getMenuId(),"删除产品需求","删除需求"+xmMenuDb.getMenuName(),"",JSON.toJSONString(xmMenu));
 
 			} 
 		}catch (BizException e) { 
@@ -381,9 +403,20 @@ public class XmMenuController {
 			if(!StringUtils.hasText(xmMenu.getMenuId())){
 				ResponseHelper.failed("menuId-0","menuId不能为空");
 			}
-			XmMenu xmMenuDb=menuOperQxService.getUserCanOpMenuById(xmMenu.getMenuId(),user.getUserid(),true);
-			if(xmMenuDb==null){
-				ResponseHelper.failed("menu-0","该需求不存在或您无权修改。");
+			XmMenu xmMenuDb=this.xmMenuService.selectOneById(xmMenu.getMenuId());
+			/**
+			 * 检查权限，如果是产品经理、助理、副经理->通过
+			 * 如果是产品组员->通过
+			 * 如果都不是，拒绝
+			 */
+			XmProduct xmProduct= productService.getProductFromCache(xmMenuDb.getProductId());
+			if(xmProduct==null){
+				return ResponseHelper.failed("product-data-0","产品已不存在");
+			}
+			if(!groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
+				if(!groupService.checkUserExistsProductGroup(xmMenuDb.getProductId(),user.getUserid())){
+					return ResponseHelper.failed("noqx","只有产品团队成员可以修改需求");
+				}
 			}
 
 			if("1".equals(xmMenuDb.getNtype())){
@@ -397,7 +430,7 @@ public class XmMenuController {
 			}
 			xmMenu.setLtime(new Date());
 			xmMenuService.updateSomeFieldByPk(xmMenu);
-			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"修改产品需求","修改产品需求"+xmMenu.getMenuName(),"", JSON.toJSONString(xmMenu));
+			xmRecordService.addXmMenuRecord(xmMenuDb.getProductId(),xmMenuDb.getMenuId(),"修改产品需求","修改产品需求"+xmMenuDb.getMenuName(),JSON.toJSONString(xmMenu),"");
 
 			m.put("data",xmMenu);
 		}catch (BizException e) { 
@@ -426,17 +459,9 @@ public class XmMenuController {
 			List<String> menuIds= (List<String>) xmMenuMap.get("menuIds");
 
 			if(menuIds==null || menuIds.size()==0){
-				ResponseHelper.failed("menuIds-0","menuIds不能为空");
+				return ResponseHelper.failed("menuIds-0","menuIds不能为空");
 			}
-			XmMenu xmMenu= BaseUtils.fromMap(xmMenuMap,XmMenu.class);
-			List<XmMenu> xmMenusDb=this.menuOperQxService.getUserCanOpMenusByIds(menuIds,user.getUserid(),false);
-			if(xmMenusDb==null ||xmMenusDb.size()==0){
-				ResponseHelper.failed("menus-0","无权限操作所选需求");
-			}
-			List<XmMenu> can=xmMenusDb;
-			if(can.size()<=0){
-				return ResponseHelper.failed("noqx","您无权修改选中的需求。");
-			}
+
 			Set<String> fields=new HashSet<>();
 			fields.add("childrenCnt");
 			fields.add("ntype");
@@ -447,8 +472,43 @@ public class XmMenuController {
 					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
+
 			Set<String> fieldKey=xmMenuMap.keySet().stream().filter(i->fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmMenuMap.get(i) )).collect(Collectors.toSet());
+			if(fieldKey.size()<=0) {
+				return ResponseHelper.failed("fieldKey-0","没有需要更新的字段");
+			}
+
+			XmMenu xmMenu= BaseUtils.fromMap(xmMenuMap,XmMenu.class);
+			List<XmMenu> xmMenusDb=this.xmMenuService.selectListByIds(menuIds);
+			if(xmMenusDb==null ||xmMenusDb.size()==0){
+				return ResponseHelper.failed("menus-0","需求均已不存在");
+			}
+			XmMenu xmMenuDb=xmMenusDb.get(0);
+			if(xmMenusDb.stream().filter(k->!xmMenuDb.getProductId().equals(k.getProductId())).findAny().isPresent()){
+				return ResponseHelper.failed("no-same-productId","批量操作只能在同一个产品进行。");
+			}
+			/**
+			 * 检查权限，如果是产品经理、助理、副经理->通过
+			 * 如果是产品组员->通过
+			 * 如果都不是，拒绝
+			 */
+			XmProduct xmProduct= productService.getProductFromCache(xmMenuDb.getProductId());
+			if(xmProduct==null){
+				return ResponseHelper.failed("product-data-0","产品已不存在");
+			}
+			if(!groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
+				if(!groupService.checkUserExistsProductGroup(xmMenuDb.getProductId(),user.getUserid())){
+					return ResponseHelper.failed("noqx","只有产品团队成员可以修改需求");
+				}
+			}
+
+			List<XmMenu> can=xmMenusDb;
+			if(can.size()<=0){
+				return ResponseHelper.failed("noqx","您无权修改选中的需求。");
+			}
+
+
 			xmMenuMap.put("ltime",new Date());
 			xmMenuService.editSomeFields(xmMenuMap);
 			if(xmMenuMap.containsKey("mmUserid")){
@@ -457,7 +517,14 @@ public class XmMenuController {
 				}
 
 			}
-			xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"修改产品需求","修改产品需求"+xmMenu.getMenuName(),"", JSON.toJSONString(xmMenu));
+
+			xmMenuMap.remove("ltime");
+			xmMenuMap.remove("menuIds");
+			String json=JSON.toJSONString(xmMenu);
+			for (XmMenu canDb : can) {
+
+				xmRecordService.addXmMenuRecord(canDb.getProductId(),canDb.getMenuId(),"修改产品需求","修改产品需求"+canDb.getMenuName(),json, "");
+			}
 
 			//m.put("data",xmMenu);
 		}catch (BizException e) {
@@ -486,10 +553,38 @@ public class XmMenuController {
 			User user=LoginUtils.getCurrentUserInfo();
 			List<String> hasChildMenus=new ArrayList<>();
 			List<XmMenu> canDelList=new ArrayList<>();
-			List<XmMenu> xmMenusDb=this.menuOperQxService.getUserCanOpMenusByIds(xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()),user.getUserid(),true);
-			if(xmMenusDb==null || xmMenusDb.size()<=0){
-				return ResponseHelper.failed("data-0-or-no-qx","您不是产品级管理人员、需求负责人、上级需求负责人，无权限操作");
+			List<String> menuIds=xmMenus.stream().map(k->k.getMenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
+			if(menuIds==null||menuIds.size()<=0){
+				return ResponseHelper.failed("menuIds-0","需求编号不能为空");
 			}
+			List<XmMenu> xmMenusDb=this.xmMenuService.selectListByIdsWithsChildrenCnt(menuIds);
+			if(xmMenusDb==null ||xmMenusDb.size()==0){
+				return ResponseHelper.failed("menus-0","需求均已不存在");
+			}
+			XmMenu xmMenuDb=xmMenusDb.get(0);
+			if(xmMenusDb.stream().filter(k->!xmMenuDb.getProductId().equals(k.getProductId())).findAny().isPresent()){
+				return ResponseHelper.failed("no-same-productId","批量操作只能在同一个产品进行。");
+			}
+			/**
+			 * 检查权限，如果是产品经理、助理、副经理->通过
+			 * 如果是产品组员->通过
+			 * 如果都不是，拒绝
+			 */
+			XmProduct xmProduct= productService.getProductFromCache(xmMenuDb.getProductId());
+			if(xmProduct==null){
+				return ResponseHelper.failed("product-data-0","产品已不存在");
+			}
+			if(!groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
+				if(!groupService.checkUserExistsProductGroup(xmMenuDb.getProductId(),user.getUserid())){
+					return ResponseHelper.failed("noqx","只有产品团队成员可以修改需求");
+				}
+			}
+
+			List<XmMenu> can=xmMenusDb;
+			if(can.size()<=0){
+				return ResponseHelper.failed("noqx","您无权删除选中的需求。");
+			}
+
 			for (XmMenu xmMenu : xmMenusDb) {
 				boolean canDel=this.xmMenuService.checkCanDelAllChild(xmMenu,xmMenusDb);
 				if(canDel){
@@ -577,29 +672,48 @@ public class XmMenuController {
 			if(parentMenuVo.getMenuIds()==null || parentMenuVo.getMenuIds().size()==0){
 				tips.setFailureMsg("需求列表不能为空");
 				m.put("tips", tips);
-				return m;
+				ResponseHelper.failed("menuIds-0", "需求列表编号不能为空");
 			}
 			if(!StringUtils.hasText(parentMenuVo.getPmenuId())){
 				return ResponseHelper.failed("parentMenuid-0", "上级编号不能为空");
 			}
-			XmMenu parentDb=menuOperQxService.getUserCanOpMenuById(parentMenuVo.getPmenuId(), user.getUserid(),true);
-			if(parentDb==null){
-				return ResponseHelper.failed("no-qx-parent","您无权限将需求挂到别人负责的需求下");
-			}
-			if( !"1".equals(parentDb.getDclass()) && !"2".equals(parentDb.getDclass()) && !"0".equals(parentDb.getDclass())){
-				return ResponseHelper.failed("parentMenu-dclass-not-1", "【"+parentDb.getMenuName()+"】为故事，不能作为上级节点。请另选上级。");
-			}
+
 			List<String> ids=parentMenuVo.getMenuIds().stream().collect(Collectors.toList());
 			ids.add(parentMenuVo.getPmenuId());
 			ids=ids.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
-			List<XmMenu> xmMenus=this.menuOperQxService.getUserCanOpMenusByIds(ids,user.getUserid(),false);
- 			if(xmMenus==null || xmMenus.size()==0){
-				return ResponseHelper.failed("no-qx", "所需需求不是您负责，无权限操作");
+			List<XmMenu> xmMenusDb=this.xmMenuService.selectListByIds(ids);
+			if(xmMenusDb==null ||xmMenusDb.size()==0){
+				return ResponseHelper.failed("menus-0","需求均已不存在");
 			}
-
-			xmMenus=xmMenus.stream().filter(i->!i.getMenuId().equals(parentDb.getMenuId())).collect(Collectors.toList());
-			List<XmMenu> canOpxmMenus=xmMenus.stream().filter(i->!parentDb.getMenuId().equals(i.getPmenuId())).collect(Collectors.toList());
-			List<XmMenu> sameParentMenus=xmMenus.stream().filter(i->parentDb.getMenuId().equals(i.getPmenuId())).collect(Collectors.toList());
+			XmMenu xmMenuDb=xmMenusDb.get(0);
+			if(xmMenusDb.stream().filter(k->!xmMenuDb.getProductId().equals(k.getProductId())).findAny().isPresent()){
+				return ResponseHelper.failed("no-same-productId","批量操作只能在同一个产品进行。");
+			}
+			Optional<XmMenu> optional=xmMenusDb.stream().filter(k->k.getMenuId().equals(parentMenuVo.getPmenuId())).findAny();
+			if(!optional.isPresent()){
+				return ResponseHelper.failed("no-parent","上级需求不存在");
+			}
+			XmMenu parentDb=optional.get();
+			if( !"1".equals(parentDb.getDclass()) && !"2".equals(parentDb.getDclass()) && !"0".equals(parentDb.getDclass())){
+				return ResponseHelper.failed("parentMenu-dclass-not-1", "【"+parentDb.getMenuName()+"】为故事，不能作为上级节点。请另选上级。");
+			}
+			/**
+			 * 检查权限，如果是产品经理、助理、副经理->通过
+			 * 如果是产品组员->通过
+			 * 如果都不是，拒绝
+			 */
+			XmProduct xmProduct= productService.getProductFromCache(xmMenuDb.getProductId());
+			if(xmProduct==null){
+				return ResponseHelper.failed("product-data-0","产品已不存在");
+			}
+			if(!groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
+				if(!groupService.checkUserExistsProductGroup(xmMenuDb.getProductId(),user.getUserid())){
+					return ResponseHelper.failed("noqx","只有产品团队成员可以修改需求");
+				}
+			}
+			xmMenusDb=xmMenusDb.stream().filter(i->!i.getMenuId().equals(parentDb.getMenuId())).collect(Collectors.toList());
+			List<XmMenu> canOpxmMenus=xmMenusDb.stream().filter(i->!parentDb.getMenuId().equals(i.getPmenuId())).collect(Collectors.toList());
+			List<XmMenu> sameParentMenus=xmMenusDb.stream().filter(i->parentDb.getMenuId().equals(i.getPmenuId())).collect(Collectors.toList());
 			if(canOpxmMenus.size()==0){
 				return ResponseHelper.failed("same-parent","所有需求均属于【"+parentDb.getMenuName()+"】,无需再变更");
 			}
