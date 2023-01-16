@@ -7,7 +7,10 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmTestPlan;
+import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmTestPlanService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -38,6 +41,12 @@ public class XmTestPlanController {
 	
 	@Autowired
 	private XmTestPlanService xmTestPlanService;
+
+	@Autowired
+	XmGroupService groupService;
+
+	@Autowired
+	XmProductService productService;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTestPlan());
@@ -104,6 +113,10 @@ public class XmTestPlanController {
 				return failed("casedbId-0","测试用例库编号不能为空");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlan.getProductId());
+			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmTestPlan.getProductId(),user.getUserid())){
+				return failed("no-in-pteam","您不是产品团队成员，不能创建测试计划。");
+			};
 			xmTestPlan.setCuserid(user.getUserid());
 			xmTestPlan.setCusername(user.getUsername());
 			xmTestPlan.setCtime(new Date());
@@ -137,9 +150,14 @@ public class XmTestPlanController {
             if( xmTestPlanDb == null ){
                 return failed("data-not-exists","数据不存在，无法删除");
             }
-            User user=LoginUtils.getCurrentUserInfo();
-            if(!user.getBranchId().equals(xmTestPlanDb.getCbranchId())){
-            	return failed("cbranchId-err","该计划不属于您的企业创建，无权删除");
+
+			User user=LoginUtils.getCurrentUserInfo();
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanDb.getProductId());
+			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-in-pteam","您不是产品团队成员，不能删除测试计划。");
+			};
+ 			if(!user.getBranchId().equals(xmTestPlanDb.getCbranchId())){
+				return failed("cbranchId-err","该计划不属于您的企业创建，无权删除");
 			}
 			xmTestPlanService.deleteByPk(xmTestPlan);
 		}catch (BizException e) { 
@@ -169,8 +187,13 @@ public class XmTestPlanController {
             if( xmTestPlanDb == null ){
                 return failed("data-not-exists","数据不存在，无法修改");
             }
+
 			User user=LoginUtils.getCurrentUserInfo();
-			if(!user.getBranchId().equals(xmTestPlanDb.getCbranchId())){
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanDb.getProductId());
+			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-in-pteam","您不是产品团队成员，不能删除测试计划。");
+			};
+ 			if(!user.getBranchId().equals(xmTestPlanDb.getCbranchId())){
 				return failed("cbranchId-err","该计划不属于您的企业创建，无权修改");
 			}
 			xmTestPlanService.updateSomeFieldByPk(xmTestPlan);
@@ -219,9 +242,18 @@ public class XmTestPlanController {
 			if(xmTestPlansDb==null ||xmTestPlansDb.size()==0){
 				return failed("data-0","记录已不存在");
 			}
+			XmTestPlan xmTestPlanDb2=xmTestPlansDb.get(0);
+			if(xmTestPlansDb.stream().filter(k->!k.getProductId().equals(xmTestPlanDb2.getProductId())).findAny().isPresent()){
+				return failed("product-no-same","批量操作只能操作同一个产品下的测试计划。");
+			}
+			User user = LoginUtils.getCurrentUserInfo();
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanDb2.getProductId());
+			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-in-pteam","您不是产品团队成员，不能删除测试计划。");
+			};
 			List<XmTestPlan> can=new ArrayList<>();
 			List<XmTestPlan> no=new ArrayList<>();
-			User user = LoginUtils.getCurrentUserInfo();
+
 			for (XmTestPlan xmTestPlanDb : xmTestPlansDb) {
 				Tips tips2 = new Tips("检查通过");
 
@@ -275,12 +307,21 @@ public class XmTestPlanController {
                 return failed("data-0","请上送待删除数据列表");
             }
              List<XmTestPlan> datasDb=xmTestPlanService.selectListByIds(xmTestPlans.stream().map(i-> i.getId() ).collect(Collectors.toList()));
-
+			XmTestPlan xmTestPlanDb2=datasDb.get(0);
+			if(datasDb.stream().filter(k->!k.getProductId().equals(xmTestPlanDb2.getProductId())).findAny().isPresent()){
+				return failed("product-no-same","批量操作只能操作同一个产品下的测试计划。");
+			}
+			User user = LoginUtils.getCurrentUserInfo();
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanDb2.getProductId());
+			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-in-pteam","您不是产品团队成员，不能删除测试计划。");
+			};
             List<XmTestPlan> can=new ArrayList<>();
             List<XmTestPlan> no=new ArrayList<>();
-			User user=LoginUtils.getCurrentUserInfo();
 			for (XmTestPlan data : datasDb) {
-                if(user.getBranchId().equals(data.getCbranchId())){
+
+				if(user.getBranchId().equals(data.getCbranchId())){
+
                     can.add(data);
                 }else{
                     no.add(data);

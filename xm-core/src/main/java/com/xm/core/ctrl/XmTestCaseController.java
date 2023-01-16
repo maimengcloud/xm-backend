@@ -7,7 +7,10 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmTestCase;
+import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmTestCaseService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
@@ -38,6 +41,12 @@ public class XmTestCaseController {
 	
 	@Autowired
 	private XmTestCaseService xmTestCaseService;
+
+	@Autowired
+	XmGroupService groupService;
+
+	@Autowired
+	XmProductService productService;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTestCase());
@@ -101,7 +110,15 @@ public class XmTestCaseController {
                     return failed("pk-exists","编号重复，请修改编号再提交");
                 }
             }
+			if(StringUtils.isEmpty(xmTestCase.getProductId())){
+				return failed("productId-0","产品编号不能为空");
+			}
 			User user=LoginUtils.getCurrentUserInfo();
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestCase.getProductId());
+			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-in-pteam","您不是产品团队成员，不能创建测试用例。");
+			};
+
 			xmTestCase.setCuserid(user.getUserid());
 			xmTestCase.setLuserid(user.getUserid());
 			xmTestCase.setLusername(user.getUsername());
@@ -138,6 +155,11 @@ public class XmTestCaseController {
             if( xmTestCaseDb == null ){
                 return failed("data-not-exists","数据不存在，无法删除");
             }
+            User user=LoginUtils.getCurrentUserInfo();
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb.getProductId());
+			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-in-pteam","您不是产品团队成员，不能删除测试用例。");
+			};
 			xmTestCaseService.deleteByPk(xmTestCase);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -167,6 +189,10 @@ public class XmTestCaseController {
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 			User user=LoginUtils.getCurrentUserInfo();
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb.getProductId());
+			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-in-pteam","您不是产品团队成员，不能修改测试用例。");
+			};
 			xmTestCase.setLuserid(user.getUserid());
 			xmTestCase.setLusername(user.getUsername());
 			xmTestCase.setLtime(new Date());
@@ -219,8 +245,17 @@ public class XmTestCaseController {
 			List<XmTestCase> can=new ArrayList<>();
 			List<XmTestCase> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
+			XmTestCase xmTestCaseDb2=xmTestCasesDb.get(0);
+			if(xmTestCasesDb.stream().filter(k->!k.getProductId().equals(xmTestCaseDb2.getProductId())).findAny().isPresent()){
+				return failed("product-no-same","批量操作所有测试用例必须都在同一个产品下。");
+			}
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb2.getProductId());
+			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-in-pteam","您不是产品团队成员，不能修改测试用例。");
+			};
 			for (XmTestCase xmTestCaseDb : xmTestCasesDb) {
-				Tips tips2 = new Tips("检查通过"); 
+				Tips tips2 = new Tips("检查通过");
+
 				if(!tips2.isOk()){
 				    no.add(xmTestCaseDb); 
 				}else{
@@ -268,7 +303,15 @@ public class XmTestCaseController {
                 return failed("data-0","请上送待删除数据列表");
             }
              List<XmTestCase> datasDb=xmTestCaseService.selectListByIds(xmTestCases.stream().map(i-> i.getId() ).collect(Collectors.toList()));
-
+			User user = LoginUtils.getCurrentUserInfo();
+			XmTestCase xmTestCaseDb2=datasDb.get(0);
+			if(datasDb.stream().filter(k->!k.getProductId().equals(xmTestCaseDb2.getProductId())).findAny().isPresent()){
+				return failed("product-no-same","批量操作所有测试用例必须都在同一个产品下。");
+			}
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb2.getProductId());
+			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-in-pteam","您不是产品团队成员，不能修改测试用例。");
+			};
             List<XmTestCase> can=new ArrayList<>();
             List<XmTestCase> no=new ArrayList<>();
             for (XmTestCase data : datasDb) {

@@ -8,13 +8,8 @@ import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.ImportFromTestCaseVo;
-import com.xm.core.entity.XmTestCase;
-import com.xm.core.entity.XmTestPlan;
-import com.xm.core.entity.XmTestPlanCase;
-import com.xm.core.service.XmTestCaseService;
-import com.xm.core.service.XmTestPlanCaseService;
-import com.xm.core.service.XmTestPlanService;
+import com.xm.core.entity.*;
+import com.xm.core.service.*;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -51,6 +46,12 @@ public class XmTestPlanCaseController {
 
 	@Autowired
 	XmTestCaseService xmTestCaseService;
+
+	@Autowired
+	XmGroupService groupService;
+
+	@Autowired
+	XmProductService productService;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTestPlanCase());
@@ -201,15 +202,18 @@ public class XmTestPlanCaseController {
 			if("2".equals(xmTestPlanDb.getStatus())){
 				return ResponseHelper.failed("status-2","测试计划已结束");
 			}
-
+			User user=LoginUtils.getCurrentUserInfo();
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanDb.getProductId());
+			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-in-pteam","您不是产品团队成员，不能操作。");
+			};
 			//过滤掉已存在的测试用例 同一个用例不能重复添加到同一个计划中
 			List<XmTestPlanCase> planCasesDb=this.xmTestPlanCaseService.selectListByCaseIdsAndPlanId(importFromTestCaseVo.getPlanId(),importFromTestCaseVo.getCaseIds()	);
 			if(planCasesDb!=null && planCasesDb.size()>0){
 				casesDb=casesDb.stream().filter(k->!planCasesDb.stream().filter(i->i.getCaseId().equals(k.getId())).findAny().isPresent()).collect(Collectors.toList());
 			}
 			if(casesDb.size()>0){
-				User user=LoginUtils.getCurrentUserInfo();
-				List<XmTestPlanCase> planCases=new ArrayList<>();
+ 				List<XmTestPlanCase> planCases=new ArrayList<>();
 				for (XmTestCase xmTestCase : casesDb) {
 					XmTestPlanCase xmTestPlanCase=new XmTestPlanCase();
 					BeanUtils.copyProperties(xmTestCase,xmTestPlanCase);
