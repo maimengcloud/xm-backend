@@ -84,24 +84,23 @@ public class XmGroupService extends BaseService {
 	}
 
 
-	/** 请在此类添加自定义函数 */
-	public List<XmGroupVo> getProjectGroupVoList(String projectId) {
+	public List<XmGroupVo> getProductGroupVoList(String productId) {
 		List<XmGroupVo>	groupVoList=new ArrayList<>();
-		List<XmGroupVo>	groupVoList2  = groupCacheService.getProjectGroups(projectId);
+		List<XmGroupVo>	groupVoList2  = groupCacheService.getProductGroups(productId);
 		if(groupVoList2==null||groupVoList2.size()==0) {
 			
 		    XmGroup group = new XmGroup();
-		    group.setProjectId(projectId);
+		    group.setProductId(productId);
 			Page page=PageUtils.getLocalPage();
 			PageUtils.clearPage();
 		    List<XmGroup> groupList = this.selectListByWhere(group);
 		     if(groupList==null || groupList.size()==0) {
-		    	 groupCacheService.putProjectGroups(projectId, groupVoList);
+		    	 groupCacheService.putProductGroups(productId, groupVoList);
 		    	 return groupVoList;
 		     }
-		    List<XmGroupUser> groupUserList=this.xmGroupUserService.selectGroupUserListByProjectId(projectId);
+		    List<XmGroupUser> groupUserList=this.xmGroupUserService.selectGroupUserListByProductId(productId);
 		    if(groupUserList==null || groupUserList.size()==0) {
-		    	 //groupCacheService.putProjectGroups(projectId, groupVoList);
+		    	 //groupCacheService.putProjectGroups(productId, groupVoList);
 		    	 //return groupVoList;
 		    }
 		    groupList.forEach(g -> { 
@@ -116,7 +115,7 @@ public class XmGroupService extends BaseService {
 	            gvo.setGroupUsers(groupUsers );
 	            groupVoList.add(gvo);
 	        });
-		    groupCacheService.putProjectGroups(projectId, groupVoList);
+		    groupCacheService.putProductGroups(productId, groupVoList);
 		    if(page!=null && (page.getPageNum()>0||page.getPageSize()>0)){
 				PageUtils.startPage(page.getPageNum(), page.getPageSize(),page.getOrderBy());
 			}
@@ -127,6 +126,51 @@ public class XmGroupService extends BaseService {
 		}
 	    
     }
+
+
+	/** 请在此类添加自定义函数 */
+	public List<XmGroupVo> getProjectGroupVoList(String projectId) {
+		List<XmGroupVo>	groupVoList=new ArrayList<>();
+		List<XmGroupVo>	groupVoList2  = groupCacheService.getProjectGroups(projectId);
+		if(groupVoList2==null||groupVoList2.size()==0) {
+
+			XmGroup group = new XmGroup();
+			group.setProjectId(projectId);
+			Page page=PageUtils.getLocalPage();
+			PageUtils.clearPage();
+			List<XmGroup> groupList = this.selectListByWhere(group);
+			if(groupList==null || groupList.size()==0) {
+				groupCacheService.putProjectGroups(projectId, groupVoList);
+				return groupVoList;
+			}
+			List<XmGroupUser> groupUserList=this.xmGroupUserService.selectGroupUserListByProjectId(projectId);
+			if(groupUserList==null || groupUserList.size()==0) {
+				//groupCacheService.putProjectGroups(projectId, groupVoList);
+				//return groupVoList;
+			}
+			groupList.forEach(g -> {
+				XmGroupVo gvo = new XmGroupVo();
+				BeanUtils.copyProperties(g,gvo);
+				List<XmGroupUser> groupUsers=new ArrayList<>();
+				groupUserList.forEach(gu -> {
+					if(g.getId().equals(gu.getGroupId())) {
+						groupUsers.add(gu);
+					}
+				});
+				gvo.setGroupUsers(groupUsers );
+				groupVoList.add(gvo);
+			});
+			groupCacheService.putProjectGroups(projectId, groupVoList);
+			if(page!=null && (page.getPageNum()>0||page.getPageSize()>0)){
+				PageUtils.startPage(page.getPageNum(), page.getPageSize(),page.getOrderBy());
+			}
+
+			return groupVoList;
+		}else {
+			return groupVoList2;
+		}
+
+	}
 
 	public boolean checkUserIsProjectAdm(XmProject xmProject,String userid){
 		if(xmProject==null){
@@ -563,6 +607,16 @@ public class XmGroupService extends BaseService {
 			tips.setFailureMsg("prj-status-4","项目暂停中，不能操作");
 		} else if("9".equals(xmProject.getStatus())){
 			tips.setFailureMsg("prj-status-9","项目已关闭，不能操作");
+		}
+		return tips;
+	}
+
+	public Tips checkProductStatus(XmProduct xmProduct){
+		Tips tips=new Tips("成功");
+		if(xmProduct==null){
+			tips.setFailureMsg("product-0","产品已不存在");
+		} else if("3".equals(xmProduct.getPstatus())){
+			tips.setFailureMsg("pstatus-3","产品已关闭，不能操作");
 		}
 		return tips;
 	}

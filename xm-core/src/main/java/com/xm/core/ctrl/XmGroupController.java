@@ -11,6 +11,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmGroup;
+import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
 import com.xm.core.service.XmGroupService;
 import com.xm.core.service.XmProductService;
@@ -31,7 +32,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * url编制采用rest风格,如对XM.xm_group xm_group的操作有增删改查,对应的url分别为:<br>
@@ -94,15 +94,22 @@ public class XmGroupController {
 			return ResponseHelper.failed("id-0","小组编号不能为空");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
-		XmGroup groupDb=this.xmGroupService.selectOneObject(new XmGroup(group.getId()));
+		XmGroup groupDb=this.xmGroupService.selectOneById( group.getId());
 		if(groupDb==null){
 			return ResponseHelper.failed("data-0","小组已不存在。");
 		}
 		xmGroupService.parentIdPathsCalcBeforeSave(group);
 		tips= xmGroupService.updateGroup(group,groupDb);	//列出XmProjectGroup列表
-		xmGroupCacheService.clearProjectGroup(groupDb.getProjectId());
-		xmRecordService.addXmGroupRecord(groupDb.getProjectId(),groupDb.getId(),"团队-小组-修改小组","修改小组信息【"+groupDb.getGroupName()+"】");
- 		m.put("tips", tips);
+		if("0".equals(groupDb.getPgClass())){
+			xmGroupCacheService.clearProjectGroup(groupDb.getProjectId());
+			xmRecordService.addXmGroupRecord(groupDb.getProjectId(),groupDb.getId(),"团队-小组-修改小组","修改小组信息【"+groupDb.getGroupName()+"】");
+
+		}else{
+			xmGroupCacheService.clearProductGroup(groupDb.getProductId());
+			xmRecordService.addXmProductRecord(groupDb.getProductId(),"团队-小组-修改小组","修改小组信息【"+groupDb.getGroupName()+"】");
+
+		}
+		m.put("tips", tips);
 		return m;
 	}
 
@@ -127,7 +134,10 @@ public class XmGroupController {
 		List<XmGroupVo>	xmGroupList=new ArrayList<>();
 		String iterationId= (String) params.get("iterationId");
 		String projectId= (String) params.get("projectId");
-		if(StringUtils.hasText(projectId)){
+		String productId= (String) params.get("productId");
+		if(StringUtils.hasText(productId)){
+			xmGroupList = xmGroupService.getProductGroupVoList(productId);	//产品团队
+		}else if(StringUtils.hasText(projectId)){
 			xmGroupList = xmGroupService.getProjectGroupVoList(projectId);	//列出XmProjectGroup列表
 		}else if(StringUtils.hasText(iterationId)){
 			xmGroupList = xmGroupService.getProjectGroupVoListByIterationId(iterationId );	//列出XmProjectGroup列表
@@ -188,24 +198,51 @@ public class XmGroupController {
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			User u = LoginUtils.getCurrentUserInfo();
-				if(!StringUtils.hasText(xmGroup.getProjectId())){
-					return ResponseHelper.failed("projectId-0","项目编号不能为空");
-				}
-				XmProject project = xmProjectService.getProjectFromCache(xmGroup.getProjectId());
-				if(project==null){
-					return ResponseHelper.failed("project-0","项目已不存在");
-				}
-				tips=this.xmGroupService.checkProjectStatus(project);
-				if(!tips.isOk()){
-					return ResponseHelper.failed(tips);
-				}
-				Map<String,String> projectAdmMap=xmGroupService.getProjectAdmUsers(project);
-				if(!projectAdmMap.containsKey(u.getUserid())) {
-					return ResponseHelper.failed("not-project-adm","您不是项目管理人员，不能创建小组。项目级助理以上人员可以创建小组。");
-				}
-				xmGroup.setProductId(null);
 
-				xmGroup.setBranchId(project.getBranchId());
+				if(StringUtils.isEmpty(xmGroup.getPgClass())){
+					return ResponseHelper.failed("pgClass-0","小组类型不能为空");
+				}
+				xmGroup.setBranchId(null);
+				if("0".equals(xmGroup.getPgClass())){
+					if(!StringUtils.hasText(xmGroup.getProjectId())){
+						return ResponseHelper.failed("projectId-0","项目编号不能为空");
+					}
+					XmProject project = xmProjectService.getProjectFromCache(xmGroup.getProjectId());
+					if(project==null){
+						return ResponseHelper.failed("project-0","项目已不存在");
+					}
+					tips=this.xmGroupService.checkProjectStatus(project);
+					if(!tips.isOk()){
+						return ResponseHelper.failed(tips);
+					}
+					Map<String,String> projectAdmMap=xmGroupService.getProjectAdmUsers(project);
+					if(!projectAdmMap.containsKey(u.getUserid())) {
+						return ResponseHelper.failed("not-project-adm","您不是项目管理人员，不能创建小组。项目级助理以上人员可以创建小组。");
+					}
+					xmGroup.setProductId(null);
+
+					xmGroup.setBranchId(project.getBranchId());
+				}else if("1".equals(xmGroup.getPgClass())){
+					if(!StringUtils.hasText(xmGroup.getProductId())){
+						return ResponseHelper.failed("productId-0","产品编号不能为空");
+					}
+					XmProduct xmProduct = xmProductService.selectOneById(xmGroup.getProductId());
+					if(xmProduct==null){
+						return ResponseHelper.failed("product-0","产品已不存在");
+					}
+					tips=this.xmGroupService.checkProductStatus(xmProduct);
+					if(!tips.isOk()){
+						return ResponseHelper.failed(tips);
+					}
+					Map<String,String> productAdmUsers=xmGroupService.getProductAdmUsers(xmProduct);
+					if(!productAdmUsers.containsKey(u.getUserid())) {
+						return ResponseHelper.failed("not-product-adm","您不是产品管理人员，不能创建小组。产品级助理以上人员可以创建小组。");
+					}
+
+					xmGroup.setBranchId(xmProduct.getBranchId());
+				}else{
+					return ResponseHelper.failed("pgClass-err","小组类型数值不正确");
+				}
 
 
 			if (StringUtils.isEmpty(xmGroup.getId())) {
@@ -218,13 +255,19 @@ public class XmGroupController {
 					return m;
 				}
 			}
-			if(StringUtils.hasText(xmGroup.getBranchId())){
+			if(!StringUtils.hasText(xmGroup.getBranchId())){
 				xmGroup.setBranchId(u.getBranchId());
 			}
 			this.xmGroupService.parentIdPathsCalcBeforeSave(xmGroup);
 			xmGroupService.insert(xmGroup);
-			xmGroupCacheService.clearProjectGroup(xmGroup.getProjectId());
-			xmRecordService.addXmGroupRecord(xmGroup.getProjectId(),xmGroup.getId(),"团队-小组-新增小组","新增小组【"+xmGroup.getGroupName()+"】");
+			if("0".equals(xmGroup.getPgClass())){
+				xmGroupCacheService.clearProjectGroup(xmGroup.getProjectId());
+				xmRecordService.addXmGroupRecord(xmGroup.getProjectId(),xmGroup.getId(),"团队-小组-新增小组","新增小组【"+xmGroup.getGroupName()+"】");
+			}else{
+				xmGroupCacheService.clearProductGroup(xmGroup.getProductId());
+				xmRecordService.addXmProductRecord(xmGroup.getProductId(),"团队-小组-新增小组","新增小组【"+xmGroup.getGroupName()+"】");
+			}
+
 
   			m.put("data",xmGroup);
 		}catch (BizException e) {
@@ -255,7 +298,7 @@ public class XmGroupController {
 			if(groupDb==null){
 				return ResponseHelper.failed("data-0","小组已不存在");
 			}
-			if(StringUtils.hasText(groupDb.getProjectId())){
+			if("0".equals(groupDb.getPgClass()) && StringUtils.hasText(groupDb.getProjectId())){
 				XmProject project = xmProjectService.getProjectFromCache(groupDb.getProjectId());
 				if(project==null){
 					return ResponseHelper.failed("project-0","项目已不存在");
@@ -263,6 +306,15 @@ public class XmGroupController {
 				Map<String,String> projectAdmMap=xmGroupService.getProjectAdmUsers(project);
 				if(!projectAdmMap.containsKey(u.getUserid())) {
 					return ResponseHelper.failed("not-project-adm","您不是项目管理人员，不能删除小组。项目级助理以上人员可以删除小组。");
+				}
+			} else if("1".equals(groupDb.getPgClass()) && StringUtils.hasText(groupDb.getProductId())){
+				XmProduct product = xmProductService.selectOneById(groupDb.getProductId());
+				if(product==null){
+					return ResponseHelper.failed("product-0","产品已不存在");
+				}
+				Map<String,String> productAdmUsers=xmGroupService.getProductAdmUsers(product);
+				if(!productAdmUsers.containsKey(u.getUserid())) {
+					return ResponseHelper.failed("not-product-adm","您不是产品管理人员，不能删除小组。产品级助理以上人员可以删除小组。");
 				}
 			}
 			XmGroup childrenGroupQuery=new XmGroup();
@@ -272,8 +324,15 @@ public class XmGroupController {
 				return ResponseHelper.failed("childrenCnt-no-0","该小组有下级小组，不能删除。请先删除下级小组。");
 			}
 			xmGroupService.doDeleteByPk(xmGroup,groupDb);
-			xmGroupCacheService.clearProjectGroup(groupDb.getProjectId());
-			xmRecordService.addXmGroupRecord(groupDb.getProjectId(),groupDb.getId(),"团队-小组-删除小组","删除小组【"+groupDb.getGroupName()+"】");
+			if("0".equals(groupDb.getPgClass())){
+				xmGroupCacheService.clearProjectGroup(groupDb.getProjectId());
+				xmRecordService.addXmGroupRecord(groupDb.getProjectId(),groupDb.getId(),"团队-小组-删除小组","删除小组【"+groupDb.getGroupName()+"】");
+
+			}else{
+				xmGroupCacheService.clearProductGroup(groupDb.getProductId());
+				xmRecordService.addXmProductRecord(groupDb.getProductId(),"团队-小组-删除小组","删除小组【"+groupDb.getGroupName()+"】");
+
+			}
 
 
 		}catch (BizException e) { 
@@ -287,7 +346,9 @@ public class XmGroupController {
 		return m;
 	}
 
-	
+
+	/**
+	 *
 
 
 	@ApiOperation( value = "根据主键列表批量删除xm_group信息",notes="batchDelXmProjectGroup,仅需要上传主键字段")
@@ -343,4 +404,6 @@ public class XmGroupController {
 		m.put("tips", tips);
 		return m;
 	}
+
+	 */
 }
