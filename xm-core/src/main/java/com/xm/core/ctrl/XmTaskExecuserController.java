@@ -305,7 +305,7 @@ public class XmTaskExecuserController {
 						allowUsers.add(xmTaskExecuser);
 						allowUserNames.add(xmTaskExecuser.getUsername());
 					}else{
-						Tips tips2=groupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskExecuser.getUserid(),xmTask.getProjectId());
+						Tips tips2=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskExecuser.getUserid(),xmTask.getProjectId());
 						if(tips2.isOk()==false){
 							noAllowUsers.add(xmTaskExecuser.getUsername());
 							continue;

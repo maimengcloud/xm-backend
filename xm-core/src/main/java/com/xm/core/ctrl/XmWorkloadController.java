@@ -305,7 +305,7 @@ public class XmWorkloadController {
 				}
 				//待他人报工，需要检查我的权限，需要项目管理人员才有权限代他人报工。
 				if(!xmWorkload.getUserid().equals(user.getUserid())){
-					Tips tips3=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmWorkload.getUserid(),xmTaskDb.getProjectId());
+					Tips tips3=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmWorkload.getUserid(),xmTaskDb.getProjectId());
 					if(!tips3.isOk()){
 						return failed("no-qx-for-oth-user","无权限代他人报工。只有项目管理人员可以代他人报工。");
 					}
@@ -446,9 +446,9 @@ public class XmWorkloadController {
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
-				Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
+				Tips isCreate=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
 				if(!isCreate.isOk()){
-					Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
+					Tips isExec=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
 					if(!isExec.isOk()){
 						return failed("noqx-0","你无权针对该业务进行报工");
 					}
@@ -499,9 +499,9 @@ public class XmWorkloadController {
 			Set<String> xmMenuIds=new HashSet<>();
 			for (XmTask xmTaskDb : tasksDb) {
 				if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
-					Tips isCreate=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
+					Tips isCreate=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
 					if(!isCreate.isOk()){
-						Tips isExec=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
+						Tips isExec=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
 						if(!isExec.isOk()){
 							break;
 						}

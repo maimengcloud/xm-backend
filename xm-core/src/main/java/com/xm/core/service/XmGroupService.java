@@ -63,20 +63,37 @@ public class XmGroupService extends BaseService {
 	}
 
 
-
-
-	public Tips checkIsAdmOrTeamHeadOrAss(User user,String tardgetUserid,String projectId){
-    	Tips tips = new Tips("成功");
+	public Tips checkIsProductAdmOrTeamHeadOrAss(User user, String tardgetUserid, String productId){
+		Tips tips = new Tips("成功");
 		List<XmGroupVo> pgroups=new ArrayList<>();
-		boolean isAdm=this.checkUserIsProjectAdm(projectId, user.getUserid());
+		boolean isAdm=this.checkUserIsProductAdm(productId, user.getUserid());
 		if(!isAdm){
-			pgroups=this.getProjectGroupVoList(projectId);
+			pgroups=this.getProductGroupVoList(productId);
 			if(pgroups==null || pgroups.size()==0){
 				return new Tips(false,"group-0","该产品还未建立产品团队，请先进行团队成员维护");
 			}
 			boolean isHead=this.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),tardgetUserid);
 			if(!isHead){
 				return new Tips(false,"not-head","您无权操作！产品经理、组长可以操作。");
+			}
+		}
+
+		return tips;
+	}
+
+
+	public Tips checkIsProjectAdmOrTeamHeadOrAss(User user, String tardgetUserid, String projectId){
+    	Tips tips = new Tips("成功");
+		List<XmGroupVo> pgroups=new ArrayList<>();
+		boolean isAdm=this.checkUserIsProjectAdm(projectId, user.getUserid());
+		if(!isAdm){
+			pgroups=this.getProjectGroupVoList(projectId);
+			if(pgroups==null || pgroups.size()==0){
+				return new Tips(false,"group-0","该项目还未建立项目团队，请先进行团队成员维护");
+			}
+			boolean isHead=this.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),tardgetUserid);
+			if(!isHead){
+				return new Tips(false,"not-head","您无权操作！项目经理、组长可以操作。");
 			}
 		}
 

@@ -121,7 +121,7 @@ public class XmFileController {
 			}
 
 			if(!user.getUserid().equals(file.getCreateUserid()) ){
-				Tips isHead=xmGroupService.checkIsAdmOrTeamHeadOrAss(user,file.getCreateUserid(),file.getProjectId());
+				Tips isHead=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,file.getCreateUserid(),file.getProjectId());
 				if(!isHead.isOk()){
 					return ResponseHelper.failed("no-qx","您只能删除自己创建的文档");
 				}
