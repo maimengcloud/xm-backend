@@ -736,7 +736,7 @@ public class XmTaskController {
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
-			boolean existsGrouop=groupService.checkUserExistsGroup(xmTaskDb.getProjectId(),xmTaskVo.getCreateUserid());
+			boolean existsGrouop=groupService.checkUserExistsProjectGroup(xmTaskDb.getProjectId(),xmTaskVo.getCreateUserid());
 			if(!existsGrouop){
 				return ResponseHelper.failed("not-member",xmTaskVo.getCreateUsername()+"不是项目组成员，不能作为任务责任人");
 			}

@@ -396,7 +396,7 @@ public class XmGroupService extends BaseService {
 		}
     	return userGroups;
     }
-    public boolean checkUserExistsGroup(String projectId, String userid){
+    public boolean checkUserExistsProjectGroup(String projectId, String userid){
 		List<XmGroupVo> userGroups= getUserGroupsByProjectId(projectId,userid);
 		return userGroups!=null && userGroups.size()>0;
 

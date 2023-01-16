@@ -106,7 +106,7 @@ public class XmTaskExecuserController {
 		User user=LoginUtils.getCurrentUserInfo();
 		String projectId= (String) xmTaskExecuser.get("projectId");
 		if(StringUtils.hasText(projectId)){
-			if(!groupService.checkUserExistsGroup(projectId,user.getUserid())){
+			if(!groupService.checkUserExistsProjectGroup(projectId,user.getUserid())){
 				xmTaskExecuser.put("linkBranchId",user.getBranchId());
 			}
 		}else{
@@ -136,7 +136,7 @@ public class XmTaskExecuserController {
 		User user=LoginUtils.getCurrentUserInfo();
 		String projectId= (String) xmTaskExecuser.get("projectId");
 		if(StringUtils.hasText(projectId)){
-			if(!groupService.checkUserExistsGroup(projectId,user.getUserid())){
+			if(!groupService.checkUserExistsProjectGroup(projectId,user.getUserid())){
 				xmTaskExecuser.put("linkBranchId",user.getBranchId());
 			}
 		}else{

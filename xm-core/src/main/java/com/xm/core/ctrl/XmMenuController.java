@@ -267,6 +267,13 @@ public class XmMenuController {
 			if(words!=null && words.size()>0){
 				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
+			if(!StringUtils.hasText(xmMenu.getMenuName())){
+				return failed("menuName-0","需求名称不能为空");
+			}
+
+			if(!StringUtils.hasText(xmMenu.getProductId())){
+				return failed("productId-0","需求归属产品不能为空");
+			}
 			User user= LoginUtils.getCurrentUserInfo();
 			if(StringUtils.isEmpty(xmMenu.getMmUserid())) {
 				xmMenu.setMmUserid(user.getUserid());

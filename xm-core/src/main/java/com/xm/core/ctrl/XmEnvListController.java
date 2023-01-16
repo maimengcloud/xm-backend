@@ -100,7 +100,7 @@ public class XmEnvListController {
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			if(StringUtils.hasText(xmEnvList.getProjectId())){
-				boolean inProjectGroup=xmGroupService.checkUserExistsGroup(xmEnvList.getProjectId(),user.getUserid());
+				boolean inProjectGroup=xmGroupService.checkUserExistsProjectGroup(xmEnvList.getProjectId(),user.getUserid());
 				if(!inProjectGroup){
 					return ResponseHelper.failed("no-in-project","您不在项目中【"+xmEnvList.getProjectId()+"】，不能添加环境清单");
 				}
@@ -147,7 +147,7 @@ public class XmEnvListController {
 						return ResponseHelper.failed("writeQx-err-1","您无权更改");
 					}
 				}else if("2".equals(writeQx)){//同一机构同一项目可写
-					boolean inProject=this.xmGroupService.checkUserExistsGroup(xmEnvListDb.getProjectId(), user.getUserid());
+					boolean inProject=this.xmGroupService.checkUserExistsProjectGroup(xmEnvListDb.getProjectId(), user.getUserid());
 					if(!inProject){
 						return ResponseHelper.failed("writeQx-err-2","您不在项目【"+xmEnvListDb.getProjectId()+"】,无权更改");
 					}
@@ -192,7 +192,7 @@ public class XmEnvListController {
 						return ResponseHelper.failed("writeQx-err-1","您无权更改");
 					}
 				}else if("2".equals(writeQx)){//同一机构同一项目可写
-					boolean inProject=this.xmGroupService.checkUserExistsGroup(xmEnvListDb.getProjectId(), user.getUserid());
+					boolean inProject=this.xmGroupService.checkUserExistsProjectGroup(xmEnvListDb.getProjectId(), user.getUserid());
 					if(!inProject){
 						return ResponseHelper.failed("writeQx-err-2","您不在项目【"+xmEnvListDb.getProjectId()+"】,无权更改");
 					}
