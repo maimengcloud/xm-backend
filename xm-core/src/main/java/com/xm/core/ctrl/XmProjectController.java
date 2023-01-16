@@ -285,7 +285,7 @@ public class XmProjectController {
 			if(!"1".equals(xmProjectDb.getDel())){
 				return failed("status-not-0","该项目不属于删除状态，不允许恢复");
 			}
-			if(this.groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
+			if(LoginUtils.isBranchAdmin(xmProjectDb.getBranchId()) || this.groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
 				XmProject xmProjectUpdate=new XmProject();
 				xmProjectUpdate.setId(xmProjectDb.getId());
 				xmProjectUpdate.setDel("0");
@@ -326,7 +326,7 @@ public class XmProjectController {
 			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
 				return failed("branchId-not-right","该项目不属于您的组织，不允许您进行删除");
 			}
-			if(this.groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
+			if(LoginUtils.isBranchAdmin(xmProjectDb.getBranchId()) || this.groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
 				XmProject xmProjectUpdate=new XmProject();
 				xmProjectUpdate.setId(xmProjectDb.getId());
 				xmProjectUpdate.setDel("1");
@@ -376,7 +376,7 @@ public class XmProjectController {
 			List<XmGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
-			if( !isCreate && !isPm ) {
+			if( !isCreate && !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
 				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目基础数据");
 				m.put("tips", tips);
 				return m;
@@ -444,7 +444,7 @@ public class XmProjectController {
 			List<XmGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
-			if( !isCreate && !isPm ) {
+			if( !isCreate && !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
 				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目状态");
 				m.put("tips", tips);
 				return m;
@@ -491,7 +491,7 @@ public class XmProjectController {
 			List<XmGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
-			if( !isCreate && !isPm ) {
+			if( !isCreate && !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
 				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目预算");
 				m.put("tips", tips);
 				return m;
@@ -537,7 +537,7 @@ public class XmProjectController {
 			List<XmGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
-			if( !isCreate && !isPm ) {
+			if( !isCreate && !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId()) ) {
 				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目基础信息");
 				m.put("tips", tips);
 				return m;

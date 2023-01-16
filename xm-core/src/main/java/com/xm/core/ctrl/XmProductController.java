@@ -343,7 +343,9 @@ public class XmProductController {
 			}else if(!user.getBranchId().equals(xmProductDb.getBranchId())){
 				return failed("branchId-not-right","该产品不属于您所在的机构，不允许操作");
 			}else if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
-				return failed("pmUserid-not-right","您不是该产品产品负责人,也不是产品助理，不允许操作");
+				if(!LoginUtils.isBranchAdmin(xmProductDb.getBranchId())){
+					return failed("pmUserid-not-right","您不是该产品产品负责人,也不是产品助理，不允许操作");
+				}
 			}
 			/**
 			 if(!"1".equals(xmProductDb.getIsTpl())){
@@ -396,7 +398,9 @@ public class XmProductController {
 			 }else if(!user.getBranchId().equals(xmProductDb.getBranchId())){
 				 return failed("branchId-not-right","该产品不属于您所在的机构，不允许删除");
 			 }else if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
-				 return failed("pmUserid-not-right","您不是该产品产品负责人,也不是产品助理，不允许删除");
+			 	if(!LoginUtils.isBranchAdmin(xmProductDb.getBranchId())){
+					return failed("pmUserid-not-right","您不是该产品产品负责人,也不是产品助理，不允许删除.若要强制删除，请联系机构管理员。");
+				}
 			 }
 			 /**
 			 if(!"1".equals(xmProductDb.getIsTpl())){
@@ -461,12 +465,12 @@ public class XmProductController {
 			List<XmProduct> can=new ArrayList<>();
 			List<XmProduct> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
+
 			for (XmProduct xmProductDb : xmProductsDb) {
-				Tips tips2 = new Tips("检查通过");
-				if(!tips2.isOk()){
-					no.add(xmProductDb);
-				}else{
+				if(LoginUtils.isBranchAdmin(xmProductDb.getBranchId()) || groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
 					can.add(xmProductDb);
+				}else{
+					no.add(xmProductDb);
 				}
 			}
 			if(can.size()>0){
@@ -482,6 +486,9 @@ public class XmProductController {
 			}
 			if(can.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				for (XmProduct candb : can) {
+					this.xmProductService.clearCache(candb.getId());
+				}
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
@@ -539,9 +546,12 @@ public class XmProductController {
 				return failed("product-0","产品已不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
-				return failed("no-qx-0","您无权修改该产品");
+			if(!LoginUtils.isBranchAdmin(xmProductDb.getBranchId())){
+				if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
+					return failed("no-qx-0","您无权修改该产品。");
+				}
 			}
+
 			xmProduct.setLtime(new Date());
 			xmProductService.updateSomeFieldByPk(xmProduct);
 			xmProductService.clearCache(xmProduct.getId());
