@@ -226,7 +226,7 @@ public class XmGroupController {
 					if(!StringUtils.hasText(xmGroup.getProductId())){
 						return ResponseHelper.failed("productId-0","产品编号不能为空");
 					}
-					XmProduct xmProduct = xmProductService.selectOneById(xmGroup.getProductId());
+					XmProduct xmProduct = xmProductService.getProductFromCache(xmGroup.getProductId());
 					if(xmProduct==null){
 						return ResponseHelper.failed("product-0","产品已不存在");
 					}
