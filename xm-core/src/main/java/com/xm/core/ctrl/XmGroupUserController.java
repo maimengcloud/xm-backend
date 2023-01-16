@@ -214,11 +214,12 @@ public class XmGroupUserController {
 			}
 			String pgClass=gu.getPgClass();
 			User user=LoginUtils.getCurrentUserInfo();
-			if(!StringUtils.hasText(gu.getProjectId())){
-				return ResponseHelper.failed("projectId-0","请上送小组归属项目编号");
-			}
+
 			String name="";
 			if("0".equals(pgClass)){
+				if(!StringUtils.hasText(gu.getProjectId())){
+					return ResponseHelper.failed("projectId-0","请上送小组归属项目编号");
+				}
 				XmProject xmProject=this.xmProjectService.getProjectFromCache(gu.getProjectId());
 				if(xmProject==null){
 					return ResponseHelper.failed("project-0","项目已不存在");
@@ -235,6 +236,9 @@ public class XmGroupUserController {
 					}
 				}
 			}else{
+				if(!StringUtils.hasText(gu.getProductId())){
+					return ResponseHelper.failed("productId-0","请上送小组归属产品编号");
+				}
 				XmProduct xmProduct=this.xmProductService.getProductFromCache(gu.getProductId());
 				if(xmProduct==null){
 					return ResponseHelper.failed("productId-0","产品已不存在");
