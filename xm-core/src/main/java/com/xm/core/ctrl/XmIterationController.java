@@ -207,10 +207,11 @@ public class XmIterationController {
 			xmIteration.setIphase("0");
 			xmIteration.setAdminUserid(user.getUserid());
 			xmIteration.setAdminUsername(user.getUsername());
-
-			if(!operQxService.checkIsProductAdmOrAss(xmProductService.getProductFromCache(xmIteration.getProductId()), user.getUserid())){
-				return failed("no-product-qx","您不是产品管理人员，无权将该产品与迭代关联");
-			};
+			XmProduct xmProductDb=xmProductService.getProductFromCache(xmIteration.getProductId());
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if(!isPm && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-qx","您无权新增迭代，您不是产品组成员。");
+			}
 			notifyMsgService.pushMsg(user,xmIteration.getAdminUserid(),xmIteration.getAdminUsername(),"6",xmIteration.getProductId(),xmIteration.getId(),"您成为迭代【"+xmIteration.getIterationName()+"】管理员，请及时跟进。");
 			xmIterationService.addIteration(xmIteration);
 			xmIterationStateService.loadTasksToXmIterationState(xmIteration.getId());
