@@ -13,6 +13,7 @@ import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmIteration;
+import com.xm.core.entity.XmProduct;
 import com.xm.core.service.*;
 import com.xm.core.vo.XmIterationVo;
 import io.swagger.annotations.*;
@@ -58,6 +59,10 @@ public class XmIterationController {
 
 	@Autowired
 	private XmRecordService  xmRecordService;
+
+
+	@Autowired
+	private XmGroupService  groupService;
 
 	@Autowired
 	XmIterationStateService xmIterationStateService;
@@ -242,9 +247,13 @@ public class XmIterationController {
 				return failed("data-0","迭代不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			boolean isPm= this.operQxService.checkIsProductAdmOrAss(xmProductService.getProductFromCache(iterationDb.getProductId()), user.getUserid());
-			if( !isPm && !user.getUserid().equals(iterationDb.getAdminUserid()) && !user.getUserid().equals(iterationDb.getCuserid())){
+			XmProduct xmProductDb=xmProductService.getProductFromCache(iterationDb.getProductId());
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+ 			if( !isPm && !user.getUserid().equals(iterationDb.getAdminUserid()) && !user.getUserid().equals(iterationDb.getCuserid())){
 				return failed("no-qx","您无权删除，迭代创建人、负责人可以删除");
+			}
+ 			if(!isPm && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-qx","您无权删除，您不是产品组成员。");
 			}
 
 			xmIterationService.deleteByPk(xmIteration);
@@ -281,10 +290,13 @@ public class XmIterationController {
 				return failed("data-0","迭代不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			boolean isPm= this.operQxService.checkIsProductAdmOrAss(xmProductService.getProductFromCache(iterationDb.getProductId()), user.getUserid());
-
-			if( !isPm && !user.getUserid().equals(iterationDb.getAdminUserid()) && user.getUserid().equals(iterationDb.getAdminUserid())){
-				return failed("no-qx","您无权修改，迭代创建人、负责人可以修改");
+			XmProduct xmProductDb=xmProductService.getProductFromCache(iterationDb.getProductId());
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if( !isPm && !user.getUserid().equals(iterationDb.getAdminUserid()) && !user.getUserid().equals(iterationDb.getCuserid())){
+				return failed("no-qx","您无权修改，产品经理、迭代创建人、负责人可以修改");
+			}
+			if(!isPm && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-qx","您无权修改，您不是产品组成员。");
 			}
 			xmIterationService.updateByPk(xmIteration);
 			if(!xmIteration.getAdminUserid().equals(iterationDb.getAdminUserid())){
@@ -339,12 +351,27 @@ public class XmIterationController {
 			List<XmIteration> can=new ArrayList<>();
 			List<XmIteration> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
-			for (XmIteration xmIterationDb : xmIterationsDb) {
+			XmIteration iterationDb=xmIterationsDb.get(0);
+			if(xmIterationsDb.stream().filter(k->!k.getProductId().equals(iterationDb.getProductId())).findAny().isPresent()){
+				return failed("data-0","批量修改只能修改同一个产品下的迭代记录");
+			}
+			XmProduct xmProductDb=xmProductService.getProductFromCache(iterationDb.getProductId());
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if( !isPm && !user.getUserid().equals(iterationDb.getAdminUserid()) && !user.getUserid().equals(iterationDb.getCuserid())){
+				return failed("no-qx","您无权修改，产品经理、迭代创建人、负责人可以修改");
+			}
+			if(!isPm && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
+				return failed("no-qx","您无权修改，您不是产品组成员。");
+			}
+			for (XmIteration iterationDb2 : xmIterationsDb) {
 				Tips tips2 = new Tips("检查通过");
+				if( !isPm && !user.getUserid().equals(iterationDb2.getAdminUserid()) && !user.getUserid().equals(iterationDb2.getCuserid())){
+					return failed("no-qx","您无权修改，产品经理、迭代创建人、负责人可以修改");
+				}
 				if(!tips2.isOk()){
-					no.add(xmIterationDb);
+					no.add(iterationDb);
 				}else{
-					can.add(xmIterationDb);
+					can.add(iterationDb);
 				}
 			}
 			if(can.size()>0){

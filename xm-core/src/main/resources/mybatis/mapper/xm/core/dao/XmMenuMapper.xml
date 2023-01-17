@@ -328,7 +328,7 @@
 		insert into xm_menu(
 			<include refid="columns"/>
 		) values (
-		#{startTime},#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{phaseId},#{iterationId},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority},#{dclass},#{iterationName},#{endTime}
+		#{startTime},#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{phaseId},#{iterationId},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority},#{dclass},#{iterationName},#{endTime},#{funcId},#{funcName},#{comments},#{ups},#{reads}
 		)
 	</insert>
 	
@@ -403,7 +403,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,phase_id,iteration_id,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time
+		start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,phase_id,iteration_id,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time,func_id,func_name,comments,ups,reads
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -446,6 +446,11 @@
 		<if test="dclass != null and dclass != ''">      and res.dclass = #{dclass}     </if>
 		<if test="iterationName != null and iterationName != ''">      and res.iteration_name = #{iterationName}     </if>
 		<if test="endTime != null">      and date_format(res.end_time,'%Y-%m-%d') = date_format(#{endTime},'%Y-%m-%d')     </if>
+		<if test="funcId != null and funcId != ''">      and res.func_id = #{funcId}     </if>
+		<if test="funcName != null and funcName != ''">      and res.func_name = #{funcName}     </if>
+		<if test="comments != null and comments != ''">      and res.comments = #{comments}     </if>
+		<if test="ups != null and ups != ''">      and res.ups = #{ups}     </if>
+		<if test="reads != null and reads != ''">      and res.reads = #{reads}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -485,7 +490,12 @@
 		priority = #{priority},
 		dclass = #{dclass},
 		iteration_name = #{iterationName},
-		end_time = #{endTime}
+		end_time = #{endTime},
+		func_id = #{funcId},
+		func_name = #{funcName},
+		comments = #{comments},
+		ups = #{ups},
+		reads = #{reads}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="startTime != null"> start_time = #{startTime},     </if>
@@ -525,6 +535,11 @@
 		<if test="dclass != null and dclass != ''"> dclass = #{dclass},     </if>
 		<if test="iterationName != null and iterationName != ''"> iteration_name = #{iterationName},     </if>
 		<if test="endTime != null"> end_time = #{endTime},     </if>
+		<if test="funcId != null and funcId != ''"> func_id = #{funcId},     </if>
+		<if test="funcName != null and funcName != ''"> func_name = #{funcName},     </if>
+		<if test="comments != null and comments != ''"> comments = #{comments},     </if>
+		<if test="ups != null and ups != ''"> ups = #{ups},     </if>
+		<if test="reads != null and reads != ''"> reads = #{reads},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -564,6 +579,11 @@
 			priority = #{item.priority},
 			dclass = #{item.dclass},
 			iteration_name = #{item.iterationName},
-			end_time = #{item.endTime}
+			end_time = #{item.endTime},
+			func_id = #{item.funcId},
+			func_name = #{item.funcName},
+			comments = #{item.comments},
+			ups = #{item.ups},
+			reads = #{item.reads}
 	</sql>
 </mapper>

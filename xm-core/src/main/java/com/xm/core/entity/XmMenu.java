@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmMenu所有属性名: <br>
- *	"startTime","开始时间","menuId","功能编号","menuName","功能名称","pmenuId","上级功能","productId","归属产品编号","remark","备注","status","状态0初始1待评审2待设计3待开发4待sit测试5待uat测试6已测试待上线7已上线8已下线9已删除","online","是否已上线","demandUrl","需求链接","codeUrl","代码链接","designUrl","设计链接","docUrl","文档链接","helpUrl","帮助文档链接","operDocUrl","操作手册链接","seqNo","排序序号","mmUserid","故事管理员编号","mmUsername","故事管理员姓名","ctime","创建时间","ntype","节点类型0-叶子节点，1非叶子节点","sinceVersion","开始版本","childrenCnt","儿子节点个数","ltime","更新时间","tagIds","标签编号,逗号分割","tagNames","标签名称,逗号分割","pidPaths","父级id逗号分割，最后一个为本节点节点编号,以,号结尾","lvl","层级0-顶级，1-一级，2-二级，3-三级，4-四级。总共5级","isTpl","是否为模板","phaseId","计划编号","iterationId","迭代编号","source","需求来源","proposerId","提出人编号","proposerName","提出人姓名","dlvl","需求层次0-基础需求,1-增值需求,2-扩展需求","dtype","需求类型;0-新增功能;1-功能改进;2-bug修复;3-用户体验;4-UI优化;5-内部需求;6-删除需求;7-接口需求;","priority","优先级;0-紧急重要；1-紧急不重要；2-不紧急重要；3-不紧急不重要","dclass","需求分类1-史诗，2-特性，3-用户故事，4-任务，5-缺陷","iterationName","迭代名称","endTime","结束时间";<br>
+ *	"startTime","开始时间","menuId","功能编号","menuName","功能名称","pmenuId","上级功能","productId","归属产品编号","remark","备注","status","状态0初始1待评审2待设计3待开发4待sit测试5待uat测试6已测试待上线7已上线8已下线9已删除","online","是否已上线","demandUrl","需求链接","codeUrl","代码链接","designUrl","设计链接","docUrl","文档链接","helpUrl","帮助文档链接","operDocUrl","操作手册链接","seqNo","排序序号","mmUserid","故事管理员编号","mmUsername","故事管理员姓名","ctime","创建时间","ntype","节点类型0-叶子节点，1非叶子节点","sinceVersion","开始版本","childrenCnt","儿子节点个数","ltime","更新时间","tagIds","标签编号,逗号分割","tagNames","标签名称,逗号分割","pidPaths","父级id逗号分割，最后一个为本节点节点编号,以,号结尾","lvl","层级0-顶级，1-一级，2-二级，3-三级，4-四级。总共5级","isTpl","是否为模板","phaseId","计划编号","iterationId","迭代编号","source","需求来源","proposerId","提出人编号","proposerName","提出人姓名","dlvl","需求层次0-基础需求,1-增值需求,2-扩展需求","dtype","需求类型;0-新增功能;1-功能改进;2-bug修复;3-用户体验;4-UI优化;5-内部需求;6-删除需求;7-接口需求;","priority","优先级;0-紧急重要；1-紧急不重要；2-不紧急重要；3-不紧急不重要","dclass","需求分类1-史诗，2-特性，3-用户故事，4-任务，5-缺陷","iterationName","迭代名称","endTime","结束时间","funcId","功能菜单编号-故事才有","funcName","功能菜单名称-故事才有","comments","评论数","ups","点赞数","reads","阅读数";<br>
  * 当前主键(包括多主键):<br>
  *	menu_id;<br>
  */
@@ -132,6 +132,21 @@ public class XmMenu  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="结束时间",allowEmptyValue=true,example="",allowableValues="")
 	Date endTime;
+	
+	@ApiModelProperty(notes="功能菜单编号-故事才有",allowEmptyValue=true,example="",allowableValues="")
+	String funcId;
+	
+	@ApiModelProperty(notes="功能菜单名称-故事才有",allowEmptyValue=true,example="",allowableValues="")
+	String funcName;
+	
+	@ApiModelProperty(notes="评论数",allowEmptyValue=true,example="",allowableValues="")
+	Integer comments;
+	
+	@ApiModelProperty(notes="点赞数",allowEmptyValue=true,example="",allowableValues="")
+	Integer ups;
+	
+	@ApiModelProperty(notes="阅读数",allowEmptyValue=true,example="",allowableValues="")
+	Integer reads;
 
 	/**
 	 *功能编号
