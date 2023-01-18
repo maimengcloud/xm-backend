@@ -328,7 +328,7 @@
 		insert into xm_menu(
 			<include refid="columns"/>
 		) values (
-		#{startTime},#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{phaseId},#{iterationId},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority},#{dclass},#{iterationName},#{endTime},#{funcId},#{funcName},#{comments},#{ups},#{reads}
+		#{startTime},#{menuId},#{menuName},#{pmenuId},#{productId},#{remark},#{status},#{online},#{demandUrl},#{codeUrl},#{designUrl},#{docUrl},#{helpUrl},#{operDocUrl},#{seqNo},#{mmUserid},#{mmUsername},#{ctime},#{ntype},#{sinceVersion},#{childrenCnt},#{ltime},#{tagIds},#{tagNames},#{pidPaths},#{lvl},#{isTpl},#{phaseId},#{iterationId},#{source},#{proposerId},#{proposerName},#{dlvl},#{dtype},#{priority},#{dclass},#{iterationName},#{endTime},#{funcId},#{funcName},#{comments},#{ups},#{readNum}
 		)
 	</insert>
 	
@@ -403,7 +403,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,phase_id,iteration_id,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time,func_id,func_name,comments,ups,reads
+		start_time,menu_id,menu_name,pmenu_id,product_id,remark,status,online,demand_url,code_url,design_url,doc_url,help_url,oper_doc_url,seq_no,mm_userid,mm_username,ctime,ntype,since_version,children_cnt,ltime,tag_ids,tag_names,pid_paths,lvl,is_tpl,phase_id,iteration_id,source,proposer_id,proposer_name,dlvl,dtype,priority,dclass,iteration_name,end_time,func_id,func_name,comments,ups,read_num
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -450,7 +450,7 @@
 		<if test="funcName != null and funcName != ''">      and res.func_name = #{funcName}     </if>
 		<if test="comments != null and comments != ''">      and res.comments = #{comments}     </if>
 		<if test="ups != null and ups != ''">      and res.ups = #{ups}     </if>
-		<if test="reads != null and reads != ''">      and res.reads = #{reads}     </if>
+		<if test="readNum != null and readNum != ''">      and res.read_num = #{readNum}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -495,7 +495,7 @@
 		func_name = #{funcName},
 		comments = #{comments},
 		ups = #{ups},
-		reads = #{reads}
+		read_num = #{readNum}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="startTime != null"> start_time = #{startTime},     </if>
@@ -539,7 +539,7 @@
 		<if test="funcName != null and funcName != ''"> func_name = #{funcName},     </if>
 		<if test="comments != null and comments != ''"> comments = #{comments},     </if>
 		<if test="ups != null and ups != ''"> ups = #{ups},     </if>
-		<if test="reads != null and reads != ''"> reads = #{reads},     </if>
+		<if test="readNum != null and readNum != ''"> read_num = #{readNum},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -584,6 +584,6 @@
 			func_name = #{item.funcName},
 			comments = #{item.comments},
 			ups = #{item.ups},
-			reads = #{item.reads}
+			read_num = #{item.readNum}
 	</sql>
 </mapper>
