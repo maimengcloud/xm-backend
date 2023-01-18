@@ -261,7 +261,7 @@ public class XmGroupService extends BaseService {
 			if(memUserids==null || memUserids.length==0){
 				return tips;
 			}
-			Set<String> memUseridSet= Arrays.stream(memUserids).filter(k->!k.equals(headUserid)).collect(Collectors.toSet());
+			Set<String> memUseridSet= Arrays.stream(memUserids).filter(k->StringUtils.hasText(k) && !k.equals(headUserid)).collect(Collectors.toSet());
 			if(memUseridSet.size()==0){
 				return tips;
 			}
