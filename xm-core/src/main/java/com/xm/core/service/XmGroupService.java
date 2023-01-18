@@ -150,6 +150,15 @@ public class XmGroupService extends BaseService {
 		}
 	    
     }
+
+	public Tips checkProjectQx(XmProject xmProject,User head){
+		Tips tips=new Tips();
+		tips=this.checkProjectScopeQx(xmProject,head,head.getUserid());
+		if(!tips.isOk()){
+			return tips;
+		}
+		return this.checkProjectTransmitQx(xmProject,head.getUserid(),head.getUserid());
+	}
 	public Tips checkProjectQx(XmProject xmProject,User head,String memUserid){
 		Tips tips=new Tips();
 		tips=this.checkProjectScopeQx(xmProject,head,memUserid);
