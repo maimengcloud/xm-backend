@@ -18,7 +18,6 @@ import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmProductProjectLink;
 import com.xm.core.entity.XmProject;
 import com.xm.core.service.*;
-import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmProjectCopyVo;
 import com.xm.core.vo.XmProjectVo;
 import io.swagger.annotations.*;
@@ -373,7 +372,6 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			List<XmGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isCreate && !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
@@ -441,7 +439,6 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			List<XmGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isCreate && !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
@@ -488,7 +485,6 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			List<XmGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isCreate && !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
@@ -534,7 +530,6 @@ public class XmProjectController {
 				m.put("tips", tips);
 				return m;
 			}
-			List<XmGroupVo> groups=this.groupService.getProjectGroupVoList(xmProjectDb.getId());
 			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isCreate && !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId()) ) {
