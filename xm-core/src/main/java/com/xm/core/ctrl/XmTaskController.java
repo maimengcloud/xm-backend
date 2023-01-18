@@ -21,6 +21,7 @@ import com.xm.core.entity.*;
 import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.service.*;
 import com.xm.core.service.cache.XmTaskCacheService;
+import com.xm.core.service.client.SysClient;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.*;
 import io.swagger.annotations.*;
@@ -95,6 +96,8 @@ public class XmTaskController {
 	@Autowired
 	PushNotifyMsgService notifyMsgService;
 
+	@Autowired
+	SysClient sysClient;
 
 
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmTask());
@@ -537,15 +540,6 @@ public class XmTaskController {
 			if(!StringUtils.hasText(xmTaskVo.getProjectId())){
 				return ResponseHelper.failed("projectId-0","项目编号不能为空");
 			}
-			User user=LoginUtils.getCurrentUserInfo();
-			tips=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskVo.getProjectId());
-			if(!tips.isOk()){
-				 return ResponseHelper.failed(tips);
-			}
-			if(!StringUtils.hasText(xmTaskVo.getCreateUserid())){
-				xmTaskVo.setCreateUserid(user.getUserid());
-				xmTaskVo.setCreateUsername(user.getUsername());
-			}
 
 			Set<String> words=sensitiveWordService.getSensitiveWord(xmTaskVo.getName());
 			if(words!=null && words.size()>0){
@@ -559,6 +553,17 @@ public class XmTaskController {
 			if(words!=null && words.size()>0){
 				return failed("description-sensitive-word","详情中有敏感词"+words+",请修改后再提交");
 			}
+
+
+			User user=LoginUtils.getCurrentUserInfo();
+			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskVo.getProjectId());
+			Tips tips1=groupService.checkProjectQx(xmProject,user,xmTaskVo.getCreateUserid());
+			if(!tips1.isOk()){
+				return ResponseHelper.failed(tips1);
+			}
+
+
+
 			xmTaskVo.setExecutorUserid(null);
 			xmTaskVo.setExecutorUsername(null);
 			xmTaskVo.setExeUserids(null);
@@ -589,7 +594,6 @@ public class XmTaskController {
 				}
 			}
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTaskVo);
-			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskVo.getProjectId());
 			if("1".equals(xmProject.getBudgetCtrl())){
 				if(xmTaskVo.getBudgetAt()!=null  && xmTaskVo.getBudgetAt().compareTo(BigDecimal.ZERO)>0){
 					if(xmTaskVo.getLvl()<=1){
@@ -697,11 +701,12 @@ public class XmTaskController {
 			if(xmTaskService.checkExistsExecuser(xmTaskDb)){
 				return ResponseHelper.failed("existsExecuser","有待验收、待结算的执行人，不能删除");
 			};
-
-			tips=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskDb.getProjectId());
-			if(!tips.isOk()){
-				return ResponseHelper.failed(tips);
+			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
+			Tips tips1=groupService.checkProjectQx(xmProject,user,xmTaskDb.getCreateUserid());
+			if(!tips1.isOk()){
+				return ResponseHelper.failed(tips1);
 			}
+
 			xmTaskService.deleteTask(xmTaskDb);
 			xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(), xmTaskDb.getId(), "项目-任务-删除任务", "删除任务"+xmTaskDb.getName());
 
@@ -739,14 +744,20 @@ public class XmTaskController {
 				return m;
 			}
 
-			tips=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskDb.getProjectId());
-			if(!tips.isOk()){
-				return ResponseHelper.failed(tips);
+
+			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
+			Tips tips1=groupService.checkProjectQx(xmProject,user,xmTaskDb.getCreateUserid());
+			if(!tips1.isOk()){
+				if(StringUtils.hasText(xmTaskDb.getExecutorUserid()) && !user.getUserid().equals(xmTaskDb.getCreateUserid()) && !xmTaskDb.getCreateUserid().equals(xmTaskDb.getExecutorUserid())){
+					tips1=groupService.checkProjectQx(xmProject,user,xmTaskDb.getExecutorUserid());
+				}
+				if(!tips1.isOk()){
+					return ResponseHelper.failed(tips1);
+				}
 			}
-			boolean existsGrouop=groupService.checkUserExistsProjectGroup(xmTaskDb.getProjectId(),xmTaskVo.getCreateUserid());
-			if(!existsGrouop){
-				return ResponseHelper.failed("not-member",xmTaskVo.getCreateUsername()+"不是项目组成员，不能作为任务责任人");
-			}
+
+
+
 			XmTask xmTask=new XmTask(xmTaskVo.getId());
 			xmTask.setCreateUserid(xmTaskVo.getCreateUserid());
 			xmTask.setCreateUsername(xmTaskVo.getCreateUsername());
@@ -793,9 +804,16 @@ public class XmTaskController {
 					xmTaskVo.setNtype("1");
 				}
 			}
-			tips=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskDb.getProjectId());
-			if(!tips.isOk()){
-				return ResponseHelper.failed(tips);
+
+			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
+			Tips tips1=groupService.checkProjectQx(xmProject,user,xmTaskDb.getCreateUserid());
+			if(!tips1.isOk()){
+				if(StringUtils.hasText(xmTaskDb.getExecutorUserid()) && !user.getUserid().equals(xmTaskDb.getCreateUserid()) && !xmTaskDb.getCreateUserid().equals(xmTaskDb.getExecutorUserid())){
+					tips1=groupService.checkProjectQx(xmProject,user,xmTaskDb.getExecutorUserid());
+				}
+				if(!tips1.isOk()){
+					return ResponseHelper.failed(tips1);
+				}
 			}
 
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTaskVo);
@@ -803,7 +821,6 @@ public class XmTaskController {
 			if(xmTaskDb.getBudgetAt()==null)xmTaskDb.setBudgetAt(BigDecimal.ZERO);
 			List<String> excludeIds=new ArrayList<>();
 			excludeIds.add(xmTaskDb.getId());
-			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 			if( "1".equals(xmProject.getBudgetCtrl()) && xmTaskDb.getBudgetAt().compareTo(xmTaskVo.getBudgetAt())!=0){
 				if(xmTaskVo.getLvl()<=1){
 					tips=xmTaskService.judgetProjectBudget(xmTaskDb.getProjectId(), xmTaskVo.getBudgetAt(),excludeIds);
@@ -846,12 +863,14 @@ public class XmTaskController {
 			if(xmTaskDb==null){
 				return ResponseHelper.failed("data-0","任务已不存在");
 			}
-			tips=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskDb.getProjectId());
-			if(!tips.isOk()){
-				boolean isCreateUser=user.getUserid().equals(xmTaskDb.getCreateUserid());
-				boolean isExecUser=user.getUserid().equals(xmTaskDb.getExecutorUserid());
-				if( !isCreateUser && !isExecUser ){
-					return ResponseHelper.failed("no-qx-op","您无权修改该任务的计划时间！只有任务执行人、任务负责人、组长、项目经理可以修改任务的进度。");
+			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
+			Tips tips1=groupService.checkProjectQx(xmProject,user,xmTaskDb.getCreateUserid());
+			if(!tips1.isOk()){
+				if(StringUtils.hasText(xmTaskDb.getExecutorUserid()) && !user.getUserid().equals(xmTaskDb.getCreateUserid()) && !xmTaskDb.getCreateUserid().equals(xmTaskDb.getExecutorUserid())){
+					tips1=groupService.checkProjectQx(xmProject,user,xmTaskDb.getExecutorUserid());
+				}
+				if(!tips1.isOk()){
+					return ResponseHelper.failed(tips1);
 				}
 			}
 			xmTaskService.updateTime(xmTask,xmTaskDb);

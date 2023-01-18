@@ -7,8 +7,10 @@ import com.mdp.core.service.BaseService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.ProjectQxTool;
 import com.xm.core.entity.*;
 import com.xm.core.service.cache.XmGroupCacheService;
+import com.xm.core.service.client.SysClient;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.BeanUtils;
@@ -55,12 +57,17 @@ public class XmGroupService extends BaseService {
     @Autowired
     XmPushMsgService pushMsgService;
 
+
+	@Autowired
+	SysClient sysClient;
+
     public void clearProjectGroup(String projectId){
 		groupCacheService.clearProjectGroups(projectId);
 	}
 	public void clearProductGroup(String productId){
 		groupCacheService.clearProductGroups(productId);
 	}
+
 
 
 	public Tips checkIsProductAdmOrTeamHeadOrAss(User user, String tardgetUserid, String productId){
@@ -143,7 +150,130 @@ public class XmGroupService extends BaseService {
 		}
 	    
     }
+	public Tips checkProjectQx(XmProject xmProject,User head,String memUserid){
+		Tips tips=new Tips();
+		tips=this.checkProjectScopeQx(xmProject,head,memUserid);
+		if(!tips.isOk()){
+			return tips;
+		}
+		return this.checkProjectTransmitQx(xmProject,head.getUserid(),memUserid);
+	}
+    public Tips checkProjectScopeQx(XmProject xmProject,User head,String memUserid){
+		Tips tips=new Tips();
+		if(head.getUserid().equals(memUserid)){
+			return this.checkProjectScopeQx(xmProject,head.getUserid(),head.getBranchId());
+		}
 
+
+		boolean headIsPm=this.checkUserIsProjectAdm(xmProject,head.getUserid());
+		boolean memIsPm=this.checkUserIsProjectAdm(xmProject,memUserid);
+		if(headIsPm && memIsPm){
+			return tips;
+		}
+			String scopeQx= ProjectQxTool.getTaskScopeQx(xmProject.getQxCode());
+			if("1".equals(scopeQx)){//同组织
+				if( !headIsPm && !head.getBranchId().equals(xmProject.getBranchId())){
+					tips.setFailureMsg("no-qx-no-same-branchId","该项目只开放给同企业人员。");
+					return tips;
+				}
+				if(!memIsPm){
+					User sysU=sysClient.getUserByUserid(memUserid);
+					if(sysU!=null && StringUtils.hasText(sysU.getUserid())){ //为空的时候可能对方账户已取消，注销
+						if(!sysU.getBranchId().equals(xmProject.getBranchId())){
+							tips.setFailureMsg("no-qx-no-same-branchId","该项目只开放给同企业人员。");
+							return tips;
+						}
+					}
+				}
+
+
+			}else if("2".equals(scopeQx)){//同项目
+				List<XmGroupVo> groups=this.getProjectGroupVoList(xmProject.getId());
+				if(!headIsPm && !this.checkUserExistsGroup(groups, head.getUserid())){
+					tips.setFailureMsg("no-qx-no-same-project","该项目只开放给同项目组人员。请先加入项目团队再操作。");
+					return tips;
+ 				};
+
+				if( !memIsPm && !this.checkUserExistsGroup(groups,memUserid)){
+					tips.setFailureMsg("no-qx-no-same-project","该项目只开放给同项目组人员。请先加入项目团队再操作。");
+					return tips;
+				};
+			}else if("3".equals(scopeQx)){//同小组
+				List<XmGroupVo> groups=this.getProjectGroupVoList(xmProject.getId());
+				List<XmGroupVo> headGroups=groups;
+				if(!headIsPm){
+					headGroups=this.getUserGroups(groups,head.getUserid());
+					if( headGroups==null || headGroups.size()==0 ){
+						tips.setFailureMsg("no-qx-no-same-team","该项目只开放给同项目同小组人员。请先加入项目团队再操作。");
+						return tips;
+					}
+				}
+				if(!memIsPm){
+					List<XmGroupVo> memGroups=this.getUserGroups(headGroups,memUserid);
+					if( memGroups==null || memGroups.size()==0 ){
+						tips.setFailureMsg("no-qx-no-same-team","该项目只开放给同项目同小组人员。请先加入项目团队再操作。");
+						return tips;
+					}
+				}
+
+
+			}
+		return tips;
+	}
+
+
+	public Tips checkProjectTransmitQx(XmProject xmProject,String headUserid,String memUserid){
+		Tips tips=new Tips();
+		String transmitQx= ProjectQxTool.getTaskTransmitQx(xmProject.getQxCode());
+		if("0".equals(transmitQx)){//不检查上下级关系
+			 return tips;
+		}else if("1".equals(transmitQx)){//检查上下级关系
+			if(!headUserid.equals(memUserid)&&StringUtils.hasText(memUserid)){
+				return tips;
+			}
+
+		}
+		return tips;
+	}
+
+	public Tips checkProjectScopeQx(XmProject xmProject,String userid,String ubranchId){
+		Tips tips=new Tips();
+		String scopeQx= ProjectQxTool.getTaskScopeQx(xmProject.getQxCode());
+		boolean isPm=this.checkUserIsProjectAdm(xmProject,userid);
+		if(!isPm){
+			if("1".equals(scopeQx)){//同组织
+				if(!StringUtils.hasText(ubranchId)){
+					User sysUser=sysClient.getUserByUserid(userid);
+					if(sysUser==null || StringUtils.isEmpty(sysUser.getUserid())){
+						//如果账户不存在，可能已注销，再判断没有意义，会导致企业无法操作遗留数据问题
+						//tips.setFailureMsg("no-qx-no-same-branchId","该项目只开放给同企业人员。");
+						return tips;
+					}
+					if(!sysUser.getBranchId().equals(xmProject.getBranchId())){
+						tips.setFailureMsg("no-qx-no-same-branchId","该项目只开放给同企业人员。");
+						return tips;
+					}
+				}else{
+					if(!ubranchId.equals(xmProject.getBranchId())){
+						tips.setFailureMsg("no-qx-no-same-branchId","该项目只开放给同企业人员。");
+						return tips;
+					}
+				}
+
+			}else if("2".equals(scopeQx)){//同项目
+				if(!this.checkUserExistsGroup(this.getProjectGroupVoList(xmProject.getId()), userid)){
+					tips.setFailureMsg("no-qx-no-same-project","该项目只开放给同项目组人员。请先加入项目团队再操作。");
+					return tips;
+				};
+			}else if("3".equals(scopeQx)){//同小组
+				if(!this.checkUserExistsProjectGroup(xmProject.getId(), userid)){
+					tips.setFailureMsg("no-qx-no-same-team","该项目只开放给同项目同小组人员。请先加入项目团队再操作。");
+					return tips;
+				}
+			}
+		}
+		return tips;
+	}
 
 	/** 请在此类添加自定义函数 */
 	public List<XmGroupVo> getProjectGroupVoList(String projectId) {
