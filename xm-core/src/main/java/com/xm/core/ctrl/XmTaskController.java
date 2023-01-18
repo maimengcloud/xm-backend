@@ -352,9 +352,9 @@ public class XmTaskController {
 			List<XmTask> no=new ArrayList<>();
 			for (XmTask xmTaskDb : xmTasksDb) {
 				XmProject xmProject=projectMap.get(xmTaskDb.getProjectId());
-				if(projectMap.containsKey(xmProject.getId())){
-					xmProject=xmProjectService.getProjectFromCache(xmProject.getId());
-					projectMap.put(xmProject.getId(),xmProject);
+				if(xmProject==null || StringUtils.isEmpty(xmProject.getId()) || !projectMap.containsKey(xmProject.getId())){
+					xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
+					projectMap.put(xmTaskDb.getProjectId(),xmProject);
 				}
 				tips=groupService.checkProjectQx(xmProject,user,xmTaskDb.getCreateUserid(),xmTaskDb.getExecutorUserid());
 				if(!tips.isOk()){
