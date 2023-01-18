@@ -110,7 +110,7 @@
 		insert into xm_product(
 			<include refid="columns"/>
 		) values (
-		#{id},#{productName},#{branchId},#{remark},#{version},#{pmUserid},#{pmUsername},#{ctime},#{deptid},#{pstatus},#{startTime},#{endTime},#{deptName},#{admUserid},#{admUsername},#{assUserid},#{assUsername},#{bizProcInstId},#{bizFlowState},#{isTpl},#{baselineId},#{baseTime},#{code},#{pbudgetWorkload},#{pbudgetAmount},#{pmenuBudgetWorkload},#{pmenuBudgetAmount},#{budgetCtrl},#{phaseBudgetCtrl},#{phaseActCtrl},#{locked},#{del},#{ltime}
+		#{id},#{productName},#{branchId},#{remark},#{version},#{pmUserid},#{pmUsername},#{ctime},#{deptid},#{pstatus},#{startTime},#{endTime},#{deptName},#{admUserid},#{admUsername},#{assUserid},#{assUsername},#{bizProcInstId},#{bizFlowState},#{isTpl},#{baselineId},#{baseTime},#{code},#{pbudgetWorkload},#{pbudgetAmount},#{pmenuBudgetWorkload},#{pmenuBudgetAmount},#{budgetCtrl},#{phaseBudgetCtrl},#{phaseActCtrl},#{locked},#{del},#{ltime},#{qxCode}
 		)
 	</insert>
 	
@@ -185,7 +185,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,ass_userid,ass_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code,pbudget_workload,pbudget_amount,pmenu_budget_workload,pmenu_budget_amount,budget_ctrl,phase_budget_ctrl,phase_act_ctrl,locked,del,ltime
+		id,product_name,branch_id,remark,version,pm_userid,pm_username,ctime,deptid,pstatus,start_time,end_time,dept_name,adm_userid,adm_username,ass_userid,ass_username,biz_proc_inst_id,biz_flow_state,is_tpl,baseline_id,base_time,code,pbudget_workload,pbudget_amount,pmenu_budget_workload,pmenu_budget_amount,budget_ctrl,phase_budget_ctrl,phase_act_ctrl,locked,del,ltime,qx_code
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -223,6 +223,7 @@
 		<if test="locked != null and locked != ''">      and res.locked = #{locked}     </if>
 		<if test="del != null and del != ''">      and res.del = #{del}     </if>
 		<if test="ltime != null">      and date_format(res.ltime,'%Y-%m-%d') = date_format(#{ltime},'%Y-%m-%d')     </if>
+		<if test="qxCode != null and qxCode != ''">      and res.qx_code = #{qxCode}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -257,7 +258,8 @@
 		phase_act_ctrl = #{phaseActCtrl},
 		locked = #{locked},
 		del = #{del},
-		ltime = #{ltime}
+		ltime = #{ltime},
+		qx_code = #{qxCode}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
@@ -292,6 +294,7 @@
 		<if test="locked != null and locked != ''"> locked = #{locked},     </if>
 		<if test="del != null and del != ''"> del = #{del},     </if>
 		<if test="ltime != null"> ltime = #{ltime},     </if>
+		<if test="qxCode != null and qxCode != ''"> qx_code = #{qxCode},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -326,6 +329,7 @@
 			phase_act_ctrl = #{item.phaseActCtrl},
 			locked = #{item.locked},
 			del = #{item.del},
-			ltime = #{item.ltime}
+			ltime = #{item.ltime},
+			qx_code = #{item.qxCode}
 	</sql>
 </mapper>
