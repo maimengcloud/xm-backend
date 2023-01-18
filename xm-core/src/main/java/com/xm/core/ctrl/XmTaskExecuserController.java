@@ -177,35 +177,16 @@ public class XmTaskExecuserController {
 				m.put("tips", tips);
 				return m;
 			}
-			boolean isBranch=false;
 			if(!xmTaskExecuser.getUserid().equals(user.getUserid())){
 				User userDb=sysClient.getUserByUserid(xmTaskExecuser.getUserid());
 				if(userDb==null){
 					return ResponseHelper.failed("userid-0","候选人不存在");
 				}
-				isBranch=!"0".equals(userDb.getMemType());
  				xmTaskExecuser.setExecUserBranchId(userDb.getBranchId());
 			}else{
-				isBranch=!"0".equals(user.getMemType());
 				xmTaskExecuser.setExecUserBranchId(user.getBranchId());
 			}
-			boolean isPm=groupService.checkUserIsProjectAdm(xmTaskDb.getProjectId(),user.getUserid());
-			boolean isTeamHeader=false;
-			List<XmGroupVo> myGgroups=groupService.getProjectGroupVoList(projectId);
-			if(!isPm){
- 				isTeamHeader= groupService.checkUserIsOtherUserTeamHeadOrAss(myGgroups,user.getUserid(),xmTaskDb.getCreateUserid());
-			}
-			if(!user.getUserid().equals(xmTaskExecuser.getUserid()) ){//只有上级可以拉人
-				if(!isPm && !isTeamHeader){
-					return ResponseHelper.failed("no-qx","您无权操作！只有任务负责人、组长、项目管理者可以给任务分配候选人。");
-				}
-			}else{
-				if(!"1".equals(xmTaskDb.getCrowd())){//如果是众包任务，自己可以直接加入，如果不是众包任务，必须任务负责人、组长、经理等拉人作为执行人
-					if(!isPm && !isTeamHeader){
-						return ResponseHelper.failed("no-qx","您无权操作！只有任务负责人、组长、项目管理者可以给任务分配执行人。");
-					}
-				}
-			}
+
 			if("1".equals(xmTaskDb.getCrowd())){
 				Map<String,Object>  result=sysClient.checkUserInterests(xmTaskExecuser.getUserid(),xmTaskDb.getBudgetAt(),xmTaskDb.getBudgetWorkload(),1);
 
@@ -223,11 +204,10 @@ public class XmTaskExecuserController {
 				xmTaskExecuser.setStatus("0");   //如果是众包，智能添加为候选人
 			}else {
 				//如果不是众包，需要判断是否已加入项目组组织架构中，如未加入，需要提示其先加入
-				boolean exists=groupService.checkUserExistsGroup(myGgroups, xmTaskExecuser.getUserid());
-				if(!exists) {
-					tips.setFailureMsg(xmTaskExecuser.getUsername()+"不在项目组织架构中，请先将其拉入项目组织架构中");
-					return ResponseHelper.failed("user-not-in-project",xmTaskExecuser.getUsername()+"不在项目组织架构中，请先将其拉入项目组织架构中");
-				}
+				tips=groupService.checkProjectQx(xmProjectDb,user,xmTaskExecuser.getUserid());
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				};
 				//检查是否已经存在执行人
 				XmTaskExecuser query=new XmTaskExecuser();
 				query.setTaskId(xmTaskDb.getId());
@@ -288,12 +268,9 @@ public class XmTaskExecuserController {
 				m.put("tips", tips);
 				return m;
 			}
-			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
-			boolean isExe=user.getUserid().equals(xmTask.getExecutorUserid());
 			List<String> noAllowUsers=new ArrayList<>();
 			List<XmTaskExecuser> allowUsers=new ArrayList<>();
 			List<String> allowUserNames=new ArrayList<>();
- 			boolean isPm=groupService.checkUserIsProjectAdm(xmTask.getProjectId(),user.getUserid());
 
 			for (XmTaskExecuser xmTaskExecuser : xmTaskExecuserListDb) {
 				if(!taskId.equals(xmTaskExecuser.getTaskId())){
@@ -301,16 +278,13 @@ public class XmTaskExecuserController {
 					break;
 				}
  				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {//只有组长、任务责任人可以请别人请离开任务
- 					if(isTaskCreater||isExe||isPm){
-						allowUsers.add(xmTaskExecuser);
-						allowUserNames.add(xmTaskExecuser.getUsername());
-					}else{
-						Tips tips2=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskExecuser.getUserid(),xmTask.getProjectId());
-						if(tips2.isOk()==false){
-							noAllowUsers.add(xmTaskExecuser.getUsername());
-							continue;
-						}
- 					}
+					tips=groupService.checkProjectQx(xmProjectService.getProjectFromCache(xmTask.getProjectId()), user,xmTaskExecuser.getUserid());
+					if(!tips.isOk()){
+						return ResponseHelper.failed(tips);
+					};
+					allowUsers.add(xmTaskExecuser);
+					allowUserNames.add(xmTaskExecuser.getUsername());
+
 				}else {//自己离开任务，可以的
 					allowUsers.add(xmTaskExecuser);
 					allowUserNames.add(xmTaskExecuser.getUsername());
@@ -375,20 +349,9 @@ public class XmTaskExecuserController {
 			User user=LoginUtils.getCurrentUserInfo();
 
 			String projectId=xmTask.getProjectId();
-			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
-			 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
- 			boolean isHead= groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups, user.getUserid(), xmTaskExecuser.getUserid());
-			if( isHead || isTaskCreater ) {
-				//放行，组长和任务责任人可以将候选人变更为执行人
-			} else{
-				if(user.getUserid().equals(xmTaskExecuser.getUserid())){
-					tips.setFailureMsg("您无权将自己变更为执行人");
-				}else {
-					tips.setFailureMsg("权限不足！任务责任人、组长可以变更候选人为执行人");
-				}
-			}
+			 tips=groupService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),user,xmTask.getCreateUserid() );
 			if(tips.isOk()) {
-
+				List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
 				boolean exists=groupService.checkUserExistsGroup(pgroups, xmTaskExecuser.getUserid());
 				  //如果还未加入项目组，自动加入项目组
 				if(!exists) {
@@ -475,15 +438,19 @@ public class XmTaskExecuserController {
 			User user=LoginUtils.getCurrentUserInfo();
 
 			String projectId=xmTaskDb.getProjectId();
-			boolean isTaskCreater=user.getUserid().equals(xmTaskDb.getCreateUserid());
-  			boolean isPm=groupService.checkUserIsProjectAdm(projectId,user.getUserid());
-			if(  !isTaskCreater && !isPm ) {
-				tips.setFailureMsg("您无权验收该任务！");
+			tips=groupService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),user,xmTaskDb.getCreateUserid(),xmTaskDb.getExecutorUserid() );
+			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
 
 			boolean needPay=false;
 			if("1".equals(xmTaskDb.getCrowd())){
+				boolean isTaskCreater=user.getUserid().equals(xmTaskDb.getCreateUserid());
+				Tips tips1=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),projectId);
+				if(  !isTaskCreater && !tips1.isOk() ) {
+					tips.setFailureMsg("您无权验收该任务！");
+					return ResponseHelper.failed(tips);
+				}
 				if("2".equals(xmTaskDb.getEstate()) && xmTaskDb.getEfunds()!=null && xmTaskDb.getEfunds().compareTo(BigDecimal.ZERO)>0){
 					needPay=true;
 				}
@@ -558,14 +525,9 @@ public class XmTaskExecuserController {
 				return ResponseHelper.failed("estate-not-0-1-3","当前任务已缴纳保证金，无法再变更报价信息。");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
-			String projectId=xmTaskExecuser.getProjectId();
+ 			String projectId=xmTaskExecuser.getProjectId();
  			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
- 				 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-				boolean isHead= groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups, user.getUserid(), xmTaskExecuser.getUserid());
-				if( !isHead && !isTaskCreater ) {
-					tips.setFailureMsg("无权操作！自己、任务责任人、组长可以修改任务的报价信息");
-				}
+ 				tips=groupService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),user,xmTaskExecuser.getUserid() );
 			} 
 			if(tips.isOk()) {
 				XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getTaskId(),xmTaskExecuser.getUserid()));
@@ -613,15 +575,9 @@ public class XmTaskExecuserController {
 				return m;
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
-			String projectId=xmTaskExecuser.getProjectId();
+ 			String projectId=xmTaskExecuser.getProjectId();
  			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
- 				 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-
-				boolean isHead= groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups, user.getUserid(), xmTaskExecuser.getUserid());
-				if( !isHead && !isTaskCreater ) {
-					tips.setFailureMsg("无权操作！任务责任人、组长可以邀请用户成为任务候选人，普通用户可以自己申请成为候选人");
-				}
+ 				tips=groupService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),user,xmTaskExecuser.getUserid());
 			} 
 			if(tips.isOk()) {
 				xmTaskExecuserService.becomeCandidate(xmTaskExecuser);
@@ -661,14 +617,9 @@ public class XmTaskExecuserController {
 				return m;
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			boolean isTaskCreater=user.getUserid().equals(xmTask.getCreateUserid());
 			String projectId=xmTaskExecuser.getProjectId();
 			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
-				 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-				boolean isHead= groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups, user.getUserid(), xmTaskExecuser.getUserid());
-				if( !isHead && !isTaskCreater ) {
-					tips.setFailureMsg("无权操作！只有自己、任务责任人、组长可以删除任务执行人.");
-				}
+				tips=groupService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),user,xmTaskExecuser.getUserid() );
 			} 
 			if(tips.isOk()) { 
 				XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getTaskId(),xmTaskExecuser.getUserid()));
