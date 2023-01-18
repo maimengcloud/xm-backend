@@ -556,10 +556,17 @@ public class XmTaskController {
 
 
 			User user=LoginUtils.getCurrentUserInfo();
+			if(StringUtils.isEmpty(xmTaskVo.getCreateUserid())){
+				xmTaskVo.setCreateUserid(user.getUserid());
+				xmTaskVo.setCreateUsername(user.getUsername());
+			}
+
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskVo.getProjectId());
 			Tips tips1=groupService.checkProjectQx(xmProject,user,xmTaskVo.getCreateUserid());
 			if(!tips1.isOk()){
-				return ResponseHelper.failed(tips1);
+				if(!tips1.isOk()){
+					return ResponseHelper.failed(tips1);
+				}
 			}
 
 
@@ -704,7 +711,12 @@ public class XmTaskController {
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 			Tips tips1=groupService.checkProjectQx(xmProject,user,xmTaskDb.getCreateUserid());
 			if(!tips1.isOk()){
-				return ResponseHelper.failed(tips1);
+				if(StringUtils.hasText(xmTaskDb.getExecutorUserid()) && !user.getUserid().equals(xmTaskDb.getCreateUserid()) && !xmTaskDb.getCreateUserid().equals(xmTaskDb.getExecutorUserid())){
+					tips1=groupService.checkProjectQx(xmProject,user,xmTaskDb.getExecutorUserid());
+				}
+				if(!tips1.isOk()){
+					return ResponseHelper.failed(tips1);
+				}
 			}
 
 			xmTaskService.deleteTask(xmTaskDb);
@@ -956,9 +968,10 @@ public class XmTaskController {
 			}
 			String projectId=batchImportVo.getProjectId();
 			String productId=batchImportVo.getProductId();
-			tips=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,user.getUserid(),batchImportVo.getProjectId());
-			if(!tips.isOk()){
-				return ResponseHelper.failed(tips);
+			XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
+			Tips tips1=groupService.checkProjectQx(xmProject,user,user.getUserid());
+			if(!tips1.isOk()){
+				return ResponseHelper.failed(tips1);
 			}
 			Map<String,String> newIdMap=new HashMap<>();
 			if(!StringUtils.hasText(batchImportVo.getParentTaskid())){
@@ -1014,7 +1027,6 @@ public class XmTaskController {
 			}
 			xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
 			List<XmTask> tasksLvl1=xmTasks.stream().filter(i->i.getLvl()<=1).collect(Collectors.toList());
-			XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
 			if("1".equals(xmProject.getBudgetCtrl())){
 				if(tasksLvl1.size()>0){
 					BigDecimal totalTaskBudgetAt=BigDecimal.ZERO;
@@ -1204,6 +1216,7 @@ public class XmTaskController {
 				return ResponseHelper.failed("menuId-0","需求编号不能为空");
 			};
 			XmMenu xmMenuDb= menuOperQxService.getUserCanOpMenuById(tasksMenu.getMenuId(), user.getUserid(), false);
+
  			if(xmMenuDb==null){
 				return ResponseHelper.failed("menu-0","无权限挂接任务到别人负责的需求上");
 			}
@@ -1238,23 +1251,21 @@ public class XmTaskController {
 
 			for (Map.Entry<String, List<XmTask>> pt : projectTasksMap.entrySet()) {
 				XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(pt.getKey());
-				boolean isProjectAdm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
-				List<XmGroupVo> groupVoList=groupService.getProjectGroupVoList(xmProjectDb.getId());
-				if(isProjectAdm==false){
-					if(groupVoList==null){
+				Tips tips1=groupService.checkProjectQx(xmProjectDb,user);
+				if(!tips1.isOk()){
 						noAllowTasks.addAll(pt.getValue());
-					}else{
-						for (XmTask xmTask : pt.getValue()) {
-							if(!user.getUserid().equals(xmTask.getCreateUserid()) && !user.getUserid().equals(xmTask.getExecutorUserid())){
-								if(!groupService.checkUserIsOtherUserTeamHeadOrAss(groupVoList,user.getUserid(),xmTask.getCreateUserid())){
-									if(!groupService.checkUserIsOtherUserTeamHeadOrAss(groupVoList,user.getUserid(),xmTask.getExecutorUserid())){
-										noAllowTasks.add(xmTask);
-									}
+				}else{
+					for (XmTask xmTask : pt.getValue()) {
+						if(!user.getUserid().equals(xmTask.getCreateUserid()) && !user.getUserid().equals(xmTask.getExecutorUserid())){
+							tips1=groupService.checkProjectQx(xmProjectDb,user, xmTask.getCreateUserid());
+							if(!tips1.isOk()){
+								tips1=groupService.checkProjectQx(xmProjectDb,user, xmTask.getExecutorUserid());
+								if(!tips1.isOk()){
+									noAllowTasks.add(xmTask);
 								}
 							}
 						}
 					}
-
 				}
 			}
 
@@ -1323,7 +1334,8 @@ public class XmTaskController {
 				return ResponseHelper.failed("data-0","计划任务已不存在");
 			}
 			String projectId=xmTaskDb.getProjectId();
-			tips=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,user.getUserid(),xmTaskDb.getProjectId());
+			XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
+			tips=groupService.checkProjectQx(xmProject,user);
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
@@ -1335,10 +1347,15 @@ public class XmTaskController {
 				if(!projectId.equals(node.getProjectId()) ){
 					return ResponseHelper.failed("not-same-project","所有任务必须同属于一个项目");
 				}
-				boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),node.getCreateUserid());
+				Tips tips1=groupService.checkProjectQx(xmProject,user,node.getCreateUserid());
 
-				if(!isHead){
-					noAllowNodes.add(node);
+				if(!tips1.isOk()){
+					tips1=groupService.checkProjectQx(xmProject,user,node.getExecutorUserid());
+					if(!tips1.isOk()){
+						noAllowNodes.add(node);
+					}else {
+						noAllowNodes.add(node);
+					}
 				}else {
 					allowDelNodes.add(node);
 				}
