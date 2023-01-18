@@ -268,6 +268,7 @@ public class XmTaskController {
 				if(ids.size()>1){
 					List<Tips> errs=new ArrayList<>();
 					List<Tips> oks=new ArrayList<>();
+					String msg="";
 					for (String id : ids) {
 						XmTaskExecuser xmTaskExecuser=new XmTaskExecuser();
 						xmTaskExecuser.setTaskId(id);
@@ -281,14 +282,19 @@ public class XmTaskController {
 						}else{
 							oks.add(tips3);
 						}
-						String msg="";
-						if(oks.size()>0){
-							msg="成功设置"+oks.size()+"个任务的执行人。";
-						}
-						if(errs.size()>0){
-							msg=msg+"以下"+errs.size()+"个任务更新不成功："+errs.stream().map(i->"["+i.get("taskId")+"]"+i.getMsg()).collect(Collectors.joining(";"));
-						}
+
+
 					}
+					Tips returnTips=new Tips();
+
+					if(errs.size()>0){
+						msg="以下"+errs.size()+"个任务更新不成功："+errs.stream().map(i->"["+i.get("taskId")+"]"+i.getMsg()).collect(Collectors.joining(";"));
+					}
+					if(oks.size()>0){
+						msg="成功设置"+oks.size()+"个任务的执行人。"+msg;
+						returnTips.setOkMsg(msg);
+					}
+					return ResponseHelper.result(returnTips);
 				}else if(ids.size()==1){
 					XmTaskExecuser xmTaskExecuser=new XmTaskExecuser();
 					xmTaskExecuser.setTaskId(ids.get(0));
@@ -325,12 +331,13 @@ public class XmTaskController {
 				return ResponseHelper.failed("tasks-0","该任务已不存在");
 			}
 			if(xmTaskMap.containsKey("createUserid")){
+				String createUserid=(String) xmTaskMap.get("createUserid");
+				String createUsername=(String) xmTaskMap.get("createUsername");
 				Set<String> projects=xmTasksDb.stream().map(i->i.getProjectId()).collect(Collectors.toSet());
 				for (String project : projects) {
-					tips=groupService.checkIsProjectAdmOrTeamHeadOrAss(user, (String) xmTaskMap.get("createUserid"),project);
-					if(!tips.isOk()){
-						return ResponseHelper.failed("no-qx-0","您无权把任务指派给您的小组成员以外的人。");
-					}
+ 					if(!groupService.checkUserExistsProjectGroup(project,createUserid)){
+						return ResponseHelper.failed("no-qx-0","【"+createUsername+"】不在项目团队中，请先将其拉入项目团队再操作。");
+					};
 				}
 
 			}

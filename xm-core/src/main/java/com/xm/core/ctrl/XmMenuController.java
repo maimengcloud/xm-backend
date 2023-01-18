@@ -295,7 +295,7 @@ public class XmMenuController {
 			}
 			if(!groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
 				if(!groupService.checkUserExistsProductGroup(xmMenu.getProductId(),user.getUserid())){
-					return ResponseHelper.failed("noqx","只有产品团队成员可以新增需求");
+					return ResponseHelper.failed("noqx-add","只有产品团队成员可以新增需求。【"+user.getUsername()+"】不在产品团队中,请将其拉入产品团队。");
 				}
 			}
 
@@ -369,7 +369,7 @@ public class XmMenuController {
 				}
 				if(!groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
 					if(!groupService.checkUserExistsProductGroup(xmMenuDb.getProductId(),user.getUserid())){
-						return ResponseHelper.failed("noqx","只有产品团队成员可以删除需求");
+						return ResponseHelper.failed("noqx-del","只有产品团队成员可以删除需求。【"+user.getUsername()+"】不在产品团队中,请将其拉入产品团队。");
 					}
 				}
 				xmMenuService.deleteByPk(xmMenu);
@@ -415,7 +415,7 @@ public class XmMenuController {
 			}
 			if(!groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
 				if(!groupService.checkUserExistsProductGroup(xmMenuDb.getProductId(),user.getUserid())){
-					return ResponseHelper.failed("noqx","只有产品团队成员可以修改需求");
+					return ResponseHelper.failed("noqx-edit","只有产品团队成员可以修改需求。【"+user.getUsername()+"】不在产品团队中,请将其拉入产品团队。");
 				}
 			}
 
@@ -499,7 +499,17 @@ public class XmMenuController {
 			}
 			if(!groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
 				if(!groupService.checkUserExistsProductGroup(xmMenuDb.getProductId(),user.getUserid())){
-					return ResponseHelper.failed("noqx","只有产品团队成员可以修改需求");
+					return ResponseHelper.failed("noqx-edit","只有产品团队成员可以修改需求。【"+user.getUsername()+"】不在产品团队中,请将其拉入产品团队。");
+				}
+			}
+
+			if(xmMenuMap.containsKey("mmUserid")){
+				String mmUserid= (String) xmMenuMap.get("mmUserid");
+				String mmUsername= (String) xmMenuMap.get("mmUsername");
+				if(!user.getUserid().equals(mmUserid)){
+					if(!groupService.checkUserExistsProductGroup(xmMenuDb.getProductId(),mmUserid)){
+						return ResponseHelper.failed("no-in-pteam","【"+mmUsername+"】不是产品团队成员，不允许成为需求负责人。");
+					}
 				}
 			}
 
@@ -576,7 +586,7 @@ public class XmMenuController {
 			}
 			if(!groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
 				if(!groupService.checkUserExistsProductGroup(xmMenuDb.getProductId(),user.getUserid())){
-					return ResponseHelper.failed("noqx","只有产品团队成员可以修改需求");
+					return ResponseHelper.failed("noqx-del","只有产品团队成员可以删除需求。【"+user.getUsername()+"】不在产品团队中,请将其拉入产品团队。");
 				}
 			}
 
@@ -708,7 +718,7 @@ public class XmMenuController {
 			}
 			if(!groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
 				if(!groupService.checkUserExistsProductGroup(xmMenuDb.getProductId(),user.getUserid())){
-					return ResponseHelper.failed("noqx","只有产品团队成员可以修改需求");
+					return ResponseHelper.failed("noqx","只有产品团队成员可以修改需求。【"+user.getUsername()+"】不在产品团队中,请将其拉入产品团队。");
 				}
 			}
 			xmMenusDb=xmMenusDb.stream().filter(i->!i.getMenuId().equals(parentDb.getMenuId())).collect(Collectors.toList());
