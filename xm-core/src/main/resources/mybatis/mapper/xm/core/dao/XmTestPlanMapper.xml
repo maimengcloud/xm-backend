@@ -14,7 +14,72 @@
 		<if test="key != null and key !='' "> and res.name like  concat('%',#{key},'%')    </if>
     </sql>
 
-
+	<update id="calcXmTestPlan" parameterType="String">
+		UPDATE xm_test_plan res
+		LEFT JOIN (
+		SELECT
+		pc.plan_id,
+		count( * ) total_cases,
+		sum( IF ( pc.exec_status = '2', 1, 0 ) ) ok_cases,
+		sum( IF ( pc.exec_status = '4', 1, 0 ) ) err_cases,
+		sum( IF ( pc.exec_status = '1', 1, 0 ) ) ig_cases,
+		sum( IF ( pc.exec_status = '3', 1, 0 ) ) bl_cases,
+		sum( IF ( pc.exec_status = '0', 1, 0 ) ) to_test_cases,
+		count( DISTINCT c.menu_id ) menus,
+		count( DISTINCT c.func_id ) funcs
+		FROM
+		xm_test_plan_case pc
+		INNER JOIN xm_test_case c ON pc.case_id = c.id
+		WHERE
+		pc.plan_id = #{id}
+		GROUP BY
+		pc.plan_id
+		) AS cc ON cc.plan_id = res.id
+		LEFT JOIN (
+		SELECT
+		q.plan_id,
+		count( * ) bug_cnt,
+		sum(
+		IF
+		(
+		q.bug_status = '1'
+		OR q.bug_status = '2'
+		OR q.bug_status = '3'
+		OR q.bug_status = '4'
+		OR q.bug_status = '5'
+		OR q.bug_status = '6'
+		OR q.bug_status = '9',
+		1,
+		0
+		)
+		) active_bugs,
+		sum( IF ( q.bug_status = '8', 1, 0 ) ) closed_bugs,
+		sum( IF ( q.bug_status = '7', 1, 0 ) ) resolved_bugs,
+		0 confirmed_bugs
+		FROM
+		xm_question q
+		WHERE
+		q.plan_id = #{id}
+		GROUP BY
+		q.plan_id
+		) AS bugs ON res.id = bugs.plan_id
+		SET res.total_cases = cc.total_cases,
+		res.ok_cases = cc.ok_cases,
+		res.err_cases = cc.err_cases,
+		res.ig_cases = cc.ig_cases,
+		res.bl_cases = cc.bl_cases,
+		res.to_test_cases = cc.to_test_cases,
+		res.menus = cc.menus,
+		res.funcs = cc.funcs,
+		res.bug_cnt = bugs.bug_cnt,
+		res.active_bugs = bugs.active_bugs,
+		res.closed_bugs = bugs.closed_bugs,
+		res.resolved_bugs = bugs.resolved_bugs,
+		res.resolved_bugs = bugs.resolved_bugs,
+		res.confirmed_bugs = bugs.confirmed_bugs
+		WHERE
+		id = #{id}
+	</update>
 	<!--结束 自定义sql函数区域-->
 	
 

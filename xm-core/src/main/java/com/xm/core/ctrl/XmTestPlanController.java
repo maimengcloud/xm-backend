@@ -79,8 +79,32 @@ public class XmTestPlanController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
+
+
+	@ApiOperation( value = "统计测试计划数据",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTestPlan.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
+	})
+	@RequestMapping(value="/calc",method=RequestMethod.POST)
+	public Map<String,Object> calcXmTestPlan(@RequestBody XmTestPlan xmTestPlan) {
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("成功统计测试计划数据");
+		try{
+			boolean createPk=false;
+			if(!StringUtils.hasText(xmTestPlan.getId())) {
+				return failed("id-0","测试计划编号不能为空");
+			}
+			this.xmTestPlanService.calcXmTestPlan(xmTestPlan.getId());
+		}catch (BizException e) {
+			tips=e.getTips();
+			logger.error("",e);
+		}catch (Exception e) {
+			tips.setFailureMsg(e.getMessage());
+			logger.error("",e);
+		}
+		m.put("tips", tips);
+		return m;
+	}
 
 	@ApiOperation( value = "新增一条测试计划信息",notes=" ")
 	@ApiResponses({
