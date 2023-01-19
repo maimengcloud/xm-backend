@@ -16,6 +16,9 @@
 		<if test="funcPidPathsLike!=null and funcPidPathsLike!=''">
 			and exists( select 1 from xm_func f where f.pid_paths like concat(#{funcPidPathsLike},'%') and c.func_id=f.id)
 		</if>
+		<if test="productId!=null and productId!=''">
+			and c.product_id=#{productId}
+		</if>
     </sql>
 
 	<select id="selectListByCaseIdsAndPlanId" parameterType="HashMap"  resultType="com.xm.core.entity.XmTestPlanCase">
