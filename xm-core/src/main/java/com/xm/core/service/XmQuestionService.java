@@ -6,18 +6,18 @@ import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmProduct;
+import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmQuestion;
 import com.xm.core.entity.XmQuestionHandle;
 import com.xm.core.vo.XmQuestionVo;
+import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -35,6 +35,9 @@ public class XmQuestionService extends BaseService {
     
 	@Autowired
 	XmRecordService xmRecordService;
+
+
+
 	
 	/** 请在此类添加自定义函数 */
     public List<Map<String,Object>> getQuestion (Map<String,Object> params) {

@@ -291,89 +291,15 @@ public class XmQuestionController {
 				ResponseHelper.failed("bugs-0","该bug已不存在");
 			}
 
+			List<XmQuestion> canOper=new ArrayList<>();
 
-			List<XmQuestion> canDel=new ArrayList<>();
+			List<XmQuestion> noOper=new ArrayList<>();
 
-			List<XmQuestion> noDel=new ArrayList<>();
+			Map<String,Tips> noOperTips=new HashMap<>();
 
-			List<Tips> noDelTips=new ArrayList<>();
+			this.checkQx(xmQuestionsDb,canOper,noOper,noOperTips);
 
-
-			/**
-			 * 如果有测试计划，有产品编号，走产品团队判断权限
-			 * 如果未通过，继续走项目权限判断
-			 */
-			Map<String,List<XmQuestion>> productsMap=new HashMap<>();//有产品的数据
-			Map<String,List<XmQuestion>> projectsMap=new HashMap<>();//没有产品、但有项目的数据
-			for (XmQuestion xmQuestion : xmQuestionsDb) {
-				if(StringUtils.hasText(xmQuestion.getProductId())){
-					List<XmQuestion> datas=productsMap.get(xmQuestion.getProductId());
-					if(datas==null){
-						datas=new ArrayList<>();
-						datas.add(xmQuestion);
-						productsMap.put(xmQuestion.getProductId(),datas);
-					}else {
-						datas.add(xmQuestion);
-					}
-				}else if(StringUtils.hasText(xmQuestion.getProjectId())) {
-					List<XmQuestion> datas=projectsMap.get(xmQuestion.getProjectId());
-					if(datas==null){
-						datas=new ArrayList<>();
-						datas.add(xmQuestion);
-						projectsMap.put(xmQuestion.getProjectId(),datas);
-					}else {
-						datas.add(xmQuestion);
-					}
-				}
-			}
-
-			if(productsMap.size()>0){
-				for (String productId : productsMap.keySet()) {
-					XmProduct xmProduct=productService.getProductFromCache(productId);
-					Tips tips1=groupService.checkProductQx(xmProduct,1,user);
-					if(!tips1.isOk()){
-						noDel.addAll(productsMap.get(productId));
-						productsMap.remove(productId);
-						noDelTips.add(tips1);
-					}else{
-						List<XmQuestion> questions=productsMap.get(productId);
-						for (XmQuestion question : questions) {
-							tips1=groupService.checkProductQx(xmProduct,1,user,question.getCreateUserid(),question.getHandlerUserid());
-							if(!tips1.isOk()){
-								noDel.add(question);
-								noDelTips.add(tips1);
-							}else {
-								canDel.add(question);
-							}
-						}
-
-					}
-				}
-			}
-			if(projectsMap.size()>0){
-				for (String projectId : projectsMap.keySet()) {
-					XmProject xmProject=projectService.getProjectFromCache(projectId);
-					Tips tips1=groupService.checkProjectQx(xmProject,user);
-					if(!tips1.isOk()){
-						noDel.addAll(projectsMap.get(projectId));
-						projectsMap.remove(projectId);
-						noDelTips.add(tips1);
-					}else{
-						List<XmQuestion> questions=projectsMap.get(projectId);
-						for (XmQuestion question : questions) {
-							tips1=groupService.checkProjectQx(xmProject,user,question.getCreateUserid(),question.getHandlerUserid());
-							if(!tips1.isOk()){
-								noDel.add(question);
-								noDelTips.add(tips1);
-							}else {
-								canDel.add(question);
-							}
-						}
-					}
-				}
-			}
-
-
+			xmQuestionMap.put("ids",canOper.stream().map(k->k.getId()).collect(Collectors.toList()));
 
 			Set<String> fieldKey=xmQuestionMap.keySet().stream().filter(i->fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmQuestionMap.get(i) )).collect(Collectors.toSet());
@@ -394,7 +320,7 @@ public class XmQuestionController {
 				Map<String,Object> map=new HashMap<>();
 				map.putAll(xmQuestionMap);
 				map.remove("ids");
-				for (XmQuestion xmQuestionVo : xmQuestionsDb) {
+				for (XmQuestion xmQuestionVo : canOper) {
 					Map<String,Object> m2=BaseUtils.toMap(xmQuestionVo);
 					m2.putAll(map);
 					xmQuestionVo=BaseUtils.fromMap(m2,XmQuestion.class);
@@ -431,7 +357,26 @@ public class XmQuestionController {
 
 			}
 
-
+			List<String> msgs=new ArrayList<>();
+			if(canOper.size()>0){
+				for (XmQuestion xmQuestion : canOper) {
+					noOperTips.remove(xmQuestion.getId());
+				}
+				msgs.add(String.format("修改了%s个缺陷。",canOper.size()));
+			}
+			if(noOper.size()>0){
+				Set<String> noDelTips2=new HashSet<>();
+				for (XmQuestion xmQuestion : noOper) {
+					Tips tips1=noOperTips.get(xmQuestion.getId());
+					noDelTips2.add(tips1.getMsg());
+				}
+				msgs.add(String.format("其中%s个缺陷，无权限修改。原因【%s】",noOper.size(),noDelTips2.stream().collect(Collectors.joining(";"))));
+			}
+			if(canOper.size()>0){
+				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+			}else{
+				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+			}
 			//m.put("data",xmMenu);
 		}catch (BizException e) {
 			tips=e.getTips();
@@ -461,129 +406,34 @@ public class XmQuestionController {
 			if(xmQuestionsDb==null || xmQuestionsDb.size()==0){
 				return ResponseHelper.failed("data-0","所有数据已不存在");
 			}
-			List<XmQuestion> canDel=new ArrayList<>();
+			List<XmQuestion> canOper=new ArrayList<>();
 
-			List<XmQuestion> noDel=new ArrayList<>();
+			List<XmQuestion> noOper=new ArrayList<>();
 
-			Map<String,Tips> noDelTips=new HashMap<>();
+			Map<String,Tips> noOperTips=new HashMap<>();
 
+			this.checkQx(xmQuestionsDb,canOper,noOper,noOperTips);
 
-			/**
-			 * 如果有测试计划，有产品编号，走产品团队判断权限
-			 * 如果未通过，继续走项目权限判断
-			 */
-			Map<String,List<XmQuestion>> productsMap=new HashMap<>();//有产品的数据
-			Map<String,List<XmQuestion>> projectsMap=new HashMap<>();//没有产品、但有项目的数据
-			for (XmQuestion xmQuestion : xmQuestionsDb) {
-				if(StringUtils.hasText(xmQuestion.getProductId())){
-					List<XmQuestion> datas=productsMap.get(xmQuestion.getProductId());
-					if(datas==null){
-						datas=new ArrayList<>();
-						datas.add(xmQuestion);
-						productsMap.put(xmQuestion.getProductId(),datas);
-					}else {
-						datas.add(xmQuestion);
-					}
-				}else if(StringUtils.hasText(xmQuestion.getProjectId())) {
-					List<XmQuestion> datas=projectsMap.get(xmQuestion.getProjectId());
-					if(datas==null){
-						datas=new ArrayList<>();
-						datas.add(xmQuestion);
-						projectsMap.put(xmQuestion.getProjectId(),datas);
-					}else {
-						datas.add(xmQuestion);
-					}
-				}
-			}
-
-			List<XmQuestion> productNoDel=new ArrayList<>();
-			if(productsMap.size()>0){
-				for (String productId : productsMap.keySet()) {
-					XmProduct xmProduct=productService.getProductFromCache(productId);
-					Tips tips1=groupService.checkProductQx(xmProduct,1,user);
-					if(!tips1.isOk()){
-						productNoDel.addAll(productsMap.get(productId));
-						for (XmQuestion xmQuestion : productsMap.get(productId)) {
-							noDelTips.put(xmQuestion.getId(),tips1);
-						}
-						productsMap.remove(productId);
-					}else{
-						List<XmQuestion> questions=productsMap.get(productId);
-						for (XmQuestion question : questions) {
-							tips1=groupService.checkProductQx(xmProduct,1,user,question.getCreateUserid(),question.getHandlerUserid());
-							if(!tips1.isOk()){
-								productNoDel.add(question);
-								noDelTips.put(question.getId(),tips1);
-							}else {
-								canDel.add(question);
-							}
-						}
-
-					}
-				}
-			}
-			for (XmQuestion xmQuestion : productNoDel) {
-				if(StringUtils.hasText(xmQuestion.getProjectId())){
-					 List<XmQuestion> ques=projectsMap.get(xmQuestion.getProjectId());
-					 if(ques!=null){
-					 	if(!ques.stream().filter(k->k.getId().equals(xmQuestion.getId())).findAny().isPresent()){
-							ques.add(xmQuestion);
-						}
-					 }else{
-					 	ques=new ArrayList<>();
-					 	ques.add(xmQuestion);
-					 	projectsMap.put(xmQuestion.getProjectId(),ques);
-					 }
-
-				}else{
-					noDel.add(xmQuestion);
-				}
-			}
-			if(projectsMap.size()>0){
-				for (String projectId : projectsMap.keySet()) {
-					XmProject xmProject=projectService.getProjectFromCache(projectId);
-					Tips tips1=groupService.checkProjectQx(xmProject,user);
-					if(!tips1.isOk()){
-						noDel.addAll(projectsMap.get(projectId));
-						for (XmQuestion xmQuestion : projectsMap.get(projectId)) {
-							noDelTips.put(xmQuestion.getId(),tips1);
-						}
-						projectsMap.remove(projectId);
-					}else{
-						List<XmQuestion> questions=projectsMap.get(projectId);
-						for (XmQuestion question : questions) {
-							tips1=groupService.checkProjectQx(xmProject,user,question.getCreateUserid(),question.getHandlerUserid());
-							if(!tips1.isOk()){
-								noDel.add(question);
-								noDelTips.put(question.getId(),tips1);
-							}else {
-								canDel.add(question);
-							}
-						}
-					}
-				}
-			}
-
-			if(canDel.size()>0){
-				xmQuestionService.batchDelete(canDel);
+			if(canOper.size()>0){
+				xmQuestionService.batchDelete(canOper);
 			}
 
 			List<String> msgs=new ArrayList<>();
-			if(canDel.size()>0){
-				for (XmQuestion xmQuestion : canDel) {
-					noDelTips.remove(xmQuestion.getId());
+			if(canOper.size()>0){
+				for (XmQuestion xmQuestion : canOper) {
+					noOperTips.remove(xmQuestion.getId());
 				}
-				msgs.add(String.format("删除了%s个缺陷。",canDel.size()));
+				msgs.add(String.format("删除了%s个缺陷。",canOper.size()));
 			}
-			if(noDel.size()>0){
+			if(noOper.size()>0){
 				Set<String> noDelTips2=new HashSet<>();
-				for (XmQuestion xmQuestion : noDel) {
-					Tips tips1=noDelTips.get(xmQuestion.getId());
+				for (XmQuestion xmQuestion : noOper) {
+					Tips tips1=noOperTips.get(xmQuestion.getId());
 					noDelTips2.add(tips1.getMsg());
 				}
-				msgs.add(String.format("其中%s个缺陷，无权限删除。原因【%s】",noDel.size(),noDelTips2.stream().collect(Collectors.joining(";"))));
+				msgs.add(String.format("其中%s个缺陷，无权限删除。原因【%s】",noOper.size(),noDelTips2.stream().collect(Collectors.joining(";"))));
 			}
-			if(canDel.size()>0){
+			if(canOper.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
 			}else{
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
@@ -598,10 +448,108 @@ public class XmQuestionController {
 		}  
 		m.put("tips", tips);
 		return m;
-	} 
+	}
 
-	
 
+
+	public void checkQx(List<XmQuestion> xmQuestionsDb, List<XmQuestion> canOper, List<XmQuestion> noOper, Map<String,Tips> noOperTips){
+		User user=LoginUtils.getCurrentUserInfo();
+		/**
+		 * 如果有测试计划，有产品编号，走产品团队判断权限
+		 * 如果未通过，继续走项目权限判断
+		 */
+		Map<String,List<XmQuestion>> productsMap=new HashMap<>();//有产品的数据
+		Map<String,List<XmQuestion>> projectsMap=new HashMap<>();//没有产品、但有项目的数据
+		for (XmQuestion xmQuestion : xmQuestionsDb) {
+			if(StringUtils.hasText(xmQuestion.getProductId())){
+				List<XmQuestion> datas=productsMap.get(xmQuestion.getProductId());
+				if(datas==null){
+					datas=new ArrayList<>();
+					datas.add(xmQuestion);
+					productsMap.put(xmQuestion.getProductId(),datas);
+				}else {
+					datas.add(xmQuestion);
+				}
+			}else if(StringUtils.hasText(xmQuestion.getProjectId())) {
+				List<XmQuestion> datas=projectsMap.get(xmQuestion.getProjectId());
+				if(datas==null){
+					datas=new ArrayList<>();
+					datas.add(xmQuestion);
+					projectsMap.put(xmQuestion.getProjectId(),datas);
+				}else {
+					datas.add(xmQuestion);
+				}
+			}
+		}
+
+		List<XmQuestion> productNoDel=new ArrayList<>();
+		if(productsMap.size()>0){
+			for (String productId : productsMap.keySet()) {
+				XmProduct xmProduct=productService.getProductFromCache(productId);
+				Tips tips1=groupService.checkProductQx(xmProduct,1,user);
+				if(!tips1.isOk()){
+					productNoDel.addAll(productsMap.get(productId));
+					for (XmQuestion xmQuestion : productsMap.get(productId)) {
+						noOperTips.put(xmQuestion.getId(),tips1);
+					}
+					productsMap.remove(productId);
+				}else{
+					List<XmQuestion> questions=productsMap.get(productId);
+					for (XmQuestion question : questions) {
+						tips1=groupService.checkProductQx(xmProduct,1,user,question.getCreateUserid(),question.getHandlerUserid());
+						if(!tips1.isOk()){
+							productNoDel.add(question);
+							noOperTips.put(question.getId(),tips1);
+						}else {
+							canOper.add(question);
+						}
+					}
+
+				}
+			}
+		}
+		for (XmQuestion xmQuestion : productNoDel) {
+			if(StringUtils.hasText(xmQuestion.getProjectId())){
+				List<XmQuestion> ques=projectsMap.get(xmQuestion.getProjectId());
+				if(ques!=null){
+					if(!ques.stream().filter(k->k.getId().equals(xmQuestion.getId())).findAny().isPresent()){
+						ques.add(xmQuestion);
+					}
+				}else{
+					ques=new ArrayList<>();
+					ques.add(xmQuestion);
+					projectsMap.put(xmQuestion.getProjectId(),ques);
+				}
+
+			}else{
+				noOper.add(xmQuestion);
+			}
+		}
+		if(projectsMap.size()>0){
+			for (String projectId : projectsMap.keySet()) {
+				XmProject xmProject=projectService.getProjectFromCache(projectId);
+				Tips tips1=groupService.checkProjectQx(xmProject,user);
+				if(!tips1.isOk()){
+					noOper.addAll(projectsMap.get(projectId));
+					for (XmQuestion xmQuestion : projectsMap.get(projectId)) {
+						noOperTips.put(xmQuestion.getId(),tips1);
+					}
+					projectsMap.remove(projectId);
+				}else{
+					List<XmQuestion> questions=projectsMap.get(projectId);
+					for (XmQuestion question : questions) {
+						tips1=groupService.checkProjectQx(xmProject,user,question.getCreateUserid(),question.getHandlerUserid());
+						if(!tips1.isOk()){
+							noOper.add(question);
+							noOperTips.put(question.getId(),tips1);
+						}else {
+							canOper.add(question);
+						}
+					}
+				}
+			}
+		}
+	}
 
 	/**
 	 * 流程审批过程中回调该接口，更新业务数据
