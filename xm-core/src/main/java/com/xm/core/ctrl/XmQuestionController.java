@@ -13,12 +13,9 @@ import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
-import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmQuestion;
-import com.xm.core.entity.XmQuestionHandle;
-import com.xm.core.service.XmQuestionHandleService;
-import com.xm.core.service.XmQuestionService;
-import com.xm.core.service.XmRecordService;
+import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.*;
+import com.xm.core.service.*;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmQuestionVo;
 import io.swagger.annotations.*;
@@ -67,6 +64,15 @@ public class XmQuestionController {
 	@Autowired
 	SensitiveWordService sensitiveWordService;
 
+	@Autowired
+	XmProductService productService;
+
+	@Autowired
+	XmProjectService projectService;
+
+	@Autowired
+	XmGroupService groupService;
+
 
 	@Autowired
 	PushNotifyMsgService notifyMsgService;
@@ -74,48 +80,7 @@ public class XmQuestionController {
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmQuestion());
 	
 	@ApiOperation( value = "查询xm_question信息列表",notes="listXmQuestion,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiImplicitParams({  
-		@ApiImplicitParam(name="id",value="问题编号,主键",required=false),
-		@ApiImplicitParam(name="name",value="问题标题",required=false),
-		@ApiImplicitParam(name="projectId",value="项目编号",required=false),
-		@ApiImplicitParam(name="projectName",value="项目名称",required=false),
-		@ApiImplicitParam(name="taskId",value="任务编号",required=false),
-		@ApiImplicitParam(name="taskName",value="任务名称",required=false),
-		@ApiImplicitParam(name="endTime",value="到期时间",required=false),
-		@ApiImplicitParam(name="askUserid",value="提出人编号",required=false),
-		@ApiImplicitParam(name="askUsername",value="提出人",required=false),
-		@ApiImplicitParam(name="handlerUserid",value="处理人编号",required=false),
-		@ApiImplicitParam(name="handlerUsername",value="处理人",required=false),
-		@ApiImplicitParam(name="priority",value="优先级别",required=false),
-		@ApiImplicitParam(name="solution",value="解决方案:",required=false),
-		@ApiImplicitParam(name="description",value="问题描述",required=false),
-		@ApiImplicitParam(name="createUserid",value="问题创建人编号",required=false),
-		@ApiImplicitParam(name="createUsername",value="问题创建人",required=false),
-		@ApiImplicitParam(name="createTime",value="创建时间",required=false),
-		@ApiImplicitParam(name="bugStatus",value="create创建（active激活）–confirm确认（confirmed已确认）–solve解决（resolved已解决）–close关闭（closed已关闭）",required=false),
-		@ApiImplicitParam(name="bizProcInstId",value="当前流程实例编号",required=false),
-		@ApiImplicitParam(name="bizFlowState",value="当前流程状态0初始1审批中2审批通过3审批不通过4流程取消或者删除",required=false),
-		@ApiImplicitParam(name="menuId",value="菜单编号",required=false),
-		@ApiImplicitParam(name="menuName",value="菜单名称",required=false),
-		@ApiImplicitParam(name="planWorkload",value="预估工时单位人时",required=false),
-		@ApiImplicitParam(name="planCostAmount",value="预估成本金额",required=false),
-		@ApiImplicitParam(name="totalActWorkload",value="实际工时",required=false),
-		@ApiImplicitParam(name="totalActCostAmount",value="实际总金额",required=false),
-		@ApiImplicitParam(name="expectResult",value="期望结果",required=false),
-		@ApiImplicitParam(name="opStep",value="操作步骤",required=false),
-		@ApiImplicitParam(name="currResult",value="当前结果",required=false),
-		@ApiImplicitParam(name="refRequire",value="相关需求",required=false),
-		@ApiImplicitParam(name="bugSeverity",value="严重程度1、2、3、4，分别对应：致命缺陷、严重缺陷、普通缺陷、轻微缺陷",required=false),
-		@ApiImplicitParam(name="bugType",value="BUG类型1、2、3、4，分别对应：代码错误、低级缺陷、设计缺陷、配置相关、安全相关、性能问题、其他",required=false),
-		@ApiImplicitParam(name="tagIds",value="标签id列表逗号分隔",required=false),
-		@ApiImplicitParam(name="tagNames",value="标签名称列表逗号分隔",required=false),
-		@ApiImplicitParam(name="urls",value="链接地址列表逗号分隔",required=false),
-		@ApiImplicitParam(name="pageSize",value="每页记录数",required=false),
-		@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
-		@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-		@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student_id desc",required=false),
-		@ApiImplicitParam(name="count",value="是否进行总条数计算,count=true|false",required=false) 
-	})
+ 	@ApiEntityParams(XmQuestion.class)
 	@ApiResponses({
 		@ApiResponse(code = 200,response= XmQuestion.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
@@ -404,44 +369,99 @@ public class XmQuestionController {
 		Tips tips=new Tips("成功删除"+xmQuestions.size()+"条数据"); 
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
+			if(xmQuestions==null || xmQuestions.size()==0){
+				return ResponseHelper.failed("p-0","参数不能为空");
+			}
 			List<XmQuestion> xmQuestionsDb=xmQuestionService.selectListByIds(xmQuestions.stream().map(i->i.getId()).collect(Collectors.toList()));
+			if(xmQuestionsDb==null || xmQuestionsDb.size()==0){
+				return ResponseHelper.failed("data-0","所有数据已不存在");
+			}
 			List<XmQuestion> canDel=new ArrayList<>();
 			List<XmQuestion> noMyCreate=new ArrayList<>();
+
+			List<XmQuestion> noDel=new ArrayList<>();
+
+
+			/**
+			 * 如果有测试计划，有产品编号，走产品团队判断权限
+			 * 如果未通过，继续走项目权限判断
+			 */
+			Map<String,List<XmQuestion>> productsMap=new HashMap<>();//有产品的数据
+			Map<String,List<XmQuestion>> projectsMap=new HashMap<>();//没有产品、但有项目的数据
 			for (XmQuestion xmQuestion : xmQuestionsDb) {
-				if(!user.getUserid().equals(xmQuestion.getCreateUserid())){
-					noMyCreate.add(xmQuestion);
-				}else {
-					canDel.add(xmQuestion);
+				if(StringUtils.hasText(xmQuestion.getProductId())){
+					List<XmQuestion> datas=productsMap.get(xmQuestion.getProductId());
+					if(datas==null){
+						datas=new ArrayList<>();
+						datas.add(xmQuestion);
+						productsMap.put(xmQuestion.getProductId(),datas);
+					}else {
+						datas.add(xmQuestion);
+					}
+				}else if(StringUtils.hasText(xmQuestion.getProjectId())) {
+					List<XmQuestion> datas=projectsMap.get(xmQuestion.getProjectId());
+					if(datas==null){
+						datas=new ArrayList<>();
+						datas.add(xmQuestion);
+						projectsMap.put(xmQuestion.getProjectId(),datas);
+					}else {
+						datas.add(xmQuestion);
+					}
 				}
 			}
+
+			if(productsMap.size()>0){
+				for (String productId : productsMap.keySet()) {
+					XmProduct xmProduct=productService.getProductFromCache(productId);
+					Tips tips1=groupService.checkProductQx(xmProduct,user);
+					if(!tips1.isOk()){
+						noDel.addAll(productsMap.get(productId));
+						productsMap.remove(productId);
+					}else{
+						List<XmQuestion> questions=productsMap.get(productId);
+						for (XmQuestion question : questions) {
+							tips1=groupService.checkProductQx(xmProduct,user,question.getCreateUserid(),question.getHandlerUserid());
+							if(!tips1.isOk()){
+								noDel.add(question);
+							}else {
+								canDel.add(question);
+							}
+						}
+
+					}
+				}
+			}
+			if(projectsMap.size()>0){
+				for (String projectId : projectsMap.keySet()) {
+					XmProject xmProject=projectService.getProjectFromCache(projectId);
+					Tips tips1=groupService.checkProjectQx(xmProject,user);
+					if(!tips1.isOk()){
+						noDel.addAll(projectsMap.get(projectId));
+						projectsMap.remove(projectId);
+					}else{
+						List<XmQuestion> questions=projectsMap.get(projectId);
+						for (XmQuestion question : questions) {
+							tips1=groupService.checkProjectQx(xmProject,user,question.getCreateUserid(),question.getHandlerUserid());
+							if(!tips1.isOk()){
+								noDel.add(question);
+							}else {
+								canDel.add(question);
+							}
+						}
+					}
+				}
+			}
+
 			if(canDel.size()>0){
 				xmQuestionService.batchDelete(canDel);
-				List<XmQuestionHandle> handles=new ArrayList<>();
-				for (XmQuestion xmQuestionVo : canDel) {
-					XmQuestionHandle handle=new XmQuestionHandle();
-					handle.setReceiptMessage(user.getUsername()+"删除了缺陷:"+xmQuestionVo.getName());
-					handle.setHandleStatus(xmQuestionVo.getBugStatus());
-					handle.setCreateTime(new Date());
-					handle.setReceiptTime(new Date());
-					handle.setHandlerUserid(xmQuestionVo.getCreateUserid());
-					handle.setHandlerUsername(xmQuestionVo.getCreateUsername());
-					handle.setLastUpdateTime(new Date());
-					handle.setHandleSolution(xmQuestionVo.getSolution());
-					handle.setQuestionId(xmQuestionVo.getId());
-					handle.setTargetUserid(xmQuestionVo.getHandlerUserid());
-					handle.setTargetUsername(xmQuestionVo.getHandlerUsername());
-					handle.setId(this.xmQuestionHandleService.createKey("id"));
-					handles.add(handle);
-				}
-				xmQuestionHandleService.batchAddAsync(handles);
 			}
 
 			List<String> msgs=new ArrayList<>();
 			if(canDel.size()>0){
 				msgs.add(String.format("删除了%s个缺陷。",canDel.size()));
 			}
-			if(noMyCreate.size()>0){
-				msgs.add(String.format("以下%s个缺陷不属于您创建的缺陷，无权限删除。",noMyCreate.size()));
+			if(noDel.size()>0){
+				msgs.add(String.format("其中%s个缺陷，无权限删除。",noDel.size()));
 			}
 			if(canDel.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
