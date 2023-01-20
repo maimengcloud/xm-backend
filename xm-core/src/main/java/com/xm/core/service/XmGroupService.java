@@ -151,7 +151,6 @@ public class XmGroupService extends BaseService {
 	    
     }
 
-
 	/**
 	 *
 	 * @param xmProduct
@@ -165,29 +164,59 @@ public class XmGroupService extends BaseService {
 		if(headIsPm){
 			return tips;
 		}
-		tips=this.checkProductScopeQx(xmProduct,teamType,head);
+		Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
+		tips=this.checkProductScopeQx(groupsMap,xmProduct,teamType,head);
 		if(!tips.isOk()){
 			return tips;
 		}
-		return this.checkProductTransmitQx(xmProduct,teamType,head.getUserid(),head.getUserid());
+		return this.checkProductTransmitQx(groupsMap,xmProduct,teamType,head.getUserid(),head.getUserid());
 	}
 	public Tips checkProductQx(XmProduct xmProduct,int teamType,User head,String ...memUserids){
-		Tips tips=new Tips("成功"); 
-		tips=this.checkProductScopeQx(xmProduct,teamType,head,memUserids);
+		Tips tips=new Tips("成功");
+		Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
+		tips=this.checkProductScopeQx(groupsMap,xmProduct,teamType,head,memUserids);
 		if(!tips.isOk()){
 			return tips;
 		}
-		return this.checkProductTransmitQx(xmProduct,teamType,head.getUserid(),memUserids);
+		return this.checkProductTransmitQx(groupsMap,xmProduct,teamType,head.getUserid(),memUserids);
 	}
-	public Tips checkProductScopeQx(XmProduct xmProduct,int teamType,User head,String ...memUserids){
+	/**
+	 *
+	 * @param groupsMap 产品组缓存数据，当需要循环执行时，避免多次查询缓存与数据库
+	 * @param xmProduct
+	 * @param teamType 0-需求人员 1-测试人员,2-迭代人员
+	 * @param head
+	 * @return
+	 */
+	public Tips checkProductQx(Map<String,List<XmGroupVo>> groupsMap,XmProduct xmProduct,int teamType,User head){
+		Tips tips=new Tips("成功");
+		boolean headIsPm=this.checkUserIsProductAdm(xmProduct,head.getUserid());
+		if(headIsPm){
+			return tips;
+		}
+		tips=this.checkProductScopeQx(groupsMap,xmProduct,teamType,head);
+		if(!tips.isOk()){
+			return tips;
+		}
+		return this.checkProductTransmitQx(groupsMap,xmProduct,teamType,head.getUserid(),head.getUserid());
+	}
+	public Tips checkProductQx(Map<String,List<XmGroupVo>> groupsMap,XmProduct xmProduct,int teamType,User head,String ...memUserids){
+		Tips tips=new Tips("成功"); 
+		tips=this.checkProductScopeQx(groupsMap,xmProduct,teamType,head,memUserids);
+		if(!tips.isOk()){
+			return tips;
+		}
+		return this.checkProductTransmitQx(groupsMap,xmProduct,teamType,head.getUserid(),memUserids);
+	}
+	public Tips checkProductScopeQx(Map<String,List<XmGroupVo>> groupsMap,XmProduct xmProduct,int teamType,User head,String ...memUserids){
 		Tips tips=new Tips("成功");
 
 		if(memUserids==null || memUserids.length==0){
-			return this.checkProductScopeQx(xmProduct,teamType,head.getUserid(),head.getUsername(),head.getBranchId());
+			return this.checkProductScopeQx(groupsMap,xmProduct,teamType,head.getUserid(),head.getUsername(),head.getBranchId());
 		}
 		Set<String> memUseridSet= Arrays.stream(memUserids).filter(k->StringUtils.hasText(k)&&!k.equals(head.getUserid())).collect(Collectors.toSet());
 		if(memUseridSet.size()==0){
-			return this.checkProductScopeQx(xmProduct,teamType,head.getUserid(),head.getUsername(),head.getBranchId());
+			return this.checkProductScopeQx(groupsMap,xmProduct,teamType,head.getUserid(),head.getUsername(),head.getBranchId());
 		}
 		String username=head.getUsername();
 		String scopeQx= QxTool.getProductScopeQx(xmProduct.getQxCode(),teamType);
@@ -220,7 +249,7 @@ public class XmGroupService extends BaseService {
 
 
 		}else if("2".equals(scopeQx)){//同产品
-			List<XmGroupVo> groups=this.getProductGroupVoList(xmProduct.getId());
+			List<XmGroupVo> groups=this.getProductGroupsFromLocalCache(groupsMap,xmProduct.getId());
 			if( !headIsPm && !this.checkUserExistsGroup(groups, head.getUserid())){
 				tips.setFailureMsg("pdqx-scope-product-0",String.format("产品【%s】只开放给同产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),username));
 				return tips;
@@ -236,8 +265,8 @@ public class XmGroupService extends BaseService {
 			tips.setFailureMsg("pdqx-scope-product-1",String.format("产品【%s】只开放给同产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
 			return tips;
 		}else if("3".equals(scopeQx)){//同小组
-			List<XmGroupVo> groups=this.getProductGroupVoList(xmProduct.getId());
-			List<XmGroupVo> headGroups=groups; 
+			List<XmGroupVo> groups=this.getProductGroupsFromLocalCache(groupsMap,xmProduct.getId());
+			List<XmGroupVo> headGroups=groups;
 			
 			if( !headIsPm ){
 				headGroups=this.getUserGroups(groups,head.getUserid());
@@ -270,7 +299,7 @@ public class XmGroupService extends BaseService {
 	 * @param ubranchId
 	 * @return
 	 */
-	public Tips checkProductScopeQx(XmProduct xmProduct,int teamType,String userid,String username,String ubranchId){
+	public Tips checkProductScopeQx(Map<String,List<XmGroupVo>> groupsMap,XmProduct xmProduct,int teamType,String userid,String username,String ubranchId){
 		Tips tips=new Tips("成功");
 		String scopeQx= QxTool.getProductScopeQx(xmProduct.getQxCode(),teamType);
 		boolean isPm=this.checkUserIsProductAdm(xmProduct,userid);
@@ -299,12 +328,13 @@ public class XmGroupService extends BaseService {
 			}
 
 		}else if("2".equals(scopeQx)){//同产品
-			if(!this.checkUserExistsGroup(this.getProductGroupVoList(xmProduct.getId()), userid)){
+			if(!this.checkUserExistsGroup(getProductGroupsFromLocalCache(groupsMap,xmProduct.getId()), userid)){
 				tips.setFailureMsg("pdqx-scope-product-0",String.format("产品【%s】只开放给同产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),username));
 				return tips;
 			};
 		}else if("3".equals(scopeQx)){//同小组
-			if(!this.checkUserExistsProductGroup(xmProduct.getId(), userid)){
+
+			if(!this.checkUserExistsGroup(getProductGroupsFromLocalCache(groupsMap,xmProduct.getId()), userid)){
 				tips.setFailureMsg("pdqx-scope-team-0",String.format("产品【%s】只开放给同产品同小组人员,【%s】不在产品团队中。",xmProduct.getId(),username));
 				return tips;
 			}
@@ -312,7 +342,32 @@ public class XmGroupService extends BaseService {
 		return tips;
 	}
 
-	public Tips checkProductTransmitQx(XmProduct xmProduct,int teamType,String headUserid,String ...memUserids){
+	List<XmGroupVo> getProductGroupsFromLocalCache(Map<String,List<XmGroupVo>> groupsMap,String productId){
+		List<XmGroupVo> groupVoList=null;
+		if(groupsMap!=null && groupsMap.containsKey(productId)){
+			groupVoList=groupsMap.get(productId);
+		}else{
+			groupVoList=getProductGroupVoList(productId);
+			if(groupsMap!=null){
+				groupsMap.put(productId,groupVoList);
+			}
+		}
+		return groupVoList;
+	}
+	List<XmGroupVo> getProjectGroupsFromLocalCache(Map<String,List<XmGroupVo>> groupsMap,String projectId){
+		List<XmGroupVo> groupVoList=null;
+		if(groupsMap!=null && groupsMap.containsKey(projectId)){
+			groupVoList=groupsMap.get(projectId);
+		}else{
+			groupVoList=getProjectGroupVoList(projectId);
+			if(groupsMap!=null){
+				groupsMap.put(projectId,groupVoList);
+			}
+		}
+		return groupVoList;
+	}
+
+	public Tips checkProductTransmitQx(Map<String,List<XmGroupVo>> groupsMap,XmProduct xmProduct,int teamType,String headUserid,String ...memUserids){
 		Tips tips=new Tips("成功");
 		String transmitQx= QxTool.getProductTransmitQx(xmProduct.getQxCode(),teamType);
 		if("0".equals(transmitQx)){//不检查上下级关系
@@ -325,7 +380,7 @@ public class XmGroupService extends BaseService {
 			if(memUseridSet.size()==0){
 				return tips;
 			}
-			List<XmGroupVo> groups=this.getProductGroupVoList(xmProduct.getId());
+			List<XmGroupVo> groups=getProductGroupsFromLocalCache(groupsMap,xmProduct.getId());
 			for (String memUserid : memUseridSet) {
 				if(this.checkUserIsOtherUserTeamHeadOrAss(groups,headUserid,memUserid)){
 					return tips;
@@ -359,10 +414,6 @@ public class XmGroupService extends BaseService {
 	}
 	public Tips checkProjectQx(XmProject xmProject,User head,String ...memUserids){
 		Tips tips=new Tips("成功");
-		boolean headIsPm=this.checkUserIsProjectAdm(xmProject,head.getUserid());
-		if(headIsPm){
-			return tips;
-		}
 		tips=this.checkProjectScopeQx(xmProject,head,memUserids);
 		if(!tips.isOk()){
 			return tips;
