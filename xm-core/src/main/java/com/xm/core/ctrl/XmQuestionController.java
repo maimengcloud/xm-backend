@@ -377,9 +377,10 @@ public class XmQuestionController {
 				return ResponseHelper.failed("data-0","所有数据已不存在");
 			}
 			List<XmQuestion> canDel=new ArrayList<>();
-			List<XmQuestion> noMyCreate=new ArrayList<>();
 
 			List<XmQuestion> noDel=new ArrayList<>();
+
+			List<Tips> noDelTips=new ArrayList<>();
 
 
 			/**
@@ -413,16 +414,18 @@ public class XmQuestionController {
 			if(productsMap.size()>0){
 				for (String productId : productsMap.keySet()) {
 					XmProduct xmProduct=productService.getProductFromCache(productId);
-					Tips tips1=groupService.checkProductQx(xmProduct,user);
+					Tips tips1=groupService.checkProductQx(xmProduct,1,user);
 					if(!tips1.isOk()){
 						noDel.addAll(productsMap.get(productId));
 						productsMap.remove(productId);
+						noDelTips.add(tips1);
 					}else{
 						List<XmQuestion> questions=productsMap.get(productId);
 						for (XmQuestion question : questions) {
-							tips1=groupService.checkProductQx(xmProduct,user,question.getCreateUserid(),question.getHandlerUserid());
+							tips1=groupService.checkProductQx(xmProduct,1,user,question.getCreateUserid(),question.getHandlerUserid());
 							if(!tips1.isOk()){
 								noDel.add(question);
+								noDelTips.add(tips1);
 							}else {
 								canDel.add(question);
 							}
@@ -438,12 +441,14 @@ public class XmQuestionController {
 					if(!tips1.isOk()){
 						noDel.addAll(projectsMap.get(projectId));
 						projectsMap.remove(projectId);
+						noDelTips.add(tips1);
 					}else{
 						List<XmQuestion> questions=projectsMap.get(projectId);
 						for (XmQuestion question : questions) {
 							tips1=groupService.checkProjectQx(xmProject,user,question.getCreateUserid(),question.getHandlerUserid());
 							if(!tips1.isOk()){
 								noDel.add(question);
+								noDelTips.add(tips1);
 							}else {
 								canDel.add(question);
 							}
@@ -461,7 +466,7 @@ public class XmQuestionController {
 				msgs.add(String.format("删除了%s个缺陷。",canDel.size()));
 			}
 			if(noDel.size()>0){
-				msgs.add(String.format("其中%s个缺陷，无权限删除。",noDel.size()));
+				msgs.add(String.format("其中%s个缺陷，无权限删除。原因【%s】",noDel.size(),noDelTips.stream().map(k->k.getMsg()).collect(Collectors.joining(";"))));
 			}
 			if(canDel.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
