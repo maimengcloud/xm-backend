@@ -173,16 +173,9 @@ public class XmQuestionController {
 			if(words!=null && words.size()>0){
 				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
-			XmProject xmProject=projectService.getProjectFromCache(xmQuestionVo.getProjectId());
-			Tips tips1 = this.groupService.checkProjectQx(xmProject,user);
-			if(!tips1.isOk()){
-				if(StringUtils.hasText(xmQuestionVo.getProductId())){
-					XmProduct xmProduct=productService.getProductFromCache(xmQuestionVo.getProductId());
-					tips1=this.groupService.checkProductQx(xmProduct,1,user);
-				}
-			}
-			if(!tips1.isOk()){
-				return failed(tips1);
+ 			tips=checkOneQx(xmQuestionVo.getProjectId(),xmQuestionVo.getProductId());
+			if(!tips.isOk()){
+				return failed(tips);
 			}
 
 			xmQuestionService.addQuestion(xmQuestionVo);
@@ -235,8 +228,17 @@ public class XmQuestionController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
-			User user=LoginUtils.getCurrentUserInfo();
 
+
+			if(!StringUtils.hasText(xmQuestionVo.getId())){
+				return failed("id-0","编号不能为空");
+			}
+			XmQuestion xmQuestionDb=this.xmQuestionService.selectOneById(xmQuestionVo.getId());
+			tips=checkOneQx(xmQuestionDb.getProjectId(),xmQuestionDb.getProductId());
+			if(!tips.isOk()){
+				return failed(tips);
+			}
+			User user=LoginUtils.getCurrentUserInfo();
 			xmQuestionService.updateQuestion(xmQuestionVo);
 			if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {
 				xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(), user.getUsername()+"修改bug【"+xmQuestionVo.getName()+"】");
@@ -263,8 +265,18 @@ public class XmQuestionController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
+
+			if(!StringUtils.hasText(xmQuestion.getId())){
+				return failed("id-0","编号不能为空");
+			}
+
+			XmQuestion xmQuestionDb=this.xmQuestionService.selectOneById(xmQuestion.getId());
+			tips=checkOneQx(xmQuestionDb.getProjectId(),xmQuestionDb.getProductId());
+			if(!tips.isOk()){
+				return failed(tips);
+			}
+			User user=LoginUtils.getCurrentUserInfo();
 			xmQuestionService.updateSomeFieldByPk(xmQuestion);
-			User user=LoginUtils.getCurrentUserInfo(); 
  			if(!StringUtils.isEmpty(xmQuestion.getHandlerUserid())) {
 				xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestion.getHandlerUserid(),xmQuestion.getHandlerUsername(), user.getUsername()+"修改bug【"+xmQuestion.getName()+"】状态");
 			}
@@ -463,6 +475,18 @@ public class XmQuestionController {
 	}
 
 
+	public Tips checkOneQx(String projectId,String productId){
+		User user=LoginUtils.getCurrentUserInfo();
+		XmProject xmProject=projectService.getProjectFromCache(projectId );
+		Tips tips1 = this.groupService.checkProjectQx(xmProject,user);
+		if(!tips1.isOk()){
+			if(StringUtils.hasText(productId)){
+				XmProduct xmProduct=productService.getProductFromCache(productId);
+				tips1=this.groupService.checkProductQx(xmProduct,1,user);
+			}
+		}
+		return tips1;
+	}
 
 	public void checkQx(List<XmQuestion> xmQuestionsDb, List<XmQuestion> canOper, List<XmQuestion> noOper, Map<String,Tips> noOperTips){
 		User user=LoginUtils.getCurrentUserInfo();
