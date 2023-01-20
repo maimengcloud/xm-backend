@@ -322,64 +322,66 @@ public class XmQuestionController {
 			Map<String,Tips> noOperTips=new HashMap<>();
 
 			this.checkQx(xmQuestionsDb,canOper,noOper,noOperTips);
+			if(canOper.size()>0){
+				xmQuestionMap.put("ids",canOper.stream().map(k->k.getId()).collect(Collectors.toList()));
 
-			xmQuestionMap.put("ids",canOper.stream().map(k->k.getId()).collect(Collectors.toList()));
-
-			Set<String> fieldKey=xmQuestionMap.keySet().stream().filter(i->fieldsMap.containsKey(i)).collect(Collectors.toSet());
-			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmQuestionMap.get(i) )).collect(Collectors.toSet());
-			if(fieldKey.size()>0){
-				Set<String> fields=new HashSet<>();
-				for (String fieldName : xmQuestionMap.keySet()) {
-					if(fields.contains(fieldName)){
-						return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+				Set<String> fieldKey=xmQuestionMap.keySet().stream().filter(i->fieldsMap.containsKey(i)).collect(Collectors.toSet());
+				fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmQuestionMap.get(i) )).collect(Collectors.toSet());
+				if(fieldKey.size()>0){
+					Set<String> fields=new HashSet<>();
+					for (String fieldName : xmQuestionMap.keySet()) {
+						if(fields.contains(fieldName)){
+							return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+						}
 					}
-				}
-				xmQuestionService.editSomeFields(xmQuestionMap);
-				String remarks= (String) xmQuestionMap.get("remarks");
-				String description= (String) xmQuestionMap.get("description");
-				String handlerUsername= (String) xmQuestionMap.get("handlerUsername");
-				String bugStatus= (String) xmQuestionMap.get("bugStatus");
+					xmQuestionService.editSomeFields(xmQuestionMap);
+					String remarks= (String) xmQuestionMap.get("remarks");
+					String description= (String) xmQuestionMap.get("description");
+					String handlerUsername= (String) xmQuestionMap.get("handlerUsername");
+					String bugStatus= (String) xmQuestionMap.get("bugStatus");
 
-				List<XmQuestionHandle> handles=new ArrayList<>();
-				Map<String,Object> map=new HashMap<>();
-				map.putAll(xmQuestionMap);
-				map.remove("ids");
-				for (XmQuestion xmQuestionVo : canOper) {
-					Map<String,Object> m2=BaseUtils.toMap(xmQuestionVo);
-					m2.putAll(map);
-					xmQuestionVo=BaseUtils.fromMap(m2,XmQuestion.class);
-					XmQuestionHandle handle=new XmQuestionHandle();
-					if(StringUtils.hasText(remarks)){
-						handle.setReceiptMessage(user.getUsername()+"修改缺陷处理意见为："+xmQuestionVo.getRemarks());
-					}else if(StringUtils.hasText(handlerUsername)){
-						handle.setReceiptMessage(user.getUsername()+"将缺陷指派给"+handlerUsername);
-						notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"5",xmQuestionVo.getProductId(),xmQuestionVo.getId(),user.getUsername()+"将bug【"+xmQuestionVo.getName()+"】指派给您，请及时跟进。");
+					List<XmQuestionHandle> handles=new ArrayList<>();
+					Map<String,Object> map=new HashMap<>();
+					map.putAll(xmQuestionMap);
+					map.remove("ids");
+					for (XmQuestion xmQuestionVo : canOper) {
+						Map<String,Object> m2=BaseUtils.toMap(xmQuestionVo);
+						m2.putAll(map);
+						xmQuestionVo=BaseUtils.fromMap(m2,XmQuestion.class);
+						XmQuestionHandle handle=new XmQuestionHandle();
+						if(StringUtils.hasText(remarks)){
+							handle.setReceiptMessage(user.getUsername()+"修改缺陷处理意见为："+xmQuestionVo.getRemarks());
+						}else if(StringUtils.hasText(handlerUsername)){
+							handle.setReceiptMessage(user.getUsername()+"将缺陷指派给"+handlerUsername);
+							notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"5",xmQuestionVo.getProductId(),xmQuestionVo.getId(),user.getUsername()+"将bug【"+xmQuestionVo.getName()+"】指派给您，请及时跟进。");
 
-					}else if(StringUtils.hasText(bugStatus)){
-						handle.setReceiptMessage(user.getUsername()+"将缺陷状态改为"+bugStatus);
-					}else  if(StringUtils.hasText(description)){
-						handle.setReceiptMessage(user.getUsername()+"修改了缺陷描述："+description);
-					}else{
-						handle.setReceiptMessage(user.getUsername()+"修改了缺陷信息："+map.toString());
+						}else if(StringUtils.hasText(bugStatus)){
+							handle.setReceiptMessage(user.getUsername()+"将缺陷状态改为"+bugStatus);
+						}else  if(StringUtils.hasText(description)){
+							handle.setReceiptMessage(user.getUsername()+"修改了缺陷描述："+description);
+						}else{
+							handle.setReceiptMessage(user.getUsername()+"修改了缺陷信息："+map.toString());
+						}
+
+						handle.setHandleStatus(xmQuestionVo.getBugStatus());
+						handle.setCreateTime(new Date());
+						handle.setReceiptTime(new Date());
+						handle.setHandlerUserid(xmQuestionVo.getCreateUserid());
+						handle.setHandlerUsername(xmQuestionVo.getCreateUsername());
+						handle.setLastUpdateTime(new Date());
+						handle.setHandleSolution(xmQuestionVo.getSolution());
+						handle.setQuestionId(xmQuestionVo.getId());
+						handle.setTargetUserid(xmQuestionVo.getHandlerUserid());
+						handle.setTargetUsername(xmQuestionVo.getHandlerUsername());
+						handle.setId(this.xmQuestionHandleService.createKey("id"));
+						handles.add(handle);
 					}
 
-					handle.setHandleStatus(xmQuestionVo.getBugStatus());
-					handle.setCreateTime(new Date());
-					handle.setReceiptTime(new Date());
-					handle.setHandlerUserid(xmQuestionVo.getCreateUserid());
-					handle.setHandlerUsername(xmQuestionVo.getCreateUsername());
-					handle.setLastUpdateTime(new Date());
-					handle.setHandleSolution(xmQuestionVo.getSolution());
-					handle.setQuestionId(xmQuestionVo.getId());
-					handle.setTargetUserid(xmQuestionVo.getHandlerUserid());
-					handle.setTargetUsername(xmQuestionVo.getHandlerUsername());
-					handle.setId(this.xmQuestionHandleService.createKey("id"));
-					handles.add(handle);
+					xmQuestionHandleService.batchAddAsync(handles);
+
 				}
-
-				xmQuestionHandleService.batchAddAsync(handles);
-
 			}
+
 
 			List<String> msgs=new ArrayList<>();
 			if(canOper.size()>0){
