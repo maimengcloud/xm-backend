@@ -155,7 +155,7 @@ public class XmGroupService extends BaseService {
 	/**
 	 *
 	 * @param xmProduct
-	 * @param teamType 1-需求人员 2-测试人员,3-迭代人员
+	 * @param teamType 0-需求人员 1-测试人员,2-迭代人员
 	 * @param head
 	 * @return
 	 */

@@ -173,6 +173,18 @@ public class XmQuestionController {
 			if(words!=null && words.size()>0){
 				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
+			XmProject xmProject=projectService.getProjectFromCache(xmQuestionVo.getProjectId());
+			Tips tips1 = this.groupService.checkProjectQx(xmProject,user);
+			if(!tips1.isOk()){
+				if(StringUtils.hasText(xmQuestionVo.getProductId())){
+					XmProduct xmProduct=productService.getProductFromCache(xmQuestionVo.getProductId());
+					tips1=this.groupService.checkProductQx(xmProduct,1,user);
+				}
+			}
+			if(!tips1.isOk()){
+				return failed(tips1);
+			}
+
 			xmQuestionService.addQuestion(xmQuestionVo);
 			if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {
 				notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"5",xmQuestionVo.getProductId(),xmQuestionVo.getId(),"您有新的bug【"+xmQuestionVo.getName()+"】需要处理，请尽快修复！");
