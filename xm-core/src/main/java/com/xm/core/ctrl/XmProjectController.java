@@ -190,6 +190,9 @@ public class XmProjectController {
 				msgs.add(String.format("有%s个数据无权限更新",no.size()));
 			}
 			if(can.size()>0){
+				for (XmProject project : can) {
+					xmProjectService.clearProject(project.getId());
+				}
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
