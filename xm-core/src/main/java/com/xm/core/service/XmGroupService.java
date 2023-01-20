@@ -160,7 +160,7 @@ public class XmGroupService extends BaseService {
 	 * @return
 	 */
 	public Tips checkProductQx(XmProduct xmProduct,int teamType,User head){
-		Tips tips=new Tips();
+		Tips tips=new Tips("成功");
 		boolean headIsPm=this.checkUserIsProductAdm(xmProduct,head.getUserid());
 		if(headIsPm){
 			return tips;
@@ -172,11 +172,7 @@ public class XmGroupService extends BaseService {
 		return this.checkProductTransmitQx(xmProduct,teamType,head.getUserid(),head.getUserid());
 	}
 	public Tips checkProductQx(XmProduct xmProduct,int teamType,User head,String ...memUserids){
-		Tips tips=new Tips("成功");
-		boolean headIsPm=this.checkUserIsProductAdm(xmProduct,head.getUserid());
-		if(headIsPm){
-			return tips;
-		}
+		Tips tips=new Tips("成功"); 
 		tips=this.checkProductScopeQx(xmProduct,teamType,head,memUserids);
 		if(!tips.isOk()){
 			return tips;
@@ -184,7 +180,7 @@ public class XmGroupService extends BaseService {
 		return this.checkProductTransmitQx(xmProduct,teamType,head.getUserid(),memUserids);
 	}
 	public Tips checkProductScopeQx(XmProduct xmProduct,int teamType,User head,String ...memUserids){
-		Tips tips=new Tips();
+		Tips tips=new Tips("成功");
 
 		if(memUserids==null || memUserids.length==0){
 			return this.checkProductScopeQx(xmProduct,teamType,head.getUserid(),head.getUsername(),head.getBranchId());
@@ -275,7 +271,7 @@ public class XmGroupService extends BaseService {
 	 * @return
 	 */
 	public Tips checkProductScopeQx(XmProduct xmProduct,int teamType,String userid,String username,String ubranchId){
-		Tips tips=new Tips();
+		Tips tips=new Tips("成功");
 		String scopeQx= QxTool.getProductScopeQx(xmProduct.getQxCode(),teamType);
 		boolean isPm=this.checkUserIsProductAdm(xmProduct,userid);
 		if(isPm){
@@ -317,7 +313,7 @@ public class XmGroupService extends BaseService {
 	}
 
 	public Tips checkProductTransmitQx(XmProduct xmProduct,int teamType,String headUserid,String ...memUserids){
-		Tips tips=new Tips();
+		Tips tips=new Tips("成功");
 		String transmitQx= QxTool.getProductTransmitQx(xmProduct.getQxCode(),teamType);
 		if("0".equals(transmitQx)){//不检查上下级关系
 			return tips;
@@ -350,7 +346,7 @@ public class XmGroupService extends BaseService {
 	 * @return
 	 */
 	public Tips checkProjectQx(XmProject xmProject,User head){
-		Tips tips=new Tips();
+		Tips tips=new Tips("成功");
 		boolean headIsPm=this.checkUserIsProjectAdm(xmProject,head.getUserid());
 		if(headIsPm){
 			return tips;
@@ -374,7 +370,7 @@ public class XmGroupService extends BaseService {
 		return this.checkProjectTransmitQx(xmProject,head.getUserid(),memUserids);
 	}
 	public Tips checkProjectScopeQx(XmProject xmProject,User head,String ...memUserids){
-		Tips tips=new Tips();
+		Tips tips=new Tips("成功");
 
 		if(memUserids==null || memUserids.length==0){
 			return this.checkProjectScopeQx(xmProject,head.getUserid(),head.getUsername(),head.getBranchId());
@@ -464,7 +460,7 @@ public class XmGroupService extends BaseService {
 	 * @return
 	 */
 	public Tips checkProjectScopeQx(XmProject xmProject,String userid,String username,String ubranchId){
-		Tips tips=new Tips();
+		Tips tips=new Tips("成功");
 		String scopeQx= QxTool.getProjectScopeQx(xmProject.getQxCode());
 		boolean isPm=this.checkUserIsProjectAdm(xmProject,userid);
 		if(isPm){
@@ -506,7 +502,7 @@ public class XmGroupService extends BaseService {
 	}
 
 	public Tips checkProjectTransmitQx(XmProject xmProject,String headUserid,String ...memUserids){
-		Tips tips=new Tips();
+		Tips tips=new Tips("成功");
 		String transmitQx= QxTool.getProjectTransmitQx(xmProject.getQxCode());
 		if("0".equals(transmitQx)){//不检查上下级关系
 			return tips;
