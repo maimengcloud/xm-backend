@@ -23,7 +23,7 @@ public class QxTool {
      * @param qxCode
      * @return
      */
-    public static String getTaskScopeQx(String qxCode){
+    public static String getProjectScopeQx(String qxCode){
         String def="2";
         if(StringUtils.isEmpty(qxCode)){
             return def;
@@ -46,7 +46,7 @@ public class QxTool {
      * @param qxCode
      * @return
      */
-    public static String getTaskTransmitQx(String qxCode){
+    public static String getProjectTransmitQx(String qxCode){
         String def="0";
         if(StringUtils.isEmpty(qxCode)){
             return def;
@@ -125,4 +125,5 @@ public class QxTool {
             }
         }
     }
+
 }
