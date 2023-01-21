@@ -351,10 +351,10 @@ public class XmQuestionController {
 						String handlerUserid= (String) xmQuestionMap.get("handlerUserid");
 						String handlerUsername= (String) xmQuestionMap.get("handlerUsername");
 						XmQuestion xmQuedb=canOper.get(0);
-						Tips tips1=productQxService.checkProductScopeQx(null,productService.getProductFromCache(xmQuedb.getProductId()),1,handlerUserid,handlerUsername,null);
+						Tips tips1=productQxService.checkProductScopeQx(null,productService.getProductFromCache(xmQuedb.getProductId()),1,user,handlerUserid,handlerUsername,null);
 						if(!tips1.isOk()){
 							if(StringUtils.hasText(xmQuedb.getProjectId())){
-								tips1=groupService.checkProjectScopeQx(projectService.getProjectFromCache(xmQuedb.getProjectId()),handlerUserid,handlerUsername,null);
+								tips1=projectQxService.checkProjectScopeQx(null,projectService.getProjectFromCache(xmQuedb.getProjectId()),1,user,handlerUserid,handlerUsername,null);
 							}
 							if(!tips1.isOk()){
 								return failed(tips1);
@@ -507,7 +507,7 @@ public class XmQuestionController {
 	public Tips checkOneQx(String projectId,String productId){
 		User user=LoginUtils.getCurrentUserInfo();
 		XmProject xmProject=projectService.getProjectFromCache(projectId );
-		Tips tips1 = this.groupService.checkProjectQx(xmProject,user);
+		Tips tips1 = this.projectQxService.checkProjectQx(xmProject,1,user);
 		if(!tips1.isOk()){
 			if(StringUtils.hasText(productId)){
 				XmProduct xmProduct=productService.getProductFromCache(productId);
