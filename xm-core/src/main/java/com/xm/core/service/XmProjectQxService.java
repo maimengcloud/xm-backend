@@ -330,14 +330,14 @@ public class XmProjectQxService {
     }
 
 
-    List<XmGroupVo> getProjectGroupsFromLocalCache(Map<String,List<XmGroupVo>> groupsMap,String productId){
+    List<XmGroupVo> getProjectGroupsFromLocalCache(Map<String,List<XmGroupVo>> groupsMap,String projectId){
         List<XmGroupVo> groupVoList=null;
-        if(groupsMap!=null && groupsMap.containsKey(productId)){
-            groupVoList=groupsMap.get(productId);
+        if(groupsMap!=null && groupsMap.containsKey(projectId)){
+            groupVoList=groupsMap.get(projectId);
         }else{
-            groupVoList=xmGroupService.getProjectGroupVoList(productId);
+            groupVoList=xmGroupService.getProjectGroupVoList(projectId);
             if(groupsMap!=null){
-                groupsMap.put(productId,groupVoList);
+                groupsMap.put(projectId,groupVoList);
             }
         }
         return groupVoList;
