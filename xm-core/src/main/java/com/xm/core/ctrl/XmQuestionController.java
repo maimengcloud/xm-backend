@@ -334,6 +334,20 @@ public class XmQuestionController {
 							return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
 						}
 					}
+					if(xmQuestionMap.containsKey("handlerUserid")){
+						String handlerUserid= (String) xmQuestionMap.get("handlerUserid");
+						String handlerUsername= (String) xmQuestionMap.get("handlerUsername");
+						XmQuestion xmQuedb=canOper.get(0);
+						Tips tips1=groupService.checkProductScopeQx(null,productService.getProductFromCache(xmQuedb.getProductId()),1,handlerUserid,handlerUsername,null);
+						if(!tips1.isOk()){
+							if(StringUtils.hasText(xmQuedb.getProjectId())){
+								tips1=groupService.checkProjectScopeQx(projectService.getProjectFromCache(xmQuedb.getProjectId()),handlerUserid,handlerUsername,null);
+							}
+							if(!tips1.isOk()){
+								return failed(tips1);
+							}
+						}
+					}
 					xmQuestionService.editSomeFields(xmQuestionMap);
 					String remarks= (String) xmQuestionMap.get("remarks");
 					String description= (String) xmQuestionMap.get("description");

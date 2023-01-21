@@ -478,7 +478,7 @@ public class XmMenuController {
 				return ResponseHelper.failed("product-data-0","产品已不存在");
 			}
 			Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
-			tips=groupService.checkProductQx(groupsMap,xmProduct,1,user);
+			tips=groupService.checkProductQx(groupsMap,xmProduct,0,user);
 			if(!tips.isOk()){
 				return failed(tips);
 			}
@@ -486,7 +486,11 @@ public class XmMenuController {
 				String mmUserid= (String) xmMenuMap.get("mmUserid");
 				String mmUsername= (String) xmMenuMap.get("mmUsername");
 				if(!user.getUserid().equals(mmUserid)){
-					tips=groupService.checkProductQx(groupsMap,xmProduct,1,user,mmUserid);
+					tips=groupService.checkProductScopeQx(groupsMap,xmProduct,0,user,mmUserid,mmUsername,null);
+					if(!tips.isOk()){
+						return failed(tips);
+					}
+					tips=groupService.checkProductTransmitQx(groupsMap,xmProduct,0,user,mmUserid,mmUsername);
 					if(!tips.isOk()){
 						return failed(tips);
 					}
@@ -496,7 +500,7 @@ public class XmMenuController {
 			List<XmMenu> noOper=new ArrayList<>();
 			Map<String,Tips> noOperTips=new HashMap<>();
 			for (XmMenu xm : xmMenusDb) {
-				tips=groupService.checkProductQx(groupsMap,xmProduct,1,user,xm.getMmUserid());
+				tips=groupService.checkProductQx(groupsMap,xmProduct,0,user,xm.getMmUserid());
 				if(tips.isOk()){
 					canOper.add(xm);
 				}else{

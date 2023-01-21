@@ -173,6 +173,9 @@ public class XmGroupService extends BaseService {
 	}
 	public Tips checkProductQx(XmProduct xmProduct,int teamType,User head,String ...memUserids){
 		Tips tips=new Tips("成功");
+		if(checkUserIsProductAdm(xmProduct,head.getUserid())){
+			return tips;
+		}
 		Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
 		tips=this.checkProductScopeQx(groupsMap,xmProduct,teamType,head,memUserids);
 		if(!tips.isOk()){
@@ -195,6 +198,26 @@ public class XmGroupService extends BaseService {
 			return tips;
 		}
 		tips=this.checkProductScopeQx(groupsMap,xmProduct,teamType,head);
+		if(!tips.isOk()){
+			return tips;
+		}
+		return this.checkProductTransmitQx(groupsMap,xmProduct,teamType,head.getUserid(),head.getUserid());
+	}
+	/**
+	 *
+	 * @param groupsMap 产品组缓存数据，当需要循环执行时，避免多次查询缓存与数据库
+	 * @param xmProduct
+	 * @param teamType 0-需求人员 1-测试人员,2-迭代人员
+	 * @param head
+	 * @return
+	 */
+	public Tips checkProductQx(Map<String,List<XmGroupVo>> groupsMap,XmProduct xmProduct,int teamType,User head,String userid,String username,String branchId){
+		Tips tips=new Tips("成功");
+		boolean headIsPm=this.checkUserIsProductAdm(xmProduct,head.getUserid());
+		if(headIsPm){
+			return tips;
+		}
+		tips=this.checkProductScopeQx(groupsMap,xmProduct,teamType,userid,username,branchId);
 		if(!tips.isOk()){
 			return tips;
 		}
@@ -367,6 +390,27 @@ public class XmGroupService extends BaseService {
 		return groupVoList;
 	}
 
+	public Tips checkProductTransmitQx(Map<String,List<XmGroupVo>> groupsMap,XmProduct xmProduct,int teamType,User head,String memUserid,String memUsername){
+		Tips tips=new Tips("成功");
+		String transmitQx= QxTool.getProductTransmitQx(xmProduct.getQxCode(),teamType);
+		if("0".equals(transmitQx)){//不检查上下级关系
+			return tips;
+		}else if("1".equals(transmitQx)){//检查上下级关系
+			if(StringUtils.isEmpty(memUserid)||head.getUserid().equals(memUserid)){
+				return tips;
+			}
+
+			List<XmGroupVo> groups=getProductGroupsFromLocalCache(groupsMap,xmProduct.getId());
+			if(this.checkUserIsOtherUserTeamHeadOrAss(groups, head.getUserid(), memUserid)){
+				return tips;
+			}
+			tips.setFailureMsg("pdqx-transmit-0",
+					String.format("产品【%s】开启了上下级关系检查，您当前账户【%s】不属于账户【%s】的上级，无权操作。",xmProduct.getId(),head.getUsername(),memUsername));
+
+
+		}
+		return tips;
+	}
 	public Tips checkProductTransmitQx(Map<String,List<XmGroupVo>> groupsMap,XmProduct xmProduct,int teamType,String headUserid,String ...memUserids){
 		Tips tips=new Tips("成功");
 		String transmitQx= QxTool.getProductTransmitQx(xmProduct.getQxCode(),teamType);
@@ -414,6 +458,10 @@ public class XmGroupService extends BaseService {
 	}
 	public Tips checkProjectQx(XmProject xmProject,User head,String ...memUserids){
 		Tips tips=new Tips("成功");
+		boolean headIsPm=this.checkUserIsProjectAdm(xmProject,head.getUserid());
+		if(headIsPm){
+			return tips;
+		}
 		tips=this.checkProjectScopeQx(xmProject,head,memUserids);
 		if(!tips.isOk()){
 			return tips;
