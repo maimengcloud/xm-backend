@@ -23,19 +23,19 @@ public class QxTool {
      * @param qxCode
      * @return
      */
-    public static String getProjectScopeQx(String qxCode){
+    public static String getProjectScopeQx(String qxCode,int teamType){
         String def="2";
         if(StringUtils.isEmpty(qxCode)){
             return def;
         }else{
-            if(qxCode.length()<1){
+            if(qxCode.length()<(teamType*2)){
                 return def;
             }else{
                 String[] qxCodeArr=qxCode.split(",");
-                if(qxCodeArr.length<1){
+                if(qxCodeArr.length<(teamType*2)){
                     return def;
                 }else{
-                    return qxCodeArr[0];
+                    return qxCodeArr[teamType*2];
                 }
             }
         }
@@ -46,19 +46,19 @@ public class QxTool {
      * @param qxCode
      * @return
      */
-    public static String getProjectTransmitQx(String qxCode){
+    public static String getProjectTransmitQx(String qxCode,int teamType){
         String def="0";
         if(StringUtils.isEmpty(qxCode)){
             return def;
         }else{
-            if(qxCode.length()<2){
+            if(qxCode.length()<(2*teamType+1)){
                 return def;
             }else{
                 String[] qxCodeArr=qxCode.split(",");
-                if(qxCodeArr.length<2){
+                if(qxCodeArr.length<(2*teamType+1)){
                     return def;
                 }else{
-                    return qxCodeArr[1];
+                    return qxCodeArr[(2*teamType+1)];
                 }
             }
         }
