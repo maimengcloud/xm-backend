@@ -35,7 +35,16 @@ public class XmProjectQxService {
     public Tips checkProjectQx(XmProject xmProject, int teamType, User head){
         return this.checkProjectQx(null,xmProject,teamType,head);
     }
-
+    /**
+     *
+     * @param xmProject
+     * @param teamType 0-任务相关 1-测试相关,2-迭代相关
+     * @param head
+     * @return
+     */
+    public Tips checkProjectQx(Map<String,List<XmGroupVo>> groupsMap,XmProject xmProject, int teamType, String userid,String username,String branchId){
+        return this.checkProjectScopeQx( groupsMap,xmProject,teamType,userid,username,branchId);
+    }
     /**
      *
      * @param groupsMap 项目组缓存数据，当需要循环执行时，避免多次查询缓存与数据库

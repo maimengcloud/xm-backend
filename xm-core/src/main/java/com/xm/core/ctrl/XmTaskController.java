@@ -336,15 +336,23 @@ public class XmTaskController {
 				return ResponseHelper.failed("tasks-0","该任务已不存在");
 			}
 			Map<String,XmProject> projectMap=new HashMap<>();
+			Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
 			if(xmTaskMap.containsKey("createUserid")){
 				String createUserid=(String) xmTaskMap.get("createUserid");
 				String createUsername=(String) xmTaskMap.get("createUsername");
+				String cbranchId=(String) xmTaskMap.get("cbranchId");
 				Set<String> projects=xmTasksDb.stream().map(i->i.getProjectId()).collect(Collectors.toSet());
 				for (String project : projects) {
 					XmProject xmProject=xmProjectService.getProjectFromCache(project);
+					boolean isPm=groupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 					projectMap.put(xmProject.getId(),xmProject);
-					Tips tips1=projectQxService.checkProjectQx(null,xmProject,0,user,createUserid,createUsername,null);
- 					if(!tips1.isOk()){
+					Tips tips1=new Tips("成功");
+					if(isPm){
+						tips1=projectQxService.checkProjectQx(groupsMap,xmProject,0,createUserid,createUsername,cbranchId);
+					}else{
+						tips1=projectQxService.checkProjectQx(groupsMap,xmProject,0,user,createUserid,createUsername,cbranchId);
+					}
+					if(!tips1.isOk()){
 						return ResponseHelper.failed(tips1);
 					};
 				}
@@ -353,14 +361,13 @@ public class XmTaskController {
 
 			List<XmTask> can=new ArrayList<>();
 			List<XmTask> no=new ArrayList<>();
-			Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
 			for (XmTask xmTaskDb : xmTasksDb) {
 				XmProject xmProject=projectMap.get(xmTaskDb.getProjectId());
 				if(xmProject==null || StringUtils.isEmpty(xmProject.getId()) || !projectMap.containsKey(xmProject.getId())){
 					xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 					projectMap.put(xmTaskDb.getProjectId(),xmProject);
 				}
-				tips=projectQxService.checkProjectQx(groupsMap,xmProject,0,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),null);
+				tips=projectQxService.checkProjectQx(groupsMap,xmProject,0,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 				if(!tips.isOk()){
 					no.add(xmTaskDb);
 				}else{
