@@ -17,6 +17,7 @@ import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.*;
 import com.xm.core.service.*;
 import com.xm.core.service.push.XmPushMsgService;
+import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmQuestionVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
@@ -72,6 +73,14 @@ public class XmQuestionController {
 
 	@Autowired
 	XmGroupService groupService;
+
+
+	@Autowired
+	XmProductQxService productQxService;
+
+
+	@Autowired
+	XmProjectQxService projectQxService;
 
 
 	@Autowired
@@ -321,7 +330,11 @@ public class XmQuestionController {
 
 			Map<String,Tips> noOperTips=new HashMap<>();
 
-			this.checkQx(xmQuestionsDb,canOper,noOper,noOperTips);
+			if(xmQuestionMap.containsKey("handlerUserid")){
+				this.checkQx(xmQuestionsDb,canOper,noOper,noOperTips,2);
+			}else{
+				this.checkQx(xmQuestionsDb,canOper,noOper,noOperTips,1);
+			}
 			if(canOper.size()>0){
 				xmQuestionMap.put("ids",canOper.stream().map(k->k.getId()).collect(Collectors.toList()));
 
@@ -338,7 +351,7 @@ public class XmQuestionController {
 						String handlerUserid= (String) xmQuestionMap.get("handlerUserid");
 						String handlerUsername= (String) xmQuestionMap.get("handlerUsername");
 						XmQuestion xmQuedb=canOper.get(0);
-						Tips tips1=groupService.checkProductScopeQx(null,productService.getProductFromCache(xmQuedb.getProductId()),1,handlerUserid,handlerUsername,null);
+						Tips tips1=productQxService.checkProductScopeQx(null,productService.getProductFromCache(xmQuedb.getProductId()),1,handlerUserid,handlerUsername,null);
 						if(!tips1.isOk()){
 							if(StringUtils.hasText(xmQuedb.getProjectId())){
 								tips1=groupService.checkProjectScopeQx(projectService.getProjectFromCache(xmQuedb.getProjectId()),handlerUserid,handlerUsername,null);
@@ -452,7 +465,7 @@ public class XmQuestionController {
 
 			Map<String,Tips> noOperTips=new HashMap<>();
 
-			this.checkQx(xmQuestionsDb,canOper,noOper,noOperTips);
+			this.checkQx(xmQuestionsDb,canOper,noOper,noOperTips,0);
 
 			if(canOper.size()>0){
 				xmQuestionService.batchDelete(canOper);
@@ -498,13 +511,13 @@ public class XmQuestionController {
 		if(!tips1.isOk()){
 			if(StringUtils.hasText(productId)){
 				XmProduct xmProduct=productService.getProductFromCache(productId);
-				tips1=this.groupService.checkProductQx(xmProduct,1,user);
+				tips1=this.productQxService.checkProductQx(xmProduct,1,user);
 			}
 		}
 		return tips1;
 	}
 
-	public void checkQx(List<XmQuestion> xmQuestionsDb, List<XmQuestion> canOper, List<XmQuestion> noOper, Map<String,Tips> noOperTips){
+	public void checkQx(List<XmQuestion> xmQuestionsDb, List<XmQuestion> canOper, List<XmQuestion> noOper, Map<String,Tips> noOperTips,int opType/**0-删除，1修改其它信息，2指派新负责人**/){
 		User user=LoginUtils.getCurrentUserInfo();
 		/**
 		 * 如果有测试计划，有产品编号，走产品团队判断权限
@@ -535,10 +548,11 @@ public class XmQuestionController {
 		}
 
 		List<XmQuestion> productNoDel=new ArrayList<>();
+		Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
 		if(productsMap.size()>0){
 			for (String productId : productsMap.keySet()) {
 				XmProduct xmProduct=productService.getProductFromCache(productId);
-				Tips tips1=groupService.checkProductQx(xmProduct,1,user);
+				Tips tips1=productQxService.checkProductQx(groupsMap,xmProduct,1,user);
 				if(!tips1.isOk()){
 					productNoDel.addAll(productsMap.get(productId));
 					for (XmQuestion xmQuestion : productsMap.get(productId)) {
@@ -548,7 +562,13 @@ public class XmQuestionController {
 				}else{
 					List<XmQuestion> questions=productsMap.get(productId);
 					for (XmQuestion question : questions) {
-						tips1=groupService.checkProductQx(xmProduct,1,user,question.getCreateUserid(),question.getHandlerUserid());
+						if(opType==0){
+							tips1=productQxService.checkProductQx(groupsMap,xmProduct,1,user,question.getCreateUserid(),question.getCreateUsername(),null);
+						}else if(opType==1){
+							tips1=productQxService.checkProductQx(groupsMap,xmProduct,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
+						}else if(opType==2){
+							//从新指派责任人
+						}
 						if(!tips1.isOk()){
 							productNoDel.add(question);
 							noOperTips.put(question.getId(),tips1);
@@ -580,7 +600,7 @@ public class XmQuestionController {
 		if(projectsMap.size()>0){
 			for (String projectId : projectsMap.keySet()) {
 				XmProject xmProject=projectService.getProjectFromCache(projectId);
-				Tips tips1=groupService.checkProjectQx(xmProject,user);
+				Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,1,user);
 				if(!tips1.isOk()){
 					noOper.addAll(projectsMap.get(projectId));
 					for (XmQuestion xmQuestion : projectsMap.get(projectId)) {
@@ -590,7 +610,14 @@ public class XmQuestionController {
 				}else{
 					List<XmQuestion> questions=projectsMap.get(projectId);
 					for (XmQuestion question : questions) {
-						tips1=groupService.checkProjectQx(xmProject,user,question.getCreateUserid(),question.getHandlerUserid());
+						tips1=projectQxService.checkProjectQx(groupsMap,xmProject,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
+						if(opType==0){
+							tips1=projectQxService.checkProjectQx(groupsMap,xmProject,1,user,question.getCreateUserid(),question.getCreateUsername(),null);
+						}else if(opType==1){
+							tips1=projectQxService.checkProjectQx(groupsMap,xmProject,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
+						}else if(opType==2){
+							//从新指派责任人
+						}
 						if(!tips1.isOk()){
 							noOper.add(question);
 							noOperTips.put(question.getId(),tips1);
