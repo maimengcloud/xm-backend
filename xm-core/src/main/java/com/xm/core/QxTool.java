@@ -28,16 +28,12 @@ public class QxTool {
         if(StringUtils.isEmpty(qxCode)){
             return def;
         }else{
-            if(qxCode.length()<(teamType*2)){
-                return def;
-            }else{
                 String[] qxCodeArr=qxCode.split(",");
-                if(qxCodeArr.length<(teamType*2)){
+                if(qxCodeArr.length<(teamType*2+2)){
                     return def;
                 }else{
                     return qxCodeArr[teamType*2];
                 }
-            }
         }
     }
     /**
@@ -51,15 +47,11 @@ public class QxTool {
         if(StringUtils.isEmpty(qxCode)){
             return def;
         }else{
-            if(qxCode.length()<(2*teamType+1)){
+            String[] qxCodeArr=qxCode.split(",");
+            if(qxCodeArr.length<(teamType*2+2)){
                 return def;
             }else{
-                String[] qxCodeArr=qxCode.split(",");
-                if(qxCodeArr.length<(2*teamType+1)){
-                    return def;
-                }else{
-                    return qxCodeArr[(2*teamType+1)];
-                }
+                return qxCodeArr[teamType*2+1];
             }
         }
     }
@@ -82,15 +74,11 @@ public class QxTool {
         if(StringUtils.isEmpty(qxCode)){
             return def;
         }else{
-            if(qxCode.length()<(teamType*2)){
+            String[] qxCodeArr=qxCode.split(",");
+            if(qxCodeArr.length<(teamType*2+2)){
                 return def;
             }else{
-                String[] qxCodeArr=qxCode.split(",");
-                if(qxCodeArr.length<(teamType*2)){
-                    return def;
-                }else{
-                    return qxCodeArr[teamType*2];
-                }
+                return qxCodeArr[teamType*2];
             }
         }
     }
@@ -113,15 +101,11 @@ public class QxTool {
         if(StringUtils.isEmpty(qxCode)){
             return def;
         }else{
-            if(qxCode.length()<(2*teamType+1)){
+            String[] qxCodeArr=qxCode.split(",");
+            if(qxCodeArr.length<(teamType*2+2)){
                 return def;
             }else{
-                String[] qxCodeArr=qxCode.split(",");
-                if(qxCodeArr.length<(2*teamType+1)){
-                    return def;
-                }else{
-                    return qxCodeArr[(2*teamType+1)];
-                }
+                return qxCodeArr[teamType*2+1];
             }
         }
     }
