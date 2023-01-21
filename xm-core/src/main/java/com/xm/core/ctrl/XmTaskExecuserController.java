@@ -62,6 +62,10 @@ public class XmTaskExecuserController {
 
 	@Autowired
 	private XmProjectService xmProjectService;
+
+
+	@Autowired
+	private XmProjectQxService projectQxService;
 	 
 	@Autowired
 	XmGroupUserService xmGroupUserService;
@@ -204,7 +208,7 @@ public class XmTaskExecuserController {
 				xmTaskExecuser.setStatus("0");   //如果是众包，智能添加为候选人
 			}else {
 				//如果不是众包，需要判断是否已加入项目组组织架构中，如未加入，需要提示其先加入
-				tips=groupService.checkProjectQx(xmProjectDb,user,xmTaskExecuser.getUserid());
+				tips=projectQxService.checkProjectQx(null,xmProjectDb,0,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				};
@@ -278,7 +282,7 @@ public class XmTaskExecuserController {
 					break;
 				}
  				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {//只有组长、任务责任人可以请别人请离开任务
-					tips=groupService.checkProjectQx(xmProjectService.getProjectFromCache(xmTask.getProjectId()), user,xmTaskExecuser.getUserid());
+					tips=projectQxService.checkProjectQx(null,xmProjectService.getProjectFromCache(xmTask.getProjectId()),0, user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					};
@@ -349,9 +353,16 @@ public class XmTaskExecuserController {
 			User user=LoginUtils.getCurrentUserInfo();
 
 			String projectId=xmTask.getProjectId();
-			 tips=groupService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),user,xmTask.getCreateUserid() );
+			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
+			XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
+			if(xmProject==null ){
+				return ResponseHelper.failed("project-0","项目已不存在");
+			}
+			Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
+			groupsMap.put(xmProject.getId(),pgroups);
+			 tips=projectQxService.checkProjectQx(groupsMap,xmProject,0,user);
 			if(tips.isOk()) {
-				List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
+
 				boolean exists=groupService.checkUserExistsGroup(pgroups, xmTaskExecuser.getUserid());
 				  //如果还未加入项目组，自动加入项目组
 				if(!exists) {
@@ -438,7 +449,7 @@ public class XmTaskExecuserController {
 			User user=LoginUtils.getCurrentUserInfo();
 
 			String projectId=xmTaskDb.getProjectId();
-			tips=groupService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),user,xmTaskDb.getCreateUserid(),xmTaskDb.getExecutorUserid() );
+			tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),0,user );
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
@@ -527,7 +538,7 @@ public class XmTaskExecuserController {
 			User user=LoginUtils.getCurrentUserInfo();
  			String projectId=xmTaskExecuser.getProjectId();
  			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
- 				tips=groupService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),user,xmTaskExecuser.getUserid() );
+ 				tips=projectQxService.checkProjectQx(null,xmProjectService.getProjectFromCache(projectId),0,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId() );
 			} 
 			if(tips.isOk()) {
 				XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getTaskId(),xmTaskExecuser.getUserid()));
@@ -577,7 +588,7 @@ public class XmTaskExecuserController {
 			User user=LoginUtils.getCurrentUserInfo();
  			String projectId=xmTaskExecuser.getProjectId();
  			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
- 				tips=groupService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),user,xmTaskExecuser.getUserid());
+ 				tips=projectQxService.checkProjectQx(null,xmProjectService.getProjectFromCache(projectId),0,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
 			} 
 			if(tips.isOk()) {
 				xmTaskExecuserService.becomeCandidate(xmTaskExecuser);
@@ -610,36 +621,34 @@ public class XmTaskExecuserController {
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			String taskId=xmTaskExecuser.getTaskId();
-			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
-			if(xmTask==null ){
+			XmTask xmTaskDb= xmTaskService.selectOneObject(new XmTask(taskId));
+			if(xmTaskDb==null ){
 				tips.setFailureMsg("任务已不存在");
 				m.put("tips", tips);
 				return m;
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			String projectId=xmTaskExecuser.getProjectId();
-			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
-				tips=groupService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),user,xmTaskExecuser.getUserid() );
-			} 
-			if(tips.isOk()) { 
-				XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getTaskId(),xmTaskExecuser.getUserid()));
-				if(xmTaskExecuserDb !=null ) {
-					if( "0".equals( xmTaskExecuserDb.getStatus() )  || "7".equals( xmTaskExecuserDb.getStatus() ) || "8".equals( xmTaskExecuserDb.getStatus() ) ) {
-						xmTaskExecuserService.delete(xmTaskExecuser);
-						notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTask.getProjectId(), xmTask.getId(), xmTaskExecuserDb.getUsername()+"离开任务【" + xmTask.getId() + "-" + xmTask.getName() + "】！");
-						notifyMsgService.pushMsg(user, xmTaskExecuserDb.getUserid(), xmTaskExecuserDb.getUsername(), "2", xmTask.getProjectId(), xmTask.getId(), "您已离开任务【" + xmTask.getId() + "-" + xmTask.getName() + "】！");
+			String projectId=xmTaskDb.getProjectId();
 
-						m.put("data",xmTaskExecuser);
-					}else {
-						tips.setFailureMsg("只有候选、放弃任务、黑名单中的数据可以被删除");
-					}
+			XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskDb.getId(),xmTaskExecuser.getUserid()));
+			if(xmTaskExecuserDb !=null ) {
+				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
+					tips=projectQxService.checkProjectQx(null,xmProjectService.getProjectFromCache(projectId),0,user,xmTaskExecuserDb.getUserid(),xmTaskExecuserDb.getUsername(),xmTaskExecuserDb.getExecUserBranchId());
 				}
-				else {
-					tips.setFailureMsg("没有查到数据");
-				}
-				
+				if( "0".equals( xmTaskExecuserDb.getStatus() )  || "7".equals( xmTaskExecuserDb.getStatus() ) || "8".equals( xmTaskExecuserDb.getStatus() ) ) {
+					xmTaskExecuserService.delete(xmTaskExecuser);
+					notifyMsgService.pushMsg(user, xmTaskDb.getCreateUserid(), xmTaskDb.getCreateUsername(), "2", xmTaskDb.getProjectId(), xmTaskDb.getId(), xmTaskExecuserDb.getUsername()+"离开任务【" + xmTaskDb.getId() + "-" + xmTaskDb.getName() + "】！");
+					notifyMsgService.pushMsg(user, xmTaskExecuserDb.getUserid(), xmTaskExecuserDb.getUsername(), "2", xmTaskDb.getProjectId(), xmTaskDb.getId(), "您已离开任务【" + xmTaskDb.getId() + "-" + xmTaskDb.getName() + "】！");
 
+					m.put("data",xmTaskExecuser);
+				}else {
+					tips.setFailureMsg("只有候选、放弃任务、黑名单中的数据可以被删除");
+				}
 			}
+			else {
+				tips.setFailureMsg("没有查到数据");
+			}
+
 		}catch (BizException e) { 
 			tips=e.getTips();
 			logger.error("",e);
