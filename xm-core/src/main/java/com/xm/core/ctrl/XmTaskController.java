@@ -348,9 +348,9 @@ public class XmTaskController {
 					projectMap.put(xmProject.getId(),xmProject);
 					Tips tips1=new Tips("成功");
 					if(isPm){
-						tips1=projectQxService.checkProjectQx(groupsMap,xmProject,0,createUserid,createUsername,cbranchId);
+						tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,createUserid,createUsername,cbranchId);
 					}else{
-						tips1=projectQxService.checkProjectQx(groupsMap,xmProject,0,user,createUserid,createUsername,cbranchId);
+						tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,createUserid,createUsername,cbranchId);
 					}
 					if(!tips1.isOk()){
 						return ResponseHelper.failed(tips1);
@@ -367,7 +367,7 @@ public class XmTaskController {
 					xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 					projectMap.put(xmTaskDb.getProjectId(),xmProject);
 				}
-				tips=projectQxService.checkProjectQx(groupsMap,xmProject,0,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+				tips=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 				if(!tips.isOk()){
 					no.add(xmTaskDb);
 				}else{
@@ -575,7 +575,7 @@ public class XmTaskController {
 			}
 
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskVo.getProjectId());
-			Tips tips1=projectQxService.checkProjectQx(xmProject,0,user);
+			Tips tips1=projectQxService.checkProjectQx(xmProject,2,user);
 			if(!tips1.isOk()){
 				return ResponseHelper.failed(tips1);
 			}
@@ -720,7 +720,7 @@ public class XmTaskController {
 				return ResponseHelper.failed("existsExecuser","有待验收、待结算的执行人，不能删除");
 			};
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
-			Tips tips1=projectQxService.checkProjectQx(null,xmProject,0,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+			Tips tips1=projectQxService.checkProjectQx(null,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 			if(!tips1.isOk()){
 				return ResponseHelper.failed(tips1);
 			}
@@ -765,11 +765,11 @@ public class XmTaskController {
 
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 			Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
-			Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,0,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+			Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 			if(!tips1.isOk()){
 				 return ResponseHelper.failed(tips1);
 			}
-			tips1=projectQxService.checkProjectQx(groupsMap,xmProject,0,user,xmTaskVo.getCreateUserid(),xmTaskVo.getCreateUsername(),xmTaskVo.getCbranchId());
+			tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,xmTaskVo.getCreateUserid(),xmTaskVo.getCreateUsername(),xmTaskVo.getCbranchId());
 			if(!tips1.isOk()){
 				return ResponseHelper.failed(tips1);
 			}
@@ -822,7 +822,7 @@ public class XmTaskController {
 			}
 
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
-			Tips tips1=projectQxService.checkProjectQx(null,xmProject,0,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+			Tips tips1=projectQxService.checkProjectQx(null,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 			if(!tips1.isOk()){
 				 return ResponseHelper.failed(tips1);
 			}
@@ -876,9 +876,9 @@ public class XmTaskController {
 			}
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 			Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
-			Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,0,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+			Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 			if(!tips1.isOk()){
-				tips1=projectQxService.checkProjectQx(groupsMap,xmProject,0,user,xmTaskDb.getExecutorUserid(),xmTaskDb.getExecutorUsername(),null);
+				tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,xmTaskDb.getExecutorUserid(),xmTaskDb.getExecutorUsername(),null);
 				if(!tips1.isOk()){
 					return ResponseHelper.failed(tips1);
 				}
@@ -966,7 +966,7 @@ public class XmTaskController {
 			String projectId=batchImportVo.getProjectId();
 			String productId=batchImportVo.getProductId();
 			XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
-			Tips tips1=projectQxService.checkProjectQx(null,xmProject,0,user);
+			Tips tips1=projectQxService.checkProjectQx(null,xmProject,2,user);
 			if(!tips1.isOk()){
 				return ResponseHelper.failed(tips1);
 			}
@@ -1328,7 +1328,7 @@ public class XmTaskController {
 			String projectId=xmTaskDb.getProjectId();
 			XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
 			Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
-			tips=projectQxService.checkProjectQx(groupsMap,xmProject,0,user);
+			tips=projectQxService.checkProjectQx(groupsMap,xmProject,2,user);
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
@@ -1341,7 +1341,7 @@ public class XmTaskController {
 				}
 			}
 			for (XmTask node : delNodesDbMap.values()) {
-				Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,0,user,node.getCreateUserid(),node.getCreateUsername(),node.getCbranchId());
+				Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,node.getCreateUserid(),node.getCreateUsername(),node.getCbranchId());
 				if(!tips1.isOk()){
 					noAllowNodes.add(node);
 				}else {
