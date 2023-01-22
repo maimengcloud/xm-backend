@@ -13,10 +13,7 @@ import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmGroup;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
-import com.xm.core.service.XmGroupService;
-import com.xm.core.service.XmProductService;
-import com.xm.core.service.XmProjectService;
-import com.xm.core.service.XmRecordService;
+import com.xm.core.service.*;
 import com.xm.core.service.cache.XmGroupCacheService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmGroupVo;
@@ -64,6 +61,13 @@ public class XmGroupController {
 
 	@Autowired
 	private XmProductService xmProductService;
+
+	@Autowired
+	private XmProjectQxService projectQxService;
+
+
+	@Autowired
+	private XmProductQxService productQxService;
 	
 	@Autowired
     XmPushMsgService pushMsgService;
@@ -98,6 +102,66 @@ public class XmGroupController {
 		if(groupDb==null){
 			return ResponseHelper.failed("data-0","小组已不存在。");
 		}
+		if("0".equals(groupDb.getPgClass())){
+			XmProject project=xmProjectService.getProjectFromCache(groupDb.getProjectId());
+			boolean isPm=xmGroupService.checkUserIsProjectAdm(project, user.getUserid());
+			if(!isPm){
+				tips = projectQxService.checkProjectQx(project,0,user);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
+			}
+			if(StringUtils.hasText(group.getLeaderUserid()) && !group.getLeaderUserid().equals(groupDb.getLeaderUserid())){
+				tips = projectQxService.checkProjectQx(null,project,0,user, groupDb.getLeaderUserid(),groupDb.getLeaderUsername(),null);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
+				tips=projectQxService.checkProjectScopeQx(null,project,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
+			}
+			if(StringUtils.hasText(group.getAssUserid()) && !group.getAssUserid().equals(groupDb.getAssUserid())){
+				tips = projectQxService.checkProjectQx(null,project,0,user, groupDb.getAssUserid(),groupDb.getAssUsername(),null);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
+				tips=projectQxService.checkProjectScopeQx(null,project,0,group.getAssUserid(),group.getAssUsername(),null);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
+			}
+		}else {
+			XmProduct product=xmProductService.getProductFromCache(groupDb.getProductId());
+			boolean isPm=xmGroupService.checkUserIsProductAdm(product, user.getUserid());
+			if(!isPm){
+				tips = productQxService.checkProductQx(product,0,user);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
+			}
+			if(StringUtils.hasText(group.getLeaderUserid()) && !group.getLeaderUserid().equals(groupDb.getLeaderUserid())){
+				tips = productQxService.checkProductQx(null,product,0,user, groupDb.getLeaderUserid(),groupDb.getLeaderUsername(),null);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
+				tips=productQxService.checkProductScopeQx(null,product,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
+			}
+			if(StringUtils.hasText(group.getAssUserid()) && !group.getAssUserid().equals(groupDb.getAssUserid())){
+				tips = productQxService.checkProductQx(null,product,0,user, groupDb.getAssUserid(),groupDb.getAssUsername(),null);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
+				tips=productQxService.checkProductScopeQx(null,product,0,group.getAssUserid(),group.getAssUsername(),null);
+				if(!tips.isOk()){
+					return ResponseHelper.failed(tips);
+				}
+			}
+		}
+
 		xmGroupService.parentIdPathsCalcBeforeSave(group);
 		tips= xmGroupService.updateGroup(group,groupDb);	//列出XmProjectGroup列表
 		if("0".equals(groupDb.getPgClass())){
@@ -215,9 +279,9 @@ public class XmGroupController {
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					}
-					Map<String,String> projectAdmMap=xmGroupService.getProjectAdmUsers(project);
-					if(!projectAdmMap.containsKey(u.getUserid())) {
-						return ResponseHelper.failed("not-project-adm","您不是项目管理人员，不能创建小组。项目级助理以上人员可以创建小组。");
+					tips=checkProjectGroupQxForAdd(project,u,xmGroup);
+					if(!tips.isOk()){
+						return ResponseHelper.failed(tips);
 					}
 					xmGroup.setProductId(null);
 
@@ -234,11 +298,10 @@ public class XmGroupController {
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					}
-					Map<String,String> productAdmUsers=xmGroupService.getProductAdmUsers(xmProduct);
-					if(!productAdmUsers.containsKey(u.getUserid())) {
-						return ResponseHelper.failed("not-product-adm","您不是产品管理人员，不能创建小组。产品级助理以上人员可以创建小组。");
+					tips=checkProductGroupQxForAdd(xmProduct,u,xmGroup);
+					if(!tips.isOk()){
+						return ResponseHelper.failed(tips);
 					}
-
 					xmGroup.setBranchId(xmProduct.getBranchId());
 				}else{
 					return ResponseHelper.failed("pgClass-err","小组类型数值不正确");
@@ -281,6 +344,46 @@ public class XmGroupController {
 		return m;
 	}
 
+
+	public Tips checkProductGroupQxForAdd(XmProduct xmProduct,User u,XmGroup xmGroup){
+		Tips tips=new Tips();
+		Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
+		tips=productQxService.checkProductQx(groupsMap,xmProduct,0,u);
+		if(!tips.isOk()){
+			return tips;
+		}
+		if(StringUtils.hasText(xmGroup.getLeaderUserid()) && !xmGroup.getLeaderUserid().equals(u.getUserid())){
+			tips=productQxService.checkProductScopeQx(groupsMap,xmProduct,0,xmGroup.getLeaderUserid(),xmGroup.getLeaderUsername(),null);
+		}
+		if(!tips.isOk()){
+			return tips;
+		}
+		if(StringUtils.hasText(xmGroup.getAssUserid()) && !xmGroup.getAssUserid().equals(u.getUserid())){
+			tips=productQxService.checkProductScopeQx(groupsMap,xmProduct,0,xmGroup.getAssUserid(),xmGroup.getAssUsername(),null);
+		}
+		return tips;
+	}
+
+
+	public Tips checkProjectGroupQxForAdd(XmProject project,User u,XmGroup xmGroup){
+		Tips tips=new Tips();
+		Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
+		tips=projectQxService.checkProjectQx(groupsMap,project,0,u);
+		if(!tips.isOk()){
+			return tips;
+		}
+		if(StringUtils.hasText(xmGroup.getLeaderUserid()) && !xmGroup.getLeaderUserid().equals(u.getUserid())){
+			tips=projectQxService.checkProjectScopeQx(groupsMap,project,0,xmGroup.getLeaderUserid(),xmGroup.getLeaderUsername(),null);
+		}
+		if(!tips.isOk()){
+			return tips;
+		}
+		if(StringUtils.hasText(xmGroup.getAssUserid()) && !xmGroup.getAssUserid().equals(u.getUserid())){
+			tips=projectQxService.checkProjectScopeQx(groupsMap,project,0,xmGroup.getAssUserid(),xmGroup.getAssUsername(),null);
+		}
+		return tips;
+	}
+
 	@ApiOperation( value = "删除一条xm_group信息",notes="delXmProjectGroup,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -305,8 +408,11 @@ public class XmGroupController {
 				}
 				Map<String,String> projectAdmMap=xmGroupService.getProjectAdmUsers(project);
 				if(!projectAdmMap.containsKey(u.getUserid())) {
-					return ResponseHelper.failed("not-project-adm","您不是项目管理人员，不能删除小组。项目级助理以上人员可以删除小组。");
-				}
+					tips=projectQxService.checkProjectQx(null,project,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
+					if(!tips.isOk()){
+						return ResponseHelper.failed(tips);
+					}
+ 				}
 			} else if("1".equals(groupDb.getPgClass()) && StringUtils.hasText(groupDb.getProductId())){
 				XmProduct product = xmProductService.selectOneById(groupDb.getProductId());
 				if(product==null){
@@ -314,8 +420,11 @@ public class XmGroupController {
 				}
 				Map<String,String> productAdmUsers=xmGroupService.getProductAdmUsers(product);
 				if(!productAdmUsers.containsKey(u.getUserid())) {
-					return ResponseHelper.failed("not-product-adm","您不是产品管理人员，不能删除小组。产品级助理以上人员可以删除小组。");
-				}
+					tips=productQxService.checkProductQx(null,product,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
+					if(!tips.isOk()){
+						return ResponseHelper.failed(tips);
+					}
+ 				}
 			}
 			XmGroup childrenGroupQuery=new XmGroup();
 			childrenGroupQuery.setPgroupId(xmGroup.getId());
