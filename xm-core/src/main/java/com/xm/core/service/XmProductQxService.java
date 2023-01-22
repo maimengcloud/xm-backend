@@ -90,7 +90,7 @@ public class XmProductQxService {
             if(xmGroupService.checkUserIsProductAdm(xmProduct,memUserid)){
                 return tips;
             }
-            if(StringUtils.hasText(memBranchId)){
+            if(!StringUtils.hasText(memBranchId)){
                 User sysU=sysClient.getUserByUserid(memUserid);
                 if(sysU==null || StringUtils.isEmpty(sysU.getUserid())){
                     return tips;

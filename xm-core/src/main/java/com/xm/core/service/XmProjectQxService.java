@@ -39,7 +39,6 @@ public class XmProjectQxService {
      *
      * @param xmProject
      * @param teamType 0-任务相关 1-测试相关,2-迭代相关
-     * @param head
      * @return
      */
     public Tips checkProjectQx(Map<String,List<XmGroupVo>> groupsMap,XmProject xmProject, int teamType, String userid,String username,String branchId){
@@ -99,7 +98,7 @@ public class XmProjectQxService {
             if(xmGroupService.checkUserIsProjectAdm(xmProject,memUserid)){
                 return tips;
             }
-            if(StringUtils.hasText(memBranchId)){
+            if(!StringUtils.hasText(memBranchId)){
                 User sysU=sysClient.getUserByUserid(memUserid);
                 if(sysU==null || StringUtils.isEmpty(sysU.getUserid())){
                     return tips;
