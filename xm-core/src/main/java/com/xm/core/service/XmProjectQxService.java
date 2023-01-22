@@ -13,6 +13,18 @@ import org.springframework.util.StringUtils;
 import java.util.*;
 import java.util.stream.Collectors;
 
+/**
+ *
+ 权限码0,1,2,3,4,5,67,8,9，逗号分割
+ 共10位,不定长，暂时只启用前6个位
+ 第0位代表团队建立及成员管理及crud权限：
+ 0-代表不限制,1-同组织，2-同项目组（默认），3-同小组
+ 第1位代表团队建立及成员管理及crud权限是否检查上下级关系：0-否（默认），1是
+ 第2位代表测试指派及crud时权限，同第0位
+ 第3位代表测试指派及crud时是否检查上下级关系，同第1位
+ 第4位代表任务指派及crud时权限，同第0位
+ 第5位代表任务指派及crud时是否检查上下级关系，同第1位
+ */
 @Service
 public class XmProjectQxService {
 
@@ -28,7 +40,7 @@ public class XmProjectQxService {
     /**
      *
      * @param xmProject
-     * @param teamType 0-任务相关 1-测试相关,2-迭代相关
+     * @param teamType 0-团队相关 1-测试相关，2-任务相关
      * @param head
      * @return
      */
