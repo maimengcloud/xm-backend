@@ -344,14 +344,8 @@ public class XmTaskController {
 				Set<String> projects=xmTasksDb.stream().map(i->i.getProjectId()).collect(Collectors.toSet());
 				for (String project : projects) {
 					XmProject xmProject=xmProjectService.getProjectFromCache(project);
-					boolean isPm=groupService.checkUserIsProjectAdm(xmProject,user.getUserid());
 					projectMap.put(xmProject.getId(),xmProject);
-					Tips tips1=new Tips("成功");
-					if(isPm){
-						tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,createUserid,createUsername,cbranchId);
-					}else{
-						tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,createUserid,createUsername,cbranchId);
-					}
+					Tips  tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,createUserid,createUsername,cbranchId);
 					if(!tips1.isOk()){
 						return ResponseHelper.failed(tips1);
 					};
@@ -367,11 +361,15 @@ public class XmTaskController {
 					xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 					projectMap.put(xmTaskDb.getProjectId(),xmProject);
 				}
-				tips=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
-				if(!tips.isOk()){
-					no.add(xmTaskDb);
-				}else{
+				if(groupService.checkUserIsProjectAdm(xmProject,user.getUserid())){
 					can.add(xmTaskDb);
+				}else{
+					tips=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+					if(!tips.isOk()){
+						no.add(xmTaskDb);
+					}else{
+						can.add(xmTaskDb);
+					}
 				}
 			}
 
@@ -579,7 +577,12 @@ public class XmTaskController {
 			if(!tips1.isOk()){
 				return ResponseHelper.failed(tips1);
 			}
-
+			if(StringUtils.hasText(xmTaskVo.getCreateUserid()) && !xmTaskVo.getCreateUserid().equals(user.getUserid())){
+				tips1=projectQxService.checkProjectQx(null,xmProject,2,user,xmTaskVo.getCreateUserid(),xmTaskVo.getCreateUsername(),null);
+				if(!tips1.isOk()){
+					return ResponseHelper.failed(tips1);
+				}
+			}
 
 
 			xmTaskVo.setExecutorUserid(null);
@@ -1332,31 +1335,38 @@ public class XmTaskController {
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
-			List<XmTask> allowDelNodes=new ArrayList<>();
-			List<XmTask> noAllowNodes=new ArrayList<>();
+			List<XmTask> canOper=new ArrayList<>();
+			List<XmTask> noOper=new ArrayList<>();
+			Map<String,Tips> noTipsMap=new HashMap<>();
 			Map<String,XmTask> delNodesDbMap=this.xmTaskService.selectTasksMapByTasks(xmTasks);
 			for (XmTask node : delNodesDbMap.values()) {
 				if(!projectId.equals(node.getProjectId()) ){
 					return ResponseHelper.failed("not-same-project","所有任务必须同属于一个项目");
 				}
 			}
-			for (XmTask node : delNodesDbMap.values()) {
-				Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,node.getCreateUserid(),node.getCreateUsername(),node.getCbranchId());
-				if(!tips1.isOk()){
-					noAllowNodes.add(node);
-				}else {
-					allowDelNodes.add(node);
-				}
+			if(groupService.checkUserIsProjectAdm(xmProject,user.getUserid())){
+				canOper.addAll(delNodesDbMap.values());
+			}else{
+				for (XmTask node : delNodesDbMap.values()) {
+					Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,node.getCreateUserid(),node.getCreateUsername(),node.getCbranchId());
+					if(!tips1.isOk()){
+						noOper.add(node);
+						noTipsMap.put(tips1.getMsg(),tips1);
+					}else {
+						canOper.add(node);
+					}
 
+				}
 			}
-			if(allowDelNodes.size()==0){
-				return ResponseHelper.failed("noqx-del","组长或者管理人员可以删除管辖范围的任务，您无权限删除所选任务");
+
+			if(canOper.size()==0){
+				return ResponseHelper.failed("noqx-del",String.format("无权限删除，原因【%s】",noTipsMap.keySet().stream().collect(Collectors.joining(";"))));
 			}
 
 			List<XmTask> existsExecuserList=new ArrayList<>();
 			List<XmTask> noExecuserList=new ArrayList<>();
-			if(allowDelNodes.size()>0){
-				for (XmTask node : allowDelNodes) {
+			if(canOper.size()>0){
+				for (XmTask node : canOper) {
 					if(this.xmTaskService.checkExistsExecuser(node)){
 						existsExecuserList.add(node);
 					}else{
@@ -1385,11 +1395,11 @@ public class XmTaskController {
 			if(hadChildNodes.size()>0){
 				msgs.add("以下"+hadChildNodes.size()+"个任务存在未删除的子任务，不能删除。如确实需要删除任务，请先删除子任务。【"+hadChildNodes.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
-			if(noAllowNodes.size()>0){
-				msgs.add("以下"+noAllowNodes.size()+"个任务您无权删除。 【"+noAllowNodes.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
-			}
 			if(existsExecuserList.size()>0){
 				msgs.add("以下"+existsExecuserList.size()+"个任务存在待结算的执行人，不能删除。如确实需要删除，请在【任务编辑->执行人】中删除执行人后再删除任务【"+existsExecuserList.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+			}
+			if(noOper.size()>0){
+				msgs.add(String.format("以下%s个任务无权限删除，原因【%s】",noOper.size(),noTipsMap.keySet().stream().collect(Collectors.joining(";"))));
 			}
 			if(canDelNodes.size()==0){
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
