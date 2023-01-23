@@ -719,14 +719,19 @@ public class XmTaskController {
 				return ResponseHelper.failed("childrenCnt-no-0","有子计划任务不能删除");
 			}
 
+			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
+			if(xmProject!=null && groupService.checkUserIsProjectAdm(xmProject,user.getUserid())){
+				Tips tips1=projectQxService.checkProjectQx(null,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+				if(!tips1.isOk()){
+					return ResponseHelper.failed(tips1);
+				}
+			}
+
+
 			if(xmTaskService.checkExistsExecuser(xmTaskDb)){
 				return ResponseHelper.failed("existsExecuser","有待验收、待结算的执行人，不能删除");
 			};
-			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
-			Tips tips1=projectQxService.checkProjectQx(null,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
-			if(!tips1.isOk()){
-				return ResponseHelper.failed(tips1);
-			}
+
 
 			xmTaskService.deleteTask(xmTaskDb);
 			xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(), xmTaskDb.getId(), "项目-任务-删除任务", "删除任务"+xmTaskDb.getName());
@@ -768,11 +773,14 @@ public class XmTaskController {
 
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 			Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
-			Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
-			if(!tips1.isOk()){
-				 return ResponseHelper.failed(tips1);
+			if(!groupService.checkUserIsProjectAdm(xmProject,user.getUserid())){
+				Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+				if(!tips1.isOk()){
+					return ResponseHelper.failed(tips1);
+				}
 			}
-			tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,xmTaskVo.getCreateUserid(),xmTaskVo.getCreateUsername(),xmTaskVo.getCbranchId());
+
+			Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,2,user,xmTaskVo.getCreateUserid(),xmTaskVo.getCreateUsername(),xmTaskVo.getCbranchId());
 			if(!tips1.isOk()){
 				return ResponseHelper.failed(tips1);
 			}
