@@ -635,7 +635,7 @@ public class XmMenuController {
 
 			List<String> msgs=new ArrayList<>();
 			if(canDelList.size()>0){
-				msgs.add(String.format("修改了%s个需求。",canDelList.size()));
+				msgs.add(String.format("删除了%s个需求。",canDelList.size()));
 			}
 			if(noOper.size()>0){
 				msgs.add(String.format("其中%s个需求，无权限删除。原因【%s】",noOper.size(),noOperTips.keySet().stream().collect(Collectors.joining(";"))));
