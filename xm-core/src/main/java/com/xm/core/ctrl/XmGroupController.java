@@ -406,20 +406,20 @@ public class XmGroupController {
 				if(project==null){
 					return ResponseHelper.failed("project-0","项目已不存在");
 				}
-				Map<String,String> projectAdmMap=xmGroupService.getProjectAdmUsers(project);
-				if(!projectAdmMap.containsKey(u.getUserid())) {
+				boolean isPm=xmGroupService.checkUserIsProjectAdm(project,u.getUserid());
+				if(!isPm) {
 					tips=projectQxService.checkProjectQx(null,project,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					}
  				}
 			} else if("1".equals(groupDb.getPgClass()) && StringUtils.hasText(groupDb.getProductId())){
-				XmProduct product = xmProductService.selectOneById(groupDb.getProductId());
+				XmProduct product = xmProductService.getProductFromCache(groupDb.getProductId());
 				if(product==null){
 					return ResponseHelper.failed("product-0","产品已不存在");
 				}
-				Map<String,String> productAdmUsers=xmGroupService.getProductAdmUsers(product);
-				if(!productAdmUsers.containsKey(u.getUserid())) {
+				boolean isPm=xmGroupService.checkUserIsProductAdm(product,u.getUserid());
+				if(!isPm) {
 					tips=productQxService.checkProductQx(null,product,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);

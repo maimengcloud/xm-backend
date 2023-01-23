@@ -72,10 +72,6 @@ public class XmProductQxService {
      */
     public Tips checkProductQx(Map<String,List<XmGroupVo>> groupsMap,XmProduct xmProduct,int teamType,User head,String memUserid,String memUsername,String memBranchId){
         Tips tips=new Tips("成功");
-        boolean headIsPm=xmGroupService.checkUserIsProductAdm(xmProduct,head.getUserid());
-        if(headIsPm){
-            return tips;
-        }
         tips=this.checkProductScopeQx(groupsMap,xmProduct,teamType,head,memUserid,memUsername,memBranchId);
         if(!tips.isOk()){
             return tips;
@@ -250,9 +246,6 @@ public class XmProductQxService {
 
     public Tips checkProductQxBatch(XmProduct xmProduct,int teamType,User head,String ...memUserids){
         Tips tips=new Tips("成功");
-        if(xmGroupService.checkUserIsProductAdm(xmProduct,head.getUserid())){
-            return tips;
-        }
         Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
         tips=this.checkProductScopeQxBatch(groupsMap,xmProduct,teamType,head,memUserids);
         if(!tips.isOk()){

@@ -296,6 +296,12 @@ public class XmMenuController {
 			if(!tips.isOk()){
 				return failed(tips);
 			}
+			if(StringUtils.hasText(xmMenu.getMmUserid()) && !xmMenu.getMmUserid().equals(user.getUserid())){
+				tips=productQxService.checkProductQx(null,xmProduct,2,user,xmMenu.getMmUserid(),xmMenu.getMmUsername(),null);
+				if(!tips.isOk()){
+					return failed(tips);
+				}
+			}
 
 
 			xmMenuService.parentIdPathsCalcBeforeSave(xmMenu);
@@ -360,10 +366,13 @@ public class XmMenuController {
 				if(xmProduct==null){
 					return ResponseHelper.failed("product-data-0","产品已不存在");
 				}
-				tips=productQxService.checkProductQx(null,xmProduct,2,user,xmMenuDb.getMmUserid(),xmMenuDb.getMmUsername(),null);
-				if(!tips.isOk()){
-					return failed(tips);
+				if(!groupService.checkUserIsProductAdm(xmProduct, user.getUserid())){
+					tips=productQxService.checkProductQx(null,xmProduct,2,user,xmMenuDb.getMmUserid(),xmMenuDb.getMmUsername(),null);
+					if(!tips.isOk()){
+						return failed(tips);
+					}
 				}
+
 				xmMenuService.deleteByPk(xmMenu);
 				xmRecordService.addXmMenuRecord(xmMenuDb.getProductId(),xmMenu.getMenuId(),"删除产品需求","删除需求"+xmMenuDb.getMenuName(),"",JSON.toJSONString(xmMenu));
 
@@ -380,7 +389,7 @@ public class XmMenuController {
 	}
 	 
 	
-	/***/
+	/**
 	@ApiOperation( value = "根据主键修改一条项目菜单表信息",notes="editXmMenu")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -429,7 +438,7 @@ public class XmMenuController {
 		m.put("tips", tips);
 		return m;
 	}
-
+	 */
 	/***/
 	@ApiOperation( value = "根据主键修改一条项目菜单表信息",notes="editXmMenu")
 	@ApiResponses({
@@ -488,11 +497,7 @@ public class XmMenuController {
 				String mmUserid= (String) xmMenuMap.get("mmUserid");
 				String mmUsername= (String) xmMenuMap.get("mmUsername");
 				if(!user.getUserid().equals(mmUserid)){
-					tips=productQxService.checkProductScopeQx(groupsMap,xmProduct,2,user,mmUserid,mmUsername,null);
-					if(!tips.isOk()){
-						return failed(tips);
-					}
-					tips=productQxService.checkProductTransmitQx(groupsMap,xmProduct,2,user,mmUserid,mmUsername);
+					tips=productQxService.checkProductQx(groupsMap,xmProduct,2,user,mmUserid,mmUsername,null);
 					if(!tips.isOk()){
 						return failed(tips);
 					}
@@ -501,15 +506,20 @@ public class XmMenuController {
 			List<XmMenu> canOper=new ArrayList<>();
 			List<XmMenu> noOper=new ArrayList<>();
 			Map<String,Tips> noOperTips=new HashMap<>();
-			for (XmMenu xm : xmMenusDb) {
-				tips=productQxService.checkProductQx(groupsMap,xmProduct,2,user,xm.getMmUserid(), xm.getMmUsername(), null);
-				if(tips.isOk()){
-					canOper.add(xm);
-				}else{
-					noOper.add(xm);
-					noOperTips.put(tips.getMsg(),tips);
+			if(groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
+				canOper.addAll(xmMenusDb);
+			}else{
+				for (XmMenu xm : xmMenusDb) {
+					tips=productQxService.checkProductQx(groupsMap,xmProduct,2,user,xm.getMmUserid(), xm.getMmUsername(), null);
+					if(tips.isOk()){
+						canOper.add(xm);
+					}else{
+						noOper.add(xm);
+						noOperTips.put(tips.getMsg(),tips);
+					}
 				}
 			}
+
 			if(canOper.size()>0){
 				xmMenuMap.put("ltime",new Date());
 				xmMenuMap.put("ids",canOper.stream().map(k->k.getMenuId()).collect(Collectors.toList()));
@@ -590,15 +600,20 @@ public class XmMenuController {
 			if(xmProduct==null){
 				return ResponseHelper.failed("product-data-0","产品已不存在");
 			}
-			for (XmMenu xm : xmMenusDb) {
-				tips=productQxService.checkProductQx(groupsMap,xmProduct,2,user,xm.getMmUserid(),xm.getMmUsername(),null);
-				if(tips.isOk()){
-					canOper.add(xm);
-				}else{
-					noOper.add(xm);
-					noOperTips.put(tips.getMsg(),tips);
+			if(groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
+				canOper.addAll(xmMenusDb);
+			}else{
+				for (XmMenu xm : xmMenusDb) {
+					tips=productQxService.checkProductQx(groupsMap,xmProduct,2,user,xm.getMmUserid(),xm.getMmUsername(),null);
+					if(tips.isOk()){
+						canOper.add(xm);
+					}else{
+						noOper.add(xm);
+						noOperTips.put(tips.getMsg(),tips);
+					}
 				}
 			}
+
 
 			if(canOper.size()>0){
 				for (XmMenu xmMenu : canOper) {
@@ -728,18 +743,23 @@ public class XmMenuController {
 			if(xmProduct==null){
 				return ResponseHelper.failed("product-data-0","产品已不存在");
 			}
-			for (XmMenu xm : xmMenusDb) {
-				tips=productQxService.checkProductQx(groupsMap,xmProduct,2,user,xm.getMmUserid(),xm.getMmUsername(),null);
-				if(tips.isOk()){
-					canOper.add(xm);
-				}else{
-					if(xm.getMenuId().equals(parentDb.getMenuId())){
-						return ResponseHelper.failed("pmenu-id-0",String.format("无权限挂接需求到【%s】,原因【%s】",xm.getMenuName(),tips.getMsg()));
+			if(groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
+				canOper.addAll(xmMenusDb);
+			}else{
+				for (XmMenu xm : xmMenusDb) {
+					tips=productQxService.checkProductQx(groupsMap,xmProduct,2,user,xm.getMmUserid(),xm.getMmUsername(),null);
+					if(tips.isOk()){
+						canOper.add(xm);
+					}else{
+						if(xm.getMenuId().equals(parentDb.getMenuId())){
+							return ResponseHelper.failed("pmenu-id-0",String.format("无权限挂接需求到【%s】,原因【%s】",xm.getMenuName(),tips.getMsg()));
+						}
+						noOper.add(xm);
+						noOperTips.put(tips.getMsg(),tips);
 					}
-					noOper.add(xm);
-					noOperTips.put(tips.getMsg(),tips);
 				}
 			}
+
 
 			xmMenusDb=canOper.stream().filter(i->!i.getMenuId().equals(parentDb.getMenuId())).collect(Collectors.toList());
 			List<XmMenu> canOpxmMenus=xmMenusDb.stream().filter(i->!parentDb.getMenuId().equals(i.getPmenuId())).collect(Collectors.toList());

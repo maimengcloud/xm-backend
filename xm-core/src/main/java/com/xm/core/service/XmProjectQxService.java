@@ -78,10 +78,6 @@ public class XmProjectQxService {
      */
     public Tips checkProjectQx(Map<String,List<XmGroupVo>> groupsMap,XmProject xmProject,int teamType,User head,String memUserid,String memUsername,String memBranchId){
         Tips tips=new Tips("成功");
-        boolean headIsPm=xmGroupService.checkUserIsProjectAdm(xmProject,head.getUserid());
-        if(headIsPm){
-            return tips;
-        }
         tips=this.checkProjectScopeQx(groupsMap,xmProject,teamType,head,memUserid,memUsername,memBranchId);
         if(!tips.isOk()){
             return tips;
