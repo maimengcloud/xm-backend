@@ -517,6 +517,14 @@ public class XmQuestionController {
 		return tips1;
 	}
 
+	/**
+	 *
+	 * @param xmQuestionsDb
+	 * @param canOper
+	 * @param noOper
+	 * @param noOperTips
+	 * @param opType  0-删除，1修改其它信息，2指派新负责人
+	 */
 	public void checkQx(List<XmQuestion> xmQuestionsDb, List<XmQuestion> canOper, List<XmQuestion> noOper, Map<String,Tips> noOperTips,int opType/**0-删除，1修改其它信息，2指派新负责人**/){
 		User user=LoginUtils.getCurrentUserInfo();
 		/**
@@ -561,22 +569,41 @@ public class XmQuestionController {
 					productsMap.remove(productId);
 				}else{
 					List<XmQuestion> questions=productsMap.get(productId);
-					for (XmQuestion question : questions) {
-						if(opType==0){
-							tips1=productQxService.checkProductQx(groupsMap,xmProduct,1,user,question.getCreateUserid(),question.getCreateUsername(),null);
-						}else if(opType==1){
-							tips1=productQxService.checkProductQx(groupsMap,xmProduct,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
-						}else if(opType==2){
-							//从新指派责任人
+					if(groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
+						if(opType==0){//删除，产品经理有百分百权限
+							canOper.addAll(questions);
+						}else if(opType==1){//修改其它信息，产品经理有百分百权限
+							canOper.addAll(questions);
+						}else if(opType==2){//重新指派，要检查被指派人是否在项目组
+							for (XmQuestion question : questions) {
+								tips1=productQxService.checkProductScopeQx(groupsMap,xmProduct,1,question.getHandlerUserid(),question.getHandlerUsername(),null);
+								if(!tips1.isOk()){
+									productNoDel.add(question);
+									noOperTips.put(question.getId(),tips1);
+								}else {
+									canOper.add(question);
+								}
+							}
 						}
-						if(!tips1.isOk()){
-							productNoDel.add(question);
-							noOperTips.put(question.getId(),tips1);
-						}else {
-							canOper.add(question);
+
+					}else{
+						for (XmQuestion question : questions) {
+							if(opType==0){
+								tips1=productQxService.checkProductQx(groupsMap,xmProduct,1,user,question.getCreateUserid(),question.getCreateUsername(),null);
+							}else if(opType==1){
+								tips1=productQxService.checkProductQx(groupsMap,xmProduct,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
+							}else if(opType==2){
+								tips1=productQxService.checkProductQx(groupsMap,xmProduct,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
+
+							}
+							if(!tips1.isOk()){
+								productNoDel.add(question);
+								noOperTips.put(question.getId(),tips1);
+							}else {
+								canOper.add(question);
+							}
 						}
 					}
-
 				}
 			}
 		}
@@ -609,20 +636,39 @@ public class XmQuestionController {
 					projectsMap.remove(projectId);
 				}else{
 					List<XmQuestion> questions=projectsMap.get(projectId);
-					for (XmQuestion question : questions) {
-						tips1=projectQxService.checkProjectQx(groupsMap,xmProject,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
-						if(opType==0){
-							tips1=projectQxService.checkProjectQx(groupsMap,xmProject,1,user,question.getCreateUserid(),question.getCreateUsername(),null);
-						}else if(opType==1){
-							tips1=projectQxService.checkProjectQx(groupsMap,xmProject,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
-						}else if(opType==2){
-							//从新指派责任人
+					if(groupService.checkUserIsProjectAdm(xmProject,user.getUserid())){
+						if(opType==0){//删除，产品经理有百分百权限
+							canOper.addAll(questions);
+						}else if(opType==1){//修改其它信息，产品经理有百分百权限
+							canOper.addAll(questions);
+						}else if(opType==2){//重新指派，要检查被指派人是否在项目组
+							for (XmQuestion question : questions) {
+								tips1=projectQxService.checkProjectScopeQx(groupsMap,xmProject,1,question.getHandlerUserid(),question.getHandlerUsername(),null);
+								if(!tips1.isOk()){
+									noOper.add(question);
+ 									noOperTips.put(question.getId(),tips1);
+								}else {
+									canOper.add(question);
+								}
+							}
 						}
-						if(!tips1.isOk()){
-							noOper.add(question);
-							noOperTips.put(question.getId(),tips1);
-						}else {
-							canOper.add(question);
+
+					}else {
+						for (XmQuestion question : questions) {
+							if (opType == 0) {
+								tips1 = projectQxService.checkProjectQx(groupsMap, xmProject, 1, user, question.getCreateUserid(), question.getCreateUsername(), null);
+							} else if (opType == 1) {
+								tips1 = projectQxService.checkProjectQx(groupsMap, xmProject, 1, user, question.getHandlerUserid(), question.getHandlerUsername(), null);
+							} else if (opType == 2) {
+								tips1 = projectQxService.checkProjectQx(groupsMap, xmProject, 1, user, question.getHandlerUserid(), question.getHandlerUsername(), null);
+
+							}
+							if (!tips1.isOk()) {
+								noOper.add(question);
+								noOperTips.put(question.getId(), tips1);
+							} else {
+								canOper.add(question);
+							}
 						}
 					}
 				}
