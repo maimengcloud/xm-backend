@@ -10,6 +10,7 @@ import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmTestCase;
 import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmProductQxService;
 import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmTestCaseService;
 import io.swagger.annotations.*;
@@ -47,6 +48,9 @@ public class XmTestCaseController {
 
 	@Autowired
 	XmProductService productService;
+
+	@Autowired
+	XmProductQxService productQxService;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTestCase());
@@ -115,17 +119,22 @@ public class XmTestCaseController {
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCase.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能创建测试用例。");
-			};
-
-			xmTestCase.setCuserid(user.getUserid());
-			xmTestCase.setLuserid(user.getUserid());
+			tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCase.getCuserid(),xmTestCase.getCusername(),xmTestCase.getCbranchId());
+			if(!tips.isOk()){
+				return failed(tips);
+			}
+			if(!StringUtils.hasText(xmTestCase.getCuserid())){
+				xmTestCase.setCuserid(user.getUserid());
+				xmTestCase.setLuserid(user.getUserid());
+				xmTestCase.setCbranchId(user.getBranchId());
+			}
+			if(!StringUtils.hasText(xmTestCase.getCbranchId())){
+				xmTestCase.setCbranchId(user.getBranchId());
+			}
 			xmTestCase.setLusername(user.getUsername());
 			xmTestCase.setCusername(user.getUsername());
 			xmTestCase.setCtime(new Date());
 			xmTestCase.setLtime(new Date());
-			xmTestCase.setCbranchId(user.getBranchId());
 			xmTestCaseService.insert(xmTestCase);
 			m.put("data",xmTestCase);
 		}catch (BizException e) { 
@@ -157,9 +166,13 @@ public class XmTestCaseController {
             }
             User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能删除测试用例。");
-			};
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if(!isPm){
+				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),xmTestCaseDb.getCbranchId());
+				if(!tips.isOk()){
+					return failed(tips);
+				}
+			}
 			xmTestCaseService.deleteByPk(xmTestCase);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -184,17 +197,25 @@ public class XmTestCaseController {
             if(!StringUtils.hasText(xmTestCase.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
-            XmTestCase xmTestCaseDb = xmTestCaseService.selectOneObject(xmTestCase);
+            XmTestCase xmTestCaseDb = xmTestCaseService.selectOneById(xmTestCase);
             if( xmTestCaseDb == null ){
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能修改测试用例。");
-			};
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if(!isPm){
+				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
+				if(!tips.isOk()){
+					return failed(tips);
+				}
+			}
+
 			xmTestCase.setLuserid(user.getUserid());
 			xmTestCase.setLusername(user.getUsername());
+			xmTestCase.setCuserid(null);//关键数据不能更新
+			xmTestCase.setCusername(null);
+			xmTestCase.setCbranchId(null);
 			xmTestCase.setLtime(new Date());
 			xmTestCaseService.updateSomeFieldByPk(xmTestCase);
 			m.put("data",xmTestCase);
@@ -244,24 +265,33 @@ public class XmTestCaseController {
 			}
 			List<XmTestCase> can=new ArrayList<>();
 			List<XmTestCase> no=new ArrayList<>();
+			Map<String,Tips> noTipsMap=new HashMap<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			XmTestCase xmTestCaseDb2=xmTestCasesDb.get(0);
 			if(xmTestCasesDb.stream().filter(k->!k.getProductId().equals(xmTestCaseDb2.getProductId())).findAny().isPresent()){
 				return failed("product-no-same","批量操作所有测试用例必须都在同一个产品下。");
 			}
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb2.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能修改测试用例。");
-			};
-			for (XmTestCase xmTestCaseDb : xmTestCasesDb) {
-				Tips tips2 = new Tips("检查通过");
-
-				if(!tips2.isOk()){
-				    no.add(xmTestCaseDb); 
-				}else{
-					can.add(xmTestCaseDb);
+			if( StringUtils.hasText(xmTestCase.getCuserid()) ){
+				tips=this.productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCase.getCuserid(),xmTestCase.getCusername(),null);
+				if(!tips.isOk()){
+					return failed(tips);
 				}
 			}
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if(!isPm && !StringUtils.hasText(xmTestCase.getCuserid())){
+				for (XmTestCase xmTestCaseDb : xmTestCasesDb) {
+					Tips tips2 = new Tips("检查通过");
+					tips2=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
+					if(!tips2.isOk()){
+						no.add(xmTestCaseDb);
+						noTipsMap.put(tips2.getMsg(),tips2);
+					}else{
+						can.add(xmTestCaseDb);
+					}
+				}
+			}
+
 			if(can.size()>0){
                 xmTestCaseMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
 			    xmTestCaseService.editSomeFields(xmTestCaseMap); 
@@ -271,7 +301,7 @@ public class XmTestCaseController {
 				msgs.add(String.format("成功更新以下%s条数据",can.size()));
 			}
 			if(no.size()>0){
-				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
+				msgs.add(String.format("以下%s个数据无权限更新,原因【%s】",no.size(),noTipsMap.keySet().stream().collect(Collectors.joining(";"))));
 			}
 			if(can.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
@@ -309,16 +339,18 @@ public class XmTestCaseController {
 				return failed("product-no-same","批量操作所有测试用例必须都在同一个产品下。");
 			}
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb2.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能修改测试用例。");
-			};
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+
             List<XmTestCase> can=new ArrayList<>();
             List<XmTestCase> no=new ArrayList<>();
+            Map<String, Tips> noTipsMap=new HashMap<>();
             for (XmTestCase data : datasDb) {
-                if(true){
+                if(isPm){
                     can.add(data);
                 }else{
-                    no.add(data);
+                	tips=productQxService.checkProductQx(null,xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
+					noTipsMap.put(tips.getMsg(),tips);
+                	no.add(data);
                 } 
             }
             List<String> msgs=new ArrayList<>();
@@ -328,7 +360,7 @@ public class XmTestCaseController {
             }
     
             if(no.size()>0){ 
-                msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
+                msgs.add(String.format("以下%s条数据无权限删除.原因【%s】",no.size(), noTipsMap.keySet().stream().collect(Collectors.joining(";"))));
             }
             if(can.size()>0){
                  tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
