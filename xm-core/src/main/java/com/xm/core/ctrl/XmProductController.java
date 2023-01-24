@@ -472,14 +472,14 @@ public class XmProductController {
 			User user = LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=xmProductsDb.get(0);
 			if(!LoginUtils.isBranchAdmin(xmProductDb.getBranchId())  && !groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
-				return failed("noqx-all","无权限修改产品基础信息。产品管理人员、机构管理员有权限更新。");
+				return failed("noqx-all","无权限操作。产品管理人员、机构管理员有权限更新产品基础信息。");
 			}
 			if(xmProductMap.containsKey("assUserid")){
 				String assUserid= (String) xmProductMap.get("assUserid");
 				String assUsername= (String) xmProductMap.get("assUsername");
 				if(StringUtils.hasText(assUserid)){
 					if(!user.getUserid().equals(xmProductDb.getPmUserid()) && !user.getUserid().equals(xmProductDb.getAdmUserid())){
-						return failed("noqx-pm","您不是当前产品经理、总监，无权限委任副经理。只有产品经理、总监可以委任产品副经理、产品助理。");
+						return failed("noqx-pm","您无权限操作,产品经理、总监可以委任产品副经理。");
 					}
 				}
 			}
@@ -488,7 +488,7 @@ public class XmProductController {
 				String pmUsername= (String) xmProductMap.get("pmUsername");
 				if(StringUtils.hasText(pmUserid)){
 					if(!user.getUserid().equals(xmProductDb.getAdmUserid())){
-						return failed("noqx-adm","只有产品总监可以委任产品经理。");
+						return failed("noqx-adm","您无权限操作,产品总监可以委任产品经理。");
 					}
 				}
 			}
@@ -497,7 +497,7 @@ public class XmProductController {
 				String admUsername= (String) xmProductMap.get("admUsername");
 				if(StringUtils.hasText(admUserid)){
 					if(!LoginUtils.isBranchAdmin(xmProductDb.getBranchId()) && !user.getUserid().equals(xmProductDb.getAdmUserid())){
-						return failed("noqx-adm","只有产品总监、机构管理员可以委任产品总监。");
+						return failed("noqx-adm","您无权限操作，产品总监、机构管理员可以委任产品总监。");
 					}
 				}
 			}

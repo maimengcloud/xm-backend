@@ -168,14 +168,14 @@ public class XmProjectController {
 			XmProject xmProject=BaseUtils.fromMap(xmProjectMap,XmProject.class);
 			XmProject xmProjectDb=xmProjectsDb.get(0);
 			if(!LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())  && !groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
-				return failed("noqx-all","无权限修改产品基础信息。产品管理人员、机构管理员有权限更新。");
+				return failed("noqx-all","您无权限操作，产品管理人员、机构管理员有权限更新项目基础信息。");
 			}
 			if(xmProjectMap.containsKey("assUserid")){
 				String assUserid= (String) xmProjectMap.get("assUserid");
 				String assUsername= (String) xmProjectMap.get("assUsername");
 				if(StringUtils.hasText(assUserid)){
 					if(!user.getUserid().equals(xmProjectDb.getPmUserid()) && !user.getUserid().equals(xmProjectDb.getAdmUserid())){
-						return failed("noqx-pm","您不是当前产品经理、总监，无权限委任副经理。只有产品经理、总监可以委任项目副经理、项目助理。");
+						return failed("noqx-pm","您无权限操作。项目经理、总监可以委任项目副经理。");
 					}
 				}
 			}
@@ -184,7 +184,7 @@ public class XmProjectController {
 				String pmUsername= (String) xmProjectMap.get("pmUsername");
 				if(StringUtils.hasText(pmUserid)){
 					if(!user.getUserid().equals(xmProjectDb.getAdmUserid())){
-						return failed("noqx-adm","只有项目总监可以委任项目经理。");
+						return failed("noqx-adm","您无权限操作，项目总监可以委任项目经理。");
 					}
 				}
 			}
@@ -193,7 +193,7 @@ public class XmProjectController {
 				String admUsername= (String) xmProjectMap.get("admUsername");
 				if(StringUtils.hasText(admUserid)){
 					if(!LoginUtils.isBranchAdmin(xmProjectDb.getBranchId()) && !user.getUserid().equals(xmProjectDb.getAdmUserid())){
-						return failed("noqx-adm","只有项目总监、机构管理员可以委任项目总监。");
+						return failed("noqx-adm","您无权限操作，项目总监、机构管理员可以委任项目总监。");
 					}
 				}
 			}
