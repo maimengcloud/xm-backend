@@ -10,6 +10,7 @@ import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmTestCasedb;
 import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmProductQxService;
 import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmTestCasedbService;
 import io.swagger.annotations.*;
@@ -47,6 +48,8 @@ public class XmTestCasedbController {
 
 	@Autowired
 	XmProductService productService;
+	@Autowired
+	XmProductQxService productQxService;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTestCasedb());
@@ -106,9 +109,13 @@ public class XmTestCasedbController {
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedb.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能创建测试用例库。");
-			};
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if(!isPm){
+				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCasedb.getCuserid(),xmTestCasedb.getCusername(),xmTestCasedb.getCbranchId());
+				if(!tips.isOk()){
+					return failed(tips);
+				}
+			}
 			xmTestCasedb.setCtime(new Date());
 			xmTestCasedb.setCuserid(user.getUserid());
 			xmTestCasedb.setCusername(user.getUsername());
@@ -143,13 +150,14 @@ public class XmTestCasedbController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			User user=LoginUtils.getCurrentUserInfo();
-            if(!user.getBranchId().equals(xmTestCasedbDb.getCbranchId())){
-				return failed("cbranchId-err","该测试库不属于您企业，不能删除");
-			}
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedbDb.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能删除测试用例库。");
-			};
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if(!isPm){
+				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCasedbDb.getCuserid(),xmTestCasedbDb.getCusername(),xmTestCasedbDb.getCbranchId());
+				if(!tips.isOk()){
+					return failed(tips);
+				}
+			}
 			xmTestCasedbService.deleteByPk(xmTestCasedb);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -180,13 +188,20 @@ public class XmTestCasedbController {
             }
 
 			User user=LoginUtils.getCurrentUserInfo();
-			if(!user.getBranchId().equals(xmTestCasedbDb.getCbranchId())){
-				return failed("cbranchId-err","该测试库不属于您企业，不能修改");
-			}
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedbDb.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能修改测试用例库。");
-			};
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+ 			if(StringUtils.hasText(xmTestCasedb.getCuserid())){
+				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCasedb.getCuserid(),xmTestCasedb.getCusername(),xmTestCasedb.getCbranchId());
+				if(!tips.isOk()){
+					return failed(tips);
+				}
+			}
+ 			if(!isPm){
+ 				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCasedbDb.getCuserid(),xmTestCasedbDb.getCusername(),xmTestCasedbDb.getCbranchId());
+				if(!tips.isOk()){
+					return failed(tips);
+				}
+ 			}
 			xmTestCasedbService.updateSomeFieldByPk(xmTestCasedb);
 			m.put("data",xmTestCasedb);
 		}catch (BizException e) { 
@@ -233,22 +248,35 @@ public class XmTestCasedbController {
 			if(xmTestCasedbsDb==null ||xmTestCasedbsDb.size()==0){
 				return failed("data-0","记录已不存在");
 			}
+			XmTestCasedb xmTestCasedbDb=xmTestCasedbsDb.get(0);
+			if(xmTestCasedbsDb.stream().filter(k->!k.getProductId().equals(xmTestCasedbDb.getProductId())).findAny().isPresent()){
+				return failed("product-0","批量操作只能在同一批产品中进行");
+			}
+
+			User user = LoginUtils.getCurrentUserInfo();
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedbDb.getProductId());
+			if(StringUtils.hasText(xmTestCasedb.getCuserid())){
+				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCasedb.getCuserid(),xmTestCasedb.getCusername(),xmTestCasedb.getCbranchId());
+				if(!tips.isOk()){
+					return failed(tips);
+				}
+			}
+
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb, user.getUserid());
 			List<XmTestCasedb> can=new ArrayList<>();
 			List<XmTestCasedb> no=new ArrayList<>();
-			User user = LoginUtils.getCurrentUserInfo();
-			for (XmTestCasedb xmTestCasedbDb : xmTestCasedbsDb) {
-				Tips tips2 = new Tips("检查通过");
-				if(!user.getBranchId().equals(xmTestCasedbDb.getCbranchId())){
-					return failed("cbranchId-err","该测试库不属于您企业，不能修改");
-				}
-				XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedbDb.getProductId());
-				if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-					return failed("no-in-pteam","您不是产品团队成员，不能修改测试用例库。");
-				};
-				if(!tips2.isOk()){
-				    no.add(xmTestCasedbDb); 
+			Set<String> noTips=new HashSet<>();
+			for (XmTestCasedb data : xmTestCasedbsDb) {
+				if(isPm){
+					can.add(data);
 				}else{
-					can.add(xmTestCasedbDb);
+					tips=productQxService.checkProductQx(null,xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
+					if(!tips.isOk()){
+						no.add(data);
+						noTips.add(tips.getMsg());
+					}else{
+						can.add(data);
+					}
 				}
 			}
 			if(can.size()>0){
@@ -295,17 +323,21 @@ public class XmTestCasedbController {
 
             List<XmTestCasedb> can=new ArrayList<>();
             List<XmTestCasedb> no=new ArrayList<>();
-
+			Set<String> noTips=new HashSet<>();
 			User user=LoginUtils.getCurrentUserInfo();
             for (XmTestCasedb data : datasDb) {
 				XmProduct xmProductDb=productService.getProductFromCache(data.getProductId());
-				if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-					return failed("no-in-pteam","您不是产品团队成员，不能删除测试用例库。");
-				};
-                if(user.getBranchId().equals(data.getCbranchId())){
-                    can.add(data);
-                }else{
-                    no.add(data);
+				boolean isPm=groupService.checkUserIsProductAdm(xmProductDb, user.getUserid());
+				if(isPm){
+					can.add(data);
+				}else{
+					tips=productQxService.checkProductQx(null,xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
+                    if(!tips.isOk()){
+                    	no.add(data);
+                    	noTips.add(tips.getMsg());
+					}else{
+                    	can.add(data);
+					}
                 } 
             }
             List<String> msgs=new ArrayList<>();

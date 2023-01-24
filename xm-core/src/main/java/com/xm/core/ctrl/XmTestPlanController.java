@@ -10,6 +10,7 @@ import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmTestPlan;
 import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmProductQxService;
 import com.xm.core.service.XmProductService;
 import com.xm.core.service.XmTestPlanService;
 import io.swagger.annotations.*;
@@ -47,6 +48,9 @@ public class XmTestPlanController {
 
 	@Autowired
 	XmProductService productService;
+
+	@Autowired
+	XmProductQxService productQxService;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTestPlan());
@@ -138,9 +142,13 @@ public class XmTestPlanController {
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlan.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmTestPlan.getProductId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能创建测试计划。");
-			};
+ 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+ 			if(!isPm){
+				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestPlan.getCuserid(),xmTestPlan.getCusername(),xmTestPlan.getCbranchId());
+				if(!tips.isOk()){
+					return failed(tips);
+				}
+ 			}
 			xmTestPlan.setCuserid(user.getUserid());
 			xmTestPlan.setCusername(user.getUsername());
 			xmTestPlan.setCtime(new Date());
@@ -177,11 +185,12 @@ public class XmTestPlanController {
 
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanDb.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能删除测试计划。");
-			};
- 			if(!user.getBranchId().equals(xmTestPlanDb.getCbranchId())){
-				return failed("cbranchId-err","该计划不属于您的企业创建，无权删除");
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if(!isPm){
+				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestPlanDb.getCuserid(),xmTestPlanDb.getCusername(),xmTestPlanDb.getCbranchId());
+				if(!tips.isOk()){
+					return failed(tips);
+				}
 			}
 			xmTestPlanService.deleteByPk(xmTestPlan);
 		}catch (BizException e) { 
@@ -212,13 +221,15 @@ public class XmTestPlanController {
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 
+
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanDb.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能删除测试计划。");
-			};
- 			if(!user.getBranchId().equals(xmTestPlanDb.getCbranchId())){
-				return failed("cbranchId-err","该计划不属于您的企业创建，无权修改");
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if(!isPm){
+				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestPlanDb.getCuserid(),xmTestPlanDb.getCusername(),xmTestPlanDb.getCbranchId());
+				if(!tips.isOk()){
+					return failed(tips);
+				}
 			}
 			xmTestPlanService.updateSomeFieldByPk(xmTestPlan);
 			m.put("data",xmTestPlan);
@@ -272,23 +283,24 @@ public class XmTestPlanController {
 			}
 			User user = LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanDb2.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能删除测试计划。");
-			};
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			List<XmTestPlan> can=new ArrayList<>();
 			List<XmTestPlan> no=new ArrayList<>();
-
+			Set<String> noTips=new HashSet<>();
 			for (XmTestPlan xmTestPlanDb : xmTestPlansDb) {
 				Tips tips2 = new Tips("检查通过");
+				 if(isPm){
+					 can.add(xmTestPlanDb);
+				 }else{
+				 	tips2=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestPlanDb.getCuserid(),xmTestPlanDb.getCusername(),xmTestPlanDb.getCbranchId());
+					 if(!tips2.isOk()){
+						 no.add(xmTestPlanDb);
+						 noTips.add(tips2.getMsg());
+					 }else{
+						 can.add(xmTestPlanDb);
+					 }
+				 }
 
-				if(!user.getBranchId().equals(xmTestPlanDb.getCbranchId())){
-					return failed("cbranchId-err","该计划不属于您的企业创建，无权修改");
-				}
-				if(!tips2.isOk()){
-				    no.add(xmTestPlanDb); 
-				}else{
-					can.add(xmTestPlanDb);
-				}
 			}
 			if(can.size()>0){
                 xmTestPlanMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
@@ -299,7 +311,7 @@ public class XmTestPlanController {
 				msgs.add(String.format("成功更新以下%s条数据",can.size()));
 			}
 			if(no.size()>0){
-				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
+				msgs.add(String.format("以下%s个数据无权限更新,原因【%s】",no.size(),noTips.stream().collect(Collectors.joining(";"))));
 			}
 			if(can.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
@@ -337,20 +349,25 @@ public class XmTestPlanController {
 			}
 			User user = LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanDb2.getProductId());
-			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid()) && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-in-pteam","您不是产品团队成员，不能删除测试计划。");
-			};
-            List<XmTestPlan> can=new ArrayList<>();
-            List<XmTestPlan> no=new ArrayList<>();
-			for (XmTestPlan data : datasDb) {
+ 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			List<XmTestPlan> can=new ArrayList<>();
+			List<XmTestPlan> no=new ArrayList<>();
+			Set<String> noTips=new HashSet<>();
+			for (XmTestPlan xmTestPlanDb : datasDb) {
+				Tips tips2 = new Tips("检查通过");
+				if(isPm){
+					can.add(xmTestPlanDb);
+				}else{
+					tips2=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestPlanDb.getCuserid(),xmTestPlanDb.getCusername(),xmTestPlanDb.getCbranchId());
+					if(!tips2.isOk()){
+						no.add(xmTestPlanDb);
+						noTips.add(tips2.getMsg());
+					}else{
+						can.add(xmTestPlanDb);
+					}
+				}
 
-				if(user.getBranchId().equals(data.getCbranchId())){
-
-                    can.add(data);
-                }else{
-                    no.add(data);
-                } 
-            }
+			}
             List<String> msgs=new ArrayList<>();
             if(can.size()>0){
                 xmTestPlanService.batchDelete(can);
@@ -358,7 +375,7 @@ public class XmTestPlanController {
             }
     
             if(no.size()>0){ 
-                msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
+                msgs.add(String.format("有%s条数据无权限删除.原因【%s】",no.size(), noTips.stream().collect(Collectors.joining(";"))));
             }
             if(can.size()>0){
                  tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
