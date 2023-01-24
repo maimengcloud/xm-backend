@@ -68,7 +68,7 @@ public class XmIterationController {
 	XmIterationStateService xmIterationStateService;
 
 	@Autowired
-	XmMenuOperQxService operQxService;
+	XmProductQxService productQxService;
 
 
 	@Autowired
@@ -205,13 +205,26 @@ public class XmIterationController {
 			xmIteration.setBranchId(user.getBranchId());
 			xmIteration.setIstatus("0");
 			xmIteration.setIphase("0");
-			xmIteration.setAdminUserid(user.getUserid());
-			xmIteration.setAdminUsername(user.getUsername());
 			XmProduct xmProductDb=xmProductService.getProductFromCache(xmIteration.getProductId());
-			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
-			if(!isPm && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-qx","您无权新增迭代，您不是产品组成员。");
+			tips=productQxService.checkProductQx(xmProductDb,3,user);
+			if(!tips.isOk()){
+				return failed(tips);
 			}
+			if(!StringUtils.hasText(xmIteration.getAdminUserid())){
+				xmIteration.setAdminUserid(user.getUserid());
+				xmIteration.setAdminUsername(user.getUsername());
+			}else if(!xmIteration.getAdminUserid().equals(user.getUserid())){
+				boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+				if( !isPm ){
+					tips = productQxService.checkProductQx(null,xmProductDb,3,user,xmIteration.getAdminUserid(),xmIteration.getAdminUsername(),null);
+					if(!tips.isOk()){
+						return failed(tips);
+					}
+				}
+			}
+
+
+
 			notifyMsgService.pushMsg(user,xmIteration.getAdminUserid(),xmIteration.getAdminUsername(),"6",xmIteration.getProductId(),xmIteration.getId(),"您成为迭代【"+xmIteration.getIterationName()+"】管理员，请及时跟进。");
 			xmIterationService.addIteration(xmIteration);
 			xmIterationStateService.loadTasksToXmIterationState(xmIteration.getId());
@@ -243,19 +256,20 @@ public class XmIterationController {
 			if(!StringUtils.hasText(xmIteration.getId())){
 				return failed("id-0","请上送迭代编号");
 			}
-			XmIteration iterationDb=this.xmIterationService.selectOneObject(xmIteration);
+			XmIteration iterationDb=this.xmIterationService.selectOneById(xmIteration.getId());
 			if(iterationDb==null){
 				return failed("data-0","迭代不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=xmProductService.getProductFromCache(iterationDb.getProductId());
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
- 			if( !isPm && !user.getUserid().equals(iterationDb.getAdminUserid()) && !user.getUserid().equals(iterationDb.getCuserid())){
-				return failed("no-qx","您无权删除，迭代创建人、负责人可以删除");
+ 			if( !isPm ){
+ 				tips = productQxService.checkProductQx(null,xmProductDb,3,user,iterationDb.getAdminUserid(),iterationDb.getAdminUsername(),null);
+ 				if(!tips.isOk()){
+					return failed(tips);
+				}
 			}
- 			if(!isPm && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-qx","您无权删除，您不是产品组成员。");
-			}
+
 
 			xmIterationService.deleteByPk(xmIteration);
 			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-删除","删除迭代"+iterationDb.getIterationName(),"", JSON.toJSONString(iterationDb));
@@ -286,23 +300,22 @@ public class XmIterationController {
 			if(!StringUtils.hasText(xmIteration.getId())){
 				return failed("id-0","请上送迭代编号");
 			}
-			XmIteration iterationDb=this.xmIterationService.selectOneObject(xmIteration);
+			XmIteration iterationDb=this.xmIterationService.selectOneById(xmIteration.getId());
 			if(iterationDb==null){
 				return failed("data-0","迭代不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=xmProductService.getProductFromCache(iterationDb.getProductId());
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
-			if( !isPm && !user.getUserid().equals(iterationDb.getAdminUserid()) && !user.getUserid().equals(iterationDb.getCuserid())){
-				return failed("no-qx","您无权修改，产品经理、迭代创建人、负责人可以修改");
+			if( !isPm ){
+				tips = productQxService.checkProductQx(null,xmProductDb,3,user,iterationDb.getAdminUserid(),iterationDb.getAdminUsername(),null);
+				if(!tips.isOk()){
+					return failed(tips);
+				}
 			}
-			if(!isPm && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-qx","您无权修改，您不是产品组成员。");
-			}
+			xmIteration.setAdminUserid(null);//不允许更改负责人
+			xmIteration.setAdminUsername(null);
 			xmIterationService.updateByPk(xmIteration);
-			if(!xmIteration.getAdminUserid().equals(iterationDb.getAdminUserid())){
-				notifyMsgService.pushMsg(user,xmIteration.getAdminUserid(),xmIteration.getAdminUsername(),"6",iterationDb.getProductId(),iterationDb.getId(),"您成为迭代【"+iterationDb.getIterationName()+"】管理员，请及时跟进。");
-			}
 			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-修改","修改迭代"+iterationDb.getIterationName(),JSON.toJSONString(xmIteration), JSON.toJSONString(iterationDb));
 			m.put("data",xmIteration);
 		}catch (BizException e) { 
@@ -349,42 +362,64 @@ public class XmIterationController {
 			if(xmIterationsDb==null ||xmIterationsDb.size()==0){
 				return failed("data-0","记录已不存在");
 			}
+
+
 			List<XmIteration> can=new ArrayList<>();
 			List<XmIteration> no=new ArrayList<>();
+			Map<String,Tips> noTipsMap=new HashMap<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			XmIteration iterationDb=xmIterationsDb.get(0);
 			if(xmIterationsDb.stream().filter(k->!k.getProductId().equals(iterationDb.getProductId())).findAny().isPresent()){
 				return failed("data-0","批量修改只能修改同一个产品下的迭代记录");
 			}
 			XmProduct xmProductDb=xmProductService.getProductFromCache(iterationDb.getProductId());
-			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
-			if( !isPm && !user.getUserid().equals(iterationDb.getAdminUserid()) && !user.getUserid().equals(iterationDb.getCuserid())){
-				return failed("no-qx","您无权修改，产品经理、迭代创建人、负责人可以修改");
-			}
-			if(!isPm && !groupService.checkUserExistsProductGroup(xmProductDb.getId(),user.getUserid())){
-				return failed("no-qx","您无权修改，您不是产品组成员。");
-			}
-			for (XmIteration iterationDb2 : xmIterationsDb) {
-				Tips tips2 = new Tips("检查通过");
-				if( !isPm && !user.getUserid().equals(iterationDb2.getAdminUserid()) && !user.getUserid().equals(iterationDb2.getCuserid())){
-					return failed("no-qx","您无权修改，产品经理、迭代创建人、负责人可以修改");
+
+
+			if(xmIterationMap.containsKey("adminUserid")){
+				String adminUserid= (String) xmIterationMap.get("adminUserid");
+				String adminUsername= (String) xmIterationMap.get("adminUsername");
+				if(StringUtils.hasText(adminUserid)){
+					tips=productQxService.checkProductQx(null,xmProductDb,3,user,adminUserid,adminUsername,null);
+					if(!tips.isOk()){
+						return failed(tips);
+					}
 				}
-				if(!tips2.isOk()){
-					no.add(iterationDb);
+			}
+
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			for (XmIteration iterationDb2 : xmIterationsDb) {
+				if( !isPm ){
+					tips=productQxService.checkProductQx(null,xmProductDb,3,user,iterationDb2.getAdminUserid(),iterationDb2.getAdminUsername(),null);
+					if(!tips.isOk()){
+						no.add(iterationDb2);
+						noTipsMap.put(tips.getMsg(),tips);
+					}else{
+						can.add(iterationDb2);
+					}
 				}else{
-					can.add(iterationDb);
+					can.add(iterationDb2);
 				}
 			}
 			if(can.size()>0){
 				xmIterationMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
 				xmIterationService.editSomeFields(xmIterationMap);
+				if(xmIterationMap.containsKey("adminUserid")){
+					String adminUserid= (String) xmIterationMap.get("adminUserid");
+					String adminUsername= (String) xmIterationMap.get("adminUsername");
+					if(StringUtils.hasText(adminUserid)){
+						for (XmIteration iteration : can) {
+							notifyMsgService.pushMsg(user,adminUserid,adminUsername,"6",iteration.getProductId(),iteration.getId(),"您成为迭代【"+iteration.getIterationName()+"】管理员，请及时跟进。");
+						}
+					}
+
+				}
 			}
 			List<String> msgs=new ArrayList<>();
 			if(can.size()>0){
 				msgs.add(String.format("成功更新以下%s条数据",can.size()));
 			}
 			if(no.size()>0){
-				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
+				msgs.add(String.format("以下%s个数据无权限更新，原因【%s】",no.size(),noTipsMap.keySet().stream().collect(Collectors.joining(";"))));
 			}
 			if(can.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
