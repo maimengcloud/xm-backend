@@ -7,7 +7,6 @@ import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
-import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -178,7 +177,7 @@ public class XmIterationController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmIteration.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmIteration_add",name = "新增迭代计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmIteration_add",name = "新增迭代计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmIteration(@RequestBody XmIterationVo xmIteration) {
 		Map<String,Object> m = new HashMap<>();
@@ -247,7 +246,7 @@ public class XmIterationController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmIteration_del",name = "删除迭代计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmIteration_del",name = "删除迭代计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmIteration(@RequestBody XmIteration xmIteration){
 		Map<String,Object> m = new HashMap<>();
@@ -291,7 +290,7 @@ public class XmIterationController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmIteration.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmIteration_edit",name = "修改迭代计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmIteration_edit",name = "修改迭代计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmIteration(@RequestBody XmIteration xmIteration) {
 		Map<String,Object> m = new HashMap<>();
@@ -438,7 +437,7 @@ public class XmIterationController {
 		return m;
 	}
 
-	@HasQx(value = "xm_core_xmIteration_loadTasksToXmIterationState",name = "计算迭代的bug、工作量、人员投入、进度等",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmIteration_loadTasksToXmIterationState",name = "计算迭代的bug、工作量、人员投入、进度等",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/loadTasksToXmIterationState",method=RequestMethod.POST)
 	public Map<String,Object> loadTasksToXmIterationState(@RequestBody XmIteration xmIteration) {
 		Map<String,Object> m = new HashMap<>();

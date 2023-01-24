@@ -66,7 +66,7 @@ public class XmTaskSkillController {
 	@ApiResponses({
 	@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmTaskSkill_batchAdd",name = "批量新增任务的技能要求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTaskSkill_batchAdd",name = "批量新增任务的技能要求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
 	public Map<String,Object> batchAddSkill(@RequestBody List<XmTaskSkill> xmTaskSkills) {
 		Map<String,Object> m = new HashMap<>();
@@ -124,7 +124,7 @@ public class XmTaskSkillController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmTaskSkill_del",name = "删除任务的技能要求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTaskSkill_del",name = "删除任务的技能要求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmTaskSkill(@RequestBody XmTaskSkill xmTaskSkill){
 		Map<String,Object> m = new HashMap<>();

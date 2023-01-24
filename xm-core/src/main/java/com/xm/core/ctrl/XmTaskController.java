@@ -257,7 +257,7 @@ public class XmTaskController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTask_editSomeFields",name = "批量修改修改任务中的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTask_editSomeFields",name = "批量修改修改任务中的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTaskMap) {
 		Map<String,Object> m = new HashMap<>();
@@ -535,7 +535,7 @@ public class XmTaskController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTask_addTask",name = "新增任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTask_addTask",name = "新增任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/addTask",method=RequestMethod.POST)
 	public Map<String,Object> addTask(@RequestBody XmTaskVo xmTaskVo) {
 		Map<String,Object> m = new HashMap<>();
@@ -699,7 +699,7 @@ public class XmTaskController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmTask_del",name = "删除任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTask_del",name = "删除任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmTask(@RequestBody XmTask xmTask){
 		Map<String,Object> m = new HashMap<>();
@@ -751,7 +751,7 @@ public class XmTaskController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	//@HasQx(value = "xm_core_xmTask_setTaskCreateUser",name = "修改任务责任人",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	////@HasQx(value = "xm_core_xmTask_setTaskCreateUser",name = "修改任务责任人",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/setTaskCreateUser",method=RequestMethod.POST)
 	public Map<String,Object> setTaskCreateUser(@RequestBody XmTaskVo xmTaskVo) {
 		Map<String,Object> m = new HashMap<>();
@@ -805,7 +805,7 @@ public class XmTaskController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTask_editXmTask",name = "修改任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTask_editXmTask",name = "修改任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmTask(@RequestBody XmTaskVo xmTaskVo) {
 		Map<String,Object> m = new HashMap<>();
@@ -869,7 +869,7 @@ public class XmTaskController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTask_editTime",name = "修改任务时间",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTask_editTime",name = "修改任务时间",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editTime",method=RequestMethod.POST)
 	public Map<String,Object> editTime(@RequestBody XmTask xmTask) {
 		Map<String,Object> m = new HashMap<>();
@@ -911,7 +911,7 @@ public class XmTaskController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmTask_editProgress",name = "修改任务进度百分比",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTask_editProgress",name = "修改任务进度百分比",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editProgress",method=RequestMethod.POST)
 	public Map<String,Object> editProgress(@RequestBody XmTask xmTask) {
 		Map<String,Object> m = new HashMap<>();
@@ -955,7 +955,7 @@ public class XmTaskController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmTask_batchImportFromTemplate",name = "从模板导入任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTask_batchImportFromTemplate",name = "从模板导入任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchImportFromTemplate",method=RequestMethod.POST)
 	public Map<String,Object> batchImportFromTemplate(@RequestBody BatchImportVo batchImportVo) {
 		Map<String,Object> m = new HashMap<>();
@@ -1110,7 +1110,7 @@ public class XmTaskController {
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmTask_batchRelTasksWithPhase",name = "批量将任务与一个项目计划关联",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTask_batchRelTasksWithPhase",name = "批量将任务与一个项目计划关联",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchRelTasksWithPhase",method=RequestMethod.POST)
 	public Map<String,Object> batchRelTasksWithPhase(@RequestBody BatchRelTasksWithPhase tasksPhase) {
 		Map<String,Object> m = new HashMap<>();
@@ -1209,7 +1209,7 @@ public class XmTaskController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmTask_batchRelTasksWithMenu",name = "批量将任务与一个用户需求关联",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTask_batchRelTasksWithMenu",name = "批量将任务与一个用户需求关联",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchRelTasksWithMenu",method=RequestMethod.POST)
 	public Map<String,Object> batchRelTasksWithMenu(@RequestBody BatchRelTasksWithMenu tasksMenu) {
 		Map<String,Object> m = new HashMap<>();
@@ -1314,7 +1314,7 @@ public class XmTaskController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmTask_batchDel",name = "批量删除任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTask_batchDel",name = "批量删除任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmTask(@RequestBody List<XmTask> xmTasks) {
 		Map<String,Object> m = new HashMap<>();
@@ -1432,7 +1432,7 @@ public class XmTaskController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmTask_batchSaveBudget",name = "批量修改任务预算",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTask_batchSaveBudget",name = "批量修改任务预算",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchSaveBudget",method=RequestMethod.POST)
 	public Map<String,Object> batchSaveBudget(@RequestBody  List<XmTask> xmTasks) {
 		Map<String,Object> m = new HashMap<>();
@@ -1586,7 +1586,7 @@ public class XmTaskController {
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmTask_batchChangeParentTask",name = "批量修改任务的上级",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
+	//@HasQx(value = "xm_core_xmTask_batchChangeParentTask",name = "批量修改任务的上级",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchChangeParentTask",method=RequestMethod.POST)
 	public Map<String,Object> batchChangeParentTask(@RequestBody BatchChangeParentTaskVo xmTasksVo) {
 		Map<String,Object> m = new HashMap<>();

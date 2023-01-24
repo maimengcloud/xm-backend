@@ -194,7 +194,7 @@ public class XmProductController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProduct.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProduct_copyTo",name = "通过复制创建产品/战略规划等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
+	//@HasQx(value = "xm_core_xmProduct_copyTo",name = "通过复制创建产品/战略规划等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/copyTo",method=RequestMethod.POST)
 	public Map<String,Object> copyTo(@RequestBody XmProductCopyVo xmProduct) {
 		Map<String,Object> m = new HashMap<>();
@@ -237,7 +237,7 @@ public class XmProductController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProduct.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProduct_add",name = "创建产品/战略规划等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
+	//@HasQx(value = "xm_core_xmProduct_add",name = "创建产品/战略规划等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Map<String,Object> addXmProduct(@RequestBody XmProductAddVo xmProduct) {
 		Map<String,Object> m = new HashMap<>();
@@ -323,7 +323,7 @@ public class XmProductController {
 	@ApiResponses({
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmProduct_unDel",name = "从回收站恢复产品等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
+	//@HasQx(value = "xm_core_xmProduct_unDel",name = "从回收站恢复产品等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/unDel",method=RequestMethod.POST)
 	public Map<String,Object> unDelXmProduct(@RequestBody XmProduct xmProduct){
 		Map<String,Object> m = new HashMap<>();
@@ -381,7 +381,7 @@ public class XmProductController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
-	@HasQx(value = "xm_core_xmProduct_del",name = "删除产品/战略规划等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
+	//@HasQx(value = "xm_core_xmProduct_del",name = "删除产品/战略规划等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Map<String,Object> delXmProduct(@RequestBody XmProduct xmProduct){
 		Map<String,Object> m = new HashMap<>();
@@ -530,7 +530,7 @@ public class XmProductController {
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmProduct.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProduct_createProductCode",name = "创建产品代号",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
+	//@HasQx(value = "xm_core_xmProduct_createProductCode",name = "创建产品代号",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/createProductCode",method=RequestMethod.POST)
 	public Map<String,Object> createProductCode() {
 		Map<String,Object> m = new HashMap<>();
@@ -556,7 +556,7 @@ public class XmProductController {
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProduct.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
-	@HasQx(value = "xm_core_xmProduct_edit",name = "修改产品/战略规划等基本信息",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
+	//@HasQx(value = "xm_core_xmProduct_edit",name = "修改产品/战略规划等基本信息",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Map<String,Object> editXmProduct(@RequestBody XmProduct xmProduct) {
 		Map<String,Object> m = new HashMap<>();
@@ -613,7 +613,7 @@ public class XmProductController {
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
-	@HasQx(value = "xm_core_xmProduct_batchDel",name = "批量删除产品/战略规划等基本信息",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
+	//@HasQx(value = "xm_core_xmProduct_batchDel",name = "批量删除产品/战略规划等基本信息",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Map<String,Object> batchDelXmProduct(@RequestBody List<XmProduct> xmProducts) {
 		Map<String,Object> m = new HashMap<>();
