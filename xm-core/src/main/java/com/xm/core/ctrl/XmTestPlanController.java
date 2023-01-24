@@ -287,20 +287,18 @@ public class XmTestPlanController {
 			List<XmTestPlan> can=new ArrayList<>();
 			List<XmTestPlan> no=new ArrayList<>();
 			Set<String> noTips=new HashSet<>();
-			for (XmTestPlan xmTestPlanDb : xmTestPlansDb) {
-				Tips tips2 = new Tips("检查通过");
-				 if(isPm){
-					 can.add(xmTestPlanDb);
-				 }else{
-				 	tips2=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestPlanDb.getCuserid(),xmTestPlanDb.getCusername(),xmTestPlanDb.getCbranchId());
-					 if(!tips2.isOk()){
-						 no.add(xmTestPlanDb);
-						 noTips.add(tips2.getMsg());
-					 }else{
-						 can.add(xmTestPlanDb);
-					 }
-				 }
-
+			if(isPm){
+				can=xmTestPlansDb;
+			}else {
+				for (XmTestPlan xmTestPlanDb : xmTestPlansDb) {
+					Tips tips2 =productQxService.checkProductQx(null,xmProductDb,1,user,xmTestPlanDb.getCuserid(),xmTestPlanDb.getCusername(),xmTestPlanDb.getCbranchId());
+					if(!tips2.isOk()){
+						no.add(xmTestPlanDb);
+						noTips.add(tips2.getMsg());
+					}else{
+						can.add(xmTestPlanDb);
+					}
+				}
 			}
 			if(can.size()>0){
                 xmTestPlanMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
@@ -353,21 +351,21 @@ public class XmTestPlanController {
 			List<XmTestPlan> can=new ArrayList<>();
 			List<XmTestPlan> no=new ArrayList<>();
 			Set<String> noTips=new HashSet<>();
-			for (XmTestPlan xmTestPlanDb : datasDb) {
-				Tips tips2 = new Tips("检查通过");
-				if(isPm){
-					can.add(xmTestPlanDb);
-				}else{
-					tips2=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestPlanDb.getCuserid(),xmTestPlanDb.getCusername(),xmTestPlanDb.getCbranchId());
+			if(isPm){
+				can=datasDb;
+			}else {
+				for (XmTestPlan xmTestPlanDb : datasDb) {
+					Tips tips2  =productQxService.checkProductQx(null,xmProductDb,1,user,xmTestPlanDb.getCuserid(),xmTestPlanDb.getCusername(),xmTestPlanDb.getCbranchId());
 					if(!tips2.isOk()){
 						no.add(xmTestPlanDb);
 						noTips.add(tips2.getMsg());
 					}else{
 						can.add(xmTestPlanDb);
 					}
-				}
 
+				}
 			}
+
             List<String> msgs=new ArrayList<>();
             if(can.size()>0){
                 xmTestPlanService.batchDelete(can);

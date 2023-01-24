@@ -279,7 +279,9 @@ public class XmTestCaseController {
 				}
 			}
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
-			if(!isPm && !StringUtils.hasText(xmTestCase.getCuserid())){
+			if(isPm){
+				 can=xmTestCasesDb;
+			}else{
 				for (XmTestCase xmTestCaseDb : xmTestCasesDb) {
 					Tips tips2 = new Tips("检查通过");
 					tips2=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
@@ -344,15 +346,20 @@ public class XmTestCaseController {
             List<XmTestCase> can=new ArrayList<>();
             List<XmTestCase> no=new ArrayList<>();
             Map<String, Tips> noTipsMap=new HashMap<>();
-            for (XmTestCase data : datasDb) {
-                if(isPm){
-                    can.add(data);
-                }else{
-                	tips=productQxService.checkProductQx(null,xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
-					noTipsMap.put(tips.getMsg(),tips);
-                	no.add(data);
-                } 
-            }
+            if(isPm){
+				can=datasDb;
+			}else {
+				for (XmTestCase data : datasDb) {
+					tips=productQxService.checkProductQx(null,xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
+					if(tips.isOk()){
+						can.add(data);
+					}else {
+						noTipsMap.put(tips.getMsg(),tips);
+						no.add(data);
+					}
+				}
+			}
+
             List<String> msgs=new ArrayList<>();
             if(can.size()>0){
                 xmTestCaseService.batchDelete(can);

@@ -266,10 +266,10 @@ public class XmTestCasedbController {
 			List<XmTestCasedb> can=new ArrayList<>();
 			List<XmTestCasedb> no=new ArrayList<>();
 			Set<String> noTips=new HashSet<>();
-			for (XmTestCasedb data : xmTestCasedbsDb) {
-				if(isPm){
-					can.add(data);
-				}else{
+			if(isPm){
+				can=xmTestCasedbsDb;
+			}else {
+				for (XmTestCasedb data : xmTestCasedbsDb) {
 					tips=productQxService.checkProductQx(null,xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
 					if(!tips.isOk()){
 						no.add(data);
@@ -278,7 +278,9 @@ public class XmTestCasedbController {
 						can.add(data);
 					}
 				}
+
 			}
+
 			if(can.size()>0){
                 xmTestCasedbMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
 			    xmTestCasedbService.editSomeFields(xmTestCasedbMap); 
@@ -320,26 +322,33 @@ public class XmTestCasedbController {
                 return failed("data-0","请上送待删除数据列表");
             }
              List<XmTestCasedb> datasDb=xmTestCasedbService.selectListByIds(xmTestCasedbs.stream().map(i-> i.getId() ).collect(Collectors.toList()));
-
+			if(datasDb==null || datasDb.size()==0){
+				return failed("data-0","测试库已不存在");
+			}
+			XmTestCasedb xmTestCasedbDb=datasDb.get(0);
+			if(datasDb.stream().filter(k->!k.getProductId().equals(xmTestCasedbDb.getProductId())).findAny().isPresent()){
+				return failed("data-0","批量处理只能在同一个产品下进行");
+			}
+			User user=LoginUtils.getCurrentUserInfo();
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedbDb.getProductId());
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
             List<XmTestCasedb> can=new ArrayList<>();
             List<XmTestCasedb> no=new ArrayList<>();
 			Set<String> noTips=new HashSet<>();
-			User user=LoginUtils.getCurrentUserInfo();
-            for (XmTestCasedb data : datasDb) {
-				XmProduct xmProductDb=productService.getProductFromCache(data.getProductId());
-				boolean isPm=groupService.checkUserIsProductAdm(xmProductDb, user.getUserid());
-				if(isPm){
-					can.add(data);
-				}else{
+			if(isPm){
+				can=datasDb;
+			}else {
+				for (XmTestCasedb data : datasDb) {
 					tips=productQxService.checkProductQx(null,xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
-                    if(!tips.isOk()){
-                    	no.add(data);
-                    	noTips.add(tips.getMsg());
+					if(!tips.isOk()){
+						no.add(data);
+						noTips.add(tips.getMsg());
 					}else{
-                    	can.add(data);
+						can.add(data);
 					}
-                } 
-            }
+				}
+			}
+
             List<String> msgs=new ArrayList<>();
             if(can.size()>0){
                 xmTestCasedbService.batchDelete(can);
