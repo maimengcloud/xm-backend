@@ -7,7 +7,6 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasQx;
@@ -32,7 +31,6 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.mdp.core.utils.BaseUtils.fromMap;
 import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
@@ -144,6 +142,9 @@ public class XmProjectController {
 				return failed("ids-0","ids不能为空");
 			}
 
+			if(ids.size()>1){
+				return failed("ids-1","一次只能更新一个项目");
+			}
 			Set<String> fields=new HashSet<>();
 			fields.add("id");
 			fields.add("code");
@@ -159,43 +160,55 @@ public class XmProjectController {
 			if(fieldKey.size()<=0) {
 				return failed("fieldKey-0","没有需要更新的字段");
 			}
-			XmProject xmProject = fromMap(xmProjectMap,XmProject.class);
+			User user=LoginUtils.getCurrentUserInfo();
 			List<XmProject> xmProjectsDb=xmProjectService.selectListByIds(ids);
 			if(xmProjectsDb==null ||xmProjectsDb.size()==0){
 				return failed("data-0","记录已不存在");
 			}
-			List<XmProject> can=new ArrayList<>();
-			List<XmProject> no=new ArrayList<>();
-			User user = LoginUtils.getCurrentUserInfo();
-			for (XmProject xmProjectDb : xmProjectsDb) {
-				Tips tips2 = new Tips("检查通过");
-				if(!groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
-					return ResponseHelper.failed("not-project-pm","您不是项目管理人员，无权限更新项目信息。");
-				};
-				if(!tips2.isOk()){
-					no.add(xmProjectDb);
-				}else{
-					can.add(xmProjectDb);
+			XmProject xmProject=BaseUtils.fromMap(xmProjectMap,XmProject.class);
+			XmProject xmProjectDb=xmProjectsDb.get(0);
+			if(!LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())  && !groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
+				return failed("noqx-all","无权限修改产品基础信息。产品管理人员、机构管理员有权限更新。");
+			}
+			if(xmProjectMap.containsKey("assUserid")){
+				String assUserid= (String) xmProjectMap.get("assUserid");
+				String assUsername= (String) xmProjectMap.get("assUsername");
+				if(StringUtils.hasText(assUserid)){
+					if(!user.getUserid().equals(xmProjectDb.getPmUserid()) && !user.getUserid().equals(xmProjectDb.getAdmUserid())){
+						return failed("noqx-pm","您不是当前产品经理、总监，无权限委任副经理。只有产品经理、总监可以委任项目副经理、项目助理。");
+					}
 				}
 			}
-			if(can.size()>0){
-				xmProjectMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
-				xmProjectService.editSomeFields(xmProjectMap);
-			}
-			List<String> msgs=new ArrayList<>();
-			if(can.size()>0){
-				msgs.add(String.format("成功更新%s条数据",can.size()));
-			}
-			if(no.size()>0){
-				msgs.add(String.format("有%s个数据无权限更新",no.size()));
-			}
-			if(can.size()>0){
-				for (XmProject project : can) {
-					xmProjectService.clearProject(project.getId());
+			if(xmProjectMap.containsKey("pmUserid")){
+				String pmUserid= (String) xmProjectMap.get("pmUserid");
+				String pmUsername= (String) xmProjectMap.get("pmUsername");
+				if(StringUtils.hasText(pmUserid)){
+					if(!user.getUserid().equals(xmProjectDb.getAdmUserid())){
+						return failed("noqx-adm","只有项目总监可以委任项目经理。");
+					}
 				}
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
-			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+			}
+			if(xmProjectMap.containsKey("admUserid")){
+				String admUserid= (String) xmProjectMap.get("admUserid");
+				String admUsername= (String) xmProjectMap.get("admUsername");
+				if(StringUtils.hasText(admUserid)){
+					if(!LoginUtils.isBranchAdmin(xmProjectDb.getBranchId()) && !user.getUserid().equals(xmProjectDb.getAdmUserid())){
+						return failed("noqx-adm","只有项目总监、机构管理员可以委任项目总监。");
+					}
+				}
+			}
+			this.xmProjectService.editSomeFields(xmProjectMap);
+
+			if(StringUtils.hasText(xmProject.getPmUserid()) && !xmProject.getPmUserid().equals(xmProjectDb.getPmUserid())){
+				notifyMsgService.pushMsg(user,xmProject.getPmUserid(),xmProject.getPmUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的项目经理，请及时跟进。");
+
+			}
+			if(StringUtils.hasText(xmProject.getAssUserid()) && !xmProject.getAssUserid().equals(xmProjectDb.getAssUserid())){
+				notifyMsgService.pushMsg(user,xmProject.getAssUserid(),xmProject.getAssUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的副经理，请及时跟进。");
+
+			}
+			if(StringUtils.hasText(xmProject.getAdmUserid()) && !xmProject.getAdmUserid().equals(xmProjectDb.getAdmUserid())){
+				notifyMsgService.pushMsg(user,xmProject.getAdmUserid(),xmProject.getAdmUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的项目总监，请及时跟进。");
 			}
 			//m.put("data",xmMenu);
 		}catch (BizException e) {
@@ -321,9 +334,13 @@ public class XmProjectController {
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			User user= LoginUtils.getCurrentUserInfo();
+			if(xmProject==null || StringUtils.isEmpty(xmProject.getId())){
+				return failed("id-0","项目编号不能为空");
+			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
 				tips.setFailureMsg("项目不存在");
+				return failed(tips);
 			}
 			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
 				return failed("branchId-not-right","该项目不属于您的组织，不允许您进行删除");
@@ -365,22 +382,15 @@ public class XmProjectController {
 
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
-				tips.setFailureMsg("项目不存在");
-				m.put("tips", tips);
-				return m;
+				return failed("id-0","项目编号不能为空");
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
-				tips.setFailureMsg("项目不存在");
-				m.put("tips", tips);
-				return m;
+				return failed("data-0","项目不存在");
 			}
-			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
-			if( !isCreate && !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
-				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目基础数据");
-				m.put("tips", tips);
-				return m;
+			if(   !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
+				return failed("noqx","您无权操作！项目管理人员才能修改项目基础数据");
 			}
 			xmProjectService.updateByPk(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
@@ -432,22 +442,15 @@ public class XmProjectController {
 
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
-				tips.setFailureMsg("项目不存在");
-				m.put("tips", tips);
-				return m;
+				return failed("id-0","项目编号不能为空");
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
-				tips.setFailureMsg("项目不存在");
-				m.put("tips", tips);
-				return m;
+				return failed("data-0","项目不存在");
 			}
-			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
-			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
-			if( !isCreate && !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
-				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目状态");
-				m.put("tips", tips);
-				return m;
+ 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
+			if( !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
+ 				return failed("noqx","您无权操作！项目管理人员才能修改项目状态");
 			}
 			xmProjectService.updateStatus(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
@@ -478,22 +481,15 @@ public class XmProjectController {
 		try{
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
-				tips.setFailureMsg("项目编号不能为空");
-				m.put("tips", tips);
-				return m;
+				return failed("id-0","项目编号不能为空");
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
-				tips.setFailureMsg("项目不存在");
-				m.put("tips", tips);
-				return m;
+				return failed("data-0","项目不存在");
 			}
-			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
-			if( !isCreate && !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
-				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目预算");
-				m.put("tips", tips);
-				return m;
+			if( !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
+				return failed("noqx","您无权操作！项目管理人员才能修改项目预算");
 			}
 			xmProjectService.editBudget(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
@@ -510,7 +506,11 @@ public class XmProjectController {
 		m.put("tips", tips);
 		return m;
 	}
-	
+
+	/**
+	 *
+	 * @param xmProject
+	 * @return
 	@ApiOperation( value = "根据主键修改一条xm_project信息",notes="editXmProject")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProject.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -523,22 +523,15 @@ public class XmProjectController {
 		try{
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
-				tips.setFailureMsg("项目不存在");
-				m.put("tips", tips);
-				return m;
+				return failed("id-0","项目编号不能为空");
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
-				tips.setFailureMsg("项目不存在");
-				m.put("tips", tips);
-				return m;
+				return failed("data-0","项目不存在");
 			}
-			boolean isCreate=user.getUserid().equals(xmProjectDb.getCreateUserid());
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
-			if( !isCreate && !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId()) ) {
-				tips.setFailureMsg("您无权操作！项目创建人、项目经理才能修改项目基础信息");
-				m.put("tips", tips);
-				return m;
+			if( !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
+				return failed("noqx","您无权操作！项目管理人员才能修改项目基础信息");
 			}
 			xmProjectService.updateProject(xmProject);
 			if(StringUtils.hasText(xmProject.getPmUserid()) && !xmProject.getPmUserid().equals(xmProjectDb.getPmUserid())){
@@ -566,6 +559,9 @@ public class XmProjectController {
 		m.put("tips", tips);
 		return m;
 	}
+
+	 */
+
 
 	@ApiOperation( value = "存为模板",notes="editXmProject")
 	@ApiResponses({
