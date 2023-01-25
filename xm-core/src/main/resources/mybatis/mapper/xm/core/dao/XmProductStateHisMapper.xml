@@ -12,6 +12,8 @@
              </foreach>
          </if>
         <if test="key != null and key !='' ">       </if>
+		<if test="startBizDate != null and startBizDate !='' ">   and res.biz_date &gt;=#{startBizDate}    </if>
+		<if test="endBizDate != null and endBizDate !='' ">   and res.biz_date &lt;=#{endBizDate}    </if>
     </sql>
 
 
