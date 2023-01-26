@@ -62,6 +62,7 @@
 		max( <if test="groupBy=='handler_userid'">handler_username</if>
 			 <if test="groupBy=='ask_userid'">ask_username</if>
 			 <if test="groupBy=='create_userid'">create_username</if>
+		     <if test="groupBy=='func_id'">func_name</if>
 			 <if test="groupBy=='menu_id'">menu_name</if> ) as name from xm_question res
 		<where>
 			<include refid="whereForMap"></include>
