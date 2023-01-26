@@ -75,14 +75,15 @@
 
 		select count(*) as bugs_num,retimes from
 		(
-		SELECT count(*) as retimes,res.question_id FROM xm_question_handle res
+		SELECT count(*) as retimes,h.question_id FROM xm_question_handle h inner join xm_question res
+		on res.id=h.question_id
 		<where>
 			<include refid="whereForMap"></include>
 			<include refid="where"></include>
-			and handle_status='9'
+			and h.handle_status='9'
 		</where>
 
-		group by res.question_id ) as ret
+		group by h.question_id ) as ret
 		group by ret.retimes
 		order by retimes desc
 	</select>
