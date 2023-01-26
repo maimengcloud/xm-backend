@@ -69,6 +69,24 @@
 		</where>
 		group by ${groupBy}
 	</select>
+
+
+	<select id="getXmQuestionRetestDist" parameterType="HashMap" resultType="HashMap">
+
+		select count(*) as bugs_num,retimes from
+		(
+		SELECT count(*) as retimes,res.question_id FROM xm_question_handle res
+		<where>
+			<include refid="whereForMap"></include>
+			<include refid="where"></include>
+			and handle_status='9'
+		</where>
+
+		group by res.question_id ) as ret
+		group by ret.retimes
+		order by retimes desc
+	</select>
+
 	<!--结束 自定义sql函数区域-->
 	
 

@@ -9,7 +9,6 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
-import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -19,7 +18,10 @@ import com.xm.core.service.*;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmQuestionVo;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,7 +134,13 @@ public class XmQuestionController {
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAgeDist(xmQuestion);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
-
+	@RequestMapping(value="/getXmQuestionRetestDist",method=RequestMethod.GET)
+	public Map<String,Object> getXmQuestionRetestDist( @ApiIgnore @RequestParam Map<String,Object> xmQuestion){
+		User user=LoginUtils.getCurrentUserInfo();
+		xmQuestion.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionRetestDist(xmQuestion);
+		return ResponseHelper.ok("ok","成功",datas);
+	}
 	@RequestMapping(value="/getXmQuestionSort",method=RequestMethod.GET)
 	public Map<String,Object> getXmQuestionSort( @ApiIgnore @RequestParam Map<String,Object> xmQuestion){
 		User user=LoginUtils.getCurrentUserInfo();
