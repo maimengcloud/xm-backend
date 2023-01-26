@@ -40,7 +40,7 @@
 				and p.casedb_id=#{casedbId}
 			</if>
 			<if test="projectId!=null and projectId!=''">
-				and p.porject_id=#{projectId}
+				and p.project_id=#{projectId}
 			</if>
 			<if test="productId!=null and productId!=''">
 				and p.product_id=#{productId}
@@ -61,7 +61,7 @@
 				and p.casedb_id=#{casedbId}
 			</if>
 			<if test="projectId!=null and projectId!=''">
-				and p.porject_id=#{projectId}
+				and p.project_id=#{projectId}
 			</if>
 			<if test="productId!=null and productId!=''">
 				and p.product_id=#{productId}
