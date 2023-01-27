@@ -75,7 +75,7 @@
 
 	<select id="getXmTestDayTimesList" parameterType="HashMap"  resultType="HashMap">
 		select res.exec_date, sum(case when res.exec_status>='1' then 1 else 0 end) as had_exec
-		from xm_test_plan_case res left join xm_test_plan p on res.plan_id=p.id
+		from xm_test_plan_case res inner join xm_test_plan p on res.plan_id=p.id
 		<where>
 			<if test="planId!=null and planId!=''">
 				and res.plan_id=#{planId}
@@ -94,6 +94,14 @@
 			</if>
 			<if test="startExecDate!=null">
 				and res.exec_date between #{startExecDate} and #{endExecDate}
+			</if>
+			<if test="linkIterationId!=null">
+				and exists ( select 1 from xm_test_case c inner join xm_menu m on c.menu_id=m.menu_id
+					where m.iteration_id=#{linkIterationId} and c.id=res.case_id
+					<if test="productId!=null and productId!=''">
+						and m.product_id=#{productId}
+					</if>
+				)
 			</if>
 		</where>
 		group by res.exec_date
