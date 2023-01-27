@@ -229,7 +229,7 @@ public class XmProjectService extends BaseService {
 	}
     
     public void clearProject(String projectId) {
-    	xmProjectCacheService.putProject(projectId, null);
+    	xmProjectCacheService.clear(projectId);
     }
     
     /** 请在此类添加自定义函数 */

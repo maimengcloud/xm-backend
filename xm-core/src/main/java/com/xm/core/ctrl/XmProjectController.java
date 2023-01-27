@@ -9,7 +9,6 @@ import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
-import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -198,7 +197,7 @@ public class XmProjectController {
 				}
 			}
 			this.xmProjectService.editSomeFields(xmProjectMap);
-
+			this.xmProjectService.clearProject(xmProjectDb.getId());
 			if(StringUtils.hasText(xmProject.getPmUserid()) && !xmProject.getPmUserid().equals(xmProjectDb.getPmUserid())){
 				notifyMsgService.pushMsg(user,xmProject.getPmUserid(),xmProject.getPmUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的项目经理，请及时跟进。");
 
