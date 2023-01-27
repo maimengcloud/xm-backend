@@ -2,6 +2,7 @@ package com.xm.core.ctrl;
 
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.mybatis.PageUtils;
@@ -87,14 +88,6 @@ public class XmTestPlanCaseController {
 
 
 	@ApiOperation( value = "查询执行结果分布",notes=" ")
-	@ApiEntityParams( XmTestPlanCase.class )
-	@ApiImplicitParams({
-			@ApiImplicitParam(name="pageSize",value="每页大小，默认20条",required=false),
-			@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
-			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-			@ApiImplicitParam(name="count",value="是否计算总记录条数，如果count=true,则计算计算总条数，如果count=false 则不计算",required=false),
-			@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student desc",required=false),
-	})
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTestPlanCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
@@ -113,14 +106,6 @@ public class XmTestPlanCaseController {
 
 
 	@ApiOperation( value = "查询成员执行结果分布",notes=" ")
-	@ApiEntityParams( XmTestPlanCase.class )
-	@ApiImplicitParams({
-			@ApiImplicitParam(name="pageSize",value="每页大小，默认20条",required=false),
-			@ApiImplicitParam(name="pageNum",value="当前页码,从1开始",required=false),
-			@ApiImplicitParam(name="total",value="总记录数,服务器端收到0时，会自动计算总记录数，如果上传>0的不自动计算",required=false),
-			@ApiImplicitParam(name="count",value="是否计算总记录条数，如果count=true,则计算计算总条数，如果count=false 则不计算",required=false),
-			@ApiImplicitParam(name="orderBy",value="排序列 如性别、学生编号排序 orderBy = sex desc,student desc",required=false),
-	})
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTestPlanCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
@@ -136,6 +121,25 @@ public class XmTestPlanCaseController {
 		m.put("tips", tips);
 		return m;
 	}
+
+
+	@ApiOperation( value = "查询测试执行次数按日统计",notes=" ")
+ 	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTestPlanCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/getXmTestDayTimesList",method=RequestMethod.GET)
+	public Map<String,Object> getXmTestDayTimesList( @ApiIgnore @RequestParam Map<String,Object> xmTestPlanCase){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		PageUtils.startPage(xmTestPlanCase);
+		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestDayTimesList(xmTestPlanCase);	//列出XmTestPlanCase列表
+		PageUtils.responePage(m, xmTestPlanCaseList);
+		m.put("data",xmTestPlanCaseList);
+
+		m.put("tips", tips);
+		return m;
+	}
+
 
 	@ApiOperation( value = "新增一条测试计划与用例关系表信息",notes=" ")
 	@ApiResponses({
@@ -323,6 +327,7 @@ public class XmTestPlanCaseController {
 			Set<String> fields=new HashSet<>();
             fields.add("caseId");
             fields.add("planId");
+			fields.add("execDate");
 			for (String fieldName : xmTestPlanCaseMap.keySet()) {
 				if(fields.contains(fieldName)){
 					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
@@ -338,6 +343,9 @@ public class XmTestPlanCaseController {
 			List<XmTestPlanCase> xmTestPlanCasesDb=xmTestPlanCaseService.selectListByIds(pkList);
 			if(xmTestPlanCasesDb==null ||xmTestPlanCasesDb.size()==0){
 				return failed("data-0","记录已不存在");
+			}
+			if(StringUtils.hasText(xmTestPlanCase.getExecStatus()) && !"0".equals(xmTestPlanCase.getExecStatus())){
+				xmTestPlanCaseMap.put("execDate", DateUtils.getDate("yyyy-MM-dd"));
 			}
 			List<XmTestPlanCase> can=new ArrayList<>();
 			List<XmTestPlanCase> no=new ArrayList<>();
