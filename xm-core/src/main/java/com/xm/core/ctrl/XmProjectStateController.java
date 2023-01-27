@@ -139,11 +139,10 @@ public class XmProjectStateController {
 		Map<String,Object> m = new HashMap<>();
 		RequestUtils.transformArray(xmProductState, "ids");
 		PageUtils.startPage(xmProductState);
-		List<Map<String,Object>>	xmProjectStateList = projectCacheService.getPortalProjectStates();	//列出XmProductState列表
+		List<Map<String,Object>>	xmProjectStateList =null;	//列出XmProductState列表
 		if(xmProjectStateList==null){
 			xmProjectStateList=xmProjectStateService.selectPortalProjectStates(xmProductState);
-			projectCacheService.putPortalProjectStates(xmProjectStateList);
-		}
+ 		}
 		PageUtils.responePage(m, xmProjectStateList);
 		m.put("data",xmProjectStateList);
 		Tips tips=new Tips("查询成功");

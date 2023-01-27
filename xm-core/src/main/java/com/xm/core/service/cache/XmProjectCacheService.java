@@ -1,13 +1,14 @@
 package com.xm.core.service.cache;
 
+import com.mdp.mq.sp.Publish;
 import com.xm.core.entity.XmProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -16,6 +17,12 @@ public class XmProjectCacheService {
 	@Autowired
 	RedisTemplate redisTemplate;
 	String currDateKey="";
+
+	Map<String, XmProject> cache=new ConcurrentHashMap<>();
+
+	@Autowired
+	Publish publish;
+
 	public String getKey(){
 		Calendar currCal=Calendar.getInstance();
 		String dateKey=currCal.get(Calendar.YEAR)+"-"+currCal.get(Calendar.DAY_OF_YEAR);
@@ -30,29 +37,35 @@ public class XmProjectCacheService {
 	String getCacheKey() {
  		return "xm_project";
 	} 
-	public void putProject(String projectId,XmProject Project){
+	public void putProject(String projectId,XmProject project){
 		String key=this.getKey();
 		String hashKey=projectId;
-		redisTemplate.opsForHash().put(key, hashKey, Project);
+		redisTemplate.opsForHash().put(key, hashKey, project);
+		this.cache.put(projectId,project);
 	}
 	
 	public  XmProject  getProject(String projectId){
-		String key=this.getKey();
-		String hashKey=projectId;
-		return (XmProject) redisTemplate.opsForHash().get(key, hashKey);
+		XmProject project=cache.get(projectId);
+		if(project==null) {
+			String key = this.getKey();
+			String hashKey = projectId;
+			project= (XmProject) redisTemplate.opsForHash().get(key, hashKey);
+			cache.put(projectId,project);
+			return project;
+		}else{
+			return project;
+		}
 		
 	}
-
-	public void putPortalProjectStates(List<Map<String,Object>> projects){
+	public void clear(String projectId){
 		String key=this.getKey();
-		String hashKey="portal";
-		redisTemplate.opsForHash().put(key, hashKey, projects);
+		cache.remove(projectId);
+		redisTemplate.opsForHash().delete(key,projectId);
+
+		publish.push("XM_PROJECT_CACHE",projectId);
 	}
 
-	public List<Map<String,Object>> getPortalProjectStates(){
-		String key=this.getKey();
-		String hashKey="portal";
-		return (List<Map<String,Object>>) redisTemplate.opsForHash().get(key, hashKey);
-
+	public void clearLocalCache(String projectId) {
+		this.cache.remove(projectId);
 	}
 }

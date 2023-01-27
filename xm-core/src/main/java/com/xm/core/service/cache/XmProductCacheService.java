@@ -1,13 +1,14 @@
 package com.xm.core.service.cache;
 
+import com.mdp.mq.sp.Publish;
 import com.xm.core.entity.XmProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -15,6 +16,12 @@ public class XmProductCacheService {
 	
 	@Autowired
 	RedisTemplate redisTemplate;
+
+	Map<String,XmProduct> cache=new ConcurrentHashMap<>();
+
+	@Autowired
+	Publish publish;
+
 	String currDateKey="";
 	public String getKey(){
 		Calendar currCal=Calendar.getInstance();
@@ -30,34 +37,37 @@ public class XmProductCacheService {
 	String getCacheKey() {
  		return "xm_product";
 	} 
-	public void putProduct(String productId,XmProduct Product){
+	public void putProduct(String productId,XmProduct product){
 		String key=this.getKey();
 		String hashKey=productId;
-		redisTemplate.opsForHash().put(key, hashKey, Product);
+		redisTemplate.opsForHash().put(key, hashKey, product);
+		cache.put(productId,product);
+		publish.push("XM_PRODUCT_CACHE",productId);
 	}
 	
 	public  XmProduct  getProduct(String productId){
-		String key=this.getKey();
-		String hashKey=productId;
-		return (XmProduct) redisTemplate.opsForHash().get(key, hashKey);
+		XmProduct product=cache.get(productId);
+		if(product==null){
+			String key=this.getKey();
+			String hashKey=productId;
+			product= (XmProduct) redisTemplate.opsForHash().get(key, hashKey);
+			cache.put(productId,product);
+			return product;
+		}else {
+			return product;
+		}
 		
 	}
 
 	public void clear(String productId){
 		String key=this.getKey();
+		cache.remove(productId);
 		redisTemplate.opsForHash().delete(key,productId);
+
+		publish.push("XM_PRODUCT_CACHE",productId);
 	}
 
-	public void putPortalProductStates(List<Map<String,Object>> products){
-		String key=this.getKey();
-		String hashKey="portal";
-		redisTemplate.opsForHash().put(key, hashKey, products);
-	}
-
-	public List<Map<String,Object>> getPortalProductStates(){
-		String key=this.getKey();
-		String hashKey="portal";
-		return (List<Map<String,Object>>) redisTemplate.opsForHash().get(key, hashKey);
-
+	public void clearLocalCache(String productId) {
+		this.cache.remove(productId);
 	}
 }
