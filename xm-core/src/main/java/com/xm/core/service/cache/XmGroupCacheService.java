@@ -1,5 +1,6 @@
 package com.xm.core.service.cache;
 
+import com.mdp.mq.sp.Publish;
 import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -7,7 +8,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -15,6 +18,11 @@ public class XmGroupCacheService {
 	
 	@Autowired
 	RedisTemplate redisTemplate;
+
+	Map<String, List<XmGroupVo>> cache=new ConcurrentHashMap<>();
+
+	@Autowired
+	Publish publish;
 
 	String currPrdDateKey="";
 	public String getProductKey(String productId){
@@ -47,8 +55,16 @@ public class XmGroupCacheService {
 	}
 
 	public  List<XmGroupVo>  getProjectGroups(String projectId){
-		String key=this.getProjectKey(projectId);
-		return (List<XmGroupVo>) redisTemplate.opsForHash().values(key);
+		List<XmGroupVo> groupVoList=this.cache.get("prj_"+projectId);
+		if(groupVoList==null){
+			String key=this.getProjectKey(projectId);
+			groupVoList=  (List<XmGroupVo>) redisTemplate.opsForHash().values(key);
+			this.cache.put("prj_"+projectId,groupVoList);
+			return groupVoList;
+		}else {
+			return groupVoList;
+		}
+
 
 	}
 	public XmGroupVo getProjectGroup(String projectId, String groupId){
@@ -69,6 +85,7 @@ public class XmGroupCacheService {
 		this.clearProjectGroups(projectId);
 	}
 	public void putProjectGroups(String projectId,List<XmGroupVo> groups){
+
 		String key=this.getProjectKey(projectId);
 		if(groups==null || groups.size()==0){
 			this.clearProjectGroups(projectId);
@@ -78,6 +95,12 @@ public class XmGroupCacheService {
 			String hashKey= group.getId();
 			redisTemplate.opsForHash().put(key, hashKey, group);
 		}
+		if(groups==null){
+			this.cache.remove("prj_"+projectId);
+		}else{
+			this.cache.put("prj_"+projectId,groups);
+		}
+		publish.push("XM_GROUP_PRJ_CACHE",projectId);
 	}
 	public void clearProjectGroups(String projectId){
 		String key=this.getProjectKey(projectId);
@@ -85,6 +108,8 @@ public class XmGroupCacheService {
 		if(keySet!=null && keySet.size()>0){
 			redisTemplate.opsForHash().delete(key,keySet.toArray());
 		}
+		this.cache.remove("prj_"+projectId);
+		publish.push("XM_GROUP_PRJ_CACHE",projectId);
 	}
 
 	public  List<XmGroupVo>  getProductGroups(String productId){
@@ -114,6 +139,12 @@ public class XmGroupCacheService {
 			String hashKey= group.getId();
 			redisTemplate.opsForHash().put(key, hashKey, group);
 		}
+		if(groups==null){
+			this.cache.remove("prd_"+productId);
+		}else{
+			this.cache.put("prd_"+productId,groups);
+		}
+		publish.push("XM_GROUP_PRD_CACHE",productId);
 	}
 	public void clearProductGroups(String productId){
 		String key=this.getProductKey(productId);
@@ -121,6 +152,15 @@ public class XmGroupCacheService {
 			if(keySet!=null && keySet.size()>0){
 				redisTemplate.opsForHash().delete(key,keySet.toArray());
 			}
+		this.cache.remove("prd_"+productId);
+		publish.push("XM_GROUP_PRD_CACHE",productId);
 	}
-	
+
+	public void clearLocalPrjectCache(String projectId) {
+		this.cache.remove("prj_"+projectId);
+	}
+
+	public void clearLocalProductCache(String productId) {
+		this.cache.remove("prd_"+productId);
+	}
 }

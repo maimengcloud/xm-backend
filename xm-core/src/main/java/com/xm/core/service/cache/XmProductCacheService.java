@@ -41,7 +41,11 @@ public class XmProductCacheService {
 		String key=this.getKey();
 		String hashKey=productId;
 		redisTemplate.opsForHash().put(key, hashKey, product);
-		cache.put(productId,product);
+		if(product!=null){
+			cache.put(productId,product);
+		}else{
+			cache.remove(productId);
+		}
 		publish.push("XM_PRODUCT_CACHE",productId);
 	}
 	

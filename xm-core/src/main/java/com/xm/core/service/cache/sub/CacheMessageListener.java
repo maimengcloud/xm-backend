@@ -1,5 +1,6 @@
 package com.xm.core.service.cache.sub;
 
+import com.xm.core.service.cache.XmGroupCacheService;
 import com.xm.core.service.cache.XmProductCacheService;
 import com.xm.core.service.cache.XmProjectCacheService;
 import org.slf4j.Logger;
@@ -29,6 +30,10 @@ public class CacheMessageListener implements MessageListener {
 	XmProjectCacheService xmProjectCacheService;
 
 
+	@Autowired
+	XmGroupCacheService  xmGroupCacheService;
+
+
     private static final Logger logger = LoggerFactory.getLogger(CacheMessageListener.class);
 	
     /*定时心跳*/
@@ -55,8 +60,10 @@ public class CacheMessageListener implements MessageListener {
 				xmProductCacheService.clearLocalCache(msg);
  			}else if(channelName.startsWith("XM_PROJECT")) {
 				xmProjectCacheService.clearLocalCache(msg);
-			}else if(channelName.startsWith("XM_GROUP")) {
-
+			}else if(channelName.startsWith("XM_GROUP_PRJ")) {
+				xmGroupCacheService.clearLocalPrjectCache(msg);
+			}else if(channelName.startsWith("XM_GROUP_PRD")) {
+				xmGroupCacheService.clearLocalProductCache(msg);
 			}
 		} catch (Exception e) {
 			logger.error("",e);

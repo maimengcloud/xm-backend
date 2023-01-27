@@ -41,7 +41,12 @@ public class XmProjectCacheService {
 		String key=this.getKey();
 		String hashKey=projectId;
 		redisTemplate.opsForHash().put(key, hashKey, project);
-		this.cache.put(projectId,project);
+		if(project!=null){
+			this.cache.put(projectId,project);
+		}else{
+			this.cache.remove(projectId);
+		}
+		publish.push("XM_PROJECT_CACHE",projectId);
 	}
 	
 	public  XmProject  getProject(String projectId){
