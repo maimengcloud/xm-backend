@@ -56,13 +56,13 @@ public class CacheMessageListener implements MessageListener {
 				return;
 			}
 			String channelName=stringSerializer.deserialize(pattern);
-			if(channelName.startsWith("XM_PRODUCT")) {
+			if(channelName.startsWith("XM_PRODUCT_CACHE")) {
 				xmProductCacheService.clearLocalCache(msg);
- 			}else if(channelName.startsWith("XM_PROJECT")) {
+ 			}else if(channelName.startsWith("XM_PROJECT_CACHE")) {
 				xmProjectCacheService.clearLocalCache(msg);
-			}else if(channelName.startsWith("XM_GROUP_PRJ")) {
+			}else if(channelName.startsWith("XM_GROUP_PRJ_CACHE")) {
 				xmGroupCacheService.clearLocalPrjectCache(msg);
-			}else if(channelName.startsWith("XM_GROUP_PRD")) {
+			}else if(channelName.startsWith("XM_GROUP_PRD_CACHE")) {
 				xmGroupCacheService.clearLocalProductCache(msg);
 			}
 		} catch (Exception e) {
