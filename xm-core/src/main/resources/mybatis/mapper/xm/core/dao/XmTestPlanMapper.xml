@@ -132,7 +132,7 @@
 		insert into xm_test_plan(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{productId},#{productName},#{flowState},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{menus},#{funcs},#{budgetWorkload},#{actWorkload},#{summaryRemark},#{cbranchId}
+		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{productId},#{productName},#{flowState},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{menus},#{funcs},#{budgetWorkload},#{actWorkload},#{summaryRemark},#{cbranchId},#{toTestCases},#{pbranchId}
 		)
 	</insert>
 	
@@ -207,7 +207,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,product_id,product_name,flow_state,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,menus,funcs,budget_workload,act_workload,summary_remark,cbranch_id
+		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,product_id,product_name,flow_state,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,menus,funcs,budget_workload,act_workload,summary_remark,cbranch_id,to_test_cases,pbranch_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -244,6 +244,8 @@
 		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
 		<if test="summaryRemark != null and summaryRemark != ''">      and res.summary_remark = #{summaryRemark}     </if>
 		<if test="cbranchId != null and cbranchId != ''">      and res.cbranch_id = #{cbranchId}     </if>
+		<if test="toTestCases != null and toTestCases != ''">      and res.to_test_cases = #{toTestCases}     </if>
+		<if test="pbranchId != null and pbranchId != ''">      and res.pbranch_id = #{pbranchId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -277,7 +279,9 @@
 		budget_workload = #{budgetWorkload},
 		act_workload = #{actWorkload},
 		summary_remark = #{summaryRemark},
-		cbranch_id = #{cbranchId}
+		cbranch_id = #{cbranchId},
+		to_test_cases = #{toTestCases},
+		pbranch_id = #{pbranchId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -311,6 +315,8 @@
 		<if test="actWorkload != null and actWorkload != ''"> act_workload = #{actWorkload},     </if>
 		<if test="summaryRemark != null and summaryRemark != ''"> summary_remark = #{summaryRemark},     </if>
 		<if test="cbranchId != null and cbranchId != ''"> cbranch_id = #{cbranchId},     </if>
+		<if test="toTestCases != null and toTestCases != ''"> to_test_cases = #{toTestCases},     </if>
+		<if test="pbranchId != null and pbranchId != ''"> pbranch_id = #{pbranchId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -344,6 +350,8 @@
 			budget_workload = #{item.budgetWorkload},
 			act_workload = #{item.actWorkload},
 			summary_remark = #{item.summaryRemark},
-			cbranch_id = #{item.cbranchId}
+			cbranch_id = #{item.cbranchId},
+			to_test_cases = #{item.toTestCases},
+			pbranch_id = #{item.pbranchId}
 	</sql>
 </mapper>

@@ -474,7 +474,7 @@
 		insert into xm_task(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetAt},#{budgetWorkload},#{actAt},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl},#{initWorkload},#{shareFee},#{oshare},#{crowd},#{browseUsers},#{execUsers},#{cityId},#{cityName},#{regionType},#{browseTimes},#{capaLvls},#{tranMode},#{supRequires},#{hot},#{top},#{urgent},#{crmSup},#{bidStep},#{interestLvls},#{filePaths},#{estate},#{efunds},#{etoPlatTime},#{etoDevTime},#{ebackTime},#{topStime},#{topEtime},#{hotStime},#{hotEtime},#{urgentStime},#{urgentEtime},#{quoteFinalAt},#{provinceId},#{provinceName},#{areaId},#{areaName},#{status},#{bidEtime},#{serviceId}
+		#{id},#{name},#{parentTaskid},#{parentTaskname},#{projectId},#{projectName},#{level},#{sortLevel},#{executorUserid},#{executorUsername},#{preTaskid},#{preTaskname},#{startTime},#{endTime},#{milestone},#{description},#{remarks},#{createUserid},#{createUsername},#{createTime},#{rate},#{budgetAt},#{budgetWorkload},#{actAt},#{actWorkload},#{taskState},#{taskType},#{taskClass},#{toTaskCenter},#{actStartTime},#{actEndTime},#{bizProcInstId},#{bizFlowState},#{phaseId},#{phaseName},#{taskSkillNames},#{exeUsernames},#{taskSkillIds},#{exeUserids},#{taskOut},#{planType},#{settleSchemel},#{menuId},#{menuName},#{productId},#{cbranchId},#{cdeptid},#{tagIds},#{tagNames},#{ntype},#{childrenCnt},#{ltime},#{pidPaths},#{lvl},#{isTpl},#{keyPath},#{uniInnerPrice},#{uniOutPrice},#{calcType},#{ptype},#{wtype},#{bctrl},#{initWorkload},#{shareFee},#{oshare},#{crowd},#{browseUsers},#{execUsers},#{cityId},#{cityName},#{regionType},#{browseTimes},#{capaLvls},#{tranMode},#{supRequires},#{hot},#{top},#{urgent},#{crmSup},#{bidStep},#{interestLvls},#{filePaths},#{estate},#{efunds},#{etoPlatTime},#{etoDevTime},#{ebackTime},#{topStime},#{topEtime},#{hotStime},#{hotEtime},#{urgentStime},#{urgentEtime},#{quoteFinalAt},#{provinceId},#{provinceName},#{areaId},#{areaName},#{status},#{bidEtime},#{serviceId},#{creditId},#{pbranchId}
 		)
 	</insert>
 	
@@ -549,7 +549,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_at,budget_workload,act_at,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload,share_fee,oshare,crowd,browse_users,exec_users,city_id,city_name,region_type,browse_times,capa_lvls,tran_mode,sup_requires,hot,top,urgent,crm_sup,bid_step,interest_lvls,file_paths,estate,efunds,eto_plat_time,eto_dev_time,eback_time,top_stime,top_etime,hot_stime,hot_etime,urgent_stime,urgent_etime,quote_final_at,province_id,province_name,area_id,area_name,status,bid_etime,service_id
+		id,name,parent_taskid,parent_taskname,project_id,project_name,level,sort_level,executor_userid,executor_username,pre_taskid,pre_taskname,start_time,end_time,milestone,description,remarks,create_userid,create_username,create_time,rate,budget_at,budget_workload,act_at,act_workload,task_state,task_type,task_class,to_task_center,act_start_time,act_end_time,biz_proc_inst_id,biz_flow_state,phase_id,phase_name,task_skill_names,exe_usernames,task_skill_ids,exe_userids,task_out,plan_type,settle_schemel,menu_id,menu_name,product_id,cbranch_id,cdeptid,tag_ids,tag_names,ntype,children_cnt,ltime,pid_paths,lvl,is_tpl,key_path,uni_inner_price,uni_out_price,calc_type,ptype,wtype,bctrl,init_workload,share_fee,oshare,crowd,browse_users,exec_users,city_id,city_name,region_type,browse_times,capa_lvls,tran_mode,sup_requires,hot,top,urgent,crm_sup,bid_step,interest_lvls,file_paths,estate,efunds,eto_plat_time,eto_dev_time,eback_time,top_stime,top_etime,hot_stime,hot_etime,urgent_stime,urgent_etime,quote_final_at,province_id,province_name,area_id,area_name,status,bid_etime,service_id,credit_id,pbranch_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -655,6 +655,8 @@
 		<if test="status != null and status != ''">      and res.status = #{status}     </if>
 		<if test="bidEtime != null">      and date_format(res.bid_etime,'%Y-%m-%d') = date_format(#{bidEtime},'%Y-%m-%d')     </if>
 		<if test="serviceId != null and serviceId != ''">      and res.service_id = #{serviceId}     </if>
+		<if test="creditId != null and creditId != ''">      and res.credit_id = #{creditId}     </if>
+		<if test="pbranchId != null and pbranchId != ''">      and res.pbranch_id = #{pbranchId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -757,7 +759,9 @@
 		area_name = #{areaName},
 		status = #{status},
 		bid_etime = #{bidEtime},
-		service_id = #{serviceId}
+		service_id = #{serviceId},
+		credit_id = #{creditId},
+		pbranch_id = #{pbranchId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -860,6 +864,8 @@
 		<if test="status != null and status != ''"> status = #{status},     </if>
 		<if test="bidEtime != null"> bid_etime = #{bidEtime},     </if>
 		<if test="serviceId != null and serviceId != ''"> service_id = #{serviceId},     </if>
+		<if test="creditId != null and creditId != ''"> credit_id = #{creditId},     </if>
+		<if test="pbranchId != null and pbranchId != ''"> pbranch_id = #{pbranchId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -962,6 +968,8 @@
 			area_name = #{item.areaName},
 			status = #{item.status},
 			bid_etime = #{item.bidEtime},
-			service_id = #{item.serviceId}
+			service_id = #{item.serviceId},
+			credit_id = #{item.creditId},
+			pbranch_id = #{item.pbranchId}
 	</sql>
 </mapper>
