@@ -67,7 +67,7 @@
 		insert into xm_func(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{pid},#{pname},#{pidPaths},#{productId},#{lvl}
+		#{id},#{name},#{pid},#{pname},#{pidPaths},#{productId},#{lvl},#{pbranchId}
 		)
 	</insert>
 	
@@ -142,7 +142,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,pid,pname,pid_paths,product_id,lvl
+		id,name,pid,pname,pid_paths,product_id,lvl,pbranch_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -154,6 +154,7 @@
 		<if test="pidPaths != null and pidPaths != ''">      and res.pid_paths = #{pidPaths}     </if>
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
 		<if test="lvl != null and lvl != ''">      and res.lvl = #{lvl}     </if>
+		<if test="pbranchId != null and pbranchId != ''">      and res.pbranch_id = #{pbranchId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -162,7 +163,8 @@
 		pname = #{pname},
 		pid_paths = #{pidPaths},
 		product_id = #{productId},
-		lvl = #{lvl}
+		lvl = #{lvl},
+		pbranch_id = #{pbranchId}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -171,6 +173,7 @@
 		<if test="pidPaths != null and pidPaths != ''"> pid_paths = #{pidPaths},     </if>
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
 		<if test="lvl != null and lvl != ''"> lvl = #{lvl},     </if>
+		<if test="pbranchId != null and pbranchId != ''"> pbranch_id = #{pbranchId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -179,6 +182,7 @@
 			pname = #{item.pname},
 			pid_paths = #{item.pidPaths},
 			product_id = #{item.productId},
-			lvl = #{item.lvl}
+			lvl = #{item.lvl},
+			pbranch_id = #{item.pbranchId}
 	</sql>
 </mapper>

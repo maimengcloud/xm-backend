@@ -7,7 +7,7 @@ import io.swagger.annotations.ApiModelProperty;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmFunc所有属性名: <br>
- *	"id","主键","name","名称","pid","上级编号","pname","上级名称","pidPaths","上级路径，直到自身，逗号分割，包含自身","productId","产品编号","lvl","菜单级别0-根，1，2，3，4，5依次类推";<br>
+ *	"id","主键","name","名称","pid","上级编号","pname","上级名称","pidPaths","上级路径，直到自身，逗号分割，包含自身","productId","产品编号","lvl","菜单级别0-根，1，2，3，4，5依次类推","pbranchId","产品归属企业";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -38,6 +38,9 @@ public class XmFunc  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="菜单级别0-根，1，2，3，4，5依次类推",allowEmptyValue=true,example="",allowableValues="")
 	Integer lvl;
+	
+	@ApiModelProperty(notes="产品归属企业",allowEmptyValue=true,example="",allowableValues="")
+	String pbranchId;
 
 	/**
 	 *主键

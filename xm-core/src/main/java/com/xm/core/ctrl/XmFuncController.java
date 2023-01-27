@@ -9,7 +9,10 @@ import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmFunc;
+import com.xm.core.entity.XmProduct;
 import com.xm.core.service.XmFuncService;
+import com.xm.core.service.XmProductQxService;
+import com.xm.core.service.XmProductService;
 import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +41,12 @@ public class XmFuncController {
 	
 	@Autowired
 	private XmFuncService xmFuncService;
+
+
+	@Autowired
+	private XmProductService xmProductService;
+	@Autowired
+	private XmProductQxService productQxService;
 
 	@Autowired
 	SensitiveWordService sensitiveWordService;
@@ -97,7 +106,16 @@ public class XmFuncController {
 			if(words!=null && words.size()>0){
 				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
 			}
-
+			if(!StringUtils.hasText(xmFunc.getProductId())){
+				return failed("productId-0","产品编号不能为空");
+			}
+			User user=LoginUtils.getCurrentUserInfo();
+			XmProduct xmProduct=xmProductService.getProductFromCache(xmFunc.getProductId());
+			tips=productQxService.checkProductQx(xmProduct,2,user);
+			if(!tips.isOk()){
+				return failed(tips);
+			}
+			xmFunc.setPbranchId(xmProduct.getBranchId());
 			xmFuncService.parentIdPathsCalcBeforeSave(xmFunc);
 			xmFuncService.insert(xmFunc);
 			m.put("data",xmFunc);
