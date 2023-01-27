@@ -92,9 +92,12 @@
 			<if test="pbranchId!=null and pbranchId!=''">
 				and p.pbranch_id=#{pbranchId}
 			</if>
+			<if test="startExecDate!=null">
+				and res.exec_date between #{startExecDate} and #{endExecDate}
+			</if>
 		</where>
 		group by res.exec_date
-		order by res.exec_date desc
+		order by res.exec_date asc
 
 	</select>
 	<!--结束 自定义sql函数区域-->
