@@ -139,7 +139,22 @@ public class XmTestPlanCaseController {
 		m.put("tips", tips);
 		return m;
 	}
+	@ApiOperation( value = "查询测试用例规划到测试计划的数目",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTestPlanCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/getXmTestCaseToPlanCalcList",method=RequestMethod.GET)
+	public Map<String,Object> getXmTestCaseToPlanCalcList( @ApiIgnore @RequestParam Map<String,Object> xmTestPlanCase){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+		PageUtils.startPage(xmTestPlanCase);
+		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestCaseToPlanCalcList(xmTestPlanCase);	//列出XmTestPlanCase列表
+		PageUtils.responePage(m, xmTestPlanCaseList);
+		m.put("data",xmTestPlanCaseList);
 
+		m.put("tips", tips);
+		return m;
+	}
 
 	@ApiOperation( value = "新增一条测试计划与用例关系表信息",notes=" ")
 	@ApiResponses({

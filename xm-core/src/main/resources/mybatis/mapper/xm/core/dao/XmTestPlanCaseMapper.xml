@@ -5,20 +5,30 @@
 	
 	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
 
-    <sql id="whereForMap">
-		<if test="planId!=null and planId!=''">
-			and res.plan_id=#{planId}
+	<sql id="whereForMap">
+		<if test=" pkList != null">  and (res.case_id, res.plan_id) in
+			<foreach collection="pkList" item="item" index="index" open="(" separator="," close=")" >
+				( #{item.caseId},  #{item.planId})
+			</foreach>
 		</if>
-		<if test="casedbId!=null and casedbId!=''">
-			and p.casedb_id=#{casedbId}
-		</if>
-		<if test="projectId!=null and projectId!=''">
-			and p.project_id=#{projectId}
+		<if test="key != null and key !='' "> and c.case_name like  concat('%',#{key},'%')    </if>
+
+		<if test="funcPidPathsLike!=null and funcPidPathsLike!=''">
+			and exists( select 1 from xm_func f where f.pid_paths like concat(#{funcPidPathsLike},'%') and c.func_id=f.id)
 		</if>
 		<if test="productId!=null and productId!=''">
-			and p.product_id=#{productId}
+			and c.product_id=#{productId}
 		</if>
-    </sql>
+		<if test="casedbId!=null and casedbId!=''">
+			and c.casedb_id=#{casedbId}
+		</if>
+		<if test="linkIterationId!=null">
+			and c.iteration_id=#{linkIterationId}
+		</if>
+		<if test="pbranchId!=null and pbranchId!=''">
+			and c.pbranch_id=#{pbranchId}
+		</if>
+	</sql>
 	<sql id="whereForRpt">
 		<if test="planId!=null and planId!=''">
 			and res.plan_id=#{planId}
@@ -87,6 +97,22 @@
 		order by res.exec_date asc
 
 	</select>
+
+	<select id="getXmTestCaseToPlanCalcList" parameterType="HashMap"  resultType="HashMap">
+		select count(*) as case_num,use_times from
+		(
+		SELECT count(*) as use_times,res.id FROM xm_test_case c inner join xm_test_plan_case res
+		on res.id=pc.case_id
+		<where>
+			<include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+		group by res.id ) as ret
+		group by ret.use_times
+		order by use_times desc
+
+	</select>
+
 	<!--结束 自定义sql函数区域-->
 	
 

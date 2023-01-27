@@ -34,5 +34,10 @@ public class XmTestPlanCaseService extends BaseService {
         return super.selectList("getXmTestDayTimesList",xmTestPlanCase);
 
     }
+    public List<Map<String, Object>> getXmTestCaseToPlanCalcList(Map<String, Object> xmTestPlanCase) {
+        return super.selectList("getXmTestCaseToPlanCalcList",xmTestPlanCase);
+
+    }
+
 }
 
