@@ -4,6 +4,7 @@ import com.mdp.mq.sp.Publish;
 import com.xm.core.entity.XmProject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -42,20 +43,23 @@ public class XmProjectCacheService {
 		String hashKey=projectId;
 		redisTemplate.opsForHash().put(key, hashKey, project);
 		if(project!=null){
-			this.cache.put(projectId,project);
+			this.cache.put(hashKey+hashKey,project);
 		}else{
-			this.cache.remove(projectId);
+			this.cache.remove(hashKey+hashKey);
 		}
 		publish.push("XM_PROJECT_CACHE",projectId);
 	}
 	
 	public  XmProject  getProject(String projectId){
-		XmProject project=cache.get(projectId);
+
+		String key = this.getKey();
+		XmProject project=cache.get(key+projectId);
 		if(project==null) {
-			String key = this.getKey();
 			String hashKey = projectId;
 			project= (XmProject) redisTemplate.opsForHash().get(key, hashKey);
-			cache.put(projectId,project);
+			if(project!=null){
+				cache.put(hashKey+hashKey,project);
+			}
 			return project;
 		}else{
 			return project;
@@ -64,13 +68,23 @@ public class XmProjectCacheService {
 	}
 	public void clear(String projectId){
 		String key=this.getKey();
-		cache.remove(projectId);
+		cache.remove(key+projectId);
 		redisTemplate.opsForHash().delete(key,projectId);
 
 		publish.push("XM_PROJECT_CACHE",projectId);
 	}
 
 	public void clearLocalCache(String projectId) {
-		this.cache.remove(projectId);
+		this.cache.remove(getKey()+projectId);
+	}
+
+	@Scheduled(cron = "* */30 * * * *")
+	public void timer() {
+		String currPrdKey=this.getKey();
+		for (String key : this.cache.keySet()) {
+			if(!key.startsWith(currPrdKey)){
+				this.cache.remove(key);
+			}
+		}
 	}
 }

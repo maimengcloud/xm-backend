@@ -4,6 +4,7 @@ import com.mdp.mq.sp.Publish;
 import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -19,7 +20,8 @@ public class XmGroupCacheService {
 	@Autowired
 	RedisTemplate redisTemplate;
 
-	Map<String, List<XmGroupVo>> cache=new ConcurrentHashMap<>();
+	Map<String, List<XmGroupVo>> prjCache =new ConcurrentHashMap<>();
+	Map<String, List<XmGroupVo>> prdCache =new ConcurrentHashMap<>();
 
 	@Autowired
 	Publish publish;
@@ -55,13 +57,12 @@ public class XmGroupCacheService {
 	}
 
 	public  List<XmGroupVo>  getProjectGroups(String projectId){
-		List<XmGroupVo> groupVoList=this.cache.get("prj_"+projectId);
+		String key=this.getProjectKey(projectId);
+		List<XmGroupVo> groupVoList=this.prjCache.get(key);
 		if(groupVoList==null){
-			String key=this.getProjectKey(projectId);
 			groupVoList=  (List<XmGroupVo>) redisTemplate.opsForHash().values(key);
-
 			if(groupVoList!=null){
-				this.cache.put("prj_"+projectId,groupVoList);
+				this.prjCache.put(key,groupVoList);
 			}
 			return groupVoList;
 		}else {
@@ -99,9 +100,9 @@ public class XmGroupCacheService {
 			redisTemplate.opsForHash().put(key, hashKey, group);
 		}
 		if(groups==null){
-			this.cache.remove("prj_"+projectId);
+			this.prjCache.remove(key);
 		}else{
-			this.cache.put("prj_"+projectId,groups);
+			this.prjCache.put(key,groups);
 		}
 		publish.push("XM_GROUP_PRJ_CACHE",projectId);
 	}
@@ -111,17 +112,18 @@ public class XmGroupCacheService {
 		if(keySet!=null && keySet.size()>0){
 			redisTemplate.opsForHash().delete(key,keySet.toArray());
 		}
-		this.cache.remove("prj_"+projectId);
+		this.prjCache.remove(key);
 		publish.push("XM_GROUP_PRJ_CACHE",projectId);
 	}
 
 	public  List<XmGroupVo>  getProductGroups(String productId){
-		List<XmGroupVo> groupVoList=this.cache.get("prd_"+productId);
+		String key=this.getProductKey(productId);
+		List<XmGroupVo> groupVoList=this.prdCache.get(key);
 		if(groupVoList==null){
-			String key=this.getProductKey(productId);
+
 			groupVoList= (List<XmGroupVo>) redisTemplate.opsForHash().values(key);
 			if(groupVoList!=null){
-				this.cache.put("prd_"+productId,groupVoList);
+				this.prdCache.put(key,groupVoList);
 			}
 			return groupVoList;
 		}else {
@@ -151,9 +153,9 @@ public class XmGroupCacheService {
 			redisTemplate.opsForHash().put(key, hashKey, group);
 		}
 		if(groups==null){
-			this.cache.remove("prd_"+productId);
+			this.prdCache.remove(key);
 		}else{
-			this.cache.put("prd_"+productId,groups);
+			this.prdCache.put(key,groups);
 		}
 		publish.push("XM_GROUP_PRD_CACHE",productId);
 	}
@@ -163,15 +165,33 @@ public class XmGroupCacheService {
 			if(keySet!=null && keySet.size()>0){
 				redisTemplate.opsForHash().delete(key,keySet.toArray());
 			}
-		this.cache.remove("prd_"+productId);
+		this.prdCache.remove(key);
 		publish.push("XM_GROUP_PRD_CACHE",productId);
 	}
 
 	public void clearLocalPrjectCache(String projectId) {
-		this.cache.remove("prj_"+projectId);
+		this.prjCache.remove(getProjectKey(projectId));
 	}
 
 	public void clearLocalProductCache(String productId) {
-		this.cache.remove("prd_"+productId);
+		this.prdCache.remove(getProductKey(productId));
+	}
+
+	/*每30分钟清除一次过期的本地缓存*/
+	@Scheduled(cron = "* */30 * * * *")
+	public void timer() {
+		String currPrdKey=this.getCacheKey()+":"+currPrdDateKey+":";
+
+		String currPrjKey=this.getCacheKey()+":"+currPrjDateKey+":";
+		for (String key : this.prdCache.keySet()) {
+			if(!key.startsWith(currPrdKey)){
+				this.prdCache.remove(key);
+			}
+		}
+		for (String key : this.prjCache.keySet()) {
+			if(!key.startsWith(currPrjKey)){
+				this.prjCache.remove(key);
+			}
+		}
 	}
 }

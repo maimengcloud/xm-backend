@@ -4,6 +4,7 @@ import com.mdp.mq.sp.Publish;
 import com.xm.core.entity.XmProduct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.util.Calendar;
@@ -42,21 +43,21 @@ public class XmProductCacheService {
 		String hashKey=productId;
 		redisTemplate.opsForHash().put(key, hashKey, product);
 		if(product!=null){
-			cache.put(productId,product);
+			cache.put(key+hashKey,product);
 		}else{
-			cache.remove(productId);
+			cache.remove(key+hashKey);
 		}
 		publish.push("XM_PRODUCT_CACHE",productId);
 	}
 	
 	public  XmProduct  getProduct(String productId){
-		XmProduct product=cache.get(productId);
+		String key=this.getKey();
+		XmProduct product=cache.get(key+productId);
 		if(product==null){
-			String key=this.getKey();
 			String hashKey=productId;
 			product= (XmProduct) redisTemplate.opsForHash().get(key, hashKey);
 			if(product!=null){
-				cache.put(productId,product);
+				cache.put(key+hashKey,product);
 			}
 			return product;
 		}else {
@@ -67,13 +68,23 @@ public class XmProductCacheService {
 
 	public void clear(String productId){
 		String key=this.getKey();
-		cache.remove(productId);
+		cache.remove(key+productId);
 		redisTemplate.opsForHash().delete(key,productId);
 
 		publish.push("XM_PRODUCT_CACHE",productId);
 	}
 
 	public void clearLocalCache(String productId) {
-		this.cache.remove(productId);
+		this.cache.remove(getKey()+productId);
+	}
+
+	@Scheduled(cron = "* */30 * * * *")
+	public void timer() {
+		String currPrdKey=this.getKey();
+		for (String key : this.cache.keySet()) {
+			if(!key.startsWith(currPrdKey)){
+				this.cache.remove(key);
+			}
+		}
 	}
 }
