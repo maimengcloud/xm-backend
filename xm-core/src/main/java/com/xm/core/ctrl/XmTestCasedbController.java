@@ -116,6 +116,7 @@ public class XmTestCasedbController {
 					return failed(tips);
 				}
 			}
+			xmTestCasedb.setPbranchId(xmProductDb.getBranchId());
 			xmTestCasedb.setCtime(new Date());
 			xmTestCasedb.setCuserid(user.getUserid());
 			xmTestCasedb.setCusername(user.getUsername());

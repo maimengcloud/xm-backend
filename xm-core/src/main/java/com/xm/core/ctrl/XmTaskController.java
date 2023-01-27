@@ -11,7 +11,6 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
-import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -584,7 +583,7 @@ public class XmTaskController {
 				}
 			}
 
-
+			xmTaskVo.setPbranchId(xmProject.getBranchId());
 			xmTaskVo.setExecutorUserid(null);
 			xmTaskVo.setExecutorUsername(null);
 			xmTaskVo.setExeUserids(null);
@@ -1001,6 +1000,8 @@ public class XmTaskController {
 						}
 					}
 				}
+ 				g.setCbranchId(user.getBranchId());
+ 				g.setPbranchId(xmProject.getBranchId());
 				g.setCreateUserid(user.getUserid());
 				g.setCreateUsername(user.getUsername());
 				g.setExecutorUserid(null);

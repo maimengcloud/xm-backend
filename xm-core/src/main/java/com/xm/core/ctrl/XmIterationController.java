@@ -201,7 +201,6 @@ public class XmIterationController {
 			xmIteration.setCtime(new Date());
 			xmIteration.setCuserid(user.getUserid());
 			xmIteration.setCusername(user.getUsername());
-			xmIteration.setBranchId(user.getBranchId());
 			xmIteration.setIstatus("0");
 			xmIteration.setIphase("0");
 			XmProduct xmProductDb=xmProductService.getProductFromCache(xmIteration.getProductId());
@@ -209,6 +208,9 @@ public class XmIterationController {
 			if(!tips.isOk()){
 				return failed(tips);
 			}
+
+			xmIteration.setBranchId(xmProductDb.getBranchId());
+
 			if(!StringUtils.hasText(xmIteration.getAdminUserid())){
 				xmIteration.setAdminUserid(user.getUserid());
 				xmIteration.setAdminUsername(user.getUsername());

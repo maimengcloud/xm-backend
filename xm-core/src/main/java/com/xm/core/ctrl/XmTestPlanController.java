@@ -149,6 +149,7 @@ public class XmTestPlanController {
 					return failed(tips);
 				}
  			}
+			xmTestPlan.setPbranchId(xmProductDb.getBranchId());
 			xmTestPlan.setCuserid(user.getUserid());
 			xmTestPlan.setCusername(user.getUsername());
 			xmTestPlan.setCtime(new Date());

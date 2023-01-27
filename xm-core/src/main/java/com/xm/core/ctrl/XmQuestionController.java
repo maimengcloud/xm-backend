@@ -194,6 +194,13 @@ public class XmQuestionController {
 			if(!tips.isOk()){
 				return failed(tips);
 			}
+			if(StringUtils.hasText(xmQuestionVo.getProjectId())){
+				XmProject xmProject=projectService.getProjectFromCache(xmQuestionVo.getProjectId() );
+				xmQuestionVo.setPbranchId(xmProject.getBranchId());
+			}else if(StringUtils.hasText(xmQuestionVo.getProductId())){
+				XmProduct xmProduct=productService.getProductFromCache(xmQuestionVo.getProductId() );
+				xmQuestionVo.setPbranchId(xmProduct.getBranchId());
+			}
 
 			xmQuestionService.addQuestion(xmQuestionVo);
 			if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {
@@ -513,10 +520,13 @@ public class XmQuestionController {
 
 
 	public Tips checkOneQx(String projectId,String productId){
+		Tips tips1=new Tips("成功");
 		User user=LoginUtils.getCurrentUserInfo();
-		XmProject xmProject=projectService.getProjectFromCache(projectId );
-		Tips tips1 = this.projectQxService.checkProjectQx(xmProject,1,user);
-		if(!tips1.isOk()){
+		if(StringUtils.hasText(projectId)){
+			XmProject xmProject=projectService.getProjectFromCache(projectId );
+			tips1 = this.projectQxService.checkProjectQx(xmProject,1,user);
+		}
+		if((StringUtils.hasText(projectId) && !tips1.isOk()) || !StringUtils.hasText(projectId)){
 			if(StringUtils.hasText(productId)){
 				XmProduct xmProduct=productService.getProductFromCache(productId);
 				tips1=this.productQxService.checkProductQx(xmProduct,1,user);

@@ -131,6 +131,7 @@ public class XmTestCaseController {
 			if(!StringUtils.hasText(xmTestCase.getCbranchId())){
 				xmTestCase.setCbranchId(user.getBranchId());
 			}
+			xmTestCase.setPbranchId(xmProductDb.getBranchId());
 			xmTestCase.setLusername(user.getUsername());
 			xmTestCase.setCusername(user.getUsername());
 			xmTestCase.setCtime(new Date());

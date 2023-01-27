@@ -9,7 +9,6 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
-import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -307,6 +306,7 @@ public class XmMenuController {
 			xmMenuService.parentIdPathsCalcBeforeSave(xmMenu);
 			xmMenu.setStatus("0");
 			xmMenu.setChildrenCnt(0);
+			xmMenu.setPbranchId(xmProduct.getBranchId());
 			if(!StringUtils.hasText(xmMenu.getProposerId())){
 				xmMenu.setProposerId(user.getUserid());
 				xmMenu.setProposerName(user.getUsername());
@@ -462,6 +462,7 @@ public class XmMenuController {
 			fields.add("ntype");
 			fields.add("pidPaths");
 			fields.add("pmenuId");
+			fields.add("pbranchId");
 			for (String fieldName : xmMenuMap.keySet()) {
 				if(fields.contains(fieldName)){
 					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");

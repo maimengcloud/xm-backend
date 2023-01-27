@@ -97,6 +97,7 @@ public class XmFuncController {
 			if(words!=null && words.size()>0){
 				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
 			}
+
 			xmFuncService.parentIdPathsCalcBeforeSave(xmFunc);
 			xmFuncService.insert(xmFunc);
 			m.put("data",xmFunc);
