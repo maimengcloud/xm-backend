@@ -101,15 +101,14 @@
 	<select id="getXmTestCaseToPlanCalcList" parameterType="HashMap"  resultType="HashMap">
 		select count(*) as case_num,use_times from
 		(
-		SELECT count(*) as use_times,res.id FROM xm_test_case c inner join xm_test_plan_case res
-		on res.id=pc.case_id
+		SELECT sum(if(res.case_id is null ,0,1)) as use_times,c.id FROM xm_test_case c left join xm_test_plan_case res
+		on c.id=res.case_id
 		<where>
 			<include refid="whereForMap"/>
 			<include refid="where"/>
 		</where>
-		group by res.id ) as ret
+		group by c.id ) as ret
 		group by ret.use_times
-		order by use_times desc
 
 	</select>
 
