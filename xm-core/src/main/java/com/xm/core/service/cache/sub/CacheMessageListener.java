@@ -47,14 +47,14 @@ public class CacheMessageListener implements MessageListener {
 	@Override
 	public void onMessage(Message message, byte[] pattern) {
 		try {
-			// TODO Auto-generated method stub 
 			String msg=message.toString();
-			logger.debug("消息下行开始----》"+msg);
+
 			//logger.debug(msg);
 			//心跳包
 			if("".equals(msg)||"\"\"".equals(msg)) {
 				return;
 			}
+			logger.debug("消息下行开始----》"+msg);
 			String channelName=stringSerializer.deserialize(pattern);
 			if(channelName.startsWith("XM_PRODUCT_CACHE")) {
 				xmProductCacheService.clearLocalCache(msg);
@@ -65,10 +65,12 @@ public class CacheMessageListener implements MessageListener {
 			}else if(channelName.startsWith("XM_GROUP_PRD_CACHE")) {
 				xmGroupCacheService.clearLocalProductCache(msg);
 			}
+			logger.debug("消息下行结束!!!!!!!!");
 		} catch (Exception e) {
 			logger.error("",e);
-		}finally {
 			logger.debug("消息下行结束!!!!!!!!");
+		}finally {
+
 		}
 		
 	}
