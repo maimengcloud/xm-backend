@@ -55,7 +55,9 @@ public class XmProductCacheService {
 			String key=this.getKey();
 			String hashKey=productId;
 			product= (XmProduct) redisTemplate.opsForHash().get(key, hashKey);
-			cache.put(productId,product);
+			if(product!=null){
+				cache.put(productId,product);
+			}
 			return product;
 		}else {
 			return product;

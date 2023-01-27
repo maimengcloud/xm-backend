@@ -59,7 +59,10 @@ public class XmGroupCacheService {
 		if(groupVoList==null){
 			String key=this.getProjectKey(projectId);
 			groupVoList=  (List<XmGroupVo>) redisTemplate.opsForHash().values(key);
-			this.cache.put("prj_"+projectId,groupVoList);
+
+			if(groupVoList!=null){
+				this.cache.put("prj_"+projectId,groupVoList);
+			}
 			return groupVoList;
 		}else {
 			return groupVoList;
@@ -113,9 +116,17 @@ public class XmGroupCacheService {
 	}
 
 	public  List<XmGroupVo>  getProductGroups(String productId){
-		String key=this.getProductKey(productId);
-		return (List<XmGroupVo>) redisTemplate.opsForHash().values(key);
-
+		List<XmGroupVo> groupVoList=this.cache.get("prd_"+productId);
+		if(groupVoList==null){
+			String key=this.getProductKey(productId);
+			groupVoList= (List<XmGroupVo>) redisTemplate.opsForHash().values(key);
+			if(groupVoList!=null){
+				this.cache.put("prd_"+productId,groupVoList);
+			}
+			return groupVoList;
+		}else {
+			return groupVoList;
+		}
 	}
 	public XmGroupVo getProductGroup(String productId, String groupId){
 		String key=this.getProductKey(productId);
