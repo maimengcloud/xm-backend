@@ -108,7 +108,7 @@
 		insert into xm_iteration(
 			<include refid="columns"/>
 		) values (
-		#{id},#{branchId},#{iterationName},#{startTime},#{endTime},#{onlineTime},#{pid},#{adminUserid},#{adminUsername},#{ctime},#{budgetCost},#{budgetWorkload},#{seqNo},#{istatus},#{cuserid},#{cusername},#{remark},#{iphase},#{isTpl},#{productId}
+		#{id},#{branchId},#{iterationName},#{startTime},#{endTime},#{onlineTime},#{pid},#{adminUserid},#{adminUsername},#{ctime},#{budgetCost},#{budgetWorkload},#{seqNo},#{istatus},#{cuserid},#{cusername},#{remark},#{iphase},#{isTpl},#{productId},#{productName}
 		)
 	</insert>
 	
@@ -183,7 +183,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,branch_id,iteration_name,start_time,end_time,online_time,pid,admin_userid,admin_username,ctime,budget_cost,budget_workload,seq_no,istatus,cuserid,cusername,remark,iphase,is_tpl,product_id
+		id,branch_id,iteration_name,start_time,end_time,online_time,pid,admin_userid,admin_username,ctime,budget_cost,budget_workload,seq_no,istatus,cuserid,cusername,remark,iphase,is_tpl,product_id,product_name
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -208,6 +208,7 @@
 		<if test="iphase != null and iphase != ''">      and res.iphase = #{iphase}     </if>
 		<if test="isTpl != null and isTpl != ''">      and res.is_tpl = #{isTpl}     </if>
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
+		<if test="productName != null and productName != ''">      and res.product_name = #{productName}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -229,7 +230,8 @@
 		remark = #{remark},
 		iphase = #{iphase},
 		is_tpl = #{isTpl},
-		product_id = #{productId}
+		product_id = #{productId},
+		product_name = #{productName}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
@@ -251,6 +253,7 @@
 		<if test="iphase != null and iphase != ''"> iphase = #{iphase},     </if>
 		<if test="isTpl != null and isTpl != ''"> is_tpl = #{isTpl},     </if>
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
+		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -272,6 +275,7 @@
 			remark = #{item.remark},
 			iphase = #{item.iphase},
 			is_tpl = #{item.isTpl},
-			product_id = #{item.productId}
+			product_id = #{item.productId},
+			product_name = #{item.productName}
 	</sql>
 </mapper>
