@@ -6,21 +6,47 @@
 	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
 
     <sql id="whereForMap">
-         <if test=" pkList != null">  and (res.case_id, res.plan_id) in
-             <foreach collection="pkList" item="item" index="index" open="(" separator="," close=")" >
-                ( #{item.caseId},  #{item.planId})
-             </foreach>
-         </if>
-		<if test="key != null and key !='' "> and c.case_name like  concat('%',#{key},'%')    </if>
-
-		<if test="funcPidPathsLike!=null and funcPidPathsLike!=''">
-			and exists( select 1 from xm_func f where f.pid_paths like concat(#{funcPidPathsLike},'%') and c.func_id=f.id)
+		<if test="planId!=null and planId!=''">
+			and res.plan_id=#{planId}
+		</if>
+		<if test="casedbId!=null and casedbId!=''">
+			and p.casedb_id=#{casedbId}
+		</if>
+		<if test="projectId!=null and projectId!=''">
+			and p.project_id=#{projectId}
 		</if>
 		<if test="productId!=null and productId!=''">
-			and c.product_id=#{productId}
+			and p.product_id=#{productId}
 		</if>
     </sql>
-
+	<sql id="whereForRpt">
+		<if test="planId!=null and planId!=''">
+			and res.plan_id=#{planId}
+		</if>
+		<if test="casedbId!=null and casedbId!=''">
+			and p.casedb_id=#{casedbId}
+		</if>
+		<if test="projectId!=null and projectId!=''">
+			and p.project_id=#{projectId}
+		</if>
+		<if test="productId!=null and productId!=''">
+			and p.product_id=#{productId}
+		</if>
+		<if test="pbranchId!=null and pbranchId!=''">
+			and p.pbranch_id=#{pbranchId}
+		</if>
+		<if test="startExecDate!=null">
+			and res.exec_date between #{startExecDate} and #{endExecDate}
+		</if>
+		<if test="linkIterationId!=null">
+			and exists ( select 1 from xm_test_case c inner join xm_menu m on c.menu_id=m.menu_id
+			where m.iteration_id=#{linkIterationId} and c.id=res.case_id
+			<if test="productId!=null and productId!=''">
+				and m.product_id=#{productId}
+			</if>
+			)
+		</if>
+	</sql>
 	<select id="selectListByCaseIdsAndPlanId" parameterType="HashMap"  resultType="com.xm.core.entity.XmTestPlanCase">
 		select * from xm_test_plan_case res where  res.plan_id=#{planId} and res.case_id in
 		<foreach collection="caseIds" item="item" index="index" open="(" separator="," close=")" >
@@ -33,18 +59,7 @@
 	<select id="getXmTestPlanCaseExecStatusDist" parameterType="HashMap"  resultType="HashMap">
 		select count(*) as total_cnt,res.exec_status from xm_test_plan_case res left join xm_test_plan p on res.plan_id=p.id
 		<where>
-			<if test="planId!=null and planId!=''">
-				and res.plan_id=#{planId}
-			</if>
-			<if test="casedbId!=null and casedbId!=''">
-				and p.casedb_id=#{casedbId}
-			</if>
-			<if test="projectId!=null and projectId!=''">
-				and p.project_id=#{projectId}
-			</if>
-			<if test="productId!=null and productId!=''">
-				and p.product_id=#{productId}
-			</if>
+			<include refid="whereForRpt"/>
 		</where>
 		group by res.exec_status
 	</select>
@@ -54,18 +69,7 @@
 		,res.exec_userid,max(res.exec_username) as exec_username
 		from xm_test_plan_case res left join xm_test_plan p on res.plan_id=p.id
 		<where>
-			<if test="planId!=null and planId!=''">
-				and res.plan_id=#{planId}
-			</if>
-			<if test="casedbId!=null and casedbId!=''">
-				and p.casedb_id=#{casedbId}
-			</if>
-			<if test="projectId!=null and projectId!=''">
-				and p.project_id=#{projectId}
-			</if>
-			<if test="productId!=null and productId!=''">
-				and p.product_id=#{productId}
-			</if>
+			<include refid="whereForRpt"/>
 		</where>
 		group by res.exec_userid
 
@@ -77,32 +81,7 @@
 		select res.exec_date, sum(case when res.exec_status>='1' then 1 else 0 end) as had_exec
 		from xm_test_plan_case res inner join xm_test_plan p on res.plan_id=p.id
 		<where>
-			<if test="planId!=null and planId!=''">
-				and res.plan_id=#{planId}
-			</if>
-			<if test="casedbId!=null and casedbId!=''">
-				and p.casedb_id=#{casedbId}
-			</if>
-			<if test="projectId!=null and projectId!=''">
-				and p.project_id=#{projectId}
-			</if>
-			<if test="productId!=null and productId!=''">
-				and p.product_id=#{productId}
-			</if>
-			<if test="pbranchId!=null and pbranchId!=''">
-				and p.pbranch_id=#{pbranchId}
-			</if>
-			<if test="startExecDate!=null">
-				and res.exec_date between #{startExecDate} and #{endExecDate}
-			</if>
-			<if test="linkIterationId!=null">
-				and exists ( select 1 from xm_test_case c inner join xm_menu m on c.menu_id=m.menu_id
-					where m.iteration_id=#{linkIterationId} and c.id=res.case_id
-					<if test="productId!=null and productId!=''">
-						and m.product_id=#{productId}
-					</if>
-				)
-			</if>
+			<include refid="whereForRpt"/>
 		</where>
 		group by res.exec_date
 		order by res.exec_date asc
