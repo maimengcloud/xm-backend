@@ -202,7 +202,7 @@ public class XmTaskController {
 	@RequestMapping(value="/getXmTaskAttDist",method=RequestMethod.GET)
 	public Map<String,Object> getXmTaskAttDist( @ApiIgnore @RequestParam Map<String,Object> xmTask){
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTask.put("branchId",user.getBranchId());
+		xmTask.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAttDist(xmTask);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
@@ -210,7 +210,7 @@ public class XmTaskController {
 	@RequestMapping(value="/getXmTaskAgeDist",method=RequestMethod.GET)
 	public Map<String,Object> getXmTaskAgeDist( @ApiIgnore @RequestParam Map<String,Object> xmTask){
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTask.put("branchId",user.getBranchId());
+		xmTask.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAgeDist(xmTask);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
@@ -241,7 +241,7 @@ public class XmTaskController {
 	public Map<String,Object> getXmTaskSort( @ApiIgnore @RequestParam Map<String,Object> xmTask){
 		User user=LoginUtils.getCurrentUserInfo();
 		PageUtils.startPage(xmTask);
-		xmTask.put("branchId",user.getBranchId());
+		xmTask.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskSort(xmTask);
 		Map<String,Object> m=new HashMap<>();
 		PageUtils.responePage(m,datas);

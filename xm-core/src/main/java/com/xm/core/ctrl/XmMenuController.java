@@ -213,7 +213,7 @@ public class XmMenuController {
 	@RequestMapping(value="/getXmMenuAttDist",method=RequestMethod.GET)
 	public Map<String,Object> getXmMenuAttDist( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
 		User user=LoginUtils.getCurrentUserInfo();
-		xmMenu.put("branchId",user.getBranchId());
+		xmMenu.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAttDist(xmMenu);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
@@ -221,7 +221,7 @@ public class XmMenuController {
 	@RequestMapping(value="/getXmMenuAgeDist",method=RequestMethod.GET)
 	public Map<String,Object> getXmMenuAgeDist( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
 		User user=LoginUtils.getCurrentUserInfo();
-		xmMenu.put("branchId",user.getBranchId());
+		xmMenu.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAgeDist(xmMenu);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
@@ -230,7 +230,7 @@ public class XmMenuController {
 	public Map<String,Object> getXmMenuSort( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
 		User user=LoginUtils.getCurrentUserInfo();
 		PageUtils.startPage(xmMenu);
-		xmMenu.put("branchId",user.getBranchId());
+		xmMenu.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuSort(xmMenu);
 		Map<String,Object> m=new HashMap<>();
 		PageUtils.responePage(m,datas);
@@ -307,6 +307,7 @@ public class XmMenuController {
 			xmMenu.setStatus("0");
 			xmMenu.setChildrenCnt(0);
 			xmMenu.setPbranchId(xmProduct.getBranchId());
+
 			if(!StringUtils.hasText(xmMenu.getProposerId())){
 				xmMenu.setProposerId(user.getUserid());
 				xmMenu.setProposerName(user.getUsername());
