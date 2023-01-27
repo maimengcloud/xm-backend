@@ -73,7 +73,7 @@ public class XmTestCasedbController {
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTestCasedb, "ids");
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTestCasedb.put("cbranchId",user.getBranchId());
+		xmTestCasedb.put("pbranchId",user.getBranchId());
 		PageUtils.startPage(xmTestCasedb);
 		List<Map<String,Object>>	xmTestCasedbList = xmTestCasedbService.selectListMapByWhere(xmTestCasedb);	//列出XmTestCasedb列表
 		PageUtils.responePage(m, xmTestCasedbList);

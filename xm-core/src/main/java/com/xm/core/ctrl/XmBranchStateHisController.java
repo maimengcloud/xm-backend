@@ -59,6 +59,8 @@ public class XmBranchStateHisController {
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmBranchStateHis, "pkList");
 		PageUtils.startPage(xmBranchStateHis);
+		User user=LoginUtils.getCurrentUserInfo();
+		xmBranchStateHis.put("branchId",user.getBranchId());
 		List<Map<String,Object>>	xmBranchStateHisList = xmBranchStateHisService.selectListMapByWhere(xmBranchStateHis);	//列出XmBranchStateHis列表
 		PageUtils.responePage(m, xmBranchStateHisList);
 		m.put("data",xmBranchStateHisList);

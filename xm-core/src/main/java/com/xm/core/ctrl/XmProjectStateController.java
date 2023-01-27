@@ -4,6 +4,8 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProductState;
 import com.xm.core.entity.XmProjectState;
 import com.xm.core.service.XmProjectStateService;
@@ -117,6 +119,8 @@ public class XmProjectStateController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmProjectState, "ids");
 		PageUtils.startPage(xmProjectState);
+		User user= LoginUtils.getCurrentUserInfo();
+		xmProjectState.put("branchId",user.getBranchId());
 		List<Map<String,Object>>	xmProjectStateList = xmProjectStateService.selectListMapByWhere(xmProjectState);	//列出XmProjectState列表
 		PageUtils.responePage(m, xmProjectStateList);
 		m.put("data",xmProjectStateList);

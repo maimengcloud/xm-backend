@@ -62,6 +62,8 @@ public class XmBranchStateController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmBranchState, "ids");
 		PageUtils.startPage(xmBranchState);
+		User user=LoginUtils.getCurrentUserInfo();
+		xmBranchState.put("branchId",user.getBranchId());
 		List<Map<String,Object>>	xmBranchStateList = xmBranchStateService.selectListMapByWhere(xmBranchState);	//列出XmBranchState列表
 		PageUtils.responePage(m, xmBranchStateList);
 		m.put("data",xmBranchStateList);

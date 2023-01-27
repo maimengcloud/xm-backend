@@ -3,6 +3,8 @@ package com.xm.core.ctrl;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProjectStateHis;
 import com.xm.core.service.XmProjectStateHisService;
 import io.swagger.annotations.*;
@@ -113,6 +115,8 @@ public class XmProjectStateHisController {
 		Map<String,Object> m = new HashMap<>(); 
 		RequestUtils.transformArray(xmProjectStateHis, "ids");
 		PageUtils.startPage(xmProjectStateHis);
+		User user= LoginUtils.getCurrentUserInfo();
+		xmProjectStateHis.put("branchId",user.getBranchId());
 		List<Map<String,Object>>	xmProjectStateHisList = xmProjectStateHisService.selectListMapByWhere(xmProjectStateHis);	//列出XmProjectStateHis列表
 		PageUtils.responePage(m, xmProjectStateHisList);
 		m.put("data",xmProjectStateHisList);

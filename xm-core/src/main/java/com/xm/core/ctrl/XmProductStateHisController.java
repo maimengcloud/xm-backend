@@ -3,6 +3,8 @@ package com.xm.core.ctrl;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProductStateHis;
 import com.xm.core.service.XmProductStateHisService;
 import io.swagger.annotations.Api;
@@ -55,6 +57,8 @@ public class XmProductStateHisController {
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmProductStateHis, "pkList");
 		PageUtils.startPage(xmProductStateHis);
+		User user= LoginUtils.getCurrentUserInfo();
+		xmProductStateHis.put("branchId",user.getBranchId());
 		List<Map<String,Object>>	xmProductStateHisList = xmProductStateHisService.selectListMapByWhere(xmProductStateHis);	//列出XmProductStateHis列表
 		PageUtils.responePage(m, xmProductStateHisList);
 		m.put("data",xmProductStateHisList);

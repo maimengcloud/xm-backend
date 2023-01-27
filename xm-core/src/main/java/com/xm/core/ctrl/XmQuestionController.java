@@ -104,7 +104,7 @@ public class XmQuestionController {
 		PageUtils.startPage(xmQuestion);
 		User user = LoginUtils.getCurrentUserInfo();
 		if(LoginUtils.isBranchAdmin()){
-			xmQuestion.put("branchId",user.getBranchId());
+			xmQuestion.put("pbranchId",user.getBranchId());
 		}else {
 			xmQuestion.put("compete",user.getUserid());
 		}
@@ -122,7 +122,7 @@ public class XmQuestionController {
 	@RequestMapping(value="/getXmQuestionAttDist",method=RequestMethod.GET)
 	public Map<String,Object> getXmQuestionAttDist( @ApiIgnore @RequestParam Map<String,Object> xmQuestion){
 		User user=LoginUtils.getCurrentUserInfo();
-		xmQuestion.put("branchId",user.getBranchId());
+		xmQuestion.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAttDist(xmQuestion);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
@@ -130,14 +130,14 @@ public class XmQuestionController {
 	@RequestMapping(value="/getXmQuestionAgeDist",method=RequestMethod.GET)
 	public Map<String,Object> getXmQuestionAgeDist( @ApiIgnore @RequestParam Map<String,Object> xmQuestion){
 		User user=LoginUtils.getCurrentUserInfo();
-		xmQuestion.put("branchId",user.getBranchId());
+		xmQuestion.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAgeDist(xmQuestion);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
 	@RequestMapping(value="/getXmQuestionRetestDist",method=RequestMethod.GET)
 	public Map<String,Object> getXmQuestionRetestDist( @ApiIgnore @RequestParam Map<String,Object> xmQuestion){
 		User user=LoginUtils.getCurrentUserInfo();
-		xmQuestion.put("branchId",user.getBranchId());
+		xmQuestion.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionRetestDist(xmQuestion);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
@@ -145,7 +145,7 @@ public class XmQuestionController {
 	public Map<String,Object> getXmQuestionSort( @ApiIgnore @RequestParam Map<String,Object> xmQuestion){
 		User user=LoginUtils.getCurrentUserInfo();
 		PageUtils.startPage(xmQuestion);
-		xmQuestion.put("branchId",user.getBranchId());
+		xmQuestion.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionSort(xmQuestion);
 		Map<String,Object> m=new HashMap<>();
 		PageUtils.responePage(m,datas);

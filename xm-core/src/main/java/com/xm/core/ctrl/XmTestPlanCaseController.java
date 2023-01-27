@@ -76,6 +76,8 @@ public class XmTestPlanCaseController {
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTestPlanCase, "pkList");
 		PageUtils.startPage(xmTestPlanCase);
+		User user= LoginUtils.getCurrentUserInfo();
+		xmTestPlanCase.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.selectListMapByWhere(xmTestPlanCase);	//列出XmTestPlanCase列表
 		PageUtils.responePage(m, xmTestPlanCaseList);
 		m.put("data",xmTestPlanCaseList);
@@ -96,6 +98,8 @@ public class XmTestPlanCaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		PageUtils.startPage(xmTestPlanCase);
+		User user= LoginUtils.getCurrentUserInfo();
+		xmTestPlanCase.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestPlanCaseExecStatusDist(xmTestPlanCase);	//列出XmTestPlanCase列表
 		PageUtils.responePage(m, xmTestPlanCaseList);
 		m.put("data",xmTestPlanCaseList);
@@ -114,6 +118,8 @@ public class XmTestPlanCaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		PageUtils.startPage(xmTestPlanCase);
+		User user= LoginUtils.getCurrentUserInfo();
+		xmTestPlanCase.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestPlanCaseUserDist(xmTestPlanCase);	//列出XmTestPlanCase列表
 		PageUtils.responePage(m, xmTestPlanCaseList);
 		m.put("data",xmTestPlanCaseList);
@@ -132,6 +138,8 @@ public class XmTestPlanCaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		PageUtils.startPage(xmTestPlanCase);
+		User user= LoginUtils.getCurrentUserInfo();
+		xmTestPlanCase.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestDayTimesList(xmTestPlanCase);	//列出XmTestPlanCase列表
 		PageUtils.responePage(m, xmTestPlanCaseList);
 		m.put("data",xmTestPlanCaseList);
@@ -148,6 +156,8 @@ public class XmTestPlanCaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		PageUtils.startPage(xmTestPlanCase);
+		User user= LoginUtils.getCurrentUserInfo();
+		xmTestPlanCase.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestCaseToPlanCalcList(xmTestPlanCase);	//列出XmTestPlanCase列表
 		PageUtils.responePage(m, xmTestPlanCaseList);
 		m.put("data",xmTestPlanCaseList);
