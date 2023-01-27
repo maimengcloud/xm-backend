@@ -23,7 +23,8 @@ public class CahceChannelConfig implements ChannelConfig {
 
 		container.addMessageListener(messageListener, topic("XM_PRODUCT_CACHE"));
 		container.addMessageListener(messageListener, topic( "XM_PROJECT_CACHE"));
-		container.addMessageListener(messageListener, topic( "XM_GROUP_CACHE"));
+		container.addMessageListener(messageListener, topic( "XM_GROUP_PRJ_CACHE"));
+		container.addMessageListener(messageListener, topic( "XM_GROUP_PRD_CACHE"));
 		return container;
 	}
 
