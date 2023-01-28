@@ -89,7 +89,7 @@
 		insert into xm_test_case(
 			<include refid="columns"/>
 		) values (
-		#{id},#{caseName},#{caseRemark},#{testStep},#{expectResult},#{menuId},#{menuName},#{ctime},#{ltime},#{luserid},#{lusername},#{cbranchId},#{moduleId},#{moduleName},#{caseStatus},#{cuserid},#{cusername},#{productId},#{verNum},#{casedbId},#{casedbName},#{funcId},#{funcName},#{funcPnames},#{preRemark},#{caseType},#{cpriority},#{budgetWorkload},#{actWorkload},#{initWorkload},#{retest},#{pbranchId}
+		#{id},#{caseName},#{caseRemark},#{testStep},#{expectResult},#{menuId},#{menuName},#{ctime},#{ltime},#{luserid},#{lusername},#{cbranchId},#{moduleId},#{moduleName},#{caseStatus},#{cuserid},#{cusername},#{productId},#{verNum},#{casedbId},#{casedbName},#{funcId},#{funcName},#{funcPnames},#{preRemark},#{caseType},#{cpriority},#{budgetWorkload},#{actWorkload},#{initWorkload},#{retest},#{pbranchId},#{testType}
 		)
 	</insert>
 	
@@ -164,7 +164,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,case_name,case_remark,test_step,expect_result,menu_id,menu_name,ctime,ltime,luserid,lusername,cbranch_id,module_id,module_name,case_status,cuserid,cusername,product_id,ver_num,casedb_id,casedb_name,func_id,func_name,func_pnames,pre_remark,case_type,cpriority,budget_workload,act_workload,init_workload,retest,pbranch_id
+		id,case_name,case_remark,test_step,expect_result,menu_id,menu_name,ctime,ltime,luserid,lusername,cbranch_id,module_id,module_name,case_status,cuserid,cusername,product_id,ver_num,casedb_id,casedb_name,func_id,func_name,func_pnames,pre_remark,case_type,cpriority,budget_workload,act_workload,init_workload,retest,pbranch_id,test_type
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -201,6 +201,7 @@
 		<if test="initWorkload != null and initWorkload != ''">      and res.init_workload = #{initWorkload}     </if>
 		<if test="retest != null and retest != ''">      and res.retest = #{retest}     </if>
 		<if test="pbranchId != null and pbranchId != ''">      and res.pbranch_id = #{pbranchId}     </if>
+		<if test="testType != null and testType != ''">      and res.test_type = #{testType}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -234,7 +235,8 @@
 		act_workload = #{actWorkload},
 		init_workload = #{initWorkload},
 		retest = #{retest},
-		pbranch_id = #{pbranchId}
+		pbranch_id = #{pbranchId},
+		test_type = #{testType}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="caseName != null and caseName != ''"> case_name = #{caseName},     </if>
@@ -268,6 +270,7 @@
 		<if test="initWorkload != null and initWorkload != ''"> init_workload = #{initWorkload},     </if>
 		<if test="retest != null and retest != ''"> retest = #{retest},     </if>
 		<if test="pbranchId != null and pbranchId != ''"> pbranch_id = #{pbranchId},     </if>
+		<if test="testType != null and testType != ''"> test_type = #{testType},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -301,6 +304,7 @@
 			act_workload = #{item.actWorkload},
 			init_workload = #{item.initWorkload},
 			retest = #{item.retest},
-			pbranch_id = #{item.pbranchId}
+			pbranch_id = #{item.pbranchId},
+			test_type = #{item.testType}
 	</sql>
 </mapper>

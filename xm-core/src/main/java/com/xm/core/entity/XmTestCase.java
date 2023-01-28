@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTestCase所有属性名: <br>
- *	"id","主键","caseName","标题","caseRemark","备注","testStep","测试步骤","expectResult","期望结果","menuId","关联的故事","menuName","关联故事名","ctime","创建时间","ltime","更新时间","luserid","更新人编号","lusername","更新人姓名","cbranchId","创建机构","moduleId","模块编号","moduleName","模块名称","caseStatus","用例状态0-草稿，1-评审中，2-审核通过，3-审核未通过，4-废弃","cuserid","创建人编号","cusername","创建人姓名","productId","产品编号","verNum","版本号","casedbId","用例库编号","casedbName","用例库名称","funcId","功能菜单编号","funcName","功能菜单名称","funcPnames","上级菜单名称列表逗号分割","preRemark","前置条件描述","caseType","用例类型","cpriority","优先级","budgetWorkload","预算工时","actWorkload","实际工时","initWorkload","原估工时","retest","是否可作为回归测试用例0-否，1-是","pbranchId","产品归属企业";<br>
+ *	"id","主键","caseName","标题","caseRemark","备注","testStep","测试步骤","expectResult","期望结果","menuId","关联的故事","menuName","关联故事名","ctime","创建时间","ltime","更新时间","luserid","更新人编号","lusername","更新人姓名","cbranchId","创建机构","moduleId","模块编号","moduleName","模块名称","caseStatus","用例状态0-草稿，1-评审中，2-审核通过，3-审核未通过，4-废弃","cuserid","创建人编号","cusername","创建人姓名","productId","产品编号","verNum","版本号","casedbId","用例库编号","casedbName","用例库名称","funcId","功能菜单编号","funcName","功能菜单名称","funcPnames","上级菜单名称列表逗号分割","preRemark","前置条件描述","caseType","用例类型-与bug类型相同","cpriority","优先级","budgetWorkload","预算工时","actWorkload","实际工时","initWorkload","原估工时","retest","是否可作为回归测试用例0-否，1-是","pbranchId","产品归属企业","testType","测试方式0-手工，1-自动";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -95,7 +95,7 @@ public class XmTestCase  implements java.io.Serializable {
 	@ApiModelProperty(notes="前置条件描述",allowEmptyValue=true,example="",allowableValues="")
 	String preRemark;
 	
-	@ApiModelProperty(notes="用例类型",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="用例类型-与bug类型相同",allowEmptyValue=true,example="",allowableValues="")
 	String caseType;
 	
 	@ApiModelProperty(notes="优先级",allowEmptyValue=true,example="",allowableValues="")
@@ -115,6 +115,9 @@ public class XmTestCase  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="产品归属企业",allowEmptyValue=true,example="",allowableValues="")
 	String pbranchId;
+	
+	@ApiModelProperty(notes="测试方式0-手工，1-自动",allowEmptyValue=true,example="",allowableValues="")
+	String testType;
 
 	/**
 	 *主键
