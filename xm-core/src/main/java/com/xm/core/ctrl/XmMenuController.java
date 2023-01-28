@@ -285,7 +285,7 @@ public class XmMenuController {
 				return failed(tips);
 			}
 			if(StringUtils.hasText(xmMenu.getMmUserid()) && !xmMenu.getMmUserid().equals(user.getUserid())){
-				tips=productQxService.checkProductQx(null,xmProduct,2,user,xmMenu.getMmUserid(),xmMenu.getMmUsername(),null);
+				tips=productQxService.checkProductQx(xmProduct,2,user,xmMenu.getMmUserid(),xmMenu.getMmUsername(),null);
 				if(!tips.isOk()){
 					return failed(tips);
 				}
@@ -357,7 +357,7 @@ public class XmMenuController {
 					return ResponseHelper.failed("product-data-0","产品已不存在");
 				}
 				if(!groupService.checkUserIsProductAdm(xmProduct, user.getUserid())){
-					tips=productQxService.checkProductQx(null,xmProduct,2,user,xmMenuDb.getMmUserid(),xmMenuDb.getMmUsername(),null);
+					tips=productQxService.checkProductQx(xmProduct,2,user,xmMenuDb.getMmUserid(),xmMenuDb.getMmUsername(),null);
 					if(!tips.isOk()){
 						return failed(tips);
 					}
@@ -399,7 +399,7 @@ public class XmMenuController {
 			if(xmProduct==null){
 				return ResponseHelper.failed("product-data-0","产品已不存在");
 			}
-			tips=productQxService.checkProductQx(null,xmProduct,2,user,xmMenuDb.getMmUserid(),xmMenuDb.getMmUsername(),null);
+			tips=productQxService.checkProductQx(xmProduct,2,user,xmMenuDb.getMmUserid(),xmMenuDb.getMmUsername(),null);
 			if(!tips.isOk()){
 				return failed(tips);
 			}

@@ -141,7 +141,7 @@ public class XmGroupController {
 				}
 			}
 			if(StringUtils.hasText(group.getLeaderUserid()) && !group.getLeaderUserid().equals(groupDb.getLeaderUserid())){
-				tips = productQxService.checkProductQx(null,product,0,user, groupDb.getLeaderUserid(),groupDb.getLeaderUsername(),null);
+				tips = productQxService.checkProductQx(product,0,user, groupDb.getLeaderUserid(),groupDb.getLeaderUsername(),null);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
@@ -151,7 +151,7 @@ public class XmGroupController {
 				}
 			}
 			if(StringUtils.hasText(group.getAssUserid()) && !group.getAssUserid().equals(groupDb.getAssUserid())){
-				tips = productQxService.checkProductQx(null,product,0,user, groupDb.getAssUserid(),groupDb.getAssUsername(),null);
+				tips = productQxService.checkProductQx(product,0,user, groupDb.getAssUserid(),groupDb.getAssUsername(),null);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
@@ -420,7 +420,7 @@ public class XmGroupController {
 				}
 				boolean isPm=xmGroupService.checkUserIsProductAdm(product,u.getUserid());
 				if(!isPm) {
-					tips=productQxService.checkProductQx(null,product,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
+					tips=productQxService.checkProductQx(product,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					}

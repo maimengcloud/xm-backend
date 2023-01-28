@@ -111,7 +111,7 @@ public class XmTestCasedbController {
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedb.getProductId());
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			if(!isPm){
-				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCasedb.getCuserid(),xmTestCasedb.getCusername(),xmTestCasedb.getCbranchId());
+				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCasedb.getCuserid(),xmTestCasedb.getCusername(),xmTestCasedb.getCbranchId());
 				if(!tips.isOk()){
 					return failed(tips);
 				}
@@ -154,7 +154,7 @@ public class XmTestCasedbController {
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedbDb.getProductId());
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			if(!isPm){
-				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCasedbDb.getCuserid(),xmTestCasedbDb.getCusername(),xmTestCasedbDb.getCbranchId());
+				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCasedbDb.getCuserid(),xmTestCasedbDb.getCusername(),xmTestCasedbDb.getCbranchId());
 				if(!tips.isOk()){
 					return failed(tips);
 				}
@@ -192,13 +192,13 @@ public class XmTestCasedbController {
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedbDb.getProductId());
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
  			if(StringUtils.hasText(xmTestCasedb.getCuserid())){
-				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCasedb.getCuserid(),xmTestCasedb.getCusername(),xmTestCasedb.getCbranchId());
+				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCasedb.getCuserid(),xmTestCasedb.getCusername(),xmTestCasedb.getCbranchId());
 				if(!tips.isOk()){
 					return failed(tips);
 				}
 			}
  			if(!isPm){
- 				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCasedbDb.getCuserid(),xmTestCasedbDb.getCusername(),xmTestCasedbDb.getCbranchId());
+ 				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCasedbDb.getCuserid(),xmTestCasedbDb.getCusername(),xmTestCasedbDb.getCbranchId());
 				if(!tips.isOk()){
 					return failed(tips);
 				}
@@ -257,7 +257,7 @@ public class XmTestCasedbController {
 			User user = LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedbDb.getProductId());
 			if(StringUtils.hasText(xmTestCasedb.getCuserid())){
-				tips=productQxService.checkProductQx(null,xmProductDb,1,user,xmTestCasedb.getCuserid(),xmTestCasedb.getCusername(),xmTestCasedb.getCbranchId());
+				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCasedb.getCuserid(),xmTestCasedb.getCusername(),xmTestCasedb.getCbranchId());
 				if(!tips.isOk()){
 					return failed(tips);
 				}
@@ -271,7 +271,7 @@ public class XmTestCasedbController {
 				can=xmTestCasedbsDb;
 			}else {
 				for (XmTestCasedb data : xmTestCasedbsDb) {
-					tips=productQxService.checkProductQx(null,xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
+					tips=productQxService.checkProductQx(xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
 					if(!tips.isOk()){
 						no.add(data);
 						noTips.add(tips.getMsg());
@@ -340,7 +340,7 @@ public class XmTestCasedbController {
 				can=datasDb;
 			}else {
 				for (XmTestCasedb data : datasDb) {
-					tips=productQxService.checkProductQx(null,xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
+					tips=productQxService.checkProductQx(xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
 					if(!tips.isOk()){
 						no.add(data);
 						noTips.add(tips.getMsg());

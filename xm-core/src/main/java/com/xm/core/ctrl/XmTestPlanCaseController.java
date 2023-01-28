@@ -186,41 +186,6 @@ public class XmTestPlanCaseController {
 		return m;
 	}
 
-	@ApiOperation( value = "新增一条测试计划与用例关系表信息",notes=" ")
-	@ApiResponses({
-		@ApiResponse(code = 200,response=XmTestPlanCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
-	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmTestPlanCase(@RequestBody XmTestPlanCase xmTestPlanCase) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功新增一条数据");
-		try{
-		    boolean createPk=false;
-			if(!StringUtils.hasText(xmTestPlanCase.getCaseId())) {
-			    createPk=true;
-				xmTestPlanCase.setCaseId(xmTestPlanCaseService.createKey("caseId"));
-			}
-			if(!StringUtils.hasText(xmTestPlanCase.getPlanId())) {
-			    createPk=true;
-				xmTestPlanCase.setPlanId(xmTestPlanCaseService.createKey("planId"));
-			}
-			if(createPk==false){
-                 if(xmTestPlanCaseService.selectOneObject(xmTestPlanCase) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
-                }
-            }
-			xmTestPlanCaseService.insert(xmTestPlanCase);
-			m.put("data",xmTestPlanCase);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
-	}
 
 
 
@@ -276,6 +241,7 @@ public class XmTestPlanCaseController {
 					xmTestPlanCase.setExecUsername(user.getUsername());
 					xmTestPlanCase.setPriority(xmTestCase.getCpriority());
 					xmTestPlanCase.setProjectId(xmTestPlanDb.getProjectId());
+					xmTestPlanCase.setProductId(xmProductDb.getId());
 					planCases.add(xmTestPlanCase);
 				}
 				this.xmTestPlanCaseService.batchInsert(planCases);
@@ -310,6 +276,15 @@ public class XmTestPlanCaseController {
             if( xmTestPlanCaseDb == null ){
                 return failed("data-not-exists","数据不存在，无法删除");
             }
+            XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanCaseDb.getProductId());
+            if(xmProductDb==null){
+				return failed("product-not-exists","产品已不存在");
+			}
+            User user=LoginUtils.getCurrentUserInfo();
+            tips=productQxService.checkProductQx(xmProductDb,1,user);
+            if(!tips.isOk()){
+            	return failed(tips);
+			}
 			xmTestPlanCaseService.deleteByPk(xmTestPlanCase);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -341,6 +316,15 @@ public class XmTestPlanCaseController {
             if( xmTestPlanCaseDb == null ){
                 return failed("data-not-exists","数据不存在，无法修改");
             }
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanCaseDb.getProductId());
+			if(xmProductDb==null){
+				return failed("product-not-exists","产品已不存在");
+			}
+			User user=LoginUtils.getCurrentUserInfo();
+			tips=productQxService.checkProductQx(xmProductDb,1,user);
+			if(!tips.isOk()){
+				return failed(tips);
+			}
 			xmTestPlanCaseService.updateSomeFieldByPk(xmTestPlanCase);
 			m.put("data",xmTestPlanCase);
 		}catch (BizException e) { 
@@ -394,18 +378,27 @@ public class XmTestPlanCaseController {
 			}
 			List<XmTestPlanCase> can=new ArrayList<>();
 			List<XmTestPlanCase> no=new ArrayList<>();
+			Set<String> noTipsSet=new HashSet<>();
 			XmTestPlanCase xmTestPlanCaseDb=xmTestPlanCasesDb.get(0);
 			if(xmTestPlanCasesDb.stream().filter(k->!k.getPlanId().equals(xmTestPlanCaseDb.getPlanId())).findAny().isPresent()){
 				return failed("planId-0","批量操作只能操作同一个测试计划的用例");
 			}
 			User user = LoginUtils.getCurrentUserInfo();
-			productService.getProductFromCache(xm)
-			productQxService.checkProductQx(xm)
-			for (XmTestPlanCase xmTestPlanCaseDb : xmTestPlanCasesDb) {
-				Tips tips2 = new Tips("检查通过");
-				productQxService.
+
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanCaseDb.getProductId());
+			if(xmProductDb==null){
+				return failed("product-not-exists","产品已不存在");
+			} 
+			tips=productQxService.checkProductQx(xmProductDb,1,user);
+			if(!tips.isOk()){
+				return failed(tips);
+			}
+			for (XmTestPlanCase pcDb : xmTestPlanCasesDb) {
+				Tips tips2 = new Tips("成功");
+				tips2=productQxService.checkProductQx(xmProductDb,1,user,pcDb.getExecUserid(),pcDb.getExecUsername(),null);
 				if(!tips2.isOk()){
-				    no.add(xmTestPlanCaseDb); 
+				    no.add(xmTestPlanCaseDb);
+					noTipsSet.add(tips2.getMsg());
 				}else{
 					can.add(xmTestPlanCaseDb);
 				}
@@ -419,7 +412,7 @@ public class XmTestPlanCaseController {
 				msgs.add(String.format("成功更新以下%s条数据",can.size()));
 			}
 			if(no.size()>0){
-				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
+				msgs.add(String.format("以下%s个数据无权限更新,原因【%s】",no.size(),noTipsSet.stream().collect(Collectors.joining(";"))));
 			}
 			if(can.size()>0){
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
@@ -454,11 +447,28 @@ public class XmTestPlanCaseController {
 
             List<XmTestPlanCase> can=new ArrayList<>();
             List<XmTestPlanCase> no=new ArrayList<>();
-            for (XmTestPlanCase data : datasDb) {
-                if(true){
-                    can.add(data);
+			Set<String> noTipsSet=new HashSet<>();
+			XmTestPlanCase xmTestPlanCaseDb=datasDb.get(0);
+			if(datasDb.stream().filter(k->!k.getPlanId().equals(xmTestPlanCaseDb.getPlanId())).findAny().isPresent()){
+				return failed("planId-0","批量操作只能操作同一个测试计划的用例");
+			}
+			User user = LoginUtils.getCurrentUserInfo();
+
+			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanCaseDb.getProductId());
+			if(xmProductDb==null){
+				return failed("product-not-exists","产品已不存在");
+			}
+			tips=productQxService.checkProductQx(xmProductDb,1,user);
+			if(!tips.isOk()){
+				return failed(tips);
+			}
+            for (XmTestPlanCase pcDb : datasDb) {
+				Tips tips1=productQxService.checkProductQx(xmProductDb,1,user,pcDb.getExecUserid(),pcDb.getExecUsername(),null);
+				if(tips1.isOk()){
+                    can.add(pcDb);
                 }else{
-                    no.add(data);
+                    no.add(pcDb);
+					noTipsSet.add(tips1.getMsg());
                 } 
             }
             List<String> msgs=new ArrayList<>();
@@ -468,7 +478,7 @@ public class XmTestPlanCaseController {
             }
     
             if(no.size()>0){ 
-                msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getCaseId() +" "+ i.getPlanId() ).collect(Collectors.joining(","))));
+                msgs.add(String.format("以下%s条数据不能删除.原因【%s】",no.size(),noTipsSet.stream().collect(Collectors.joining(";"))));
             }
             if(can.size()>0){
                  tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
