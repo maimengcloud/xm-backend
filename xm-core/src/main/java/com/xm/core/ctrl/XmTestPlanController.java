@@ -284,6 +284,12 @@ public class XmTestPlanController {
 			}
 			User user = LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanDb2.getProductId());
+			if(StringUtils.hasText(xmTestPlan.getCuserid())){
+				tips=this.productQxService.checkProductQx(xmProductDb,1,user,xmTestPlan.getCuserid(),xmTestPlan.getCusername(),xmTestPlan.getCbranchId());
+				if(!tips.isOk()){
+					return failed(tips);
+				}
+			}
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			List<XmTestPlan> can=new ArrayList<>();
 			List<XmTestPlan> no=new ArrayList<>();
