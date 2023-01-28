@@ -208,7 +208,7 @@ public class XmTaskExecuserController {
 				xmTaskExecuser.setStatus("0");   //如果是众包，智能添加为候选人
 			}else {
 				//如果不是众包，需要判断是否已加入项目组组织架构中，如未加入，需要提示其先加入
-				tips=projectQxService.checkProjectQx(null,xmProjectDb,0,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
+				tips=projectQxService.checkProjectQx(xmProjectDb,0,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				};
@@ -282,7 +282,7 @@ public class XmTaskExecuserController {
 					break;
 				}
  				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {//只有组长、任务责任人可以请别人请离开任务
-					tips=projectQxService.checkProjectQx(null,xmProjectService.getProjectFromCache(xmTask.getProjectId()),2, user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
+					tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(xmTask.getProjectId()),2, user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					};
@@ -358,8 +358,7 @@ public class XmTaskExecuserController {
 			if(xmProject==null ){
 				return ResponseHelper.failed("project-0","项目已不存在");
 			}
-			
-			groupsMap.put(xmProject.getId(),pgroups);
+
 			 tips=projectQxService.checkProjectQx(xmProject,2,user);
 			if(tips.isOk()) {
 
@@ -542,7 +541,7 @@ public class XmTaskExecuserController {
 			User user=LoginUtils.getCurrentUserInfo();
  			String projectId=xmTaskExecuser.getProjectId();
  			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
- 				tips=projectQxService.checkProjectQx(null,xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId() );
+ 				tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId() );
 			} 
 			if(tips.isOk()) {
 				XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getTaskId(),xmTaskExecuser.getUserid()));
@@ -592,7 +591,7 @@ public class XmTaskExecuserController {
 			User user=LoginUtils.getCurrentUserInfo();
  			String projectId=xmTaskExecuser.getProjectId();
  			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
- 				tips=projectQxService.checkProjectQx(null,xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
+ 				tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
 			} 
 			if(tips.isOk()) {
 				xmTaskExecuserService.becomeCandidate(xmTaskExecuser);
@@ -637,7 +636,7 @@ public class XmTaskExecuserController {
 			XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskDb.getId(),xmTaskExecuser.getUserid()));
 			if(xmTaskExecuserDb !=null ) {
 				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
-					tips=projectQxService.checkProjectQx(null,xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuserDb.getUserid(),xmTaskExecuserDb.getUsername(),xmTaskExecuserDb.getExecUserBranchId());
+					tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuserDb.getUserid(),xmTaskExecuserDb.getUsername(),xmTaskExecuserDb.getExecUserBranchId());
 				}
 				if( "0".equals( xmTaskExecuserDb.getStatus() )  || "7".equals( xmTaskExecuserDb.getStatus() ) || "8".equals( xmTaskExecuserDb.getStatus() ) ) {
 					xmTaskExecuserService.delete(xmTaskExecuser);

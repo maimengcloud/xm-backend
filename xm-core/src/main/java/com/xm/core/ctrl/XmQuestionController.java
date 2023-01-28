@@ -16,7 +16,6 @@ import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.*;
 import com.xm.core.service.*;
 import com.xm.core.service.push.XmPushMsgService;
-import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmQuestionVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -382,10 +381,10 @@ public class XmQuestionController {
 						String handlerUserid= (String) xmQuestionMap.get("handlerUserid");
 						String handlerUsername= (String) xmQuestionMap.get("handlerUsername");
 						XmQuestion xmQuedb=canOper.get(0);
-						Tips tips1=productQxService.checkProductScopeQx(null,productService.getProductFromCache(xmQuedb.getProductId()),1,user,handlerUserid,handlerUsername,null);
+						Tips tips1=productQxService.checkProductScopeQx(productService.getProductFromCache(xmQuedb.getProductId()),1,user,handlerUserid,handlerUsername,null);
 						if(!tips1.isOk()){
 							if(StringUtils.hasText(xmQuedb.getProjectId())){
-								tips1=projectQxService.checkProjectScopeQx(null,projectService.getProjectFromCache(xmQuedb.getProjectId()),1,user,handlerUserid,handlerUsername,null);
+								tips1=projectQxService.checkProjectScopeQx(projectService.getProjectFromCache(xmQuedb.getProjectId()),1,user,handlerUserid,handlerUsername,null);
 							}
 							if(!tips1.isOk()){
 								return failed(tips1);

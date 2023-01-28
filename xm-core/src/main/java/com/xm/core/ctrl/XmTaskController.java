@@ -583,7 +583,7 @@ public class XmTaskController {
 				return ResponseHelper.failed(tips1);
 			}
 			if(StringUtils.hasText(xmTaskVo.getCreateUserid()) && !xmTaskVo.getCreateUserid().equals(user.getUserid())){
-				tips1=projectQxService.checkProjectQx(null,xmProject,2,user,xmTaskVo.getCreateUserid(),xmTaskVo.getCreateUsername(),null);
+				tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskVo.getCreateUserid(),xmTaskVo.getCreateUsername(),null);
 				if(!tips1.isOk()){
 					return ResponseHelper.failed(tips1);
 				}
@@ -726,7 +726,7 @@ public class XmTaskController {
 
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 			if(xmProject!=null && groupService.checkUserIsProjectAdm(xmProject,user.getUserid())){
-				Tips tips1=projectQxService.checkProjectQx(null,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+				Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 				if(!tips1.isOk()){
 					return ResponseHelper.failed(tips1);
 				}
@@ -838,7 +838,7 @@ public class XmTaskController {
 			}
 
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
-			Tips tips1=projectQxService.checkProjectQx(null,xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+			Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 			if(!tips1.isOk()){
 				 return ResponseHelper.failed(tips1);
 			}
@@ -982,7 +982,7 @@ public class XmTaskController {
 			String projectId=batchImportVo.getProjectId();
 			String productId=batchImportVo.getProductId();
 			XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
-			Tips tips1=projectQxService.checkProjectQx(null,xmProject,2,user);
+			Tips tips1=projectQxService.checkProjectQx(xmProject,2,user);
 			if(!tips1.isOk()){
 				return ResponseHelper.failed(tips1);
 			}
