@@ -106,7 +106,23 @@ public class XmQuestionController {
 		if(LoginUtils.isBranchAdmin()){
 			xmQuestion.put("pbranchId",user.getBranchId());
 		}else {
-			xmQuestion.put("compete",user.getUserid());
+			String id= (String) xmQuestion.get("id");
+			String menuId= (String) xmQuestion.get("menuId");
+			Object ids=  xmQuestion.get("ids");
+			Object menuIds=  xmQuestion.get("menuIds");
+			String productId= (String) xmQuestion.get("productId");
+			String myUserid= (String) xmQuestion.get("myUserid");
+			String projectId= (String) xmQuestion.get("projectId");
+			String linkIterationId= (String) xmQuestion.get("linkIterationId");
+			String casedbId= (String) xmQuestion.get("casedbId");
+			String planId= (String) xmQuestion.get("planId");
+			String funcId= (String) xmQuestion.get("funcId");
+			String hisHandlerUserid= (String) xmQuestion.get("hisHandlerUserid");
+
+
+			if(   !( StringUtils.hasText(myUserid) ||StringUtils.hasText(id) || StringUtils.hasText(menuId) || StringUtils.hasText(productId)|| StringUtils.hasText(projectId)||menuIds!=null||ids!=null|| StringUtils.hasText(casedbId)|| StringUtils.hasText(linkIterationId)|| StringUtils.hasText(planId)|| StringUtils.hasText(funcId) || StringUtils.hasText(hisHandlerUserid)) ){
+				xmQuestion.put("compete",user.getUserid());
+			}
 		}
 
 
