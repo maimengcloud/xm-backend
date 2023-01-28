@@ -6,7 +6,6 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.mybatis.PageUtils;
-import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -112,21 +111,21 @@ public class XmGroupController {
 				}
 			}
 			if(StringUtils.hasText(group.getLeaderUserid()) && !group.getLeaderUserid().equals(groupDb.getLeaderUserid())){
-				tips = projectQxService.checkProjectQx(null,project,0,user, groupDb.getLeaderUserid(),groupDb.getLeaderUsername(),null);
+				tips = projectQxService.checkProjectQx(project,0,user, groupDb.getLeaderUserid(),groupDb.getLeaderUsername(),null);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
-				tips=projectQxService.checkProjectScopeQx(null,project,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
+				tips=projectQxService.checkProjectScopeQx(project,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
 			}
 			if(StringUtils.hasText(group.getAssUserid()) && !group.getAssUserid().equals(groupDb.getAssUserid())){
-				tips = projectQxService.checkProjectQx(null,project,0,user, groupDb.getAssUserid(),groupDb.getAssUsername(),null);
+				tips = projectQxService.checkProjectQx(project,0,user, groupDb.getAssUserid(),groupDb.getAssUsername(),null);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
-				tips=projectQxService.checkProjectScopeQx(null,project,0,group.getAssUserid(),group.getAssUsername(),null);
+				tips=projectQxService.checkProjectScopeQx(project,0,group.getAssUserid(),group.getAssUsername(),null);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
@@ -145,7 +144,7 @@ public class XmGroupController {
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
-				tips=productQxService.checkProductScopeQx(null,product,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
+				tips=productQxService.checkProductScopeQx(product,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
@@ -155,7 +154,7 @@ public class XmGroupController {
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
-				tips=productQxService.checkProductScopeQx(null,product,0,group.getAssUserid(),group.getAssUsername(),null);
+				tips=productQxService.checkProductScopeQx(product,0,group.getAssUserid(),group.getAssUsername(),null);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
@@ -347,19 +346,19 @@ public class XmGroupController {
 
 	public Tips checkProductGroupQxForAdd(XmProduct xmProduct,User u,XmGroup xmGroup){
 		Tips tips=new Tips();
-		Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
-		tips=productQxService.checkProductQx(groupsMap,xmProduct,0,u);
+		
+		tips=productQxService.checkProductQx(xmProduct,0,u);
 		if(!tips.isOk()){
 			return tips;
 		}
 		if(StringUtils.hasText(xmGroup.getLeaderUserid()) && !xmGroup.getLeaderUserid().equals(u.getUserid())){
-			tips=productQxService.checkProductScopeQx(groupsMap,xmProduct,0,xmGroup.getLeaderUserid(),xmGroup.getLeaderUsername(),null);
+			tips=productQxService.checkProductScopeQx(xmProduct,0,xmGroup.getLeaderUserid(),xmGroup.getLeaderUsername(),null);
 		}
 		if(!tips.isOk()){
 			return tips;
 		}
 		if(StringUtils.hasText(xmGroup.getAssUserid()) && !xmGroup.getAssUserid().equals(u.getUserid())){
-			tips=productQxService.checkProductScopeQx(groupsMap,xmProduct,0,xmGroup.getAssUserid(),xmGroup.getAssUsername(),null);
+			tips=productQxService.checkProductScopeQx(xmProduct,0,xmGroup.getAssUserid(),xmGroup.getAssUsername(),null);
 		}
 		return tips;
 	}
@@ -367,19 +366,19 @@ public class XmGroupController {
 
 	public Tips checkProjectGroupQxForAdd(XmProject project,User u,XmGroup xmGroup){
 		Tips tips=new Tips();
-		Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
-		tips=projectQxService.checkProjectQx(groupsMap,project,0,u);
+		
+		tips=projectQxService.checkProjectQx(project,0,u);
 		if(!tips.isOk()){
 			return tips;
 		}
 		if(StringUtils.hasText(xmGroup.getLeaderUserid()) && !xmGroup.getLeaderUserid().equals(u.getUserid())){
-			tips=projectQxService.checkProjectScopeQx(groupsMap,project,0,xmGroup.getLeaderUserid(),xmGroup.getLeaderUsername(),null);
+			tips=projectQxService.checkProjectScopeQx(project,0,xmGroup.getLeaderUserid(),xmGroup.getLeaderUsername(),null);
 		}
 		if(!tips.isOk()){
 			return tips;
 		}
 		if(StringUtils.hasText(xmGroup.getAssUserid()) && !xmGroup.getAssUserid().equals(u.getUserid())){
-			tips=projectQxService.checkProjectScopeQx(groupsMap,project,0,xmGroup.getAssUserid(),xmGroup.getAssUsername(),null);
+			tips=projectQxService.checkProjectScopeQx(project,0,xmGroup.getAssUserid(),xmGroup.getAssUsername(),null);
 		}
 		return tips;
 	}
@@ -408,7 +407,7 @@ public class XmGroupController {
 				}
 				boolean isPm=xmGroupService.checkUserIsProjectAdm(project,u.getUserid());
 				if(!isPm) {
-					tips=projectQxService.checkProjectQx(null,project,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
+					tips=projectQxService.checkProjectQx(project,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					}

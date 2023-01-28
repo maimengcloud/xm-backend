@@ -596,11 +596,11 @@ public class XmQuestionController {
 		}
 
 		List<XmQuestion> productNoDel=new ArrayList<>();
-		Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
+		
 		if(productsMap.size()>0){
 			for (String productId : productsMap.keySet()) {
 				XmProduct xmProduct=productService.getProductFromCache(productId);
-				Tips tips1=productQxService.checkProductQx(groupsMap,xmProduct,1,user);
+				Tips tips1=productQxService.checkProductQx(xmProduct,1,user);
 				if(!tips1.isOk()){
 					productNoDel.addAll(productsMap.get(productId));
 					for (XmQuestion xmQuestion : productsMap.get(productId)) {
@@ -616,7 +616,7 @@ public class XmQuestionController {
 							canOper.addAll(questions);
 						}else if(opType==2){//重新指派，要检查被指派人是否在项目组
 							for (XmQuestion question : questions) {
-								tips1=productQxService.checkProductScopeQx(groupsMap,xmProduct,1,question.getHandlerUserid(),question.getHandlerUsername(),null);
+								tips1=productQxService.checkProductScopeQx(xmProduct,1,question.getHandlerUserid(),question.getHandlerUsername(),null);
 								if(!tips1.isOk()){
 									productNoDel.add(question);
 									noOperTips.put(question.getId(),tips1);
@@ -629,11 +629,11 @@ public class XmQuestionController {
 					}else{
 						for (XmQuestion question : questions) {
 							if(opType==0){
-								tips1=productQxService.checkProductQx(groupsMap,xmProduct,1,user,question.getCreateUserid(),question.getCreateUsername(),null);
+								tips1=productQxService.checkProductQx(xmProduct,1,user,question.getCreateUserid(),question.getCreateUsername(),null);
 							}else if(opType==1){
-								tips1=productQxService.checkProductQx(groupsMap,xmProduct,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
+								tips1=productQxService.checkProductQx(xmProduct,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
 							}else if(opType==2){
-								tips1=productQxService.checkProductQx(groupsMap,xmProduct,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
+								tips1=productQxService.checkProductQx(xmProduct,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
 
 							}
 							if(!tips1.isOk()){
@@ -667,7 +667,7 @@ public class XmQuestionController {
 		if(projectsMap.size()>0){
 			for (String projectId : projectsMap.keySet()) {
 				XmProject xmProject=projectService.getProjectFromCache(projectId);
-				Tips tips1=projectQxService.checkProjectQx(groupsMap,xmProject,1,user);
+				Tips tips1=projectQxService.checkProjectQx(xmProject,1,user);
 				if(!tips1.isOk()){
 					noOper.addAll(projectsMap.get(projectId));
 					for (XmQuestion xmQuestion : projectsMap.get(projectId)) {
@@ -683,7 +683,7 @@ public class XmQuestionController {
 							canOper.addAll(questions);
 						}else if(opType==2){//重新指派，要检查被指派人是否在项目组
 							for (XmQuestion question : questions) {
-								tips1=projectQxService.checkProjectScopeQx(groupsMap,xmProject,1,question.getHandlerUserid(),question.getHandlerUsername(),null);
+								tips1=projectQxService.checkProjectScopeQx(xmProject,1,question.getHandlerUserid(),question.getHandlerUsername(),null);
 								if(!tips1.isOk()){
 									noOper.add(question);
  									noOperTips.put(question.getId(),tips1);
@@ -696,11 +696,11 @@ public class XmQuestionController {
 					}else {
 						for (XmQuestion question : questions) {
 							if (opType == 0) {
-								tips1 = projectQxService.checkProjectQx(groupsMap, xmProject, 1, user, question.getCreateUserid(), question.getCreateUsername(), null);
+								tips1 = projectQxService.checkProjectQx( xmProject, 1, user, question.getCreateUserid(), question.getCreateUsername(), null);
 							} else if (opType == 1) {
-								tips1 = projectQxService.checkProjectQx(groupsMap, xmProject, 1, user, question.getHandlerUserid(), question.getHandlerUsername(), null);
+								tips1 = projectQxService.checkProjectQx( xmProject, 1, user, question.getHandlerUserid(), question.getHandlerUsername(), null);
 							} else if (opType == 2) {
-								tips1 = projectQxService.checkProjectQx(groupsMap, xmProject, 1, user, question.getHandlerUserid(), question.getHandlerUsername(), null);
+								tips1 = projectQxService.checkProjectQx( xmProject, 1, user, question.getHandlerUserid(), question.getHandlerUsername(), null);
 
 							}
 							if (!tips1.isOk()) {

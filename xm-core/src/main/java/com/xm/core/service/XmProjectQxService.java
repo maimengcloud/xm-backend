@@ -235,7 +235,7 @@ public class XmProjectQxService {
         if(xmGroupService.checkUserIsProjectAdm(xmProject,head.getUserid())){
             return tips;
         }
-        Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
+        
         tips=this.checkProjectScopeQxBatch(xmProject,teamType,head,memUserids);
         if(!tips.isOk()){
             return tips;

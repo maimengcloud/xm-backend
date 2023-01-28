@@ -19,7 +19,6 @@ import com.xm.core.entity.XmTask;
 import com.xm.core.queue.XmMenuSumParentsPushService;
 import com.xm.core.service.*;
 import com.xm.core.vo.BatchChangeParentMenuVo;
-import com.xm.core.vo.XmGroupVo;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -479,8 +478,8 @@ public class XmMenuController {
 			if(xmProduct==null){
 				return ResponseHelper.failed("product-data-0","产品已不存在");
 			}
-			Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
-			tips=productQxService.checkProductQx(groupsMap,xmProduct,2,user);
+			
+			tips=productQxService.checkProductQx(xmProduct,2,user);
 			if(!tips.isOk()){
 				return failed(tips);
 			}
@@ -488,7 +487,7 @@ public class XmMenuController {
 				String mmUserid= (String) xmMenuMap.get("mmUserid");
 				String mmUsername= (String) xmMenuMap.get("mmUsername");
 				if(!user.getUserid().equals(mmUserid)){
-					tips=productQxService.checkProductQx(groupsMap,xmProduct,2,user,mmUserid,mmUsername,null);
+					tips=productQxService.checkProductQx(xmProduct,2,user,mmUserid,mmUsername,null);
 					if(!tips.isOk()){
 						return failed(tips);
 					}
@@ -501,7 +500,7 @@ public class XmMenuController {
 				canOper.addAll(xmMenusDb);
 			}else{
 				for (XmMenu xm : xmMenusDb) {
-					tips=productQxService.checkProductQx(groupsMap,xmProduct,2,user,xm.getMmUserid(), xm.getMmUsername(), null);
+					tips=productQxService.checkProductQx(xmProduct,2,user,xm.getMmUserid(), xm.getMmUsername(), null);
 					if(tips.isOk()){
 						canOper.add(xm);
 					}else{
@@ -592,7 +591,7 @@ public class XmMenuController {
 			List<XmMenu> canOper=new ArrayList<>();
 			List<XmMenu> noOper=new ArrayList<>();
 			Map<String,Tips> noOperTips=new HashMap<>();
-			Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
+			
 			XmProduct xmProduct= productService.getProductFromCache(xmMenuDb.getProductId());
 			if(xmProduct==null){
 				return ResponseHelper.failed("product-data-0","产品已不存在");
@@ -601,7 +600,7 @@ public class XmMenuController {
 				canOper.addAll(xmMenusDb);
 			}else{
 				for (XmMenu xm : xmMenusDb) {
-					tips=productQxService.checkProductQx(groupsMap,xmProduct,2,user,xm.getMmUserid(),xm.getMmUsername(),null);
+					tips=productQxService.checkProductQx(xmProduct,2,user,xm.getMmUserid(),xm.getMmUsername(),null);
 					if(tips.isOk()){
 						canOper.add(xm);
 					}else{
@@ -735,7 +734,7 @@ public class XmMenuController {
 			List<XmMenu> canOper=new ArrayList<>();
 			List<XmMenu> noOper=new ArrayList<>();
 			Map<String,Tips> noOperTips=new HashMap<>();
-			Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
+			
 			XmProduct xmProduct= productService.getProductFromCache(xmMenuDb.getProductId());
 			if(xmProduct==null){
 				return ResponseHelper.failed("product-data-0","产品已不存在");
@@ -744,7 +743,7 @@ public class XmMenuController {
 				canOper.addAll(xmMenusDb);
 			}else{
 				for (XmMenu xm : xmMenusDb) {
-					tips=productQxService.checkProductQx(groupsMap,xmProduct,2,user,xm.getMmUserid(),xm.getMmUsername(),null);
+					tips=productQxService.checkProductQx(xmProduct,2,user,xm.getMmUserid(),xm.getMmUsername(),null);
 					if(tips.isOk()){
 						canOper.add(xm);
 					}else{

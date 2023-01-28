@@ -358,9 +358,9 @@ public class XmTaskExecuserController {
 			if(xmProject==null ){
 				return ResponseHelper.failed("project-0","项目已不存在");
 			}
-			Map<String,List<XmGroupVo>> groupsMap=new HashMap<>();
+			
 			groupsMap.put(xmProject.getId(),pgroups);
-			 tips=projectQxService.checkProjectQx(groupsMap,xmProject,2,user);
+			 tips=projectQxService.checkProjectQx(xmProject,2,user);
 			if(tips.isOk()) {
 
 				boolean exists=groupService.checkUserExistsGroup(pgroups, xmTaskExecuser.getUserid());
