@@ -28,6 +28,14 @@
 		<if test="pbranchId!=null and pbranchId!=''">
 			and c.pbranch_id=#{pbranchId}
 		</if>
+		<if test="linkIterationId!=null">
+			and exists ( select 1 from  xm_menu m
+			where m.iteration_id=#{linkIterationId} and c.menu_id=m.menu_id
+			<if test="productId!=null and productId!=''">
+				and m.product_id=#{productId}
+			</if>
+			)
+		</if>
 	</sql>
 	<sql id="whereForRpt">
 		<if test="planId!=null and planId!=''">
@@ -103,9 +111,31 @@
 		(
 		SELECT sum(if(res.case_id is null ,0,1)) as use_times,c.id FROM xm_test_case c left join xm_test_plan_case res
 		on c.id=res.case_id
+		<if test="projectId!=null and projectId!=''">
+			and res.project_id=#{projectId}
+		</if>
+		<if test="startExecDate!=null">
+			and res.exec_date between #{startExecDate} and #{endExecDate}
+		</if>
 		<where>
-			<include refid="whereForMap"/>
-			<include refid="where"/>
+			<if test="casedbId!=null and casedbId!=''">
+				and c.casedb_id=#{casedbId}
+			</if>
+
+			<if test="productId!=null and productId!=''">
+				and c.product_id=#{productId}
+			</if>
+			<if test="pbranchId!=null and pbranchId!=''">
+				and c.pbranch_id=#{pbranchId}
+			</if>
+			<if test="linkIterationId!=null">
+				and exists ( select 1 from  xm_menu m
+				where m.iteration_id=#{linkIterationId} and c.menu_id=m.menu_id
+				<if test="productId!=null and productId!=''">
+					and m.product_id=#{productId}
+				</if>
+				)
+			</if>
 		</where>
 		group by c.id ) as ret
 		group by ret.use_times
