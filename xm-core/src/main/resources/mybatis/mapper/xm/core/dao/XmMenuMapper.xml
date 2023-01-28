@@ -55,9 +55,6 @@
 		<if test=" planEndTimeEnd !=null "> and res.end_time &lt; #{planEndTimeEnd} </if>
 		<if test="key != null and key !='' ">  and res.menu_name like #{key}     </if>
 		<if test="isTop!=null and isTop!=''">  and (res.pmenu_id is null )</if>
-		<if test=" linkProjectId!=null and linkProjectId!=''">  and
-			exists (select 1 from xm_product_project_link link where link.product_id=res.product_id and link.project_id=#{linkProjectId})
-		</if>
 	</sql>
 
 	<select id="selectExistIterationMenus" parameterType="HashMap" resultType="com.xm.core.entity.XmMenu">
