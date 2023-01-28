@@ -405,7 +405,13 @@ public class XmTaskController {
 				}
 			}
 			can=can.stream().filter(i->!noExecs.stream().filter(k->k.getId().equals(i.getId())).findAny().isPresent()).collect(Collectors.toList());
-
+			if(can.size()>0 && xmTaskMap.containsKey("taskState")){
+				String taskState= (String) xmTaskMap.get("taskState");
+				if("3".equals(taskState)||"4".equals(taskState)||"9".equals(taskState)){
+					xmTaskMap.put("endTime",new Date());
+					xmTaskMap.put("actEndTime",new Date());
+				}
+			}
 			if(can.size()>0){
 				xmTaskMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
 

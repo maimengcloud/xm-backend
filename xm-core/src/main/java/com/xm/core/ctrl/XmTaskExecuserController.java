@@ -481,7 +481,11 @@ public class XmTaskExecuserController {
 					return ResponseHelper.failed(tips);
 				}
 			}
-
+			String taskState= xmTaskUpdate.getTaskState();
+			if("3".equals(taskState)||"4".equals(taskState)||"9".equals(taskState)){
+				xmTaskUpdate.setEndTime(new Date());
+				xmTaskUpdate.setActEndTime(new Date());
+			}
 			xmTaskService.updateSomeFieldByPk(xmTaskUpdate);
 			if("2".equals(xmTaskDb.getOshare()) && xmTaskDb.getShareFee()!=null && xmTaskDb.getShareFee().compareTo(BigDecimal.ZERO)>0){
 				 mkClient.pushAfterTaskAcceptanceSuccess(xmTaskDb.getExecutorUserid(),xmTaskDb.getExecutorUsername(),xmTaskDb.getProjectId(),xmTaskDb.getId(),xmTaskDb.getShareFee());
