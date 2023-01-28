@@ -109,21 +109,7 @@ public class XmMenuController {
 		RequestUtils.transformArray(xmMenu, "tagIdList");
 		RequestUtils.transformArray(xmMenu, "dclasss");
 		PageUtils.startPage(xmMenu);
-		String menuId= (String) xmMenu.get("menuId");
-		Object menuIds=  xmMenu.get("menuIds");
-		String projectId= (String) xmMenu.get("projectId");
-		String mmUserid= (String) xmMenu.get("mmUserid");
-		String pmenuId= (String) xmMenu.get("pmenuId");
-		String productId= (String) xmMenu.get("productId");
-		String excludeIterationId= (String) xmMenu.get("excludeIterationId");
-
-		User user = LoginUtils.getCurrentUserInfo();
-
-		xmMenu.put("userid",user.getUserid());
-		if( !StringUtils.hasText(menuId) && !(StringUtils.hasText(projectId) || StringUtils.hasText(mmUserid)|| StringUtils.hasText(pmenuId)||menuIds!=null
-				|| StringUtils.hasText(productId) || StringUtils.hasText(excludeIterationId)  ) ){
-			xmMenu.put("compete",user.getUserid());
-		}
+		this.paramsInit(xmMenu);
 		List<Map<String,Object>>	xmMenuList = xmMenuService.selectListMapByWhere(xmMenu);	//列出XmMenu列表
 		PageUtils.responePage(m, xmMenuList);
 		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))&& xmMenuList.size()>0){
@@ -152,7 +138,26 @@ public class XmMenuController {
 		m.put("tips", tips);
 		return m;
 	}
-	
+
+	public void paramsInit(Map<String,Object> xmMenu){
+
+		String menuId= (String) xmMenu.get("menuId");
+		Object menuIds=  xmMenu.get("menuIds");
+		String linkProjectId= (String) xmMenu.get("linkProjectId");
+		String proposerId= (String) xmMenu.get("proposerId");
+		String mmUserid= (String) xmMenu.get("mmUserid");
+		String pmenuId= (String) xmMenu.get("pmenuId");
+		String productId= (String) xmMenu.get("productId");
+		String excludeIterationId= (String) xmMenu.get("excludeIterationId");
+		String iterationId = (String) xmMenu.get("iterationId");
+		String funcId = (String) xmMenu.get("funcId");
+
+		if( !StringUtils.hasText(menuId) && !(StringUtils.hasText(linkProjectId) || StringUtils.hasText(mmUserid)|| StringUtils.hasText(pmenuId)||menuIds!=null
+				|| StringUtils.hasText(productId) || StringUtils.hasText(excludeIterationId)|| StringUtils.hasText(proposerId) || StringUtils.hasText(iterationId) || StringUtils.hasText(funcId)   ) ){
+			User user = LoginUtils.getCurrentUserInfo();
+			xmMenu.put("pbranchId",user.getBranchId());
+		}
+	}
 
 	@RequestMapping(value="/listWithState",method=RequestMethod.GET)
 	public Map<String,Object> listWithState( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
@@ -162,21 +167,7 @@ public class XmMenuController {
 		RequestUtils.transformArray(xmMenu, "dclasss");
 		PageUtils.startPage(xmMenu);
 		Tips tips=new Tips("查询成功");
-		String menuId= (String) xmMenu.get("menuId");
-		Object menuIds=  xmMenu.get("menuIds");
-		String projectId= (String) xmMenu.get("projectId");
-		String mmUserid= (String) xmMenu.get("mmUserid");
-		String pmenuId= (String) xmMenu.get("pmenuId");
-		String productId= (String) xmMenu.get("productId");
-		String excludeIterationId= (String) xmMenu.get("excludeIterationId");
-
-		User user = LoginUtils.getCurrentUserInfo();
-
-		xmMenu.put("userid",user.getUserid());
-		if( !StringUtils.hasText(menuId) && !(StringUtils.hasText(projectId) || StringUtils.hasText(mmUserid)|| StringUtils.hasText(pmenuId)||menuIds!=null
-				|| StringUtils.hasText(productId) || StringUtils.hasText(excludeIterationId)  ) ){
-			xmMenu.put("compete",user.getUserid());
-		}
+		this.paramsInit(xmMenu);
 		List<Map<String,Object>>	xmMenuList = xmMenuService.selectListMapByWhereWithState(xmMenu);	//列出XmMenu列表
 		PageUtils.responePage(m, xmMenuList);
 		if("1".equals(xmMenu.get("withParents"))  && !"1".equals(xmMenu.get("isTop"))&& xmMenuList.size()>0){
@@ -212,25 +203,23 @@ public class XmMenuController {
 
 	@RequestMapping(value="/getXmMenuAttDist",method=RequestMethod.GET)
 	public Map<String,Object> getXmMenuAttDist( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
-		User user=LoginUtils.getCurrentUserInfo();
-		xmMenu.put("pbranchId",user.getBranchId());
+ 		this.paramsInit(xmMenu);
 		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAttDist(xmMenu);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmMenuAgeDist",method=RequestMethod.GET)
 	public Map<String,Object> getXmMenuAgeDist( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
-		User user=LoginUtils.getCurrentUserInfo();
-		xmMenu.put("pbranchId",user.getBranchId());
+		this.paramsInit(xmMenu);
 		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAgeDist(xmMenu);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmMenuSort",method=RequestMethod.GET)
 	public Map<String,Object> getXmMenuSort( @ApiIgnore @RequestParam Map<String,Object> xmMenu){
-		User user=LoginUtils.getCurrentUserInfo();
+
 		PageUtils.startPage(xmMenu);
-		xmMenu.put("pbranchId",user.getBranchId());
+		this.paramsInit(xmMenu);
 		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuSort(xmMenu);
 		Map<String,Object> m=new HashMap<>();
 		PageUtils.responePage(m,datas);

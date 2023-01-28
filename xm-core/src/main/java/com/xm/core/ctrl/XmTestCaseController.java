@@ -75,18 +75,7 @@ public class XmTestCaseController {
 		RequestUtils.transformArray(xmTestCase, "ids");
 		RequestUtils.transformArray(xmTestCase, "menuIds");
 		PageUtils.startPage(xmTestCase);
-		String id= (String) xmTestCase.get("id");
-		String menuId= (String) xmTestCase.get("menuId");
-		Object ids=  xmTestCase.get("ids");
-		Object menuIds=  xmTestCase.get("menuIds");
-		String productId= (String) xmTestCase.get("productId");
-		String myUserid= (String) xmTestCase.get("myUserid");
-		String projectId= (String) xmTestCase.get("projectId");
-		String iterationId= (String) xmTestCase.get("iterationId");
-		String casedbId= (String) xmTestCase.get("casedbId");
-		if(   !( StringUtils.hasText(myUserid) ||StringUtils.hasText(id) || StringUtils.hasText(menuId) || StringUtils.hasText(productId)|| StringUtils.hasText(projectId)||menuIds!=null||ids!=null|| StringUtils.hasText(casedbId)|| StringUtils.hasText(iterationId) ) ){
-			xmTestCase.put("compete", LoginUtils.getCurrentUserInfo().getUserid());
-		}
+		paramsInit(xmTestCase);
 		List<Map<String,Object>>	xmTestCaseList = xmTestCaseService.selectListMapByWhere(xmTestCase);	//列出XmTestCase列表
 		PageUtils.responePage(m, xmTestCaseList);
 		m.put("data",xmTestCaseList);
@@ -94,8 +83,27 @@ public class XmTestCaseController {
 		m.put("tips", tips);
 		return m;
 	}
-	
- 
+
+	public void paramsInit(Map<String,Object> xmTestCase){
+		Object ids=xmTestCase.get("ids");
+		Object menuIds=xmTestCase.get("menuIds");
+		Object caseIds=xmTestCase.get("caseIds");
+		String id= (String) xmTestCase.get("id");
+		String cuserid = (String) xmTestCase.get("cuserid");
+		String menuId= (String) xmTestCase.get("menuId");
+		String funcId= (String) xmTestCase.get("funcId");
+		String iteration= (String) xmTestCase.get("iteration");
+		String casedbId= (String) xmTestCase.get("casedbId");
+		String productId= (String) xmTestCase.get("productId");
+		String projectId= (String) xmTestCase.get("projectId");
+		String planId= (String) xmTestCase.get("planId");
+		String caseId= (String) xmTestCase.get("caseId");
+		if(!(StringUtils.hasText(id)||StringUtils.hasText(menuId)||StringUtils.hasText(funcId)||StringUtils.hasText(iteration)||StringUtils.hasText(casedbId)||StringUtils.hasText(productId)||StringUtils.hasText(projectId)
+				||StringUtils.hasText(planId)||StringUtils.hasText(caseId)||StringUtils.hasText(cuserid)||ids!=null||caseIds!=null||menuIds!=null)){
+			User user=LoginUtils.getCurrentUserInfo();
+			xmTestCase.put("pbranchId",user.getBranchId());
+		}
+	}
 
 	@ApiOperation( value = "新增一条测试用例信息",notes=" ")
 	@ApiResponses({

@@ -76,8 +76,9 @@ public class XmTestPlanCaseController {
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmTestPlanCase, "pkList");
 		PageUtils.startPage(xmTestPlanCase);
+
 		User user= LoginUtils.getCurrentUserInfo();
-		xmTestPlanCase.put("pbranchId",user.getBranchId());
+		paramsInit(xmTestPlanCase);
 		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.selectListMapByWhere(xmTestPlanCase);	//列出XmTestPlanCase列表
 		PageUtils.responePage(m, xmTestPlanCaseList);
 		m.put("data",xmTestPlanCaseList);
@@ -86,7 +87,24 @@ public class XmTestPlanCaseController {
 		return m;
 	}
 
-
+	public void paramsInit(Map<String,Object> xmTestPlanCase){
+		Object pkList=xmTestPlanCase.get("pkList");
+		Object caseIds=xmTestPlanCase.get("caseIds");
+		String menuId= (String) xmTestPlanCase.get("menuId");
+		String funcId= (String) xmTestPlanCase.get("funcId");
+		String linkIteration= (String) xmTestPlanCase.get("linkIteration");
+		String casedbId= (String) xmTestPlanCase.get("casedbId");
+		String productId= (String) xmTestPlanCase.get("productId");
+		String projectId= (String) xmTestPlanCase.get("projectId");
+		String planId= (String) xmTestPlanCase.get("planId");
+		String caseId= (String) xmTestPlanCase.get("caseId");
+		String execUserid= (String) xmTestPlanCase.get("execUserid");
+		if(!(StringUtils.hasText(menuId)||StringUtils.hasText(funcId)||StringUtils.hasText(linkIteration)||StringUtils.hasText(casedbId)||StringUtils.hasText(productId)||StringUtils.hasText(projectId)
+				||StringUtils.hasText(planId)||StringUtils.hasText(caseId)||StringUtils.hasText(execUserid)||pkList!=null||caseIds!=null)){
+			User user=LoginUtils.getCurrentUserInfo();
+			xmTestPlanCase.put("pbranchId",user.getBranchId());
+		}
+	}
 
 
 	@ApiOperation( value = "查询执行结果分布",notes=" ")
@@ -99,7 +117,7 @@ public class XmTestPlanCaseController {
 		Tips tips=new Tips("查询成功");
 		PageUtils.startPage(xmTestPlanCase);
 		User user= LoginUtils.getCurrentUserInfo();
-		xmTestPlanCase.put("pbranchId",user.getBranchId());
+		paramsInit(xmTestPlanCase);
 		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestPlanCaseExecStatusDist(xmTestPlanCase);	//列出XmTestPlanCase列表
 		PageUtils.responePage(m, xmTestPlanCaseList);
 		m.put("data",xmTestPlanCaseList);
@@ -118,8 +136,7 @@ public class XmTestPlanCaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("查询成功");
 		PageUtils.startPage(xmTestPlanCase);
-		User user= LoginUtils.getCurrentUserInfo();
-		xmTestPlanCase.put("pbranchId",user.getBranchId());
+		paramsInit(xmTestPlanCase);
 		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestPlanCaseUserDist(xmTestPlanCase);	//列出XmTestPlanCase列表
 		PageUtils.responePage(m, xmTestPlanCaseList);
 		m.put("data",xmTestPlanCaseList);
@@ -139,7 +156,7 @@ public class XmTestPlanCaseController {
 		Tips tips=new Tips("查询成功");
 		PageUtils.startPage(xmTestPlanCase);
 		User user= LoginUtils.getCurrentUserInfo();
-		xmTestPlanCase.put("pbranchId",user.getBranchId());
+		paramsInit(xmTestPlanCase);
 		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestDayTimesList(xmTestPlanCase);	//列出XmTestPlanCase列表
 		PageUtils.responePage(m, xmTestPlanCaseList);
 		m.put("data",xmTestPlanCaseList);
@@ -157,7 +174,7 @@ public class XmTestPlanCaseController {
 		Tips tips=new Tips("查询成功");
 		PageUtils.startPage(xmTestPlanCase);
 		User user= LoginUtils.getCurrentUserInfo();
-		xmTestPlanCase.put("pbranchId",user.getBranchId());
+		paramsInit(xmTestPlanCase);
 		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestCaseToPlanCalcList(xmTestPlanCase);	//列出XmTestPlanCase列表
 		PageUtils.responePage(m, xmTestPlanCaseList);
 		m.put("data",xmTestPlanCaseList);
