@@ -392,11 +392,17 @@ public class XmQuestionController {
 							}
 						}
 					}
+
+					String bugStatus= (String) xmQuestionMap.get("bugStatus");
+					if(bugStatus!=null){
+						if("8".equals(bugStatus)){//关闭缺陷就把结束时间定死
+							xmQuestionMap.put("endTime",new Date());
+						}
+					}
 					xmQuestionService.editSomeFields(xmQuestionMap);
 					String remarks= (String) xmQuestionMap.get("remarks");
 					String description= (String) xmQuestionMap.get("description");
 					String handlerUsername= (String) xmQuestionMap.get("handlerUsername");
-					String bugStatus= (String) xmQuestionMap.get("bugStatus");
 
 					List<XmQuestionHandle> handles=new ArrayList<>();
 					Map<String,Object> map=new HashMap<>();

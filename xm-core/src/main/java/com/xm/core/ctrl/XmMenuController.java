@@ -512,6 +512,12 @@ public class XmMenuController {
 			}
 
 			if(canOper.size()>0){
+				String status= (String) xmMenuMap.get("status");
+				if(status!=null){
+					if("3".equals(status)||"2".equals(status)){//关闭缺陷就把结束时间定死
+						xmMenuMap.put("endTime",new Date());
+					}
+				}
 				xmMenuMap.put("ltime",new Date());
 				xmMenuMap.put("ids",canOper.stream().map(k->k.getMenuId()).collect(Collectors.toList()));
 				xmMenuService.editSomeFields(xmMenuMap);
