@@ -40,7 +40,7 @@ public class XmProjectQxService {
     /**
      *
      * @param xmProject
-     * @param teamType 0-任务相关 1-测试相关,2-迭代相关
+     * @param teamType 0-团队 1-测试相关,2-任务相关
      * @return
      */
     public Tips checkProjectQx(XmProject xmProject, int teamType, String userid,String username,String branchId){
@@ -49,7 +49,7 @@ public class XmProjectQxService {
     /**
      *
      * @param xmProject
-     * @param teamType 0-任务相关 1-测试相关,2-迭代相关
+     * @param teamType 0-团队 1-测试相关,2-任务相关
      * @param head
      * @return
      */
@@ -60,7 +60,7 @@ public class XmProjectQxService {
     /**
      *
      * @param xmProject
-     * @param teamType 0-任务相关 1-测试相关,2-迭代相关
+     * @param teamType 0-团队 1-测试相关,2-任务相关
      * @param head
      * @return
      */

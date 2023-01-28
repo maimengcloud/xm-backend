@@ -47,7 +47,8 @@ public class XmProductQxService {
      * @return
      */
     public Tips checkProductQx(XmProduct xmProduct, int teamType, User head){
-        return this.checkProductQx(xmProduct,teamType,head);
+        Tips tips= this.checkProductScopeQx(xmProduct,teamType,head.getUserid(),head.getUsername(),head.getBranchId());
+         return tips;
     }
     /**
      *
