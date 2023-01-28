@@ -294,8 +294,7 @@ public class XmTestCaseController {
 				 can=xmTestCasesDb;
 			}else{
 				for (XmTestCase xmTestCaseDb : xmTestCasesDb) {
-					Tips tips2 = new Tips("检查通过");
-					tips2=productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
+					Tips tips2 = productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
 					if(!tips2.isOk()){
 						no.add(xmTestCaseDb);
 						noTipsMap.put(tips2.getMsg(),tips2);

@@ -388,19 +388,27 @@ public class XmTestPlanCaseController {
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanCaseDb.getProductId());
 			if(xmProductDb==null){
 				return failed("product-not-exists","产品已不存在");
-			} 
-			tips=productQxService.checkProductQx(xmProductDb,1,user);
+			}
+			if(StringUtils.hasText(xmTestPlanCase.getExecUserid())){
+				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestPlanCase.getExecUserid(),xmTestPlanCase.getExecUsername(),null);
+			}else {
+				tips=productQxService.checkProductQx(xmProductDb,1,user);
+			}
 			if(!tips.isOk()){
 				return failed(tips);
 			}
-			for (XmTestPlanCase pcDb : xmTestPlanCasesDb) {
-				Tips tips2 = new Tips("成功");
-				tips2=productQxService.checkProductQx(xmProductDb,1,user,pcDb.getExecUserid(),pcDb.getExecUsername(),null);
-				if(!tips2.isOk()){
-				    no.add(xmTestPlanCaseDb);
-					noTipsSet.add(tips2.getMsg());
-				}else{
-					can.add(xmTestPlanCaseDb);
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if(isPm){
+				can=xmTestPlanCasesDb;
+			}else {
+				for (XmTestPlanCase pcDb : xmTestPlanCasesDb) {
+					Tips tips2  = productQxService.checkProductQx(xmProductDb, 1, user, pcDb.getExecUserid(), pcDb.getExecUsername(), null);
+					if (!tips2.isOk()) {
+						no.add(xmTestPlanCaseDb);
+						noTipsSet.add(tips2.getMsg());
+					} else {
+						can.add(xmTestPlanCaseDb);
+					}
 				}
 			}
 			if(can.size()>0){
@@ -458,19 +466,21 @@ public class XmTestPlanCaseController {
 			if(xmProductDb==null){
 				return failed("product-not-exists","产品已不存在");
 			}
-			tips=productQxService.checkProductQx(xmProductDb,1,user);
-			if(!tips.isOk()){
-				return failed(tips);
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if(isPm){
+				can=datasDb;
+			}else {
+				for (XmTestPlanCase pcDb : datasDb) {
+					Tips tips1=productQxService.checkProductQx(xmProductDb,1,user,pcDb.getExecUserid(),pcDb.getExecUsername(),null);
+					if(tips1.isOk()){
+						can.add(pcDb);
+					}else{
+						no.add(pcDb);
+						noTipsSet.add(tips1.getMsg());
+					}
+				}
 			}
-            for (XmTestPlanCase pcDb : datasDb) {
-				Tips tips1=productQxService.checkProductQx(xmProductDb,1,user,pcDb.getExecUserid(),pcDb.getExecUsername(),null);
-				if(tips1.isOk()){
-                    can.add(pcDb);
-                }else{
-                    no.add(pcDb);
-					noTipsSet.add(tips1.getMsg());
-                } 
-            }
+
             List<String> msgs=new ArrayList<>();
             if(can.size()>0){
                 xmTestPlanCaseService.batchDelete(can);
