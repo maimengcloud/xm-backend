@@ -53,6 +53,9 @@ public class XmTestPlanCaseController {
 
 	@Autowired
 	XmProductService productService;
+
+	@Autowired
+	XmProductQxService productQxService;
 	 
 
 	Map<String,Object> fieldsMap = toMap(new XmTestPlanCase());
@@ -391,9 +394,16 @@ public class XmTestPlanCaseController {
 			}
 			List<XmTestPlanCase> can=new ArrayList<>();
 			List<XmTestPlanCase> no=new ArrayList<>();
+			XmTestPlanCase xmTestPlanCaseDb=xmTestPlanCasesDb.get(0);
+			if(xmTestPlanCasesDb.stream().filter(k->!k.getPlanId().equals(xmTestPlanCaseDb.getPlanId())).findAny().isPresent()){
+				return failed("planId-0","批量操作只能操作同一个测试计划的用例");
+			}
 			User user = LoginUtils.getCurrentUserInfo();
+			productService.getProductFromCache(xm)
+			productQxService.checkProductQx(xm)
 			for (XmTestPlanCase xmTestPlanCaseDb : xmTestPlanCasesDb) {
-				Tips tips2 = new Tips("检查通过"); 
+				Tips tips2 = new Tips("检查通过");
+				productQxService.
 				if(!tips2.isOk()){
 				    no.add(xmTestPlanCaseDb); 
 				}else{
