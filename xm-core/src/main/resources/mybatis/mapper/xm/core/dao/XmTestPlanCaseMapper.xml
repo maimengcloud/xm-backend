@@ -114,6 +114,9 @@
 		<if test="projectId!=null and projectId!=''">
 			and res.project_id=#{projectId}
 		</if>
+		<if test="planId!=null and planId!=''">
+			and res.plan_id=#{planId}
+		</if>
 		<if test="startExecDate!=null">
 			and res.exec_date between #{startExecDate} and #{endExecDate}
 		</if>
