@@ -1,32 +1,26 @@
 package com.xm.core.ctrl;
 
-import java.util.*;
-import java.util.stream.Collectors;
+import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
+import com.mdp.core.utils.RequestUtils;
+import com.mdp.mybatis.PageUtils;
+import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmRptData;
+import com.xm.core.service.XmRptDataService;
+import io.swagger.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import io.swagger.annotations.*;
-
-import static com.mdp.core.utils.ResponseHelper.*;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-import com.mdp.mybatis.PageUtils;
-import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.NumberUtil;
-import com.mdp.safe.client.entity.User;
-import com.mdp.safe.client.utils.LoginUtils;
-import io.swagger.annotations.*;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import com.xm.core.service.XmRptDataService;
-import com.xm.core.entity.XmRptData;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.mdp.core.utils.BaseUtils.toMap;
+import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_rpt_data xm_rpt_data的操作有增删改查,对应的url分别为:<br>
@@ -74,8 +68,7 @@ public class XmRptDataController {
 	}
 	
  
-	
-	/**
+
 	@ApiOperation( value = "新增一条xm_rpt_data信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmRptData.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
@@ -97,7 +90,7 @@ public class XmRptDataController {
             }
 			xmRptDataService.insert(xmRptData);
 			m.put("data",xmRptData);
-		}catch (BizException e) { 
+		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
@@ -107,9 +100,7 @@ public class XmRptDataController {
 		m.put("tips", tips);
 		return m;
 	}
-	*/
-	
-	/**
+
 	@ApiOperation( value = "删除一条xm_rpt_data信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
@@ -137,7 +128,6 @@ public class XmRptDataController {
 		m.put("tips", tips);
 		return m;
 	}
-	 */
 	
 	/**
 	@ApiOperation( value = "根据主键修改一条xm_rpt_data信息",notes=" ")
