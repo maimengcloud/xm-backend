@@ -8,7 +8,7 @@ import java.util.Date;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmRptConfig所有属性名: <br>
- *	"bizId","业务编号","id","报告编号","name","报告名称","cuserid","创建人","cusername","创建人姓名","ctime","创建时间","cbranchId","创建机构","cfg","报告配置项";<br>
+ *	"bizId","业务编号","id","报告编号","name","报告名称","cuserid","创建人","cusername","创建人姓名","ctime","创建时间","cbranchId","创建机构","cfg","报告配置项","bizType","业务类型1-产品报告，2-迭代报告，3-测试计划报告，4-项目报告，5-企业报告，6-测试库报告";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -42,6 +42,9 @@ public class XmRptConfig  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="报告配置项",allowEmptyValue=true,example="",allowableValues="")
 	String cfg;
+	
+	@ApiModelProperty(notes="业务类型1-产品报告，2-迭代报告，3-测试计划报告，4-项目报告，5-企业报告，6-测试库报告",allowEmptyValue=true,example="",allowableValues="")
+	String bizType;
 
 	/**
 	 *报告编号

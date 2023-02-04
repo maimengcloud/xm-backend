@@ -67,7 +67,7 @@
 		insert into xm_rpt_config(
 			<include refid="columns"/>
 		) values (
-		#{bizId},#{id},#{name},#{cuserid},#{cusername},#{ctime},#{cbranchId},#{cfg}
+		#{bizId},#{id},#{name},#{cuserid},#{cusername},#{ctime},#{cbranchId},#{cfg},#{bizType}
 		)
 	</insert>
 	
@@ -142,7 +142,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		biz_id,id,name,cuserid,cusername,ctime,cbranch_id,cfg
+		biz_id,id,name,cuserid,cusername,ctime,cbranch_id,cfg,biz_type
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -155,6 +155,7 @@
 		<if test="ctime != null">      and date_format(res.ctime,'%Y-%m-%d') = date_format(#{ctime},'%Y-%m-%d')     </if>
 		<if test="cbranchId != null and cbranchId != ''">      and res.cbranch_id = #{cbranchId}     </if>
 		<if test="cfg != null and cfg != ''">      and res.cfg = #{cfg}     </if>
+		<if test="bizType != null and bizType != ''">      and res.biz_type = #{bizType}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -164,7 +165,8 @@
 		cusername = #{cusername},
 		ctime = #{ctime},
 		cbranch_id = #{cbranchId},
-		cfg = #{cfg}
+		cfg = #{cfg},
+		biz_type = #{bizType}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="bizId != null and bizId != ''"> biz_id = #{bizId},     </if>
@@ -174,6 +176,7 @@
 		<if test="ctime != null"> ctime = #{ctime},     </if>
 		<if test="cbranchId != null and cbranchId != ''"> cbranch_id = #{cbranchId},     </if>
 		<if test="cfg != null and cfg != ''"> cfg = #{cfg},     </if>
+		<if test="bizType != null and bizType != ''"> biz_type = #{bizType},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -183,6 +186,7 @@
 			cusername = #{item.cusername},
 			ctime = #{item.ctime},
 			cbranch_id = #{item.cbranchId},
-			cfg = #{item.cfg}
+			cfg = #{item.cfg},
+			biz_type = #{item.bizType}
 	</sql>
 </mapper>
