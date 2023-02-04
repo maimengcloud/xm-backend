@@ -84,6 +84,30 @@ public class XmTestCaseController {
 		return m;
 	}
 
+	@ApiOperation( value = "测试用例排行榜",notes=" ")
+	@ApiResponses({
+			@ApiResponse(code = 200,response=XmTestCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
+	})
+	@RequestMapping(value="/getXmTestCaseSort",method=RequestMethod.GET)
+	public Map<String,Object> getXmTestCaseSort( @ApiIgnore @RequestParam Map<String,Object> xmTestCase){
+		Map<String,Object> m = new HashMap<>();
+		Tips tips=new Tips("查询成功");
+ 		paramsInit(xmTestCase);
+ 		String groupBy= (String) xmTestCase.get("groupBy");
+ 		if("func_id".equals(groupBy) || "menu_id".equals(groupBy) || "cuserid".equals(groupBy)){
+
+		}else {
+ 			return failed("groupBy-0","分组参数错误");
+		}
+		List<Map<String,Object>>	xmTestCaseList = xmTestCaseService.getXmTestCaseSort(xmTestCase);	//列出XmTestCase列表
+		PageUtils.responePage(m, xmTestCaseList);
+		m.put("data",xmTestCaseList);
+
+		m.put("tips", tips);
+		return m;
+	}
+
+
 	public void paramsInit(Map<String,Object> xmTestCase){
 		Object ids=xmTestCase.get("ids");
 		Object menuIds=xmTestCase.get("menuIds");

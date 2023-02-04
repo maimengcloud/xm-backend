@@ -212,8 +212,13 @@
 
 	<select id="getXmMenuSort" parameterType="HashMap" resultType="HashMap">
 		select count(*) as value,${groupBy} as id,
-		max( <if test="groupBy=='proposer_id'">proposer_name</if>
-		<if test="groupBy=='mm_userid'">mm_username</if>  ) as name from xm_menu res
+		max(
+		<if test="groupBy=='func_id'">func_name</if>
+		<if test="groupBy=='proposer_id'">proposer_name</if>
+		<if test="groupBy=='mm_userid'">mm_username</if>
+		<if test="groupBy=='product_id'">product_id</if>
+		<if test="groupBy=='iteration_id'">iteration_name</if>
+		) as name from xm_menu res
 		<where>
 			<include refid="whereForMap"></include>
 			<include refid="where"></include>
