@@ -61,6 +61,8 @@ public class XmRptConfigController {
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmRptConfig, "ids");
 		PageUtils.startPage(xmRptConfig);
+		User user=LoginUtils.getCurrentUserInfo();
+		xmRptConfig.put("cbranchId",user.getBranchId());
 		List<Map<String,Object>>	xmRptConfigList = xmRptConfigService.selectListMapByWhere(xmRptConfig);	//列出XmRptConfig列表
 		PageUtils.responePage(m, xmRptConfigList);
 		m.put("data",xmRptConfigList);

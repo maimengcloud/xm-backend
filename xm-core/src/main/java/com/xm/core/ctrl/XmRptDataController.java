@@ -61,6 +61,8 @@ public class XmRptDataController {
 		Tips tips=new Tips("查询成功");
 		RequestUtils.transformArray(xmRptData, "ids");
 		PageUtils.startPage(xmRptData);
+		User user=LoginUtils.getCurrentUserInfo();
+		xmRptData.put("cbranchId",user.getBranchId());
 		List<Map<String,Object>>	xmRptDataList = xmRptDataService.selectListMapByWhere(xmRptData);	//列出XmRptData列表
 		PageUtils.responePage(m, xmRptDataList);
 		m.put("data",xmRptDataList);
