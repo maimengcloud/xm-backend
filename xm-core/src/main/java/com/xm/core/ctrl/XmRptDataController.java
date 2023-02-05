@@ -2,8 +2,11 @@ package com.xm.core.ctrl;
 
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
+import com.mdp.safe.client.entity.User;
+import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmRptData;
 import com.xm.core.service.XmRptDataService;
@@ -15,9 +18,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.toMap;
 import static com.mdp.core.utils.ResponseHelper.failed;
@@ -78,16 +80,13 @@ public class XmRptDataController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-		    boolean createPk=false;
-			if(!StringUtils.hasText(xmRptData.getId())) {
-			    createPk=true;
-				xmRptData.setId(xmRptDataService.createKey("id"));
-			}
-			if(createPk==false){
-                 if(xmRptDataService.selectOneObject(xmRptData) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
-                }
-            }
+			xmRptData.setId(xmRptDataService.createKey("id"));
+			User user= LoginUtils.getCurrentUserInfo();
+			xmRptData.setCuserid(user.getUserid());
+			xmRptData.setCusername(user.getUsername());
+			xmRptData.setCbranchId(user.getBranchId());
+			xmRptData.setCtime(new Date());
+			xmRptData.setBizDate(DateUtils.getDate("yyyy-MM-dd"));
 			xmRptDataService.insert(xmRptData);
 			m.put("data",xmRptData);
 		}catch (BizException e) {
@@ -234,7 +233,7 @@ public class XmRptDataController {
 	}
 	*/
 
-	/**
+
 	@ApiOperation( value = "根据主键列表批量删除xm_rpt_data信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
@@ -281,6 +280,5 @@ public class XmRptDataController {
         }  
         m.put("tips", tips);
         return m;
-	} 
-	*/
+	}
 }

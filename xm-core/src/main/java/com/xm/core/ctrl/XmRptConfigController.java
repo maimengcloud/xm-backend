@@ -80,16 +80,12 @@ public class XmRptConfigController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-		    boolean createPk=false;
-			if(!StringUtils.hasText(xmRptConfig.getId())) {
-			    createPk=true;
-				xmRptConfig.setId(xmRptConfigService.createKey("id"));
-			}
-			if(createPk==false){
-                 if(xmRptConfigService.selectOneObject(xmRptConfig) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
-                }
-            }
+			xmRptConfig.setId(xmRptConfigService.createKey("id"));
+			User user= LoginUtils.getCurrentUserInfo();
+			xmRptConfig.setCuserid(user.getUserid());
+			xmRptConfig.setCusername(user.getUsername());
+			xmRptConfig.setCbranchId(user.getBranchId());
+			xmRptConfig.setCtime(new Date());
 			xmRptConfigService.insert(xmRptConfig);
 			m.put("data",xmRptConfig);
 		}catch (BizException e) { 
