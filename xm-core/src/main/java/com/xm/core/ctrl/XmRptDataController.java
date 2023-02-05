@@ -118,6 +118,10 @@ public class XmRptDataController {
             if( xmRptDataDb == null ){
                 return failed("data-not-exists","数据不存在，无法删除");
             }
+			User user=LoginUtils.getCurrentUserInfo();
+ 			if( !xmRptDataDb.getCuserid().equals(user.getUserid())){
+				return failed("not-yours","只能删除自己创建的报表");
+			}
 			xmRptDataService.deleteByPk(xmRptData);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -248,8 +252,11 @@ public class XmRptDataController {
             if(xmRptDatas.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
             }
+            User user=LoginUtils.getCurrentUserInfo();
              List<XmRptData> datasDb=xmRptDataService.selectListByIds(xmRptDatas.stream().map(i-> i.getId() ).collect(Collectors.toList()));
-
+			if(datasDb.stream().filter(k->!k.getCuserid().equals(user.getUserid())).findAny().isPresent()){
+				return failed("not-yours","只能删除自己创建的报表");
+			}
             List<XmRptData> can=new ArrayList<>();
             List<XmRptData> no=new ArrayList<>();
             for (XmRptData data : datasDb) {
