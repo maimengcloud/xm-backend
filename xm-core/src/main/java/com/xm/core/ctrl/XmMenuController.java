@@ -20,6 +20,7 @@ import com.xm.core.queue.XmMenuSumParentsPushService;
 import com.xm.core.service.*;
 import com.xm.core.vo.BatchChangeParentMenuVo;
 import io.swagger.annotations.*;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -302,6 +303,12 @@ public class XmMenuController {
 			}
 			xmMenu.setCtime(new Date());
 			xmMenu.setLtime(new Date());
+			if(xmMenu.getStartTime()==null){
+				xmMenu.setStartTime( xmMenu.getCtime());
+			}
+			if(xmMenu.getEndTime()==null){
+				xmMenu.setEndTime(DateUtils.addDays(xmMenu.getCtime(),14));
+			}
 			xmMenuService.insert(xmMenu);
 			notifyMsgService.pushMsg(user,xmMenu.getMmUserid(),xmMenu.getMmUsername(),"4",xmMenu.getProductId(),xmMenu.getMenuId(),"您成为需求【"+xmMenu.getMenuName()+"】的负责人，请跟进需求！");
 

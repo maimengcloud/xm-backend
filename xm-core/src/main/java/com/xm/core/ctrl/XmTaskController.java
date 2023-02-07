@@ -24,6 +24,7 @@ import com.xm.core.service.client.SysClient;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.*;
 import io.swagger.annotations.*;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -604,6 +605,13 @@ public class XmTaskController {
 			xmTaskVo.setTaskState("0");
 			xmTaskVo.setEstate("0");
 			xmTaskVo.setRate(0);
+
+			if(xmTaskVo.getStartTime()==null){
+				xmTaskVo.setStartTime( xmTaskVo.getCreateTime());
+			}
+			if(xmTaskVo.getEndTime()==null){
+				xmTaskVo.setEndTime(DateUtils.addDays(xmTaskVo.getCreateTime(),14));
+			}
 			if( !StringUtils.hasText(xmTaskVo.getMilestone()) ){
 				xmTaskVo.setMilestone("0");
 			}

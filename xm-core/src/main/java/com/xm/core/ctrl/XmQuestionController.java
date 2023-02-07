@@ -21,6 +21,7 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -193,6 +194,9 @@ public class XmQuestionController {
 			xmQuestionVo.setCreateUserid(user.getUserid());
 			xmQuestionVo.setCreateUsername(user.getUsername());
 			xmQuestionVo.setLtime(new Date());
+			if(xmQuestionVo.getEndTime()==null){
+				xmQuestionVo.setEndTime(DateUtils.addDays(xmQuestionVo.getCreateTime(),7));
+			}
 			if(!StringUtils.hasText(xmQuestionVo.getHandlerUserid())){
 				xmQuestionVo.setHandlerUserid(user.getUserid());
 				xmQuestionVo.setHandlerUsername(user.getUsername());
