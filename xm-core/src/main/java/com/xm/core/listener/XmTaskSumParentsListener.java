@@ -44,11 +44,12 @@ public class XmTaskSumParentsListener extends MessageListener<XmTask> {
     /**
      * 每隔一段时间更新一次数据库
      */
-    @Scheduled(cron = "0 0/30 * * * ?")
+    @Scheduled(cron = "0 */25 * * * ?")
     public void autoUpdateToDb(){
        Map<String,Map<String,XmTask>> myTasksAllMap=new HashMap<>();
         synchronized (this.tasksAllMap){
             myTasksAllMap.putAll(this.tasksAllMap);
+            this.tasksAllMap.clear();
         }
         if(myTasksAllMap.size()>0){
 

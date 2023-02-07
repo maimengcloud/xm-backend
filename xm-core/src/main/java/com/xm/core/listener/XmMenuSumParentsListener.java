@@ -44,16 +44,17 @@ public class XmMenuSumParentsListener extends MessageListener<XmMenu> {
     /**
      * 每隔一段时间更新一次数据库
      */
-    @Scheduled(cron = "0 0/30 * * * ?")
+    @Scheduled(cron = "0 */35 * * * ?")
     public void autoUpdateToDb(){
         Map<String,Map<String, XmMenu>> myMenusAllMap=new HashMap<>();
         synchronized (this.menusAllMap){
             myMenusAllMap.putAll(this.menusAllMap);
+            myMenusAllMap.clear();
         }
         if(myMenusAllMap.size()>0){
 
             List<XmMenu> menus=new ArrayList<>();
-             myMenusAllMap.forEach((projectId,menusMap)->{
+             myMenusAllMap.forEach((productId,menusMap)->{
                 menus.addAll(menusMap.values());
                 if(menus.size()>100){
                     new Thread(){
