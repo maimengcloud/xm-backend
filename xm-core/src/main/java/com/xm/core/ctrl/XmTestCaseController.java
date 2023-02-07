@@ -138,16 +138,8 @@ public class XmTestCaseController {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
-		    boolean createPk=false;
-			if(!StringUtils.hasText(xmTestCase.getId())) {
-			    createPk=true;
-				xmTestCase.setId(xmTestCaseService.createKey("id"));
-			}
-			if(createPk==false){
-                 if(xmTestCaseService.selectOneObject(xmTestCase) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
-                }
-            }
+
+			xmTestCase.setId(xmTestCaseService.createKey("id"));
 			if(StringUtils.isEmpty(xmTestCase.getProductId())){
 				return failed("productId-0","产品编号不能为空");
 			}
@@ -159,15 +151,17 @@ public class XmTestCaseController {
 			}
 			if(!StringUtils.hasText(xmTestCase.getCuserid())){
 				xmTestCase.setCuserid(user.getUserid());
-				xmTestCase.setLuserid(user.getUserid());
 				xmTestCase.setCbranchId(user.getBranchId());
+				xmTestCase.setCusername(user.getUsername());
+				xmTestCase.setPbranchId(xmProductDb.getBranchId());
 			}
 			if(!StringUtils.hasText(xmTestCase.getCbranchId())){
 				xmTestCase.setCbranchId(user.getBranchId());
 			}
-			xmTestCase.setPbranchId(xmProductDb.getBranchId());
+
+			xmTestCase.setLuserid(user.getUserid());
 			xmTestCase.setLusername(user.getUsername());
-			xmTestCase.setCusername(user.getUsername());
+			xmTestCase.setCaseStatus("0");
 			xmTestCase.setCtime(new Date());
 			xmTestCase.setLtime(new Date());
 			xmTestCaseService.insert(xmTestCase);
