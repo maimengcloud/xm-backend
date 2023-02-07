@@ -193,7 +193,7 @@
 			sum( ifnull( t.budget_workload, 0 ) ) AS budget_workload,
 			sum( ifnull( t.act_at, 0 ) ) AS act_at,
 			sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
-			sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) )   AS budget_workload_rate,
+			sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) )   AS budget_workload_calc,
 			sum( ifnull(t.rate,0)) as total_rate,
 			min( t.start_time ) AS start_time,
 			max( t.end_time ) AS end_time,
@@ -212,9 +212,9 @@
 			res.budget_workload=ifnull(t2.budget_workload,0),
 			res.act_at = t2.act_at,
 			res.act_workload = t2.act_workload,
-		    res.rate = case when (ifnull(t2.budget_workload,0) >0) then ifnull(t2.act_workload,0)*100/(ifnull(t2.budget_workload,0) )
+		    res.rate = case when ifnull(t2.budget_workload,0) >0 then ifnull(t2.budget_workload_calc,0) / t2.budget_workload
 		                    when  t2.act_workload >0 then 100
-							when res.task_state &gt;='2' then 100
+							when  res.task_state &gt;='2' then 100
 		                    else res.rate end,
 			res.start_time = ifnull(res.start_time,t2.start_time),
 			res.end_time = ifnull(t2.end_time,t2.end_time),
@@ -240,7 +240,7 @@
 		sum( ifnull( t.act_at, 0 ) ) AS act_at,
 		sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
 			sum( ifnull( t.budget_at, 0 ) ) AS budget_at,
-			sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) ) as budget_workload_rate,
+			sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) ) as budget_workload_calc,
 			sum( ifnull(t.rate,0)) as total_rate,
 			sum( ifnull( t.budget_workload, 0 )) as budget_workload,
 			min( t.act_start_time ) AS act_start_time,
@@ -256,8 +256,8 @@
 			res.budget_workload=ifnull(t2.budget_workload,0),
 		res.act_at = t2.act_at,
 		res.act_workload = t2.act_workload,
-			res.rate = case when ( ifnull(t2.budget_workload,0)>0) then ifnull(t2.act_workload,0)*100/( ifnull(t2.budget_workload,0))
-							when  t2.act_workload >0 then 100
+			res.rate = case when ifnull(t2.budget_workload,0)>0 then ifnull(t2.budget_workload_calc,0) / t2.budget_workload
+							when t2.act_workload >0 then 100
 							when res.task_state &gt;='2' then 100
 							else res.rate end,
 			res.start_time = ifnull(res.start_time,t2.start_time),
