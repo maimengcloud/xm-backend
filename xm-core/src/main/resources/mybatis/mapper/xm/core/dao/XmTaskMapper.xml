@@ -214,7 +214,7 @@
 			res.act_workload = t2.act_workload,
 		    res.rate = case when (ifnull(t2.budget_workload,0) >0) then ifnull(t2.act_workload,0)*100/(ifnull(t2.budget_workload,0) )
 		                    when  t2.act_workload >0 then 100
-							when res.task_state in('2','3','4') then 100
+							when res.task_state &gt;='2' then 100
 		                    else res.rate end,
 			res.start_time = ifnull(res.start_time,t2.start_time),
 			res.end_time = ifnull(t2.end_time,t2.end_time),
@@ -258,7 +258,7 @@
 		res.act_workload = t2.act_workload,
 			res.rate = case when ( ifnull(t2.budget_workload,0)>0) then ifnull(t2.act_workload,0)*100/( ifnull(t2.budget_workload,0))
 							when  t2.act_workload >0 then 100
-							when res.task_state in('2','3','4') then 100
+							when res.task_state &gt;='2' then 100
 							else res.rate end,
 			res.start_time = ifnull(res.start_time,t2.start_time),
 		res.end_time = ifnull(t2.end_time,t2.end_time),
