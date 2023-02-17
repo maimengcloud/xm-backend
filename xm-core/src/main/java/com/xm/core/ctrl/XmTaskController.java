@@ -590,6 +590,16 @@ public class XmTaskController {
 				}
 			}
 
+			if("1".equals(xmProject.getMenuLink()) && "0".equals(xmTaskVo.getNtype())){
+				if(!StringUtils.hasText(xmTaskVo.getMenuId())){
+					return ResponseHelper.failed("menuId-0","该项目配置了任务必须关联需求，请关联需求后再提交");
+				}
+			}
+			if("1".equals(xmProject.getPhaseLink()) && "0".equals(xmTaskVo.getNtype())){
+				if(!StringUtils.hasText(xmTaskVo.getParentTaskid())){
+					return ResponseHelper.failed("parentTaskid-0","该项目配置了任务必须关联上级计划，请关联计划后再提交");
+				}
+			}
 			xmTaskVo.setPbranchId(xmProject.getBranchId());
 			xmTaskVo.setExecutorUserid(null);
 			xmTaskVo.setExecutorUsername(null);
