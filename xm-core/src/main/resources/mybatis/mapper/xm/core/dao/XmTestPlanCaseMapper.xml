@@ -199,7 +199,7 @@
 		insert into xm_test_plan_case(
 			<include refid="columns"/>
 		) values (
-		#{bugs},#{execUserid},#{caseId},#{ltime},#{ctime},#{execStatus},#{execUsername},#{priority},#{remark},#{testStep},#{planId},#{projectId},#{budgetWorkload},#{actWorkload},#{initWorkload},#{execDate},#{execType},#{productId}
+		#{bugs},#{execUserid},#{caseId},#{ltime},#{ctime},#{execStatus},#{execUsername},#{priority},#{remark},#{testStep},#{planId},#{projectId},#{budgetWorkload},#{actWorkload},#{initWorkload},#{execDate},#{execType},#{productId},#{autoStep}
 		)
 	</insert>
 	
@@ -274,7 +274,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		bugs,exec_userid,case_id,ltime,ctime,exec_status,exec_username,priority,remark,test_step,plan_id,project_id,budget_workload,act_workload,init_workload,exec_date,exec_type,product_id
+		bugs,exec_userid,case_id,ltime,ctime,exec_status,exec_username,priority,remark,test_step,plan_id,project_id,budget_workload,act_workload,init_workload,exec_date,exec_type,product_id,auto_step
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -297,6 +297,7 @@
 		<if test="execDate != null and execDate != ''">      and res.exec_date = #{execDate}     </if>
 		<if test="execType != null and execType != ''">      and res.exec_type = #{execType}     </if>
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
+		<if test="autoStep != null and autoStep != ''">      and res.auto_step = #{autoStep}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -315,7 +316,8 @@
 		init_workload = #{initWorkload},
 		exec_date = #{execDate},
 		exec_type = #{execType},
-		product_id = #{productId}
+		product_id = #{productId},
+		auto_step = #{autoStep}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="bugs != null and bugs != ''"> bugs = #{bugs},     </if>
@@ -334,6 +336,7 @@
 		<if test="execDate != null and execDate != ''"> exec_date = #{execDate},     </if>
 		<if test="execType != null and execType != ''"> exec_type = #{execType},     </if>
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
+		<if test="autoStep != null and autoStep != ''"> auto_step = #{autoStep},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -352,6 +355,7 @@
 			init_workload = #{item.initWorkload},
 			exec_date = #{item.execDate},
 			exec_type = #{item.execType},
-			product_id = #{item.productId}
+			product_id = #{item.productId},
+			auto_step = #{item.autoStep}
 	</sql>
 </mapper>

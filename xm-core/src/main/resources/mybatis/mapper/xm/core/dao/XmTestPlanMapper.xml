@@ -132,7 +132,7 @@
 		insert into xm_test_plan(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{toTestCases},#{productId},#{productName},#{flowState},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{menus},#{funcs},#{budgetWorkload},#{actWorkload},#{summaryRemark},#{cbranchId},#{pbranchId},#{ptype},#{envJson}
+		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{toTestCases},#{productId},#{productName},#{flowState},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{menus},#{funcs},#{budgetWorkload},#{actWorkload},#{summaryRemark},#{cbranchId},#{pbranchId},#{ptype},#{envJson},#{testType}
 		)
 	</insert>
 	
@@ -207,7 +207,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,to_test_cases,product_id,product_name,flow_state,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,menus,funcs,budget_workload,act_workload,summary_remark,cbranch_id,pbranch_id,ptype,env_json
+		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,to_test_cases,product_id,product_name,flow_state,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,menus,funcs,budget_workload,act_workload,summary_remark,cbranch_id,pbranch_id,ptype,env_json,test_type
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -248,6 +248,7 @@
 		<if test="pbranchId != null and pbranchId != ''">      and res.pbranch_id = #{pbranchId}     </if>
 		<if test="ptype != null and ptype != ''">      and res.ptype = #{ptype}     </if>
 		<if test="envJson != null and envJson != ''">      and res.env_json = #{envJson}     </if>
+		<if test="testType != null and testType != ''">      and res.test_type = #{testType}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -285,7 +286,8 @@
 		cbranch_id = #{cbranchId},
 		pbranch_id = #{pbranchId},
 		ptype = #{ptype},
-		env_json = #{envJson}
+		env_json = #{envJson},
+		test_type = #{testType}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -323,6 +325,7 @@
 		<if test="pbranchId != null and pbranchId != ''"> pbranch_id = #{pbranchId},     </if>
 		<if test="ptype != null and ptype != ''"> ptype = #{ptype},     </if>
 		<if test="envJson != null and envJson != ''"> env_json = #{envJson},     </if>
+		<if test="testType != null and testType != ''"> test_type = #{testType},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -360,6 +363,7 @@
 			cbranch_id = #{item.cbranchId},
 			pbranch_id = #{item.pbranchId},
 			ptype = #{item.ptype},
-			env_json = #{item.envJson}
+			env_json = #{item.envJson},
+			test_type = #{item.testType}
 	</sql>
 </mapper>
