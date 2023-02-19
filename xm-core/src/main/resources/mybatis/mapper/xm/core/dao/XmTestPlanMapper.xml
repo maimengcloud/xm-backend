@@ -132,7 +132,7 @@
 		insert into xm_test_plan(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{productId},#{productName},#{flowState},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{menus},#{funcs},#{budgetWorkload},#{actWorkload},#{summaryRemark},#{cbranchId},#{toTestCases},#{pbranchId},#{ptype}
+		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{toTestCases},#{productId},#{productName},#{flowState},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{menus},#{funcs},#{budgetWorkload},#{actWorkload},#{summaryRemark},#{cbranchId},#{pbranchId},#{ptype},#{envJson}
 		)
 	</insert>
 	
@@ -207,7 +207,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,product_id,product_name,flow_state,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,menus,funcs,budget_workload,act_workload,summary_remark,cbranch_id,to_test_cases,pbranch_id,ptype
+		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,to_test_cases,product_id,product_name,flow_state,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,menus,funcs,budget_workload,act_workload,summary_remark,cbranch_id,pbranch_id,ptype,env_json
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -230,6 +230,7 @@
 		<if test="errCases != null and errCases != ''">      and res.err_cases = #{errCases}     </if>
 		<if test="igCases != null and igCases != ''">      and res.ig_cases = #{igCases}     </if>
 		<if test="blCases != null and blCases != ''">      and res.bl_cases = #{blCases}     </if>
+		<if test="toTestCases != null and toTestCases != ''">      and res.to_test_cases = #{toTestCases}     </if>
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
 		<if test="productName != null and productName != ''">      and res.product_name = #{productName}     </if>
 		<if test="flowState != null and flowState != ''">      and res.flow_state = #{flowState}     </if>
@@ -244,9 +245,9 @@
 		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
 		<if test="summaryRemark != null and summaryRemark != ''">      and res.summary_remark = #{summaryRemark}     </if>
 		<if test="cbranchId != null and cbranchId != ''">      and res.cbranch_id = #{cbranchId}     </if>
-		<if test="toTestCases != null and toTestCases != ''">      and res.to_test_cases = #{toTestCases}     </if>
 		<if test="pbranchId != null and pbranchId != ''">      and res.pbranch_id = #{pbranchId}     </if>
 		<if test="ptype != null and ptype != ''">      and res.ptype = #{ptype}     </if>
+		<if test="envJson != null and envJson != ''">      and res.env_json = #{envJson}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -267,6 +268,7 @@
 		err_cases = #{errCases},
 		ig_cases = #{igCases},
 		bl_cases = #{blCases},
+		to_test_cases = #{toTestCases},
 		product_id = #{productId},
 		product_name = #{productName},
 		flow_state = #{flowState},
@@ -281,9 +283,9 @@
 		act_workload = #{actWorkload},
 		summary_remark = #{summaryRemark},
 		cbranch_id = #{cbranchId},
-		to_test_cases = #{toTestCases},
 		pbranch_id = #{pbranchId},
-		ptype = #{ptype}
+		ptype = #{ptype},
+		env_json = #{envJson}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -303,6 +305,7 @@
 		<if test="errCases != null and errCases != ''"> err_cases = #{errCases},     </if>
 		<if test="igCases != null and igCases != ''"> ig_cases = #{igCases},     </if>
 		<if test="blCases != null and blCases != ''"> bl_cases = #{blCases},     </if>
+		<if test="toTestCases != null and toTestCases != ''"> to_test_cases = #{toTestCases},     </if>
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
 		<if test="productName != null and productName != ''"> product_name = #{productName},     </if>
 		<if test="flowState != null and flowState != ''"> flow_state = #{flowState},     </if>
@@ -317,9 +320,9 @@
 		<if test="actWorkload != null and actWorkload != ''"> act_workload = #{actWorkload},     </if>
 		<if test="summaryRemark != null and summaryRemark != ''"> summary_remark = #{summaryRemark},     </if>
 		<if test="cbranchId != null and cbranchId != ''"> cbranch_id = #{cbranchId},     </if>
-		<if test="toTestCases != null and toTestCases != ''"> to_test_cases = #{toTestCases},     </if>
 		<if test="pbranchId != null and pbranchId != ''"> pbranch_id = #{pbranchId},     </if>
 		<if test="ptype != null and ptype != ''"> ptype = #{ptype},     </if>
+		<if test="envJson != null and envJson != ''"> env_json = #{envJson},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -340,6 +343,7 @@
 			err_cases = #{item.errCases},
 			ig_cases = #{item.igCases},
 			bl_cases = #{item.blCases},
+			to_test_cases = #{item.toTestCases},
 			product_id = #{item.productId},
 			product_name = #{item.productName},
 			flow_state = #{item.flowState},
@@ -354,8 +358,8 @@
 			act_workload = #{item.actWorkload},
 			summary_remark = #{item.summaryRemark},
 			cbranch_id = #{item.cbranchId},
-			to_test_cases = #{item.toTestCases},
 			pbranch_id = #{item.pbranchId},
-			ptype = #{item.ptype}
+			ptype = #{item.ptype},
+			env_json = #{item.envJson}
 	</sql>
 </mapper>

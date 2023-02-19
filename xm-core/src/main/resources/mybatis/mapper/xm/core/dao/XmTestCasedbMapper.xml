@@ -67,7 +67,7 @@
 		insert into xm_test_casedb(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{cuserid},#{cusername},#{ctime},#{cbranchId},#{productId},#{productName},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{testPlans},#{menus},#{funcs},#{status},#{budgetWorkload},#{actWorkload},#{pbranchId}
+		#{id},#{name},#{cuserid},#{cusername},#{ctime},#{cbranchId},#{productId},#{productName},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{testPlans},#{menus},#{funcs},#{status},#{budgetWorkload},#{actWorkload},#{pbranchId},#{envJson}
 		)
 	</insert>
 	
@@ -142,7 +142,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,cuserid,cusername,ctime,cbranch_id,product_id,product_name,total_cases,ok_cases,err_cases,ig_cases,bl_cases,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,test_plans,menus,funcs,status,budget_workload,act_workload,pbranch_id
+		id,name,cuserid,cusername,ctime,cbranch_id,product_id,product_name,total_cases,ok_cases,err_cases,ig_cases,bl_cases,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,test_plans,menus,funcs,status,budget_workload,act_workload,pbranch_id,env_json
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -172,6 +172,7 @@
 		<if test="budgetWorkload != null and budgetWorkload != ''">      and res.budget_workload = #{budgetWorkload}     </if>
 		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
 		<if test="pbranchId != null and pbranchId != ''">      and res.pbranch_id = #{pbranchId}     </if>
+		<if test="envJson != null and envJson != ''">      and res.env_json = #{envJson}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -198,7 +199,8 @@
 		status = #{status},
 		budget_workload = #{budgetWorkload},
 		act_workload = #{actWorkload},
-		pbranch_id = #{pbranchId}
+		pbranch_id = #{pbranchId},
+		env_json = #{envJson}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -225,6 +227,7 @@
 		<if test="budgetWorkload != null and budgetWorkload != ''"> budget_workload = #{budgetWorkload},     </if>
 		<if test="actWorkload != null and actWorkload != ''"> act_workload = #{actWorkload},     </if>
 		<if test="pbranchId != null and pbranchId != ''"> pbranch_id = #{pbranchId},     </if>
+		<if test="envJson != null and envJson != ''"> env_json = #{envJson},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -251,6 +254,7 @@
 			status = #{item.status},
 			budget_workload = #{item.budgetWorkload},
 			act_workload = #{item.actWorkload},
-			pbranch_id = #{item.pbranchId}
+			pbranch_id = #{item.pbranchId},
+			env_json = #{item.envJson}
 	</sql>
 </mapper>

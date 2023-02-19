@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 /**
  * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
  * 实体 XmTestCasedb所有属性名: <br>
- *	"id","主键","name","用例库名称","cuserid","创建人","cusername","创建人姓名","ctime","创建日期","cbranchId","归属机构编号","productId","产品编号","productName","产品名称","totalCases","总用例数","okCases","通过用例数","errCases","失败用例数","igCases","忽略用例数","blCases","阻塞用例数","bugCnt","bug数目","closedBugs","已关闭bug总数","resolvedBugs","已解决bug总数","activeBugs","激活的bug总数","confirmedBugs","已解决bug总数","testPlans","测试计划数","menus","需求数目","funcs","功能模块数","status","状态0初始，1-启用，2关闭","budgetWorkload","预算工时","actWorkload","实际工时","pbranchId","产品归属企业";<br>
+ *	"id","主键","name","用例库名称","cuserid","创建人","cusername","创建人姓名","ctime","创建日期","cbranchId","归属机构编号","productId","产品编号","productName","产品名称","totalCases","总用例数","okCases","通过用例数","errCases","失败用例数","igCases","忽略用例数","blCases","阻塞用例数","bugCnt","bug数目","closedBugs","已关闭bug总数","resolvedBugs","已解决bug总数","activeBugs","激活的bug总数","confirmedBugs","已解决bug总数","testPlans","测试计划数","menus","需求数目","funcs","功能模块数","status","状态0初始，1-启用，2关闭","budgetWorkload","预算工时","actWorkload","实际工时","pbranchId","产品归属企业","envJson","环境变量列表";<br>
  * 当前主键(包括多主键):<br>
  *	id;<br>
  */
@@ -94,6 +94,9 @@ public class XmTestCasedb  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="产品归属企业",allowEmptyValue=true,example="",allowableValues="")
 	String pbranchId;
+	
+	@ApiModelProperty(notes="环境变量列表",allowEmptyValue=true,example="",allowableValues="")
+	String envJson;
 
 	/**
 	 *主键
