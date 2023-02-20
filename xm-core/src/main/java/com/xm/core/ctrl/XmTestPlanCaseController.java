@@ -242,6 +242,7 @@ public class XmTestPlanCaseController {
 					xmTestPlanCase.setPriority(xmTestCase.getCpriority());
 					xmTestPlanCase.setProjectId(xmTestPlanDb.getProjectId());
 					xmTestPlanCase.setProductId(xmProductDb.getId());
+					xmTestPlanCase.setExecType(xmTestCase.getTestType());
 					planCases.add(xmTestPlanCase);
 				}
 				this.xmTestPlanCaseService.batchInsert(planCases);
