@@ -28,6 +28,9 @@
 		<if test="pbranchId!=null and pbranchId!=''">
 			and c.pbranch_id=#{pbranchId}
 		</if>
+		<if test="testType!=null and testType!=''">
+			and c.test_type=#{testType}
+		</if>
 		<if test="linkIterationId!=null">
 			and exists ( select 1 from  xm_menu m
 			where m.iteration_id=#{linkIterationId} and c.menu_id=m.menu_id
@@ -151,7 +154,7 @@
 	
 	<!-- 通过条件查询获取数据列表 返回list<map> -->
 	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
-		select res.*,c.case_name,c.ver_num,c.case_remark,c.func_id,c.func_name,c.menu_id,c.menu_name,c.product_id,c.case_type,c.case_status,c.casedb_id,c.casedb_name,c.pre_remark,cpriority from xm_test_plan_case res left join xm_test_case c on res.case_id=c.id
+		select res.*,c.case_name,c.ver_num,c.case_remark,c.func_id,c.func_name,c.menu_id,c.menu_name,c.product_id,c.case_type,c.case_status,c.casedb_id,c.casedb_name,c.pre_remark,c.test_type,c.auto_step,c.cpriority from xm_test_plan_case res left join xm_test_case c on res.case_id=c.id
 		<where>
 		    <include refid="whereForMap"/>
 			<include refid="where"/>
