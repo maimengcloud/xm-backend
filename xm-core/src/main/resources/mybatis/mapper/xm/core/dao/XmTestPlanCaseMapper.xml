@@ -199,7 +199,7 @@
 		insert into xm_test_plan_case(
 			<include refid="columns"/>
 		) values (
-		#{bugs},#{execUserid},#{caseId},#{ltime},#{ctime},#{execStatus},#{execUsername},#{priority},#{remark},#{testStep},#{planId},#{projectId},#{budgetWorkload},#{actWorkload},#{initWorkload},#{execDate},#{execType},#{productId}
+		#{bugs},#{execUserid},#{caseId},#{ltime},#{ctime},#{execStatus},#{execUsername},#{priority},#{remark},#{testStep},#{planId},#{projectId},#{budgetWorkload},#{actWorkload},#{initWorkload},#{execDate},#{productId}
 		)
 	</insert>
 	
@@ -274,7 +274,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		bugs,exec_userid,case_id,ltime,ctime,exec_status,exec_username,priority,remark,test_step,plan_id,project_id,budget_workload,act_workload,init_workload,exec_date,exec_type,product_id
+		bugs,exec_userid,case_id,ltime,ctime,exec_status,exec_username,priority,remark,test_step,plan_id,project_id,budget_workload,act_workload,init_workload,exec_date,product_id
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -295,7 +295,6 @@
 		<if test="actWorkload != null and actWorkload != ''">      and res.act_workload = #{actWorkload}     </if>
 		<if test="initWorkload != null and initWorkload != ''">      and res.init_workload = #{initWorkload}     </if>
 		<if test="execDate != null and execDate != ''">      and res.exec_date = #{execDate}     </if>
-		<if test="execType != null and execType != ''">      and res.exec_type = #{execType}     </if>
 		<if test="productId != null and productId != ''">      and res.product_id = #{productId}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
@@ -314,7 +313,6 @@
 		act_workload = #{actWorkload},
 		init_workload = #{initWorkload},
 		exec_date = #{execDate},
-		exec_type = #{execType},
 		product_id = #{productId}
 	</sql>
 	<sql id="someFieldSet">
@@ -332,7 +330,6 @@
 		<if test="actWorkload != null and actWorkload != ''"> act_workload = #{actWorkload},     </if>
 		<if test="initWorkload != null and initWorkload != ''"> init_workload = #{initWorkload},     </if>
 		<if test="execDate != null and execDate != ''"> exec_date = #{execDate},     </if>
-		<if test="execType != null and execType != ''"> exec_type = #{execType},     </if>
 		<if test="productId != null and productId != ''"> product_id = #{productId},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
@@ -351,7 +348,6 @@
 			act_workload = #{item.actWorkload},
 			init_workload = #{item.initWorkload},
 			exec_date = #{item.execDate},
-			exec_type = #{item.execType},
 			product_id = #{item.productId}
 	</sql>
 </mapper>
