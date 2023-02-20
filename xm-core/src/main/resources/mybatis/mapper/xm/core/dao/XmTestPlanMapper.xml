@@ -132,7 +132,7 @@
 		insert into xm_test_plan(
 			<include refid="columns"/>
 		) values (
-		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{toTestCases},#{productId},#{productName},#{flowState},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{menus},#{funcs},#{budgetWorkload},#{actWorkload},#{summaryRemark},#{cbranchId},#{pbranchId},#{ptype},#{envJson},#{testType}
+		#{id},#{name},#{casedbId},#{casedbName},#{projectId},#{projectName},#{cuserid},#{cusername},#{ctime},#{stime},#{etime},#{status},#{tcode},#{totalCases},#{okCases},#{errCases},#{igCases},#{blCases},#{toTestCases},#{productId},#{productName},#{flowState},#{bugCnt},#{closedBugs},#{resolvedBugs},#{activeBugs},#{confirmedBugs},#{menus},#{funcs},#{budgetWorkload},#{actWorkload},#{summaryRemark},#{cbranchId},#{pbranchId},#{ptype},#{envJson},#{testType},#{execCfgCron},#{execCfgTimes},#{execCfgThreads},#{execTimes},#{execStime},#{execEtime},#{execStatus}
 		)
 	</insert>
 	
@@ -207,7 +207,7 @@
 	
 	<!--sql片段 列-->
 	<sql id="columns">
-		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,to_test_cases,product_id,product_name,flow_state,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,menus,funcs,budget_workload,act_workload,summary_remark,cbranch_id,pbranch_id,ptype,env_json,test_type
+		id,name,casedb_id,casedb_name,project_id,project_name,cuserid,cusername,ctime,stime,etime,status,tcode,total_cases,ok_cases,err_cases,ig_cases,bl_cases,to_test_cases,product_id,product_name,flow_state,bug_cnt,closed_bugs,resolved_bugs,active_bugs,confirmed_bugs,menus,funcs,budget_workload,act_workload,summary_remark,cbranch_id,pbranch_id,ptype,env_json,test_type,exec_cfg_cron,exec_cfg_times,exec_cfg_threads,exec_times,exec_stime,exec_etime,exec_status
 	</sql>
 
 	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
@@ -249,6 +249,13 @@
 		<if test="ptype != null and ptype != ''">      and res.ptype = #{ptype}     </if>
 		<if test="envJson != null and envJson != ''">      and res.env_json = #{envJson}     </if>
 		<if test="testType != null and testType != ''">      and res.test_type = #{testType}     </if>
+		<if test="execCfgCron != null and execCfgCron != ''">      and res.exec_cfg_cron = #{execCfgCron}     </if>
+		<if test="execCfgTimes != null">      and date_format(res.exec_cfg_times,'%Y-%m-%d') = date_format(#{execCfgTimes},'%Y-%m-%d')     </if>
+		<if test="execCfgThreads != null and execCfgThreads != ''">      and res.exec_cfg_threads = #{execCfgThreads}     </if>
+		<if test="execTimes != null and execTimes != ''">      and res.exec_times = #{execTimes}     </if>
+		<if test="execStime != null">      and date_format(res.exec_stime,'%Y-%m-%d') = date_format(#{execStime},'%Y-%m-%d')     </if>
+		<if test="execEtime != null">      and date_format(res.exec_etime,'%Y-%m-%d') = date_format(#{execEtime},'%Y-%m-%d')     </if>
+		<if test="execStatus != null and execStatus != ''">      and res.exec_status = #{execStatus}     </if>
 	</sql>
 	<!--sql片段 更新字段 -->
 	<sql id="set">
@@ -287,7 +294,14 @@
 		pbranch_id = #{pbranchId},
 		ptype = #{ptype},
 		env_json = #{envJson},
-		test_type = #{testType}
+		test_type = #{testType},
+		exec_cfg_cron = #{execCfgCron},
+		exec_cfg_times = #{execCfgTimes},
+		exec_cfg_threads = #{execCfgThreads},
+		exec_times = #{execTimes},
+		exec_stime = #{execStime},
+		exec_etime = #{execEtime},
+		exec_status = #{execStatus}
 	</sql>
 	<sql id="someFieldSet">
 		<if test="name != null and name != ''"> name = #{name},     </if>
@@ -326,6 +340,13 @@
 		<if test="ptype != null and ptype != ''"> ptype = #{ptype},     </if>
 		<if test="envJson != null and envJson != ''"> env_json = #{envJson},     </if>
 		<if test="testType != null and testType != ''"> test_type = #{testType},     </if>
+		<if test="execCfgCron != null and execCfgCron != ''"> exec_cfg_cron = #{execCfgCron},     </if>
+		<if test="execCfgTimes != null"> exec_cfg_times = #{execCfgTimes},     </if>
+		<if test="execCfgThreads != null and execCfgThreads != ''"> exec_cfg_threads = #{execCfgThreads},     </if>
+		<if test="execTimes != null and execTimes != ''"> exec_times = #{execTimes},     </if>
+		<if test="execStime != null"> exec_stime = #{execStime},     </if>
+		<if test="execEtime != null"> exec_etime = #{execEtime},     </if>
+		<if test="execStatus != null and execStatus != ''"> exec_status = #{execStatus},     </if>
 	</sql>
 	<!--sql片段 批量更新 -->
 	<sql id="batchSet">
@@ -364,6 +385,13 @@
 			pbranch_id = #{item.pbranchId},
 			ptype = #{item.ptype},
 			env_json = #{item.envJson},
-			test_type = #{item.testType}
+			test_type = #{item.testType},
+			exec_cfg_cron = #{item.execCfgCron},
+			exec_cfg_times = #{item.execCfgTimes},
+			exec_cfg_threads = #{item.execCfgThreads},
+			exec_times = #{item.execTimes},
+			exec_stime = #{item.execStime},
+			exec_etime = #{item.execEtime},
+			exec_status = #{item.execStatus}
 	</sql>
 </mapper>
