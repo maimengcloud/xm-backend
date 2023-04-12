@@ -14,7 +14,18 @@
         <if test="key != null and key !='' "> and res.name like  concat('%',#{key},'%')    </if>
     </sql>
 
-
+	<select id="getExistsPlanCasedbIds" parameterType="List" resultType="String">
+ 		select id from xm_test_casedb res where exists(select 1 from xm_test_plan p where p.casedb_id=res.id
+			and p.casedb_id in
+			<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+				#{item}
+			</foreach>
+			)
+		and id in
+		<foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+			#{item}
+		</foreach>
+	</select>
 	<!--结束 自定义sql函数区域-->
 	
 

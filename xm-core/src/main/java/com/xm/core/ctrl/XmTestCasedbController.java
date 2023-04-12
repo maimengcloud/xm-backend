@@ -349,20 +349,38 @@ public class XmTestCasedbController {
 					}
 				}
 			}
-
+			if(can.size()>0){
+				List<XmTestCasedb> can2=new ArrayList<>();
+ 				List<String> existsPlanCasedbIds=this.xmTestCasedbService.getExistsPlanCasedbIds(can.stream().map(k->k.getId()).collect(Collectors.toList()));
+				if(existsPlanCasedbIds.size()>0){
+					for (XmTestCasedb xmTestCasedb : can) {
+						if(existsPlanCasedbIds.stream().filter(k->k.equals(xmTestCasedb.getId())).findAny().isPresent()){
+							no.add(xmTestCasedb);
+							noTips.add(xmTestCasedb.getName()+"存在测试计划，请先删除测试计划");
+						}else{
+							can2.add(xmTestCasedb);
+						}
+					}
+					can=can2;
+				}
+			}
             List<String> msgs=new ArrayList<>();
             if(can.size()>0){
                 xmTestCasedbService.batchDelete(can);
                 msgs.add(String.format("成功删除%s条数据.",can.size()));
             }
+
     
             if(no.size()>0){ 
                 msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
             }
+			if(noTips.size()>0){
+				msgs.add(noTips.stream().collect(Collectors.joining(";")));
+			}
             if(can.size()>0){
-                 tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+                 tips.setOkMsg(msgs.stream().collect(Collectors.joining(";")));
             }else {
-                tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+                tips.setFailureMsg(msgs.stream().collect(Collectors.joining(";")));
             }
         }catch (BizException e) { 
             tips=e.getTips();

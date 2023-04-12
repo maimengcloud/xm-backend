@@ -381,7 +381,7 @@ public class XmQuestionController {
 							return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
 						}
 					}
-					if(xmQuestionMap.containsKey("handlerUserid")){
+					if(StringUtils.hasText(xmQuestionsDb.get(0).getProductId()) && xmQuestionMap.containsKey("handlerUserid")){
 						String handlerUserid= (String) xmQuestionMap.get("handlerUserid");
 						String handlerUsername= (String) xmQuestionMap.get("handlerUsername");
 						XmQuestion xmQuedb=canOper.get(0);
