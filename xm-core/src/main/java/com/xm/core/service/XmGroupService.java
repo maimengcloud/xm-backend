@@ -846,7 +846,7 @@ public class XmGroupService extends BaseService<XmGroupMapper,XmGroup> {
 			pidPathsList.add(pidPathss[i]);
 		}
 		if(pidPathsList.size()>0){//暂时不处理，改由前端手段更新
-			//super.update("sumParents",pidPathsList	);
+			//baseMapper.sumParents(pidPathsList	);
 		}
 
 	}
@@ -889,7 +889,7 @@ public class XmGroupService extends BaseService<XmGroupMapper,XmGroup> {
 					List<String> ids=set.stream().filter(k->!allSet.contains(k)).collect(Collectors.toList());
 					if(ids.size()>0){
 						allSet.addAll(ids.stream().collect(Collectors.toSet()));
-						//super.update("batchSumParents", ids);////暂时不处理，改由前端手段更新
+						//baseMapper.batchSumParents( ids);////暂时不处理，改由前端手段更新
 					}
 
 				}

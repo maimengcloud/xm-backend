@@ -90,7 +90,7 @@ public class XmMenuPlanService extends BaseService<XmMenuPlanMapper,XmMenuPlan> 
 	 */
 	public int loadTasksToXmMenuPlan(String projectId) {
 		 
-		return this.update("loadTasksToXmMenuPlan", projectId);
+		return baseMapper.loadTasksToXmMenuPlan( projectId);
 	}
 }
 

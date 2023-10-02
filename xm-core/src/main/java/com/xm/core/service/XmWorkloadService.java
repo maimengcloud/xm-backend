@@ -46,11 +46,11 @@ public class XmWorkloadService extends BaseService<XmWorkloadMapper, XmWorkload>
 
 
 	public List<Map<String,Object>> listTaskWorkloadBySbillIdGroupByUseridAndTaskId(String sbillId) {
-		return this.selectList("listTaskWorkloadBySbillIdGroupByUseridAndTaskId",sbillId);
+		return baseMapper.listTaskWorkloadBySbillIdGroupByUseridAndTaskId(sbillId);
 	}
 
 	public void updateStatusBySbillIdBySbillDel(String sbillId) {
-		super.update("updateStatusBySbillIdBySbillDel",sbillId);
+		baseMapper.updateStatusBySbillIdBySbillDel(sbillId);
 	}
 
 
@@ -60,7 +60,7 @@ public class XmWorkloadService extends BaseService<XmWorkloadMapper, XmWorkload>
 	}
 
 	public void updateStatusBySbillIdByFlowState(String sbillId,String sstatus) {
-		super.update("updateStatusBySbillIdByFlowState",map("sbillId",sbillId,"sstatus",sstatus));
+		baseMapper.updateStatusBySbillIdByFlowState(map("sbillId",sbillId,"sstatus",sstatus));
 	}
 
 	public List<Map<String, Object>> ListGroupByTaskIdAndUserid(Map<String, Object> xmWorkload) {
@@ -72,16 +72,16 @@ public class XmWorkloadService extends BaseService<XmWorkloadMapper, XmWorkload>
 	}
 
     public void updateStatusAfterJoinSbill(Map<String,Object> details) {
-		super.update("updateStatusAfterJoinSbill",details);
+		baseMapper.updateStatusAfterJoinSbill(details);
     }
 
 	public void updateStatusAfterDetailDel(List<String> detailIds) {
-		super.update("updateStatusAfterDetailDel",detailIds);
+		baseMapper.updateStatusAfterDetailDel(detailIds);
 	}
 
 	@Override
 	public String createKey(String keyName) {
-		return "TW"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
+		return "TW"+getSequenceService().getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
 	}
 }
 

@@ -101,7 +101,7 @@ public class XmProjectContractService extends BaseService<XmProjectContractMappe
 	}
 	
 	private void updateFlowStateByProcInstForDeleteSuccess(Map<String, Object> flowVars) {
-		this.update("updateFlowStateByProcInstForDeleteSuccess", flowVars);
+		baseMapper.updateFlowStateByProcInstForDeleteSuccess( flowVars);
 		
 	}
 
@@ -111,7 +111,7 @@ public class XmProjectContractService extends BaseService<XmProjectContractMappe
 		if("1".equals(flowState)) {
 			flowVars.put("bizProcInstId", flowVars.get("procInstId"));
 		}
-		this.update("updateProcessApprova", flowVars);
+		baseMapper.updateProcessApprova( flowVars);
 	}
     
 	/** 请在此类添加自定义函数 */

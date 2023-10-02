@@ -35,14 +35,14 @@ public class XmProjectStateService extends BaseService<XmProjectStateMapper, XmP
 		return baseMapper.selectListMapByWhere(page,ew,ext);
 	}
 	public int loadTasksToXmProjectState(String projectId) {
-		return this.update("loadTasksToXmProjectState", projectId);
+		return baseMapper.loadTasksToXmProjectState( projectId);
 	}
 	public int loadTasksSettleToXmProjectState(String projectId) {
-		return this.update("loadTasksSettleToXmProjectState", projectId);
+		return baseMapper.loadTasksSettleToXmProjectState( projectId);
 	}
 
 	public List<Map<String, Object>> selectPortalProjectStates(Map<String,Object> params) {
-		return this.selectList("selectPortalProjectStates",params);
+		return baseMapper.selectPortalProjectStates(params);
 	}
 }
 

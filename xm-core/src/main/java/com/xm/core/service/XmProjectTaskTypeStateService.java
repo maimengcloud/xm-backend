@@ -18,7 +18,7 @@ import java.util.Map;
 public class XmProjectTaskTypeStateService extends BaseService<XmProjectTaskTypeStateMapper, XmProjectTaskTypeState> {
 
 	public void loadTasksToXmProjectTaskTypeState(String projectId) {
-		this.update("loadTasksToXmProjectTaskTypeState", projectId);
+		baseMapper.loadTasksToXmProjectTaskTypeState( projectId);
 	}
 
 	/**

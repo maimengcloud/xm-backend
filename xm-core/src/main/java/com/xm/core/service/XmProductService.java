@@ -97,7 +97,7 @@ public class XmProductService extends BaseService<XmProductMapper,XmProduct> {
 	 */
 	public List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> iterationMap) {
 		// TODO Auto-generated method stub
-		return this.selectList("selectListMapByWhereWithState", iterationMap);
+		return baseMapper.selectListMapByWhereWithState( iterationMap);
 	}
 
 	@Transactional
@@ -368,16 +368,16 @@ public class XmProductService extends BaseService<XmProductMapper,XmProduct> {
 				seq="0"+seq;
 			}
 		}
-		String code=sequenceService.getCommonNo("PD{date:yyyy}-"+seq+"-{rands:2}");
+		String code=getSequenceService().getCommonNo("PD{date:yyyy}-"+seq+"-{rands:2}");
 		return code;
 
 	}
 	public String createProductId(String code){
-		String id=sequenceService.getCommonNo(code+"-{rands:4}");
+		String id=getSequenceService().getCommonNo(code+"-{rands:4}");
 		XmProduct xmProduct=new XmProduct(id);
 		long idcount=this.countByWhere(xmProduct);
 		while (idcount>0){
-			id=sequenceService.getCommonNo(code+"-{rands:4}");
+			id=getSequenceService().getCommonNo(code+"-{rands:4}");
 			xmProduct=new XmProduct(id);
 			idcount=this.countByWhere(xmProduct);
 		}

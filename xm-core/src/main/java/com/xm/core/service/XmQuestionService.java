@@ -192,7 +192,7 @@ public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> 
 	}
 	
 	private void updateFlowStateByProcInstForDeleteSuccess(Map<String, Object> flowVars) {
-		this.update("updateFlowStateByProcInstForDeleteSuccess", flowVars);
+		baseMapper.updateFlowStateByProcInstForDeleteSuccess( flowVars);
 		
 	}
 
@@ -202,7 +202,7 @@ public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> 
 		if("1".equals(flowState)) {
 			flowVars.put("bizProcInstId", flowVars.get("procInstId"));
 		}
-		this.update("updateProcessApprova", flowVars);
+		baseMapper.updateProcessApprova( flowVars);
 	}
 
 
@@ -220,7 +220,7 @@ public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> 
 
 	@Override
 	public String createKey(String keyName) {
-		return "Q"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
+		return "Q"+getSequenceService().getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
 	}
 
     public List<Map<String, Object>> getXmQuestionRetestDist(Map<String, Object> xmQuestion) {

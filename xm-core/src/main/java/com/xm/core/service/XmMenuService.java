@@ -48,7 +48,7 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 	 * @return
 	 */
 	public List<Map<String, Object>> selectListMapByWhereWithPlan(Map<String, Object> xmMenu) {
-		return this.selectList("selectListMapByWhereWithPlan", xmMenu);
+		return baseMapper.selectListMapByWhereWithPlan( xmMenu);
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 	 */
 	public List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> xmMenu) {
 
-		return this.selectList("selectListMapByWhereWithState", xmMenu);
+		return baseMapper.selectListMapByWhereWithState( xmMenu);
 	}
 
 	/**
@@ -70,16 +70,17 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 	 */
 	public List<Map<String, Object>> selectListMapByWhereWithPhase(Map<String, Object> xmMenu) {
 
-		return this.selectList("selectListMapByWhereWithPhase", xmMenu);
+		return baseMapper.selectListMapByWhereWithPhase( xmMenu);
 	}
 
 
 	public void updateMenuChildrenCntByMenuId(String menuId) {
-		super.update("updateMenuChildrenCntByMenuId", menuId);
+		baseMapper.updateMenuChildrenCntByMenuId( menuId);
+		
 	}
 
 	public void updateChildrenCntByIds(List<String> ids) {
-		super.update("updateChildrenCntByIds", ids);
+		baseMapper.updateChildrenCntByIds( ids);
 	}
 
 	@Transactional
@@ -106,12 +107,12 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 	}
 
 	public List<Map<String, Object>> queryTaskUsersByMenuId(String menuId) {
-		return this.selectList("queryTaskUsersByMenuId", menuId);
+		return baseMapper.queryTaskUsersByMenuId( menuId);
 	}
 
 	public List<XmMenu> selectExistIterationMenus(List<String> menuIds) {
 
-		return this.selectList("selectExistIterationMenus", map("menuIds", menuIds));
+		return baseMapper.selectExistIterationMenus( map("menuIds", menuIds));
 	}
 
 	public List<XmMenu> parentIdPathsCalcBeforeSave(List<XmMenu> nodes) {
@@ -256,7 +257,7 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 
 	@Transactional
 	public void doBatchDeleteByProductIds(List<String> productIds) {
-		super.delete("doBatchDeleteByProductIds", productIds);
+		super.baseMapper.doBatchDeleteByProductIds( productIds);
 	}
 
 
@@ -288,32 +289,32 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 	}
 
 	public void batchUnIteration(XmIterationMenuVo xmIterationMenus) {
-		super.update("batchUnIteration", xmIterationMenus);
+		baseMapper.batchUnIteration( xmIterationMenus);
 	}
 
 	public void batchIteration(XmIterationMenuVo xmIterationMenus) {
-		super.update("batchIteration", xmIterationMenus);
+		baseMapper.batchIteration( xmIterationMenus);
 	}
 
 
 	public void batchUnProductPhase(XmPhaseMenusVo xmPhaseMenusVo) {
-		super.update("batchUnProductPhase", xmPhaseMenusVo);
+		baseMapper.batchUnProductPhase( xmPhaseMenusVo);
 	}
 
 	public void batchProductPhase(XmPhaseMenusVo xmPhaseMenusVo) {
-		super.update("batchProductPhase", xmPhaseMenusVo);
+		baseMapper.batchProductPhase( xmPhaseMenusVo);
 	}
 
 	public List<XmMenu> listTenMenuByProductIdAndIterationId(String productId, String iterationId) {
 
-		return baseMapper.listTenMenuByProductIdAndIterationId", map("productId", productId, "iterationId( iterationId));
+		return baseMapper.listTenMenuByProductIdAndIterationId( map("productId", productId, "iterationId", iterationId));
 	}
 
 
 
 	@Transactional
 	public void batchChangeParent(List<XmMenu> xmMenus,XmMenu parentMenu) {
-		super.update("batchChangeParent",map("menuIds",xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()),"pmenuId",parentMenu.getMenuId(),"parentPidPaths",parentMenu.getPidPaths()));
+		baseMapper.batchChangeParent(map("menuIds",xmMenus.stream().map(i->i.getMenuId()).collect(Collectors.toList()),"pmenuId",parentMenu.getMenuId(),"parentPidPaths",parentMenu.getPidPaths()));
  		pushService.pushXmMenu(parentMenu);
 	}
 
@@ -349,7 +350,7 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 			pidPathsList.add(pidPathss[i]);
 		}
 		if(pidPathsList.size()>0){
-			super.update("sumParents",pidPathsList	);
+			baseMapper.sumParents(pidPathsList	);
 		}
 
 	}
@@ -391,7 +392,7 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 			if(set.size()>0){
 				List<String> ids=set.stream().collect(Collectors.toList());
 				if(ids.size()>0){
-					super.update("batchSumParents", ids);
+					baseMapper.batchSumParents( ids);
 				}
 
 			}
@@ -414,18 +415,18 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 
 	@Override
 	public String createKey(String keyName) {
-		return "M"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
+		return "M"+getSequenceService().getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
  	}
 
 	public void updateUps(List<String> menuIds) {
-		super.update("updateUps",menuIds);
+		baseMapper.updateUps(menuIds);
 	}
 
 	public void updateComments(List<String> menuIds) {
-		super.update("updateComments",menuIds);
+		baseMapper.updateComments(menuIds);
 	}
 	public void upReads(String menuId,Integer reads) {
-		super.update("upReads",map("menuId",menuId,"reads",reads));
+		baseMapper.upReads(map("menuId",menuId,"reads",reads));
 	}
 }
 

@@ -155,7 +155,7 @@ public class XmFileService extends BaseService<XmFileMapper,XmFile> {
 	}
 	
 	private void updateFlowStateByProcInstForDeleteSuccess(Map<String, Object> flowVars) {
-		this.update("updateFlowStateByProcInstForDeleteSuccess", flowVars);
+		baseMapper.updateFlowStateByProcInstForDeleteSuccess( flowVars);
 		
 	}
 
@@ -165,7 +165,7 @@ public class XmFileService extends BaseService<XmFileMapper,XmFile> {
 		if("1".equals(flowState)) {
 			flowVars.put("bizProcInstId", flowVars.get("procInstId"));
 		}
-		this.update("updateProcessApprova", flowVars);
+		baseMapper.updateProcessApprova( flowVars);
 	}
 
 }

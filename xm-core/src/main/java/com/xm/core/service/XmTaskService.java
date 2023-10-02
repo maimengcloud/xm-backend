@@ -191,7 +191,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	}
 
 	public void updateTaskChildrenCntByTaskId(String taskId){
-		super.update("updateTaskChildrenCntByTaskId",taskId);
+		baseMapper.updateTaskChildrenCntByTaskId(taskId);
 	}
 
 	public List<Map<String,Object>> getTask(Map<String,Object> xmTask){  
@@ -496,7 +496,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	@Transactional
 	public void batchRelTasksWithMenu(BatchRelTasksWithMenu tasksWithMenu,XmMenu xmMenuDb) {
 		Map<String,Object> map=map("menuId",tasksWithMenu.getMenuId(),"menuName",xmMenuDb.getMenuName(),"productId",xmMenuDb.getProductId(),"taskIds",tasksWithMenu.getTaskIds());
-		 super.update("batchRelTasksWithMenu",map);
+		 baseMapper.batchRelTasksWithMenu(map);
 	}
 
 	@Transactional
@@ -520,7 +520,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	}
 
 	public void updateChildrenCntByIds(List<String> ids) {
-		super.update("updateChildrenCntByIds",ids);
+		baseMapper.updateChildrenCntByIds(ids);
 	}
 
 
@@ -668,7 +668,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 			pidPathsList.add(pidPathss[i]);
 		}
 		if(pidPathsList.size()>0){
-			super.update("sumParents",pidPathsList	);
+			baseMapper.sumParents(pidPathsList	);
 		}
 
 	}
@@ -711,7 +711,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 			if(set.size()>0){
 				List<String> ids=set.stream().collect(Collectors.toList());
 				if(ids.size()>0){
- 					super.update("batchSumParents", ids);
+ 					baseMapper.batchSumParents( ids);
 				}
 
 			}
@@ -761,7 +761,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	}
 
 	public void batchRelTasksWithPhase(BatchRelTasksWithPhase tasksPhase) {
-		super.update("batchRelTasksWithPhase",tasksPhase);
+		baseMapper.batchRelTasksWithPhase(tasksPhase);
 	}
 
 	public Map<String,Object> calcProjectAndTaskBudget(String projectId,List<String> excludeTaskIds){
@@ -802,7 +802,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 
 	@Transactional
 	public void batchChangeParent(List<XmTask> xmTasks,XmTask parentTask) {
-		super.update("batchChangeParent",map("taskIds",xmTasks.stream().map(i->i.getId()).collect(Collectors.toList()),"parentTaskid",parentTask.getId(),"parentTaskname",parentTask.getName(),"parentPidPaths",parentTask.getPidPaths()));
+		baseMapper.batchChangeParent(map("taskIds",xmTasks.stream().map(i->i.getId()).collect(Collectors.toList()),"parentTaskid",parentTask.getId(),"parentTaskname",parentTask.getName(),"parentPidPaths",parentTask.getPidPaths()));
 		pushService.pushXmTask(parentTask);
 	}
 
@@ -811,7 +811,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	 * @param taskId
 	 */
 	public void updateActCostAndActWorkloadAfterSettle(String taskId,String toTaskState) {
-		super.update("updateActCostAndActWorkloadAfterSettle",map("id",taskId,"taskState",toTaskState));
+		baseMapper.updateActCostAndActWorkloadAfterSettle(map("id",taskId,"taskState",toTaskState));
 	}
 
 	public void calcWorkloadByRecord(String id) {
@@ -827,11 +827,11 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 			return;
 		}
 		ids=ids.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
-		super.update("calcWorkloadByRecord",ids);
+		baseMapper.calcWorkloadByRecord(ids);
 	}
 
 	public void batchUpdateBudgetWorkloadAndRate(List<String> ids,BigDecimal budgetWorkload) {
-		super.update("batchUpdateBudgetWorkloadAndRate",map("ids",ids,"budgetWorkload",budgetWorkload));
+		baseMapper.batchUpdateBudgetWorkloadAndRate(map("ids",ids,"budgetWorkload",budgetWorkload));
 	}
 
 	public List<Map<String, Object>> getXmTaskAttDist(Map<String, Object> xmTask) {
@@ -848,15 +848,15 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 
 	@Override
 	public String createKey(String keyName) {
-		return "T"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
+		return "T"+getSequenceService().getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
 	}
 
     public void upBrowseTimes(String id,Integer nums) {
-		super.update("upBrowseTimes",map("id",id,"nums",nums));
+		baseMapper.upBrowseTimes(map("id",id,"nums",nums));
     }
 
 	public void updateSomeFieldByPkAfterPaySuccess(XmTask xmTaskUpdate) {
-		super.update("updateSomeFieldByPkAfterPaySuccess",xmTaskUpdate);
+		baseMapper.updateSomeFieldByPkAfterPaySuccess(xmTaskUpdate);
 	}
 }
 

@@ -18,7 +18,7 @@ public class XmAttachmentService extends BaseService<XmAttachmentMapper,XmAttach
         XmAttachment del = new XmAttachment();
         del.setOriginId(originId);
         del.setOriginType(originType);
-        this.delete("deleteByOrigin",del);
+        this.baseMapper.deleteByOrigin(del);
         if(attachmentList.size() > 0) {
             attachmentList.forEach(attach->{
                 attach.setOriginId(originId);

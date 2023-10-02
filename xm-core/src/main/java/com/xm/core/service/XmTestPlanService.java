@@ -31,7 +31,7 @@ public class XmTestPlanService extends BaseService<XmTestPlanMapper, XmTestPlan>
         return baseMapper.selectListMapByWhere(page,ew,ext);
     }
     public void calcXmTestPlan(String id) {
-        super.update("calcXmTestPlan",id);
+        baseMapper.calcXmTestPlan(id);
     }
 }
 

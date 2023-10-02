@@ -339,16 +339,16 @@ public class XmProjectService extends BaseService<XmProjectMapper,XmProject> {
 				seq="0"+seq;
 			}
 		}
-		String code=sequenceService.getCommonNo("PJ{date:yyyy}-"+seq+"-{rands:2}");
+		String code=getSequenceService().getCommonNo("PJ{date:yyyy}-"+seq+"-{rands:2}");
 		return code;
 
 	}
 	public String createProjectId(String code){
-		String id=sequenceService.getCommonNo(code+"-{rands:4}");
+		String id=getSequenceService().getCommonNo(code+"-{rands:4}");
 		XmProject xmProject=new XmProject(id);
 		long idcount=this.countByWhere(xmProject);
 		while (idcount>0){
-			id=sequenceService.getCommonNo(code+"-{rands:4}");
+			id=getSequenceService().getCommonNo(code+"-{rands:4}");
 			xmProject=new XmProject(id);
 			idcount=this.countByWhere(xmProject);
 		}

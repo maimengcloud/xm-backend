@@ -114,7 +114,7 @@ public class XmEnvListService extends BaseService<XmEnvListMapper,XmEnvList> {
 	}
 	
 	private void updateFlowStateByProcInstForDeleteSuccess(Map<String, Object> flowVars) {
-		this.update("updateFlowStateByProcInstForDeleteSuccess", flowVars);
+		baseMapper.updateFlowStateByProcInstForDeleteSuccess( flowVars);
 		
 	}
 
@@ -124,7 +124,7 @@ public class XmEnvListService extends BaseService<XmEnvListMapper,XmEnvList> {
 		if("1".equals(flowState)) {
 			flowVars.put("bizProcInstId", flowVars.get("procInstId"));
 		}
-		this.update("updateProcessApprova", flowVars);
+		baseMapper.updateProcessApprova( flowVars);
 	}
 }
 

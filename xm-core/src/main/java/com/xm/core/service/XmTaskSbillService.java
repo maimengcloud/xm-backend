@@ -157,7 +157,7 @@ public class XmTaskSbillService extends BaseService<XmTaskSbillMapper,XmTaskSbil
 	}
 
 	public void updateBySbillDetailList(List<String> sbillIds) {
-		super.update("updateBySbillDetailList",sbillIds);
+		baseMapper.updateBySbillDetailList(sbillIds);
 	}
 
 	@Transactional

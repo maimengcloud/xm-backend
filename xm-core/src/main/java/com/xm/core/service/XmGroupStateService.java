@@ -18,7 +18,7 @@ public class XmGroupStateService extends BaseService<XmGroupStateMapper,XmGroupS
 	 */
 	public int loadTasksToXmProjectGroupState(String projectId) {
 		 
-		return this.update("loadTasksToXmProjectGroupState", projectId);
+		return baseMapper.loadTasksToXmProjectGroupState( projectId);
 	}
 
 }

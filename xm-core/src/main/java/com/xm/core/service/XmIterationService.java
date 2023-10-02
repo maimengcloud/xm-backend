@@ -25,7 +25,7 @@ public class XmIterationService extends BaseService<XmIterationMapper,XmIteratio
 	 * call load_tasks_to_xm_iteration_state(inIterationId)
 	 */
 	public void loadTasksToXmIterationState(String inIterationId) {
-		this.update("load_tasks_to_xm_iteration_state", inIterationId);
+		baseMapper.load_tasks_to_xm_iteration_state( inIterationId);
 	}
 
 	/**
@@ -35,7 +35,7 @@ public class XmIterationService extends BaseService<XmIterationMapper,XmIteratio
 	 */
 	public List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> iterationMap) {
 		// TODO Auto-generated method stub
-		return this.selectList("selectListMapByWhereWithState", iterationMap);
+		return baseMapper.selectListMapByWhereWithState( iterationMap);
 	}
 
 	@Transactional
@@ -51,7 +51,7 @@ public class XmIterationService extends BaseService<XmIterationMapper,XmIteratio
 				seq="0"+seq;
 			}
 		}
-		String code=sequenceService.getCommonNo("IT{date:yyyy}-"+seq+"-{rands:4}");
+		String code=getSequenceService().getCommonNo("IT{date:yyyy}-"+seq+"-{rands:4}");
 		return code;
 
 	}

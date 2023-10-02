@@ -116,7 +116,7 @@ public class XmMenuStateService extends BaseService<XmMenuStateMapper,XmMenuStat
 			pidPathsList.add(pidPathss[i]);
 		}
 		if(pidPathsList.size()>0){
-			super.update("sumParents",pidPathsList	);
+			baseMapper.sumParents(pidPathsList	);
 		}
 
 	}
@@ -159,7 +159,7 @@ public class XmMenuStateService extends BaseService<XmMenuStateMapper,XmMenuStat
 					List<String> ids=set.stream().filter(k->!allSet.contains(k)).collect(Collectors.toList());
 					if(ids.size()>0){
 						allSet.addAll(ids.stream().collect(Collectors.toSet()));
-						super.update("batchSumParents", ids);
+						baseMapper.batchSumParents( ids);
 					}
 
 				}
@@ -179,7 +179,7 @@ public class XmMenuStateService extends BaseService<XmMenuStateMapper,XmMenuStat
 	 */
 	public int loadTasksToXmMenuState(String productId) {
 		 
-		return this.update("loadTasksToXmMenuState", productId);
+		return baseMapper.loadTasksToXmMenuState( productId);
 	}
 }
 

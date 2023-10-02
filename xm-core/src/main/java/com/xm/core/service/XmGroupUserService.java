@@ -19,11 +19,11 @@ public class XmGroupUserService extends BaseService<XmGroupUserMapper,XmGroupUse
 	XmRecordService xmRecordService;
 	
 	public List<XmGroupUser> selectGroupUserListByProjectId(String projectId) {
-		return this.selectList("selectGroupUserListByProjectId", projectId); 
+		return baseMapper.selectGroupUserListByProjectId( projectId); 
 	}
 
 	public List<XmGroupUser> selectGroupUserListByProductId(String productId) {
-		return this.selectList("selectGroupUserListByProductId", productId);
+		return baseMapper.selectGroupUserListByProductId( productId);
 	}
 
 

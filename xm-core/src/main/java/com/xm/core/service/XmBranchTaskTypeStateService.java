@@ -28,7 +28,7 @@ public class XmBranchTaskTypeStateService extends BaseService<XmBranchTaskTypeSt
 		return baseMapper.selectListMapByWhere(page,ew,ext);
 	}
 	public void loadProjectTaskTypeStateToXmBranchTaskTypeState(String branchId) {
-		this.update("loadProjectTaskTypeStateToXmBranchTaskTypeState", branchId);
+		baseMapper.loadProjectTaskTypeStateToXmBranchTaskTypeState( branchId);
 	}
 	
 	/** 请在此类添加自定义函数 */

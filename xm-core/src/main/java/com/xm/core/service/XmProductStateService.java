@@ -34,7 +34,7 @@ public class XmProductStateService extends BaseService<XmProductStateMapper, XmP
 	 */
 	public int loadTasksToXmProductState(String productId) {
 		 
-		return this.update("loadTasksToXmProductState", productId);
+		return baseMapper.loadTasksToXmProductState( productId);
 	}
 
 }

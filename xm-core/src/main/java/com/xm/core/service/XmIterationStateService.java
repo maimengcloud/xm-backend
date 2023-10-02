@@ -36,7 +36,7 @@ public class XmIterationStateService extends BaseService<XmIterationStateMapper,
 	 */
 	public int loadTasksToXmIterationState(String iterationId) {
 		 
-		return this.update("loadTasksToXmIterationState", iterationId);
+		return baseMapper.loadTasksToXmIterationState( iterationId);
 	}
 
 }

@@ -268,7 +268,7 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 	 * @param taskId
 	 */
 	public void updateXmTaskExeUseridsAndUsernamesByTaskId(String taskId) {
-		this.update("updateXmTaskExeUseridsAndUsernamesByTaskId", taskId);
+		baseMapper.updateXmTaskExeUseridsAndUsernamesByTaskId( taskId);
 	}
 
 	public List<Map<String,Object>> selectListMapByWhereWithTask(Map<String,Object> params){

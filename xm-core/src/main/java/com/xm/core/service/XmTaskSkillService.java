@@ -52,7 +52,7 @@ public class XmTaskSkillService extends BaseService<XmTaskSkillMapper,XmTaskSkil
 
     }
     public void updateXmTaskSkillIdsAndNamesByTaskId(String taskId) {
-    	super.update("updateXmTaskSkillIdsAndNamesByTaskId", taskId);
+    	baseMapper.updateXmTaskSkillIdsAndNamesByTaskId( taskId);
     }
 }
 

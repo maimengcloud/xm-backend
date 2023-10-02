@@ -444,7 +444,7 @@ public class XmRecordService extends BaseService<XmRecordMapper,XmRecord> {
 	}
 	@Override
 	public String createKey(String keyName) {
-		return "R"+sequenceService.getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
+		return "R"+getSequenceService().getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
 	}
 
     public List<String> selectChangeProjectIds() {

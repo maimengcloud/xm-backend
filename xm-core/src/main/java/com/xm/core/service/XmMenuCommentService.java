@@ -32,15 +32,15 @@ public class XmMenuCommentService extends BaseService<XmMenuCommentMapper, XmMen
 	}
 
 	public void showComment(String[] ids) {
-		this.update("showComment", ids);
+		baseMapper.showComment( ids);
 
 	}
 	public void unShowComment(String[] ids) {
-		this.update("unShowComment", ids);
+		baseMapper.unShowComment( ids);
 	}
 
 	public void updateChildrenSum(String pid,Integer addCount) {
-		super.update("updateChildrenSum",map("pid",pid,"addCount",addCount));
+		baseMapper.updateChildrenSum(map("pid",pid,"addCount",addCount));
 	}
 
 	public List<Map<String, Object>> selectListByPids(List<String> pids) {
