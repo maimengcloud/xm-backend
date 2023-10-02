@@ -1,9 +1,10 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.xm.core.entity.XmIterationState;
 import com.xm.core.service.XmIterationStateService;
 import io.swagger.annotations.*;
@@ -13,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -80,16 +80,17 @@ public class XmIterationStateController {
 		@ApiResponse(code = 200,response= XmIterationState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmIterationState( @ApiIgnore @RequestParam Map<String,Object> xmIterationState){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmIterationState, "ids");
-		PageUtils.startPage(xmIterationState);
-		List<Map<String,Object>>	xmIterationStateList = xmIterationStateService.selectListMapByWhere(xmIterationState);	//列出XmIterationState列表
-		PageUtils.responePage(m, xmIterationStateList);
-		m.put("data",xmIterationStateList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+	public Result listXmIterationState(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmIterationStateService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmIterationState列表
+		
+		
+		
+		
 	}
 
 	@ApiOperation( value = "计算bug、task、测试案例、等数据",notes="loadTasksToXmIterationState")
@@ -97,20 +98,13 @@ public class XmIterationStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/loadTasksToXmIterationState",method=RequestMethod.POST)
-	public Map<String,Object> loadTasksToXmIterationState(@RequestBody Map<String,Object> params) {
-		Map<String,Object> m = new HashMap<>();
+	public Result loadTasksToXmIterationState(@RequestBody Map<String,Object> params) {
+		
 		Tips tips=new Tips("成功修改数据"); 
-		try{ 
+		
 			int i= xmIterationStateService.loadTasksToXmIterationState((String) params.get("iterationId"));
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}  
  
 	
@@ -120,8 +114,8 @@ public class XmIterationStateController {
 		@ApiResponse(code = 200,response=XmIterationState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmIterationState(@RequestBody XmIterationState xmIterationState) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmIterationState(@RequestBody XmIterationState xmIterationState) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(StringUtils.isEmpty(xmIterationState.getId())) {
@@ -135,16 +129,7 @@ public class XmIterationStateController {
 				}
 			}
 			xmIterationStateService.insert(xmIterationState);
-			m.put("data",xmIterationState);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -154,20 +139,13 @@ public class XmIterationStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmIterationState(@RequestBody XmIterationState xmIterationState){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmIterationState(@RequestBody XmIterationState xmIterationState){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			xmIterationStateService.deleteByPk(xmIterationState);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 */
 	
@@ -177,21 +155,12 @@ public class XmIterationStateController {
 		@ApiResponse(code = 200,response=XmIterationState.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmIterationState(@RequestBody XmIterationState xmIterationState) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmIterationState(@RequestBody XmIterationState xmIterationState) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			xmIterationStateService.updateByPk(xmIterationState);
-			m.put("data",xmIterationState);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -203,20 +172,13 @@ public class XmIterationStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmIterationState(@RequestBody List<XmIterationState> xmIterationStates) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmIterationState(@RequestBody List<XmIterationState> xmIterationStates) {
+		
 		Tips tips=new Tips("成功删除"+xmIterationStates.size()+"条数据"); 
-		try{ 
+		
 			xmIterationStateService.batchDelete(xmIterationStates);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	*/
 }

@@ -1,11 +1,13 @@
 package com.xm.core.ctrl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.msg.client.PushNotifyMsgService;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -91,22 +93,23 @@ public class XmProductController {
 		@ApiResponse(code = 200,response= XmProduct.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmProduct( @ApiIgnore @RequestParam Map<String,Object> xmProduct){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmProduct, "ids");
-		PageUtils.startPage(xmProduct);
-		String id= (String) xmProduct.get("id");
-		Object ids=  xmProduct.get("ids");
-		String projectId= (String) xmProduct.get("projectId");
-		String pmUserid= (String) xmProduct.get("pmUserid");
-		String queryScope= (String) xmProduct.get("queryScope");
+	public Result listXmProduct(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		String id= (String) params.get("id");
+		Object ids=  params.get("ids");
+		String projectId= (String) params.get("projectId");
+		String pmUserid= (String) params.get("pmUserid");
+		String queryScope= (String) params.get("queryScope");
 		User user = LoginUtils.getCurrentUserInfo();
 		if("branchId".equals(queryScope)){
-			xmProduct.put("branchId",user.getBranchId());
+		params.put("branchId",user.getBranchId());
 		}else if("compete".equals(queryScope)){
-			xmProduct.put("branchId",null);
-			xmProduct.put("compete",user.getUserid());
+			params.put("branchId",null);
+			params.put("compete",user.getUserid());
 		}else if("productId".equals(queryScope)){
 			if(!StringUtils.hasText(id)){
 				tips.setFailureMsg("产品编号id必输");
@@ -116,53 +119,51 @@ public class XmProductController {
 		}
 
 
-		xmProduct.put("userid",user.getUserid());
+		params.put("userid",user.getUserid());
 		if( !StringUtils.hasText(queryScope) && !(StringUtils.hasText(id) || StringUtils.hasText(projectId)|| StringUtils.hasText(pmUserid)||ids!=null
 				 ||ids!=null ) ){
 			if(LoginUtils.isBranchAdmin()){
-				xmProduct.put("branchId",user.getBranchId());
+		params.put("branchId",user.getBranchId());
 			}else{
-				xmProduct.put("compete",user.getUserid());
+				params.put("compete",user.getUserid());
 			}
 
 		}
-		if(!StringUtils.hasText((String) xmProduct.get("isTpl"))){
-			xmProduct.put("isTpl","0");
+		if(!StringUtils.hasText((String) params.get("isTpl"))){
+			params.put("isTpl","0");
 		}else{
-			if("1".equals(xmProduct.get("isTpl"))){
-				xmProduct.remove("branchId");
-				xmProduct.put("myBranchId",user.getBranchId());
-				xmProduct.put("platformBranchId",platformBranchId);
+			if("1".equals(params.get("isTpl"))){
+				params.remove("branchId");
+				params.put("myBranchId",user.getBranchId());
+				params.put("platformBranchId",platformBranchId);
 			}
 		}
-		List<Map<String,Object>>	xmProductList = xmProductService.selectListMapByWhere(xmProduct);	//列出XmProduct列表
-		PageUtils.responePage(m, xmProductList);
-		m.put("data",xmProductList);
+		List<Map<String,Object>> datas = xmProductService.selectListMapByWhere(page,qw,params);
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProduct列表
 
-		m.put("tips", tips);
-		return m;
 	}
 	@ApiOperation( value = "查询产品表信息列表连同相关状态数据一起带出",notes="") 
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmProduct.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listWithState",method=RequestMethod.GET)
-	public Map<String,Object> listWithState( @ApiIgnore @RequestParam Map<String,Object> xmProduct){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmProduct, "ids");
-		PageUtils.startPage(xmProduct);
-		String id= (String) xmProduct.get("id");
-		Object ids=  xmProduct.get("ids");
-		String projectId= (String) xmProduct.get("projectId");
-		String pmUserid= (String) xmProduct.get("pmUserid");
-		String queryScope= (String) xmProduct.get("queryScope");
+	public Result listWithState(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		String id= (String) params.get("id");
+		Object ids=  params.get("ids");
+		String projectId= (String) params.get("projectId");
+		String pmUserid= (String) params.get("pmUserid");
+		String queryScope= (String) params.get("queryScope");
 		User user = LoginUtils.getCurrentUserInfo();
 		if("branchId".equals(queryScope)){
-			xmProduct.put("branchId",user.getBranchId());
+		params.put("branchId",user.getBranchId());
 		}else if("compete".equals(queryScope)){
-			xmProduct.put("branchId",null);
-			xmProduct.put("compete",user.getUserid());
+			params.put("branchId",null);
+			params.put("compete",user.getUserid());
 		}else if("productId".equals(queryScope)){
 			if(!StringUtils.hasText(id)){
 				tips.setFailureMsg("产品编号id必输");
@@ -171,21 +172,17 @@ public class XmProductController {
 			}
 		}
 
-		xmProduct.put("userid",user.getUserid());
+		params.put("userid",user.getUserid());
 		if( !StringUtils.hasText(queryScope) && !(StringUtils.hasText(id) || StringUtils.hasText(projectId)|| StringUtils.hasText(pmUserid)||ids!=null
 				||ids!=null ) ){
 			if(!LoginUtils.isBranchAdmin()){
-				xmProduct.put("compete",user.getUserid());
+				params.put("compete",user.getUserid());
 			}
 		}
-		xmProduct.put("platformBranchId",platformBranchId);
-		xmProduct.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	xmProductList = xmProductService.selectListMapByWhereWithState(xmProduct);	//列出XmProduct列表
-		PageUtils.responePage(m, xmProductList);
-		m.put("data",xmProductList);
+		params.put("platformBranchId",platformBranchId);
+		params.put("linkBranchId",user.getBranchId());
+		List<Map<String,Object>>	xmProductList = xmProductService.selectListMapByWhereWithState(params);	//列出XmProduct列表
 
-		m.put("tips", tips);
-		return m;
 	}
 
 	/***/
@@ -195,8 +192,8 @@ public class XmProductController {
 	})
 	//@HasQx(value = "xm_core_xmProduct_copyTo",name = "通过复制创建产品/战略规划等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/copyTo",method=RequestMethod.POST)
-	public Map<String,Object> copyTo(@RequestBody XmProductCopyVo xmProduct) {
-		Map<String,Object> m = new HashMap<>();
+	public Result copyTo(@RequestBody XmProductCopyVo xmProduct) {
+		
 		Tips tips=new Tips("拷贝成功");
 		try{
 			User user= LoginUtils.getCurrentUserInfo();
@@ -219,7 +216,7 @@ public class XmProductController {
 			XmProduct xmProductNew=xmProductService.copyTo(user,xmProduct);
 			this.xmProductStateService.loadTasksToXmProductState(xmProductNew.getId());
 			xmRecordService.addXmProductRecord(xmProductNew.getId(),"通过拷贝创建产品","拷贝产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】,创建新的产品【"+xmProductNew.getId()+"】【"+xmProductNew.getProductName()+"】","参数:"+ JSON.toJSONString(xmProduct),"");
-			m.put("data",xmProductNew);
+			
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -227,8 +224,7 @@ public class XmProductController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	/***/
@@ -238,8 +234,8 @@ public class XmProductController {
 	})
 	//@HasQx(value = "xm_core_xmProduct_add",name = "创建产品/战略规划等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmProduct(@RequestBody XmProductAddVo xmProduct) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmProduct(@RequestBody XmProductAddVo xmProduct) {
+		
 		Tips tips=new Tips("创建产品成功");
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
@@ -306,16 +302,7 @@ public class XmProductController {
 			}
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"创建产品","创建产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】");
 			xmProductStateService.loadTasksToXmProductState(xmProduct.getId());
-			m.put("data",xmProduct);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	/***/
 	@ApiOperation( value = "从回收站恢复产品",notes="unDelXmProduct,仅需要上传主键字段")
@@ -324,8 +311,8 @@ public class XmProductController {
 	})
 	//@HasQx(value = "xm_core_xmProduct_unDel",name = "从回收站恢复产品等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/unDel",method=RequestMethod.POST)
-	public Map<String,Object> unDelXmProduct(@RequestBody XmProduct xmProduct){
-		Map<String,Object> m = new HashMap<>();
+	public Result unDelXmProduct(@RequestBody XmProduct xmProduct){
+		
 		Tips tips=new Tips("成功从回收站恢复产品");
 		try{
 			if(!StringUtils.hasText(xmProduct.getId())){
@@ -371,8 +358,7 @@ public class XmProductController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	/***/
@@ -382,8 +368,8 @@ public class XmProductController {
 	})
 	//@HasQx(value = "xm_core_xmProduct_del",name = "删除产品/战略规划等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmProduct(@RequestBody XmProduct xmProduct){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmProduct(@RequestBody XmProduct xmProduct){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			if(!StringUtils.hasText(xmProduct.getId())){
@@ -422,15 +408,8 @@ public class XmProductController {
 			xmProductService.clearCache(xmProduct.getId());
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"删除产品",user.getUsername()+"删除产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】","",JSON.toJSONString(xmProductDb));
 
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	@ApiOperation( value = "批量修改某些字段",notes="")
 	@ApiEntityParams( value = XmProduct.class, props={ }, remark = "产品", paramType = "body" )
@@ -438,8 +417,8 @@ public class XmProductController {
 			@ApiResponse(code = 200,response=XmProduct.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmProductMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmProductMap) {
+		
 		Tips tips=new Tips("成功更新");
 		try{
 			List<String> ids= (List<String>) xmProductMap.get("ids");
@@ -520,8 +499,7 @@ public class XmProductController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	/***/
@@ -531,13 +509,13 @@ public class XmProductController {
 	})
 	//@HasQx(value = "xm_core_xmProduct_createProductCode",name = "创建产品代号",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/createProductCode",method=RequestMethod.POST)
-	public Map<String,Object> createProductCode() {
-		Map<String,Object> m = new HashMap<>();
+	public Result createProductCode() {
+		
 		Tips tips=new Tips("成功创建产品代号");
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
 			String data=this.xmProductService.createProductCode(user.getBranchId());
-			m.put("data",data);
+			
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -545,8 +523,7 @@ public class XmProductController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 
@@ -557,8 +534,8 @@ public class XmProductController {
 	})
 	//@HasQx(value = "xm_core_xmProduct_edit",name = "修改产品/战略规划等基本信息",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmProduct(@RequestBody XmProduct xmProduct) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmProduct(@RequestBody XmProduct xmProduct) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 
@@ -592,16 +569,7 @@ public class XmProductController {
 			if(StringUtils.hasText(xmProduct.getAdmUserid()) && !xmProduct.getAdmUserid().equals(xmProductDb.getAdmUserid()) ){
 				notifyMsgService.pushMsg(user,xmProduct.getAdmUserid(),xmProduct.getAdmUsername(),"3",xmProductDb.getId(),xmProductDb.getId(),"您成为产品【"+xmProductDb.getProductName()+"】的产品总监，请及时跟进。");
 			}
-			m.put("data",xmProduct);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	
@@ -614,8 +582,8 @@ public class XmProductController {
 	})
 	//@HasQx(value = "xm_core_xmProduct_batchDel",name = "批量删除产品/战略规划等基本信息",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmProduct(@RequestBody List<XmProduct> xmProducts) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmProduct(@RequestBody List<XmProduct> xmProducts) {
+		
 		Tips tips=new Tips("成功删除"+xmProducts.size()+"条数据"); 
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
@@ -676,15 +644,8 @@ public class XmProductController {
 			}
 			return tips;
 
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 */
 	

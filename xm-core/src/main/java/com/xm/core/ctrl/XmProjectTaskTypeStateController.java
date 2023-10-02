@@ -1,9 +1,10 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.xm.core.entity.XmProjectTaskTypeState;
 import com.xm.core.service.XmProjectTaskTypeStateService;
 import io.swagger.annotations.*;
@@ -14,7 +15,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -75,16 +75,17 @@ public class XmProjectTaskTypeStateController {
 		@ApiResponse(code = 200,response= XmProjectTaskTypeState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmProjectTaskTypeState( @ApiIgnore @RequestParam Map<String,Object> xmProjectTaskTypeState){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmProjectTaskTypeState, "ids");
-		PageUtils.startPage(xmProjectTaskTypeState);
-		List<Map<String,Object>>	xmProjectTaskTypeStateList = xmProjectTaskTypeStateService.selectListMapByWhere(xmProjectTaskTypeState);	//列出XmProjectTaskTypeState列表
-		PageUtils.responePage(m, xmProjectTaskTypeStateList);
-		m.put("data",xmProjectTaskTypeStateList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+	public Result listXmProjectTaskTypeState(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmProjectTaskTypeStateService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectTaskTypeState列表
+		
+		
+		
+		
 	}
 	
 	@ApiOperation( value = "从任务表汇总数据到项目任务类型汇总表",notes="")
@@ -92,8 +93,8 @@ public class XmProjectTaskTypeStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/loadTasksToXmProjectTaskTypeState",method=RequestMethod.POST)
-	public Map<String,Object> loadTasksToXmProjectTaskTypeState(@RequestBody XmProjectTaskTypeState xmProjectTaskTypeState){
-		Map<String,Object> m = new HashMap<>();
+	public Result loadTasksToXmProjectTaskTypeState(@RequestBody XmProjectTaskTypeState xmProjectTaskTypeState){
+		
 		Tips tips=new Tips("成功更新一个项目数据");
 		try{
 			if(StringUtils.isEmpty(xmProjectTaskTypeState.getProjectId())) {
@@ -102,15 +103,8 @@ public class XmProjectTaskTypeStateController {
 	
 				xmProjectTaskTypeStateService.loadTasksToXmProjectTaskTypeState(xmProjectTaskTypeState.getBranchId());
 			}
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	
 	/**
@@ -119,8 +113,8 @@ public class XmProjectTaskTypeStateController {
 		@ApiResponse(code = 200,response=XmProjectTaskTypeState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmProjectTaskTypeState(@RequestBody XmProjectTaskTypeState xmProjectTaskTypeState) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmProjectTaskTypeState(@RequestBody XmProjectTaskTypeState xmProjectTaskTypeState) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(StringUtils.isEmpty(xmProjectTaskTypeState.getId())) {
@@ -134,16 +128,7 @@ public class XmProjectTaskTypeStateController {
 				}
 			}
 			xmProjectTaskTypeStateService.insert(xmProjectTaskTypeState);
-			m.put("data",xmProjectTaskTypeState);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -153,20 +138,13 @@ public class XmProjectTaskTypeStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmProjectTaskTypeState(@RequestBody XmProjectTaskTypeState xmProjectTaskTypeState){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmProjectTaskTypeState(@RequestBody XmProjectTaskTypeState xmProjectTaskTypeState){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			xmProjectTaskTypeStateService.deleteByPk(xmProjectTaskTypeState);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 */
 	
@@ -176,21 +154,12 @@ public class XmProjectTaskTypeStateController {
 		@ApiResponse(code = 200,response=XmProjectTaskTypeState.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmProjectTaskTypeState(@RequestBody XmProjectTaskTypeState xmProjectTaskTypeState) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmProjectTaskTypeState(@RequestBody XmProjectTaskTypeState xmProjectTaskTypeState) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			xmProjectTaskTypeStateService.updateByPk(xmProjectTaskTypeState);
-			m.put("data",xmProjectTaskTypeState);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -202,20 +171,13 @@ public class XmProjectTaskTypeStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmProjectTaskTypeState(@RequestBody List<XmProjectTaskTypeState> xmProjectTaskTypeStates) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmProjectTaskTypeState(@RequestBody List<XmProjectTaskTypeState> xmProjectTaskTypeStates) {
+		
 		Tips tips=new Tips("成功删除"+xmProjectTaskTypeStates.size()+"条数据"); 
-		try{ 
+		
 			xmProjectTaskTypeStateService.batchDelete(xmProjectTaskTypeStates);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	*/
 }

@@ -1,9 +1,11 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -68,19 +70,17 @@ public class XmTestCasedbController {
 		@ApiResponse(code = 200,response=XmTestCasedb.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTestCasedb( @ApiIgnore @RequestParam Map<String,Object> xmTestCasedb){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmTestCasedb, "ids");
+	public Result listXmTestCasedb(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
 		User user=LoginUtils.getCurrentUserInfo();
 		xmTestCasedb.put("pbranchId",user.getBranchId());
-		PageUtils.startPage(xmTestCasedb);
-		List<Map<String,Object>>	xmTestCasedbList = xmTestCasedbService.selectListMapByWhere(xmTestCasedb);	//列出XmTestCasedb列表
-		PageUtils.responePage(m, xmTestCasedbList);
-		m.put("data",xmTestCasedbList);
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmTestCasedbService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestCasedb列表
 
-		m.put("tips", tips);
-		return m;
 	}
 	
  
@@ -90,8 +90,8 @@ public class XmTestCasedbController {
 		@ApiResponse(code = 200,response=XmTestCasedb.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmTestCasedb(@RequestBody XmTestCasedb xmTestCasedb) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmTestCasedb(@RequestBody XmTestCasedb xmTestCasedb) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 		    boolean createPk=false;
@@ -122,16 +122,7 @@ public class XmTestCasedbController {
 			xmTestCasedb.setCusername(user.getUsername());
 			xmTestCasedb.setCbranchId(user.getBranchId());
 			xmTestCasedbService.insert(xmTestCasedb);
-			m.put("data",xmTestCasedb);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "删除一条测试用例库信息",notes=" ")
@@ -139,8 +130,8 @@ public class XmTestCasedbController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmTestCasedb(@RequestBody XmTestCasedb xmTestCasedb){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmTestCasedb(@RequestBody XmTestCasedb xmTestCasedb){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
             if(!StringUtils.hasText(xmTestCasedb.getId())) {
@@ -160,15 +151,8 @@ public class XmTestCasedbController {
 				}
 			}
 			xmTestCasedbService.deleteByPk(xmTestCasedb);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 	@ApiOperation( value = "根据主键修改一条测试用例库信息",notes=" ")
@@ -176,8 +160,8 @@ public class XmTestCasedbController {
 		@ApiResponse(code = 200,response=XmTestCasedb.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmTestCasedb(@RequestBody XmTestCasedb xmTestCasedb) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmTestCasedb(@RequestBody XmTestCasedb xmTestCasedb) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmTestCasedb.getId())) {
@@ -204,16 +188,7 @@ public class XmTestCasedbController {
 				}
  			}
 			xmTestCasedbService.updateSomeFieldByPk(xmTestCasedb);
-			m.put("data",xmTestCasedb);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
     @ApiOperation( value = "批量修改某些字段",notes="")
@@ -222,8 +197,8 @@ public class XmTestCasedbController {
 			@ApiResponse(code = 200,response=XmTestCasedb.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTestCasedbMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTestCasedbMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             List<String> ids= (List<String>) xmTestCasedbMap.get("ids");
@@ -298,7 +273,7 @@ public class XmTestCasedbController {
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -306,8 +281,7 @@ public class XmTestCasedbController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "根据主键列表批量删除测试用例库信息",notes=" ")
@@ -315,10 +289,10 @@ public class XmTestCasedbController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmTestCasedb(@RequestBody List<XmTestCasedb> xmTestCasedbs) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmTestCasedb(@RequestBody List<XmTestCasedb> xmTestCasedbs) {
+		
         Tips tips=new Tips("成功删除"); 
-        try{ 
+        
             if(xmTestCasedbs.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
             }

@@ -1,11 +1,13 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -74,20 +76,18 @@ public class XmTestPlanCaseController {
 		@ApiResponse(code = 200,response=XmTestPlanCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTestPlanCase( @ApiIgnore @RequestParam Map<String,Object> xmTestPlanCase){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmTestPlanCase, "pkList");
-		PageUtils.startPage(xmTestPlanCase);
+	public Result listXmTestPlanCase(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "pkList");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 
 		User user= LoginUtils.getCurrentUserInfo();
-		paramsInit(xmTestPlanCase);
-		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.selectListMapByWhere(xmTestPlanCase);	//列出XmTestPlanCase列表
-		PageUtils.responePage(m, xmTestPlanCaseList);
-		m.put("data",xmTestPlanCaseList);
+		paramsInit(params);
+		List<Map<String,Object>> datas = xmTestPlanCaseService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestPlanCase列表
 
-		m.put("tips", tips);
-		return m;
 	}
 
 	public void paramsInit(Map<String,Object> xmTestPlanCase){
@@ -115,18 +115,15 @@ public class XmTestPlanCaseController {
 			@ApiResponse(code = 200,response=XmTestPlanCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/getXmTestPlanCaseExecStatusDist",method=RequestMethod.GET)
-	public Map<String,Object> getXmTestPlanCaseExecStatusDist( @ApiIgnore @RequestParam Map<String,Object> xmTestPlanCase){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		PageUtils.startPage(xmTestPlanCase);
+	public Result getXmTestPlanCaseExecStatusDist(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
-		paramsInit(xmTestPlanCase);
-		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestPlanCaseExecStatusDist(xmTestPlanCase);	//列出XmTestPlanCase列表
-		PageUtils.responePage(m, xmTestPlanCaseList);
-		m.put("data",xmTestPlanCaseList);
+		paramsInit(params);
+		List<Map<String,Object>>	datas = xmTestPlanCaseService.getXmTestPlanCaseExecStatusDist(params);	//列出XmTestPlanCase列表
 
-		m.put("tips", tips);
-		return m;
 	}
 
 
@@ -135,17 +132,14 @@ public class XmTestPlanCaseController {
 			@ApiResponse(code = 200,response=XmTestPlanCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/getXmTestPlanCaseUserDist",method=RequestMethod.GET)
-	public Map<String,Object> getXmTestPlanCaseUserDist( @ApiIgnore @RequestParam Map<String,Object> xmTestPlanCase){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		PageUtils.startPage(xmTestPlanCase);
-		paramsInit(xmTestPlanCase);
-		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestPlanCaseUserDist(xmTestPlanCase);	//列出XmTestPlanCase列表
-		PageUtils.responePage(m, xmTestPlanCaseList);
-		m.put("data",xmTestPlanCaseList);
+	public Result getXmTestPlanCaseUserDist(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		paramsInit(params);
+		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestPlanCaseUserDist(params);	//列出XmTestPlanCase列表
 
-		m.put("tips", tips);
-		return m;
 	}
 
 
@@ -154,36 +148,30 @@ public class XmTestPlanCaseController {
 			@ApiResponse(code = 200,response=XmTestPlanCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/getXmTestDayTimesList",method=RequestMethod.GET)
-	public Map<String,Object> getXmTestDayTimesList( @ApiIgnore @RequestParam Map<String,Object> xmTestPlanCase){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		PageUtils.startPage(xmTestPlanCase);
+	public Result getXmTestDayTimesList(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
-		paramsInit(xmTestPlanCase);
-		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestDayTimesList(xmTestPlanCase);	//列出XmTestPlanCase列表
-		PageUtils.responePage(m, xmTestPlanCaseList);
-		m.put("data",xmTestPlanCaseList);
+		paramsInit(params);
+		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestDayTimesList(params);	//列出XmTestPlanCase列表
 
-		m.put("tips", tips);
-		return m;
 	}
 	@ApiOperation( value = "查询测试用例规划到测试计划的数目",notes=" ")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTestPlanCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/getXmTestCaseToPlanCalcList",method=RequestMethod.GET)
-	public Map<String,Object> getXmTestCaseToPlanCalcList( @ApiIgnore @RequestParam Map<String,Object> xmTestPlanCase){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		PageUtils.startPage(xmTestPlanCase);
+	public Result getXmTestCaseToPlanCalcList(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
-		paramsInit(xmTestPlanCase);
-		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestCaseToPlanCalcList(xmTestPlanCase);	//列出XmTestPlanCase列表
-		PageUtils.responePage(m, xmTestPlanCaseList);
-		m.put("data",xmTestPlanCaseList);
+		paramsInit(params);
+		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestCaseToPlanCalcList(params);	//列出XmTestPlanCase列表
 
-		m.put("tips", tips);
-		return m;
 	}
 
 
@@ -194,8 +182,8 @@ public class XmTestPlanCaseController {
 			@ApiResponse(code = 200,response=XmTestPlanCase.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/importFromTestCase",method=RequestMethod.POST)
-	public Map<String,Object> importFromTestCase(@RequestBody ImportFromTestCaseVo importFromTestCaseVo) {
-		Map<String,Object> m = new HashMap<>();
+	public Result importFromTestCase(@RequestBody ImportFromTestCaseVo importFromTestCaseVo) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(importFromTestCaseVo.getCaseIds()==null || importFromTestCaseVo.getCaseIds().size()==0){
@@ -254,16 +242,15 @@ public class XmTestPlanCaseController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	@ApiOperation( value = "删除一条测试计划与用例关系表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmTestPlanCase(@RequestBody XmTestPlanCase xmTestPlanCase){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmTestPlanCase(@RequestBody XmTestPlanCase xmTestPlanCase){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
             if(!StringUtils.hasText(xmTestPlanCase.getCaseId())) {
@@ -286,15 +273,8 @@ public class XmTestPlanCaseController {
             	return failed(tips);
 			}
 			xmTestPlanCaseService.deleteByPk(xmTestPlanCase);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 	@ApiOperation( value = "根据主键修改一条测试计划与用例关系表信息",notes=" ")
@@ -302,8 +282,8 @@ public class XmTestPlanCaseController {
 		@ApiResponse(code = 200,response=XmTestPlanCase.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmTestPlanCase(@RequestBody XmTestPlanCase xmTestPlanCase) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmTestPlanCase(@RequestBody XmTestPlanCase xmTestPlanCase) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmTestPlanCase.getCaseId())) {
@@ -326,16 +306,7 @@ public class XmTestPlanCaseController {
 				return failed(tips);
 			}
 			xmTestPlanCaseService.updateSomeFieldByPk(xmTestPlanCase);
-			m.put("data",xmTestPlanCase);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
     @ApiOperation( value = "批量修改某些字段",notes="")
@@ -344,8 +315,8 @@ public class XmTestPlanCaseController {
 			@ApiResponse(code = 200,response=XmTestPlanCase.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTestPlanCaseMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTestPlanCaseMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			List<Map<String,Object>> pkList= (List<Map<String,Object>>) xmTestPlanCaseMap.get("pkList");
@@ -427,7 +398,7 @@ public class XmTestPlanCaseController {
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -435,8 +406,7 @@ public class XmTestPlanCaseController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "根据主键列表批量删除测试计划与用例关系表信息",notes=" ")
@@ -444,10 +414,10 @@ public class XmTestPlanCaseController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmTestPlanCase(@RequestBody List<XmTestPlanCase> xmTestPlanCases) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmTestPlanCase(@RequestBody List<XmTestPlanCase> xmTestPlanCases) {
+		
         Tips tips=new Tips("成功删除"); 
-        try{ 
+        
             if(xmTestPlanCases.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
             }

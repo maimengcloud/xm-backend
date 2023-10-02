@@ -1,11 +1,13 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
@@ -62,16 +64,17 @@ public class XmProductProjectLinkController {
 		@ApiResponse(code = 200,response=XmProductProjectLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmProductProjectLink( @ApiIgnore @RequestParam Map<String,Object> xmProductProjectLink){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmProductProjectLink, "projectIds");
-		PageUtils.startPage(xmProductProjectLink);
-		List<Map<String,Object>>	xmProductProjectLinkList = xmProductProjectLinkService.selectListMapByWhere(xmProductProjectLink);	//列出XmProductProjectLink列表
-		PageUtils.responePage(m, xmProductProjectLinkList);
-		m.put("data",xmProductProjectLinkList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+	public Result listXmProductProjectLink(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "projectIds");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmProductProjectLinkService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProductProjectLink列表
+		
+		
+		
+		
 	}
 	
  
@@ -81,8 +84,8 @@ public class XmProductProjectLinkController {
 		@ApiResponse(code = 200,response=XmProductProjectLink.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmProductProjectLink(@RequestBody XmProductProjectLink xmProductProjectLink) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmProductProjectLink(@RequestBody XmProductProjectLink xmProductProjectLink) {
+		
 		Tips tips=new Tips("成功加入");
 		try{
 			User user = LoginUtils.getCurrentUserInfo();
@@ -111,16 +114,7 @@ public class XmProductProjectLinkController {
 			xmProductProjectLink.setCuserid(user.getUserid());
 			xmProductProjectLink.setCusername(user.getUsername());
 			xmProductProjectLinkService.insert(xmProductProjectLink);
-			m.put("data",xmProductProjectLink);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "删除一条产品与项目的关联关系表，一般由产品经理挂接项目到产品上信息",notes=" ")
@@ -128,8 +122,8 @@ public class XmProductProjectLinkController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmProductProjectLink(@RequestBody XmProductProjectLink xmProductProjectLink){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmProductProjectLink(@RequestBody XmProductProjectLink xmProductProjectLink){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			User user = LoginUtils.getCurrentUserInfo();
@@ -149,15 +143,8 @@ public class XmProductProjectLinkController {
 				return ResponseHelper.failed("tasks-not-0","存在至少"+tasks.size()+"个任务与产品关联，不能移出.关联任务【"+tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			xmProductProjectLinkService.deleteByPk(xmProductProjectLink);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	
 	/**
@@ -166,21 +153,12 @@ public class XmProductProjectLinkController {
 		@ApiResponse(code = 200,response=XmProductProjectLink.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmProductProjectLink(@RequestBody XmProductProjectLink xmProductProjectLink) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmProductProjectLink(@RequestBody XmProductProjectLink xmProductProjectLink) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			xmProductProjectLinkService.updateByPk(xmProductProjectLink);
-			m.put("data",xmProductProjectLink);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 
@@ -189,8 +167,8 @@ public class XmProductProjectLinkController {
 			@ApiResponse(code = 200,response= XmMenu.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
  	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> map) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields(@RequestBody Map<String,Object> map) {
+		
 		Tips tips=new Tips("成功更新");
 		try{
 			List<Map<String,Object>> ids= (List<Map<String, Object>>) map.get("pkList");
@@ -221,8 +199,7 @@ public class XmProductProjectLinkController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	/**
@@ -231,20 +208,13 @@ public class XmProductProjectLinkController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmProductProjectLink(@RequestBody List<XmProductProjectLink> xmProductProjectLinks) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmProductProjectLink(@RequestBody List<XmProductProjectLink> xmProductProjectLinks) {
+		
 		Tips tips=new Tips("成功删除"+xmProductProjectLinks.size()+"条数据"); 
-		try{ 
+		
 			xmProductProjectLinkService.batchDelete(xmProductProjectLinks);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	*/
 }

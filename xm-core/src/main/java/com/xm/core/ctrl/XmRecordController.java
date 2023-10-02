@@ -1,8 +1,9 @@
 package com.xm.core.ctrl;
 
-import com.mdp.core.entity.Tips;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.xm.core.entity.XmRecord;
 import com.xm.core.service.XmRecordService;
 import io.swagger.annotations.*;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -69,16 +69,17 @@ public class XmRecordController {
 		@ApiResponse(code = 200,response= XmRecord.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmRecord( @ApiIgnore @RequestParam Map<String,Object> xmRecord){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmRecord, "ids");
-		PageUtils.startPage(xmRecord);
-		List<Map<String,Object>>	xmRecordList = xmRecordService.selectListMapByWhere(xmRecord);	//列出XmRecord列表
-		PageUtils.responePage(m, xmRecordList);
-		m.put("data",xmRecordList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+	public Result listXmRecord(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmRecordService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmRecord列表
+		
+		
+		
+		
 	}
 	
  
@@ -89,8 +90,8 @@ public class XmRecordController {
 		@ApiResponse(code = 200,response=XmRecord.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmRecord(@RequestBody XmRecord xmRecord) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmRecord(@RequestBody XmRecord xmRecord) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(StringUtils.isEmpty(xmRecord.getId())) {
@@ -104,16 +105,7 @@ public class XmRecordController {
 				}
 			}
 			xmRecordService.insert(xmRecord);
-			m.put("data",xmRecord);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -123,20 +115,13 @@ public class XmRecordController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmRecord(@RequestBody XmRecord xmRecord){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmRecord(@RequestBody XmRecord xmRecord){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			xmRecordService.deleteByPk(xmRecord);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 */
 	
@@ -146,21 +131,12 @@ public class XmRecordController {
 		@ApiResponse(code = 200,response=XmRecord.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmRecord(@RequestBody XmRecord xmRecord) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmRecord(@RequestBody XmRecord xmRecord) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			xmRecordService.updateByPk(xmRecord);
-			m.put("data",xmRecord);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -172,20 +148,13 @@ public class XmRecordController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmRecord(@RequestBody List<XmRecord> xmRecords) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmRecord(@RequestBody List<XmRecord> xmRecords) {
+		
 		Tips tips=new Tips("成功删除"+xmRecords.size()+"条数据"); 
-		try{ 
+		
 			xmRecordService.batchDelete(xmRecords);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	*/
 }

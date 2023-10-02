@@ -1,9 +1,10 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
-import com.mdp.mybatis.PageUtils;
-import com.mdp.qx.HasQx;
+import com.mdp.core.query.QueryTools;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmTaskSkill;
 import com.xm.core.service.XmTaskSkillService;
@@ -17,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -51,15 +51,16 @@ public class XmTaskSkillController {
 		@ApiResponse(code = 200,response= XmTaskSkill.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTaskSkill( @ApiIgnore @RequestParam Map<String,Object> xmTaskSkill){
-		Map<String,Object> m = new HashMap<>();
-		PageUtils.startPage(xmTaskSkill);
-		List<Map<String,Object>>	xmTaskSkillList = xmTaskSkillService.selectListMapByWhere(xmTaskSkill);	//列出XmTaskSkill列表
-		PageUtils.responePage(m, xmTaskSkillList);
-		m.put("data",xmTaskSkillList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+	public Result listXmTaskSkill(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmTaskSkillService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskSkill列表
+		
+		
+		
+		
 	}
 	
 	@ApiOperation( value = "批量添加技能",notes="batchDelXmTaskSkill,仅需要上传主键字段")
@@ -68,8 +69,8 @@ public class XmTaskSkillController {
 	})
 	//@HasQx(value = "xm_core_xmTaskSkill_batchAdd",name = "批量新增任务的技能要求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
-	public Map<String,Object> batchAddSkill(@RequestBody List<XmTaskSkill> xmTaskSkills) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchAddSkill(@RequestBody List<XmTaskSkill> xmTaskSkills) {
+		
 		Tips tips=new Tips("成功添加"+xmTaskSkills.size()+"条数据");
 		try{
 			xmTaskSkillService.insertOrDelete(xmTaskSkills);
@@ -80,8 +81,7 @@ public class XmTaskSkillController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
  
@@ -92,8 +92,8 @@ public class XmTaskSkillController {
 		@ApiResponse(code = 200,response=XmTaskSkill.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmTaskSkill(@RequestBody XmTaskSkill xmTaskSkill) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmTaskSkill(@RequestBody XmTaskSkill xmTaskSkill) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(StringUtils.isEmpty(xmTaskSkill.getId())) {
@@ -107,16 +107,7 @@ public class XmTaskSkillController {
 				}
 			}
 			xmTaskSkillService.insert(xmTaskSkill);
-			m.put("data",xmTaskSkill);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -126,20 +117,13 @@ public class XmTaskSkillController {
 	})
 	//@HasQx(value = "xm_core_xmTaskSkill_del",name = "删除任务的技能要求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmTaskSkill(@RequestBody XmTaskSkill xmTaskSkill){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmTaskSkill(@RequestBody XmTaskSkill xmTaskSkill){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			xmTaskSkillService.deleteByPk(xmTaskSkill);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	
 	/**
@@ -148,21 +132,12 @@ public class XmTaskSkillController {
 		@ApiResponse(code = 200,response=XmTaskSkill.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmTaskSkill(@RequestBody XmTaskSkill xmTaskSkill) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmTaskSkill(@RequestBody XmTaskSkill xmTaskSkill) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			xmTaskSkillService.updateByPk(xmTaskSkill);
-			m.put("data",xmTaskSkill);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -174,20 +149,13 @@ public class XmTaskSkillController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmTaskSkill(@RequestBody List<XmTaskSkill> xmTaskSkills) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmTaskSkill(@RequestBody List<XmTaskSkill> xmTaskSkills) {
+		
 		Tips tips=new Tips("成功删除"+xmTaskSkills.size()+"条数据"); 
-		try{ 
+		
 			xmTaskSkillService.batchDelete(xmTaskSkills);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	*/
 }

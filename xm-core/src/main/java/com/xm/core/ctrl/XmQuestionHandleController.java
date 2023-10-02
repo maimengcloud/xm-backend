@@ -1,9 +1,11 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.xm.core.entity.XmQuestionHandle;
 import com.xm.core.service.XmQuestionHandleService;
 import io.swagger.annotations.*;
@@ -14,7 +16,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -71,16 +72,17 @@ public class XmQuestionHandleController {
 		@ApiResponse(code = 200,response= XmQuestionHandle.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmQuestionHandle( @ApiIgnore @RequestParam Map<String,Object> xmQuestionHandle){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmQuestionHandle, "ids");
-		PageUtils.startPage(xmQuestionHandle);
-		List<Map<String,Object>>	xmQuestionHandleList = xmQuestionHandleService.selectListMapByWhere(xmQuestionHandle);	//列出XmQuestionHandle列表
-		PageUtils.responePage(m, xmQuestionHandleList);
-		m.put("data",xmQuestionHandleList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+	public Result listXmQuestionHandle(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmQuestionHandleService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmQuestionHandle列表
+		
+		
+		
+		
 	}
 	
  
@@ -90,8 +92,8 @@ public class XmQuestionHandleController {
 		@ApiResponse(code = 200,response=XmQuestionHandle.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmQuestionHandle(@RequestBody XmQuestionHandle xmQuestionHandle) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmQuestionHandle(@RequestBody XmQuestionHandle xmQuestionHandle) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(StringUtils.isEmpty(xmQuestionHandle.getId())) {
@@ -105,7 +107,7 @@ public class XmQuestionHandleController {
 				}
 			}
 			xmQuestionHandleService.insert(xmQuestionHandle);
-			m.put("data",xmQuestionHandle);
+			
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -113,8 +115,7 @@ public class XmQuestionHandleController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	/**
@@ -123,20 +124,13 @@ public class XmQuestionHandleController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmQuestionHandle(@RequestBody XmQuestionHandle xmQuestionHandle){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmQuestionHandle(@RequestBody XmQuestionHandle xmQuestionHandle){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			xmQuestionHandleService.deleteByPk(xmQuestionHandle);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 */
 	
@@ -146,21 +140,12 @@ public class XmQuestionHandleController {
 		@ApiResponse(code = 200,response=XmQuestionHandle.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmQuestionHandle(@RequestBody XmQuestionHandle xmQuestionHandle) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmQuestionHandle(@RequestBody XmQuestionHandle xmQuestionHandle) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			xmQuestionHandleService.updateByPk(xmQuestionHandle);
-			m.put("data",xmQuestionHandle);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -172,20 +157,13 @@ public class XmQuestionHandleController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmQuestionHandle(@RequestBody List<XmQuestionHandle> xmQuestionHandles) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmQuestionHandle(@RequestBody List<XmQuestionHandle> xmQuestionHandles) {
+		
 		Tips tips=new Tips("成功删除"+xmQuestionHandles.size()+"条数据"); 
-		try{ 
+		
 			xmQuestionHandleService.batchDelete(xmQuestionHandles);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	*/
 }

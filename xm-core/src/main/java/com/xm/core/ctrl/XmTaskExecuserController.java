@@ -1,13 +1,15 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.meta.client.service.ItemService;
 import com.mdp.msg.client.PushNotifyMsgService;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -21,7 +23,10 @@ import com.xm.core.service.client.MkClient;
 import com.xm.core.service.client.SysClient;
 import com.xm.core.vo.XmGroupVo;
 import com.xm.core.vo.XmTaskAcceptanceVo;
-import io.swagger.annotations.*;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -103,27 +108,28 @@ public class XmTaskExecuserController {
 		@ApiResponse(code = 200,response= XmTaskExecuser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTaskExecuser( @ApiIgnore @RequestParam Map<String,Object> xmTaskExecuser){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmTaskExecuser, "ids");
-		PageUtils.startPage(xmTaskExecuser);
+	public Result listXmTaskExecuser(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		String projectId= (String) xmTaskExecuser.get("projectId");
+		String projectId= (String) params.get("projectId");
 		if(StringUtils.hasText(projectId)){
 			if(!groupService.checkUserExistsProjectGroup(projectId,user.getUserid())){
-				xmTaskExecuser.put("linkBranchId",user.getBranchId());
+				params.put("linkBranchId",user.getBranchId());
 			}
 		}else{
-			xmTaskExecuser.put("linkBranchId",user.getBranchId());
+			params.put("linkBranchId",user.getBranchId());
 		}
 
 
-		List<Map<String,Object>>	xmTaskExecuserList = xmTaskExecuserService.selectListMapByWhere(xmTaskExecuser);	//列出XmTaskExecuser列表
-		PageUtils.responePage(m, xmTaskExecuserList);
-		m.put("data",xmTaskExecuserList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+		List<Map<String,Object>> datas = xmTaskExecuserService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskExecuser列表
+		
+		
+		
+		
 	}
 
 
@@ -133,25 +139,25 @@ public class XmTaskExecuserController {
 			@ApiResponse(code = 200,response= XmTaskExecuser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listWithTask",method=RequestMethod.GET)
-	public Map<String,Object> listXmTaskExecuserWithTask( @ApiIgnore @RequestParam Map<String,Object> xmTaskExecuser){
-		Map<String,Object> m = new HashMap<>();
-		RequestUtils.transformArray(xmTaskExecuser, "ids");
-		PageUtils.startPage(xmTaskExecuser);
+	public Result listXmTaskExecuserWithTask(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		String projectId= (String) xmTaskExecuser.get("projectId");
+		String projectId= (String) params.get("projectId");
 		if(StringUtils.hasText(projectId)){
 			if(!groupService.checkUserExistsProjectGroup(projectId,user.getUserid())){
-				xmTaskExecuser.put("linkBranchId",user.getBranchId());
+				params.put("linkBranchId",user.getBranchId());
 			}
 		}else{
-			xmTaskExecuser.put("linkBranchId",user.getBranchId());
+			params.put("linkBranchId",user.getBranchId());
 		}
-		List<Map<String,Object>>	xmTaskExecuserList = xmTaskExecuserService.selectListMapByWhereWithTask(xmTaskExecuser);	//列出XmTaskExecuser列表
-		PageUtils.responePage(m, xmTaskExecuserList);
-		m.put("data",xmTaskExecuserList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+		List<Map<String,Object>>	datas = xmTaskExecuserService.selectListMapByWhereWithTask(params);	//列出XmTaskExecuser列表
+		
+		return Result.ok().setData(datas).setTotal(page.getTotal());
+		
+		
 	}
 	
 	@ApiOperation( value = "新增一条xm_task_execuser信息",notes="addXmTaskExecuser,主键如果为空，后台自动生成")
@@ -160,8 +166,8 @@ public class XmTaskExecuserController {
 	})
 	////@HasQx(value = "xm_core_xmTaskExecuser_add",name = "新增任务执行者",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmTaskExecuser(@RequestBody XmTaskExecuser xmTaskExecuser) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmTaskExecuser(@RequestBody XmTaskExecuser xmTaskExecuser) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 
@@ -233,16 +239,7 @@ public class XmTaskExecuserController {
 			}
 			sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTaskDb.getId(),xmTaskDb.getBudgetAt(),xmTaskDb.getBudgetWorkload(),1);
 
-			m.put("data",xmTaskExecuser);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	@ApiOperation( value = "执行人离开任务",notes="editXmTaskExecuser")
@@ -251,8 +248,8 @@ public class XmTaskExecuserController {
 	})
 	////@HasQx(value = "xm_core_xmTaskExecuser_leave",name = "执行人离开任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/leave",method=RequestMethod.POST)
-	public Map<String,Object> leave(@RequestBody List<XmTaskExecuser> xmTaskExecusers) {
-		Map<String,Object> m = new HashMap<>();
+	public Result leave(@RequestBody List<XmTaskExecuser> xmTaskExecusers) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			if(xmTaskExecusers==null || xmTaskExecusers.size()==0){
@@ -319,8 +316,7 @@ public class XmTaskExecuserController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 
@@ -330,8 +326,8 @@ public class XmTaskExecuserController {
 	})
 	////@HasQx(value = "xm_core_xmTaskExecuser_execute",name = "修改任务执行人基础信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/execute",method=RequestMethod.POST)
-	public Map<String,Object> execute(@RequestBody  XmTaskExecuser xmTaskExecuser) {
-		Map<String,Object> m = new HashMap<>();
+	public Result execute(@RequestBody  XmTaskExecuser xmTaskExecuser) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			/**
@@ -404,7 +400,7 @@ public class XmTaskExecuserController {
 					xmTaskExecuserService.becomeExecute(xmTask,xmTaskExecuser);
 					tips.setOkMsg("变更成功");
 				}
-				m.put("data",xmTaskExecuser);
+				
 
 			}
  			
@@ -415,8 +411,7 @@ public class XmTaskExecuserController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "验收付款",notes="acceptance")
@@ -425,8 +420,8 @@ public class XmTaskExecuserController {
 	})
 	////@HasQx(value = "xm_core_xmTaskExecuser_execute",name = "修改任务执行人基础信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/acceptance",method=RequestMethod.POST)
-	public Map<String,Object> acceptance(@RequestBody XmTaskAcceptanceVo xmTaskAcceptanceVo) {
-		Map<String,Object> m = new HashMap<>();
+	public Result acceptance(@RequestBody XmTaskAcceptanceVo xmTaskAcceptanceVo) {
+		
 		Tips tips=new Tips("成功验收");
 		try{
 			String taskId=xmTaskAcceptanceVo.getTaskId();
@@ -508,8 +503,7 @@ public class XmTaskExecuserController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 
@@ -519,8 +513,8 @@ public class XmTaskExecuserController {
 	})
 	////@HasQx(value = "xm_core_xmTaskExecuser_quotePrice",name = "项目中的任务报价",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/quotePrice",method=RequestMethod.POST)
-	public Map<String,Object> quotePrice(@RequestBody XmTaskExecuser xmTaskExecuser) {
-		Map<String,Object> m = new HashMap<>();
+	public Result quotePrice(@RequestBody XmTaskExecuser xmTaskExecuser) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			String taskId=xmTaskExecuser.getTaskId();
@@ -549,7 +543,7 @@ public class XmTaskExecuserController {
 					xmTaskExecuserService.quotePrice(xmTaskExecuser);
 					notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTask.getProjectId(), xmTask.getId(), user.getUsername()+"修改任务【" + xmTask.getId() + "-" + xmTask.getName() + "】的报价信息，请尽快选标！");
 
-					m.put("data",xmTaskExecuser);
+					
 				}else {
 					tips.setFailureMsg("只有修改处于候选状态的投标人的报价信息");
 				}
@@ -563,8 +557,7 @@ public class XmTaskExecuserController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	@ApiOperation( value = "变更为候选人",notes="quotePrice")
 	@ApiResponses({
@@ -572,8 +565,8 @@ public class XmTaskExecuserController {
 	})
 	////@HasQx(value = "xm_core_xmTaskExecuser_candidate",name = "变更成为任务候选人",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/candidate",method=RequestMethod.POST)
-	public Map<String,Object> becomeCandidate(@RequestBody XmTaskExecuser xmTaskExecuser) {
-		Map<String,Object> m = new HashMap<>();
+	public Result becomeCandidate(@RequestBody XmTaskExecuser xmTaskExecuser) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			String taskId=xmTaskExecuser.getTaskId();
@@ -597,7 +590,7 @@ public class XmTaskExecuserController {
 				xmTaskExecuserService.becomeCandidate(xmTaskExecuser);
 				notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTask.getProjectId(), xmTask.getId(), user.getUsername()+"投标任务【" + xmTask.getId() + "-" + xmTask.getName() + "】，请尽快选标！");
 
-				m.put("data",xmTaskExecuser);
+				
 
 			}
 		}catch (BizException e) {
@@ -607,8 +600,7 @@ public class XmTaskExecuserController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	
@@ -619,8 +611,8 @@ public class XmTaskExecuserController {
 	})
 	////@HasQx(value = "xm_core_xmTaskExecuser_del",name = "删除项目中任务的执行人",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmTaskExecuser(@RequestBody XmTaskExecuser xmTaskExecuser){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmTaskExecuser(@RequestBody XmTaskExecuser xmTaskExecuser){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			String taskId=xmTaskExecuser.getTaskId();
@@ -643,7 +635,7 @@ public class XmTaskExecuserController {
 					notifyMsgService.pushMsg(user, xmTaskDb.getCreateUserid(), xmTaskDb.getCreateUsername(), "2", xmTaskDb.getProjectId(), xmTaskDb.getId(), xmTaskExecuserDb.getUsername()+"离开任务【" + xmTaskDb.getId() + "-" + xmTaskDb.getName() + "】！");
 					notifyMsgService.pushMsg(user, xmTaskExecuserDb.getUserid(), xmTaskExecuserDb.getUsername(), "2", xmTaskDb.getProjectId(), xmTaskDb.getId(), "您已离开任务【" + xmTaskDb.getId() + "-" + xmTaskDb.getName() + "】！");
 
-					m.put("data",xmTaskExecuser);
+					
 				}else {
 					tips.setFailureMsg("只有候选、放弃任务、黑名单中的数据可以被删除");
 				}
@@ -652,14 +644,7 @@ public class XmTaskExecuserController {
 				tips.setFailureMsg("没有查到数据");
 			}
 
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 }

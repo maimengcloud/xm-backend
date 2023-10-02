@@ -1,10 +1,12 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmTaskSbill;
@@ -61,82 +63,77 @@ public class XmTaskSbillDetailController {
 		@ApiResponse(code = 200,response=XmTaskSbillDetail.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTaskSbillDetail( @ApiIgnore @RequestParam Map<String,Object> xmTaskSbillDetail){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmTaskSbillDetail, "ids");
-		PageUtils.startPage(xmTaskSbillDetail);
+	public Result listXmTaskSbillDetail(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskSbillDetail.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.selectListMapByWhere(xmTaskSbillDetail);	//列出XmTaskSbillDetail列表
-		PageUtils.responePage(m, xmTaskSbillDetailList);
-		m.put("data",xmTaskSbillDetailList);
+		params.put("linkBranchId",user.getBranchId());
+		List<Map<String,Object>> datas = xmTaskSbillDetailService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskSbillDetail列表
 
-		m.put("tips", tips);
-		return m;
 	}
 	@ApiOperation( value = "查询个人支出费用按月分布报表",notes=" ")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskSbillDetail.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listSumSamtGroupByUseridBizMonth",method=RequestMethod.GET)
-	public Map<String,Object> listSumSamtGroupByUseridBizMonth( @ApiIgnore @RequestParam Map<String,Object> xmTaskSbillDetail){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		String bizYear= (String) xmTaskSbillDetail.get("bizYear");
+	public Result listSumSamtGroupByUseridBizMonth(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		String bizYear= (String) params.get("bizYear");
 		if(!StringUtils.hasText(bizYear)){
-			return ResponseHelper.failed("bizYear-0","年份不能为空");
+			return failed("bizYear-0","年份不能为空");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskSbillDetail.put("branchId",user.getBranchId());
-		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.listSumSamtGroupByUseridBizMonth(xmTaskSbillDetail);	//列出XmTaskSbillDetail列表
+		params.put("branchId",user.getBranchId());
+		List<Map<String,Object>>	datas = xmTaskSbillDetailService.listSumSamtGroupByUseridBizMonth(params);	//列出XmTaskSbillDetail列表
 
-		m.put("data",xmTaskSbillDetailList);
+		return Result.ok().setData(datas);
 
-		m.put("tips", tips);
-		return m;
+		
 	}
 	@ApiOperation( value = "查询项目支出费用按月分布报表",notes=" ")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskSbillDetail.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listSumSamtGroupByProjectIdBizMonth",method=RequestMethod.GET)
-	public Map<String,Object> listSumSamtGroupByProjectIdBizMonth( @ApiIgnore @RequestParam Map<String,Object> xmTaskSbillDetail){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
+	public Result listSumSamtGroupByProjectIdBizMonth(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
 		String bizYear= (String) xmTaskSbillDetail.get("bizYear");
 		if(!StringUtils.hasText(bizYear)){
 			return ResponseHelper.failed("bizYear-0","年份不能为空");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskSbillDetail.put("branchId",user.getBranchId());
+		params.put("branchId",user.getBranchId());
 		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.listSumSamtGroupByProjectIdBizMonth(xmTaskSbillDetail);	//列出XmTaskSbillDetail列表
 
-		m.put("data",xmTaskSbillDetailList);
+		
 
-		m.put("tips", tips);
-		return m;
+		
 	}
 	@ApiOperation( value = "查询机构支出费用按月分布报表",notes=" ")
 	@ApiResponses({
 			@ApiResponse(code = 200,response=XmTaskSbillDetail.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listSumSamtGroupByBranchIdBizMonth",method=RequestMethod.GET)
-	public Map<String,Object> listSumSamtGroupByBranchIdBizMonth( @ApiIgnore @RequestParam Map<String,Object> xmTaskSbillDetail){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
+	public Result listSumSamtGroupByBranchIdBizMonth(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
 		String bizYear= (String) xmTaskSbillDetail.get("bizYear");
 		if(!StringUtils.hasText(bizYear)){
 			return ResponseHelper.failed("bizYear-0","年份不能为空");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskSbillDetail.put("branchId",user.getBranchId());
+		params.put("branchId",user.getBranchId());
 		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.listSumSamtGroupByBranchIdBizMonth(xmTaskSbillDetail);	//列出XmTaskSbillDetail列表
 
-		m.put("data",xmTaskSbillDetailList);
+		
 
-		m.put("tips", tips);
-		return m;
+		
 	}
 	/**
 	@ApiOperation( value = "新增一条工时登记表信息",notes=" ")
@@ -144,8 +141,8 @@ public class XmTaskSbillDetailController {
 		@ApiResponse(code = 200,response=XmTaskSbillDetail.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmTaskSbillDetail(@RequestBody XmTaskSbillDetail xmTaskSbillDetail) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmTaskSbillDetail(@RequestBody XmTaskSbillDetail xmTaskSbillDetail) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 		    boolean createPk=false;
@@ -159,16 +156,7 @@ public class XmTaskSbillDetailController {
                 }
             }
 			xmTaskSbillDetailService.insert(xmTaskSbillDetail);
-			m.put("data",xmTaskSbillDetail);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 
@@ -177,7 +165,7 @@ public class XmTaskSbillDetailController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmTaskSbillDetail(@RequestBody XmTaskSbillDetail xmTaskSbillDetail){
+	public Result delXmTaskSbillDetail(@RequestBody XmTaskSbillDetail xmTaskSbillDetail){
 		 return batchDelXmTaskSbillDetail(Arrays.asList(xmTaskSbillDetail));
 	}
 	
@@ -187,8 +175,8 @@ public class XmTaskSbillDetailController {
 		@ApiResponse(code = 200,response=XmTaskSbillDetail.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmTaskSbillDetail(@RequestBody XmTaskSbillDetail xmTaskSbillDetail) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmTaskSbillDetail(@RequestBody XmTaskSbillDetail xmTaskSbillDetail) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmTaskSbillDetail.getId())) {
@@ -199,16 +187,7 @@ public class XmTaskSbillDetailController {
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 			xmTaskSbillDetailService.updateSomeFieldByPk(xmTaskSbillDetail);
-			m.put("data",xmTaskSbillDetail);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 
@@ -217,8 +196,8 @@ public class XmTaskSbillDetailController {
 			@ApiResponse(code = 200,response=XmTaskSbillDetail.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmTaskSbillDetailMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields(@RequestBody Map<String,Object> xmTaskSbillDetailMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             List<String> ids= (List<String>) xmTaskSbillDetailMap.get("ids");
@@ -294,7 +273,7 @@ public class XmTaskSbillDetailController {
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -302,8 +281,7 @@ public class XmTaskSbillDetailController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "根据主键列表批量删除工时登记表信息",notes=" ")
@@ -311,8 +289,8 @@ public class XmTaskSbillDetailController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmTaskSbillDetail(@RequestBody List<XmTaskSbillDetail> xmTaskSbillDetails) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmTaskSbillDetail(@RequestBody List<XmTaskSbillDetail> xmTaskSbillDetails) {
+		
         Tips tips=new Tips("成功删除"); 
         try{
         	User user=LoginUtils.getCurrentUserInfo();

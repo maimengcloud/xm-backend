@@ -1,7 +1,11 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
@@ -58,18 +62,14 @@ public class XmBranchStateController {
 		@ApiResponse(code = 200,response= XmBranchState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmBranchState( @ApiIgnore @RequestParam Map<String,Object> xmBranchState){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmBranchState, "ids");
-		PageUtils.startPage(xmBranchState);
+	public Result listXmBranchState( @ApiIgnore @RequestParam Map<String,Object> params){
+ 		RequestUtils.transformArray(params, "ids");
 		User user=LoginUtils.getCurrentUserInfo();
-		xmBranchState.put("branchId",user.getBranchId());
-		List<Map<String,Object>>	xmBranchStateList = xmBranchStateService.selectListMapByWhere(xmBranchState);	//列出XmBranchState列表
-		PageUtils.responePage(m, xmBranchStateList);
-		m.put("data",xmBranchStateList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+		params.put("branchId",user.getBranchId());
+		QueryWrapper<XmBranchState> qw= QueryTools.initQueryWrapper(XmBranchState.class,params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>>	datas = xmBranchStateService.selectListMapByWhere(page,qw,params);	//列出XmBranchState列表
+		return Result.ok().setData(datas).setTotal(page.getTotal());
 	}
 
 	@ApiOperation( value = "查询机构内所有项目指标汇总信息列表",notes="listXmBranchState,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
@@ -78,16 +78,14 @@ public class XmBranchStateController {
 			@ApiResponse(code = 200,response= XmBranchState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list/portal/allBranchSum",method=RequestMethod.GET)
-	public Map<String,Object> listPortalAllXmBranchSumState( @ApiIgnore @RequestParam Map<String,Object> xmBranchState){
-		Map<String,Object> m = new HashMap<>();
-		RequestUtils.transformArray(xmBranchState, "ids");
-		PageUtils.startPage(xmBranchState);
-		List<Map<String,Object>>	xmBranchStateList = xmBranchStateService.listPortalAllXmBranchSumState(xmBranchState);	//列出XmBranchState列表
-		PageUtils.responePage(m, xmBranchStateList);
-		m.put("data",xmBranchStateList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+	public Result listPortalAllXmBranchSumState( @ApiIgnore @RequestParam Map<String,Object> params){
+		RequestUtils.transformArray(params, "ids");
+		User user=LoginUtils.getCurrentUserInfo();
+		params.put("branchId",user.getBranchId());
+		QueryWrapper<XmBranchState> qw= QueryTools.initQueryWrapper(XmBranchState.class,params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>>	datas = xmBranchStateService.listPortalAllXmBranchSumState(page,qw,params);	//列出XmBranchState列表
+		return Result.ok().setData(datas).setTotal(page.getTotal());
 	}
 
 	@ApiOperation( value = "查询前后两周每日任务变化数量",notes="listXmBranchState,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
@@ -95,15 +93,10 @@ public class XmBranchStateController {
 			@ApiResponse(code = 200,response= XmBranchState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list/tasksSumDw",method=RequestMethod.GET)
-	public Map<String,Object> tasksSumDw(){
-		Map<String,Object> m = new HashMap<>();
-		User user= LoginUtils.getCurrentUserInfo();
-		List<Map<String,Object>>	xmBranchStateList = xmBranchStateService.tasksSumDw(user.getBranchId());	//列出XmBranchState列表
-		PageUtils.responePage(m, xmBranchStateList);
-		m.put("data",xmBranchStateList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+	public Result tasksSumDw(){
+		User user=LoginUtils.getCurrentUserInfo();
+ 		List<Map<String,Object>>	datas = xmBranchStateService.tasksSumDw(user.getUserid());	//列出XmBranchState列表
+		return Result.ok().setData(datas);
 	}
 
 	@ApiOperation( value = "从项目汇总表汇总数据到机构汇总表",notes="")
@@ -111,25 +104,15 @@ public class XmBranchStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/loadProjectStateToXmBranchState",method=RequestMethod.POST)
-	public Map<String,Object> loadProjectStateToXmBranchState(@RequestBody XmBranchState xmBranchState){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功更新一个机构数据");
-		try{
+	public Result loadProjectStateToXmBranchState(@RequestBody XmBranchState xmBranchState){
+
 			if(StringUtils.isEmpty(xmBranchState.getBranchId())) {
 				tips.setFailureMsg("机构编号branchId必填");
 			}else {
 	
 				xmBranchStateService.loadProjectStateToXmBranchState(xmBranchState.getBranchId());
 			}
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+			return Result.ok();
 	}
  
 	
@@ -139,7 +122,7 @@ public class XmBranchStateController {
 		@ApiResponse(code = 200,response=XmBranchState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmBranchState(@RequestBody XmBranchState xmBranchState) {
+	public Result addXmBranchState(@RequestBody XmBranchState xmBranchState) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功新增一条数据");
 		try{
@@ -173,7 +156,7 @@ public class XmBranchStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmBranchState(@RequestBody XmBranchState xmBranchState){
+	public Result delXmBranchState(@RequestBody XmBranchState xmBranchState){
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除一条数据");
 		try{
@@ -196,7 +179,7 @@ public class XmBranchStateController {
 		@ApiResponse(code = 200,response=XmBranchState.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmBranchState(@RequestBody XmBranchState xmBranchState) {
+	public Result editXmBranchState(@RequestBody XmBranchState xmBranchState) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功更新一条数据");
 		try{
@@ -222,7 +205,7 @@ public class XmBranchStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmBranchState(@RequestBody List<XmBranchState> xmBranchStates) {
+	public Result batchDelXmBranchState(@RequestBody List<XmBranchState> xmBranchStates) {
 		Map<String,Object> m = new HashMap<>();
 		Tips tips=new Tips("成功删除"+xmBranchStates.size()+"条数据"); 
 		try{ 

@@ -1,10 +1,12 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -20,7 +22,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import static com.mdp.core.utils.BaseUtils.toMap;
 
@@ -58,17 +63,15 @@ public class XmRecordVisitController {
 		@ApiResponse(code = 200,response=XmRecordVisit.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmRecordVisit( @ApiIgnore @RequestParam Map<String,Object> xmRecordVisit){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmRecordVisit, "ids");
-		PageUtils.startPage(xmRecordVisit);
-		List<Map<String,Object>>	xmRecordVisitList = xmRecordVisitService.selectListMapByWhere(xmRecordVisit);	//列出XmRecordVisit列表
-		PageUtils.responePage(m, xmRecordVisitList);
-		m.put("data",xmRecordVisitList);
+	public Result listXmRecordVisit(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmRecordVisitService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmRecordVisit列表
 
-		m.put("tips", tips);
-		return m;
 	}
 	
  
@@ -78,8 +81,8 @@ public class XmRecordVisitController {
 		@ApiResponse(code = 200,response=XmRecordVisit.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmRecordVisit(@RequestBody XmRecordVisit xmRecordVisit) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmRecordVisit(@RequestBody XmRecordVisit xmRecordVisit) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(!StringUtils.hasText(xmRecordVisit.getBizId())){
@@ -108,7 +111,7 @@ public class XmRecordVisitController {
 				xmRecordVisitService.batchAddAndCalc(newDatas);
 
 			}
-			//m.put("data",xmRecordVisit);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -116,8 +119,7 @@ public class XmRecordVisitController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@Scheduled(cron = "0 0 */3 * * ?")
@@ -137,8 +139,8 @@ public class XmRecordVisitController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmRecordVisit(@RequestBody XmRecordVisit xmRecordVisit){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmRecordVisit(@RequestBody XmRecordVisit xmRecordVisit){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
             if(!StringUtils.hasText(xmRecordVisit.getId())) {
@@ -149,15 +151,8 @@ public class XmRecordVisitController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmRecordVisitService.deleteByPk(xmRecordVisit);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 */
 	
@@ -167,8 +162,8 @@ public class XmRecordVisitController {
 		@ApiResponse(code = 200,response=XmRecordVisit.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmRecordVisit(@RequestBody XmRecordVisit xmRecordVisit) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmRecordVisit(@RequestBody XmRecordVisit xmRecordVisit) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmRecordVisit.getId())) {
@@ -179,16 +174,7 @@ public class XmRecordVisitController {
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 			xmRecordVisitService.updateSomeFieldByPk(xmRecordVisit);
-			m.put("data",xmRecordVisit);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 
@@ -199,8 +185,8 @@ public class XmRecordVisitController {
 			@ApiResponse(code = 200,response=XmRecordVisit.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmRecordVisitMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmRecordVisitMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             List<String> ids= (List<String>) xmRecordVisitMap.get("ids");
@@ -253,7 +239,7 @@ public class XmRecordVisitController {
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -261,8 +247,7 @@ public class XmRecordVisitController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 
@@ -272,10 +257,10 @@ public class XmRecordVisitController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmRecordVisit(@RequestBody List<XmRecordVisit> xmRecordVisits) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmRecordVisit(@RequestBody List<XmRecordVisit> xmRecordVisits) {
+		
         Tips tips=new Tips("成功删除"); 
-        try{ 
+        
             if(xmRecordVisits.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
             }

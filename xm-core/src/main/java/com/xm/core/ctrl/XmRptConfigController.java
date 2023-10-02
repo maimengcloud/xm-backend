@@ -1,9 +1,11 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -56,19 +58,17 @@ public class XmRptConfigController {
 		@ApiResponse(code = 200,response=XmRptConfig.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmRptConfig( @ApiIgnore @RequestParam Map<String,Object> xmRptConfig){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmRptConfig, "ids");
-		PageUtils.startPage(xmRptConfig);
+	public Result listXmRptConfig(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmRptConfig.put("cbranchId",user.getBranchId());
-		List<Map<String,Object>>	xmRptConfigList = xmRptConfigService.selectListMapByWhere(xmRptConfig);	//列出XmRptConfig列表
-		PageUtils.responePage(m, xmRptConfigList);
-		m.put("data",xmRptConfigList);
+		params.put("cbranchId",user.getBranchId());
+		List<Map<String,Object>> datas = xmRptConfigService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmRptConfig列表
 
-		m.put("tips", tips);
-		return m;
 	}
 	
  
@@ -78,8 +78,8 @@ public class XmRptConfigController {
 		@ApiResponse(code = 200,response=XmRptConfig.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmRptConfig(@RequestBody XmRptConfig xmRptConfig) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmRptConfig(@RequestBody XmRptConfig xmRptConfig) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			xmRptConfig.setId(xmRptConfigService.createKey("id"));
@@ -89,16 +89,7 @@ public class XmRptConfigController {
 			xmRptConfig.setCbranchId(user.getBranchId());
 			xmRptConfig.setCtime(new Date());
 			xmRptConfigService.insert(xmRptConfig);
-			m.put("data",xmRptConfig);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "删除一条测试报告配置表信息",notes=" ")
@@ -106,8 +97,8 @@ public class XmRptConfigController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmRptConfig(@RequestBody XmRptConfig xmRptConfig){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmRptConfig(@RequestBody XmRptConfig xmRptConfig){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
             if(!StringUtils.hasText(xmRptConfig.getId())) {
@@ -118,15 +109,8 @@ public class XmRptConfigController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmRptConfigService.deleteByPk(xmRptConfig);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 	@ApiOperation( value = "根据主键修改一条测试报告配置表信息",notes=" ")
@@ -134,8 +118,8 @@ public class XmRptConfigController {
 		@ApiResponse(code = 200,response=XmRptConfig.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmRptConfig(@RequestBody XmRptConfig xmRptConfig) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmRptConfig(@RequestBody XmRptConfig xmRptConfig) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmRptConfig.getId())) {
@@ -146,16 +130,7 @@ public class XmRptConfigController {
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 			xmRptConfigService.updateSomeFieldByPk(xmRptConfig);
-			m.put("data",xmRptConfig);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
     @ApiOperation( value = "批量修改某些字段",notes="")
@@ -164,8 +139,8 @@ public class XmRptConfigController {
 			@ApiResponse(code = 200,response=XmRptConfig.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmRptConfigMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmRptConfigMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             List<String> ids= (List<String>) xmRptConfigMap.get("ids");
@@ -218,7 +193,7 @@ public class XmRptConfigController {
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -226,8 +201,7 @@ public class XmRptConfigController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "根据主键列表批量删除测试报告配置表信息",notes=" ")
@@ -235,10 +209,10 @@ public class XmRptConfigController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmRptConfig(@RequestBody List<XmRptConfig> xmRptConfigs) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmRptConfig(@RequestBody List<XmRptConfig> xmRptConfigs) {
+		
         Tips tips=new Tips("成功删除"); 
-        try{ 
+        
             if(xmRptConfigs.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
             }

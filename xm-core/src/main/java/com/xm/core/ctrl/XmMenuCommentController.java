@@ -1,11 +1,13 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.qx.HasRole;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
@@ -23,7 +25,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.toMap;
@@ -66,28 +71,27 @@ public class XmMenuCommentController {
 		@ApiResponse(code = 200,response=XmMenuComment.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmMenuComment( @ApiIgnore @RequestParam Map<String,Object> xmMenuComment){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmMenuComment, "ids");
-		PageUtils.startPage(xmMenuComment);
-		String pid= (String) xmMenuComment.get("pid");
+	public Result listXmMenuComment(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		String pid= (String) params.get("pid");
 		if(!StringUtils.hasText(pid)){
-			xmMenuComment.put("pidIsNull","1");
+			params.put("pidIsNull","1");
 		}
 
-		List<Map<String,Object>>	xmMenuCommentList = xmMenuCommentService.selectListMapByWhere(xmMenuComment);	//列出XmMenuComment列表
+		List<Map<String,Object>> datas = xmMenuCommentService.selectListMapByWhere(page,qw,params);
 
-		if(xmMenuCommentList.size()>0) {
-			List<Map<String, Object>> children=xmMenuCommentService.selectListByPids(xmMenuCommentList.stream().map(k->(String)k.get("id")).collect(Collectors.toList()));
-			m.put("children", children);
+
+		if(datas.size()>0) {
+			List<Map<String, Object>> children=xmMenuCommentService.selectListByPids(datas.stream().map(k->(String)k.get("id")).collect(Collectors.toList()));
+
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal()).put("children",children);	//列出XmMenuComment列表
 		}
 
-		PageUtils.responePage(m, xmMenuCommentList);
-		m.put("data",xmMenuCommentList);
-
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmMenuComment列表
 	}
 
 
@@ -97,8 +101,8 @@ public class XmMenuCommentController {
 	})
 	@HasRole
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmMenuComment(@RequestBody XmMenuComment xmMenuComment) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmMenuComment(@RequestBody XmMenuComment xmMenuComment) {
+		
 		Tips tips=new Tips("成功评论");
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
@@ -120,7 +124,7 @@ public class XmMenuCommentController {
 			if(!user.getUserid().equals(xmMenuDb.getMmUserid())){
 				notifyMsgService.pushMsg(user, xmMenuDb.getMmUserid(), xmMenuDb.getMmUsername(),"10",xmMenuDb.getMenuId(),xmMenuComment.getId(),user.getUsername()+"发表评论："+xmMenuComment.getContext());
 			}
-			m.put("data",xmMenuComment);
+			
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("执行异常",e);
@@ -128,8 +132,7 @@ public class XmMenuCommentController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("执行异常",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 
@@ -138,8 +141,8 @@ public class XmMenuCommentController {
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	})
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmMenuComment(@RequestBody XmMenuComment xmMenuComment){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmMenuComment(@RequestBody XmMenuComment xmMenuComment){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			XmMenuComment commentDb=this.xmMenuCommentService.selectOneById(xmMenuComment.getId());
@@ -165,8 +168,7 @@ public class XmMenuCommentController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("执行异常",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 
@@ -175,13 +177,13 @@ public class XmMenuCommentController {
 			@ApiResponse(code = 200,response=XmMenuComment.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/praise",method=RequestMethod.POST)
-	public Map<String,Object> praiseComment(@RequestBody XmMenuComment xmMenuComment) {
-		Map<String,Object> m = new HashMap<>();
+	public Result praiseComment(@RequestBody XmMenuComment xmMenuComment) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			xmMenuCommentService.update("praiseComment", xmMenuComment);
 
-			m.put("data",xmMenuComment);
+			
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("执行异常",e);
@@ -189,8 +191,7 @@ public class XmMenuCommentController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("执行异常",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "屏蔽评论",notes="unShowComment")
@@ -198,8 +199,8 @@ public class XmMenuCommentController {
 			@ApiResponse(code = 200,response=XmMenuComment.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/unshow",method=RequestMethod.POST)
-	public Map<String,Object> unShowComment(@RequestBody String[] ids) {
-		Map<String,Object> m = new HashMap<>();
+	public Result unShowComment(@RequestBody String[] ids) {
+		
 		Tips tips=new Tips("成功屏蔽评论");
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
@@ -225,8 +226,7 @@ public class XmMenuCommentController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("执行异常",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "打开评论",notes="showComment")
@@ -234,8 +234,8 @@ public class XmMenuCommentController {
 			@ApiResponse(code = 200,response=XmMenuComment.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/show",method=RequestMethod.POST)
-	public Map<String,Object> showComment(@RequestBody String[] ids) {
-		Map<String,Object> m = new HashMap<>();
+	public Result showComment(@RequestBody String[] ids) {
+		
 		Tips tips=new Tips("成功打开评论");
 		try{
 			User user= LoginUtils.getCurrentUserInfo();
@@ -261,8 +261,7 @@ public class XmMenuCommentController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("执行异常",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	/**
@@ -271,8 +270,8 @@ public class XmMenuCommentController {
 		@ApiResponse(code = 200,response=XmMenuComment.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmMenuComment(@RequestBody XmMenuComment xmMenuComment) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmMenuComment(@RequestBody XmMenuComment xmMenuComment) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 		    boolean createPk=false;
@@ -286,16 +285,7 @@ public class XmMenuCommentController {
                 }
             }
 			xmMenuCommentService.insert(xmMenuComment);
-			m.put("data",xmMenuComment);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -305,8 +295,8 @@ public class XmMenuCommentController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmMenuComment(@RequestBody XmMenuComment xmMenuComment){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmMenuComment(@RequestBody XmMenuComment xmMenuComment){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
             if(!StringUtils.hasText(xmMenuComment.getId())) {
@@ -317,15 +307,8 @@ public class XmMenuCommentController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmMenuCommentService.deleteByPk(xmMenuComment);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 */
 	
@@ -335,8 +318,8 @@ public class XmMenuCommentController {
 		@ApiResponse(code = 200,response=XmMenuComment.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmMenuComment(@RequestBody XmMenuComment xmMenuComment) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmMenuComment(@RequestBody XmMenuComment xmMenuComment) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmMenuComment.getId())) {
@@ -347,16 +330,7 @@ public class XmMenuCommentController {
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 			xmMenuCommentService.updateSomeFieldByPk(xmMenuComment);
-			m.put("data",xmMenuComment);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 
@@ -367,8 +341,8 @@ public class XmMenuCommentController {
 			@ApiResponse(code = 200,response=XmMenuComment.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmMenuCommentMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmMenuCommentMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             List<String> ids= (List<String>) xmMenuCommentMap.get("ids");
@@ -421,7 +395,7 @@ public class XmMenuCommentController {
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -429,8 +403,7 @@ public class XmMenuCommentController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 
@@ -440,10 +413,10 @@ public class XmMenuCommentController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmMenuComment(@RequestBody List<XmMenuComment> xmMenuComments) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmMenuComment(@RequestBody List<XmMenuComment> xmMenuComments) {
+		
         Tips tips=new Tips("成功删除"); 
-        try{ 
+        
             if(xmMenuComments.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
             }

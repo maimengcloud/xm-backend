@@ -1,10 +1,12 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -18,7 +20,10 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.toMap;
@@ -56,19 +61,17 @@ public class XmRptDataController {
 		@ApiResponse(code = 200,response=XmRptData.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmRptData( @ApiIgnore @RequestParam Map<String,Object> xmRptData){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmRptData, "ids");
-		PageUtils.startPage(xmRptData);
+	public Result listXmRptData(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmRptData.put("cbranchId",user.getBranchId());
-		List<Map<String,Object>>	xmRptDataList = xmRptDataService.selectListMapByWhere(xmRptData);	//列出XmRptData列表
-		PageUtils.responePage(m, xmRptDataList);
-		m.put("data",xmRptDataList);
+		params.put("cbranchId",user.getBranchId());
+		List<Map<String,Object>> datas = xmRptDataService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmRptData列表
 
-		m.put("tips", tips);
-		return m;
 	}
 	
  
@@ -78,8 +81,8 @@ public class XmRptDataController {
 		@ApiResponse(code = 200,response=XmRptData.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmRptData(@RequestBody XmRptData xmRptData) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmRptData(@RequestBody XmRptData xmRptData) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			xmRptData.setId(xmRptDataService.createKey("id"));
@@ -90,7 +93,7 @@ public class XmRptDataController {
 			xmRptData.setCtime(new Date());
 			xmRptData.setBizDate(DateUtils.getDate("yyyy-MM-dd"));
 			xmRptDataService.insert(xmRptData);
-			m.put("data",xmRptData);
+			
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -98,8 +101,7 @@ public class XmRptDataController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "删除一条xm_rpt_data信息",notes=" ")
@@ -107,8 +109,8 @@ public class XmRptDataController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmRptData(@RequestBody XmRptData xmRptData){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmRptData(@RequestBody XmRptData xmRptData){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
             if(!StringUtils.hasText(xmRptData.getId())) {
@@ -123,15 +125,8 @@ public class XmRptDataController {
 				return failed("not-yours","只能删除自己创建的报表");
 			}
 			xmRptDataService.deleteByPk(xmRptData);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	
 	/**
@@ -140,8 +135,8 @@ public class XmRptDataController {
 		@ApiResponse(code = 200,response=XmRptData.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmRptData(@RequestBody XmRptData xmRptData) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmRptData(@RequestBody XmRptData xmRptData) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmRptData.getId())) {
@@ -152,16 +147,7 @@ public class XmRptDataController {
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 			xmRptDataService.updateSomeFieldByPk(xmRptData);
-			m.put("data",xmRptData);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 
@@ -172,8 +158,8 @@ public class XmRptDataController {
 			@ApiResponse(code = 200,response=XmRptData.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmRptDataMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmRptDataMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             List<String> ids= (List<String>) xmRptDataMap.get("ids");
@@ -226,7 +212,7 @@ public class XmRptDataController {
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -234,8 +220,7 @@ public class XmRptDataController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 
@@ -245,10 +230,10 @@ public class XmRptDataController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmRptData(@RequestBody List<XmRptData> xmRptDatas) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmRptData(@RequestBody List<XmRptData> xmRptDatas) {
+		
         Tips tips=new Tips("成功删除"); 
-        try{ 
+        
             if(xmRptDatas.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
             }

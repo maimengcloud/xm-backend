@@ -5,7 +5,7 @@ import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
-import com.mdp.mybatis.PageUtils;
+import com.mdp.core.entity.Result;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -86,18 +86,19 @@ public class XmGroupUserController {
 		@ApiResponse(code = 200,response= XmGroupUser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmProjectGroupUser( @ApiIgnore @RequestParam Map<String,Object> xmGroupUser){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmGroupUser, "ids");
-		PageUtils.startPage(xmGroupUser);
+	public Result listXmProjectGroupUser(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmGroupUser.put("branchId",user.getBranchId());
-		List<Map<String,Object>>	xmGroupUserList = xmGroupUserService.selectListMapByWhere(xmGroupUser);	//列出XmProjectGroupUser列表
-		PageUtils.responePage(m, xmGroupUserList);
-		m.put("data",xmGroupUserList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+		params.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectGroupUser列表
+		
+		
+		
+		
 	}
 	
  
@@ -107,8 +108,8 @@ public class XmGroupUserController {
 		@ApiResponse(code = 200,response= XmGroupUser.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmProjectGroupUser(@RequestBody XmGroupUser gu) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmProjectGroupUser(@RequestBody XmGroupUser gu) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 
@@ -184,7 +185,7 @@ public class XmGroupUserController {
 				xmRecordService.addXmGroupRecord(gu.getProjectId(),gu.getGroupId(), "项目-团队-新增小组成员", "增加组员["+gu.getUsername()+"]",gu.getUserid(),null);
 			}
 
-			m.put("data",gu);
+			
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -192,8 +193,7 @@ public class XmGroupUserController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "删除一条xm_group_user信息",notes="delXmProjectGroupUser,仅需要上传主键字段")
@@ -201,8 +201,8 @@ public class XmGroupUserController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmProjectGroupUser(@RequestBody XmGroupUser gu){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmProjectGroupUser(@RequestBody XmGroupUser gu){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			if(!StringUtils.hasText(gu.getGroupId())||!StringUtils.hasText(gu.getUserid())){
@@ -278,15 +278,8 @@ public class XmGroupUserController {
 			}
 
 
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 	@ApiOperation( value = "根据主键修改一条xm_group_user信息",notes="editXmProjectGroupUser")
@@ -294,8 +287,8 @@ public class XmGroupUserController {
 		@ApiResponse(code = 200,response= XmGroupUser.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmProjectGroupUser(@RequestBody XmGroupUser gu0) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmProjectGroupUser(@RequestBody XmGroupUser gu0) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			if(!StringUtils.hasText(gu0.getGroupId())||!StringUtils.hasText(gu0.getUserid())){
@@ -358,16 +351,7 @@ public class XmGroupUserController {
 				xmRecordService.addXmGroupRecord(gu.getProductId(), gu.getGroupId(),"项目-团队-修改小组成员信息", "变更["+gu.getUsername()+"]");
 			}
 
-			m.put("data",gu);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 
@@ -376,8 +360,8 @@ public class XmGroupUserController {
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
-	public Map<String,Object> batchAddXmProjectGroupUser(@RequestBody List<XmGroupUser> gus) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchAddXmProjectGroupUser(@RequestBody List<XmGroupUser> gus) {
+		
 		if(gus==null || gus.size()==0){
 			return ResponseHelper.failed("data-0","请上送要删除的小组成员");
 		}
@@ -513,8 +497,7 @@ public class XmGroupUserController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 
@@ -523,8 +506,8 @@ public class XmGroupUserController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmProjectGroupUser(@RequestBody List<XmGroupUser> gus) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmProjectGroupUser(@RequestBody List<XmGroupUser> gus) {
+		
 		if(gus==null || gus.size()==0){
 			return ResponseHelper.failed("data-0","请上送要删除的小组成员");
 		}
@@ -630,14 +613,7 @@ public class XmGroupUserController {
 			});
 
 
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 }

@@ -1,8 +1,9 @@
 package com.xm.core.ctrl;
 
-import com.mdp.core.entity.Tips;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.xm.core.entity.XmProjectContract;
 import com.xm.core.service.XmProjectContractService;
 import io.swagger.annotations.*;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.Map;
 /**
  * url编制采用rest风格,如对XM.xm_project_contract xm_project_contract的操作有增删改查,对应的url分别为:<br>
@@ -54,13 +54,13 @@ public class XmProjectContractController {
 		@ApiResponse(code = 200,response= XmProjectContract.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmProjectContract( @ApiIgnore @RequestParam Map<String,Object> contractCard){
-		Map<String,Object> m = new HashMap<>();
-		RequestUtils.transformArray(contractCard, "htIds");
-		PageUtils.startPage(contractCard); 
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+	public Result listXmProjectContract(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		RequestUtils.transformArray(params, "htIds");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		
+		
 	}
 	
  
@@ -71,8 +71,8 @@ public class XmProjectContractController {
 		@ApiResponse(code = 200,response=XmProjectContract.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmProjectContract(@RequestBody XmProjectContract xmProjectContract) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmProjectContract(@RequestBody XmProjectContract xmProjectContract) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(StringUtils.isEmpty(xmProjectContract.getHtId())) {
@@ -86,16 +86,7 @@ public class XmProjectContractController {
 				}
 			}
 			xmProjectContractService.insert(xmProjectContract);
-			m.put("data",xmProjectContract);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -105,20 +96,13 @@ public class XmProjectContractController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmProjectContract(@RequestBody XmProjectContract xmProjectContract){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmProjectContract(@RequestBody XmProjectContract xmProjectContract){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			xmProjectContractService.deleteByPk(xmProjectContract);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 */
 	
@@ -128,21 +112,12 @@ public class XmProjectContractController {
 		@ApiResponse(code = 200,response=XmProjectContract.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmProjectContract(@RequestBody XmProjectContract xmProjectContract) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmProjectContract(@RequestBody XmProjectContract xmProjectContract) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			xmProjectContractService.updateByPk(xmProjectContract);
-			m.put("data",xmProjectContract);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -154,20 +129,13 @@ public class XmProjectContractController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmProjectContract(@RequestBody List<XmProjectContract> xmProjectContracts) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmProjectContract(@RequestBody List<XmProjectContract> xmProjectContracts) {
+		
 		Tips tips=new Tips("成功删除"+xmProjectContracts.size()+"条数据"); 
-		try{ 
+		
 			xmProjectContractService.batchDelete(xmProjectContracts);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	*/
 }

@@ -1,11 +1,13 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -25,7 +27,6 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -84,10 +85,10 @@ public class XmGroupController {
 	})
 	//@HasQx(value = "xm_core_xmGroup_updateGroup",name = "批量更新修改项目团队信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> updateGroup(@RequestBody XmGroup group) {
+	public Result updateGroup(@RequestBody XmGroup group) {
 
 		Tips tips=new Tips("小组更新成功");
-		Map<String,Object> m = new HashMap<>();
+		
 		if(group==null){
 			tips.setFailureMsg("小组信息不能为空");
 			m.put("tips", tips);
@@ -172,8 +173,7 @@ public class XmGroupController {
 			xmRecordService.addXmProductRecord(groupDb.getProductId(),"团队-小组-修改小组","修改小组信息【"+groupDb.getGroupName()+"】");
 
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "根据项目Id拿到团队",notes="")
@@ -190,10 +190,11 @@ public class XmGroupController {
 	})
 	//@HasQx(value = "xm_core_xmGroup_getGroups",name = "查找项目团队信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/getGroups",method=RequestMethod.GET)
-	public Map<String,Object> getGroup(@ApiIgnore @RequestParam Map<String,Object> params) {
-		Map<String,Object> m = new HashMap<>();
+	public Result getGroup(@ApiIgnore @RequestParam Map<String,Object> params) {
+		
 		RequestUtils.transformArray(params, "ids");
-		PageUtils.startPage(params);
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		List<XmGroupVo>	xmGroupList=new ArrayList<>();
 		String iterationId= (String) params.get("iterationId");
 		String projectId= (String) params.get("projectId");
@@ -206,11 +207,10 @@ public class XmGroupController {
 			xmGroupList = xmGroupService.getProjectGroupVoListByIterationId(iterationId );	//列出XmProjectGroup列表
 		}
 
-		PageUtils.responePage(m, xmGroupList);
-		m.put("data",xmGroupList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+		
+		
+		
+		
 	}
 
 
@@ -230,24 +230,25 @@ public class XmGroupController {
 		@ApiResponse(code = 200,response= XmGroup.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmProjectGroup( @ApiIgnore @RequestParam Map<String,Object> xmGroup){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmGroup, "ids");
-		PageUtils.startPage(xmGroup);
+	public Result listXmProjectGroup(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		String projectId= (String) xmGroup.get("projectId");
 		String productId= (String) xmGroup.get("productId");
 		String iterationId= (String) xmGroup.get("iterationId");
 		if(!StringUtils.hasText(projectId) && !StringUtils.hasText(productId) && !StringUtils.hasText(iterationId)){
-			xmGroup.put("branchId",user.getBranchId());
+		params.put("branchId",user.getBranchId());
 			xmGroup.put("orCrowBranchId",user.getBranchId());
 		}
-		List<Map<String,Object>>	xmGroupList = xmGroupService.selectListMapByWhere(xmGroup);	//列出XmProjectGroup列表
-		PageUtils.responePage(m, xmGroupList);
-		m.put("data",xmGroupList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+		List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectGroup列表
+		
+		
+		
+		
 	}
 
 	@ApiOperation( value = "新增一条xm_group信息",notes="addXmProjectGroup,主键如果为空，后台自动生成")
@@ -256,8 +257,8 @@ public class XmGroupController {
 	})
 	//@HasQx(value = "xm_core_xmGroup_add",name = "新增项目团队信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmProjectGroup(@RequestBody XmGroup xmGroup) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmProjectGroup(@RequestBody XmGroup xmGroup) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			User u = LoginUtils.getCurrentUserInfo();
@@ -331,7 +332,7 @@ public class XmGroupController {
 			}
 
 
-  			m.put("data",xmGroup);
+  			
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -339,8 +340,7 @@ public class XmGroupController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 
@@ -388,8 +388,8 @@ public class XmGroupController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmProjectGroup(@RequestBody XmGroup xmGroup){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmProjectGroup(@RequestBody XmGroup xmGroup){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			User u = LoginUtils.getCurrentUserInfo();
@@ -443,15 +443,8 @@ public class XmGroupController {
 			}
 
 
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 
@@ -464,8 +457,8 @@ public class XmGroupController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmProjectGroup(@RequestBody List<XmGroup> xmGroups) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmProjectGroup(@RequestBody List<XmGroup> xmGroups) {
+		
 		Tips tips=new Tips("成功删除"+xmGroups.size()+"条数据"); 
 		try{
 			List<XmGroup> groupsDb=this.xmGroupService.selectListByIds(xmGroups.stream().map(i->i.getId()).collect(Collectors.toList()));
@@ -502,15 +495,8 @@ public class XmGroupController {
 				xmRecordService.addXmGroupRecord(groupDb.getProjectId(),groupDb.getId(),"团队-小组-批量删除小组","删除"+canDelNodes.size()+"个小组【"+groupNames+"】");
 
 			}
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 	 */

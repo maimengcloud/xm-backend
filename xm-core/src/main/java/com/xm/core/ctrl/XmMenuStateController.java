@@ -1,9 +1,10 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.xm.core.entity.XmMenuState;
 import com.xm.core.service.XmMenuStateService;
 import com.xm.core.vo.XmMenuStateVo;
@@ -14,7 +15,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -98,16 +98,17 @@ public class XmMenuStateController {
 		@ApiResponse(code = 200,response= XmMenuState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmMenuState( @ApiIgnore @RequestParam Map<String,Object> xmMenuState){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmMenuState, "ids");
-		PageUtils.startPage(xmMenuState);
-		List<Map<String,Object>>	xmMenuStateList = xmMenuStateService.selectListMapByWhere(xmMenuState);	//列出XmMenuState列表
-		PageUtils.responePage(m, xmMenuStateList);
-		m.put("data",xmMenuStateList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+	public Result listXmMenuState(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmMenuStateService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmMenuState列表
+		
+		
+		
+		
 	}
 	
  
@@ -118,8 +119,8 @@ public class XmMenuStateController {
 		@ApiResponse(code = 200,response=XmMenuState.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmMenuState(@RequestBody XmMenuState xmMenuState) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmMenuState(@RequestBody XmMenuState xmMenuState) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(xmMenuStateService.countByWhere(xmMenuState)>0){
@@ -128,16 +129,7 @@ public class XmMenuStateController {
 				return m;
 			}
 			xmMenuStateService.insert(xmMenuState);
-			m.put("data",xmMenuState);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	
@@ -147,20 +139,13 @@ public class XmMenuStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmMenuState(@RequestBody XmMenuState xmMenuState){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmMenuState(@RequestBody XmMenuState xmMenuState){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			xmMenuStateService.deleteByPk(xmMenuState);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 
 	
@@ -170,21 +155,12 @@ public class XmMenuStateController {
 		@ApiResponse(code = 200,response=XmMenuState.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmMenuState(@RequestBody XmMenuState xmMenuState) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmMenuState(@RequestBody XmMenuState xmMenuState) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			xmMenuStateService.updateByPk(xmMenuState);
-			m.put("data",xmMenuState);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	
@@ -196,60 +172,39 @@ public class XmMenuStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmMenuState(@RequestBody List<XmMenuState> xmMenuStates) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmMenuState(@RequestBody List<XmMenuState> xmMenuStates) {
+		
 		Tips tips=new Tips("成功删除"+xmMenuStates.size()+"条数据"); 
-		try{ 
+		
 			xmMenuStateService.batchDelete(xmMenuStates);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	@ApiOperation( value = "根据主键列表批量删除功能计划表,无需前端维护，所有数据由汇总统计得出信息",notes="batchEditXmMenuState,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchEdit",method=RequestMethod.POST)
-	public Map<String,Object> batchEditXmMenuState(@RequestBody List<XmMenuState> xmMenuStates) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchEditXmMenuState(@RequestBody List<XmMenuState> xmMenuStates) {
+		
 		Tips tips=new Tips("成功修改"+xmMenuStates.size()+"条数据"); 
-		try{ 
+		
 			xmMenuStateService.batchUpdate(xmMenuStates);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	@ApiOperation( value = "根据主键列表批量删除功能计划表,无需前端维护，所有数据由汇总统计得出信息",notes="batchEditXmMenuState,仅需要上传主键字段")
 	@ApiResponses({
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchAddStateByProductIdAndMenuList",method=RequestMethod.POST)
-	public Map<String,Object> batchAddStateByProductIdAndMenuList(@RequestBody XmMenuStateVo vo) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchAddStateByProductIdAndMenuList(@RequestBody XmMenuStateVo vo) {
+		
 		Tips tips=new Tips("成功修改"+vo.getXmMenus().size()+"条数据"); 
-		try{ 
+		
 			tips = xmMenuStateService.batchAddStateByProductIdAndMenuList(vo.getProductId(), vo.getProductName(), vo.getXmMenus());
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 	
 	
 	@ApiOperation( value = "计算bug、task、测试案例、等数据",notes="loadTasksToXmMenuState")
@@ -257,19 +212,12 @@ public class XmMenuStateController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/loadTasksToXmMenuState",method=RequestMethod.POST)
-	public Map<String,Object> loadTasksToXmMenuState(@RequestBody Map<String,Object> params) {
-		Map<String,Object> m = new HashMap<>();
+	public Result loadTasksToXmMenuState(@RequestBody Map<String,Object> params) {
+		
 		Tips tips=new Tips("成功修改数据"); 
-		try{ 
+		
 			int i= xmMenuStateService.loadTasksToXmMenuState((String) params.get("productId"));
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}  
 }

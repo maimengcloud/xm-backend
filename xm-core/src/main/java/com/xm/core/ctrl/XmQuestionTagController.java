@@ -1,8 +1,9 @@
 package com.xm.core.ctrl;
 
-import com.mdp.core.entity.Tips;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.xm.core.entity.XmQuestionTag;
 import com.xm.core.service.XmQuestionTagService;
 import io.swagger.annotations.*;
@@ -15,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -60,16 +60,17 @@ public class XmQuestionTagController {
 		@ApiResponse(code = 200,response= XmQuestionTag.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmQuestionTag( @ApiIgnore @RequestParam Map<String,Object> xmQuestionTag){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmQuestionTag, "ids");
-		PageUtils.startPage(xmQuestionTag);
-		List<Map<String,Object>>	xmQuestionTagList = xmQuestionTagService.selectListMapByWhere(xmQuestionTag);	//列出XmQuestionTag列表
-		PageUtils.responePage(m, xmQuestionTagList);
-		m.put("data",xmQuestionTagList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+	public Result listXmQuestionTag(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmQuestionTagService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmQuestionTag列表
+		
+		
+		
+		
 	}
 	
  
@@ -80,8 +81,8 @@ public class XmQuestionTagController {
 		@ApiResponse(code = 200,response=XmQuestionTag.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmQuestionTag(@RequestBody XmQuestionTag xmQuestionTag) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmQuestionTag(@RequestBody XmQuestionTag xmQuestionTag) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(StringUtils.isEmpty(xmQuestionTag.getId())) {
@@ -95,16 +96,7 @@ public class XmQuestionTagController {
 				}
 			}
 			xmQuestionTagService.insert(xmQuestionTag);
-			m.put("data",xmQuestionTag);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -114,20 +106,13 @@ public class XmQuestionTagController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmQuestionTag(@RequestBody XmQuestionTag xmQuestionTag){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmQuestionTag(@RequestBody XmQuestionTag xmQuestionTag){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			xmQuestionTagService.deleteByPk(xmQuestionTag);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 */
 	
@@ -137,21 +122,12 @@ public class XmQuestionTagController {
 		@ApiResponse(code = 200,response=XmQuestionTag.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmQuestionTag(@RequestBody XmQuestionTag xmQuestionTag) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmQuestionTag(@RequestBody XmQuestionTag xmQuestionTag) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			xmQuestionTagService.updateByPk(xmQuestionTag);
-			m.put("data",xmQuestionTag);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -163,20 +139,13 @@ public class XmQuestionTagController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmQuestionTag(@RequestBody List<XmQuestionTag> xmQuestionTags) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmQuestionTag(@RequestBody List<XmQuestionTag> xmQuestionTags) {
+		
 		Tips tips=new Tips("成功删除"+xmQuestionTags.size()+"条数据"); 
-		try{ 
+		
 			xmQuestionTagService.batchDelete(xmQuestionTags);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	*/
 }

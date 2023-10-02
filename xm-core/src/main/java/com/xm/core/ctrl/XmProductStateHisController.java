@@ -1,8 +1,9 @@
 package com.xm.core.ctrl;
 
-import com.mdp.core.entity.Tips;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmProductStateHis;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 /**
@@ -52,19 +52,17 @@ public class XmProductStateHisController {
 		@ApiResponse(code = 200,response=XmProductStateHis.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmProductStateHis( @ApiIgnore @RequestParam Map<String,Object> xmProductStateHis){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmProductStateHis, "pkList");
-		PageUtils.startPage(xmProductStateHis);
+	public Result listXmProductStateHis(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "pkList");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
-		xmProductStateHis.put("branchId",user.getBranchId());
-		List<Map<String,Object>>	xmProductStateHisList = xmProductStateHisService.selectListMapByWhere(xmProductStateHis);	//列出XmProductStateHis列表
-		PageUtils.responePage(m, xmProductStateHisList);
-		m.put("data",xmProductStateHisList);
+		params.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas = QueryTools.xmProductStateHisService(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProductStateHis列表
 
-		m.put("tips", tips);
-		return m;
 	}
 	
  
@@ -75,8 +73,8 @@ public class XmProductStateHisController {
 		@ApiResponse(code = 200,response=XmProductStateHis.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 		    boolean createPk=false;
@@ -94,16 +92,7 @@ public class XmProductStateHisController {
                 }
             }
 			xmProductStateHisService.insert(xmProductStateHis);
-			m.put("data",xmProductStateHis);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -113,8 +102,8 @@ public class XmProductStateHisController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
             if(!StringUtils.hasText(xmProductStateHis.getProductId())) {
@@ -128,15 +117,8 @@ public class XmProductStateHisController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmProductStateHisService.deleteByPk(xmProductStateHis);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 */
 	
@@ -146,8 +128,8 @@ public class XmProductStateHisController {
 		@ApiResponse(code = 200,response=XmProductStateHis.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmProductStateHis.getProductId())) {
@@ -161,16 +143,7 @@ public class XmProductStateHisController {
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 			xmProductStateHisService.updateSomeFieldByPk(xmProductStateHis);
-			m.put("data",xmProductStateHis);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 	
@@ -182,20 +155,13 @@ public class XmProductStateHisController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmProductStateHis(@RequestBody List<XmProductStateHis> xmProductStateHiss) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmProductStateHis(@RequestBody List<XmProductStateHis> xmProductStateHiss) {
+		
 		Tips tips=new Tips("成功删除"+xmProductStateHiss.size()+"条数据"); 
-		try{ 
+		
 			xmProductStateHisService.batchDelete(xmProductStateHiss);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	*/
 }

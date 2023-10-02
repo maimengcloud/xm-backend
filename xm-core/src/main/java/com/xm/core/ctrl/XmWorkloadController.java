@@ -1,13 +1,15 @@
 package com.xm.core.ctrl;
 
+import com.alibaba.druid.sql.dialect.odps.ast.OdpsAddTableStatement;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
-import com.mdp.mybatis.PageUtils;
-import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.*;
@@ -22,13 +24,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import org.w3c.dom.CDATASection;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.mdp.core.utils.BaseUtils.map;
 import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
@@ -89,43 +91,38 @@ public class XmWorkloadController {
 		@ApiResponse(code = 200,response= XmWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmWorkload( @ApiIgnore @RequestParam Map<String,Object> xmWorkload){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmWorkload, "ids");
-		RequestUtils.transformArray( xmWorkload, "wstatuses");
-		RequestUtils.transformArray( xmWorkload, "sstatuses");
-		PageUtils.startPage(xmWorkload);
-		String taskId= (String) xmWorkload.get("taskId");
-		String sbillId= (String) xmWorkload.get("sbillId");
-		String projectId= (String) xmWorkload.get("projectId");
-		String userid= (String) xmWorkload.get("userid");
+	public Result listXmWorkload(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		RequestUtils.transformArray(params, "wstatuses");
+		RequestUtils.transformArray(params, "sstatuses");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		String taskId= (String) params.get("taskId");
+		String sbillId= (String) params.get("sbillId");
+		String projectId= (String) params.get("projectId");
+		String userid= (String) params.get("userid");
 		User user=LoginUtils.getCurrentUserInfo();
-		xmWorkload.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.selectListMapByWhere(xmWorkload);	//列出XmWorkload列表
-		PageUtils.responePage(m, xmWorkloadList);
-		m.put("data",xmWorkloadList);
+		params.put("linkBranchId",user.getBranchId());
+		List<Map<String,Object>> datas = xmWorkloadService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmWorkload列表
 
-		m.put("tips", tips);
-		return m;
 	}
 	@ApiOperation( value = "查询项目每日登记工时情况",notes=" ")
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listProjectWorkloadSetDay",method=RequestMethod.GET)
-	public Map<String,Object> listProjectWorkloadSetDay( @ApiIgnore @RequestParam Map<String,Object> xmWorkload){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		PageUtils.startPage(xmWorkload);
+	public Result listProjectWorkloadSetDay(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmWorkload.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.listProjectWorkloadSetDay(xmWorkload);	//列出XmWorkload列表
-		PageUtils.responePage(m, xmWorkloadList);
-		m.put("data",xmWorkloadList);
-
-		m.put("tips", tips);
-		return m;
+		params.put("linkBranchId",user.getBranchId());
+		List<Map<String,Object>>	datas = xmWorkloadService.listProjectWorkloadSetDay(params);	//列出XmWorkload列表
+		return Result.ok().setData(datas);
 	}
 
 
@@ -134,18 +131,15 @@ public class XmWorkloadController {
 			@ApiResponse(code = 200,response= XmWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listProjectWorkloadSetMonth",method=RequestMethod.GET)
-	public Map<String,Object> listProjectWorkloadSetMonth( @ApiIgnore @RequestParam Map<String,Object> xmWorkload){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		PageUtils.startPage(xmWorkload);
+	public Result listProjectWorkloadSetMonth(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmWorkload.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.listProjectWorkloadSetMonth(xmWorkload);	//列出XmWorkload列表
-		PageUtils.responePage(m, xmWorkloadList);
-		m.put("data",xmWorkloadList);
+		params.put("linkBranchId",user.getBranchId());
+		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.listProjectWorkloadSetMonth(params);	//列出XmWorkload列表
 
-		m.put("tips", tips);
-		return m;
 	}
 
 
@@ -154,25 +148,22 @@ public class XmWorkloadController {
 			@ApiResponse(code = 200,response= XmWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/ListGroupByTaskIdAndUserid",method=RequestMethod.GET)
-	public Map<String,Object> ListGroupByTaskIdAndUserid( @ApiIgnore @RequestParam Map<String,Object> xmWorkload){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmWorkload, "ids");
-		RequestUtils.transformArray( xmWorkload, "wstatuses");
-		RequestUtils.transformArray( xmWorkload, "sstatuses");
-		PageUtils.startPage(xmWorkload);
+	public Result ListGroupByTaskIdAndUserid(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		RequestUtils.transformArray(params, "wstatuses");
+		RequestUtils.transformArray(params, "sstatuses");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmWorkload.put("linkBranchId",user.getBranchId());
-		String queryScope= (String) xmWorkload.get("queryScope");
+		params.put("linkBranchId",user.getBranchId());
+		String queryScope= (String) params.get("queryScope");
 		if("my".equals(queryScope)){
-			xmWorkload.put("userid",user.getUserid());
+			params.put("userid",user.getUserid());
 		}
-		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.ListGroupByTaskIdAndUserid(xmWorkload);	//列出XmWorkload列表
-		PageUtils.responePage(m, xmWorkloadList);
-		m.put("data",xmWorkloadList);
+		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.ListGroupByTaskIdAndUserid(params);	//列出XmWorkload列表
 
-		m.put("tips", tips);
-		return m;
 	}
 
 	@ApiOperation( value = "按任务及报工人查询待确认工时",notes=" ")
@@ -180,25 +171,22 @@ public class XmWorkloadController {
 			@ApiResponse(code = 200,response= XmWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/ListGroupByTaskIdAndUseridToSet",method=RequestMethod.GET)
-	public Map<String,Object> ListGroupByTaskIdAndUseridToSet( @ApiIgnore @RequestParam Map<String,Object> xmWorkload){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmWorkload, "ids");
-		RequestUtils.transformArray( xmWorkload, "wstatuses");
-		RequestUtils.transformArray( xmWorkload, "sstatuses");
-		PageUtils.startPage(xmWorkload);
+	public Result ListGroupByTaskIdAndUseridToSet(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		RequestUtils.transformArray(params, "wstatuses");
+		RequestUtils.transformArray(params, "sstatuses");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		String queryScope= (String) xmWorkload.get("queryScope");
 		User user=LoginUtils.getCurrentUserInfo();
-		xmWorkload.put("linkBranchId",user.getBranchId());
+		params.put("linkBranchId",user.getBranchId());
 		if("my".equals(queryScope)){
-			xmWorkload.put("userid",user.getUserid());
+			params.put("userid",user.getUserid());
 		}
-		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.ListGroupByTaskIdAndUseridToSet(xmWorkload);	//列出XmWorkload列表
-		PageUtils.responePage(m, xmWorkloadList);
-		m.put("data",xmWorkloadList);
+		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.ListGroupByTaskIdAndUseridToSet(params);	//列出XmWorkload列表
 
-		m.put("tips", tips);
-		return m;
 	}
 
 
@@ -207,8 +195,8 @@ public class XmWorkloadController {
 		@ApiResponse(code = 200,response= XmWorkload.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmWorkload(@RequestBody XmWorkload xmWorkload) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmWorkload(@RequestBody XmWorkload xmWorkload) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			User user= LoginUtils.getCurrentUserInfo();
@@ -378,7 +366,8 @@ public class XmWorkloadController {
  				xmWorkload.setBranchId(xmTestCaseDb.getCbranchId());
  				xmWorkloadService.insert(xmWorkload);
 			}else if("4".equals(xmWorkload.getBizType())){//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
- 				List<Map<String,Object>> xmTestPlanCaseDbs=this.xmTestPlanCaseService.selectListMapByWhere(map("planId",xmWorkload.getPlanId(),"caseId",xmWorkload.getCaseId()));
+ 				List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
 				if(xmTestPlanCaseDbs==null||xmTestPlanCaseDbs.size()==0){
 					return failed("xmTestPlanCaseDb-0","执行用例已不存在");
 				}
@@ -410,24 +399,15 @@ public class XmWorkloadController {
 				xmWorkload.setPlanId((String) xmTestPlanCaseDb.get("planId"));
 				xmWorkloadService.insert(xmWorkload);
 			}
-			m.put("data",xmWorkload);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	@ApiOperation( value = "根据主键修改一条工时登记表信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response= XmWorkload.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmWorkload(@RequestBody XmWorkload xmWorkload) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmWorkload(@RequestBody XmWorkload xmWorkload) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmWorkload.getId())) {
@@ -459,16 +439,7 @@ public class XmWorkloadController {
 			pushService.pushXmTask(xmTaskDb);
 			this.xmTaskService.calcWorkloadByRecord(xmWorkload.getTaskId());
 
-			m.put("data",xmWorkload);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 
@@ -477,8 +448,8 @@ public class XmWorkloadController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmWorkload(@RequestBody List<XmWorkload> xmWorkloads) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmWorkload(@RequestBody List<XmWorkload> xmWorkloads) {
+		
 		Tips tips=new Tips("成功删除"+xmWorkloads.size()+"条数据"); 
 		try{
 			if(xmWorkloads.stream().filter(i->!StringUtils.hasText(i.getId())).findAny().isPresent()){
@@ -554,15 +525,8 @@ public class XmWorkloadController {
 			}else{
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 
@@ -575,8 +539,8 @@ public class XmWorkloadController {
 	})
 	//@HasQx(value = "xm_core_xmWorkload_editSomeFields",name = "批量修改修改任务中的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmWorkloadMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields(@RequestBody Map<String,Object> xmWorkloadMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			List<String> ids= (List<String>) xmWorkloadMap.get("ids");
@@ -668,7 +632,7 @@ public class XmWorkloadController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -676,7 +640,6 @@ public class XmWorkloadController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 }

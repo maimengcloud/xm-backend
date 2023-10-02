@@ -1,9 +1,11 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -68,17 +70,15 @@ public class XmFuncController {
 		@ApiResponse(code = 200,response=XmFunc.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmFunc( @ApiIgnore @RequestParam Map<String,Object> xmFunc){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmFunc, "ids");
-		PageUtils.startPage(xmFunc);
-		List<Map<String,Object>>	xmFuncList = xmFuncService.selectListMapByWhere(xmFunc);	//列出XmFunc列表
-		PageUtils.responePage(m, xmFuncList);
-		m.put("data",xmFuncList);
+	public Result listXmFunc(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = sensitiveWordService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmFunc列表
 
-		m.put("tips", tips);
-		return m;
 	}
 	
  
@@ -88,8 +88,8 @@ public class XmFuncController {
 		@ApiResponse(code = 200,response=XmFunc.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmFunc(@RequestBody XmFunc xmFunc) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmFunc(@RequestBody XmFunc xmFunc) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 		    boolean createPk=false;
@@ -118,16 +118,7 @@ public class XmFuncController {
 			xmFunc.setPbranchId(xmProduct.getBranchId());
 			xmFuncService.parentIdPathsCalcBeforeSave(xmFunc);
 			xmFuncService.insert(xmFunc);
-			m.put("data",xmFunc);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "删除一条功能模块表信息",notes=" ")
@@ -135,8 +126,8 @@ public class XmFuncController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmFunc(@RequestBody XmFunc xmFunc){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmFunc(@RequestBody XmFunc xmFunc){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
             if(!StringUtils.hasText(xmFunc.getId())) {
@@ -151,15 +142,8 @@ public class XmFuncController {
 				return failed("childcnt-not-0","至少还有"+childcnt+"个子节点,请先删除子节点，再删除父节点");
 			}
 			xmFuncService.deleteByPk(xmFunc);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 	@ApiOperation( value = "根据主键修改一条功能模块表信息",notes=" ")
@@ -167,8 +151,8 @@ public class XmFuncController {
 		@ApiResponse(code = 200,response=XmFunc.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmFunc(@RequestBody XmFunc xmFunc) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmFunc(@RequestBody XmFunc xmFunc) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmFunc.getId())) {
@@ -179,16 +163,7 @@ public class XmFuncController {
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 			xmFuncService.updateSomeFieldByPk(xmFunc);
-			m.put("data",xmFunc);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
     @ApiOperation( value = "批量修改某些字段",notes="")
@@ -197,8 +172,8 @@ public class XmFuncController {
 			@ApiResponse(code = 200,response=XmFunc.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmFuncMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmFuncMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             List<String> ids= (List<String>) xmFuncMap.get("ids");
@@ -259,7 +234,7 @@ public class XmFuncController {
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -267,8 +242,7 @@ public class XmFuncController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "根据主键列表批量删除功能模块表信息",notes=" ")
@@ -276,10 +250,10 @@ public class XmFuncController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmFunc(@RequestBody List<XmFunc> xmFuncs) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmFunc(@RequestBody List<XmFunc> xmFuncs) {
+		
         Tips tips=new Tips("成功删除"); 
-        try{ 
+        
             if(xmFuncs.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
             }

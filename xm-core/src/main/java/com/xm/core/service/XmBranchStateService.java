@@ -1,33 +1,36 @@
 package com.xm.core.service;
 
-import com.mdp.core.service.BaseService;
-import org.springframework.stereotype.Service;
-
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import java.util.List;
 import java.util.Map;
+import org.springframework.stereotype.Service;
+import com.mdp.core.service.BaseService;
+import static com.mdp.core.utils.BaseUtils.*;
+import com.mdp.core.entity.Tips;
+import com.mdp.core.err.BizException;
 
+import com.xm.core.entity.XmBranchState;
+import com.xm.core.mapper.XmBranchStateMapper;
 /**
- * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
- * 组织 com.qqkj  顶级模块 xm 大模块 core 小模块 <br>
- * 实体 XmBranchState 表 XM.xm_branch_state 当前主键(包括多主键): id; 
- ***/
-@Service("xm.core.xmBranchStateService")
-public class XmBranchStateService extends BaseService {
+ * @author maimeng-mdp code-gen
+ * @since 2023-10-3
+ */
+@Service
+public class XmBranchStateService extends BaseService<XmBranchStateMapper,XmBranchState> {
+	static Logger logger =LoggerFactory.getLogger(XmBranchStateService.class);
 
-	public void loadProjectStateToXmBranchState(String branchId) {
-		this.update("loadProjectStateToXmBranchState", branchId);
-		
+	/**
+	 * 自定义查询，支持多表关联
+	 * @param page 分页条件
+	 * @param ew 一定要，并且必须加@Param("ew")注解
+	 * @param ext 如果xml中需要根据某些值进行特殊处理，可以通过这个进行传递，非必须，注解也可以不加
+	 * @return
+	 */
+	public List<Map<String,Object>> selectListMapByWhere(IPage page, QueryWrapper ew, Map<String,Object> ext){
+		return baseMapper.selectListMapByWhere(page,ew,ext);
 	}
-
-    public List<Map<String, Object>> listPortalAllXmBranchSumState(Map<String, Object> xmBranchState) {
-		return this.selectList("listPortalAllXmBranchSumState",xmBranchState);
-    }
-
-    public List<Map<String, Object>> tasksSumDw(String branchId) {
-	    return super.selectList("tasksSumDw",branchId);
-    }
-
-    /** 请在此类添加自定义函数 */
-
 }
 

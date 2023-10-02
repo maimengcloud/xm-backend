@@ -1,10 +1,10 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
-import com.mdp.qx.HasQx;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenuPlan;
@@ -18,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 /**
@@ -101,17 +100,18 @@ public class XmMenuPlanController {
 		@ApiResponse(code = 200,response=XmMenuPlan.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmMenuPlan( @ApiIgnore @RequestParam Map<String,Object> xmMenuPlan){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmMenuPlan, "ids");
-		RequestUtils.transformArray(xmMenuPlan, "tagIdList");
-		PageUtils.startPage(xmMenuPlan);
-		List<Map<String,Object>>	xmMenuPlanList = xmMenuPlanService.selectListMapByWhere(xmMenuPlan);	//列出XmMenuPlan列表
-		PageUtils.responePage(m, xmMenuPlanList);
-		m.put("data",xmMenuPlanList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+	public Result listXmMenuPlan(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "ids");
+		RequestUtils.transformArray(params, "tagIdList");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmMenuPlanService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmMenuPlan列表
+		
+		
+		
+		
 	}
 	
  
@@ -123,8 +123,8 @@ public class XmMenuPlanController {
 	})
 	//@HasQx(value = "xm_core_xmMenuPlan_add",name = "新增需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmMenuPlan(@RequestBody XmMenuPlan xmMenuPlan) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmMenuPlan(@RequestBody XmMenuPlan xmMenuPlan) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(xmMenuPlanService.countByWhere(xmMenuPlan)>0){
@@ -133,16 +133,7 @@ public class XmMenuPlanController {
 				return m;
 			}
 			xmMenuPlanService.insert(xmMenuPlan);
-			m.put("data",xmMenuPlan);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	
@@ -153,22 +144,15 @@ public class XmMenuPlanController {
 	})
 	//@HasQx(value = "xm_core_xmMenuPlan_del",name = "删除需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmMenuPlan(@RequestBody XmMenuPlan xmMenuPlan){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmMenuPlan(@RequestBody XmMenuPlan xmMenuPlan){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			xmMenuPlanService.deleteByPk(xmMenuPlan);
 			User user = LoginUtils.getCurrentUserInfo();
 			pushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmMenuPlan.getMenuId(), user.getUserid(), user.getUsername(), xmMenuPlan.getMenuName()+"相关计划删除");
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 
 	
@@ -179,23 +163,14 @@ public class XmMenuPlanController {
 	})
 	//@HasQx(value = "xm_core_xmMenuPlan_edit",name = "修改需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmMenuPlan(@RequestBody XmMenuPlan xmMenuPlan) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmMenuPlan(@RequestBody XmMenuPlan xmMenuPlan) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			xmMenuPlanService.updateByPk(xmMenuPlan); 
 			User user = LoginUtils.getCurrentUserInfo();
 			pushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmMenuPlan.getMenuId(), user.getUserid(), user.getUsername(),  user.getUsername()+"对需求【"+xmMenuPlan.getMenuName()+"】相关计划进行调整，需求负责人为【"+xmMenuPlan.getChargeUsername()+"】");
-			m.put("data",xmMenuPlan);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	
@@ -208,20 +183,13 @@ public class XmMenuPlanController {
 	})
 	//@HasQx(value = "xm_core_xmMenuPlan_batchDel",name = "批量删除需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmMenuPlan(@RequestBody List<XmMenuPlan> xmMenuPlans) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmMenuPlan(@RequestBody List<XmMenuPlan> xmMenuPlans) {
+		
 		Tips tips=new Tips("成功删除"+xmMenuPlans.size()+"条数据"); 
-		try{ 
+		
 			xmMenuPlanService.batchDelete(xmMenuPlans);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	@ApiOperation( value = "根据主键列表批量删除功能计划表,无需前端维护，所有数据由汇总统计得出信息",notes="batchEditXmMenuPlan,仅需要上传主键字段")
 	@ApiResponses({
@@ -229,25 +197,18 @@ public class XmMenuPlanController {
 	})
 	//@HasQx(value = "xm_core_xmMenuPlan_batchEdit",name = "批量修改需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchEdit",method=RequestMethod.POST)
-	public Map<String,Object> batchEditXmMenuPlan(@RequestBody List<XmMenuPlan> xmMenuPlans) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchEditXmMenuPlan(@RequestBody List<XmMenuPlan> xmMenuPlans) {
+		
 		Tips tips=new Tips("成功修改"+xmMenuPlans.size()+"条数据"); 
-		try{ 
+		
 			xmMenuPlanService.batchUpdate(xmMenuPlans);
 			User user = LoginUtils.getCurrentUserInfo();
 
 			for (XmMenuPlan xmMenuPlan : xmMenuPlans) {
 				pushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmMenuPlan.getMenuId(), user.getUserid(), user.getUsername(),  user.getUsername()+"对需求【"+xmMenuPlan.getMenuName()+"】相关计划进行调整，需求负责人为【"+xmMenuPlan.getChargeUsername()+"】");
 			}
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 
 	@ApiOperation( value = "根据主键列表批量删除功能计划表,无需前端维护，所有数据由汇总统计得出信息",notes="batchEditXmMenuPlan,仅需要上传主键字段")
 	@ApiResponses({
@@ -255,20 +216,13 @@ public class XmMenuPlanController {
 	})
 	//@HasQx(value = "xm_core_xmMenuPlan_batchAddPlanByProjectIdAndMenuList",name = "由分配到项目的需求创建需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchAddPlanByProjectIdAndMenuList",method=RequestMethod.POST)
-	public Map<String,Object> batchAddPlanByProjectIdAndMenuList(@RequestBody XmMenuPlanVo vo) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchAddPlanByProjectIdAndMenuList(@RequestBody XmMenuPlanVo vo) {
+		
 		Tips tips=new Tips("成功修改"+vo.getXmMenus().size()+"条数据"); 
-		try{ 
+		
 			tips = xmMenuPlanService.batchAddPlanByProjectIdAndMenuList(vo.getProjectId(), vo.getProjectName(), vo.getXmMenus());
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	} 	 
 
 	@ApiOperation( value = "计算bug、task、测试案例、等数据",notes="loadTasksToXmMenuPlan")
@@ -277,19 +231,12 @@ public class XmMenuPlanController {
 	})
 	//@HasQx(value = "xm_core_xmMenuPlan_loadTasksToXmMenuPlan",name = "计算需求对应的bug、task、测试案例等数据",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/loadTasksToXmMenuPlan",method=RequestMethod.POST)
-	public Map<String,Object> loadTasksToXmMenuPlan(@RequestBody Map<String,Object> params) {
-		Map<String,Object> m = new HashMap<>();
+	public Result loadTasksToXmMenuPlan(@RequestBody Map<String,Object> params) {
+		
 		Tips tips=new Tips("成功修改数据"); 
-		try{ 
+		
 			int i= xmMenuPlanService.loadTasksToXmMenuPlan((String) params.get("projectId"));
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}  
 }

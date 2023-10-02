@@ -1,14 +1,16 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.meta.client.entity.ItemVo;
 import com.mdp.meta.client.service.ItemService;
 import com.mdp.msg.client.PushNotifyMsgService;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -28,7 +30,10 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.toMap;
@@ -82,17 +87,15 @@ public class XmTaskOrderController {
 		@ApiResponse(code = 200,response=XmTaskOrder.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTaskOrder( @ApiIgnore @RequestParam Map<String,Object> xmTaskOrder){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmTaskOrder, "ids");
-		PageUtils.startPage(xmTaskOrder);
-		List<Map<String,Object>>	xmTaskOrderList = xmTaskOrderService.selectListMapByWhere(xmTaskOrder);	//列出XmTaskOrder列表
-		PageUtils.responePage(m, xmTaskOrderList);
-		m.put("data",xmTaskOrderList);
+	public Result listXmTaskOrder(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmTaskOrderService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskOrder列表
 
-		m.put("tips", tips);
-		return m;
 	}
 
 	@ApiOperation( value = "计算订单金额",notes=" ")
@@ -100,7 +103,7 @@ public class XmTaskOrderController {
 			@ApiResponse(code = 200,response= AddXmTaskOrderVo.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/calcOrder",method= RequestMethod.GET)
-	public Map<String,Object> calcOrder(  AddXmTaskOrderVo xmTaskOrder) {
+	public Result calcOrder(  AddXmTaskOrderVo xmTaskOrder) {
 		xmTaskOrder.setCalc(true);
 		return  addXmTaskOrder(xmTaskOrder);
 	}
@@ -110,8 +113,8 @@ public class XmTaskOrderController {
 		@ApiResponse(code = 200,response=XmTaskOrder.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmTaskOrder(@RequestBody AddXmTaskOrderVo xmTaskOrder) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmTaskOrder(@RequestBody AddXmTaskOrderVo xmTaskOrder) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(!StringUtils.hasText(xmTaskOrder.getTaskId())){
@@ -254,16 +257,7 @@ public class XmTaskOrderController {
 				}
 				msgService.pushMsg(user,user.getUserid(),user.getUsername(),"2",order.getProjectId(),order.getTaskId(),"您为任务支付"+remark+order.getFinalFee()+"元订单提交成功，请及时付款");
 			}
-			m.put("data",order);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	/**
@@ -272,8 +266,8 @@ public class XmTaskOrderController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmTaskOrder(@RequestBody XmTaskOrder xmTaskOrder){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmTaskOrder(@RequestBody XmTaskOrder xmTaskOrder){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
             if(!StringUtils.hasText(xmTaskOrder.getId())) {
@@ -284,15 +278,8 @@ public class XmTaskOrderController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmTaskOrderService.deleteByPk(xmTaskOrder);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 */
 	
@@ -302,8 +289,8 @@ public class XmTaskOrderController {
 		@ApiResponse(code = 200,response=XmTaskOrder.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmTaskOrder(@RequestBody XmTaskOrder xmTaskOrder) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmTaskOrder(@RequestBody XmTaskOrder xmTaskOrder) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmTaskOrder.getId())) {
@@ -314,16 +301,7 @@ public class XmTaskOrderController {
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 			xmTaskOrderService.updateSomeFieldByPk(xmTaskOrder);
-			m.put("data",xmTaskOrder);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 
@@ -334,8 +312,8 @@ public class XmTaskOrderController {
 			@ApiResponse(code = 200,response=XmTaskOrder.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTaskOrderMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTaskOrderMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             List<String> ids= (List<String>) xmTaskOrderMap.get("ids");
@@ -388,7 +366,7 @@ public class XmTaskOrderController {
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -396,8 +374,7 @@ public class XmTaskOrderController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 
@@ -407,10 +384,10 @@ public class XmTaskOrderController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmTaskOrder(@RequestBody List<XmTaskOrder> xmTaskOrders) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmTaskOrder(@RequestBody List<XmTaskOrder> xmTaskOrders) {
+		
         Tips tips=new Tips("成功删除"); 
-        try{ 
+        
             if(xmTaskOrders.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
             }
@@ -457,15 +434,15 @@ public class XmTaskOrderController {
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
 	@RequestMapping(value="/getOrderById",method=RequestMethod.GET)
-	public Map<String,Object> getOrderById(String orderId) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
+	public Result getOrderById(String orderId) {
+		
+		
 		if(!StringUtils.hasText(orderId)) {
 			return failed("data-0","订单Id不能为空");
 		}
 		XmTaskOrder moOrder = xmTaskOrderService.selectOneById(orderId);
 		m.put("tips", tips);
-		m.put("data", moOrder);
+		
 		return m;
 	}
 
@@ -474,8 +451,8 @@ public class XmTaskOrderController {
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
 	@RequestMapping(value="/orderPaySuccess",method=RequestMethod.POST)
-	public Map<String,Object> orderPaySuccess(@RequestBody XmTaskOrder order) {
-		Map<String,Object> m = new HashMap<>();
+	public Result orderPaySuccess(@RequestBody XmTaskOrder order) {
+		
 		try {
 			Tips tips=new Tips("操作成功");
 			if(!StringUtils.hasText(order.getId())) {
@@ -503,8 +480,8 @@ public class XmTaskOrderController {
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
 	@RequestMapping(value="/payCancel",method=RequestMethod.POST)
-	public Map<String,Object> payCancel(@RequestBody XmTaskOrder order) {
-		Map<String,Object> m = new HashMap<>();
+	public Result payCancel(@RequestBody XmTaskOrder order) {
+		
 		try {
 			Tips tips=new Tips("操作成功");
 			if(!StringUtils.hasText(order.getId())) {
@@ -530,9 +507,9 @@ public class XmTaskOrderController {
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
 	@RequestMapping(value="/updatePrepayId",method=RequestMethod.POST)
-	public Map<String,Object> updatePrepayId(@RequestBody  XmTaskOrder order) {
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
+	public Result updatePrepayId(@RequestBody  XmTaskOrder order) {
+		
+		
 		if(!StringUtils.hasText(order.getId())) {
 			return failed("data-0","订单Id不能为空");
 		}
@@ -543,7 +520,7 @@ public class XmTaskOrderController {
 		moOrder.setPayTime(new Date());
 		xmTaskOrderService.updateSomeFieldByPk(moOrder);
 		m.put("tips", tips);
-		m.put("data", moOrder);
+		
 		return m;
 	}
 }

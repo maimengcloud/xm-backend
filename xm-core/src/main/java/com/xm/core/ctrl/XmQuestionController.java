@@ -1,14 +1,16 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -96,47 +98,48 @@ public class XmQuestionController {
 		@ApiResponse(code = 200,response= XmQuestion.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmQuestion( @ApiIgnore @RequestParam Map<String,Object> xmQuestion){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmQuestion, "ids");
-		RequestUtils.transformArray(xmQuestion, "menuIds");
-		RequestUtils.transformArray(xmQuestion, "tagIdList");
-		PageUtils.startPage(xmQuestion);
+	public Result listXmQuestion(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "ids");
+		RequestUtils.transformArray(params, "menuIds");
+		RequestUtils.transformArray(params, "tagIdList");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user = LoginUtils.getCurrentUserInfo();
 		if(LoginUtils.isBranchAdmin()){
-			xmQuestion.put("pbranchId",user.getBranchId());
+			params.put("pbranchId",user.getBranchId());
 		}else {
-			String id= (String) xmQuestion.get("id");
-			String menuId= (String) xmQuestion.get("menuId");
-			Object ids=  xmQuestion.get("ids");
-			Object menuIds=  xmQuestion.get("menuIds");
-			String productId= (String) xmQuestion.get("productId");
-			String myUserid= (String) xmQuestion.get("myUserid");
-			String projectId= (String) xmQuestion.get("projectId");
-			String linkIterationId= (String) xmQuestion.get("linkIterationId");
-			String casedbId= (String) xmQuestion.get("casedbId");
-			String planId= (String) xmQuestion.get("planId");
-			String funcId= (String) xmQuestion.get("funcId");
-			String hisHandlerUserid= (String) xmQuestion.get("hisHandlerUserid");
+			String id= (String) params.get("id");
+			String menuId= (String) params.get("menuId");
+			Object ids=  params.get("ids");
+			Object menuIds=  params.get("menuIds");
+			String productId= (String) params.get("productId");
+			String myUserid= (String) params.get("myUserid");
+			String projectId= (String) params.get("projectId");
+			String linkIterationId= (String) params.get("linkIterationId");
+			String casedbId= (String) params.get("casedbId");
+			String planId= (String) params.get("planId");
+			String funcId= (String) params.get("funcId");
+			String hisHandlerUserid= (String) params.get("hisHandlerUserid");
 
 
 			if(   !( StringUtils.hasText(myUserid) ||StringUtils.hasText(id) || StringUtils.hasText(menuId) || StringUtils.hasText(productId)|| StringUtils.hasText(projectId)||menuIds!=null||ids!=null|| StringUtils.hasText(casedbId)|| StringUtils.hasText(linkIterationId)|| StringUtils.hasText(planId)|| StringUtils.hasText(funcId) || StringUtils.hasText(hisHandlerUserid)) ){
-				xmQuestion.put("compete",user.getUserid());
+				params.put("compete",user.getUserid());
 			}
 		}
 
 
-		List<Map<String,Object>>	xmQuestionList = xmQuestionService.getQuestion(xmQuestion);	//列出XmQuestion列表
-		PageUtils.responePage(m, xmQuestionList);
-		m.put("data",xmQuestionList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+		List<Map<String,Object>>	datas = xmQuestionService.getQuestion(params);	//列出XmQuestion列表
+		return Result.ok().setData(datas);
+		
+		
+		
+		
 	}
 
 
 	@RequestMapping(value="/getXmQuestionAttDist",method=RequestMethod.GET)
-	public Map<String,Object> getXmQuestionAttDist( @ApiIgnore @RequestParam Map<String,Object> xmQuestion){
+	public Result getXmQuestionAttDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
 		xmQuestion.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAttDist(xmQuestion);
@@ -144,31 +147,31 @@ public class XmQuestionController {
 	}
 
 	@RequestMapping(value="/getXmQuestionAgeDist",method=RequestMethod.GET)
-	public Map<String,Object> getXmQuestionAgeDist( @ApiIgnore @RequestParam Map<String,Object> xmQuestion){
+	public Result getXmQuestionAgeDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
 		xmQuestion.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAgeDist(xmQuestion);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
 	@RequestMapping(value="/getXmQuestionRetestDist",method=RequestMethod.GET)
-	public Map<String,Object> getXmQuestionRetestDist( @ApiIgnore @RequestParam Map<String,Object> xmQuestion){
+	public Result getXmQuestionRetestDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
 		xmQuestion.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionRetestDist(xmQuestion);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
 	@RequestMapping(value="/getXmQuestionSort",method=RequestMethod.GET)
-	public Map<String,Object> getXmQuestionSort( @ApiIgnore @RequestParam Map<String,Object> xmQuestion){
+	public Result getXmQuestionSort(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
-		PageUtils.startPage(xmQuestion);
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		xmQuestion.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionSort(xmQuestion);
 		Map<String,Object> m=new HashMap<>();
 		PageUtils.responePage(m,datas);
-		m.put("data",datas);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+		
+		
+		
 	}
 
 	@ApiOperation( value = "新增一条xm_question信息",notes="addXmQuestion,主键如果为空，后台自动生成")
@@ -177,8 +180,8 @@ public class XmQuestionController {
 	})
 	//@HasQx(value = "xm_core_xmQuestion_add",name = "新增bug",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmQuestion(@RequestBody XmQuestionVo xmQuestionVo) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmQuestion(@RequestBody XmQuestionVo xmQuestionVo) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(!StringUtils.hasText(xmQuestionVo.getProjectId())){
@@ -226,16 +229,7 @@ public class XmQuestionController {
 				notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"5",xmQuestionVo.getProductId(),xmQuestionVo.getId(),"您有新的bug【"+xmQuestionVo.getName()+"】需要处理，请尽快修复！");
 				xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(), user.getUsername()+"创建bug【"+xmQuestionVo.getName()+"】并指派给"+xmQuestionVo.getHandlerUsername());
 			}
-			m.put("data",xmQuestionVo);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	/**
@@ -244,20 +238,13 @@ public class XmQuestionController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmQuestion(@RequestBody XmQuestion xmQuestion){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmQuestion(@RequestBody XmQuestion xmQuestion){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			xmQuestionService.deleteByPk(xmQuestion);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	 */
 	
@@ -267,8 +254,8 @@ public class XmQuestionController {
 	})
 	//@HasQx(value = "xm_core_xmQuestion_edit",name = "修改bug",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmQuestion(@RequestBody XmQuestionVo xmQuestionVo) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmQuestion(@RequestBody XmQuestionVo xmQuestionVo) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 
@@ -286,16 +273,7 @@ public class XmQuestionController {
 			if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {
 				xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(), user.getUsername()+"修改bug【"+xmQuestionVo.getName()+"】");
 			}
-			m.put("data",xmQuestionVo);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 	
 	@ApiOperation( value = "根据主键修改一条xm_question信息",notes="editXmQuestion")
@@ -304,8 +282,8 @@ public class XmQuestionController {
 	})
 	//@HasQx(value = "xm_core_xmQuestion_editStatus",name = "修改bug状态",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editStatus",method=RequestMethod.POST)
-	public Map<String,Object> editStatus(@RequestBody XmQuestion xmQuestion) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editStatus(@RequestBody XmQuestion xmQuestion) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 
@@ -323,7 +301,7 @@ public class XmQuestionController {
  			if(!StringUtils.isEmpty(xmQuestion.getHandlerUserid())) {
 				xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestion.getHandlerUserid(),xmQuestion.getHandlerUsername(), user.getUsername()+"修改bug【"+xmQuestion.getName()+"】状态");
 			}
-			m.put("data",xmQuestion);
+			
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -331,8 +309,7 @@ public class XmQuestionController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 
@@ -343,8 +320,8 @@ public class XmQuestionController {
 	})
 	//@HasQx(value = "xm_core_xmQuestion_editSomeFields",name = "修改bug的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields(@RequestBody Map<String,Object> xmQuestionMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields(@RequestBody Map<String,Object> xmQuestionMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
@@ -470,7 +447,7 @@ public class XmQuestionController {
 			}else{
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -478,8 +455,7 @@ public class XmQuestionController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "根据主键列表批量删除xm_question信息",notes="batchDelXmQuestion,仅需要上传主键字段")
@@ -487,8 +463,8 @@ public class XmQuestionController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmQuestion(@RequestBody List<XmQuestion> xmQuestions) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmQuestion(@RequestBody List<XmQuestion> xmQuestions) {
+		
 		Tips tips=new Tips("成功删除"+xmQuestions.size()+"条数据"); 
 		try{
 			User user=LoginUtils.getCurrentUserInfo();
@@ -532,15 +508,8 @@ public class XmQuestionController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 
@@ -738,11 +707,11 @@ public class XmQuestionController {
 	 **/
 	@AuditLog(firstMenu="办公平台",secondMenu="项目问题管理",func="processApprova",funcDesc="项目问题审核",operType=OperType.UPDATE)
 	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
-	public Map<String,Object> processApprova( @RequestBody Map<String,Object> flowVars){
-		Map<String,Object> m = new HashMap<>();
+	public Result processApprova( @RequestBody Map<String,Object> flowVars){
+		
 		Tips tips=new Tips("成功新增一条数据");
 		  
-		try{ 
+		
 			
 			this.xmQuestionService.processApprova(flowVars);
 			logger.debug("procInstId====="+flowVars.get("procInstId"));
@@ -753,8 +722,7 @@ public class XmQuestionController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("执行异常",e);
 		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 

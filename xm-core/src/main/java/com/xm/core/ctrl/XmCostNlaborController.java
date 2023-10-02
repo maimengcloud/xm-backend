@@ -1,9 +1,11 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -56,17 +58,15 @@ public class XmCostNlaborController {
 		@ApiResponse(code = 200,response=XmCostNlabor.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmCostNlabor( @ApiIgnore @RequestParam Map<String,Object> xmCostNlabor){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmCostNlabor, "ids");
-		PageUtils.startPage(xmCostNlabor);
-		List<Map<String,Object>>	xmCostNlaborList = xmCostNlaborService.selectListMapByWhere(xmCostNlabor);	//列出XmCostNlabor列表
-		PageUtils.responePage(m, xmCostNlaborList);
-		m.put("data",xmCostNlaborList);
+	public Result listXmCostNlabor(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmCostNlaborService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmCostNlabor列表
 
-		m.put("tips", tips);
-		return m;
 	}
 
 
@@ -74,16 +74,16 @@ public class XmCostNlaborController {
 			@ApiResponse(code = 200,response= XmCostNlabor.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/listSum",method=RequestMethod.GET)
-	public Map<String,Object> listSum( @ApiIgnore @RequestParam Map<String,Object> xmCostNlabor){
-		Map<String,Object> m = new HashMap<>();
-		RequestUtils.transformArray(xmCostNlabor, "ids");
-		PageUtils.startPage(xmCostNlabor);
+	public Result listSum(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		List<Map<String,Object>>	data = xmCostNlaborService.listSum(xmCostNlabor);	//列出xmProjectMCostNouser列表
-		PageUtils.responePage(m, data);
-		m.put("data",data);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+		
+		
+		
+		
 	}
 	
 
@@ -92,8 +92,8 @@ public class XmCostNlaborController {
 		@ApiResponse(code = 200,response=XmCostNlabor.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmCostNlabor(@RequestBody XmCostNlabor xmCostNlabor) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmCostNlabor(@RequestBody XmCostNlabor xmCostNlabor) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 		    boolean createPk=false;
@@ -107,7 +107,7 @@ public class XmCostNlaborController {
                 }
             }
 			xmCostNlaborService.insert(xmCostNlabor);
-			m.put("data",xmCostNlabor);
+			
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -115,8 +115,7 @@ public class XmCostNlaborController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "删除一条项目实际人工成本费用信息",notes=" ")
@@ -124,8 +123,8 @@ public class XmCostNlaborController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmCostNlabor(@RequestBody XmCostNlabor xmCostNlabor){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmCostNlabor(@RequestBody XmCostNlabor xmCostNlabor){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
             if(!StringUtils.hasText(xmCostNlabor.getId())) {
@@ -136,15 +135,8 @@ public class XmCostNlaborController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmCostNlaborService.deleteByPk(xmCostNlabor);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 	@ApiOperation( value = "根据主键修改一条项目实际人工成本费用信息",notes=" ")
@@ -152,8 +144,8 @@ public class XmCostNlaborController {
 		@ApiResponse(code = 200,response=XmCostNlabor.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmCostNlabor(@RequestBody XmCostNlabor xmCostNlabor) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmCostNlabor(@RequestBody XmCostNlabor xmCostNlabor) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmCostNlabor.getId())) {
@@ -164,16 +156,7 @@ public class XmCostNlaborController {
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 			xmCostNlaborService.updateSomeFieldByPk(xmCostNlabor);
-			m.put("data",xmCostNlabor);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
     @ApiOperation( value = "批量修改某些字段",notes="")
@@ -182,8 +165,8 @@ public class XmCostNlaborController {
 			@ApiResponse(code = 200,response=XmCostNlabor.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmCostNlaborMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmCostNlaborMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             List<String> ids= (List<String>) xmCostNlaborMap.get("ids");
@@ -236,7 +219,7 @@ public class XmCostNlaborController {
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -244,8 +227,7 @@ public class XmCostNlaborController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "根据主键列表批量删除项目实际人工成本费用信息",notes=" ")
@@ -253,10 +235,10 @@ public class XmCostNlaborController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmCostNlabor(@RequestBody List<XmCostNlabor> xmCostNlabors) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmCostNlabor(@RequestBody List<XmCostNlabor> xmCostNlabors) {
+		
         Tips tips=new Tips("成功删除"); 
-        try{ 
+        
             if(xmCostNlabors.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
             }

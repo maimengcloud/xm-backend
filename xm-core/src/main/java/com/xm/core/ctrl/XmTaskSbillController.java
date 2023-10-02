@@ -1,9 +1,14 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
-import com.mdp.core.utils.*;
-import com.mdp.mybatis.PageUtils;
+import com.mdp.core.query.QueryTools;
+import com.mdp.core.utils.DateUtils;
+import com.mdp.core.utils.NumberUtil;
+import com.mdp.core.utils.RequestUtils;
+import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmTask;
@@ -28,7 +33,10 @@ import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.map;
@@ -68,19 +76,17 @@ public class XmTaskSbillController {
 		@ApiResponse(code = 200,response=XmTaskSbill.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTaskSbill( @ApiIgnore @RequestParam Map<String,Object> xmTaskSbill){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmTaskSbill, "ids");
-		PageUtils.startPage(xmTaskSbill);
+	public Result listXmTaskSbill(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTaskSbill.put("branchId",user.getBranchId());
-		List<Map<String,Object>>	xmTaskSbillList = xmTaskSbillService.selectListMapByWhere(xmTaskSbill);	//列出XmTaskSbill列表
-		PageUtils.responePage(m, xmTaskSbillList);
-		m.put("data",xmTaskSbillList);
+		params.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas = xmTaskSbillService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskSbill列表
 
-		m.put("tips", tips);
-		return m;
 	}
 	
  
@@ -91,8 +97,8 @@ public class XmTaskSbillController {
 		@ApiResponse(code = 200,response=XmTaskSbill.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmTaskSbill(@RequestBody XmTaskSbill xmTaskSbill) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmTaskSbill(@RequestBody XmTaskSbill xmTaskSbill) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 		    boolean createPk=false;
@@ -123,16 +129,7 @@ public class XmTaskSbillController {
 			xmTaskSbill.setFmsg("");
 
 			xmTaskSbillService.insert(xmTaskSbill);
-			m.put("data",xmTaskSbill);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	
@@ -142,8 +139,8 @@ public class XmTaskSbillController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmTaskSbill(@RequestBody XmTaskSbill xmTaskSbill){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmTaskSbill(@RequestBody XmTaskSbill xmTaskSbill){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		if( xmTaskSbill==null || !StringUtils.hasText(xmTaskSbill.getId())){
 			tips.setFailureMsg("请上送结算单编号");
@@ -164,15 +161,8 @@ public class XmTaskSbillController {
 		try{
 			//删除结算单时候，要一起恢复工时单为未加入结算状态
 			xmTaskSbillService.deleteByPkAndReturnWorkload(sbillDb);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 
@@ -182,9 +172,9 @@ public class XmTaskSbillController {
 			@ApiResponse(code = 200,response=XmTaskSbill.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/batchJoinToSbill",method=RequestMethod.POST)
-	public Map<String,Object> batchJoinToSbill(@RequestBody BatchJoinToSbillVo batchJoinToSbill) {
+	public Result batchJoinToSbill(@RequestBody BatchJoinToSbillVo batchJoinToSbill) {
 
-		Map<String,Object> m = new HashMap<>();
+		
 		Tips tips=new Tips("成功更新一条数据");
 		if(!StringUtils.hasText(batchJoinToSbill.getSbillId())){
 			return ResponseHelper.failed("sbillId-0","请上送结算单编号");
@@ -309,8 +299,7 @@ public class XmTaskSbillController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "根据主键修改一条任务结算表信息",notes=" ")
@@ -318,8 +307,8 @@ public class XmTaskSbillController {
 		@ApiResponse(code = 200,response=XmTaskSbill.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmTaskSbill(@RequestBody XmTaskSbill xmTaskSbill) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmTaskSbill(@RequestBody XmTaskSbill xmTaskSbill) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		if( xmTaskSbill==null || !StringUtils.hasText(xmTaskSbill.getId())){
 			tips.setFailureMsg("请上送结算单编号");
@@ -341,16 +330,7 @@ public class XmTaskSbillController {
 		try{
 			xmTaskSbill.setLtime(new Date());
 			xmTaskSbillService.updateByPk(xmTaskSbill);
-			m.put("data",xmTaskSbill);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	
@@ -362,8 +342,8 @@ public class XmTaskSbillController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmTaskSbill(@RequestBody List<XmTaskSbill> xmTaskSbills) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmTaskSbill(@RequestBody List<XmTaskSbill> xmTaskSbills) {
+		
 		Tips tips=new Tips("成功删除"+xmTaskSbills.size()+"条数据");
 		try{
 			xmTaskSbillService.batchDelete(xmTaskSbills);
@@ -374,8 +354,7 @@ public class XmTaskSbillController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 	*/
 
@@ -384,7 +363,7 @@ public class XmTaskSbillController {
 			@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	})
 	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
-	public Map<String,Object> sbillProcessApprova(@RequestBody Map<String,Object> paramMap) {
+	public Result sbillProcessApprova(@RequestBody Map<String,Object> paramMap) {
 		Map<String,Object> map=new HashMap<>();
 		Tips tips=new Tips("成功更新结算单状态");
 

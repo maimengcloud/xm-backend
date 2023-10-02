@@ -1,9 +1,11 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -65,17 +67,15 @@ public class XmTaskEvalController {
 		@ApiResponse(code = 200,response=XmTaskEval.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmTaskEval( @ApiIgnore @RequestParam Map<String,Object> xmTaskEval){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
-		RequestUtils.transformArray(xmTaskEval, "ids");
-		PageUtils.startPage(xmTaskEval);
-		List<Map<String,Object>>	xmTaskEvalList = xmTaskEvalService.selectListMapByWhere(xmTaskEval);	//列出XmTaskEval列表
-		PageUtils.responePage(m, xmTaskEvalList);
-		m.put("data",xmTaskEvalList);
+	public Result listXmTaskEval(@ApiIgnore @RequestParam Map<String,Object> params){
+		
+		
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
+		List<Map<String,Object>> datas = xmTaskEvalService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskEval列表
 
-		m.put("tips", tips);
-		return m;
 	}
 
 
@@ -84,14 +84,13 @@ public class XmTaskEvalController {
 			@ApiResponse(code = 200,response= MyTotalEval.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/getServiceProviderEval",method=RequestMethod.GET)
-	public Map<String,Object> getMyEval(){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
+	public Result getMyEval(){
+		
+		
 		User user = LoginUtils.getCurrentUserInfo();
 		MyTotalEval myTotalEval = xmTaskEvalService.getServiceProviderEval(user);	//列出XmTaskEval列表
-		m.put("data",myTotalEval);
-		m.put("tips", tips);
-		return m;
+		
+		
 	}
 
 	@ApiOperation( value = "个人中心交易评价汇总信息",notes=" ")
@@ -99,22 +98,21 @@ public class XmTaskEvalController {
 			@ApiResponse(code = 200,response= MyTotalEval.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/getPersonEval",method=RequestMethod.GET)
-	public Map<String,Object> getPersonEval(){
-		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("查询成功");
+	public Result getPersonEval(){
+		
+		
 		User user = LoginUtils.getCurrentUserInfo();
 		MyTotalEval myTotalEval = xmTaskEvalService.getPersonEval(user);	//列出XmTaskEval列表
-		m.put("data",myTotalEval);
-		m.put("tips", tips);
-		return m;
+		
+		
 	}
 	@ApiOperation( value = "新增一条xm_task_eval信息",notes=" ")
 	@ApiResponses({
 		@ApiResponse(code = 200,response=XmTaskEval.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmTaskEval(@RequestBody XmTaskEval xmTaskEval) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmTaskEval(@RequestBody XmTaskEval xmTaskEval) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 		    boolean createPk=false;
@@ -151,16 +149,7 @@ public class XmTaskEvalController {
 			xmTaskEval.setToUsername(toUser.getUsername());
 			xmTaskEval.setToBranchId(toUser.getBranchId());
 			xmTaskEvalService.insert(xmTaskEval);
-			m.put("data",xmTaskEval);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "删除一条xm_task_eval信息",notes=" ")
@@ -168,8 +157,8 @@ public class XmTaskEvalController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmTaskEval(@RequestBody XmTaskEval xmTaskEval){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmTaskEval(@RequestBody XmTaskEval xmTaskEval){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
             if(!StringUtils.hasText(xmTaskEval.getId())) {
@@ -180,15 +169,8 @@ public class XmTaskEvalController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmTaskEvalService.deleteByPk(xmTaskEval);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 	@ApiOperation( value = "根据主键修改一条xm_task_eval信息",notes=" ")
@@ -196,8 +178,8 @@ public class XmTaskEvalController {
 		@ApiResponse(code = 200,response=XmTaskEval.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmTaskEval(@RequestBody XmTaskEval xmTaskEval) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmTaskEval(@RequestBody XmTaskEval xmTaskEval) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             if(!StringUtils.hasText(xmTaskEval.getId())) {
@@ -208,16 +190,7 @@ public class XmTaskEvalController {
                 return failed("data-not-exists","数据不存在，无法修改");
             }
 			xmTaskEvalService.updateSomeFieldByPk(xmTaskEval);
-			m.put("data",xmTaskEval);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
     @ApiOperation( value = "批量修改某些字段",notes="")
@@ -226,8 +199,8 @@ public class XmTaskEvalController {
 			@ApiResponse(code = 200,response=XmTaskEval.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Map<String,Object> editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTaskEvalMap) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTaskEvalMap) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
             List<String> ids= (List<String>) xmTaskEvalMap.get("ids");
@@ -280,7 +253,7 @@ public class XmTaskEvalController {
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-			//m.put("data",xmMenu);
+			//
 		}catch (BizException e) {
 			tips=e.getTips();
 			logger.error("",e);
@@ -288,8 +261,7 @@ public class XmTaskEvalController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("",e);
 		}
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "根据主键列表批量删除xm_task_eval信息",notes=" ")
@@ -297,10 +269,10 @@ public class XmTaskEvalController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmTaskEval(@RequestBody List<XmTaskEval> xmTaskEvals) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmTaskEval(@RequestBody List<XmTaskEval> xmTaskEvals) {
+		
         Tips tips=new Tips("成功删除"); 
-        try{ 
+        
             if(xmTaskEvals.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
             }

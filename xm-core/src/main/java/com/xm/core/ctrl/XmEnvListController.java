@@ -1,12 +1,14 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
+import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -21,7 +23,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -65,19 +66,20 @@ public class XmEnvListController {
 		@ApiResponse(code = 200,response= XmEnvList.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Map<String,Object> listXmEnvList( @ApiIgnore @RequestParam Map<String,Object> xmEnvList){
-		Map<String,Object> m = new HashMap<>(); 
-		RequestUtils.transformArray(xmEnvList, "ids");
-		PageUtils.startPage(xmEnvList);
+	public Result listXmEnvList(@ApiIgnore @RequestParam Map<String,Object> params){
+		 
+		RequestUtils.transformArray(params, "ids");
+		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		xmEnvList.put("userid",user.getUserid());
-		xmEnvList.put("branchId",user.getBranchId());
-		List<Map<String,Object>>	xmEnvListList = xmEnvListService.selectListMapByWhere(xmEnvList);	//列出XmEnvList列表
-		PageUtils.responePage(m, xmEnvListList);
-		m.put("data",xmEnvListList);
-		Tips tips=new Tips("查询成功");
-		m.put("tips", tips);
-		return m;
+		params.put("branchId",user.getBranchId());
+		List<Map<String,Object>> datas = xmEnvListService.selectListMapByWhere(page,qw,params);
+			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmEnvList列表
+		
+		
+		
+		
 	}
 	
  
@@ -88,8 +90,8 @@ public class XmEnvListController {
 	})
 	////@HasQx(value = "xm_core_xmEnvList_add",name = "新建环境清单",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Map<String,Object> addXmEnvList(@RequestBody XmEnvList xmEnvList) {
-		Map<String,Object> m = new HashMap<>();
+	public Result addXmEnvList(@RequestBody XmEnvList xmEnvList) {
+		
 		Tips tips=new Tips("成功新增一条数据");
 		try{
 			if(!StringUtils.hasText(xmEnvList.getProjectId())){
@@ -113,16 +115,7 @@ public class XmEnvListController {
 				return ResponseHelper.failed("writeQx-0","请选中写权限");
 			}
 			xmEnvListService.addEnv(xmEnvList);
-			m.put("data",xmEnvList);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 	@ApiOperation( value = "删除一条xm_env_list信息",notes="delXmEnvList,仅需要上传主键字段")
@@ -131,8 +124,8 @@ public class XmEnvListController {
 	})
 	////@HasQx(value = "xm_core_xmEnvList_del",name = "删除环境清单",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Map<String,Object> delXmEnvList(@RequestBody XmEnvList xmEnvList){
-		Map<String,Object> m = new HashMap<>();
+	public Result delXmEnvList(@RequestBody XmEnvList xmEnvList){
+		
 		Tips tips=new Tips("成功删除一条数据");
 		try{
 			XmEnvList xmEnvListDb=this.xmEnvListService.selectOneById(xmEnvList.getId());
@@ -159,15 +152,8 @@ public class XmEnvListController {
 				}
 			}
 			xmEnvListService.deleteByPk(xmEnvList);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 
 	@ApiOperation( value = "根据主键修改一条xm_env_list信息",notes="editXmEnvList")
@@ -176,8 +162,8 @@ public class XmEnvListController {
 	})
 	////@HasQx(value = "xm_core_xmEnvList_edit",name = "修改环境清单",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Map<String,Object> editXmEnvList(@RequestBody XmEnvList xmEnvList) {
-		Map<String,Object> m = new HashMap<>();
+	public Result editXmEnvList(@RequestBody XmEnvList xmEnvList) {
+		
 		Tips tips=new Tips("成功更新一条数据");
 		try{
 			XmEnvList xmEnvListDb=this.xmEnvListService.selectOneById(xmEnvList.getId());
@@ -204,16 +190,7 @@ public class XmEnvListController {
 				}
 			}
 			xmEnvListService.updateByPk(xmEnvList);
-			m.put("data",xmEnvList);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 
 
@@ -224,20 +201,13 @@ public class XmEnvListController {
 	})
 	//@HasQx(value = "xm_core_xmEnvList_batchDel",name = "批量删除环境清单",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Map<String,Object> batchDelXmEnvList(@RequestBody List<XmEnvList> xmEnvLists) {
-		Map<String,Object> m = new HashMap<>();
+	public Result batchDelXmEnvList(@RequestBody List<XmEnvList> xmEnvLists) {
+		
 		Tips tips=new Tips("成功删除"+xmEnvLists.size()+"条数据"); 
-		try{ 
+		
 			xmEnvListService.batchDelete(xmEnvLists);
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
-		m.put("tips", tips);
-		return m;
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		
 	}
 	**/
 
@@ -261,11 +231,11 @@ public class XmEnvListController {
 	 **/
 	@AuditLog(firstMenu="办公平台",secondMenu="项目惯例",func="processApprova",funcDesc="项目环境清单审批",operType=OperType.UPDATE)
 	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
-	public Map<String,Object> processApprova( @RequestBody Map<String,Object> flowVars){
-		Map<String,Object> m = new HashMap<>();
+	public Result processApprova( @RequestBody Map<String,Object> flowVars){
+		
 		Tips tips=new Tips("成功新增一条数据");
 		  
-		try{ 
+		
 			
 			this.xmEnvListService.processApprova(flowVars);
 			logger.debug("procInstId====="+flowVars.get("procInstId"));
@@ -276,7 +246,6 @@ public class XmEnvListController {
 			tips.setFailureMsg(e.getMessage());
 			logger.error("执行异常",e);
 		}  
-		m.put("tips", tips);
-		return m;
+		
 	}
 }
