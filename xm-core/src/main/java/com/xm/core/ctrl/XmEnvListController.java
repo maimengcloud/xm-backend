@@ -6,14 +6,12 @@ import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmEnvList;
 import com.xm.core.service.XmEnvListService;
 import com.xm.core.service.XmGroupService;
@@ -111,7 +109,7 @@ public class XmEnvListController {
 				return ResponseHelper.failed("writeQx-0","请选中写权限");
 			}
 			xmEnvListService.addEnv(xmEnvList);
-		
+		return Result.ok();
 	}
 
 	@ApiOperation( value = "删除一条xm_env_list信息",notes="delXmEnvList,仅需要上传主键字段")
@@ -182,7 +180,8 @@ public class XmEnvListController {
 				}
 			}
 			xmEnvListService.updateByPk(xmEnvList);
-		
+
+		return Result.ok();
 	}
 
 
@@ -224,20 +223,8 @@ public class XmEnvListController {
 	@AuditLog(firstMenu="办公平台",secondMenu="项目惯例",func="processApprova",funcDesc="项目环境清单审批",operType=OperType.UPDATE)
 	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
 	public Result processApprova( @RequestBody Map<String,Object> flowVars){
-		
-		
-		  
-		
-			
-			this.xmEnvListService.processApprova(flowVars);
-			logger.debug("procInstId====="+flowVars.get("procInstId"));
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("执行异常",e);
-		}catch (Exception e) {
-			return Result.error(e.getMessage());
-			logger.error("执行异常",e);
-		}  
+		this.xmEnvListService.processApprova(flowVars);
+		return Result.ok();
 		
 	}
 }

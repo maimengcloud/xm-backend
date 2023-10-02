@@ -4,14 +4,12 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmBudgetNlabor;
 import com.xm.core.service.XmBudgetNlaborService;
 import io.swagger.annotations.*;
@@ -26,7 +24,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.toMap;
-import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_budget_nlabor 项目人力成本预算的操作有增删改查,对应的url分别为:<br>
@@ -141,7 +138,7 @@ public class XmBudgetNlaborController {
                 return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmBudgetNlaborService.updateSomeFieldByPk(xmBudgetNlabor);
-		
+		return Result.ok();
 	}
 
     @ApiOperation( value = "批量修改某些字段",notes="")
@@ -239,8 +236,7 @@ public class XmBudgetNlaborController {
 				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
 				return Result.error(msgs.stream().collect(Collectors.joining()));
-			}
-		return Result.ok();
+			} 
 		
 	}
 
