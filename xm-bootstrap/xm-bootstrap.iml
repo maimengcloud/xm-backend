@@ -10,7 +10,7 @@
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-cloud-starter:M.1.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-cloud-starter:2.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter:3.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-context:3.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-rsa:1.0.9.RELEASE" level="project" />
@@ -24,7 +24,6 @@
     <orderEntry type="library" scope="RUNTIME" name="Maven: org.latencyutils:LatencyUtils:2.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter-netflix-hystrix:2.2.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-netflix-hystrix:2.2.6.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-aop:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-netflix-ribbon:2.2.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-netflix-archaius:2.2.6.RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-starter-netflix-archaius:2.2.6.RELEASE" level="project" />
@@ -51,9 +50,6 @@
     <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy-json:2.5.14" level="project" />
     <orderEntry type="library" name="Maven: org.codehaus.groovy:groovy-xml:2.5.14" level="project" />
     <orderEntry type="library" name="Maven: com.github.jknack:handlebars:4.2.0" level="project" />
-    <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.9.4" level="project" />
-    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.2" level="project" />
-    <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.2" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.11.3" level="project" />
     <orderEntry type="library" name="Maven: net.javacrumbs.json-unit:json-unit-assertj:2.19.0" level="project" />
     <orderEntry type="library" name="Maven: net.javacrumbs.json-unit:json-unit-core:2.19.0" level="project" />
@@ -98,12 +94,11 @@
     <orderEntry type="library" name="Maven: io.projectreactor.addons:reactor-extra:3.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-cache:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.stoyanr:evictor:1.0.0" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-oauth2-client-cloud:M.1.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-oauth2-client-cloud:2.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-oauth2-client:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.sun.mail:jakarta.mail:1.6.5" level="project" />
     <orderEntry type="library" name="Maven: com.sun.activation:jakarta.activation:1.2.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-config:5.4.2" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-core:5.4.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-oauth2-client:5.4.2" level="project" />
     <orderEntry type="library" name="Maven: com.nimbusds:oauth2-oidc-sdk:8.23.1" level="project" />
     <orderEntry type="library" name="Maven: com.github.stephenc.jcip:jcip-annotations:1.0-1" level="project" />
@@ -117,23 +112,9 @@
     <orderEntry type="library" name="Maven: org.springframework.cloud:spring-cloud-commons:3.0.0" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-crypto:5.4.2" level="project" />
     <orderEntry type="module" module-name="xm-core" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-boot-starter:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-redis:1.4.7.RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: redis.clients:jedis:3.3.0" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.9.0" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-data-redis:2.4.1" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-core:2.4.1" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-web:2.4.1" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-json:2.4.1" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.11.3" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.module:jackson-module-parameter-names:2.11.3" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-sensitive-word:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-ds:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.alibaba:druid:1.2.4" level="project" />
-    <orderEntry type="library" name="Maven: javax.annotation:javax.annotation-api:1.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.javassist:javassist:3.20.0-GA" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-oauth2-client:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-qx-api:M.1.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-oauth2-client:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-qx-api:2.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: io.projectreactor.netty:reactor-netty:1.0.2" level="project" />
     <orderEntry type="library" name="Maven: io.projectreactor.netty:reactor-netty-core:1.0.2" level="project" />
     <orderEntry type="library" name="Maven: io.netty:netty-handler:4.1.55.Final" level="project" />
@@ -162,15 +143,14 @@
     <orderEntry type="library" name="Maven: io.projectreactor:reactor-core:3.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-oauth2-resource-server:5.4.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.security:spring-security-oauth2-core:5.4.2" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-tpa-client:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-micro-client:M.1.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-tpa-client:2.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-redis:2.4.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-keyvalue:2.4.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.data:spring-data-commons:2.4.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-tx:5.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-oxm:5.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context-support:5.3.2" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-audit-log-client:M.1.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-audit-log-client:2.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: net.coobird:thumbnailator:0.4.8" level="project" />
     <orderEntry type="library" name="Maven: org.apache.poi:poi:3.17" level="project" />
     <orderEntry type="library" name="Maven: commons-codec:commons-codec:1.15" level="project" />
@@ -188,42 +168,75 @@
     <orderEntry type="library" name="Maven: org.glassfish.jaxb:txw2:2.3.3" level="project" />
     <orderEntry type="library" name="Maven: com.sun.istack:istack-commons-runtime:3.0.11" level="project" />
     <orderEntry type="library" name="Maven: org.jsoup:jsoup:1.11.3" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-core-api:M.1.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-ext-utils:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework:spring-web:5.3.2" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-core:9.0.41" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.tomcat:tomcat-annotations-api:9.0.41" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.11.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-annotations:2.11.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.11.3" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-core:9.0.41" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.tomcat:tomcat-annotations-api:9.0.41" level="project" />
-    <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.3" level="project" />
-    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.11" level="project" />
-    <orderEntry type="library" name="Maven: org.dom4j:dom4j:2.1.3" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-ext-utils:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: org.springframework:spring-web:5.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-webmvc:5.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-context:5.3.2" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-expression:5.3.2" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-safe-client:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-mq:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:8.0.22" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-msg-client:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-meta-client:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-tomcat-enhance:M.1.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-boot-starter:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.11.3" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-lang3:3.11" level="project" />
+    <orderEntry type="library" name="Maven: commons-beanutils:commons-beanutils:1.9.4" level="project" />
+    <orderEntry type="library" name="Maven: commons-logging:commons-logging:1.2" level="project" />
+    <orderEntry type="library" name="Maven: commons-collections:commons-collections:3.2.2" level="project" />
+    <orderEntry type="library" name="Maven: org.dom4j:dom4j:2.1.3" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-redis:1.4.7.RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: redis.clients:jedis:3.3.0" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-pool2:2.9.0" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-data-redis:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.session:spring-session-core:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-web:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-json:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.datatype:jackson-datatype-jdk8:2.11.3" level="project" />
+    <orderEntry type="library" name="Maven: com.fasterxml.jackson.module:jackson-module-parameter-names:2.11.3" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-tomcat:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish:jakarta.el:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-websocket:9.0.41" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-spring-enhance:M.1.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-dao-mybatis:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-boot-starter:3.4.3.1" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus:3.4.3.1" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-extension:3.4.3.1" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-core:3.4.3.1" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-annotation:3.4.3.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.jsqlparser:jsqlparser:4.0" level="project" />
+    <orderEntry type="library" name="Maven: org.mybatis:mybatis:3.5.7" level="project" />
+    <orderEntry type="library" name="Maven: org.mybatis:mybatis-spring:2.0.6" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-mybatis-enhance:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-spring-enhance:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-swagger-enhance:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-tomcat-enhance:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-email-client:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-mail:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-safe-client:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: io.jsonwebtoken:jjwt:0.9.1" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-sensitive-word:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-meta-client:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-mq:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: mysql:mysql-connector-java:8.0.22" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-safe-license:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-dev:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-freemarker:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.freemarker:freemarker:2.3.30" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.security:spring-security-core:5.4.2" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-micro-client:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-webflux:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-reactor-netty:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-msg-client:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-plat-client:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-ds:2.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: org.springframework:spring-jdbc:5.3.2" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-swagger-enhance:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-dao-mybatis:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.mdp:mdp-mybatis-enhance:M.1.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.github.pagehelper:pagehelper:5.2.0" level="project" />
-    <orderEntry type="library" name="Maven: com.github.jsqlparser:jsqlparser:3.2" level="project" />
-    <orderEntry type="library" name="Maven: org.mybatis.spring.boot:mybatis-spring-boot-starter:2.1.4" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:dynamic-datasource-spring-boot-starter:3.6.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-jdbc:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: com.zaxxer:HikariCP:3.4.5" level="project" />
-    <orderEntry type="library" name="Maven: org.mybatis.spring.boot:mybatis-spring-boot-autoconfigure:2.1.4" level="project" />
-    <orderEntry type="library" name="Maven: org.mybatis:mybatis:3.5.6" level="project" />
-    <orderEntry type="library" name="Maven: org.mybatis:mybatis-spring:2.0.6" level="project" />
+    <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-aop:2.4.1" level="project" />
+    <orderEntry type="library" name="Maven: com.alibaba:druid:1.2.4" level="project" />
+    <orderEntry type="library" name="Maven: javax.annotation:javax.annotation-api:1.3.2" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-sms-client:2.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.alibaba:fastjson:1.2.47" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot:2.4.1" level="project" />
