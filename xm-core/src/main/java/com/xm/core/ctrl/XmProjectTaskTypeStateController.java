@@ -6,7 +6,6 @@ import com.mdp.core.entity.Result;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.xm.core.entity.XmProjectTaskTypeState;
-import com.xm.core.service.XmProjectTaskTypeStateService;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;

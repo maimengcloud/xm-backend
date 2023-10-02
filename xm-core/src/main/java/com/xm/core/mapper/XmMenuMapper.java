@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xm.core.entity.XmMenu;
+import com.xm.core.vo.XmIterationMenuVo;
+import com.xm.core.vo.XmPhaseMenusVo;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -38,5 +40,37 @@ public interface XmMenuMapper extends BaseMapper<XmMenu> {
     List<Map<String, Object>> queryTaskUsersByMenuId(String menuId);
 
     List<XmMenu> selectExistIterationMenus(Map<String, Object> menuIds);
+
+    void doBatchDeleteByProductIds(List<String> productIds);
+
+    void batchUnIteration(XmIterationMenuVo xmIterationMenus);
+
+    void batchIteration(XmIterationMenuVo xmIterationMenus);
+
+    void batchUnProductPhase(XmPhaseMenusVo xmPhaseMenusVo);
+
+    void batchProductPhase(XmPhaseMenusVo xmPhaseMenusVo);
+
+    List<XmMenu> listTenMenuByProductIdAndIterationId(Map<String, Object> map);
+
+    void batchChangeParent(Map<String, Object> map);
+
+    List<XmMenu> selectListByIdsWithsChildrenCnt(List<String> ids);
+
+    void sumParents(List<String> pidPathsList);
+
+    void batchSumParents(List<String> ids);
+
+    List<Map<String, Object>> getXmMenuAttDist(Map<String, Object> xmMenu);
+
+    List<Map<String, Object>> getXmMenuAgeDist(Map<String, Object> xmMenu);
+
+    List<Map<String, Object>> getXmMenuSort(Map<String, Object> xmMenu);
+
+    void updateUps(List<String> menuIds);
+
+    void updateComments(List<String> menuIds);
+
+    void upReads(Map<String, Object> map);
 }
 

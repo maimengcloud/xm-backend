@@ -1,12 +1,9 @@
 package com.xm.core.ctrl;
 
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.entity.Result;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmGroupState;
-import com.xm.core.service.XmGroupStateService;
 import io.swagger.annotations.*;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -14,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 

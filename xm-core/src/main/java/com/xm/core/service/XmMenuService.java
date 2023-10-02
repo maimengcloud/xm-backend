@@ -94,12 +94,13 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 		List<XmMenu> xmMenuList = new ArrayList<>();
 		if (addList.size() > 0) {
 			xmMenuList.addAll(addList.stream().map(i -> (XmMenu) i).collect(Collectors.toList()));
-			this.batchInsert(addList);
+			this.saveBatch(xmMenuList);
 			this.xmMenuStateService.batchLoadXmMenuToState(xmMenus.get(0).getProductId());
 		}
 		if (editList.size() > 0) {
-			xmMenuList.addAll(editList.stream().map(i -> (XmMenu) i).collect(Collectors.toList()));
-			this.batchUpdate(editList);
+			List<XmMenu> updateList = editList.stream().map(i -> (XmMenu) i).collect(Collectors.toList());
+			xmMenuList.addAll(updateList);
+			this.updateBatchById(updateList);
 		}
 		if (xmMenuList.size() > 0) {
 			pushService.pushXmMenus(xmMenuList);
