@@ -191,8 +191,7 @@ public class XmProjectStateController {
 				 XmProjectState xmProjectStateQuery = new  XmProjectState(xmProjectState.getId());
 				if(xmProjectStateService.countByWhere(xmProjectStateQuery)>0){
 					return Result.error("编号重复，请修改编号再提交");
-					m.put("tips", tips);
-					return m;
+					
 				}
 			}
 			xmProjectStateService.insert(xmProjectState);

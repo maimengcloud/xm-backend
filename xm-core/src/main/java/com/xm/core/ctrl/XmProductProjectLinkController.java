@@ -92,8 +92,7 @@ public class XmProductProjectLinkController {
 			}
 			 if(xmProductProjectLinkService.selectOneObject(xmProductProjectLink) !=null ){
 				return Result.error("已加入，无需再添加");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			if(!xmGroupService.checkUserIsProductAdm(xmProductProjectLink.getProductId(),user.getUserid())){
 				if(!xmGroupService.checkUserIsProjectAdm(xmProductProjectLink.getProjectId(),user.getUserid())){

@@ -169,8 +169,7 @@ public class XmTaskExecuserController {
 			XmTask xmTaskDb=xmTaskService.selectOneObject(new XmTask(xmTaskExecuser.getTaskId()));
 			if(xmTaskDb==null){
 				return Result.error("任务已不存在");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			String projectId=xmTaskDb.getProjectId();
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(projectId);
@@ -178,8 +177,7 @@ public class XmTaskExecuserController {
 			xmTaskExecuser.setBranchId(xmProjectDb.getBranchId());
 			if(!"0".equals(xmTaskDb.getTaskState()) && !"1".equals(xmTaskDb.getTaskState()) ){
 				return Result.error("该任务已经处于完工、结算状态，不允许再修改");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			if(!xmTaskExecuser.getUserid().equals(user.getUserid())){
 				User userDb=sysClient.getUserByUserid(xmTaskExecuser.getUserid());
@@ -246,8 +244,7 @@ public class XmTaskExecuserController {
 
 			if(xmTaskExecusers==null || xmTaskExecusers.size()==0){
 				return Result.error("执行人列表不能为空");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			List<XmTaskExecuser> xmTaskExecuserListDb=this.xmTaskExecuserService.selectListByIds(xmTaskExecusers.stream().map(i->map("taskId",i.getTaskId(),"userid",i.getUserid())).collect(Collectors.toList()));
@@ -258,8 +255,7 @@ public class XmTaskExecuserController {
 			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(xmTaskExecuserListDb.get(0).getTaskId()));
 			if(xmTask==null ){
 				return Result.error("任务已不存在");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			List<String> noAllowUsers=new ArrayList<>();
 			List<XmTaskExecuser> allowUsers=new ArrayList<>();
@@ -321,14 +317,12 @@ public class XmTaskExecuserController {
 			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
 			if(xmTask==null ){
 				return Result.error("任务已不存在");
-				m.put("tips", tips);
-				return m;
+				
 			}
 
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
 				return Result.error("该任务已经处于完工、结算状态，不允许再修改");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 
@@ -489,13 +483,11 @@ public class XmTaskExecuserController {
 			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
 			if(xmTask==null ){
 				return Result.error("任务已不存在");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
 				return Result.error("该任务已经处于完工、结算计划，不允许再修改报价");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			if("2".equals(xmTask.getEstate())||"3".equals(xmTask.getEstate())){
 				return ResponseHelper.failed("estate-not-0-1-3","当前任务已缴纳保证金，无法再变更报价信息。");
@@ -533,13 +525,11 @@ public class XmTaskExecuserController {
 			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
 			if(xmTask==null ){
 				return Result.error("任务已不存在");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
 				return Result.error("该任务已经不需要候选人");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			User user=LoginUtils.getCurrentUserInfo();
  			String projectId=xmTaskExecuser.getProjectId();
@@ -571,8 +561,7 @@ public class XmTaskExecuserController {
 			XmTask xmTaskDb= xmTaskService.selectOneObject(new XmTask(taskId));
 			if(xmTaskDb==null ){
 				return Result.error("任务已不存在");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			String projectId=xmTaskDb.getProjectId();

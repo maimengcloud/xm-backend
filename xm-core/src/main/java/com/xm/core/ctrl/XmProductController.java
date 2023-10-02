@@ -1,10 +1,9 @@
 package com.xm.core.ctrl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.msg.client.PushNotifyMsgService;
@@ -12,6 +11,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProductCopyVo;
 import com.xm.core.entity.XmProductProjectLink;
@@ -34,7 +34,6 @@ import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.fromMap;
 import static com.mdp.core.utils.BaseUtils.toMap;
-import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对XM.xm_product 产品表的操作有增删改查,对应的url分别为:<br>
@@ -112,8 +111,7 @@ public class XmProductController {
 		}else if("productId".equals(queryScope)){
 			if(!StringUtils.hasText(id)){
 				return Result.error("产品编号id必输");
-				m.put("tips", tips);
-				return m;
+				
 			}
 		}
 
@@ -166,8 +164,7 @@ public class XmProductController {
 		}else if("productId".equals(queryScope)){
 			if(!StringUtils.hasText(id)){
 				return Result.error("产品编号id必输");
-				m.put("tips", tips);
-				return m;
+				
 			}
 		}
 
@@ -236,8 +233,7 @@ public class XmProductController {
 				xmProductQuery.setCode(xmProduct.getCode());
 				if(xmProductService.countByWhere(xmProductQuery)>0){
 					return Result.error("产品代号已存在，请修改再提交");
-					m.put("tips", tips);
-					return m;
+					
 				}
 			}
 			if(xmProduct.getLinks()!=null && xmProduct.getLinks().size()>0){

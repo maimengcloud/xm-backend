@@ -161,8 +161,7 @@ public class XmGroupUserController {
 
 			if(xmGroupUserService.countByWhere(gu)>0){
 				return Result.error("该用户已在小组中");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			xmGroupUserService.insert(gu);
 			Map<String,Object> usermap=new HashMap<>();

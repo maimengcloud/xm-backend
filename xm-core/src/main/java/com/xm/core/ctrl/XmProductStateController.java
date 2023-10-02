@@ -133,8 +133,7 @@ public class XmProductStateController {
 				 XmProductState xmProductStateQuery = new  XmProductState(xmProductState.getId());
 				if(xmProductStateService.countByWhere(xmProductStateQuery)>0){
 					return Result.error("编号重复，请修改编号再提交");
-					m.put("tips", tips);
-					return m;
+					
 				}
 			}
 			xmProductStateService.insert(xmProductState);

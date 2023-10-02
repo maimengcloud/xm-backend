@@ -508,8 +508,7 @@ public class XmProjectController {
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
 				return Result.error("项目不存在");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			XmProject xmProjectTo=this.xmProjectService.copyProject(user,xmProject);
 

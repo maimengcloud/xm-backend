@@ -179,8 +179,7 @@ public class XmQuestionController {
 
 			if(!StringUtils.hasText(xmQuestionVo.getProjectId())){
 				return Result.error("项目编号projectId必传");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmQuestionVo.getQtype())){

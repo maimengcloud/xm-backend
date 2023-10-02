@@ -126,8 +126,7 @@ public class XmMenuPlanController {
 
 			if(xmMenuPlanService.countByWhere(xmMenuPlan)>0){
 				return Result.error("编号重复，请修改编号再提交");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			xmMenuPlanService.insert(xmMenuPlan);
 			return Result.ok();

@@ -121,8 +121,7 @@ public class XmIterationStateController {
 				 XmIterationState xmIterationStateQuery = new  XmIterationState(xmIterationState.getId());
 				if(xmIterationStateService.countByWhere(xmIterationStateQuery)>0){
 					return Result.error("编号重复，请修改编号再提交");
-					m.put("tips", tips);
-					return m;
+					
 				}
 			}
 			xmIterationStateService.insert(xmIterationState);

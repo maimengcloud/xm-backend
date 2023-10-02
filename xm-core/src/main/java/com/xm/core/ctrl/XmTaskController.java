@@ -537,8 +537,7 @@ public class XmTaskController {
 
 			if(!StringUtils.hasText(xmTaskVo.getNtype())){
 				return Result.error("节点类型ntype不能为空");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			if(!StringUtils.hasText(xmTaskVo.getProjectId())){
 				return ResponseHelper.failed("projectId-0","项目编号不能为空");
@@ -706,8 +705,7 @@ public class XmTaskController {
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTask.getId())){
 				return Result.error("任务编号不能为空");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			XmTask xmTaskDb=this.xmTaskService.selectOneObject(xmTask);
 			if(xmTaskDb==null){
@@ -749,14 +747,12 @@ public class XmTaskController {
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTaskVo.getId())){
 				return Result.error("任务编号不能为空");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			XmTask xmTaskDb=this.xmTaskService.selectOneObject(xmTaskVo);
 			if(xmTaskDb==null){
 				return Result.error("该任务不存在");
-				m.put("tips", tips);
-				return m;
+				
 			}
 
 
@@ -794,8 +790,7 @@ public class XmTaskController {
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTaskVo.getId())){
 				return Result.error("任务编号不能为空");
-				m.put("tips", tips);
-				return m;
+				
 			}
 
 			XmTask xmTaskDb=this.xmTaskService.selectOneObject(xmTaskVo);
@@ -849,8 +844,7 @@ public class XmTaskController {
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTask.getId())){
 				return Result.error("任务编号不能为空");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			XmTask xmTaskDb=xmTaskService.selectOneObject(xmTask);
 			if(xmTaskDb==null){
@@ -882,8 +876,7 @@ public class XmTaskController {
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTask.getId())){
 				return Result.error("任务编号不能为空");
-				m.put("tips", tips);
-				return m;
+				
 			}
 
 			XmTask xmTaskDb=xmTaskService.selectOneObject(xmTask);
@@ -918,8 +911,7 @@ public class XmTaskController {
 			User user=LoginUtils.getCurrentUserInfo();
  			if(xmTasks==null || xmTasks.size()==0){
 				return Result.error("任务列表不能为空");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			if(!StringUtils.hasText(batchImportVo.getPtype())){
 				return ResponseHelper.failed("ptype-0","请上送ptype,0代表项目计划（任务），1代表产品计划（任务）");
@@ -1249,8 +1241,7 @@ public class XmTaskController {
 
 			if(xmTasks==null || xmTasks.size()==0){
 				return Result.error("任务列表不能为空");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			XmTask xmTask=xmTasks.get(0);
 			if(!StringUtils.hasText(xmTask.getId())){
@@ -1357,8 +1348,7 @@ public class XmTaskController {
 
 			if(xmTasks==null || xmTasks.size()==0){
 				return Result.error("任务列表不能为空");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			Map<String,XmTask> xmTaskDbMap=this.xmTaskService.selectTasksMapByTasks(xmTasks);
 			XmTask xmTaskDb=xmTaskDbMap.values().stream().findFirst().isPresent()?xmTaskDbMap.values().stream().findFirst().get():null;
@@ -1500,8 +1490,7 @@ public class XmTaskController {
 
 			if(xmTasksVo.getTaskIds()==null || xmTasksVo.getTaskIds().size()==0){
 				return Result.error("任务列表不能为空");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			if(!StringUtils.hasText(xmTasksVo.getParentTaskid())){
 				return ResponseHelper.failed("parentTaskid-0", "上级编号不能为空");

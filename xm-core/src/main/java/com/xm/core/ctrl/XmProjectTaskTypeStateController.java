@@ -116,8 +116,7 @@ public class XmProjectTaskTypeStateController {
 				 XmProjectTaskTypeState xmProjectTaskTypeStateQuery = new  XmProjectTaskTypeState(xmProjectTaskTypeState.getId());
 				if(xmProjectTaskTypeStateService.countByWhere(xmProjectTaskTypeStateQuery)>0){
 					return Result.error("编号重复，请修改编号再提交");
-					m.put("tips", tips);
-					return m;
+					
 				}
 			}
 			xmProjectTaskTypeStateService.insert(xmProjectTaskTypeState);

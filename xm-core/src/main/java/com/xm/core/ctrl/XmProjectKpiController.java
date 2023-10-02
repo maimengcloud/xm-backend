@@ -95,8 +95,7 @@ public class XmProjectKpiController {
 				 XmProjectKpi xmProjectKpiQuery = new  XmProjectKpi(xmProjectKpi.getId());
 				if(xmProjectKpiService.countByWhere(xmProjectKpiQuery)>0){
 					return Result.error("编号重复，请修改编号再提交");
-					m.put("tips", tips);
-					return m;
+					
 				}
 			}
 			xmProjectKpiService.insert(xmProjectKpi);

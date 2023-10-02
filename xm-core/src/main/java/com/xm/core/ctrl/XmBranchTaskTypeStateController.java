@@ -100,8 +100,7 @@ public class XmBranchTaskTypeStateController {
 				 XmBranchTaskTypeState xmBranchTaskTypeStateQuery = new  XmBranchTaskTypeState(xmBranchTaskTypeState.getId());
 				if(xmBranchTaskTypeStateService.countByWhere(xmBranchTaskTypeStateQuery)>0){
 					return Result.error("编号重复，请修改编号再提交");
-					m.put("tips", tips);
-					return m;
+					
 				}
 			}
 			xmBranchTaskTypeStateService.insert(xmBranchTaskTypeState);

@@ -122,8 +122,7 @@ public class XmMenuStateController {
 
 			if(xmMenuStateService.countByWhere(xmMenuState)>0){
 				return Result.error("编号重复，请修改编号再提交");
-				m.put("tips", tips);
-				return m;
+				
 			}
 			xmMenuStateService.insert(xmMenuState);
 		

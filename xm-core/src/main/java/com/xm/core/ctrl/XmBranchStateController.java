@@ -132,8 +132,7 @@ public class XmBranchStateController {
 				 XmBranchState xmBranchStateQuery = new  XmBranchState(xmBranchState.getId());
 				if(xmBranchStateService.countByWhere(xmBranchStateQuery)>0){
 					return Result.error("编号重复，请修改编号再提交");
-					m.put("tips", tips);
-					return m;
+					
 				}
 			}
 			xmBranchStateService.insert(xmBranchState);

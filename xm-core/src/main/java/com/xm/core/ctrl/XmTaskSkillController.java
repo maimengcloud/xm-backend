@@ -89,8 +89,7 @@ public class XmTaskSkillController {
 				 XmTaskSkill xmTaskSkillQuery = new  XmTaskSkill(xmTaskSkill.getId());
 				if(xmTaskSkillService.countByWhere(xmTaskSkillQuery)>0){
 					return Result.error("编号重复，请修改编号再提交");
-					m.put("tips", tips);
-					return m;
+					
 				}
 			}
 			xmTaskSkillService.insert(xmTaskSkill);

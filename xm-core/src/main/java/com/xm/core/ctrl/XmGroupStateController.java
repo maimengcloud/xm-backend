@@ -94,8 +94,7 @@ public class XmGroupStateController {
 				 XmProjectGroupState xmGroupStateQuery = new  XmProjectGroupState(xmGroupState.getId());
 				if(xmGroupStateService.countByWhere(xmGroupStateQuery)>0){
 					return Result.error("编号重复，请修改编号再提交");
-					m.put("tips", tips);
-					return m;
+					
 				}
 			}
 			xmGroupStateService.insert(xmGroupState);
