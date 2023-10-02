@@ -14,7 +14,7 @@ import java.util.Map;
  * 实体 XmProjectContract 表 XM.xm_project_contract 当前主键(包括多主键): ht_id; 
  ***/
 @Service("xm.core.xmProjectContractService")
-public class XmProjectContractService extends BaseService {
+public class XmProjectContractService extends BaseService<XmProjectContractMapper,XmProjectContract> {
     
    
 	

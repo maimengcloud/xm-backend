@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * 实体 XmTaskOrder 表 xm_task_order 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmTaskOrderService")
-public class XmTaskOrderService extends BaseService {
+public class XmTaskOrderService extends BaseService<XmTaskOrderMapper,XmTaskOrder> {
 	static Logger logger =LoggerFactory.getLogger(XmTaskOrderService.class);
 
 	@Autowired

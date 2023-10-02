@@ -19,7 +19,7 @@ import java.util.Map;
  * 实体 XmEnvList 表 XM.xm_env_list 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmEnvListService")
-public class XmEnvListService extends BaseService {
+public class XmEnvListService extends BaseService<XmEnvListMapper,XmEnvList> {
 
     public void addEnv(XmEnvList xmEnvList) {
         xmEnvList.setId(this.createKey("id"));

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * 实体 XmProjectKpiHis 表 XM.xm_project_kpi_his 当前主键(包括多主键): kpi_id; 
  ***/
 @Service("xm.core.xmProjectKpiHisService")
-public class XmProjectKpiHisService extends BaseService {
+public class XmProjectKpiHisService extends BaseService<XmProjectKpiHisMapper,XmProjectKpiHis> {
 	
 	/** 请在此类添加自定义函数 */
 

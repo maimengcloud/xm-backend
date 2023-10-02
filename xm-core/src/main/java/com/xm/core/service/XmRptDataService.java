@@ -17,7 +17,7 @@ import com.xm.core.entity.XmRptData;
  * 实体 XmRptData 表 xm_rpt_data 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmRptDataService")
-public class XmRptDataService extends BaseService {
+public class XmRptDataService extends BaseService<XmRptDataMapper,XmRptData> {
 	static Logger logger =LoggerFactory.getLogger(XmRptDataService.class);
 
 }

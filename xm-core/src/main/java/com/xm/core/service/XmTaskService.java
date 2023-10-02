@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
  * 实体 XmTask 表 XM.xm_task 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmTaskService")
-public class XmTaskService extends BaseService {
+public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	
 	final String TYPE = "任务";
 

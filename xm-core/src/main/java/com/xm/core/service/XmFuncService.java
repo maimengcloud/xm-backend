@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
  * 实体 XmFunc 表 xm_func 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmFuncService")
-public class XmFuncService extends BaseService {
+public class XmFuncService extends BaseService<XmFuncMapper,XmFunc> {
 	static Logger logger =LoggerFactory.getLogger(XmFuncService.class);
 
 

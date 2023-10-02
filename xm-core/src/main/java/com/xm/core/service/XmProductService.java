@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
  * 实体 XmProduct 表 XM.xm_product 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmProductService")
-public class XmProductService extends BaseService {
+public class XmProductService extends BaseService<XmProductMapper,XmProduct> {
 
 
 	@Value("${mdp.platform-branch-id:platform-branch-001}")

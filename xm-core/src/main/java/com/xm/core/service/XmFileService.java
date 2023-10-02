@@ -23,7 +23,7 @@ import java.util.Map;
  * 实体 XmFile 表 XM.xm_file 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmFileService")
-public class XmFileService extends BaseService {
+public class XmFileService extends BaseService<XmFileMapper,XmFile> {
     
     final String Type = "文档";
 

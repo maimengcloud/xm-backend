@@ -25,7 +25,7 @@ import java.util.Map;
  * 实体 XmQuestion 表 XM.xm_question 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmQuestionService")
-public class XmQuestionService extends BaseService {
+public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> {
     
     @Autowired
     XmAttachmentService xmAttachmentService;

@@ -16,7 +16,7 @@ import java.util.*;
  * 实体 XmMenuPlan 表 XM.xm_menu_plan 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmMenuPlanService")
-public class XmMenuPlanService extends BaseService {
+public class XmMenuPlanService extends BaseService<XmMenuPlanMapper,XmMenuPlan> {
 	
 	/** 请在此类添加自定义函数 */
 	

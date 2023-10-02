@@ -27,7 +27,7 @@ import java.util.stream.Collectors;
  * 实体 XmProjectGroup 表 XM.xm_group 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmGroupService")
-public class XmGroupService extends BaseService {
+public class XmGroupService extends BaseService<XmGroupMapper,XmGroup> {
 
 
 	@Autowired

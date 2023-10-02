@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * 实体 XmIterationState 表 XM.xm_iteration_state 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmIterationStateService")
-public class XmIterationStateService extends BaseService {
+public class XmIterationStateService extends BaseService<XmIterationStateMapper,XmIterationState> {
 	
 	/** 请在此类添加自定义函数 */
 	

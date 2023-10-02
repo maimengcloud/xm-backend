@@ -16,7 +16,7 @@ import java.util.Map;
  * 实体 XmMyFocus 表 XM.xm_my_focus 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmMyFocusService")
-public class XmMyFocusService extends BaseService {
+public class XmMyFocusService extends BaseService<XmMyFocusMapper,XmMyFocus> {
 
 	
 

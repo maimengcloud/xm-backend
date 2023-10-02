@@ -12,7 +12,7 @@ import java.util.List;
  * 实体 XmProjectGroupUser 表 XM.xm_group_user 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmGroupUserService")
-public class XmGroupUserService extends BaseService {
+public class XmGroupUserService extends BaseService<XmGroupUserMapper,XmGroupUser> {
 
 
 	@Autowired

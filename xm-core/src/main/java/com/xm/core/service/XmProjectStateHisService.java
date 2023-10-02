@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * 实体 XmProjectStateHis 表 XM.xm_project_state_his 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmProjectStateHisService")
-public class XmProjectStateHisService extends BaseService {
+public class XmProjectStateHisService extends BaseService<XmProjectStateHisMapper,XmProjectStateHis> {
 	
 	/** 请在此类添加自定义函数 */
 

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * 实体 XmProductState 表 XM.xm_product_state 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmProductStateService")
-public class XmProductStateService extends BaseService {
+public class XmProductStateService extends BaseService<XmProductStateMapper,XmProductState> {
 	
 	/**
 	 * 计算bug、task、测试案例、等数据

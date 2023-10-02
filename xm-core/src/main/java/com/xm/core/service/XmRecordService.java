@@ -21,7 +21,7 @@ import java.util.List;
  * 实体 XmRecord 表 XM.xm_record 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmRecordService")
-public class XmRecordService extends BaseService {
+public class XmRecordService extends BaseService<XmRecordMapper,XmRecord> {
 	
 	/** 请在此类添加自定义函数 */
 	

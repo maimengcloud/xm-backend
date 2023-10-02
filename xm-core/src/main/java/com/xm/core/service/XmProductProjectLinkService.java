@@ -13,7 +13,7 @@ import java.util.List;
  * 实体 XmProductProjectLink 表 XM.xm_product_project_link 当前主键(包括多主键): project_id; 
  ***/
 @Service("xm.core.xmProductProjectLinkService")
-public class XmProductProjectLinkService extends BaseService {
+public class XmProductProjectLinkService extends BaseService<XmProductProjectLinkMapper,XmProductProjectLink> {
 	static Logger logger =LoggerFactory.getLogger(XmProductProjectLinkService.class);
 
 	List<XmProductProjectLink> selectListByIterationId(String iterationId){

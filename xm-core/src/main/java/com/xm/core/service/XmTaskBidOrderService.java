@@ -27,7 +27,7 @@ import java.util.List;
  * 实体 XmTaskBidOrder 表 xm_task_bid_order 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmTaskBidOrderService")
-public class XmTaskBidOrderService extends BaseService {
+public class XmTaskBidOrderService extends BaseService<XmTaskBidOrderMapper,XmTaskBidOrder> {
 	static Logger logger =LoggerFactory.getLogger(XmTaskBidOrderService.class);
 
 	@Autowired

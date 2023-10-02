@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * 实体 XmMenuState 表 XM.xm_menu_state 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmMenuStateService")
-public class XmMenuStateService extends BaseService {
+public class XmMenuStateService extends BaseService<XmMenuStateMapper,XmMenuState> {
 	
 	/** 请在此类添加自定义函数 */
 	

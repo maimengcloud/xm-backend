@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
  * 实体 XmTaskSbill 表 xm_task_sbill 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmTaskSbillService")
-public class XmTaskSbillService extends BaseService {
+public class XmTaskSbillService extends BaseService<XmTaskSbillMapper,XmTaskSbill> {
 	static Logger logger =LoggerFactory.getLogger(XmTaskSbillService.class);
 
 	@Autowired

@@ -14,7 +14,7 @@ import java.util.Map;
  * 实体 XmMenuComment 表 xm_menu_comment 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmMenuCommentService")
-public class XmMenuCommentService extends BaseService {
+public class XmMenuCommentService extends BaseService<XmMenuCommentMapper,XmMenuComment> {
 	static Logger logger =LoggerFactory.getLogger(XmMenuCommentService.class);
 
 

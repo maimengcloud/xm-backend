@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
  * 实体 XmTaskSbillDetail 表 xm_task_sbill_detail 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmTaskSbillDetailService")
-public class XmTaskSbillDetailService extends BaseService {
+public class XmTaskSbillDetailService extends BaseService<XmTaskSbillDetailMapper,XmTaskSbillDetail> {
 	static Logger logger =LoggerFactory.getLogger(XmTaskSbillDetailService.class);
 
 	@Autowired

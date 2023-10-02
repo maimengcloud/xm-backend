@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * 实体 XmProductStateHis 表 xm_product_state_his 当前主键(包括多主键): product_id,biz_date; 
  ***/
 @Service("xm.core.xmProductStateHisService")
-public class XmProductStateHisService extends BaseService {
+public class XmProductStateHisService extends BaseService<XmProductStateHisMapper,XmProductStateHis> {
 	static Logger logger =LoggerFactory.getLogger(XmProductStateHisService.class);
 
 }

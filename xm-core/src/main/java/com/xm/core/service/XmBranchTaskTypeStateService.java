@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * 实体 XmBranchTaskTypeState 表 XM.xm_branch_task_type_state 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmBranchTaskTypeStateService")
-public class XmBranchTaskTypeStateService extends BaseService {
+public class XmBranchTaskTypeStateService extends BaseService<XmBranchTaskTypeStateMapper,XmBranchTaskTypeState> {
 
 	public void loadProjectTaskTypeStateToXmBranchTaskTypeState(String branchId) {
 		this.update("loadProjectTaskTypeStateToXmBranchTaskTypeState", branchId);

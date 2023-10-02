@@ -14,7 +14,7 @@ import java.util.*;
  * 实体 XmRecordVisit 表 xm_record_visit 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmRecordVisitService")
-public class XmRecordVisitService extends BaseService {
+public class XmRecordVisitService extends BaseService<XmRecordVisitMapper,XmRecordVisit> {
 	static Logger logger =LoggerFactory.getLogger(XmRecordVisitService.class);
 
 	public void batchAddAndCalc(List<XmRecordVisit> datas) {

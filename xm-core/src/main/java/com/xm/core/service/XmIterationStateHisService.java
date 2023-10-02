@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * 实体 XmIterationStateHis 表 xm_iteration_state_his 当前主键(包括多主键): iteration_id,biz_date; 
  ***/
 @Service("xm.core.xmIterationStateHisService")
-public class XmIterationStateHisService extends BaseService {
+public class XmIterationStateHisService extends BaseService<XmIterationStateHisMapper,XmIterationStateHis> {
 	static Logger logger =LoggerFactory.getLogger(XmIterationStateHisService.class);
 
 }

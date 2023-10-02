@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
  * 实体 XmMenu 表 XM.xm_menu 当前主键(包括多主键): menu_id; 
  ***/
 @Service("xm.core.xmMenuService")
-public class XmMenuService extends BaseService {
+public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 
 	@Autowired
 	XmMenuStateService xmMenuStateService;

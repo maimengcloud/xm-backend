@@ -16,7 +16,7 @@ import java.util.Map;
  * 实体 XmWorkload 表 xm_workload 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmWorkloadService")
-public class XmWorkloadService extends BaseService {
+public class XmWorkloadService extends BaseService<XmWorkloadMapper,XmWorkload> {
 	static Logger logger =LoggerFactory.getLogger(XmWorkloadService.class);
 
 	@Autowired

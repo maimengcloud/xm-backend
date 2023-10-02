@@ -13,7 +13,7 @@ import java.util.Map;
  * 实体 XmCostNlabor 表 xm_cost_nlabor 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmCostNlaborService")
-public class XmCostNlaborService extends BaseService {
+public class XmCostNlaborService extends BaseService<XmCostNlaborMapper,XmCostNlabor> {
 	static Logger logger =LoggerFactory.getLogger(XmCostNlaborService.class);
 
     public List<Map<String, Object>> listSum(Map<String, Object> xmCostNlabor) {

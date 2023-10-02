@@ -12,7 +12,7 @@ import java.util.List;
  * 实体 XmAttachment 表 XM.xm_attachment 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmAttachmentService")
-public class XmAttachmentService extends BaseService {
+public class XmAttachmentService extends BaseService<XmAttachmentMapper,XmAttachment> {
 	
     public void insertOrUpdate(String originId,String originType, List<XmAttachment> attachmentList) {
         XmAttachment del = new XmAttachment();

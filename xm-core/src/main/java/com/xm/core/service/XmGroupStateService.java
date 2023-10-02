@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * 实体 XmProjectGroupState 表 XM.xm_group_state 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmGroupStateService")
-public class XmGroupStateService extends BaseService {
+public class XmGroupStateService extends BaseService<XmGroupStateMapper,XmGroupState> {
 	
 	/**
 	 * 计算bug、task、测试案例、等数据

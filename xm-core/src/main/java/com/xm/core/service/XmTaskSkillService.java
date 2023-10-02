@@ -13,7 +13,7 @@ import java.util.List;
  * 实体 XmTaskSkill 表 XM.xm_task_skill 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmTaskSkillService")
-public class XmTaskSkillService extends BaseService {
+public class XmTaskSkillService extends BaseService<XmTaskSkillMapper,XmTaskSkill> {
 	
 
 	@Autowired

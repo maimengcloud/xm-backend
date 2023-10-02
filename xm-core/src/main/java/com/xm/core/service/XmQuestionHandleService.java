@@ -13,7 +13,7 @@ import java.util.List;
  * 实体 XmQuestionHandle 表 XM.xm_question_handle 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmQuestionHandleService")
-public class XmQuestionHandleService extends BaseService {
+public class XmQuestionHandleService extends BaseService<XmQuestionHandleMapper,XmQuestionHandle> {
 
     @Async
     public void batchAddAsync(List<XmQuestionHandle> handles) {

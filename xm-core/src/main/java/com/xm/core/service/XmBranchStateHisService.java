@@ -1,6 +1,8 @@
 package com.xm.core.service;
 
 import com.mdp.core.service.BaseService;
+import com.xm.core.entity.XmBranchStateHis;
+import com.xm.core.mapper.XmBranchStateHisMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -13,7 +15,7 @@ import java.util.Map;
  * 实体 XmBranchStateHis 表 xm_branch_state_his 当前主键(包括多主键): biz_date,branch_id; 
  ***/
 @Service("xm.core.xmBranchStateHisService")
-public class XmBranchStateHisService extends BaseService {
+public class XmBranchStateHisService extends BaseService<XmBranchStateHisMapper, XmBranchStateHis> {
 	static Logger logger =LoggerFactory.getLogger(XmBranchStateHisService.class);
 
     public List<Map<String, Object>> listXmBranchFiveDayTaskCnt(Map<String, Object> xmBranchStateHis) {

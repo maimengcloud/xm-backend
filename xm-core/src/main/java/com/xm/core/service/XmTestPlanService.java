@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
  * 实体 XmTestPlan 表 xm_test_plan 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmTestPlanService")
-public class XmTestPlanService extends BaseService {
+public class XmTestPlanService extends BaseService<XmTestPlanMapper,XmTestPlan> {
 	static Logger logger =LoggerFactory.getLogger(XmTestPlanService.class);
 
     public void calcXmTestPlan(String id) {

@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
  * 实体 XmTaskEval 表 xm_task_eval 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmTaskEvalService")
-public class XmTaskEvalService extends BaseService {
+public class XmTaskEvalService extends BaseService<XmTaskEvalMapper,XmTaskEval> {
 	static Logger logger =LoggerFactory.getLogger(XmTaskEvalService.class);
 
     public MyTotalEval getServiceProviderEval(User user) {

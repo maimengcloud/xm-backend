@@ -29,7 +29,7 @@ import java.util.*;
  * 实体 XmProject 表 XM.xm_project 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmProjectService")
-public class XmProjectService extends BaseService {
+public class XmProjectService extends BaseService<XmProjectMapper,XmProject> {
 
 
 	@Value("${mdp.platform-branch-id:platform-branch-001}")

@@ -12,7 +12,7 @@ import java.util.Map;
  * 实体 XmTestCase 表 XM.xm_test_case 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmTestCaseService")
-public class XmTestCaseService extends BaseService {
+public class XmTestCaseService extends BaseService<XmTestCaseMapper,XmTestCase> {
     public List<Map<String, Object>> getXmTestCaseSort(Map<String, Object> xmTestCase) {
         return super.selectList("getXmTestCaseSort",xmTestCase);
     }

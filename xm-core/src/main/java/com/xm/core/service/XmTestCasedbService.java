@@ -12,7 +12,7 @@ import java.util.List;
  * 实体 XmTestCasedb 表 xm_test_casedb 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmTestCasedbService")
-public class XmTestCasedbService extends BaseService {
+public class XmTestCasedbService extends BaseService<XmTestCasedbMapper,XmTestCasedb> {
 	static Logger logger =LoggerFactory.getLogger(XmTestCasedbService.class);
 
     public List<String> getExistsPlanCasedbIds(List<String> casedbIds) {

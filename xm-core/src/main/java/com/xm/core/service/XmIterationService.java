@@ -14,7 +14,7 @@ import java.util.Map;
  * 实体 XmIteration 表 XM.xm_iteration 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmIterationService")
-public class XmIterationService extends BaseService {
+public class XmIterationService extends BaseService<XmIterationMapper,XmIteration> {
 
 
 

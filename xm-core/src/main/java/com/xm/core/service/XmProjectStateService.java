@@ -13,7 +13,7 @@ import java.util.Map;
  * 实体 XmProjectState 表 XM.xm_project_state 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmProjectStateService")
-public class XmProjectStateService extends BaseService {
+public class XmProjectStateService extends BaseService<XmProjectStateMapper,XmProjectState> {
 	
 	/** 请在此类添加自定义函数 */
 	

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
  * 实体 XmQuestionTag 表 XM.xm_question_tag 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmQuestionTagService")
-public class XmQuestionTagService extends BaseService {
+public class XmQuestionTagService extends BaseService<XmQuestionTagMapper,XmQuestionTag> {
 	
 	/** 请在此类添加自定义函数 */
 

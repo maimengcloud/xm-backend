@@ -24,7 +24,7 @@ import java.util.*;
  * 实体 XmTaskExecuser 表 XM.xm_task_execuser 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmTaskExecuserService")
-public class XmTaskExecuserService extends BaseService {
+public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTaskExecuser> {
 
 	/** 请在此类添加自定义函数 */
 

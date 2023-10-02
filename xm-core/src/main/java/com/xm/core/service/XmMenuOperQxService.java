@@ -16,7 +16,7 @@ import java.util.List;
  * 实体 XmMenu 表 XM.xm_menu 当前主键(包括多主键): menu_id; 
  ***/
 @Service("xm.core.xmProductOperQxService")
-public class XmMenuOperQxService extends BaseService {
+public class XmMenuOperQxService extends BaseService<XmMenuOperQxMapper,XmMenuOperQx> {
 
 
 	@Override

@@ -15,7 +15,7 @@ import java.util.Map;
  * 实体 XmTestPlanCase 表 xm_test_plan_case 当前主键(包括多主键): case_id,plan_id; 
  ***/
 @Service("xm.core.xmTestPlanCaseService")
-public class XmTestPlanCaseService extends BaseService {
+public class XmTestPlanCaseService extends BaseService<XmTestPlanCaseMapper,XmTestPlanCase> {
 	static Logger logger =LoggerFactory.getLogger(XmTestPlanCaseService.class);
 
     public List<XmTestPlanCase> selectListByCaseIdsAndPlanId(String planId, List<String> caseIds) {
