@@ -1,9 +1,12 @@
 package com.xm.core.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
 import com.xm.core.entity.*;
+import com.xm.core.mapper.XmProductMapper;
 import com.xm.core.service.cache.XmProductCacheService;
 import com.xm.core.vo.XmProductAddVo;
 import org.springframework.beans.BeanUtils;
@@ -49,7 +52,16 @@ public class XmProductService extends BaseService<XmProductMapper,XmProduct> {
 
 	@Autowired
 	private XmTaskService xmTaskService;
-
+	/**
+	 * 自定义查询，支持多表关联
+	 * @param page 分页条件
+	 * @param ew 一定要，并且必须加@Param("ew")注解
+	 * @param ext 如果xml中需要根据某些值进行特殊处理，可以通过这个进行传递，非必须，注解也可以不加
+	 * @return
+	 */
+	public List<Map<String,Object>> selectListMapByWhere(IPage page, QueryWrapper ew, Map<String,Object> ext){
+		return baseMapper.selectListMapByWhere(page,ew,ext);
+	}
 
 	/**
 	 * 产品不直接根项目关联，此函数作废了

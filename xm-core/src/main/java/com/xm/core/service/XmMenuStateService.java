@@ -1,5 +1,7 @@
 package com.xm.core.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.DateUtils;
@@ -7,6 +9,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmMenuState;
+import com.xm.core.mapper.XmMenuStateMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -21,8 +24,17 @@ import java.util.stream.Collectors;
  ***/
 @Service("xm.core.xmMenuStateService")
 public class XmMenuStateService extends BaseService<XmMenuStateMapper,XmMenuState> {
-	
-	/** 请在此类添加自定义函数 */
+
+	/**
+	 * 自定义查询，支持多表关联
+	 * @param page 分页条件
+	 * @param ew 一定要，并且必须加@Param("ew")注解
+	 * @param ext 如果xml中需要根据某些值进行特殊处理，可以通过这个进行传递，非必须，注解也可以不加
+	 * @return
+	 */
+	public List<Map<String,Object>> selectListMapByWhere(IPage page, QueryWrapper ew, Map<String,Object> ext){
+		return baseMapper.selectListMapByWhere(page,ew,ext);
+	}
 	
 	/**
 	 * 根据前端手动选择的功能列表及项目，批量插入到功能计划表中，如果有重复则忽略

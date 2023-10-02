@@ -1,7 +1,8 @@
 package com.xm.core.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmProduct;
 import org.springframework.stereotype.Service;
@@ -9,6 +10,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -16,23 +18,7 @@ import java.util.List;
  * 实体 XmMenu 表 XM.xm_menu 当前主键(包括多主键): menu_id; 
  ***/
 @Service("xm.core.xmProductOperQxService")
-public class XmMenuOperQxService extends BaseService<XmMenuOperQxMapper,XmMenuOperQx> {
-
-
-	@Override
-	public String getNameSpace() {
-		return XmMenu.class.getName();
-	}
-
-	public Tips checkProductStatus(XmProduct xmProductDb) {
-		Tips tips=new Tips("成功");
-		if(xmProductDb==null){
-			tips.setFailureMsg("product-0","产品已不存在");
-		} else if("3".equals(xmProductDb.getPstatus())){
-			tips.setFailureMsg("pstatus-3","产品已经关闭，不能再操作");
-		}
-		return tips;
-	}
+public class XmMenuOperQxService {
 
 	/**
 	 * 检查某个人是否为产品级管理人员
