@@ -78,7 +78,7 @@ public class XmBranchTaskTypeStateController {
 	public Result loadProjectTaskTypeStateToXmBranchTaskTypeState(@RequestBody XmBranchState xmBranchState){
 
 			if(StringUtils.isEmpty(xmBranchState.getBranchId())) {
-				tips.setFailureMsg("机构编号branchId必填");
+				return Result.error("机构编号branchId必填");
 			}else {
 	
 				xmBranchTaskTypeStateService.loadProjectTaskTypeStateToXmBranchTaskTypeState(xmBranchState.getBranchId());
@@ -99,7 +99,7 @@ public class XmBranchTaskTypeStateController {
 			}else{
 				 XmBranchTaskTypeState xmBranchTaskTypeStateQuery = new  XmBranchTaskTypeState(xmBranchTaskTypeState.getId());
 				if(xmBranchTaskTypeStateService.countByWhere(xmBranchTaskTypeStateQuery)>0){
-					tips.setFailureMsg("编号重复，请修改编号再提交");
+					return Result.error("编号重复，请修改编号再提交");
 					m.put("tips", tips);
 					return m;
 				}

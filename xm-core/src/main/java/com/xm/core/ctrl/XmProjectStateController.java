@@ -153,7 +153,7 @@ public class XmProjectStateController {
 	public Result loadTasksToXmProjectState(@RequestBody XmProjectState xmProjectState){
 
 			if(StringUtils.isEmpty(xmProjectState.getProjectId())) {
-				tips.setFailureMsg("项目编号projectId必填");
+				return Result.error("项目编号projectId必填");
 			}else {
 	
 				xmProjectStateService.loadTasksToXmProjectState(xmProjectState.getProjectId());
@@ -169,7 +169,7 @@ public class XmProjectStateController {
 	public Result loadTasksSettleToXmProjectState(@RequestBody XmProjectState xmProjectState){
 
 			if(StringUtils.isEmpty(xmProjectState.getProjectId())) {
-				tips.setFailureMsg("项目编号projectId必填");
+				return Result.error("项目编号projectId必填");
 			}else {
 	
 				xmProjectStateService.loadTasksSettleToXmProjectState(xmProjectState.getProjectId());
@@ -190,7 +190,7 @@ public class XmProjectStateController {
 			}else{
 				 XmProjectState xmProjectStateQuery = new  XmProjectState(xmProjectState.getId());
 				if(xmProjectStateService.countByWhere(xmProjectStateQuery)>0){
-					tips.setFailureMsg("编号重复，请修改编号再提交");
+					return Result.error("编号重复，请修改编号再提交");
 					m.put("tips", tips);
 					return m;
 				}

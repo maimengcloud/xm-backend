@@ -215,7 +215,7 @@ public class XmTaskBidOrderController {
 		
 		
 		if(!StringUtils.hasText(orderId)) {
-			return failed("data-0","订单Id不能为空");
+			return Result.error("data-0","订单Id不能为空");
 		}
 		XmTaskBidOrder moOrder = xmTaskBidOrderService.selectOneById(orderId);
 		m.put("tips", tips);
@@ -233,11 +233,11 @@ public class XmTaskBidOrderController {
 		try {
 			
 			if(!StringUtils.hasText(order.getId())) {
-				return failed("data-0","订单Id不能为空");
+				return Result.error("data-0","订单Id不能为空");
 			}
 			String flag= (String) this.redisTemplate.opsForValue().get("pay-notify-success-"+order.getPayId());
 			if(!StringUtils.hasText(flag)|| !"1".equals(flag)){
-				return failed("pay-notify-success-flag-0","验证码错误");
+				return Result.error("pay-notify-success-flag-0","验证码错误");
 			}
 			xmTaskBidOrderService.orderPaySuccess(order.getId(),order.getPayId(),order.getPrepayId(), order.getTranId(), order.getPayAt(), order.getRemark());
 
@@ -245,10 +245,10 @@ public class XmTaskBidOrderController {
 			return m;
 		}catch (BizException e) {
 			logger.error("",e);
-			return failed("data-0",e.getMessage());
+			return Result.error("data-0",e.getMessage());
 		} catch (Exception e) {
 			logger.error("",e);
-			return failed("data-0", "开通模块失败");
+			return Result.error("data-0", "开通模块失败");
 		}
 	}
 
@@ -262,21 +262,21 @@ public class XmTaskBidOrderController {
 		try {
 			
 			if(!StringUtils.hasText(order.getId())) {
-				return failed("data-0","订单Id不能为空");
+				return Result.error("data-0","订单Id不能为空");
 			}
 			String flag= (String) this.redisTemplate.opsForValue().get("pay-notify-cancel-"+order.getPayId());
 			if(!StringUtils.hasText(flag)|| !"1".equals(flag)){
-				return failed("pay-notify-cancel-flag-0","验证码错误");
+				return Result.error("pay-notify-cancel-flag-0","验证码错误");
 			}
 			this.xmTaskBidOrderService.payCancel(order.getId(),order.getPayId(), order.getRemark());
 			m.put("tips", tips);
 			return m;
 		}catch (BizException e) {
 			logger.error("",e);
-			return failed("data-0",e.getMessage());
+			return Result.error("data-0",e.getMessage());
 		} catch (Exception e) {
 			logger.error("",e);
-			return failed("data-0", "付款取消操作失败");
+			return Result.error("data-0", "付款取消操作失败");
 		}
 	}
 	@ApiOperation( value = "修改订单的第三方流水号",notes=" ")
@@ -288,7 +288,7 @@ public class XmTaskBidOrderController {
 		
 		
 		if(!StringUtils.hasText(order.getId())) {
-			return failed("data-0","订单Id不能为空");
+			return Result.error("data-0","订单Id不能为空");
 		}
 		XmTaskBidOrder moOrder = new XmTaskBidOrder();
 		moOrder.setId(order.getId());

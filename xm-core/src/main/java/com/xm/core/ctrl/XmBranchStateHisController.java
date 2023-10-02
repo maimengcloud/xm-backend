@@ -103,7 +103,7 @@ public class XmBranchStateHisController {
 			}
 			if(createPk==false){
                  if(xmBranchStateHisService.selectOneObject(xmBranchStateHis) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
+                    return Result.error("pk-exists","编号重复，请修改编号再提交");
                 }
             }
 			xmBranchStateHisService.insert(xmBranchStateHis);
@@ -120,14 +120,14 @@ public class XmBranchStateHisController {
 	public Result delXmBranchStateHis(@RequestBody XmBranchStateHis xmBranchStateHis){
 
             if(!StringUtils.hasText(xmBranchStateHis.getBizDate())) {
-                 return failed("pk-not-exists","请上送主键参数bizDate");
+                 return Result.error("pk-not-exists","请上送主键参数bizDate");
             }
             if(!StringUtils.hasText(xmBranchStateHis.getBranchId())) {
-                 return failed("pk-not-exists","请上送主键参数branchId");
+                 return Result.error("pk-not-exists","请上送主键参数branchId");
             }
             XmBranchStateHis xmBranchStateHisDb = xmBranchStateHisService.selectOneObject(xmBranchStateHis);
             if( xmBranchStateHisDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
+                return Result.error("data-not-exists","数据不存在，无法删除");
             }
 			xmBranchStateHisService.deleteByPk(xmBranchStateHis);
 		return Result.ok();
@@ -144,14 +144,14 @@ public class XmBranchStateHisController {
 	public Result editXmBranchStateHis(@RequestBody XmBranchStateHis xmBranchStateHis) {
 
             if(!StringUtils.hasText(xmBranchStateHis.getBizDate())) {
-                 return failed("pk-not-exists","请上送主键参数bizDate");
+                 return Result.error("pk-not-exists","请上送主键参数bizDate");
             }
             if(!StringUtils.hasText(xmBranchStateHis.getBranchId())) {
-                 return failed("pk-not-exists","请上送主键参数branchId");
+                 return Result.error("pk-not-exists","请上送主键参数branchId");
             }
             XmBranchStateHis xmBranchStateHisDb = xmBranchStateHisService.selectOneObject(xmBranchStateHis);
             if( xmBranchStateHisDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmBranchStateHisService.updateSomeFieldByPk(xmBranchStateHis);
 		

@@ -138,11 +138,11 @@ public class XmProjectController {
 
 			List<String> ids= (List<String>) xmProjectMap.get("ids");
 			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 
 			if(ids.size()>1){
-				return failed("ids-1","一次只能更新一个项目");
+				return Result.error("ids-1","一次只能更新一个项目");
 			}
 			Set<String> fields=new HashSet<>();
 			fields.add("id");
@@ -150,31 +150,31 @@ public class XmProjectController {
 			fields.add("bizFlowState");
 			for (String fieldName : xmProjectMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmProjectMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmProjectMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			List<XmProject> xmProjectsDb=xmProjectService.selectListByIds(ids);
 			if(xmProjectsDb==null ||xmProjectsDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 			XmProject xmProject=BaseUtils.fromMap(xmProjectMap,XmProject.class);
 			XmProject xmProjectDb=xmProjectsDb.get(0);
 			if(!LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())  && !groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
-				return failed("noqx-all","您无权限操作，产品管理人员、机构管理员有权限更新项目基础信息。");
+				return Result.error("noqx-all","您无权限操作，产品管理人员、机构管理员有权限更新项目基础信息。");
 			}
 			if(xmProjectMap.containsKey("assUserid")){
 				String assUserid= (String) xmProjectMap.get("assUserid");
 				String assUsername= (String) xmProjectMap.get("assUsername");
 				if(StringUtils.hasText(assUserid)){
 					if(!user.getUserid().equals(xmProjectDb.getPmUserid()) && !user.getUserid().equals(xmProjectDb.getAdmUserid())){
-						return failed("noqx-pm","您无权限操作。项目经理、总监可以委任项目副经理。");
+						return Result.error("noqx-pm","您无权限操作。项目经理、总监可以委任项目副经理。");
 					}
 				}
 			}
@@ -183,7 +183,7 @@ public class XmProjectController {
 				String pmUsername= (String) xmProjectMap.get("pmUsername");
 				if(StringUtils.hasText(pmUserid)){
 					if(!user.getUserid().equals(xmProjectDb.getAdmUserid())){
-						return failed("noqx-adm","您无权限操作，项目总监可以委任项目经理。");
+						return Result.error("noqx-adm","您无权限操作，项目总监可以委任项目经理。");
 					}
 				}
 			}
@@ -192,7 +192,7 @@ public class XmProjectController {
 				String admUsername= (String) xmProjectMap.get("admUsername");
 				if(StringUtils.hasText(admUserid)){
 					if(!LoginUtils.isBranchAdmin(xmProjectDb.getBranchId()) && !user.getUserid().equals(xmProjectDb.getAdmUserid())){
-						return failed("noqx-adm","您无权限操作，项目总监、机构管理员可以委任项目总监。");
+						return Result.error("noqx-adm","您无权限操作，项目总监、机构管理员可以委任项目总监。");
 					}
 				}
 			}
@@ -223,27 +223,27 @@ public class XmProjectController {
 	public Result addXmProject(@RequestBody XmProjectVo xmProjectVo) {
 
 			if(!StringUtils.hasText(xmProjectVo.getName())){
-				return failed("name-0","项目名称不能为空");
+				return Result.error("name-0","项目名称不能为空");
 			}
 			if(xmProjectVo.getLinks()!=null && xmProjectVo.getLinks().size()>0){
 				for (XmProductProjectLink link : xmProjectVo.getLinks()) {
 					if(!StringUtils.hasText(link.getProductId())){
-						return failed("productId-0","关联的产品编号不能为空");
+						return Result.error("productId-0","关联的产品编号不能为空");
 					}
 				}
 			}
 			Set<String> words=sensitiveWordService.getSensitiveWord(xmProjectVo.getName());
 			if(words!=null && words.size()>0){
-				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+				return Result.error("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
 			}
 			words=sensitiveWordService.getSensitiveWord(xmProjectVo.getBaseRemark());
 			if(words!=null && words.size()>0){
-				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
+				return Result.error("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
 
 			words=sensitiveWordService.getSensitiveWord(xmProjectVo.getAssessRemarks());
 			if(words!=null && words.size()>0){
-				return failed("assessRemarks-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
+				return Result.error("assessRemarks-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
 			User user = LoginUtils.getCurrentUserInfo();
 				xmProjectService.saveProject(xmProjectVo);
@@ -273,13 +273,13 @@ public class XmProjectController {
 			User user= LoginUtils.getCurrentUserInfo();
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
-				tips.setFailureMsg("项目不存在");
+				return Result.error("项目不存在");
 			}
 			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
-				return failed("branchId-not-right","该项目不属于您的组织，不允许您进行恢复");
+				return Result.error("branchId-not-right","该项目不属于您的组织，不允许您进行恢复");
 			}
 			if(!"1".equals(xmProjectDb.getDel())){
-				return failed("status-not-0","该项目不属于删除状态，不允许恢复");
+				return Result.error("status-not-0","该项目不属于删除状态，不允许恢复");
 			}
 			if(LoginUtils.isBranchAdmin(xmProjectDb.getBranchId()) || this.groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
 				XmProject xmProjectUpdate=new XmProject();
@@ -291,7 +291,7 @@ public class XmProjectController {
 				xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-从回收站恢复项目",user.getUsername()+"从回收站恢复项目【"+xmProjectDb.getName()+"】", null, JSON.toJSONString(xmProjectDb));
 
 			}else {
-				tips.setFailureMsg("您不是该项目管理人员，无权从回收站恢复项目");
+				return Result.error("您不是该项目管理人员，无权从回收站恢复项目");
 			}
 
 		return Result.ok();
@@ -307,15 +307,15 @@ public class XmProjectController {
 
 			User user= LoginUtils.getCurrentUserInfo();
 			if(xmProject==null || StringUtils.isEmpty(xmProject.getId())){
-				return failed("id-0","项目编号不能为空");
+				return Result.error("id-0","项目编号不能为空");
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
-				tips.setFailureMsg("项目不存在");
-				return failed(tips);
+				return Result.error("项目不存在");
+				return Result.error(tips);
 			}
 			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
-				return failed("branchId-not-right","该项目不属于您的组织，不允许您进行删除");
+				return Result.error("branchId-not-right","该项目不属于您的组织，不允许您进行删除");
 			}
 			if(LoginUtils.isBranchAdmin(xmProjectDb.getBranchId()) || this.groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid())){
 				XmProject xmProjectUpdate=new XmProject();
@@ -327,7 +327,7 @@ public class XmProjectController {
 				xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-删除",user.getUsername()+"删除项目【"+xmProjectDb.getName()+"】", null, JSON.toJSONString(xmProjectDb));
 
 			}else {
-				tips.setFailureMsg("您不是该项目管理人员，无权删除");
+				return Result.error("您不是该项目管理人员，无权删除");
 			}
 
 		return Result.ok();
@@ -345,15 +345,15 @@ public class XmProjectController {
 
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
-				return failed("id-0","项目编号不能为空");
+				return Result.error("id-0","项目编号不能为空");
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
-				return failed("data-0","项目不存在");
+				return Result.error("data-0","项目不存在");
 			}
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if(   !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
-				return failed("noqx","您无权操作！项目管理人员才能修改项目基础数据");
+				return Result.error("noqx","您无权操作！项目管理人员才能修改项目基础数据");
 			}
 			xmProjectService.updateByPk(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
@@ -387,15 +387,15 @@ public class XmProjectController {
 
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
-				return failed("id-0","项目编号不能为空");
+				return Result.error("id-0","项目编号不能为空");
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
-				return failed("data-0","项目不存在");
+				return Result.error("data-0","项目不存在");
 			}
  			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
- 				return failed("noqx","您无权操作！项目管理人员才能修改项目状态");
+ 				return Result.error("noqx","您无权操作！项目管理人员才能修改项目状态");
 			}
 			xmProjectService.updateStatus(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
@@ -417,15 +417,15 @@ public class XmProjectController {
 
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
-				return failed("id-0","项目编号不能为空");
+				return Result.error("id-0","项目编号不能为空");
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
-				return failed("data-0","项目不存在");
+				return Result.error("data-0","项目不存在");
 			}
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
-				return failed("noqx","您无权操作！项目管理人员才能修改项目预算");
+				return Result.error("noqx","您无权操作！项目管理人员才能修改项目预算");
 			}
 			xmProjectService.editBudget(xmProject);
 			xmProjectService.clearProject(xmProject.getId());
@@ -450,15 +450,15 @@ public class XmProjectController {
 
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
-				return failed("id-0","项目编号不能为空");
+				return Result.error("id-0","项目编号不能为空");
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
-				return failed("data-0","项目不存在");
+				return Result.error("data-0","项目不存在");
 			}
 			boolean isPm=groupService.checkUserIsProjectAdm(xmProjectDb,user.getUserid());
 			if( !isPm && !LoginUtils.isBranchAdmin(xmProjectDb.getBranchId())) {
-				return failed("noqx","您无权操作！项目管理人员才能修改项目基础信息");
+				return Result.error("noqx","您无权操作！项目管理人员才能修改项目基础信息");
 			}
 			xmProjectService.updateProject(xmProject);
 			if(StringUtils.hasText(xmProject.getPmUserid()) && !xmProject.getPmUserid().equals(xmProjectDb.getPmUserid())){
@@ -491,10 +491,10 @@ public class XmProjectController {
 
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
-				return failed("id-0","请上送原项目编号参数id");
+				return Result.error("id-0","请上送原项目编号参数id");
 			}
 			if( !StringUtils.hasText(xmProject.getName())){
-				return failed("name-0","请上送新项目名称");
+				return Result.error("name-0","请上送新项目名称");
 			}
 			if(StringUtils.hasText(xmProject.getCode())){
 				XmProject pq=new XmProject();
@@ -502,12 +502,12 @@ public class XmProjectController {
 				pq.setCode(xmProject.getCode());
 				List<XmProject> xmProjectList=this.xmProjectService.selectListByWhere(pq);
 				if(xmProjectList!=null && xmProjectList.size()>0){
-					return failed("code-exists","项目代号【"+xmProject.getCode()+"】已存在，，请重新输入新的项目代号，如果为空，后台自动生成");
+					return Result.error("code-exists","项目代号【"+xmProject.getCode()+"】已存在，，请重新输入新的项目代号，如果为空，后台自动生成");
 				}
 			}
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
-				tips.setFailureMsg("项目不存在");
+				return Result.error("项目不存在");
 				m.put("tips", tips);
 				return m;
 			}
@@ -570,7 +570,7 @@ public class XmProjectController {
 			tips=e.getTips();
 			logger.error("执行异常",e);
 		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
+			return Result.error(e.getMessage());
 			logger.error("执行异常",e);
 		}  
 		

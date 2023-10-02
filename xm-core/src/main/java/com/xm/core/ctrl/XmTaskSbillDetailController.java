@@ -85,7 +85,7 @@ public class XmTaskSbillDetailController {
 		
 		String bizYear= (String) params.get("bizYear");
 		if(!StringUtils.hasText(bizYear)){
-			return failed("bizYear-0","年份不能为空");
+			return Result.error("bizYear-0","年份不能为空");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
@@ -150,7 +150,7 @@ public class XmTaskSbillDetailController {
 			}
 			if(createPk==false){
                  if(xmTaskSbillDetailService.selectOneObject(xmTaskSbillDetail) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
+                    return Result.error("pk-exists","编号重复，请修改编号再提交");
                 }
             }
 			xmTaskSbillDetailService.insert(xmTaskSbillDetail);
@@ -176,11 +176,11 @@ public class XmTaskSbillDetailController {
 	public Result editXmTaskSbillDetail(@RequestBody XmTaskSbillDetail xmTaskSbillDetail) {
 
             if(!StringUtils.hasText(xmTaskSbillDetail.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmTaskSbillDetail xmTaskSbillDetailDb = xmTaskSbillDetailService.selectOneObject(xmTaskSbillDetail);
             if( xmTaskSbillDetailDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmTaskSbillDetailService.updateSomeFieldByPk(xmTaskSbillDetail);
 		
@@ -196,7 +196,7 @@ public class XmTaskSbillDetailController {
 
             List<String> ids= (List<String>) xmTaskSbillDetailMap.get("ids");
 			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
@@ -209,14 +209,14 @@ public class XmTaskSbillDetailController {
             fields.add("projectId");
 			for (String fieldName : xmTaskSbillDetailMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmTaskSbillDetailMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskSbillDetailMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
  			}
 			String sstatus= (String) xmTaskSbillDetailMap.get("sstatus");
 			if(StringUtils.hasText(sstatus)){
@@ -227,11 +227,11 @@ public class XmTaskSbillDetailController {
 			XmTaskSbillDetail xmTaskSbillDetail = fromMap(xmTaskSbillDetailMap,XmTaskSbillDetail.class);
 			List<XmTaskSbillDetail> xmTaskSbillDetailsDb=xmTaskSbillDetailService.selectListByIds(ids);
 			if(xmTaskSbillDetailsDb==null ||xmTaskSbillDetailsDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 			if(fieldKey.contains("othFee")){
 				if(xmTaskSbillDetailsDb.size()>1){
-					return failed("data-not-1","其他费用的修改只能一次修改一条记录，不能批量修改");
+					return Result.error("data-not-1","其他费用的修改只能一次修改一条记录，不能批量修改");
 				}else{
 					XmTaskSbillDetail detail=xmTaskSbillDetailsDb.get(0);
 					this.xmTaskSbillDetailService.preCalcSamt(detail);
@@ -263,9 +263,9 @@ public class XmTaskSbillDetailController {
 				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -283,19 +283,19 @@ public class XmTaskSbillDetailController {
         		
         	User user=LoginUtils.getCurrentUserInfo();
             if(xmTaskSbillDetails.size()<=0){
-                return failed("data-0","请上送待删除数据列表");
+                return Result.error("data-0","请上送待删除数据列表");
             }
              List<XmTaskSbillDetail> datasDb=xmTaskSbillDetailService.selectListByIds(xmTaskSbillDetails.stream().map(i-> i.getId() ).collect(Collectors.toList()));
 			String sbillId=datasDb.get(0).getSbillId();
 			if(datasDb.stream().filter(i->!sbillId.equals(i.getSbillId())).findAny().isPresent()){
-				return failed("sbillId-0","只能删除同一个结算单的清单");
+				return Result.error("sbillId-0","只能删除同一个结算单的清单");
 			}
 			XmTaskSbill xmTaskSbill=xmTaskSbillService.selectOneById(sbillId);
 			if(!user.getUserid().equals(xmTaskSbill.getCuserid())){
-				return failed("sbillId-0","该结算单不是您创建的，您不能删除其清单");
+				return Result.error("sbillId-0","该结算单不是您创建的，您不能删除其清单");
 			}
 			if(!"0".equals(xmTaskSbill.getStatus())){
-				return failed("status-not-0","结算单已提交，不允许更改");
+				return Result.error("status-not-0","结算单已提交，不允许更改");
 			}
             List<XmTaskSbillDetail> can=new ArrayList<>();
             List<XmTaskSbillDetail> no=new ArrayList<>();
@@ -316,18 +316,11 @@ public class XmTaskSbillDetailController {
                 msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
             }
             if(can.size()>0){
-                 tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+                 return Result.ok(msgs.stream().collect(Collectors.joining()));
             }else {
-                tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+                return Result.error(msgs.stream().collect(Collectors.joining()));
             }
-        }catch (BizException e) { 
-            tips=e.getTips();
-            logger.error("",e);
-        }catch (Exception e) {
-            tips.setFailureMsg(e.getMessage());
-            logger.error("",e);
-        }  
-        m.put("tips", tips);
-        return m;
+        return Result.ok();
+        
 	}
 }

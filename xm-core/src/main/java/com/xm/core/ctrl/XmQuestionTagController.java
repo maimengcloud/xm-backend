@@ -85,7 +85,7 @@ public class XmQuestionTagController {
 			}else{
 				 XmQuestionTag xmQuestionTagQuery = new  XmQuestionTag(xmQuestionTag.getId());
 				if(xmQuestionTagService.countByWhere(xmQuestionTagQuery)>0){
-					tips.setFailureMsg("编号重复，请修改编号再提交");
+					return Result.error("编号重复，请修改编号再提交");
 					m.put("tips", tips);
 					return m;
 				}

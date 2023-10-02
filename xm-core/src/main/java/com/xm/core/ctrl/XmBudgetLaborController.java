@@ -99,7 +99,7 @@ public class XmBudgetLaborController {
 			}
 			if(createPk==false){
                  if(xmBudgetLaborService.selectOneObject(xmBudgetLabor) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
+                    return Result.error("pk-exists","编号重复，请修改编号再提交");
                 }
             }
 			xmBudgetLaborService.insert(xmBudgetLabor);
@@ -116,11 +116,11 @@ public class XmBudgetLaborController {
 	public Result delXmBudgetLabor(@RequestBody XmBudgetLabor xmBudgetLabor){
 
             if(!StringUtils.hasText(xmBudgetLabor.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmBudgetLabor xmBudgetLaborDb = xmBudgetLaborService.selectOneObject(xmBudgetLabor);
             if( xmBudgetLaborDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
+                return Result.error("data-not-exists","数据不存在，无法删除");
             }
 			xmBudgetLaborService.deleteByPk(xmBudgetLabor);
 		return Result.ok();
@@ -135,11 +135,11 @@ public class XmBudgetLaborController {
 	public Result editXmBudgetLabor(@RequestBody XmBudgetLabor xmBudgetLabor) {
 
             if(!StringUtils.hasText(xmBudgetLabor.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmBudgetLabor xmBudgetLaborDb = xmBudgetLaborService.selectOneObject(xmBudgetLabor);
             if( xmBudgetLaborDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmBudgetLaborService.updateSomeFieldByPk(xmBudgetLabor);
 		
@@ -155,26 +155,26 @@ public class XmBudgetLaborController {
 
             List<String> ids= (List<String>) xmBudgetLaborMap.get("ids");
 			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
             fields.add("id");
 			for (String fieldName : xmBudgetLaborMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmBudgetLaborMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmBudgetLaborMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
  			}
 			XmBudgetLabor xmBudgetLabor = fromMap(xmBudgetLaborMap,XmBudgetLabor.class);
 			List<XmBudgetLabor> xmBudgetLaborsDb=xmBudgetLaborService.selectListByIds(ids);
 			if(xmBudgetLaborsDb==null ||xmBudgetLaborsDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 			List<XmBudgetLabor> can=new ArrayList<>();
 			List<XmBudgetLabor> no=new ArrayList<>();
@@ -199,9 +199,9 @@ public class XmBudgetLaborController {
 				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -217,7 +217,7 @@ public class XmBudgetLaborController {
 	public Result batchAddXmBudgetLabor(@RequestBody List<XmBudgetLabor> xmBudgetLabors) {
 
 			if(xmBudgetLabors.size()<=0){
-				return failed("data-0","请上送待新增数据列表");
+				return Result.error("data-0","请上送待新增数据列表");
 			}
 			List<XmBudgetLabor> datasDb=xmBudgetLabors;
 			List<XmBudgetLabor> can=new ArrayList<>();
@@ -240,9 +240,9 @@ public class XmBudgetLaborController {
 				msgs.add(String.format("以下%s条数据不能新增.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 		return Result.ok();
 		
@@ -258,7 +258,7 @@ public class XmBudgetLaborController {
         
         
             if(xmBudgetLabors.size()<=0){
-                return failed("data-0","请上送待删除数据列表");
+                return Result.error("data-0","请上送待删除数据列表");
             }
              List<XmBudgetLabor> datasDb=xmBudgetLaborService.selectListByIds(xmBudgetLabors.stream().map(i-> i.getId() ).collect(Collectors.toList()));
 
@@ -281,19 +281,12 @@ public class XmBudgetLaborController {
                 msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
             }
             if(can.size()>0){
-                 tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+                 return Result.ok(msgs.stream().collect(Collectors.joining()));
             }else {
-                tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+                return Result.error(msgs.stream().collect(Collectors.joining()));
             }
-        }catch (BizException e) { 
-            tips=e.getTips();
-            logger.error("",e);
-        }catch (Exception e) {
-            tips.setFailureMsg(e.getMessage());
-            logger.error("",e);
-        }  
-        m.put("tips", tips);
-        return m;
+        return Result.ok();
+        
 	} 
 
 }

@@ -168,7 +168,7 @@ public class XmTaskExecuserController {
 			 User user=LoginUtils.getCurrentUserInfo();
 			XmTask xmTaskDb=xmTaskService.selectOneObject(new XmTask(xmTaskExecuser.getTaskId()));
 			if(xmTaskDb==null){
-				tips.setFailureMsg("任务已不存在");
+				return Result.error("任务已不存在");
 				m.put("tips", tips);
 				return m;
 			}
@@ -177,7 +177,7 @@ public class XmTaskExecuserController {
 			xmTaskExecuser.setProjectId(projectId);
 			xmTaskExecuser.setBranchId(xmProjectDb.getBranchId());
 			if(!"0".equals(xmTaskDb.getTaskState()) && !"1".equals(xmTaskDb.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算状态，不允许再修改");
+				return Result.error("该任务已经处于完工、结算状态，不允许再修改");
 				m.put("tips", tips);
 				return m;
 			}
@@ -245,7 +245,7 @@ public class XmTaskExecuserController {
 	public Result leave(@RequestBody List<XmTaskExecuser> xmTaskExecusers) {
 
 			if(xmTaskExecusers==null || xmTaskExecusers.size()==0){
-				tips.setFailureMsg("执行人列表不能为空");
+				return Result.error("执行人列表不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -257,7 +257,7 @@ public class XmTaskExecuserController {
 			String taskId=xmTaskExecuserListDb.get(0).getTaskId();
 			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(xmTaskExecuserListDb.get(0).getTaskId()));
 			if(xmTask==null ){
-				tips.setFailureMsg("任务已不存在");
+				return Result.error("任务已不存在");
 				m.put("tips", tips);
 				return m;
 			}
@@ -267,7 +267,7 @@ public class XmTaskExecuserController {
 
 			for (XmTaskExecuser xmTaskExecuser : xmTaskExecuserListDb) {
 				if(!taskId.equals(xmTaskExecuser.getTaskId())){
-					tips.setFailureMsg("批量操作只允许在同一个任务进行");
+					return Result.error("批量操作只允许在同一个任务进行");
 					break;
 				}
  				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {//只有组长、任务责任人可以请别人请离开任务
@@ -297,9 +297,9 @@ public class XmTaskExecuserController {
 				msgs.add("以下人员您无权操作，【"+allowUserNamesStr+"】;");
 			}
 			if(allowUserNames.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.ok(msgs.stream().collect(Collectors.joining(" ")));
 			}else{
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.error(msgs.stream().collect(Collectors.joining(" ")));
 			}
 		return Result.ok();
 		
@@ -320,13 +320,13 @@ public class XmTaskExecuserController {
 			String taskId=xmTaskExecuser.getTaskId();
 			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
 			if(xmTask==null ){
-				tips.setFailureMsg("任务已不存在");
+				return Result.error("任务已不存在");
 				m.put("tips", tips);
 				return m;
 			}
 
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算状态，不允许再修改");
+				return Result.error("该任务已经处于完工、结算状态，不允许再修改");
 				m.put("tips", tips);
 				return m;
 			}
@@ -378,11 +378,11 @@ public class XmTaskExecuserController {
 					}
 					//一个任务只能一个执行人
 					xmTaskExecuserService.becomeExecute(xmTask,xmTaskExecuser);
-					tips.setOkMsg("变更成功");
-					//tips.setFailureMsg("变更不成功，原因：候选人不在项目组中，请先将候选人加入项目团队中。");
+					return Result.ok("变更成功");
+					//return Result.error("变更不成功，原因：候选人不在项目组中，请先将候选人加入项目团队中。");
 				}else {
 					xmTaskExecuserService.becomeExecute(xmTask,xmTaskExecuser);
-					tips.setOkMsg("变更成功");
+					return Result.ok("变更成功");
 				}
 				
 
@@ -402,16 +402,16 @@ public class XmTaskExecuserController {
 
 			String taskId=xmTaskAcceptanceVo.getTaskId();
 			if(!StringUtils.hasText(taskId)){
-				tips.setFailureMsg("taskId-0");
+				return Result.error("taskId-0");
 				return ResponseHelper.failed("taskId-0","任务编号不能为空");
 			}
 			XmTask xmTaskDb= xmTaskService.selectOneById(taskId);
 			if(xmTaskDb==null ){
-				tips.setFailureMsg("任务已不存在");
+				return Result.error("任务已不存在");
 				return ResponseHelper.failed(tips);
 			}
 			if("3".equals(xmTaskDb.getTaskState()) ||"4".equals(xmTaskDb.getTaskState()) || "9".equals(xmTaskDb.getTaskState())){
-				tips.setFailureMsg("该任务已验收，不能重复验收");
+				return Result.error("该任务已验收，不能重复验收");
 				return ResponseHelper.failed(tips);
 			}
 
@@ -429,7 +429,7 @@ public class XmTaskExecuserController {
 				boolean isTaskCreater=user.getUserid().equals(xmTaskDb.getCreateUserid());
 				Tips tips1=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),projectId);
 				if(  !isTaskCreater && !tips1.isOk() ) {
-					tips.setFailureMsg("您无权验收该任务！");
+					return Result.error("您无权验收该任务！");
 					return ResponseHelper.failed(tips);
 				}
 				if("2".equals(xmTaskDb.getEstate()) && xmTaskDb.getEfunds()!=null && xmTaskDb.getEfunds().compareTo(BigDecimal.ZERO)>0){
@@ -488,12 +488,12 @@ public class XmTaskExecuserController {
 			String taskId=xmTaskExecuser.getTaskId();
 			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
 			if(xmTask==null ){
-				tips.setFailureMsg("任务已不存在");
+				return Result.error("任务已不存在");
 				m.put("tips", tips);
 				return m;
 			}
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经处于完工、结算计划，不允许再修改报价");
+				return Result.error("该任务已经处于完工、结算计划，不允许再修改报价");
 				m.put("tips", tips);
 				return m;
 			}
@@ -513,7 +513,7 @@ public class XmTaskExecuserController {
 
 					
 				}else {
-					tips.setFailureMsg("只有修改处于候选状态的投标人的报价信息");
+					return Result.error("只有修改处于候选状态的投标人的报价信息");
 				}
 				
 
@@ -532,12 +532,12 @@ public class XmTaskExecuserController {
 			String taskId=xmTaskExecuser.getTaskId();
 			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
 			if(xmTask==null ){
-				tips.setFailureMsg("任务已不存在");
+				return Result.error("任务已不存在");
 				m.put("tips", tips);
 				return m;
 			}
 			if(!"0".equals(xmTask.getTaskState()) && !"1".equals(xmTask.getTaskState()) ){
-				tips.setFailureMsg("该任务已经不需要候选人");
+				return Result.error("该任务已经不需要候选人");
 				m.put("tips", tips);
 				return m;
 			}
@@ -570,7 +570,7 @@ public class XmTaskExecuserController {
 			String taskId=xmTaskExecuser.getTaskId();
 			XmTask xmTaskDb= xmTaskService.selectOneObject(new XmTask(taskId));
 			if(xmTaskDb==null ){
-				tips.setFailureMsg("任务已不存在");
+				return Result.error("任务已不存在");
 				m.put("tips", tips);
 				return m;
 			}
@@ -589,11 +589,11 @@ public class XmTaskExecuserController {
 
 					
 				}else {
-					tips.setFailureMsg("只有候选、放弃任务、黑名单中的数据可以被删除");
+					return Result.error("只有候选、放弃任务、黑名单中的数据可以被删除");
 				}
 			}
 			else {
-				tips.setFailureMsg("没有查到数据");
+				return Result.error("没有查到数据");
 			}
 
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());

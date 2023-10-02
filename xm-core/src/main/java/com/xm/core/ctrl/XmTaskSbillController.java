@@ -106,7 +106,7 @@ public class XmTaskSbillController {
 			}
 			if(createPk==false){
                  if(xmTaskSbillService.selectOneObject(xmTaskSbill) !=null ){
-                    tips.setFailureMsg("编号重复，请修改编号再提交");
+                    return Result.error("编号重复，请修改编号再提交");
                     m.put("tips", tips);
                     return m;
                 }
@@ -141,18 +141,18 @@ public class XmTaskSbillController {
 		
 		
 		if( xmTaskSbill==null || !StringUtils.hasText(xmTaskSbill.getId())){
-			tips.setFailureMsg("请上送结算单编号");
+			return Result.error("请上送结算单编号");
 			m.put("tips", tips);
 			return m;
 		}
 		XmTaskSbill sbillDb=this.xmTaskSbillService.selectOneById(xmTaskSbill.getId());
 		if(!"0".equals(sbillDb.getStatus())){
-			tips.setFailureMsg("只有待提交的结算单才能删除");
+			return Result.error("只有待提交的结算单才能删除");
 			m.put("tips", tips);
 			return m;
 		}
 		if(!("0".equals(sbillDb.getBizFlowState()) || "4".equals(sbillDb.getBizFlowState()))){
-			tips.setFailureMsg("已发审数据不允许删除");
+			return Result.error("已发审数据不允许删除");
 			m.put("tips", tips);
 			return m;
 		}
@@ -303,19 +303,19 @@ public class XmTaskSbillController {
 		
 		
 		if( xmTaskSbill==null || !StringUtils.hasText(xmTaskSbill.getId())){
-			tips.setFailureMsg("请上送结算单编号");
+			return Result.error("请上送结算单编号");
 			m.put("tips", tips);
 			return m;
 		}
 		XmTaskSbill sbillDb=this.xmTaskSbillService.selectOneById(xmTaskSbill.getId());
 
 		if(!"0".equals(sbillDb.getStatus())){
-			tips.setFailureMsg("只能修改待提交的结算单");
+			return Result.error("只能修改待提交的结算单");
 			m.put("tips", tips);
 			return m;
 		}
 		if(!("0".equals(sbillDb.getBizFlowState()) || "4".equals(sbillDb.getBizFlowState()))){
-			tips.setFailureMsg("已发审数据不允许修改");
+			return Result.error("已发审数据不允许修改");
 			m.put("tips", tips);
 			return m;
 		}
@@ -341,7 +341,7 @@ public class XmTaskSbillController {
 			tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
+			return Result.error(e.getMessage());
 			logger.error("",e);
 		}
 		
@@ -359,7 +359,7 @@ public class XmTaskSbillController {
 
 		String sbillId= (String) paramMap.get("sbillId");
 		if( !StringUtils.hasText(sbillId)){
-			tips.setFailureMsg("结算单ID必传");
+			return Result.error("结算单ID必传");
 			map.put("tips", tips);
 			return map;
 		}
@@ -372,7 +372,7 @@ public class XmTaskSbillController {
 			tips=e.getTips();
 			logger.error("执行异常",e);
 		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
+			return Result.error(e.getMessage());
 			logger.error("执行异常",e);
 		}
 		map.put("tips", tips);

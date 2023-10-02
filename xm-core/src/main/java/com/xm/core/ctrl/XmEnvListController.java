@@ -235,7 +235,7 @@ public class XmEnvListController {
 			tips=e.getTips();
 			logger.error("执行异常",e);
 		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
+			return Result.error(e.getMessage());
 			logger.error("执行异常",e);
 		}  
 		

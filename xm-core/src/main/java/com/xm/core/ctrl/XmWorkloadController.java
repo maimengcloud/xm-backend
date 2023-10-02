@@ -203,53 +203,53 @@ public class XmWorkloadController {
 				xmWorkload.setUbranchId(user.getBranchId());
 			}else{
 				if(!StringUtils.hasText(xmWorkload.getUbranchId())){
-					return failed("ubranchId-0","请上送用户归属机构号");
+					return Result.error("ubranchId-0","请上送用户归属机构号");
 				}
 			}
 			//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
 			if(!StringUtils.hasText(xmWorkload.getBizType())) {
-				return failed("bizType-0","请上送报工类型");
+				return Result.error("bizType-0","请上送报工类型");
 			}
 			if("1".equals(xmWorkload.getBizType())){
 				if(!StringUtils.hasText(xmWorkload.getTaskId())){
-					return failed("taskId-0","请上送任务编号");
+					return Result.error("taskId-0","请上送任务编号");
 				}
 			}
 			if("2".equals(xmWorkload.getBizType())){
 				if(!StringUtils.hasText(xmWorkload.getBugId())){
-					return failed("bugId-0","请上送缺陷编号");
+					return Result.error("bugId-0","请上送缺陷编号");
 				}
 			}
 			if("3".equals(xmWorkload.getBizType())){
 				if(!StringUtils.hasText(xmWorkload.getCaseId())){
-					return failed("caseId-0","请上送测试用例编号");
+					return Result.error("caseId-0","请上送测试用例编号");
 				}
 			}
 			if("4".equals(xmWorkload.getBizType())){
 				if(!StringUtils.hasText(xmWorkload.getPlanId())){
-					return failed("planId-0","请上送测试计划编号");
+					return Result.error("planId-0","请上送测试计划编号");
 				}
 				if(!StringUtils.hasText(xmWorkload.getCaseId())){
-					return failed("caseId-0","请上送测试用例编号");
+					return Result.error("caseId-0","请上送测试用例编号");
 				}
 			}
 
 			if(!StringUtils.hasText(xmWorkload.getUserid())){
-				return failed("userid-0","请上送工作人员编号");
+				return Result.error("userid-0","请上送工作人员编号");
 			}
 			if(!StringUtils.hasText(xmWorkload.getUbranchId())){
-				return failed("ubranchId-0","请上送工作人员归属机构");
+				return Result.error("ubranchId-0","请上送工作人员归属机构");
 			}
 
 			if(!StringUtils.hasText(xmWorkload.getBizDate())) {
-				return failed("bizDate-0","请上送日期");
+				return Result.error("bizDate-0","请上送日期");
 			}
 			if(xmWorkload.getWorkload()==null) {
-				return failed("workload-0","工时不能为空");
+				return Result.error("workload-0","工时不能为空");
 			}
 
 			if(xmWorkload.getWorkload().compareTo(BigDecimal.ZERO)==0) {
-				return failed("workload-0","工时不能为0");
+				return Result.error("workload-0","工时不能为0");
 			}
 			XmWorkload xmWorkloadCount=new XmWorkload();
 			//xmWorkloadCount.setUserid(user.getUserid());
@@ -271,29 +271,29 @@ public class XmWorkloadController {
 			xmWorkloadCount.setBizType(xmWorkload.getBizType());
 			long count=this.xmWorkloadService.countByWhere(xmWorkloadCount);
 			if(count>0){
-				return failed("data-1","当前工作项今天已经报工");
+				return Result.error("data-1","当前工作项今天已经报工");
 			}
 			//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
 			if("1".equals(xmWorkload.getBizType())){
 				XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmWorkload.getTaskId()));
 				if(xmTaskDb==null ){
-					return failed("data-0","任务已不存在");
+					return Result.error("data-0","任务已不存在");
 				}
 				if("1".equals(xmTaskDb.getNtype())){
-					return failed("ntype-1",xmTaskDb.getName()+"为计划，不是任务，不用登记工时");
+					return Result.error("ntype-1",xmTaskDb.getName()+"为计划，不是任务，不用登记工时");
 				}
 				if("3".equals(xmTaskDb.getTaskState())){
-					return failed("taskState-3",xmTaskDb.getName()+"已结算完毕，不能再提交工时");
+					return Result.error("taskState-3",xmTaskDb.getName()+"已结算完毕，不能再提交工时");
 				}
 				//待他人报工，需要检查我的权限，需要项目管理人员才有权限代他人报工。
 				if(!xmWorkload.getUserid().equals(user.getUserid())){
 					Tips tips3=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmWorkload.getUserid(),xmTaskDb.getProjectId());
 					if(!tips3.isOk()){
-						return failed("no-qx-for-oth-user","无权限代他人报工。只有项目管理人员可以代他人报工。");
+						return Result.error("no-qx-for-oth-user","无权限代他人报工。只有项目管理人员可以代他人报工。");
 					}
 				}
 				if(!(xmWorkload.getUserid().equals(xmTaskDb.getCreateUserid())|| xmWorkload.getUserid().equals(xmTaskDb.getExecutorUserid()))){
-					return failed("no-create-or-not-exec",xmWorkload.getUserid()+"不是任务的负责人也不是执行人，不能报工。");
+					return Result.error("no-create-or-not-exec",xmWorkload.getUserid()+"不是任务的负责人也不是执行人，不能报工。");
 				}
 				xmWorkload.setBizName(xmTaskDb.getName());
 				xmWorkload.setMenuId(xmTaskDb.getMenuId());
@@ -316,19 +316,19 @@ public class XmWorkloadController {
 			}else if("2".equals(xmWorkload.getBizType())){//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
 				XmQuestion xmQuestionDb=xmQuestionService.selectOneById(xmWorkload.getBugId());
 				if(xmQuestionDb==null){
-					return failed("bug-0","缺陷已不存在");
+					return Result.error("bug-0","缺陷已不存在");
 				}
 				if(StringUtils.hasText(xmQuestionDb.getProjectId())){
 					XmProject xmProject=xmProjectService.getProjectFromCache(xmQuestionDb.getProjectId());
 					if(xmProject==null){
-						return failed("project-0","项目已不存在");
+						return Result.error("project-0","项目已不存在");
 					}
 					xmWorkload.setProjectId(xmProject.getId());
 					xmWorkload.setBranchId(xmProject.getBranchId());
 				}
 
 				if (!(xmWorkload.getUserid().equals(xmQuestionDb.getCreateUserid())||xmWorkload.getUserid().equals(xmQuestionDb.getHandlerUserid()))) {
-					return failed("userid-err",xmWorkload.getUserid()+"不是当前缺陷的负责人或者创建人，无须报工。");
+					return Result.error("userid-err",xmWorkload.getUserid()+"不是当前缺陷的负责人或者创建人，无须报工。");
 				}
 
 				xmWorkload.setBizName(xmQuestionDb.getName());
@@ -345,10 +345,10 @@ public class XmWorkloadController {
 			}else if("3".equals(xmWorkload.getBizType())){//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
 				XmTestCase xmTestCaseDb=this.xmTestCaseService.selectOneById(xmWorkload.getCaseId());
 				if(xmTestCaseDb==null){
-					return failed("case-0","用例已不存在");
+					return Result.error("case-0","用例已不存在");
 				}
 				if(!(xmWorkload.getUserid().equals(xmTestCaseDb.getCuserid())||xmWorkload.getUserid().equals(xmTestCaseDb.getLuserid()))){
-					return failed("userid-err",xmWorkload.getUserid()+"不是当前用例的负责人或者责任人，无须报工。");
+					return Result.error("userid-err",xmWorkload.getUserid()+"不是当前用例的负责人或者责任人，无须报工。");
 				}
 
 				xmWorkload.setBizName(xmTestCaseDb.getCaseName());
@@ -364,23 +364,23 @@ public class XmWorkloadController {
 		List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
 			return Result.ok();
 				if(xmTestPlanCaseDbs==null||xmTestPlanCaseDbs.size()==0){
-					return failed("xmTestPlanCaseDb-0","执行用例已不存在");
+					return Result.error("xmTestPlanCaseDb-0","执行用例已不存在");
 				}
 				Map<String,Object> xmTestPlanCaseDb=xmTestPlanCaseDbs.get(0);
 				if(!(xmWorkload.getUserid().equals(xmTestPlanCaseDb.get("execUserid")))){
-					return failed("userid-err",xmWorkload.getUserid()+"不是当前用例的执行人，无须报工。");
+					return Result.error("userid-err",xmWorkload.getUserid()+"不是当前用例的执行人，无须报工。");
 				}
 				String projectId= (String) xmTestPlanCaseDb.get("projectId");
 				if(StringUtils.hasText(projectId)){
 					XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
 					if(xmProject==null){
-						return failed("project-0","项目已不存在");
+						return Result.error("project-0","项目已不存在");
 					}
 
 					xmWorkload.setProjectId(xmProject.getId());
 					xmWorkload.setBranchId(xmProject.getBranchId());
 				}else{
-					return failed("projectId-0","项目编号不能为空");
+					return Result.error("projectId-0","项目编号不能为空");
 				}
 
 				xmWorkload.setBizName((String) xmTestPlanCaseDb.get("caseName"));
@@ -404,18 +404,18 @@ public class XmWorkloadController {
 	public Result editXmWorkload(@RequestBody XmWorkload xmWorkload) {
 
             if(!StringUtils.hasText(xmWorkload.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmWorkload xmWorkloadDb = xmWorkloadService.selectOneObject(xmWorkload);
             if( xmWorkloadDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			XmTask xmTaskDb=this.xmTaskService.selectOneObject(new XmTask(xmWorkloadDb.getTaskId()));
 			if(xmTaskDb==null ){
-				return failed("data-0","任务已不存在");
+				return Result.error("data-0","任务已不存在");
 			}
 			if("1".equals(xmTaskDb.getNtype())){
-				return failed("ntype-1",xmTaskDb.getName()+"为计划，不是任务，不用登记工时");
+				return Result.error("ntype-1",xmTaskDb.getName()+"为计划，不是任务，不用登记工时");
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
@@ -423,7 +423,7 @@ public class XmWorkloadController {
 				if(!isCreate.isOk()){
 					Tips isExec=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
 					if(!isExec.isOk()){
-						return failed("noqx-0","你无权针对该业务进行报工");
+						return Result.error("noqx-0","你无权针对该业务进行报工");
 					}
 
 				}
@@ -512,9 +512,9 @@ public class XmWorkloadController {
 				msgs.add("以下"+noQxDel.size()+"条工时单据无权限删除，您只能删除你负责的任务的工时单据，【"+noQxDel.stream().map(i->i.getUsername()+i.getBizDate()).collect(Collectors.joining(","))+"】.");
 			}
 			if(canDel.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else{
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 		return Result.ok();
 		
@@ -616,9 +616,9 @@ public class XmWorkloadController {
 				msgs.add("有"+taskStateNot34.size()+"条工时对应的任务不是已完工状态，不允许进入结算池");
 			}
 			if(canChanges.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else{
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 
 			//

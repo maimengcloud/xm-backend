@@ -98,7 +98,7 @@ public class XmBudgetNlaborController {
 			}
 			if(createPk==false){
                  if(xmBudgetNlaborService.selectOneObject(xmBudgetNlabor) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
+                    return Result.error("pk-exists","编号重复，请修改编号再提交");
                 }
             }
 			xmBudgetNlaborService.insert(xmBudgetNlabor);
@@ -115,11 +115,11 @@ public class XmBudgetNlaborController {
 	public Result delXmBudgetNlabor(@RequestBody XmBudgetNlabor xmBudgetNlabor){
 
             if(!StringUtils.hasText(xmBudgetNlabor.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmBudgetNlabor xmBudgetNlaborDb = xmBudgetNlaborService.selectOneObject(xmBudgetNlabor);
             if( xmBudgetNlaborDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
+                return Result.error("data-not-exists","数据不存在，无法删除");
             }
 			xmBudgetNlaborService.deleteByPk(xmBudgetNlabor);
 		return Result.ok();
@@ -134,11 +134,11 @@ public class XmBudgetNlaborController {
 	public Result editXmBudgetNlabor(@RequestBody XmBudgetNlabor xmBudgetNlabor) {
 
             if(!StringUtils.hasText(xmBudgetNlabor.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmBudgetNlabor xmBudgetNlaborDb = xmBudgetNlaborService.selectOneObject(xmBudgetNlabor);
             if( xmBudgetNlaborDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmBudgetNlaborService.updateSomeFieldByPk(xmBudgetNlabor);
 		
@@ -154,26 +154,26 @@ public class XmBudgetNlaborController {
 
             List<String> ids= (List<String>) xmBudgetNlaborMap.get("ids");
 			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
             fields.add("id");
 			for (String fieldName : xmBudgetNlaborMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmBudgetNlaborMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmBudgetNlaborMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
  			}
 			XmBudgetNlabor xmBudgetNlabor = BaseUtils.fromMap(xmBudgetNlaborMap,XmBudgetNlabor.class);
 			List<XmBudgetNlabor> xmBudgetNlaborsDb=xmBudgetNlaborService.selectListByIds(ids);
 			if(xmBudgetNlaborsDb==null ||xmBudgetNlaborsDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 			List<XmBudgetNlabor> can=new ArrayList<>();
 			List<XmBudgetNlabor> no=new ArrayList<>();
@@ -198,9 +198,9 @@ public class XmBudgetNlaborController {
 				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -215,7 +215,7 @@ public class XmBudgetNlaborController {
 	public Result batchAddXmBudgetNlabor(@RequestBody List<XmBudgetNlabor> xmBudgetNlabors) {
 
 			if(xmBudgetNlabors.size()<=0){
-				return failed("data-0","请上送待新增数据列表");
+				return Result.error("data-0","请上送待新增数据列表");
 			}
 			List<XmBudgetNlabor> datasDb=xmBudgetNlabors;
 			List<XmBudgetNlabor> can=new ArrayList<>();
@@ -238,9 +238,9 @@ public class XmBudgetNlaborController {
 				msgs.add(String.format("以下%s条数据不能新增.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 		return Result.ok();
 		
@@ -256,7 +256,7 @@ public class XmBudgetNlaborController {
         
         
             if(xmBudgetNlabors.size()<=0){
-                return failed("data-0","请上送待删除数据列表");
+                return Result.error("data-0","请上送待删除数据列表");
             }
              List<XmBudgetNlabor> datasDb=xmBudgetNlaborService.selectListByIds(xmBudgetNlabors.stream().map(i-> i.getId() ).collect(Collectors.toList()));
 
@@ -279,19 +279,12 @@ public class XmBudgetNlaborController {
                 msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
             }
             if(can.size()>0){
-                 tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+                 return Result.ok(msgs.stream().collect(Collectors.joining()));
             }else {
-                tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+                return Result.error(msgs.stream().collect(Collectors.joining()));
             }
-        }catch (BizException e) { 
-            tips=e.getTips();
-            logger.error("",e);
-        }catch (Exception e) {
-            tips.setFailureMsg(e.getMessage());
-            logger.error("",e);
-        }  
-        m.put("tips", tips);
-        return m;
+        return Result.ok();
+        
 	} 
 
 }

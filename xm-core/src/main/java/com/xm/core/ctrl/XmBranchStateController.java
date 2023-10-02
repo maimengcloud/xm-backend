@@ -107,7 +107,7 @@ public class XmBranchStateController {
 	public Result loadProjectStateToXmBranchState(@RequestBody XmBranchState xmBranchState){
 
 			if(StringUtils.isEmpty(xmBranchState.getBranchId())) {
-				tips.setFailureMsg("机构编号branchId必填");
+				return Result.error("机构编号branchId必填"); 
 			}else {
 	
 				xmBranchStateService.loadProjectStateToXmBranchState(xmBranchState.getBranchId());
@@ -131,7 +131,7 @@ public class XmBranchStateController {
 			}else{
 				 XmBranchState xmBranchStateQuery = new  XmBranchState(xmBranchState.getId());
 				if(xmBranchStateService.countByWhere(xmBranchStateQuery)>0){
-					tips.setFailureMsg("编号重复，请修改编号再提交");
+					return Result.error("编号重复，请修改编号再提交");
 					m.put("tips", tips);
 					return m;
 				}
@@ -142,7 +142,7 @@ public class XmBranchStateController {
 			tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
+			return Result.error(e.getMessage());
 			logger.error("",e);
 		}  
 		m.put("tips", tips);
@@ -165,7 +165,7 @@ public class XmBranchStateController {
 			tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
+			return Result.error(e.getMessage());
 			logger.error("",e);
 		}  
 		m.put("tips", tips);
@@ -189,7 +189,7 @@ public class XmBranchStateController {
 			tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
+			return Result.error(e.getMessage());
 			logger.error("",e);
 		}  
 		m.put("tips", tips);
@@ -214,7 +214,7 @@ public class XmBranchStateController {
 			tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
+			return Result.error(e.getMessage());
 			logger.error("",e);
 		}  
 		m.put("tips", tips);

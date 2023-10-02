@@ -134,11 +134,11 @@ public class XmRecordVisitController {
 	public Result delXmRecordVisit(@RequestBody XmRecordVisit xmRecordVisit){
 
             if(!StringUtils.hasText(xmRecordVisit.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmRecordVisit xmRecordVisitDb = xmRecordVisitService.selectOneObject(xmRecordVisit);
             if( xmRecordVisitDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
+                return Result.error("data-not-exists","数据不存在，无法删除");
             }
 			xmRecordVisitService.deleteByPk(xmRecordVisit);
 		return Result.ok();
@@ -155,11 +155,11 @@ public class XmRecordVisitController {
 	public Result editXmRecordVisit(@RequestBody XmRecordVisit xmRecordVisit) {
 
             if(!StringUtils.hasText(xmRecordVisit.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmRecordVisit xmRecordVisitDb = xmRecordVisitService.selectOneObject(xmRecordVisit);
             if( xmRecordVisitDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmRecordVisitService.updateSomeFieldByPk(xmRecordVisit);
 		
@@ -177,26 +177,26 @@ public class XmRecordVisitController {
 
             List<String> ids= (List<String>) xmRecordVisitMap.get("ids");
 			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
             fields.add("id");
 			for (String fieldName : xmRecordVisitMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmRecordVisitMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmRecordVisitMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
  			}
 			XmRecordVisit xmRecordVisit = fromMap(xmRecordVisitMap,XmRecordVisit.class);
 			List<XmRecordVisit> xmRecordVisitsDb=xmRecordVisitService.selectListByIds(ids);
 			if(xmRecordVisitsDb==null ||xmRecordVisitsDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 			List<XmRecordVisit> can=new ArrayList<>();
 			List<XmRecordVisit> no=new ArrayList<>();
@@ -221,9 +221,9 @@ public class XmRecordVisitController {
 				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -242,7 +242,7 @@ public class XmRecordVisitController {
         
         
             if(xmRecordVisits.size()<=0){
-                return failed("data-0","请上送待删除数据列表");
+                return Result.error("data-0","请上送待删除数据列表");
             }
              List<XmRecordVisit> datasDb=xmRecordVisitService.selectListByIds(xmRecordVisits.stream().map(i-> i.getId() ).collect(Collectors.toList()));
 
@@ -265,19 +265,12 @@ public class XmRecordVisitController {
                 msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
             }
             if(can.size()>0){
-                 tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+                 return Result.ok(msgs.stream().collect(Collectors.joining()));
             }else {
-                tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+                return Result.error(msgs.stream().collect(Collectors.joining()));
             }
-        }catch (BizException e) { 
-            tips=e.getTips();
-            logger.error("",e);
-        }catch (Exception e) {
-            tips.setFailureMsg(e.getMessage());
-            logger.error("",e);
-        }  
-        m.put("tips", tips);
-        return m;
+        return Result.ok();
+        
 	} 
 	*/
 }

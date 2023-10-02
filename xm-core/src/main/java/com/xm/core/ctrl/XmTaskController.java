@@ -294,7 +294,7 @@ public class XmTaskController {
 					}
 					if(oks.size()>0){
 						msg="成功设置"+oks.size()+"个任务的执行人。"+msg;
-						returnTips.setOkMsg(msg);
+						returnreturn Result.ok(msg);
 					}
 					return ResponseHelper.result(returnTips);
 				}else if(ids.size()==1){
@@ -447,9 +447,9 @@ public class XmTaskController {
 				msgs.add(String.format("以下%s个任务未设置执行人，不能变更为待执行状态,【%s】。",noExecs.size(),noExecs.stream().map(i->i.getName()).collect(Collectors.joining(","))));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -470,10 +470,10 @@ public class XmTaskController {
 		String id=(String) xmTask.get("id");
 		String shareKey= (String) xmTask.get("shareKey");
 		if(!StringUtils.hasText(id)){
-			tips.setFailureMsg("任务编号id必传");
+			return Result.error("任务编号id必传");
 		}
 		if(!StringUtils.hasText(shareKey)){
-			//tips.setFailureMsg("分享码shareKey必传");
+			//return Result.error("分享码shareKey必传");
 		}
 
 		if(tips.isOk()){
@@ -510,7 +510,7 @@ public class XmTaskController {
 		
 		String id=(String) xmTask.get("id");
 		if(!StringUtils.hasText(id)){
-			tips.setFailureMsg("任务编号id必传");
+			return Result.error("任务编号id必传");
 		}
 
 		if(tips.isOk()){
@@ -536,7 +536,7 @@ public class XmTaskController {
 
 
 			if(!StringUtils.hasText(xmTaskVo.getNtype())){
-				tips.setFailureMsg("节点类型ntype不能为空");
+				return Result.error("节点类型ntype不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -546,15 +546,15 @@ public class XmTaskController {
 
 			Set<String> words=sensitiveWordService.getSensitiveWord(xmTaskVo.getName());
 			if(words!=null && words.size()>0){
-				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+				return Result.error("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
 			}
 			words=sensitiveWordService.getSensitiveWord(xmTaskVo.getRemarks());
 			if(words!=null && words.size()>0){
-				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
+				return Result.error("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
 			words=sensitiveWordService.getSensitiveWord(xmTaskVo.getDescription());
 			if(words!=null && words.size()>0){
-				return failed("description-sensitive-word","详情中有敏感词"+words+",请修改后再提交");
+				return Result.error("description-sensitive-word","详情中有敏感词"+words+",请修改后再提交");
 			}
 
 
@@ -619,7 +619,7 @@ public class XmTaskController {
 			}else{
 				XmTask xmTaskQuery = new  XmTask(xmTaskVo.getId());
 				if(this.xmTaskService.countByWhere(xmTaskQuery)>0){
-					tips.setFailureMsg("编号重复，请修改编号再提交");
+					return Result.error("编号重复，请修改编号再提交");
 					throw new BizException(tips);
 				}
 			}
@@ -705,7 +705,7 @@ public class XmTaskController {
 
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTask.getId())){
-				tips.setFailureMsg("任务编号不能为空");
+				return Result.error("任务编号不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -748,13 +748,13 @@ public class XmTaskController {
 
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTaskVo.getId())){
-				tips.setFailureMsg("任务编号不能为空");
+				return Result.error("任务编号不能为空");
 				m.put("tips", tips);
 				return m;
 			}
 			XmTask xmTaskDb=this.xmTaskService.selectOneObject(xmTaskVo);
 			if(xmTaskDb==null){
-				tips.setFailureMsg("该任务不存在");
+				return Result.error("该任务不存在");
 				m.put("tips", tips);
 				return m;
 			}
@@ -793,7 +793,7 @@ public class XmTaskController {
 
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTaskVo.getId())){
-				tips.setFailureMsg("任务编号不能为空");
+				return Result.error("任务编号不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -848,7 +848,7 @@ public class XmTaskController {
 
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTask.getId())){
-				tips.setFailureMsg("任务编号不能为空");
+				return Result.error("任务编号不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -881,7 +881,7 @@ public class XmTaskController {
 
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTask.getId())){
-				tips.setFailureMsg("任务编号不能为空");
+				return Result.error("任务编号不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -917,7 +917,7 @@ public class XmTaskController {
 			List<XmTask> xmTasks=batchImportVo.getXmTasks();
 			User user=LoginUtils.getCurrentUserInfo();
  			if(xmTasks==null || xmTasks.size()==0){
-				tips.setFailureMsg("任务列表不能为空");
+				return Result.error("任务列表不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -999,7 +999,7 @@ public class XmTaskController {
 					if("0".equals(batchImportVo.getPtype())&&totalTaskBudgetAt.compareTo(BigDecimal.ZERO)>0){
 						tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetAt,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
 						if(!tips.isOk()){
-							tips.setFailureMsg(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+							return Result.error(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 							return ResponseHelper.failed(tips);
 						}
 					}
@@ -1133,9 +1133,9 @@ public class XmTaskController {
 				msgs.add("以下"+noAllowTasks.size()+"个任务无权操作，只有任务负责人、项目经理、组长可以批量将任务与项目计划进行关联,【"+noAllowTasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			if(allowTasks.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.ok(msgs.stream().collect(Collectors.joining(" ")));
 			}else{
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.error(msgs.stream().collect(Collectors.joining(" ")));
 			}
 
 		return Result.ok();
@@ -1228,9 +1228,9 @@ public class XmTaskController {
 				msgs.add("以下"+noAllowTasks.size()+"个任务无权操作，只有任务负责人、项目经理、组长、产品组组长、需求管理组人员可以批量将任务与需求进行关联,【"+noAllowTasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			if(allowTasks.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.ok(msgs.stream().collect(Collectors.joining(" ")));
 			}else{
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.error(msgs.stream().collect(Collectors.joining(" ")));
 			}
 		
 	} 
@@ -1248,7 +1248,7 @@ public class XmTaskController {
 			User user=LoginUtils.getCurrentUserInfo();
 
 			if(xmTasks==null || xmTasks.size()==0){
-				tips.setFailureMsg("任务列表不能为空");
+				return Result.error("任务列表不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -1334,9 +1334,9 @@ public class XmTaskController {
 				msgs.add(String.format("以下%s个任务无权限删除，原因【%s】",noOper.size(),noTipsMap.keySet().stream().collect(Collectors.joining(";"))));
 			}
 			if(canDelNodes.size()==0){
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.error(msgs.stream().collect(Collectors.joining(" ")));
 			}else{
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.ok(msgs.stream().collect(Collectors.joining(" ")));
 			}
 
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
@@ -1356,7 +1356,7 @@ public class XmTaskController {
 			User user=LoginUtils.getCurrentUserInfo();
 
 			if(xmTasks==null || xmTasks.size()==0){
-				tips.setFailureMsg("任务列表不能为空");
+				return Result.error("任务列表不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -1430,7 +1430,7 @@ public class XmTaskController {
 				if("0".equals(xmTaskDb.getPtype()) && totalTaskBudgetAt.compareTo(BigDecimal.ZERO)>0){
 					tips=xmTaskService.judgetProjectBudget(xmTaskDb.getProjectId(),totalTaskBudgetAt,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
 					if(!tips.isOk()){
-						tips.setFailureMsg(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+						return Result.error(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 						return ResponseHelper.failed(tips);
 					}
 				}
@@ -1476,11 +1476,11 @@ public class XmTaskController {
 
 			}
 			if(canOpTasks.size()<=0){
-				tips.setFailureMsg("成功修改0个任务。当前任务均无权限操作，只有组长助理、组长、项目助理、项目经理有权限批量修改预算。");
+				return Result.error("成功修改0个任务。当前任务均无权限操作，只有组长助理、组长、项目助理、项目经理有权限批量修改预算。");
 			}else if(canOpTasks.size()==xmTasks.size()){
-				tips.setOkMsg("成功修改"+canOpTasks.size()+"个任务。");
+				return Result.ok("成功修改"+canOpTasks.size()+"个任务。");
 			}else {
-				tips.setOkMsg("成功修改"+canOpTasks.size()+"个任务。其中以下任务无权限修改。【"+noAllowTasksDbMap.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+				return Result.ok("成功修改"+canOpTasks.size()+"个任务。其中以下任务无权限修改。【"+noAllowTasksDbMap.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 		
 	}
@@ -1499,7 +1499,7 @@ public class XmTaskController {
 			User user=LoginUtils.getCurrentUserInfo();
 
 			if(xmTasksVo.getTaskIds()==null || xmTasksVo.getTaskIds().size()==0){
-				tips.setFailureMsg("任务列表不能为空");
+				return Result.error("任务列表不能为空");
 				m.put("tips", tips);
 				return m;
 			}
@@ -1596,9 +1596,9 @@ public class XmTaskController {
 				msgs.add("以下"+sameParentTasks.size()+"个计划任务已属于【"+parentTask.getName()+"】之下，无需变更，【"+sameParentTasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			if(allowTasksDbMap3.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.ok(msgs.stream().collect(Collectors.joining(" ")));
 			}else{
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.error(msgs.stream().collect(Collectors.joining(" ")));
 			}
 
 		return Result.ok();
@@ -1635,7 +1635,7 @@ public class XmTaskController {
 			tips=e.getTips();
 			logger.error("执行异常",e);
 		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
+			return Result.error(e.getMessage());
 			logger.error("执行异常",e);
 		}  
 		

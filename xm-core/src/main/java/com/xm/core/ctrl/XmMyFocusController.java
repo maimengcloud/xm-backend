@@ -104,19 +104,19 @@ public class XmMyFocusController {
 
 			User user = LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmMyFocus.getBizId())) {
-				return failed("bizId","业务编号不能为空");
+				return Result.error("bizId","业务编号不能为空");
 			}
 			if(!StringUtils.hasText(xmMyFocus.getPbizId())) {
-				return failed("pbizId","上级编号不能为空");
+				return Result.error("pbizId","上级编号不能为空");
 			}
 			if(!StringUtils.hasText(xmMyFocus.getFocusType())) {
-				return failed("focusType","关注类型不能为空");
+				return Result.error("focusType","关注类型不能为空");
 			}
 			xmMyFocus.setUserid(user.getUserid());
 			xmMyFocus.setUsername(user.getUsername());
 			xmMyFocus.setUbranchId(user.getBranchId());
 			if(xmMyFocusService.selectOneObject(xmMyFocus) !=null ){
-				return failed("pk-exists","已关注");
+				return Result.error("pk-exists","已关注");
 			}
 			xmMyFocusService.focus(xmMyFocus);
 			
@@ -133,15 +133,15 @@ public class XmMyFocusController {
 
 			User user = LoginUtils.getCurrentUserInfo();
             if(!StringUtils.hasText(xmMyFocus.getBizId())) {
-                 return failed("pk-not-exists","请上送主键参数bizId");
+                 return Result.error("pk-not-exists","请上送主键参数bizId");
             }
             if(!StringUtils.hasText(xmMyFocus.getPbizId())) {
-                 return failed("pk-not-exists","请上送主键参数pbizId");
+                 return Result.error("pk-not-exists","请上送主键参数pbizId");
             }
 			xmMyFocus.setUserid(user.getUserid());
             XmMyFocus xmMyFocusDb = xmMyFocusService.selectOneObject(xmMyFocus);
             if( xmMyFocusDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
+                return Result.error("data-not-exists","数据不存在，无法删除");
             }
 			xmMyFocusService.unfocus(xmMyFocusDb);
 		return Result.ok();
@@ -157,17 +157,17 @@ public class XmMyFocusController {
 	public Result editXmMyFocus(@RequestBody XmMyFocus xmMyFocus) {
 
             if(!StringUtils.hasText(xmMyFocus.getUserid())) {
-                 return failed("pk-not-exists","请上送主键参数userid");
+                 return Result.error("pk-not-exists","请上送主键参数userid");
             }
             if(!StringUtils.hasText(xmMyFocus.getBizId())) {
-                 return failed("pk-not-exists","请上送主键参数bizId");
+                 return Result.error("pk-not-exists","请上送主键参数bizId");
             }
             if(!StringUtils.hasText(xmMyFocus.getPbizId())) {
-                 return failed("pk-not-exists","请上送主键参数pbizId");
+                 return Result.error("pk-not-exists","请上送主键参数pbizId");
             }
             XmMyFocus xmMyFocusDb = xmMyFocusService.selectOneObject(xmMyFocus);
             if( xmMyFocusDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmMyFocusService.updateSomeFieldByPk(xmMyFocus);
 		
@@ -185,7 +185,7 @@ public class XmMyFocusController {
 
 			List<Map<String,Object>> pkList= (List<Map<String,Object>>) xmMyFocusMap.get("pkList");
 			if(pkList==null || pkList.size()==0){
-				return failed("pkList-0","pkList不能为空");
+				return Result.error("pkList-0","pkList不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
@@ -194,19 +194,19 @@ public class XmMyFocusController {
             fields.add("pbizId");
 			for (String fieldName : xmMyFocusMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmMyFocusMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmMyFocusMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
  			}
 			XmMyFocus xmMyFocus = fromMap(xmMyFocusMap,XmMyFocus.class);
 			List<XmMyFocus> xmMyFocussDb=xmMyFocusService.selectListByIds(pkList);
 			if(xmMyFocussDb==null ||xmMyFocussDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 			List<XmMyFocus> can=new ArrayList<>();
 			List<XmMyFocus> no=new ArrayList<>();
@@ -231,9 +231,9 @@ public class XmMyFocusController {
 				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -251,7 +251,7 @@ public class XmMyFocusController {
         
         
             if(xmMyFocuss.size()<=0){
-                return failed("data-0","请上送待删除数据列表");
+                return Result.error("data-0","请上送待删除数据列表");
             }
              List<XmMyFocus> datasDb=xmMyFocusService.selectListByIds(xmMyFocuss.stream().map(i->map( "userid",i.getUserid() ,  "bizId",i.getBizId() ,  "pbizId",i.getPbizId() )).collect(Collectors.toList()));
 
@@ -274,18 +274,11 @@ public class XmMyFocusController {
                 msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getUserid() +" "+ i.getBizId() +" "+ i.getPbizId() ).collect(Collectors.joining(","))));
             }
             if(can.size()>0){
-                 tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+                 return Result.ok(msgs.stream().collect(Collectors.joining()));
             }else {
-                tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+                return Result.error(msgs.stream().collect(Collectors.joining()));
             }
-        }catch (BizException e) { 
-            tips=e.getTips();
-            logger.error("",e);
-        }catch (Exception e) {
-            tips.setFailureMsg(e.getMessage());
-            logger.error("",e);
-        }  
-        m.put("tips", tips);
-        return m;
+        return Result.ok();
+        
 	}
 }

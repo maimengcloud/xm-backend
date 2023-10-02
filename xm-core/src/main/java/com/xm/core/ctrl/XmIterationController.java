@@ -187,11 +187,11 @@ public class XmIterationController {
 
 			Set<String> words=sensitiveWordService.getSensitiveWord(xmIteration.getIterationName());
 			if(words!=null && words.size()>0){
-				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+				return Result.error("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
 			}
 			words=sensitiveWordService.getSensitiveWord(xmIteration.getRemark());
 			if(words!=null && words.size()>0){
-				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
+				return Result.error("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
 			q.setBranchId(user.getBranchId());
 			Long count=this.xmIterationService.countByWhere(q);
@@ -205,7 +205,7 @@ public class XmIterationController {
 			XmProduct xmProductDb=xmProductService.getProductFromCache(xmIteration.getProductId());
 			tips=productQxService.checkProductQx(xmProductDb,3,user);
 			if(!tips.isOk()){
-				return failed(tips);
+				return Result.error(tips);
 			}
 
 			xmIteration.setBranchId(xmProductDb.getBranchId());
@@ -218,7 +218,7 @@ public class XmIterationController {
 				if( !isPm ){
 					tips = productQxService.checkProductQx(xmProductDb,3,user,xmIteration.getAdminUserid(),xmIteration.getAdminUsername(),null);
 					if(!tips.isOk()){
-						return failed(tips);
+						return Result.error(tips);
 					}
 				}
 			}
@@ -243,11 +243,11 @@ public class XmIterationController {
 	public Result delXmIteration(@RequestBody XmIteration xmIteration){
 
 			if(!StringUtils.hasText(xmIteration.getId())){
-				return failed("id-0","请上送迭代编号");
+				return Result.error("id-0","请上送迭代编号");
 			}
 			XmIteration iterationDb=this.xmIterationService.selectOneById(xmIteration.getId());
 			if(iterationDb==null){
-				return failed("data-0","迭代不存在");
+				return Result.error("data-0","迭代不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=xmProductService.getProductFromCache(iterationDb.getProductId());
@@ -255,7 +255,7 @@ public class XmIterationController {
  			if( !isPm ){
  				tips = productQxService.checkProductQx(xmProductDb,3,user,iterationDb.getAdminUserid(),iterationDb.getAdminUsername(),null);
  				if(!tips.isOk()){
-					return failed(tips);
+					return Result.error(tips);
 				}
 			}
 
@@ -278,11 +278,11 @@ public class XmIterationController {
 	public Result editXmIteration(@RequestBody XmIteration xmIteration) {
 
 			if(!StringUtils.hasText(xmIteration.getId())){
-				return failed("id-0","请上送迭代编号");
+				return Result.error("id-0","请上送迭代编号");
 			}
 			XmIteration iterationDb=this.xmIterationService.selectOneById(xmIteration.getId());
 			if(iterationDb==null){
-				return failed("data-0","迭代不存在");
+				return Result.error("data-0","迭代不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=xmProductService.getProductFromCache(iterationDb.getProductId());
@@ -290,7 +290,7 @@ public class XmIterationController {
 			if( !isPm ){
 				tips = productQxService.checkProductQx(xmProductDb,3,user,iterationDb.getAdminUserid(),iterationDb.getAdminUsername(),null);
 				if(!tips.isOk()){
-					return failed(tips);
+					return Result.error(tips);
 				}
 			}
 			xmIteration.setAdminUserid(null);//不允许更改负责人
@@ -310,26 +310,26 @@ public class XmIterationController {
 
 			List<String> ids= (List<String>) xmIterationMap.get("ids");
 			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
 			fields.add("id");
 			for (String fieldName : xmIterationMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmIterationMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmIterationMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
 			}
 			XmIteration xmIteration = fromMap(xmIterationMap,XmIteration.class);
 			List<XmIteration> xmIterationsDb=xmIterationService.selectListByIds(ids);
 			if(xmIterationsDb==null ||xmIterationsDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 
 
@@ -339,7 +339,7 @@ public class XmIterationController {
 			User user = LoginUtils.getCurrentUserInfo();
 			XmIteration iterationDb=xmIterationsDb.get(0);
 			if(xmIterationsDb.stream().filter(k->!k.getProductId().equals(iterationDb.getProductId())).findAny().isPresent()){
-				return failed("data-0","批量修改只能修改同一个产品下的迭代记录");
+				return Result.error("data-0","批量修改只能修改同一个产品下的迭代记录");
 			}
 			XmProduct xmProductDb=xmProductService.getProductFromCache(iterationDb.getProductId());
 
@@ -350,7 +350,7 @@ public class XmIterationController {
 				if(StringUtils.hasText(adminUserid)){
 					tips=productQxService.checkProductQx(xmProductDb,3,user,adminUserid,adminUsername,null);
 					if(!tips.isOk()){
-						return failed(tips);
+						return Result.error(tips);
 					}
 				}
 			}
@@ -391,9 +391,9 @@ public class XmIterationController {
 				msgs.add(String.format("以下%s个数据无权限更新，原因【%s】",no.size(),noTipsMap.keySet().stream().collect(Collectors.joining(";"))));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -405,14 +405,14 @@ public class XmIterationController {
 	public Result loadTasksToXmIterationState(@RequestBody XmIteration xmIteration) {
 
 			if(!StringUtils.hasText(xmIteration.getId())){
-				return failed("id-0","请上送迭代编号");
+				return Result.error("id-0","请上送迭代编号");
 			}
 			if(xmIteration==null || StringUtils.isEmpty(xmIteration.getId())) {
-				tips.setFailureMsg("请输入迭代编号id");
+				return Result.error("请输入迭代编号id");
 			}else {
 				XmIteration iterationDb=this.xmIterationService.selectOneObject(xmIteration);
 				if(iterationDb==null){
-					return failed("data-0","迭代不存在");
+					return Result.error("data-0","迭代不存在");
 				}
 				xmIterationService.loadTasksToXmIterationState(xmIteration.getId());
 				xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-汇总","汇总计算迭代数据"+iterationDb.getIterationName());

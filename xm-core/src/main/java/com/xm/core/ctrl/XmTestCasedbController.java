@@ -99,11 +99,11 @@ public class XmTestCasedbController {
 			}
 			if(createPk==false){
                  if(xmTestCasedbService.selectOneObject(xmTestCasedb) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
+                    return Result.error("pk-exists","编号重复，请修改编号再提交");
                 }
             }
 			if(!StringUtils.hasText(xmTestCasedb.getProductId())){
-				return failed("productId-0","产品编号不能为空");
+				return Result.error("productId-0","产品编号不能为空");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedb.getProductId());
@@ -111,7 +111,7 @@ public class XmTestCasedbController {
 			if(!isPm){
 				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCasedb.getCuserid(),xmTestCasedb.getCusername(),xmTestCasedb.getCbranchId());
 				if(!tips.isOk()){
-					return failed(tips);
+					return Result.error(tips);
 				}
 			}
 			xmTestCasedb.setPbranchId(xmProductDb.getBranchId());
@@ -131,11 +131,11 @@ public class XmTestCasedbController {
 	public Result delXmTestCasedb(@RequestBody XmTestCasedb xmTestCasedb){
 
             if(!StringUtils.hasText(xmTestCasedb.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmTestCasedb xmTestCasedbDb = xmTestCasedbService.selectOneObject(xmTestCasedb);
             if( xmTestCasedbDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
+                return Result.error("data-not-exists","数据不存在，无法删除");
             }
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedbDb.getProductId());
@@ -143,7 +143,7 @@ public class XmTestCasedbController {
 			if(!isPm){
 				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCasedbDb.getCuserid(),xmTestCasedbDb.getCusername(),xmTestCasedbDb.getCbranchId());
 				if(!tips.isOk()){
-					return failed(tips);
+					return Result.error(tips);
 				}
 			}
 			xmTestCasedbService.deleteByPk(xmTestCasedb);
@@ -159,11 +159,11 @@ public class XmTestCasedbController {
 	public Result editXmTestCasedb(@RequestBody XmTestCasedb xmTestCasedb) {
 
             if(!StringUtils.hasText(xmTestCasedb.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmTestCasedb xmTestCasedbDb = xmTestCasedbService.selectOneObject(xmTestCasedb);
             if( xmTestCasedbDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 
 			User user=LoginUtils.getCurrentUserInfo();
@@ -172,13 +172,13 @@ public class XmTestCasedbController {
  			if(StringUtils.hasText(xmTestCasedb.getCuserid())){
 				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCasedb.getCuserid(),xmTestCasedb.getCusername(),xmTestCasedb.getCbranchId());
 				if(!tips.isOk()){
-					return failed(tips);
+					return Result.error(tips);
 				}
 			}
  			if(!isPm){
  				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCasedbDb.getCuserid(),xmTestCasedbDb.getCusername(),xmTestCasedbDb.getCbranchId());
 				if(!tips.isOk()){
-					return failed(tips);
+					return Result.error(tips);
 				}
  			}
 			xmTestCasedbService.updateSomeFieldByPk(xmTestCasedb);
@@ -195,30 +195,30 @@ public class XmTestCasedbController {
 
             List<String> ids= (List<String>) xmTestCasedbMap.get("ids");
 			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
             fields.add("id");
 			for (String fieldName : xmTestCasedbMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmTestCasedbMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTestCasedbMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
  			}
 			XmTestCasedb xmTestCasedb = fromMap(xmTestCasedbMap,XmTestCasedb.class);
 			List<XmTestCasedb> xmTestCasedbsDb=xmTestCasedbService.selectListByIds(ids);
 			if(xmTestCasedbsDb==null ||xmTestCasedbsDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 			XmTestCasedb xmTestCasedbDb=xmTestCasedbsDb.get(0);
 			if(xmTestCasedbsDb.stream().filter(k->!k.getProductId().equals(xmTestCasedbDb.getProductId())).findAny().isPresent()){
-				return failed("product-0","批量操作只能在同一批产品中进行");
+				return Result.error("product-0","批量操作只能在同一批产品中进行");
 			}
 
 			User user = LoginUtils.getCurrentUserInfo();
@@ -226,7 +226,7 @@ public class XmTestCasedbController {
 			if(StringUtils.hasText(xmTestCasedb.getCuserid())){
 				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCasedb.getCuserid(),xmTestCasedb.getCusername(),xmTestCasedb.getCbranchId());
 				if(!tips.isOk()){
-					return failed(tips);
+					return Result.error(tips);
 				}
 			}
 
@@ -261,9 +261,9 @@ public class XmTestCasedbController {
 				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -280,15 +280,15 @@ public class XmTestCasedbController {
         
         
             if(xmTestCasedbs.size()<=0){
-                return failed("data-0","请上送待删除数据列表");
+                return Result.error("data-0","请上送待删除数据列表");
             }
              List<XmTestCasedb> datasDb=xmTestCasedbService.selectListByIds(xmTestCasedbs.stream().map(i-> i.getId() ).collect(Collectors.toList()));
 			if(datasDb==null || datasDb.size()==0){
-				return failed("data-0","测试库已不存在");
+				return Result.error("data-0","测试库已不存在");
 			}
 			XmTestCasedb xmTestCasedbDb=datasDb.get(0);
 			if(datasDb.stream().filter(k->!k.getProductId().equals(xmTestCasedbDb.getProductId())).findAny().isPresent()){
-				return failed("data-0","批量处理只能在同一个产品下进行");
+				return Result.error("data-0","批量处理只能在同一个产品下进行");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCasedbDb.getProductId());
@@ -338,19 +338,12 @@ public class XmTestCasedbController {
 				msgs.add(noTips.stream().collect(Collectors.joining(";")));
 			}
             if(can.size()>0){
-                 tips.setOkMsg(msgs.stream().collect(Collectors.joining(";")));
+                 return Result.ok(msgs.stream().collect(Collectors.joining(";")));
             }else {
-                tips.setFailureMsg(msgs.stream().collect(Collectors.joining(";")));
+                return Result.error(msgs.stream().collect(Collectors.joining(";")));
             }
-        }catch (BizException e) { 
-            tips=e.getTips();
-            logger.error("",e);
-        }catch (Exception e) {
-            tips.setFailureMsg(e.getMessage());
-            logger.error("",e);
-        }  
-        m.put("tips", tips);
-        return m;
+        return Result.ok();
+        
 	} 
 
 }

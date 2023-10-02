@@ -142,9 +142,9 @@ public class XmIterationMenuController {
 				msgs.add("有"+notJoins.size()+"个用户故事未加入迭代，无需移出。【"+notJoins.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
 			}
 			if(canDels.size()==0){
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.error(msgs.stream().collect(Collectors.joining(" ")));
 			}else {
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.ok(msgs.stream().collect(Collectors.joining(" ")));
 			}
 		return Result.ok();
 		
@@ -214,9 +214,9 @@ public class XmIterationMenuController {
 				msgs.add("有"+ntype1.size()+"个为史诗/特性，不用加入迭代。【"+ntype1.stream().map(i->i.getMenuName()).collect(Collectors.joining(","))+"】");
 			}
 			if(canAdds.size()==0){
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.error(msgs.stream().collect(Collectors.joining(" ")));
 			}else {
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
+				return Result.ok(msgs.stream().collect(Collectors.joining(" ")));
 			}
 
 		return Result.ok();

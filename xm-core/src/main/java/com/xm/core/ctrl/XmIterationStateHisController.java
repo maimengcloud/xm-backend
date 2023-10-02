@@ -84,7 +84,7 @@ public class XmIterationStateHisController {
 			}
 			if(createPk==false){
                  if(xmIterationStateHisService.selectOneObject(xmIterationStateHis) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
+                    return Result.error("pk-exists","编号重复，请修改编号再提交");
                 }
             }
 			xmIterationStateHisService.insert(xmIterationStateHis);
@@ -101,14 +101,14 @@ public class XmIterationStateHisController {
 	public Result delXmIterationStateHis(@RequestBody XmIterationStateHis xmIterationStateHis){
 
             if(!StringUtils.hasText(xmIterationStateHis.getIterationId())) {
-                 return failed("pk-not-exists","请上送主键参数iterationId");
+                 return Result.error("pk-not-exists","请上送主键参数iterationId");
             }
             if(!StringUtils.hasText(xmIterationStateHis.getBizDate())) {
-                 return failed("pk-not-exists","请上送主键参数bizDate");
+                 return Result.error("pk-not-exists","请上送主键参数bizDate");
             }
             XmIterationStateHis xmIterationStateHisDb = xmIterationStateHisService.selectOneObject(xmIterationStateHis);
             if( xmIterationStateHisDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
+                return Result.error("data-not-exists","数据不存在，无法删除");
             }
 			xmIterationStateHisService.deleteByPk(xmIterationStateHis);
 		return Result.ok();
@@ -125,14 +125,14 @@ public class XmIterationStateHisController {
 	public Result editXmIterationStateHis(@RequestBody XmIterationStateHis xmIterationStateHis) {
 
             if(!StringUtils.hasText(xmIterationStateHis.getIterationId())) {
-                 return failed("pk-not-exists","请上送主键参数iterationId");
+                 return Result.error("pk-not-exists","请上送主键参数iterationId");
             }
             if(!StringUtils.hasText(xmIterationStateHis.getBizDate())) {
-                 return failed("pk-not-exists","请上送主键参数bizDate");
+                 return Result.error("pk-not-exists","请上送主键参数bizDate");
             }
             XmIterationStateHis xmIterationStateHisDb = xmIterationStateHisService.selectOneObject(xmIterationStateHis);
             if( xmIterationStateHisDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmIterationStateHisService.updateSomeFieldByPk(xmIterationStateHis);
 		

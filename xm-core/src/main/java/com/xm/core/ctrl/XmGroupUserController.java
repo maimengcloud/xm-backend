@@ -160,7 +160,7 @@ public class XmGroupUserController {
 			}
 
 			if(xmGroupUserService.countByWhere(gu)>0){
-				tips.setFailureMsg("该用户已在小组中");
+				return Result.error("该用户已在小组中");
 				m.put("tips", tips);
 				return m;
 			}
@@ -456,9 +456,9 @@ public class XmGroupUserController {
 				msg.add("以下"+gusDb.size()+"个小组用户已在组里，无需再添加。【"+gusDb.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"】");
 			}
 			if(canAddUsers.size()!=0){
-				tips.setOkMsg(msg.stream().collect(Collectors.joining(" ")));
+				return Result.ok(msg.stream().collect(Collectors.joining(" ")));
 			}else{
-				tips.setFailureMsg(msg.stream().collect(Collectors.joining(" ")));
+				return Result.error(msg.stream().collect(Collectors.joining(" ")));
 			}
 			groupUsersMap.forEach((groupId,groupUsers)->{
 
@@ -573,9 +573,9 @@ public class XmGroupUserController {
 				msg.add("以下"+noDelUsers.size()+"个小组用户无权限删除。【"+noDelUsers.stream().collect(Collectors.toSet()).stream().collect(Collectors.joining(","))+"】");
  			}
 			if(canDelUsers.size()!=0){
-				tips.setOkMsg(msg.stream().collect(Collectors.joining(" ")));
+				return Result.ok(msg.stream().collect(Collectors.joining(" ")));
 			}else{
-				tips.setFailureMsg(msg.stream().collect(Collectors.joining(" ")));
+				return Result.error(msg.stream().collect(Collectors.joining(" ")));
 			}
 			groupUsersMap.forEach((groupId,groupUsers)->{
 

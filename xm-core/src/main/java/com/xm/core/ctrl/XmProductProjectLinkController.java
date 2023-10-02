@@ -91,7 +91,7 @@ public class XmProductProjectLinkController {
 				return ResponseHelper.failed("projectId-0","项目编号不能为空");
 			}
 			 if(xmProductProjectLinkService.selectOneObject(xmProductProjectLink) !=null ){
-				tips.setFailureMsg("已加入，无需再添加");
+				return Result.error("已加入，无需再添加");
 				m.put("tips", tips);
 				return m;
 			}

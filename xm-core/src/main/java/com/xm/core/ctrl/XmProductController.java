@@ -111,7 +111,7 @@ public class XmProductController {
 			params.put("compete",user.getUserid());
 		}else if("productId".equals(queryScope)){
 			if(!StringUtils.hasText(id)){
-				tips.setFailureMsg("产品编号id必输");
+				return Result.error("产品编号id必输");
 				m.put("tips", tips);
 				return m;
 			}
@@ -165,7 +165,7 @@ public class XmProductController {
 			params.put("compete",user.getUserid());
 		}else if("productId".equals(queryScope)){
 			if(!StringUtils.hasText(id)){
-				tips.setFailureMsg("产品编号id必输");
+				return Result.error("产品编号id必输");
 				m.put("tips", tips);
 				return m;
 			}
@@ -195,10 +195,10 @@ public class XmProductController {
 
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProduct.getId())){
-				return failed("id-0","请上送原产品编号参数id");
+				return Result.error("id-0","请上送原产品编号参数id");
 			}
 			if( !StringUtils.hasText(xmProduct.getProductName())){
-				return failed("productName-0","请上送新产品名称");
+				return Result.error("productName-0","请上送新产品名称");
 			}
 			if(StringUtils.hasText(xmProduct.getCode())){
 				XmProduct pq=new XmProduct();
@@ -206,7 +206,7 @@ public class XmProductController {
 				pq.setCode(xmProduct.getCode());
 				List<XmProduct> xmProductList=this.xmProductService.selectListByWhere(pq);
 				if(xmProductList!=null && xmProductList.size()>0){
-					return failed("code-exists","产品编码【"+xmProduct.getCode()+"】已存在，，请重新输入新的产品编码，如果为空，后台自动生成");
+					return Result.error("code-exists","产品编码【"+xmProduct.getCode()+"】已存在，，请重新输入新的产品编码，如果为空，后台自动生成");
 				}
 			}
 
@@ -229,13 +229,13 @@ public class XmProductController {
 
 			User user=LoginUtils.getCurrentUserInfo();
 			if(StringUtils.isEmpty(xmProduct.getCode())) {
-				return failed("code-0","","产品代号不能为空");
+				return Result.error("code-0","","产品代号不能为空");
 			}else{
 				 XmProduct xmProductQuery = new  XmProduct();
 				xmProductQuery.setBranchId(user.getBranchId());
 				xmProductQuery.setCode(xmProduct.getCode());
 				if(xmProductService.countByWhere(xmProductQuery)>0){
-					tips.setFailureMsg("产品代号已存在，请修改再提交");
+					return Result.error("产品代号已存在，请修改再提交");
 					m.put("tips", tips);
 					return m;
 				}
@@ -243,21 +243,21 @@ public class XmProductController {
 			if(xmProduct.getLinks()!=null && xmProduct.getLinks().size()>0){
 				for (XmProductProjectLink link : xmProduct.getLinks()) {
 					if(!StringUtils.hasText(link.getProjectId())) {
-						return failed("projectId-0", "", "关联产品编号不能为空");
+						return Result.error("projectId-0", "", "关联产品编号不能为空");
 					}
 				}
 			}
 			if(!StringUtils.hasText(xmProduct.getProductName())){
-				return failed("productName-0","","产品名称不能为空");
+				return Result.error("productName-0","","产品名称不能为空");
 			}
 
 			Set<String> words=sensitiveWordService.getSensitiveWord(xmProduct.getProductName());
 			if(words!=null && words.size()>0){
-				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+				return Result.error("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
 			}
 			words=sensitiveWordService.getSensitiveWord(xmProduct.getRemark());
 			if(words!=null && words.size()>0){
-				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
+				return Result.error("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
 			xmProduct.setPmUserid(user.getUserid());
 			xmProduct.setPmUsername(user.getUsername());
@@ -303,22 +303,22 @@ public class XmProductController {
 	public Result unDelXmProduct(@RequestBody XmProduct xmProduct){
 
 			if(!StringUtils.hasText(xmProduct.getId())){
-				return failed("id-0","","产品编号不能为空");
+				return Result.error("id-0","","产品编号不能为空");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=xmProductService.getProductFromCache(xmProduct.getId());
 			if(xmProductDb==null){
-				return failed("data-0","产品已不存在");
+				return Result.error("data-0","产品已不存在");
 			}
 			if(!"1".equals(xmProductDb.getDel())){
-				return failed("del-not-1","该产品不是已删除状态");
+				return Result.error("del-not-1","该产品不是已删除状态");
 			}
 			if(!user.getBranchId().equals(xmProductDb.getBranchId())){
-				return failed("branchId-not-right","该产品不属于您所在的机构，不允许操作");
+				return Result.error("branchId-not-right","该产品不属于您所在的机构，不允许操作");
 			}
 			if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
 				if(!LoginUtils.isBranchAdmin(xmProductDb.getBranchId())){
-					return failed("pmUserid-not-right","您不是该产品产品管理人员，不允许操作");
+					return Result.error("pmUserid-not-right","您不是该产品产品管理人员，不允许操作");
 				}
 			}
 			/**
@@ -352,22 +352,22 @@ public class XmProductController {
 	public Result delXmProduct(@RequestBody XmProduct xmProduct){
 
 			if(!StringUtils.hasText(xmProduct.getId())){
-				return failed("id-0","","产品编号不能为空");
+				return Result.error("id-0","","产品编号不能为空");
 			}
  			User user=LoginUtils.getCurrentUserInfo();
 			 XmProduct xmProductDb=xmProductService.getProductFromCache(xmProduct.getId());
 			 if(xmProductDb==null){
-				return failed("data-0","产品已不存在");
+				return Result.error("data-0","产品已不存在");
 			 }
 			 if(!"0".equals(xmProductDb.getPstatus())&&!"3".equals(xmProductDb.getPstatus())){
-				 return failed("pstatus-not-0-3","该产品不是初始、已关闭状态，不允许删除");
+				 return Result.error("pstatus-not-0-3","该产品不是初始、已关闭状态，不允许删除");
 			 }
 			 if(!user.getBranchId().equals(xmProductDb.getBranchId())){
-				 return failed("branchId-not-right","该产品不属于您所在的机构，不允许删除");
+				 return Result.error("branchId-not-right","该产品不属于您所在的机构，不允许删除");
 			 }
 			 if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
 			 	if(!LoginUtils.isBranchAdmin(xmProductDb.getBranchId())){
-					return failed("pmUserid-not-right","您不是该产品管理人员，不允许删除.若要强制删除，请联系产品管理人员或者机构管理员。");
+					return Result.error("pmUserid-not-right","您不是该产品管理人员，不允许删除.若要强制删除，请联系产品管理人员或者机构管理员。");
 				}
 			 }
 			 /**
@@ -400,41 +400,41 @@ public class XmProductController {
 
 			List<String> ids= (List<String>) xmProductMap.get("ids");
 			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 			if( ids.size()>1){
-				return failed("ids-1","一次只能修改一个产品");
+				return Result.error("ids-1","一次只能修改一个产品");
 			}
 			Set<String> fields=new HashSet<>();
 			fields.add("id");
 			for (String fieldName : xmProductMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmProductMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmProductMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
 			}
 			XmProduct xmProduct = fromMap(xmProductMap,XmProduct.class);
 			List<XmProduct> xmProductsDb=xmProductService.selectListByIds(ids);
 			if(xmProductsDb==null ||xmProductsDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 
 			User user = LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=xmProductsDb.get(0);
 			if(!LoginUtils.isBranchAdmin(xmProductDb.getBranchId())  && !groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
-				return failed("noqx-all","无权限操作。产品管理人员、机构管理员有权限更新产品基础信息。");
+				return Result.error("noqx-all","无权限操作。产品管理人员、机构管理员有权限更新产品基础信息。");
 			}
 			if(xmProductMap.containsKey("assUserid")){
 				String assUserid= (String) xmProductMap.get("assUserid");
 				String assUsername= (String) xmProductMap.get("assUsername");
 				if(StringUtils.hasText(assUserid)){
 					if(!user.getUserid().equals(xmProductDb.getPmUserid()) && !user.getUserid().equals(xmProductDb.getAdmUserid())){
-						return failed("noqx-pm","您无权限操作,产品经理、总监可以委任产品副经理。");
+						return Result.error("noqx-pm","您无权限操作,产品经理、总监可以委任产品副经理。");
 					}
 				}
 			}
@@ -443,7 +443,7 @@ public class XmProductController {
 				String pmUsername= (String) xmProductMap.get("pmUsername");
 				if(StringUtils.hasText(pmUserid)){
 					if(!user.getUserid().equals(xmProductDb.getAdmUserid())){
-						return failed("noqx-adm","您无权限操作,产品总监可以委任产品经理。");
+						return Result.error("noqx-adm","您无权限操作,产品总监可以委任产品经理。");
 					}
 				}
 			}
@@ -452,7 +452,7 @@ public class XmProductController {
 				String admUsername= (String) xmProductMap.get("admUsername");
 				if(StringUtils.hasText(admUserid)){
 					if(!LoginUtils.isBranchAdmin(xmProductDb.getBranchId()) && !user.getUserid().equals(xmProductDb.getAdmUserid())){
-						return failed("noqx-adm","您无权限操作，产品总监、机构管理员可以委任产品总监。");
+						return Result.error("noqx-adm","您无权限操作，产品总监、机构管理员可以委任产品总监。");
 					}
 				}
 			}
@@ -501,16 +501,16 @@ public class XmProductController {
 
 
 			if(!StringUtils.hasText(xmProduct.getId())){
-				return failed("id-0","","产品编号不能为空");
+				return Result.error("id-0","","产品编号不能为空");
 			}
 			XmProduct xmProductDb=xmProductService.getProductFromCache(xmProduct.getId());
 			if(xmProductDb==null){
-				return failed("data-0","产品已不存在");
+				return Result.error("data-0","产品已不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!LoginUtils.isBranchAdmin(xmProductDb.getBranchId())){
 				if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
-					return failed("no-qx-0","您无权修改该产品。");
+					return Result.error("no-qx-0","您无权修改该产品。");
 				}
 			}
 
@@ -551,25 +551,25 @@ public class XmProductController {
 			for (XmProduct xmProduct : xmProducts) {
 				Tips otips=new Tips();
 				if(!StringUtils.hasText(xmProduct.getId())){
-					otips.setFailureMsg("id-0","","产品编号不能为空");
+					oreturn Result.error("id-0","","产品编号不能为空");
 					errTips.add(otips);
 					continue;
 				}
 				XmProduct xmProductDb=xmProductService.getProductFromCache(xmProduct.getId());
 
 				if(xmProductDb==null){
-					otips.setFailureMsg("data-0","","产品【"+xmProductDb.getProductName()+"】已不存在");
+					oreturn Result.error("data-0","","产品【"+xmProductDb.getProductName()+"】已不存在");
 				}else if(!"0".equals(xmProductDb.getPstatus())&&!"3".equals(xmProductDb.getPstatus())){
-					otips.setFailureMsg("pstatus-not-0-3","产品【"+xmProductDb.getProductName()+"】不是初始、已关闭状态，不允许删除");
+					oreturn Result.error("pstatus-not-0-3","产品【"+xmProductDb.getProductName()+"】不是初始、已关闭状态，不允许删除");
  				}else if(!user.getBranchId().equals(xmProductDb.getBranchId())){
-					otips.setFailureMsg("branchId-not-right","产品【"+xmProductDb.getProductName()+"】不属于您所在的机构，不允许删除");
+					oreturn Result.error("branchId-not-right","产品【"+xmProductDb.getProductName()+"】不属于您所在的机构，不允许删除");
  				}else if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
-					otips.setFailureMsg("pmUserid-not-right","您不是产品【"+xmProductDb.getProductName()+"】负责人,也不是产品助理，不允许删除");
+					oreturn Result.error("pmUserid-not-right","您不是产品【"+xmProductDb.getProductName()+"】负责人,也不是产品助理，不允许删除");
  				}else{
 					if(!"1".equals(xmProductDb.getIsTpl())){
 						long menus=xmProductService.checkExistsMenu(xmProduct.getId());
 						if(menus>0) {
-							otips.setFailureMsg("had-menus","产品【"+xmProductDb.getProductName()+"】有"+menus+"个需求关联，不允许删除，请先解绑需求");
+							oreturn Result.error("had-menus","产品【"+xmProductDb.getProductName()+"】有"+menus+"个需求关联，不允许删除，请先解绑需求");
 						}
 					}
 				}
@@ -592,13 +592,13 @@ public class XmProductController {
 			}
 			String msg="成功删除"+canDelList.size()+"条产品信息";
 			if(canDelList.size()==xmProducts.size()){
-				tips.setOkMsg(msg);
+				return Result.ok(msg);
 			}else{
 				if(errTips.size()>0 && canDelList.size()>0){
 					String errmsg=errTips.stream().map(i->i.getMsg()).collect(Collectors.joining(" "));
-					tips.setOkMsg(msg+"\n"+errmsg);
+					return Result.ok(msg+"\n"+errmsg);
 				}else{
-					tips.setFailureMsg(errTips.stream().map(i->i.getMsg()).collect(Collectors.joining(" ")));
+					return Result.error(errTips.stream().map(i->i.getMsg()).collect(Collectors.joining(" ")));
 				}
 			}
 			return tips;

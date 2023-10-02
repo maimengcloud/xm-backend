@@ -121,24 +121,24 @@ public class XmTaskEvalController {
 			}
 			if(createPk==false){
                  if(xmTaskEvalService.selectOneObject(xmTaskEval) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
+                    return Result.error("pk-exists","编号重复，请修改编号再提交");
                 }
             }
 			if(!StringUtils.hasText(xmTaskEval.getTaskId())){
-				return failed("taskId-0","任务编号不能为空");
+				return Result.error("taskId-0","任务编号不能为空");
 			}
 
 			if(!StringUtils.hasText(xmTaskEval.getToUserid())){
-				return failed("toUserid-0","被评价人编号不能为空");
+				return Result.error("toUserid-0","被评价人编号不能为空");
 			}
 			Set<String> words=sensitiveWordService.getSensitiveWord(xmTaskEval.getRemark());
 			if(words!=null && words.size()>0){
-				return failed("remark-sensitive-word","评论存在敏感词"+words+"，请修改再提交");
+				return Result.error("remark-sensitive-word","评论存在敏感词"+words+"，请修改再提交");
 			}
 			User user = LoginUtils.getCurrentUserInfo();
 			User toUser=sysClient.getUserByUserid(xmTaskEval.getToUserid());
 			if(toUser==null){
-				return failed("toUser-0","被评价人不存在");
+				return Result.error("toUser-0","被评价人不存在");
 			}
 			xmTaskEval.setEvalTime(new Date());
 			xmTaskEval.setEvalUserid(user.getUserid());
@@ -158,11 +158,11 @@ public class XmTaskEvalController {
 	public Result delXmTaskEval(@RequestBody XmTaskEval xmTaskEval){
 
             if(!StringUtils.hasText(xmTaskEval.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmTaskEval xmTaskEvalDb = xmTaskEvalService.selectOneObject(xmTaskEval);
             if( xmTaskEvalDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
+                return Result.error("data-not-exists","数据不存在，无法删除");
             }
 			xmTaskEvalService.deleteByPk(xmTaskEval);
 		return Result.ok();
@@ -177,11 +177,11 @@ public class XmTaskEvalController {
 	public Result editXmTaskEval(@RequestBody XmTaskEval xmTaskEval) {
 
             if(!StringUtils.hasText(xmTaskEval.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmTaskEval xmTaskEvalDb = xmTaskEvalService.selectOneObject(xmTaskEval);
             if( xmTaskEvalDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmTaskEvalService.updateSomeFieldByPk(xmTaskEval);
 		
@@ -197,26 +197,26 @@ public class XmTaskEvalController {
 
             List<String> ids= (List<String>) xmTaskEvalMap.get("ids");
 			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
             fields.add("id");
 			for (String fieldName : xmTaskEvalMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmTaskEvalMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskEvalMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
  			}
 			XmTaskEval xmTaskEval = fromMap(xmTaskEvalMap,XmTaskEval.class);
 			List<XmTaskEval> xmTaskEvalsDb=xmTaskEvalService.selectListByIds(ids);
 			if(xmTaskEvalsDb==null ||xmTaskEvalsDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 			List<XmTaskEval> can=new ArrayList<>();
 			List<XmTaskEval> no=new ArrayList<>();
@@ -241,9 +241,9 @@ public class XmTaskEvalController {
 				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -260,7 +260,7 @@ public class XmTaskEvalController {
         
         
             if(xmTaskEvals.size()<=0){
-                return failed("data-0","请上送待删除数据列表");
+                return Result.error("data-0","请上送待删除数据列表");
             }
              List<XmTaskEval> datasDb=xmTaskEvalService.selectListByIds(xmTaskEvals.stream().map(i-> i.getId() ).collect(Collectors.toList()));
 
@@ -283,19 +283,12 @@ public class XmTaskEvalController {
                 msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
             }
             if(can.size()>0){
-                 tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+                 return Result.ok(msgs.stream().collect(Collectors.joining()));
             }else {
-                tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+                return Result.error(msgs.stream().collect(Collectors.joining()));
             }
-        }catch (BizException e) { 
-            tips=e.getTips();
-            logger.error("",e);
-        }catch (Exception e) {
-            tips.setFailureMsg(e.getMessage());
-            logger.error("",e);
-        }  
-        m.put("tips", tips);
-        return m;
+        return Result.ok();
+        
 	} 
 
 }

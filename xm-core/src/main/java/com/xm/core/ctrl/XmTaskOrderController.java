@@ -267,11 +267,11 @@ public class XmTaskOrderController {
 	public Result delXmTaskOrder(@RequestBody XmTaskOrder xmTaskOrder){
 
             if(!StringUtils.hasText(xmTaskOrder.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmTaskOrder xmTaskOrderDb = xmTaskOrderService.selectOneObject(xmTaskOrder);
             if( xmTaskOrderDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
+                return Result.error("data-not-exists","数据不存在，无法删除");
             }
 			xmTaskOrderService.deleteByPk(xmTaskOrder);
 		return Result.ok();
@@ -288,11 +288,11 @@ public class XmTaskOrderController {
 	public Result editXmTaskOrder(@RequestBody XmTaskOrder xmTaskOrder) {
 
             if(!StringUtils.hasText(xmTaskOrder.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmTaskOrder xmTaskOrderDb = xmTaskOrderService.selectOneObject(xmTaskOrder);
             if( xmTaskOrderDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmTaskOrderService.updateSomeFieldByPk(xmTaskOrder);
 		
@@ -310,26 +310,26 @@ public class XmTaskOrderController {
 
             List<String> ids= (List<String>) xmTaskOrderMap.get("ids");
 			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
             fields.add("id");
 			for (String fieldName : xmTaskOrderMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmTaskOrderMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTaskOrderMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
  			}
 			XmTaskOrder xmTaskOrder = fromMap(xmTaskOrderMap,XmTaskOrder.class);
 			List<XmTaskOrder> xmTaskOrdersDb=xmTaskOrderService.selectListByIds(ids);
 			if(xmTaskOrdersDb==null ||xmTaskOrdersDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 			List<XmTaskOrder> can=new ArrayList<>();
 			List<XmTaskOrder> no=new ArrayList<>();
@@ -354,9 +354,9 @@ public class XmTaskOrderController {
 				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -375,7 +375,7 @@ public class XmTaskOrderController {
         
         
             if(xmTaskOrders.size()<=0){
-                return failed("data-0","请上送待删除数据列表");
+                return Result.error("data-0","请上送待删除数据列表");
             }
              List<XmTaskOrder> datasDb=xmTaskOrderService.selectListByIds(xmTaskOrders.stream().map(i-> i.getId() ).collect(Collectors.toList()));
 
@@ -398,19 +398,12 @@ public class XmTaskOrderController {
                 msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
             }
             if(can.size()>0){
-                 tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+                 return Result.ok(msgs.stream().collect(Collectors.joining()));
             }else {
-                tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+                return Result.error(msgs.stream().collect(Collectors.joining()));
             }
-        }catch (BizException e) { 
-            tips=e.getTips();
-            logger.error("",e);
-        }catch (Exception e) {
-            tips.setFailureMsg(e.getMessage());
-            logger.error("",e);
-        }  
-        m.put("tips", tips);
-        return m;
+        return Result.ok();
+        
 	} 
 	*/
 
@@ -424,7 +417,7 @@ public class XmTaskOrderController {
 		
 		
 		if(!StringUtils.hasText(orderId)) {
-			return failed("data-0","订单Id不能为空");
+			return Result.error("data-0","订单Id不能为空");
 		}
 		XmTaskOrder moOrder = xmTaskOrderService.selectOneById(orderId);
 		m.put("tips", tips);
@@ -442,11 +435,11 @@ public class XmTaskOrderController {
 		try {
 			
 			if(!StringUtils.hasText(order.getId())) {
-				return failed("data-0","订单Id不能为空");
+				return Result.error("data-0","订单Id不能为空");
 			}
 			String flag= (String) this.redisTemplate.opsForValue().get("pay-notify-success-"+order.getPayId());
 			if(!StringUtils.hasText(flag)|| !"1".equals(flag)){
-				return failed("pay-notify-success-flag-0","验证码错误");
+				return Result.error("pay-notify-success-flag-0","验证码错误");
 			}
 			xmTaskOrderService.orderPaySuccess(order.getId(),order.getPayId(),order.getPrepayId(), order.getTranId(), order.getPayAt(), order.getRemark());
 
@@ -454,10 +447,10 @@ public class XmTaskOrderController {
 			return m;
 		}catch (BizException e) {
 			logger.error("",e);
-			return failed("data-0",e.getMessage());
+			return Result.error("data-0",e.getMessage());
 		} catch (Exception e) {
 			logger.error("",e);
-			return failed("data-0", "开通模块失败");
+			return Result.error("data-0", "开通模块失败");
 		}
 	}
 
@@ -471,21 +464,21 @@ public class XmTaskOrderController {
 		try {
 			
 			if(!StringUtils.hasText(order.getId())) {
-				return failed("data-0","订单Id不能为空");
+				return Result.error("data-0","订单Id不能为空");
 			}
 			String flag= (String) this.redisTemplate.opsForValue().get("pay-notify-cancel-"+order.getPayId());
 			if(!StringUtils.hasText(flag)|| !"1".equals(flag)){
-				return failed("pay-notify-cancel-flag-0","验证码错误");
+				return Result.error("pay-notify-cancel-flag-0","验证码错误");
 			}
 			this.xmTaskOrderService.payCancel(order.getId(),order.getPayId(), order.getRemark());
 			m.put("tips", tips);
 			return m;
 		}catch (BizException e) {
 			logger.error("",e);
-			return failed("data-0",e.getMessage());
+			return Result.error("data-0",e.getMessage());
 		} catch (Exception e) {
 			logger.error("",e);
-			return failed("data-0", "付款取消操作失败");
+			return Result.error("data-0", "付款取消操作失败");
 		}
 	}
 	@ApiOperation( value = "修改订单的第三方流水号",notes=" ")
@@ -497,7 +490,7 @@ public class XmTaskOrderController {
 		
 		
 		if(!StringUtils.hasText(order.getId())) {
-			return failed("data-0","订单Id不能为空");
+			return Result.error("data-0","订单Id不能为空");
 		}
 		XmTaskOrder moOrder = new XmTaskOrder();
 		moOrder.setId(order.getId());

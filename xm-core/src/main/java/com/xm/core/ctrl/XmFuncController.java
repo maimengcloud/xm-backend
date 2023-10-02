@@ -99,21 +99,21 @@ public class XmFuncController {
 			}
 			if(createPk==false){
                  if(xmFuncService.selectOneObject(xmFunc) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
+                    return Result.error("pk-exists","编号重复，请修改编号再提交");
                 }
             }
 			Set<String> words=sensitiveWordService.getSensitiveWord(xmFunc.getName());
 			if(words!=null && words.size()>0){
-				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+				return Result.error("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
 			}
 			if(!StringUtils.hasText(xmFunc.getProductId())){
-				return failed("productId-0","产品编号不能为空");
+				return Result.error("productId-0","产品编号不能为空");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProduct=xmProductService.getProductFromCache(xmFunc.getProductId());
 			tips=productQxService.checkProductQx(xmProduct,2,user);
 			if(!tips.isOk()){
-				return failed(tips);
+				return Result.error(tips);
 			}
 			xmFunc.setPbranchId(xmProduct.getBranchId());
 			xmFuncService.parentIdPathsCalcBeforeSave(xmFunc);
@@ -129,15 +129,15 @@ public class XmFuncController {
 	public Result delXmFunc(@RequestBody XmFunc xmFunc){
 
             if(!StringUtils.hasText(xmFunc.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmFunc xmFuncDb = xmFuncService.selectOneObject(xmFunc);
             if( xmFuncDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
+                return Result.error("data-not-exists","数据不存在，无法删除");
             }
             Long childcnt=xmFuncService.countByWhere(map("pid",xmFuncDb.getId()));
             if(childcnt>0){
-				return failed("childcnt-not-0","至少还有"+childcnt+"个子节点,请先删除子节点，再删除父节点");
+				return Result.error("childcnt-not-0","至少还有"+childcnt+"个子节点,请先删除子节点，再删除父节点");
 			}
 			xmFuncService.deleteByPk(xmFunc);
 		return Result.ok();
@@ -152,11 +152,11 @@ public class XmFuncController {
 	public Result editXmFunc(@RequestBody XmFunc xmFunc) {
 
             if(!StringUtils.hasText(xmFunc.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmFunc xmFuncDb = xmFuncService.selectOneObject(xmFunc);
             if( xmFuncDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmFuncService.updateSomeFieldByPk(xmFunc);
 		
@@ -172,7 +172,7 @@ public class XmFuncController {
 
             List<String> ids= (List<String>) xmFuncMap.get("ids");
 			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
@@ -180,19 +180,19 @@ public class XmFuncController {
 			fields.add("pidPaths");
 			for (String fieldName : xmFuncMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmFuncMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmFuncMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
  			}
 			XmFunc xmFunc = fromMap(xmFuncMap,XmFunc.class);
 			List<XmFunc> xmFuncsDb=xmFuncService.selectListByIds(ids);
 			if(xmFuncsDb==null ||xmFuncsDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 			List<XmFunc> can=new ArrayList<>();
 			List<XmFunc> no=new ArrayList<>();
@@ -208,7 +208,7 @@ public class XmFuncController {
 			if(can.size()>0){
 				if(xmFuncMap.containsKey("pid")){
 					if(can.size()>1){
-						return failed("pid-1","修改上级归属只能一个个节点修改，不能批量修改");
+						return Result.error("pid-1","修改上级归属只能一个个节点修改，不能批量修改");
 					}
 					xmFuncService.parentIdPathsCalcBeforeSave(can.get(0));
 					xmFuncMap.put("pidPaths",can.get(0).getPidPaths());
@@ -224,9 +224,9 @@ public class XmFuncController {
 				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -243,7 +243,7 @@ public class XmFuncController {
         
         
             if(xmFuncs.size()<=0){
-                return failed("data-0","请上送待删除数据列表");
+                return Result.error("data-0","请上送待删除数据列表");
             }
              List<XmFunc> datasDb=xmFuncService.selectListByIds(xmFuncs.stream().map(i-> i.getId() ).collect(Collectors.toList()));
 
@@ -266,19 +266,12 @@ public class XmFuncController {
                 msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
             }
             if(can.size()>0){
-                 tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+                 return Result.ok(msgs.stream().collect(Collectors.joining()));
             }else {
-                tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+                return Result.error(msgs.stream().collect(Collectors.joining()));
             }
-        }catch (BizException e) { 
-            tips=e.getTips();
-            logger.error("",e);
-        }catch (Exception e) {
-            tips.setFailureMsg(e.getMessage());
-            logger.error("",e);
-        }  
-        m.put("tips", tips);
-        return m;
+        return Result.ok();
+        
 	} 
 
 }

@@ -178,7 +178,7 @@ public class XmQuestionController {
 	public Result addXmQuestion(@RequestBody XmQuestionVo xmQuestionVo) {
 
 			if(!StringUtils.hasText(xmQuestionVo.getProjectId())){
-				tips.setFailureMsg("项目编号projectId必传");
+				return Result.error("项目编号projectId必传");
 				m.put("tips", tips);
 				return m;
 			}
@@ -199,15 +199,15 @@ public class XmQuestionController {
 			}
 			Set<String> words=sensitiveWordService.getSensitiveWord(xmQuestionVo.getName());
 			if(words!=null && words.size()>0){
-				return failed("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+				return Result.error("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
 			}
 			words=sensitiveWordService.getSensitiveWord(xmQuestionVo.getRemarks());
 			if(words!=null && words.size()>0){
-				return failed("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
+				return Result.error("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
  			tips=checkOneQx(xmQuestionVo.getProjectId(),xmQuestionVo.getProductId());
 			if(!tips.isOk()){
-				return failed(tips);
+				return Result.error(tips);
 			}
 			if(StringUtils.hasText(xmQuestionVo.getProjectId())){
 				XmProject xmProject=projectService.getProjectFromCache(xmQuestionVo.getProjectId() );
@@ -250,12 +250,12 @@ public class XmQuestionController {
 
 
 			if(!StringUtils.hasText(xmQuestionVo.getId())){
-				return failed("id-0","编号不能为空");
+				return Result.error("id-0","编号不能为空");
 			}
 			XmQuestion xmQuestionDb=this.xmQuestionService.selectOneById(xmQuestionVo.getId());
 			tips=checkOneQx(xmQuestionDb.getProjectId(),xmQuestionDb.getProductId());
 			if(!tips.isOk()){
-				return failed(tips);
+				return Result.error(tips);
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			xmQuestionService.updateQuestion(xmQuestionVo);
@@ -275,13 +275,13 @@ public class XmQuestionController {
 
 
 			if(!StringUtils.hasText(xmQuestion.getId())){
-				return failed("id-0","编号不能为空");
+				return Result.error("id-0","编号不能为空");
 			}
 
 			XmQuestion xmQuestionDb=this.xmQuestionService.selectOneById(xmQuestion.getId());
 			tips=checkOneQx(xmQuestionDb.getProjectId(),xmQuestionDb.getProductId());
 			if(!tips.isOk()){
-				return failed(tips);
+				return Result.error(tips);
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			xmQuestionService.updateSomeFieldByPk(xmQuestion);
@@ -347,7 +347,7 @@ public class XmQuestionController {
 								tips1=projectQxService.checkProjectScopeQx(projectService.getProjectFromCache(xmQuedb.getProjectId()),1,user,handlerUserid,handlerUsername,null);
 							}
 							if(!tips1.isOk()){
-								return failed(tips1);
+								return Result.error(tips1);
 							}
 						}
 					}
@@ -422,9 +422,9 @@ public class XmQuestionController {
 				msgs.add(String.format("其中%s个缺陷，无权限修改。原因【%s】",noOper.size(),noDelTips2.stream().collect(Collectors.joining(";"))));
 			}
 			if(canOper.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else{
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -474,9 +474,9 @@ public class XmQuestionController {
 				msgs.add(String.format("其中%s个缺陷，无权限删除。原因【%s】",noOper.size(),noDelTips2.stream().collect(Collectors.joining(";"))));
 			}
 			if(canOper.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else{
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
@@ -690,7 +690,7 @@ public class XmQuestionController {
 			tips=e.getTips();
 			logger.error("执行异常",e);
 		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
+			return Result.error(e.getMessage());
 			logger.error("执行异常",e);
 		}  
 		

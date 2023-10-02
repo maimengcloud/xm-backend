@@ -97,7 +97,7 @@ public class XmTestCaseController {
  		if("func_id".equals(groupBy) || "menu_id".equals(groupBy) || "cuserid".equals(groupBy)){
 
 		}else {
- 			return failed("groupBy-0","分组参数错误");
+ 			return Result.error("groupBy-0","分组参数错误");
 		}
 		List<Map<String,Object>>	xmTestCaseList = xmTestCaseService.getXmTestCaseSort(xmTestCase);	//列出XmTestCase列表
 
@@ -135,13 +135,13 @@ public class XmTestCaseController {
 
 			xmTestCase.setId(xmTestCaseService.createKey("id"));
 			if(StringUtils.isEmpty(xmTestCase.getProductId())){
-				return failed("productId-0","产品编号不能为空");
+				return Result.error("productId-0","产品编号不能为空");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCase.getProductId());
 			tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCase.getCuserid(),xmTestCase.getCusername(),xmTestCase.getCbranchId());
 			if(!tips.isOk()){
-				return failed(tips);
+				return Result.error(tips);
 			}
 			if(!StringUtils.hasText(xmTestCase.getCuserid())){
 				xmTestCase.setCuserid(user.getUserid());
@@ -170,11 +170,11 @@ public class XmTestCaseController {
 	public Result delXmTestCase(@RequestBody XmTestCase xmTestCase){
 
             if(!StringUtils.hasText(xmTestCase.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmTestCase xmTestCaseDb = xmTestCaseService.selectOneObject(xmTestCase);
             if( xmTestCaseDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
+                return Result.error("data-not-exists","数据不存在，无法删除");
             }
             User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb.getProductId());
@@ -182,7 +182,7 @@ public class XmTestCaseController {
 			if(!isPm){
 				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),xmTestCaseDb.getCbranchId());
 				if(!tips.isOk()){
-					return failed(tips);
+					return Result.error(tips);
 				}
 			}
 			xmTestCaseService.deleteByPk(xmTestCase);
@@ -198,11 +198,11 @@ public class XmTestCaseController {
 	public Result editXmTestCase(@RequestBody XmTestCase xmTestCase) {
 
             if(!StringUtils.hasText(xmTestCase.getId())) {
-                 return failed("pk-not-exists","请上送主键参数id");
+                 return Result.error("pk-not-exists","请上送主键参数id");
             }
             XmTestCase xmTestCaseDb = xmTestCaseService.selectOneById(xmTestCase);
             if( xmTestCaseDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb.getProductId());
@@ -210,7 +210,7 @@ public class XmTestCaseController {
 			if(!isPm){
 				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
 				if(!tips.isOk()){
-					return failed(tips);
+					return Result.error(tips);
 				}
 			}
 
@@ -234,26 +234,26 @@ public class XmTestCaseController {
 
             List<String> ids= (List<String>) xmTestCaseMap.get("ids");
 			if(ids==null || ids.size()==0){
-				return failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
             fields.add("id");
 			for (String fieldName : xmTestCaseMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=xmTestCaseMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmTestCaseMap.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
  			}
 			XmTestCase xmTestCase = fromMap(xmTestCaseMap,XmTestCase.class);
 			List<XmTestCase> xmTestCasesDb=xmTestCaseService.selectListByIds(ids);
 			if(xmTestCasesDb==null ||xmTestCasesDb.size()==0){
-				return failed("data-0","记录已不存在");
+				return Result.error("data-0","记录已不存在");
 			}
 			List<XmTestCase> can=new ArrayList<>();
 			List<XmTestCase> no=new ArrayList<>();
@@ -261,13 +261,13 @@ public class XmTestCaseController {
 			User user = LoginUtils.getCurrentUserInfo();
 			XmTestCase xmTestCaseDb2=xmTestCasesDb.get(0);
 			if(xmTestCasesDb.stream().filter(k->!k.getProductId().equals(xmTestCaseDb2.getProductId())).findAny().isPresent()){
-				return failed("product-no-same","批量操作所有测试用例必须都在同一个产品下。");
+				return Result.error("product-no-same","批量操作所有测试用例必须都在同一个产品下。");
 			}
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb2.getProductId());
 			if( StringUtils.hasText(xmTestCase.getCuserid()) ){
 				tips=this.productQxService.checkProductQx(xmProductDb,1,user,xmTestCase.getCuserid(),xmTestCase.getCusername(),null);
 				if(!tips.isOk()){
-					return failed(tips);
+					return Result.error(tips);
 				}
 			}
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
@@ -297,9 +297,9 @@ public class XmTestCaseController {
 				msgs.add(String.format("以下%s个数据无权限更新,原因【%s】",no.size(),noTipsMap.keySet().stream().collect(Collectors.joining(";"))));
 			}
 			if(can.size()>0){
-				tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
-				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
 			//
 		return Result.ok();
@@ -316,13 +316,13 @@ public class XmTestCaseController {
         
         
             if(xmTestCases.size()<=0){
-                return failed("data-0","请上送待删除数据列表");
+                return Result.error("data-0","请上送待删除数据列表");
             }
              List<XmTestCase> datasDb=xmTestCaseService.selectListByIds(xmTestCases.stream().map(i-> i.getId() ).collect(Collectors.toList()));
 			User user = LoginUtils.getCurrentUserInfo();
 			XmTestCase xmTestCaseDb2=datasDb.get(0);
 			if(datasDb.stream().filter(k->!k.getProductId().equals(xmTestCaseDb2.getProductId())).findAny().isPresent()){
-				return failed("product-no-same","批量操作所有测试用例必须都在同一个产品下。");
+				return Result.error("product-no-same","批量操作所有测试用例必须都在同一个产品下。");
 			}
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb2.getProductId());
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
@@ -354,18 +354,11 @@ public class XmTestCaseController {
                 msgs.add(String.format("以下%s条数据无权限删除.原因【%s】",no.size(), noTipsMap.keySet().stream().collect(Collectors.joining(";"))));
             }
             if(can.size()>0){
-                 tips.setOkMsg(msgs.stream().collect(Collectors.joining()));
+                 return Result.ok(msgs.stream().collect(Collectors.joining()));
             }else {
-                tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
+                return Result.error(msgs.stream().collect(Collectors.joining()));
             }
-        }catch (BizException e) { 
-            tips=e.getTips();
-            logger.error("",e);
-        }catch (Exception e) {
-            tips.setFailureMsg(e.getMessage());
-            logger.error("",e);
-        }  
-        m.put("tips", tips);
-        return m;
+        return Result.ok();
+        
 	}
 }

@@ -86,7 +86,7 @@ public class XmProductStateHisController {
 			}
 			if(createPk==false){
                  if(xmProductStateHisService.selectOneObject(xmProductStateHis) !=null ){
-                    return failed("pk-exists","编号重复，请修改编号再提交");
+                    return Result.error("pk-exists","编号重复，请修改编号再提交");
                 }
             }
 			xmProductStateHisService.insert(xmProductStateHis);
@@ -103,14 +103,14 @@ public class XmProductStateHisController {
 	public Result delXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis){
 
             if(!StringUtils.hasText(xmProductStateHis.getProductId())) {
-                 return failed("pk-not-exists","请上送主键参数productId");
+                 return Result.error("pk-not-exists","请上送主键参数productId");
             }
             if(!StringUtils.hasText(xmProductStateHis.getBizDate())) {
-                 return failed("pk-not-exists","请上送主键参数bizDate");
+                 return Result.error("pk-not-exists","请上送主键参数bizDate");
             }
             XmProductStateHis xmProductStateHisDb = xmProductStateHisService.selectOneObject(xmProductStateHis);
             if( xmProductStateHisDb == null ){
-                return failed("data-not-exists","数据不存在，无法删除");
+                return Result.error("data-not-exists","数据不存在，无法删除");
             }
 			xmProductStateHisService.deleteByPk(xmProductStateHis);
 		return Result.ok();
@@ -127,14 +127,14 @@ public class XmProductStateHisController {
 	public Result editXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis) {
 
             if(!StringUtils.hasText(xmProductStateHis.getProductId())) {
-                 return failed("pk-not-exists","请上送主键参数productId");
+                 return Result.error("pk-not-exists","请上送主键参数productId");
             }
             if(!StringUtils.hasText(xmProductStateHis.getBizDate())) {
-                 return failed("pk-not-exists","请上送主键参数bizDate");
+                 return Result.error("pk-not-exists","请上送主键参数bizDate");
             }
             XmProductStateHis xmProductStateHisDb = xmProductStateHisService.selectOneObject(xmProductStateHis);
             if( xmProductStateHisDb == null ){
-                return failed("data-not-exists","数据不存在，无法修改");
+                return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmProductStateHisService.updateSomeFieldByPk(xmProductStateHis);
 		
