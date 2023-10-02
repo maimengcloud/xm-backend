@@ -1,9 +1,11 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmIterationStateHis;
 import com.xm.core.service.XmIterationStateHisService;
 import io.swagger.annotations.Api;
@@ -53,9 +55,9 @@ public class XmIterationStateHisController {
 	public Result listXmIterationStateHis(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "pkList");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "pkList");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmIterationStateHis> qw = QueryTools.initQueryWrapper(XmIterationStateHis.class , params);
 		List<Map<String,Object>> datas = xmIterationStateHisService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmIterationStateHis列表
 
@@ -70,9 +72,7 @@ public class XmIterationStateHisController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmIterationStateHis(@RequestBody XmIterationStateHis xmIterationStateHis) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 		    boolean createPk=false;
 			if(!StringUtils.hasText(xmIterationStateHis.getIterationId())) {
 			    createPk=true;
@@ -99,9 +99,7 @@ public class XmIterationStateHisController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmIterationStateHis(@RequestBody XmIterationStateHis xmIterationStateHis){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmIterationStateHis.getIterationId())) {
                  return failed("pk-not-exists","请上送主键参数iterationId");
             }
@@ -113,7 +111,7 @@ public class XmIterationStateHisController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmIterationStateHisService.deleteByPk(xmIterationStateHis);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -125,9 +123,7 @@ public class XmIterationStateHisController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmIterationStateHis(@RequestBody XmIterationStateHis xmIterationStateHis) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmIterationStateHis.getIterationId())) {
                  return failed("pk-not-exists","请上送主键参数iterationId");
             }
@@ -153,10 +149,10 @@ public class XmIterationStateHisController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmIterationStateHis(@RequestBody List<XmIterationStateHis> xmIterationStateHiss) {
 		
-		Tips tips=new Tips("成功删除"+xmIterationStateHiss.size()+"条数据"); 
+		
 		
 			xmIterationStateHisService.batchDelete(xmIterationStateHiss);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

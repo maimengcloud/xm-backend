@@ -71,14 +71,11 @@ public class XmProjectKpiController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmProjectKpi(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmProjectKpiService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectKpi列表
-		
-		
-		
 		
 	}
 	
@@ -91,9 +88,7 @@ public class XmProjectKpiController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProjectKpi(@RequestBody XmProjectKpi xmProjectKpi) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmProjectKpi.getId())) {
 				xmProjectKpi.setId(xmProjectKpiService.createKey("id"));
 			}else{
@@ -116,9 +111,7 @@ public class XmProjectKpiController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProjectKpi(@RequestBody XmProjectKpi xmProjectKpi){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmProjectKpiService.deleteByPk(xmProjectKpi);
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
 		
@@ -132,9 +125,7 @@ public class XmProjectKpiController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProjectKpi(@RequestBody XmProjectKpi xmProjectKpi) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmProjectKpiService.updateByPk(xmProjectKpi);
 		
 	}
@@ -150,7 +141,7 @@ public class XmProjectKpiController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProjectKpi(@RequestBody List<XmProjectKpi> xmProjectKpis) {
 		
-		Tips tips=new Tips("成功删除"+xmProjectKpis.size()+"条数据"); 
+		
 		
 			xmProjectKpiService.batchDelete(xmProjectKpis);
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());

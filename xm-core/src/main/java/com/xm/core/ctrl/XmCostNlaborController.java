@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
@@ -9,6 +10,7 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmCostNlabor;
 import com.xm.core.service.XmCostNlaborService;
 import io.swagger.annotations.*;
@@ -61,11 +63,11 @@ public class XmCostNlaborController {
 	public Result listXmCostNlabor(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmCostNlabor> qw = QueryTools.initQueryWrapper(XmCostNlabor.class , params);
 		List<Map<String,Object>> datas = xmCostNlaborService.selectListMapByWhere(page,qw,params);
-			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmCostNlabor列表
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmCostNlabor列表
 
 	}
 
@@ -76,14 +78,10 @@ public class XmCostNlaborController {
 	@RequestMapping(value="/listSum",method=RequestMethod.GET)
 	public Result listSum(@ApiIgnore @RequestParam Map<String,Object> params){
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
-		List<Map<String,Object>>	data = xmCostNlaborService.listSum(xmCostNlabor);	//列出xmProjectMCostNouser列表
-		
-		
-		
-		
+		List<Map<String,Object>>	data = xmCostNlaborService.listSum(params);	//列出xmProjectMCostNouser列表 
+		return Result.ok("query-ok","查询成功").setData(data).setTotal(page.getTotal());	//列出XmCostNlabor列表 
 	}
 	
 
@@ -93,9 +91,7 @@ public class XmCostNlaborController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmCostNlabor(@RequestBody XmCostNlabor xmCostNlabor) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 		    boolean createPk=false;
 			if(!StringUtils.hasText(xmCostNlabor.getId())) {
 			    createPk=true;
@@ -108,13 +104,7 @@ public class XmCostNlaborController {
             }
 			xmCostNlaborService.insert(xmCostNlabor);
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
+		return Result.ok();  
 		
 	}
 
@@ -124,9 +114,7 @@ public class XmCostNlaborController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmCostNlabor(@RequestBody XmCostNlabor xmCostNlabor){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmCostNlabor.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -145,9 +133,7 @@ public class XmCostNlaborController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmCostNlabor(@RequestBody XmCostNlabor xmCostNlabor) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmCostNlabor.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -166,9 +152,7 @@ public class XmCostNlaborController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmCostNlaborMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             List<String> ids= (List<String>) xmCostNlaborMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -220,13 +204,7 @@ public class XmCostNlaborController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -237,7 +215,7 @@ public class XmCostNlaborController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmCostNlabor(@RequestBody List<XmCostNlabor> xmCostNlabors) {
 		
-        Tips tips=new Tips("成功删除"); 
+        
         
             if(xmCostNlabors.size()<=0){
                 return failed("data-0","请上送待删除数据列表");

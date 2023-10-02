@@ -113,16 +113,13 @@ public class XmProjectStateHisController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmProjectStateHis(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmProjectStateHisService.selectListMapByWhere(page,qw,params);
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectStateHis列表
-		
-		
-		
 		
 	}
 	
@@ -135,9 +132,7 @@ public class XmProjectStateHisController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProjectStateHis(@RequestBody XmProjectStateHis xmProjectStateHis) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmProjectStateHis.getId())) {
 				xmProjectStateHis.setId(xmProjectStateHisService.createKey("id"));
 			}else{
@@ -160,11 +155,9 @@ public class XmProjectStateHisController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProjectStateHis(@RequestBody XmProjectStateHis xmProjectStateHis){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmProjectStateHisService.deleteByPk(xmProjectStateHis);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -176,9 +169,7 @@ public class XmProjectStateHisController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProjectStateHis(@RequestBody XmProjectStateHis xmProjectStateHis) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmProjectStateHisService.updateByPk(xmProjectStateHis);
 		
 	}
@@ -194,10 +185,10 @@ public class XmProjectStateHisController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProjectStateHis(@RequestBody List<XmProjectStateHis> xmProjectStateHiss) {
 		
-		Tips tips=new Tips("成功删除"+xmProjectStateHiss.size()+"条数据"); 
+		
 		
 			xmProjectStateHisService.batchDelete(xmProjectStateHiss);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

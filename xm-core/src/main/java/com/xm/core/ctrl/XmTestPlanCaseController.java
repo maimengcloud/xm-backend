@@ -79,12 +79,12 @@ public class XmTestPlanCaseController {
 	public Result listXmTestPlanCase(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "pkList");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "pkList");		
 		IPage page=QueryTools.initPage(params);
 
 		User user= LoginUtils.getCurrentUserInfo();
 		paramsInit(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmTestPlanCaseService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestPlanCase列表
 
@@ -117,8 +117,7 @@ public class XmTestPlanCaseController {
 	@RequestMapping(value="/getXmTestPlanCaseExecStatusDist",method=RequestMethod.GET)
 	public Result getXmTestPlanCaseExecStatusDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		
-		
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+				
 		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
 		paramsInit(params);
@@ -134,8 +133,7 @@ public class XmTestPlanCaseController {
 	@RequestMapping(value="/getXmTestPlanCaseUserDist",method=RequestMethod.GET)
 	public Result getXmTestPlanCaseUserDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		
-		
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+				
 		IPage page=QueryTools.initPage(params);
 		paramsInit(params);
 		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestPlanCaseUserDist(params);	//列出XmTestPlanCase列表
@@ -150,8 +148,7 @@ public class XmTestPlanCaseController {
 	@RequestMapping(value="/getXmTestDayTimesList",method=RequestMethod.GET)
 	public Result getXmTestDayTimesList(@ApiIgnore @RequestParam Map<String,Object> params){
 		
-		
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+				
 		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
 		paramsInit(params);
@@ -165,8 +162,7 @@ public class XmTestPlanCaseController {
 	@RequestMapping(value="/getXmTestCaseToPlanCalcList",method=RequestMethod.GET)
 	public Result getXmTestCaseToPlanCalcList(@ApiIgnore @RequestParam Map<String,Object> params){
 		
-		
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+				
 		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
 		paramsInit(params);
@@ -183,9 +179,7 @@ public class XmTestPlanCaseController {
 	})
 	@RequestMapping(value="/importFromTestCase",method=RequestMethod.POST)
 	public Result importFromTestCase(@RequestBody ImportFromTestCaseVo importFromTestCaseVo) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(importFromTestCaseVo.getCaseIds()==null || importFromTestCaseVo.getCaseIds().size()==0){
 				return ResponseHelper.failed("caseIds-0","测试用例编号不能为空");
 			}
@@ -235,13 +229,7 @@ public class XmTestPlanCaseController {
 				this.xmTestPlanCaseService.batchInsert(planCases);
 			}
 
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	@ApiOperation( value = "删除一条测试计划与用例关系表信息",notes=" ")
@@ -250,9 +238,7 @@ public class XmTestPlanCaseController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmTestPlanCase(@RequestBody XmTestPlanCase xmTestPlanCase){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmTestPlanCase.getCaseId())) {
                  return failed("pk-not-exists","请上送主键参数caseId");
             }
@@ -283,9 +269,7 @@ public class XmTestPlanCaseController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmTestPlanCase(@RequestBody XmTestPlanCase xmTestPlanCase) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmTestPlanCase.getCaseId())) {
                  return failed("pk-not-exists","请上送主键参数caseId");
             }
@@ -316,9 +300,7 @@ public class XmTestPlanCaseController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTestPlanCaseMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			List<Map<String,Object>> pkList= (List<Map<String,Object>>) xmTestPlanCaseMap.get("pkList");
 			if(pkList==null || pkList.size()==0){
 				return failed("pkList-0","pkList不能为空");
@@ -399,13 +381,7 @@ public class XmTestPlanCaseController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -416,7 +392,7 @@ public class XmTestPlanCaseController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmTestPlanCase(@RequestBody List<XmTestPlanCase> xmTestPlanCases) {
 		
-        Tips tips=new Tips("成功删除"); 
+        
         
             if(xmTestPlanCases.size()<=0){
                 return failed("data-0","请上送待删除数据列表");

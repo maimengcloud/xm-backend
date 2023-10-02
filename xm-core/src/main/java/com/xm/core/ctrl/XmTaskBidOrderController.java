@@ -89,9 +89,9 @@ public class XmTaskBidOrderController {
 	public Result listXmTaskBidOrder(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmTaskBidOrderService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskBidOrder列表
 
@@ -115,9 +115,7 @@ public class XmTaskBidOrderController {
 	})
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmTaskBidOrder(@RequestBody AddXmTaskBidOrderVo bidOrderVo) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(!StringUtils.hasText(bidOrderVo.getTaskId())){
 				return ResponseHelper.failed("taskId-0","任务编号不能为空");
 			}
@@ -203,13 +201,7 @@ public class XmTaskBidOrderController {
 				msgService.pushMsg(user,user.getUserid(),user.getUsername(),"2",order.getProjectId(),order.getTaskId(),"您为任务支付"+remark+order.getFinalFee()+"元订单提交成功，请及时付款");
 			}
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -239,7 +231,7 @@ public class XmTaskBidOrderController {
 	public Result orderPaySuccess(@RequestBody XmTaskBidOrder order) {
 		
 		try {
-			Tips tips=new Tips("操作成功");
+			
 			if(!StringUtils.hasText(order.getId())) {
 				return failed("data-0","订单Id不能为空");
 			}
@@ -268,7 +260,7 @@ public class XmTaskBidOrderController {
 	public Result payCancel(@RequestBody XmTaskBidOrder order) {
 		
 		try {
-			Tips tips=new Tips("操作成功");
+			
 			if(!StringUtils.hasText(order.getId())) {
 				return failed("data-0","订单Id不能为空");
 			}

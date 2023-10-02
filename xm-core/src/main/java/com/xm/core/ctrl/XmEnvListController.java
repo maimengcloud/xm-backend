@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
@@ -12,6 +13,7 @@ import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmEnvList;
 import com.xm.core.service.XmEnvListService;
 import com.xm.core.service.XmGroupService;
@@ -68,18 +70,14 @@ public class XmEnvListController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmEnvList(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		xmEnvList.put("userid",user.getUserid());
+		params.put("userid",user.getUserid());
 		params.put("branchId",user.getBranchId());
+		QueryWrapper<XmEnvList> qw = QueryTools.initQueryWrapper(XmEnvList.class , params);
 		List<Map<String,Object>> datas = xmEnvListService.selectListMapByWhere(page,qw,params);
-			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmEnvList列表
-		
-		
-		
-		
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmEnvList列表 
 	}
 	
  
@@ -91,9 +89,7 @@ public class XmEnvListController {
 	////@HasQx(value = "xm_core_xmEnvList_add",name = "新建环境清单",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmEnvList(@RequestBody XmEnvList xmEnvList) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(!StringUtils.hasText(xmEnvList.getProjectId())){
 				return ResponseHelper.failed("projectId-0","项目编号不能为空");
 			}
@@ -125,9 +121,7 @@ public class XmEnvListController {
 	////@HasQx(value = "xm_core_xmEnvList_del",name = "删除环境清单",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmEnvList(@RequestBody XmEnvList xmEnvList){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			XmEnvList xmEnvListDb=this.xmEnvListService.selectOneById(xmEnvList.getId());
 			if(xmEnvListDb==null){
 				return ResponseHelper.failed("data-0","数据已不存在");
@@ -152,7 +146,7 @@ public class XmEnvListController {
 				}
 			}
 			xmEnvListService.deleteByPk(xmEnvList);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 
@@ -163,9 +157,7 @@ public class XmEnvListController {
 	////@HasQx(value = "xm_core_xmEnvList_edit",name = "修改环境清单",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmEnvList(@RequestBody XmEnvList xmEnvList) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			XmEnvList xmEnvListDb=this.xmEnvListService.selectOneById(xmEnvList.getId());
 			if(xmEnvListDb==null){
 				return ResponseHelper.failed("data-0","数据已不存在");
@@ -203,10 +195,10 @@ public class XmEnvListController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmEnvList(@RequestBody List<XmEnvList> xmEnvLists) {
 		
-		Tips tips=new Tips("成功删除"+xmEnvLists.size()+"条数据"); 
+		
 		
 			xmEnvListService.batchDelete(xmEnvLists);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	**/
@@ -233,7 +225,7 @@ public class XmEnvListController {
 	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
 	public Result processApprova( @RequestBody Map<String,Object> flowVars){
 		
-		Tips tips=new Tips("成功新增一条数据");
+		
 		  
 		
 			

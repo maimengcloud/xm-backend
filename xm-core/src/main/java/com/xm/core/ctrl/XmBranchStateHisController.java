@@ -91,9 +91,7 @@ public class XmBranchStateHisController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmBranchStateHis(@RequestBody XmBranchStateHis xmBranchStateHis) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 		    boolean createPk=false;
 			if(!StringUtils.hasText(xmBranchStateHis.getBizDate())) {
 			    createPk=true;
@@ -120,9 +118,7 @@ public class XmBranchStateHisController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmBranchStateHis(@RequestBody XmBranchStateHis xmBranchStateHis){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmBranchStateHis.getBizDate())) {
                  return failed("pk-not-exists","请上送主键参数bizDate");
             }
@@ -134,7 +130,7 @@ public class XmBranchStateHisController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmBranchStateHisService.deleteByPk(xmBranchStateHis);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -146,9 +142,7 @@ public class XmBranchStateHisController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmBranchStateHis(@RequestBody XmBranchStateHis xmBranchStateHis) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmBranchStateHis.getBizDate())) {
                  return failed("pk-not-exists","请上送主键参数bizDate");
             }
@@ -174,10 +168,10 @@ public class XmBranchStateHisController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmBranchStateHis(@RequestBody List<XmBranchStateHis> xmBranchStateHiss) {
 		
-		Tips tips=new Tips("成功删除"+xmBranchStateHiss.size()+"条数据"); 
+		
 		
 			xmBranchStateHisService.batchDelete(xmBranchStateHiss);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

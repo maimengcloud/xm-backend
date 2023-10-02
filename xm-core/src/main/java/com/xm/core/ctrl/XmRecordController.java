@@ -71,14 +71,11 @@ public class XmRecordController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmRecord(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmRecordService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmRecord列表
-		
-		
-		
 		
 	}
 	
@@ -91,9 +88,7 @@ public class XmRecordController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmRecord(@RequestBody XmRecord xmRecord) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmRecord.getId())) {
 				xmRecord.setId(xmRecordService.createKey("id"));
 			}else{
@@ -116,9 +111,7 @@ public class XmRecordController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmRecord(@RequestBody XmRecord xmRecord){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmRecordService.deleteByPk(xmRecord);
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
 		
@@ -132,9 +125,7 @@ public class XmRecordController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmRecord(@RequestBody XmRecord xmRecord) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmRecordService.updateByPk(xmRecord);
 		
 	}
@@ -150,7 +141,7 @@ public class XmRecordController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmRecord(@RequestBody List<XmRecord> xmRecords) {
 		
-		Tips tips=new Tips("成功删除"+xmRecords.size()+"条数据"); 
+		
 		
 			xmRecordService.batchDelete(xmRecords);
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());

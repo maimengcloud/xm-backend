@@ -77,14 +77,11 @@ public class XmProjectTaskTypeStateController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmProjectTaskTypeState(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmProjectTaskTypeStateService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectTaskTypeState列表
-		
-		
-		
 		
 	}
 	
@@ -94,16 +91,14 @@ public class XmProjectTaskTypeStateController {
 	}) 
 	@RequestMapping(value="/loadTasksToXmProjectTaskTypeState",method=RequestMethod.POST)
 	public Result loadTasksToXmProjectTaskTypeState(@RequestBody XmProjectTaskTypeState xmProjectTaskTypeState){
-		
-		Tips tips=new Tips("成功更新一个项目数据");
-		try{
+
 			if(StringUtils.isEmpty(xmProjectTaskTypeState.getProjectId())) {
 				tips.setFailureMsg("项目编号projectId必填");
 			}else {
 	
 				xmProjectTaskTypeStateService.loadTasksToXmProjectTaskTypeState(xmProjectTaskTypeState.getBranchId());
 			}
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	
@@ -114,9 +109,7 @@ public class XmProjectTaskTypeStateController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProjectTaskTypeState(@RequestBody XmProjectTaskTypeState xmProjectTaskTypeState) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmProjectTaskTypeState.getId())) {
 				xmProjectTaskTypeState.setId(xmProjectTaskTypeStateService.createKey("id"));
 			}else{
@@ -139,11 +132,9 @@ public class XmProjectTaskTypeStateController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProjectTaskTypeState(@RequestBody XmProjectTaskTypeState xmProjectTaskTypeState){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmProjectTaskTypeStateService.deleteByPk(xmProjectTaskTypeState);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -155,9 +146,7 @@ public class XmProjectTaskTypeStateController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProjectTaskTypeState(@RequestBody XmProjectTaskTypeState xmProjectTaskTypeState) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmProjectTaskTypeStateService.updateByPk(xmProjectTaskTypeState);
 		
 	}
@@ -173,10 +162,10 @@ public class XmProjectTaskTypeStateController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProjectTaskTypeState(@RequestBody List<XmProjectTaskTypeState> xmProjectTaskTypeStates) {
 		
-		Tips tips=new Tips("成功删除"+xmProjectTaskTypeStates.size()+"条数据"); 
+		
 		
 			xmProjectTaskTypeStateService.batchDelete(xmProjectTaskTypeStates);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

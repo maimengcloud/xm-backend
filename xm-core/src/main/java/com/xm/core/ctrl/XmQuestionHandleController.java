@@ -74,14 +74,11 @@ public class XmQuestionHandleController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmQuestionHandle(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmQuestionHandleService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmQuestionHandle列表
-		
-		
-		
 		
 	}
 	
@@ -93,9 +90,7 @@ public class XmQuestionHandleController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmQuestionHandle(@RequestBody XmQuestionHandle xmQuestionHandle) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmQuestionHandle.getId())) {
 				xmQuestionHandle.setId(xmQuestionHandleService.createKey("id"));
 			}else{
@@ -108,13 +103,7 @@ public class XmQuestionHandleController {
 			}
 			xmQuestionHandleService.insert(xmQuestionHandle);
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
+		return Result.ok();  
 		
 	}
 	
@@ -125,11 +114,9 @@ public class XmQuestionHandleController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmQuestionHandle(@RequestBody XmQuestionHandle xmQuestionHandle){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmQuestionHandleService.deleteByPk(xmQuestionHandle);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -141,9 +128,7 @@ public class XmQuestionHandleController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmQuestionHandle(@RequestBody XmQuestionHandle xmQuestionHandle) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmQuestionHandleService.updateByPk(xmQuestionHandle);
 		
 	}
@@ -159,10 +144,10 @@ public class XmQuestionHandleController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmQuestionHandle(@RequestBody List<XmQuestionHandle> xmQuestionHandles) {
 		
-		Tips tips=new Tips("成功删除"+xmQuestionHandles.size()+"条数据"); 
+		
 		
 			xmQuestionHandleService.batchDelete(xmQuestionHandles);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
@@ -12,6 +13,7 @@ import com.mdp.qx.HasRole;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmMenuComment;
 import com.xm.core.service.XmMenuCalcService;
@@ -25,7 +27,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -74,14 +75,14 @@ public class XmMenuCommentController {
 	public Result listXmMenuComment(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		String pid= (String) params.get("pid");
 		if(!StringUtils.hasText(pid)){
 			params.put("pidIsNull","1");
 		}
 
+		QueryWrapper<XmMenuComment> qw = QueryTools.initQueryWrapper(XmMenuComment.class , params);
 		List<Map<String,Object>> datas = xmMenuCommentService.selectListMapByWhere(page,qw,params);
 
 
@@ -102,9 +103,7 @@ public class XmMenuCommentController {
 	@HasRole
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmMenuComment(@RequestBody XmMenuComment xmMenuComment) {
-		
-		Tips tips=new Tips("成功评论");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			XmMenu xmMenuDb=this.xmMenuService.selectOneById(xmMenuComment.getMenuId());
 			if(xmMenuDb==null){
@@ -142,9 +141,7 @@ public class XmMenuCommentController {
 	})
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmMenuComment(@RequestBody XmMenuComment xmMenuComment){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			XmMenuComment commentDb=this.xmMenuCommentService.selectOneById(xmMenuComment.getId());
 			if(commentDb==null){
 				return ResponseHelper.failed("data-0","评论已不存在");
@@ -178,9 +175,7 @@ public class XmMenuCommentController {
 	})
 	@RequestMapping(value="/praise",method=RequestMethod.POST)
 	public Result praiseComment(@RequestBody XmMenuComment xmMenuComment) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmMenuCommentService.update("praiseComment", xmMenuComment);
 
 			
@@ -200,9 +195,7 @@ public class XmMenuCommentController {
 	})
 	@RequestMapping(value="/unshow",method=RequestMethod.POST)
 	public Result unShowComment(@RequestBody String[] ids) {
-		
-		Tips tips=new Tips("成功屏蔽评论");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			List<XmMenuComment> comments=this.xmMenuCommentService.selectListByIds(Arrays.asList(ids));
 			if(comments==null || comments.size()==0){
@@ -235,9 +228,7 @@ public class XmMenuCommentController {
 	})
 	@RequestMapping(value="/show",method=RequestMethod.POST)
 	public Result showComment(@RequestBody String[] ids) {
-		
-		Tips tips=new Tips("成功打开评论");
-		try{
+
 			User user= LoginUtils.getCurrentUserInfo();
 			List<XmMenuComment> comments=this.xmMenuCommentService.selectListByIds(Arrays.asList(ids));
 			if(comments==null || comments.size()==0){
@@ -271,9 +262,7 @@ public class XmMenuCommentController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmMenuComment(@RequestBody XmMenuComment xmMenuComment) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 		    boolean createPk=false;
 			if(!StringUtils.hasText(xmMenuComment.getId())) {
 			    createPk=true;
@@ -296,9 +285,7 @@ public class XmMenuCommentController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmMenuComment(@RequestBody XmMenuComment xmMenuComment){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmMenuComment.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -307,7 +294,7 @@ public class XmMenuCommentController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmMenuCommentService.deleteByPk(xmMenuComment);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -319,9 +306,7 @@ public class XmMenuCommentController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmMenuComment(@RequestBody XmMenuComment xmMenuComment) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmMenuComment.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -342,9 +327,7 @@ public class XmMenuCommentController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmMenuCommentMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             List<String> ids= (List<String>) xmMenuCommentMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -396,13 +379,7 @@ public class XmMenuCommentController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	*/
@@ -415,7 +392,7 @@ public class XmMenuCommentController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmMenuComment(@RequestBody List<XmMenuComment> xmMenuComments) {
 		
-        Tips tips=new Tips("成功删除"); 
+        
         
             if(xmMenuComments.size()<=0){
                 return failed("data-0","请上送待删除数据列表");

@@ -74,14 +74,11 @@ public class XmProjectKpiHisController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmProjectKpiHis(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "kpiIds");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "kpiIds");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmProjectKpiHisService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectKpiHis列表
-		
-		
-		
 		
 	}
 	
@@ -94,9 +91,7 @@ public class XmProjectKpiHisController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProjectKpiHis(@RequestBody XmProjectKpiHis xmProjectKpiHis) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmProjectKpiHis.getKpiId())) {
 				xmProjectKpiHis.setKpiId(xmProjectKpiHisService.createKey("kpiId"));
 			}else{
@@ -119,9 +114,7 @@ public class XmProjectKpiHisController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProjectKpiHis(@RequestBody XmProjectKpiHis xmProjectKpiHis){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmProjectKpiHisService.deleteByPk(xmProjectKpiHis);
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
 		
@@ -135,9 +128,7 @@ public class XmProjectKpiHisController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProjectKpiHis(@RequestBody XmProjectKpiHis xmProjectKpiHis) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmProjectKpiHisService.updateByPk(xmProjectKpiHis);
 		
 	}
@@ -153,7 +144,7 @@ public class XmProjectKpiHisController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProjectKpiHis(@RequestBody List<XmProjectKpiHis> xmProjectKpiHiss) {
 		
-		Tips tips=new Tips("成功删除"+xmProjectKpiHiss.size()+"条数据"); 
+		
 		
 			xmProjectKpiHisService.batchDelete(xmProjectKpiHiss);
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());

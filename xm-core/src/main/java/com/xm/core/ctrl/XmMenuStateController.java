@@ -1,10 +1,12 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmMenuState;
 import com.xm.core.service.XmMenuStateService;
 import com.xm.core.vo.XmMenuStateVo;
@@ -100,14 +102,11 @@ public class XmMenuStateController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmMenuState(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmMenuState> qw = QueryTools.initQueryWrapper(XmMenuState.class , params);
 		List<Map<String,Object>> datas = xmMenuStateService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmMenuState列表
-		
-		
-		
 		
 	}
 	
@@ -120,9 +119,7 @@ public class XmMenuStateController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmMenuState(@RequestBody XmMenuState xmMenuState) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(xmMenuStateService.countByWhere(xmMenuState)>0){
 				tips.setFailureMsg("编号重复，请修改编号再提交");
 				m.put("tips", tips);
@@ -140,11 +137,9 @@ public class XmMenuStateController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmMenuState(@RequestBody XmMenuState xmMenuState){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmMenuStateService.deleteByPk(xmMenuState);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 
@@ -156,9 +151,7 @@ public class XmMenuStateController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmMenuState(@RequestBody XmMenuState xmMenuState) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmMenuStateService.updateByPk(xmMenuState);
 		
 	}
@@ -174,10 +167,10 @@ public class XmMenuStateController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmMenuState(@RequestBody List<XmMenuState> xmMenuStates) {
 		
-		Tips tips=new Tips("成功删除"+xmMenuStates.size()+"条数据"); 
+		
 		
 			xmMenuStateService.batchDelete(xmMenuStates);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	@ApiOperation( value = "根据主键列表批量删除功能计划表,无需前端维护，所有数据由汇总统计得出信息",notes="batchEditXmMenuState,仅需要上传主键字段")
@@ -187,10 +180,10 @@ public class XmMenuStateController {
 	@RequestMapping(value="/batchEdit",method=RequestMethod.POST)
 	public Result batchEditXmMenuState(@RequestBody List<XmMenuState> xmMenuStates) {
 		
-		Tips tips=new Tips("成功修改"+xmMenuStates.size()+"条数据"); 
+		
 		
 			xmMenuStateService.batchUpdate(xmMenuStates);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	@ApiOperation( value = "根据主键列表批量删除功能计划表,无需前端维护，所有数据由汇总统计得出信息",notes="batchEditXmMenuState,仅需要上传主键字段")
@@ -200,10 +193,10 @@ public class XmMenuStateController {
 	@RequestMapping(value="/batchAddStateByProductIdAndMenuList",method=RequestMethod.POST)
 	public Result batchAddStateByProductIdAndMenuList(@RequestBody XmMenuStateVo vo) {
 		
-		Tips tips=new Tips("成功修改"+vo.getXmMenus().size()+"条数据"); 
+		
 		
 			tips = xmMenuStateService.batchAddStateByProductIdAndMenuList(vo.getProductId(), vo.getProductName(), vo.getXmMenus());
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 	
 	
@@ -214,10 +207,10 @@ public class XmMenuStateController {
 	@RequestMapping(value="/loadTasksToXmMenuState",method=RequestMethod.POST)
 	public Result loadTasksToXmMenuState(@RequestBody Map<String,Object> params) {
 		
-		Tips tips=new Tips("成功修改数据"); 
+		
 		
 			int i= xmMenuStateService.loadTasksToXmMenuState((String) params.get("productId"));
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}  
 }

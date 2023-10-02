@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
@@ -10,6 +11,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmFunc;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.service.XmFuncService;
@@ -73,9 +75,9 @@ public class XmFuncController {
 	public Result listXmFunc(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = sensitiveWordService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmFunc列表
 
@@ -89,9 +91,7 @@ public class XmFuncController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmFunc(@RequestBody XmFunc xmFunc) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 		    boolean createPk=false;
 			if(!StringUtils.hasText(xmFunc.getId())) {
 			    createPk=true;
@@ -127,9 +127,7 @@ public class XmFuncController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmFunc(@RequestBody XmFunc xmFunc){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmFunc.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -142,7 +140,7 @@ public class XmFuncController {
 				return failed("childcnt-not-0","至少还有"+childcnt+"个子节点,请先删除子节点，再删除父节点");
 			}
 			xmFuncService.deleteByPk(xmFunc);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 
@@ -152,9 +150,7 @@ public class XmFuncController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmFunc(@RequestBody XmFunc xmFunc) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmFunc.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -173,9 +169,7 @@ public class XmFuncController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmFuncMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             List<String> ids= (List<String>) xmFuncMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -235,13 +229,7 @@ public class XmFuncController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -252,7 +240,7 @@ public class XmFuncController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmFunc(@RequestBody List<XmFunc> xmFuncs) {
 		
-        Tips tips=new Tips("成功删除"); 
+        
         
             if(xmFuncs.size()<=0){
                 return failed("data-0","请上送待删除数据列表");

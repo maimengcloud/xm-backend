@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
@@ -9,6 +10,7 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmBudgetLabor;
 import com.xm.core.service.XmBudgetLaborService;
 import io.swagger.annotations.*;
@@ -61,9 +63,9 @@ public class XmBudgetLaborController {
 	public Result listXmBudgetLabor(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBudgetLabor> qw = QueryTools.initQueryWrapper(XmBudgetLabor.class , params);
 		List<Map<String,Object>> datas = xmBudgetLaborService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmBudgetLabor列表
 
@@ -75,12 +77,10 @@ public class XmBudgetLaborController {
 	@RequestMapping(value="/listSum",method=RequestMethod.GET)
 	public Result listSum(@ApiIgnore @RequestParam Map<String,Object> params){
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
-		List<Map<String,Object>>	data = xmBudgetLaborService.listSum(xmBudgetLabor);	//列出XmProjectMBudgetCostUser列表
-		
-		
+		List<Map<String,Object>>	data = xmBudgetLaborService.listSum(params);	//列出XmProjectMBudgetCostUser列表 
+		return Result.ok().setData(data);
 		
 		
 	}
@@ -91,9 +91,7 @@ public class XmBudgetLaborController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmBudgetLabor(@RequestBody XmBudgetLabor xmBudgetLabor) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 		    boolean createPk=false;
 			if(!StringUtils.hasText(xmBudgetLabor.getId())) {
 			    createPk=true;
@@ -106,13 +104,7 @@ public class XmBudgetLaborController {
             }
 			xmBudgetLaborService.insert(xmBudgetLabor);
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
+		return Result.ok();  
 		
 	}
 
@@ -122,9 +114,7 @@ public class XmBudgetLaborController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmBudgetLabor(@RequestBody XmBudgetLabor xmBudgetLabor){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmBudgetLabor.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -133,7 +123,7 @@ public class XmBudgetLaborController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmBudgetLaborService.deleteByPk(xmBudgetLabor);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 
@@ -143,9 +133,7 @@ public class XmBudgetLaborController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmBudgetLabor(@RequestBody XmBudgetLabor xmBudgetLabor) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmBudgetLabor.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -164,9 +152,7 @@ public class XmBudgetLaborController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmBudgetLaborMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             List<String> ids= (List<String>) xmBudgetLaborMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -218,13 +204,7 @@ public class XmBudgetLaborController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -235,9 +215,7 @@ public class XmBudgetLaborController {
 	})
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
 	public Result batchAddXmBudgetLabor(@RequestBody List<XmBudgetLabor> xmBudgetLabors) {
-		
-		Tips tips=new Tips("成功删除");
-		try{
+
 			if(xmBudgetLabors.size()<=0){
 				return failed("data-0","请上送待新增数据列表");
 			}
@@ -266,13 +244,7 @@ public class XmBudgetLaborController {
 			}else {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -283,7 +255,7 @@ public class XmBudgetLaborController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmBudgetLabor(@RequestBody List<XmBudgetLabor> xmBudgetLabors) {
 		
-        Tips tips=new Tips("成功删除"); 
+        
         
             if(xmBudgetLabors.size()<=0){
                 return failed("data-0","请上送待删除数据列表");

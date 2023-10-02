@@ -76,9 +76,9 @@ public class XmTestPlanController {
 		
 		RequestUtils.transformArray(params, "ids");
 		User user=LoginUtils.getCurrentUserInfo();
-		params.put("cbranchId",user.getBranchId());
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		params.put("cbranchId",user.getBranchId());		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmTestPlanService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestPlan列表
 
@@ -91,21 +91,13 @@ public class XmTestPlanController {
 	})
 	@RequestMapping(value="/calc",method=RequestMethod.POST)
 	public Result calcXmTestPlan(@RequestBody XmTestPlan xmTestPlan) {
-		
-		Tips tips=new Tips("成功统计测试计划数据");
-		try{
+
 			boolean createPk=false;
 			if(!StringUtils.hasText(xmTestPlan.getId())) {
 				return failed("id-0","测试计划编号不能为空");
 			}
 			this.xmTestPlanService.calcXmTestPlan(xmTestPlan.getId());
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -115,9 +107,7 @@ public class XmTestPlanController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmTestPlan(@RequestBody XmTestPlan xmTestPlan) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 		    boolean createPk=false;
 			if(!StringUtils.hasText(xmTestPlan.getId())) {
 			    createPk=true;
@@ -163,9 +153,7 @@ public class XmTestPlanController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmTestPlan(@RequestBody XmTestPlan xmTestPlan){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmTestPlan.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -184,7 +172,7 @@ public class XmTestPlanController {
 				}
 			}
 			xmTestPlanService.deleteByPk(xmTestPlan);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 
@@ -194,9 +182,7 @@ public class XmTestPlanController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmTestPlan(@RequestBody XmTestPlan xmTestPlan) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmTestPlan.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -226,9 +212,7 @@ public class XmTestPlanController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTestPlanMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             List<String> ids= (List<String>) xmTestPlanMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -298,13 +282,7 @@ public class XmTestPlanController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -315,7 +293,7 @@ public class XmTestPlanController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmTestPlan(@RequestBody List<XmTestPlan> xmTestPlans) {
 		
-        Tips tips=new Tips("成功删除"); 
+        
         
             if(xmTestPlans.size()<=0){
                 return failed("data-0","请上送待删除数据列表");

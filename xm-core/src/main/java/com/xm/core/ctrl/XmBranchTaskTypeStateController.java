@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
@@ -7,6 +8,7 @@ import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmBranchState;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmBranchTaskTypeState;
 import com.xm.core.service.XmBranchTaskTypeStateService;
 import io.swagger.annotations.*;
@@ -59,14 +61,11 @@ public class XmBranchTaskTypeStateController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmBranchTaskTypeState(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchTaskTypeState> qw = QueryTools.initQueryWrapper(XmBranchTaskTypeState.class , params);
 		List<Map<String,Object>> datas = xmBranchTaskTypeStateService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmBranchTaskTypeState列表
-		
-		
-		
 		
 	}
 	
@@ -77,16 +76,14 @@ public class XmBranchTaskTypeStateController {
 	}) 
 	@RequestMapping(value="/loadProjectTaskTypeStateToXmBranchTaskTypeState",method=RequestMethod.POST)
 	public Result loadProjectTaskTypeStateToXmBranchTaskTypeState(@RequestBody XmBranchState xmBranchState){
-		
-		Tips tips=new Tips("成功更新一个机构数据");
-		try{
+
 			if(StringUtils.isEmpty(xmBranchState.getBranchId())) {
 				tips.setFailureMsg("机构编号branchId必填");
 			}else {
 	
 				xmBranchTaskTypeStateService.loadProjectTaskTypeStateToXmBranchTaskTypeState(xmBranchState.getBranchId());
 			}
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	/**
@@ -96,9 +93,7 @@ public class XmBranchTaskTypeStateController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmBranchTaskTypeState(@RequestBody XmBranchTaskTypeState xmBranchTaskTypeState) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmBranchTaskTypeState.getId())) {
 				xmBranchTaskTypeState.setId(xmBranchTaskTypeStateService.createKey("id"));
 			}else{
@@ -121,11 +116,9 @@ public class XmBranchTaskTypeStateController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmBranchTaskTypeState(@RequestBody XmBranchTaskTypeState xmBranchTaskTypeState){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmBranchTaskTypeStateService.deleteByPk(xmBranchTaskTypeState);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -137,9 +130,7 @@ public class XmBranchTaskTypeStateController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmBranchTaskTypeState(@RequestBody XmBranchTaskTypeState xmBranchTaskTypeState) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmBranchTaskTypeStateService.updateByPk(xmBranchTaskTypeState);
 		
 	}
@@ -155,10 +146,10 @@ public class XmBranchTaskTypeStateController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmBranchTaskTypeState(@RequestBody List<XmBranchTaskTypeState> xmBranchTaskTypeStates) {
 		
-		Tips tips=new Tips("成功删除"+xmBranchTaskTypeStates.size()+"条数据"); 
+		
 		
 			xmBranchTaskTypeStateService.batchDelete(xmBranchTaskTypeStates);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

@@ -62,14 +62,11 @@ public class XmQuestionTagController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmQuestionTag(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmQuestionTagService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmQuestionTag列表
-		
-		
-		
 		
 	}
 	
@@ -82,9 +79,7 @@ public class XmQuestionTagController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmQuestionTag(@RequestBody XmQuestionTag xmQuestionTag) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmQuestionTag.getId())) {
 				xmQuestionTag.setId(xmQuestionTagService.createKey("id"));
 			}else{
@@ -107,11 +102,9 @@ public class XmQuestionTagController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmQuestionTag(@RequestBody XmQuestionTag xmQuestionTag){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmQuestionTagService.deleteByPk(xmQuestionTag);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -123,9 +116,7 @@ public class XmQuestionTagController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmQuestionTag(@RequestBody XmQuestionTag xmQuestionTag) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmQuestionTagService.updateByPk(xmQuestionTag);
 		
 	}
@@ -141,10 +132,10 @@ public class XmQuestionTagController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmQuestionTag(@RequestBody List<XmQuestionTag> xmQuestionTags) {
 		
-		Tips tips=new Tips("成功删除"+xmQuestionTags.size()+"条数据"); 
+		
 		
 			xmQuestionTagService.batchDelete(xmQuestionTags);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

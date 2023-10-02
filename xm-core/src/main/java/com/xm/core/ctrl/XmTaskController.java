@@ -124,8 +124,7 @@ public class XmTaskController {
 		RequestUtils.transformArray(params, "ids");
 		RequestUtils.transformArray(params, "skillIds");
 		RequestUtils.transformArray(params, "tagIdList");
-		RequestUtils.transformArray(params, "lvls");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "lvls");		
 		IPage page=QueryTools.initPage(params);
 		String taskOut= (String) params.get("taskOut");
 		String projectId= (String) params.get("projectId");
@@ -145,6 +144,7 @@ public class XmTaskController {
 
 			params.put("compete",user.getUserid());
 		}
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmTaskService.getTask(params);	//列出XmTask列表
  		if("1".equals(params.get("withParents"))  && !"1".equals(params.get("isTop"))&& datas.size()>0){
 			Set<String> pidPathsSet=new HashSet<>();
@@ -190,8 +190,7 @@ public class XmTaskController {
 		
 
 		
-		RequestUtils.transformArray(params, "skillIds");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "skillIds");		
 		IPage page=QueryTools.initPage(params);
 		xmTask.put("taskOut","1");
 		xmTask.put("ntype","0");
@@ -241,8 +240,7 @@ public class XmTaskController {
 	}
 	@RequestMapping(value="/getXmTaskSort",method=RequestMethod.GET)
 	public Result getXmTaskSort(@ApiIgnore @RequestParam Map<String,Object> params){
-		User user=LoginUtils.getCurrentUserInfo();
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		User user=LoginUtils.getCurrentUserInfo();		
 		IPage page=QueryTools.initPage(params);
 		xmTask.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskSort(xmTask);
@@ -261,9 +259,7 @@ public class XmTaskController {
 	//@HasQx(value = "xm_core_xmTask_editSomeFields",name = "批量修改修改任务中的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTaskMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			User user = LoginUtils.getCurrentUserInfo();
 			List<String> ids= (List<String>) xmTaskMap.get("ids");
 
@@ -456,13 +452,7 @@ public class XmTaskController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -542,9 +532,7 @@ public class XmTaskController {
 	//@HasQx(value = "xm_core_xmTask_addTask",name = "新增任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/addTask",method=RequestMethod.POST)
 	public Result addTask(@RequestBody XmTaskVo xmTaskVo) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 
 
 			if(!StringUtils.hasText(xmTaskVo.getNtype())){
@@ -667,13 +655,7 @@ public class XmTaskController {
 				xmTaskVo = xmTaskService.addTask(xmTaskVo);
 			}
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -695,8 +677,7 @@ public class XmTaskController {
 	public Result listXmTask(@ApiIgnore @RequestParam Map<String,Object> xmTask){
 		 
 		RequestUtils.transformArray(params, "ids");
-		RequestUtils.transformArray(params, "tagIdList");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "tagIdList");		
 		IPage page=QueryTools.initPage(params);
 
 		String taskOut= (String) xmTask.get("taskOut");
@@ -708,11 +689,9 @@ public class XmTaskController {
 				xmTask.put("cbranchId",user.getBranchId());
 			}
 		}
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTask列表
-		
-		
-		
 		
 	}
 	
@@ -723,9 +702,7 @@ public class XmTaskController {
 	//@HasQx(value = "xm_core_xmTask_del",name = "删除任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmTask(@RequestBody XmTask xmTask){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTask.getId())){
 				tips.setFailureMsg("任务编号不能为空");
@@ -757,13 +734,7 @@ public class XmTaskController {
 			xmTaskService.deleteTask(xmTaskDb);
 			xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(), xmTaskDb.getId(), "项目-任务-删除任务", "删除任务"+xmTaskDb.getName());
 
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
+		return Result.ok();  
 		
 	}
 
@@ -774,9 +745,7 @@ public class XmTaskController {
 	////@HasQx(value = "xm_core_xmTask_setTaskCreateUser",name = "修改任务责任人",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/setTaskCreateUser",method=RequestMethod.POST)
 	public Result setTaskCreateUser(@RequestBody XmTaskVo xmTaskVo) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTaskVo.getId())){
 				tips.setFailureMsg("任务编号不能为空");
@@ -811,13 +780,7 @@ public class XmTaskController {
 			 this.xmTaskService.updateSomeFieldByPk(xmTask);
 			 this.xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(),xmTaskDb.getId(),"项目-任务-修改任务责任人","修改任务【"+xmTaskDb.getName()+"】责任人。原责任人【"+xmTaskDb.getCreateUsername()+"】，新责任人【"+xmTask.getCreateUsername()+"】");
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	@ApiOperation( value = "根据主键修改一条任务信息",notes="editXmTask")
@@ -827,9 +790,7 @@ public class XmTaskController {
 	//@HasQx(value = "xm_core_xmTask_editXmTask",name = "修改任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmTask(@RequestBody XmTaskVo xmTaskVo) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTaskVo.getId())){
 				tips.setFailureMsg("任务编号不能为空");
@@ -874,13 +835,7 @@ public class XmTaskController {
 				xmTaskService.updateTask(xmTaskVo,xmTaskDb);
 			}
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	@ApiOperation( value = "根据主键修改一条任务信息",notes="editXmTask")
@@ -890,9 +845,7 @@ public class XmTaskController {
 	//@HasQx(value = "xm_core_xmTask_editTime",name = "修改任务时间",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editTime",method=RequestMethod.POST)
 	public Result editTime(@RequestBody XmTask xmTask) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTask.getId())){
 				tips.setFailureMsg("任务编号不能为空");
@@ -914,13 +867,7 @@ public class XmTaskController {
 			}
 			xmTaskService.updateTime(xmTask,xmTaskDb);
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	/**不允许直接改进度，通过报工形式改进度
@@ -931,9 +878,7 @@ public class XmTaskController {
 	//@HasQx(value = "xm_core_xmTask_editProgress",name = "修改任务进度百分比",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editProgress",method=RequestMethod.POST)
 	public Result editProgress(@RequestBody XmTask xmTask) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmTask.getId())){
 				tips.setFailureMsg("任务编号不能为空");
@@ -956,13 +901,7 @@ public class XmTaskController {
 			}
 			xmTaskService.updateProgress(xmTask,xmTaskDb);
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	**/
@@ -974,9 +913,7 @@ public class XmTaskController {
 	//@HasQx(value = "xm_core_xmTask_batchImportFromTemplate",name = "从模板导入任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchImportFromTemplate",method=RequestMethod.POST)
 	public Result batchImportFromTemplate(@RequestBody BatchImportVo batchImportVo) {
-		
-		Tips tips=new Tips("成功导入");
-		try{
+
 			List<XmTask> xmTasks=batchImportVo.getXmTasks();
 			User user=LoginUtils.getCurrentUserInfo();
  			if(xmTasks==null || xmTasks.size()==0){
@@ -1122,9 +1059,7 @@ public class XmTaskController {
 	//@HasQx(value = "xm_core_xmTask_batchRelTasksWithPhase",name = "批量将任务与一个项目计划关联",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchRelTasksWithPhase",method=RequestMethod.POST)
 	public Result batchRelTasksWithPhase(@RequestBody BatchRelTasksWithPhase tasksPhase) {
-		
-		Tips tips=new Tips("成功将任务数据与项目计划关联");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 
 			if(tasksPhase==null){
@@ -1203,13 +1138,7 @@ public class XmTaskController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}
 
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	 **/
@@ -1220,9 +1149,7 @@ public class XmTaskController {
 	//@HasQx(value = "xm_core_xmTask_batchRelTasksWithMenu",name = "批量将任务与一个用户需求关联",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchRelTasksWithMenu",method=RequestMethod.POST)
 	public Result batchRelTasksWithMenu(@RequestBody BatchRelTasksWithMenu tasksMenu) {
-		
-		Tips tips=new Tips("成功将任务与用户需求关联");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 
 			if(tasksMenu==null||tasksMenu.getTaskIds()==null||tasksMenu.getTaskIds().size()==0 ){
@@ -1316,9 +1243,7 @@ public class XmTaskController {
 	//@HasQx(value = "xm_core_xmTask_batchDel",name = "批量删除任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmTask(@RequestBody List<XmTask> xmTasks) {
-		
-		Tips tips=new Tips("成功删除"+xmTasks.size()+"条数据"); 
-		try{
+
 
 			User user=LoginUtils.getCurrentUserInfo();
 
@@ -1427,9 +1352,7 @@ public class XmTaskController {
 	//@HasQx(value = "xm_core_xmTask_batchSaveBudget",name = "批量修改任务预算",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchSaveBudget",method=RequestMethod.POST)
 	public Result batchSaveBudget(@RequestBody  List<XmTask> xmTasks) {
-		
-		Tips tips=new Tips("成功修改"+xmTasks.size()+"条数据"); 
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 
 			if(xmTasks==null || xmTasks.size()==0){
@@ -1572,9 +1495,7 @@ public class XmTaskController {
 	//@HasQx(value = "xm_core_xmTask_batchChangeParentTask",name = "批量修改任务的上级",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchChangeParentTask",method=RequestMethod.POST)
 	public Result batchChangeParentTask(@RequestBody BatchChangeParentTaskVo xmTasksVo) {
-		
-		Tips tips=new Tips("成功修改");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 
 			if(xmTasksVo.getTaskIds()==null || xmTasksVo.getTaskIds().size()==0){
@@ -1680,13 +1601,7 @@ public class XmTaskController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}
 
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	/**
@@ -1710,7 +1625,7 @@ public class XmTaskController {
 	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
 	public Result processApprova( @RequestBody Map<String,Object> flowVars){
 		
-		Tips tips=new Tips("成功新增一条数据");
+		
 		  
 		
 			

@@ -75,10 +75,10 @@ public class XmTestCaseController {
 		
 		
 		RequestUtils.transformArray(params, "ids");
-		RequestUtils.transformArray(params, "menuIds");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "menuIds");		
 		IPage page=QueryTools.initPage(params);
 		paramsInit(xmTestCase);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmTestCaseService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestCase列表
 
@@ -131,9 +131,7 @@ public class XmTestCaseController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmTestCase(@RequestBody XmTestCase xmTestCase) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 
 			xmTestCase.setId(xmTestCaseService.createKey("id"));
 			if(StringUtils.isEmpty(xmTestCase.getProductId())){
@@ -170,9 +168,7 @@ public class XmTestCaseController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmTestCase(@RequestBody XmTestCase xmTestCase){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmTestCase.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -200,9 +196,7 @@ public class XmTestCaseController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmTestCase(@RequestBody XmTestCase xmTestCase) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmTestCase.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -237,9 +231,7 @@ public class XmTestCaseController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTestCaseMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             List<String> ids= (List<String>) xmTestCaseMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -310,13 +302,7 @@ public class XmTestCaseController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -327,7 +313,7 @@ public class XmTestCaseController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmTestCase(@RequestBody List<XmTestCase> xmTestCases) {
 		
-        Tips tips=new Tips("成功删除"); 
+        
         
             if(xmTestCases.size()<=0){
                 return failed("data-0","请上送待删除数据列表");

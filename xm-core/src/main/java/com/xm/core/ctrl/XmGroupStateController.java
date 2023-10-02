@@ -57,14 +57,11 @@ public class XmGroupStateController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmProjectGroupState(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectGroupState列表
-		
-		
-		
 		
 	}
 	
@@ -77,10 +74,10 @@ public class XmGroupStateController {
 	@RequestMapping(value="/loadTasksToXmProjectGroupState",method=RequestMethod.POST)
 	public Result loadTasksToXmProjectGroupState(@RequestBody Map<String,Object> params) {
 		
-		Tips tips=new Tips("成功修改数据"); 
+		
 		
 			int i= xmGroupStateService.loadTasksToXmProjectGroupState((String) params.get("projectId"));
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}  
 	/**
@@ -90,9 +87,7 @@ public class XmGroupStateController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProjectGroupState(@RequestBody XmProjectGroupState xmGroupState) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmGroupState.getId())) {
 				xmGroupState.setId(xmGroupStateService.createKey("id"));
 			}else{
@@ -115,11 +110,9 @@ public class XmGroupStateController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProjectGroupState(@RequestBody XmProjectGroupState xmGroupState){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmGroupStateService.deleteByPk(xmGroupState);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -131,9 +124,7 @@ public class XmGroupStateController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProjectGroupState(@RequestBody XmProjectGroupState xmGroupState) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmGroupStateService.updateByPk(xmGroupState);
 		
 	}
@@ -149,10 +140,10 @@ public class XmGroupStateController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProjectGroupState(@RequestBody List<XmProjectGroupState> xmGroupStates) {
 		
-		Tips tips=new Tips("成功删除"+xmGroupStates.size()+"条数据"); 
+		
 		
 			xmGroupStateService.batchDelete(xmGroupStates);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
@@ -7,6 +8,7 @@ import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmMenuPlan;
 import com.xm.core.service.XmMenuPlanService;
 import com.xm.core.service.push.XmMenuPushMsgService;
@@ -103,14 +105,11 @@ public class XmMenuPlanController {
 	public Result listXmMenuPlan(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
 		RequestUtils.transformArray(params, "ids");
-		RequestUtils.transformArray(params, "tagIdList");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "tagIdList");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmMenuPlan> qw = QueryTools.initQueryWrapper(XmMenuPlan.class , params);
 		List<Map<String,Object>> datas = xmMenuPlanService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmMenuPlan列表
-		
-		
-		
 		
 	}
 	
@@ -124,16 +123,14 @@ public class XmMenuPlanController {
 	//@HasQx(value = "xm_core_xmMenuPlan_add",name = "新增需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmMenuPlan(@RequestBody XmMenuPlan xmMenuPlan) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(xmMenuPlanService.countByWhere(xmMenuPlan)>0){
 				tips.setFailureMsg("编号重复，请修改编号再提交");
 				m.put("tips", tips);
 				return m;
 			}
 			xmMenuPlanService.insert(xmMenuPlan);
-		
+			return Result.ok();
 	}
 	
 	
@@ -145,14 +142,11 @@ public class XmMenuPlanController {
 	//@HasQx(value = "xm_core_xmMenuPlan_del",name = "删除需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmMenuPlan(@RequestBody XmMenuPlan xmMenuPlan){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+		 
 			xmMenuPlanService.deleteByPk(xmMenuPlan);
 			User user = LoginUtils.getCurrentUserInfo();
 			pushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmMenuPlan.getMenuId(), user.getUserid(), user.getUsername(), xmMenuPlan.getMenuName()+"相关计划删除");
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
-		
+		return Result.ok();		
 	}
 	 
 	
@@ -164,13 +158,11 @@ public class XmMenuPlanController {
 	//@HasQx(value = "xm_core_xmMenuPlan_edit",name = "修改需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmMenuPlan(@RequestBody XmMenuPlan xmMenuPlan) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+		 	
 			xmMenuPlanService.updateByPk(xmMenuPlan); 
 			User user = LoginUtils.getCurrentUserInfo();
 			pushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmMenuPlan.getMenuId(), user.getUserid(), user.getUsername(),  user.getUsername()+"对需求【"+xmMenuPlan.getMenuName()+"】相关计划进行调整，需求负责人为【"+xmMenuPlan.getChargeUsername()+"】");
-		
+		return Result.ok();
 	}
 	
 	
@@ -184,12 +176,9 @@ public class XmMenuPlanController {
 	//@HasQx(value = "xm_core_xmMenuPlan_batchDel",name = "批量删除需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmMenuPlan(@RequestBody List<XmMenuPlan> xmMenuPlans) {
-		
-		Tips tips=new Tips("成功删除"+xmMenuPlans.size()+"条数据"); 
-		
+		 
 			xmMenuPlanService.batchDelete(xmMenuPlans);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
-		
+		return Result.ok();		
 	} 
 	@ApiOperation( value = "根据主键列表批量删除功能计划表,无需前端维护，所有数据由汇总统计得出信息",notes="batchEditXmMenuPlan,仅需要上传主键字段")
 	@ApiResponses({
@@ -198,17 +187,14 @@ public class XmMenuPlanController {
 	//@HasQx(value = "xm_core_xmMenuPlan_batchEdit",name = "批量修改需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchEdit",method=RequestMethod.POST)
 	public Result batchEditXmMenuPlan(@RequestBody List<XmMenuPlan> xmMenuPlans) {
-		
-		Tips tips=new Tips("成功修改"+xmMenuPlans.size()+"条数据"); 
-		
+		 
 			xmMenuPlanService.batchUpdate(xmMenuPlans);
 			User user = LoginUtils.getCurrentUserInfo();
 
 			for (XmMenuPlan xmMenuPlan : xmMenuPlans) {
 				pushMsgService.pushMenuRelUsersMsg(user.getBranchId(), xmMenuPlan.getMenuId(), user.getUserid(), user.getUsername(),  user.getUsername()+"对需求【"+xmMenuPlan.getMenuName()+"】相关计划进行调整，需求负责人为【"+xmMenuPlan.getChargeUsername()+"】");
 			}
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
-		
+		return Result.ok();		
 	} 
 	@ApiOperation( value = "根据主键列表批量删除功能计划表,无需前端维护，所有数据由汇总统计得出信息",notes="batchEditXmMenuPlan,仅需要上传主键字段")
 	@ApiResponses({
@@ -217,12 +203,8 @@ public class XmMenuPlanController {
 	//@HasQx(value = "xm_core_xmMenuPlan_batchAddPlanByProjectIdAndMenuList",name = "由分配到项目的需求创建需求计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchAddPlanByProjectIdAndMenuList",method=RequestMethod.POST)
 	public Result batchAddPlanByProjectIdAndMenuList(@RequestBody XmMenuPlanVo vo) {
-		
-		Tips tips=new Tips("成功修改"+vo.getXmMenus().size()+"条数据"); 
-		
-			tips = xmMenuPlanService.batchAddPlanByProjectIdAndMenuList(vo.getProjectId(), vo.getProjectName(), vo.getXmMenus());
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
-		
+	 	xmMenuPlanService.batchAddPlanByProjectIdAndMenuList(vo.getProjectId(), vo.getProjectName(), vo.getXmMenus());
+		return Result.ok();		
 	} 	 
 
 	@ApiOperation( value = "计算bug、task、测试案例、等数据",notes="loadTasksToXmMenuPlan")
@@ -232,11 +214,8 @@ public class XmMenuPlanController {
 	//@HasQx(value = "xm_core_xmMenuPlan_loadTasksToXmMenuPlan",name = "计算需求对应的bug、task、测试案例等数据",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/loadTasksToXmMenuPlan",method=RequestMethod.POST)
 	public Result loadTasksToXmMenuPlan(@RequestBody Map<String,Object> params) {
-		
-		Tips tips=new Tips("成功修改数据"); 
-		
+ 
 			int i= xmMenuPlanService.loadTasksToXmMenuPlan((String) params.get("projectId"));
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
-		
+		return Result.ok();		
 	}  
 }

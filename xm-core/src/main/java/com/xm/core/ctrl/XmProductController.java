@@ -96,8 +96,7 @@ public class XmProductController {
 	public Result listXmProduct(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		String id= (String) params.get("id");
 		Object ids=  params.get("ids");
@@ -138,6 +137,7 @@ public class XmProductController {
 				params.put("platformBranchId",platformBranchId);
 			}
 		}
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmProductService.selectListMapByWhere(page,qw,params);
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProduct列表
 
@@ -150,8 +150,7 @@ public class XmProductController {
 	public Result listWithState(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		String id= (String) params.get("id");
 		Object ids=  params.get("ids");
@@ -193,9 +192,7 @@ public class XmProductController {
 	//@HasQx(value = "xm_core_xmProduct_copyTo",name = "通过复制创建产品/战略规划等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/copyTo",method=RequestMethod.POST)
 	public Result copyTo(@RequestBody XmProductCopyVo xmProduct) {
-		
-		Tips tips=new Tips("拷贝成功");
-		try{
+
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProduct.getId())){
 				return failed("id-0","请上送原产品编号参数id");
@@ -217,13 +214,7 @@ public class XmProductController {
 			this.xmProductStateService.loadTasksToXmProductState(xmProductNew.getId());
 			xmRecordService.addXmProductRecord(xmProductNew.getId(),"通过拷贝创建产品","拷贝产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】,创建新的产品【"+xmProductNew.getId()+"】【"+xmProductNew.getProductName()+"】","参数:"+ JSON.toJSONString(xmProduct),"");
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	
@@ -235,9 +226,7 @@ public class XmProductController {
 	//@HasQx(value = "xm_core_xmProduct_add",name = "创建产品/战略规划等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProduct(@RequestBody XmProductAddVo xmProduct) {
-		
-		Tips tips=new Tips("创建产品成功");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			if(StringUtils.isEmpty(xmProduct.getCode())) {
 				return failed("code-0","","产品代号不能为空");
@@ -312,9 +301,7 @@ public class XmProductController {
 	//@HasQx(value = "xm_core_xmProduct_unDel",name = "从回收站恢复产品等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/unDel",method=RequestMethod.POST)
 	public Result unDelXmProduct(@RequestBody XmProduct xmProduct){
-		
-		Tips tips=new Tips("成功从回收站恢复产品");
-		try{
+
 			if(!StringUtils.hasText(xmProduct.getId())){
 				return failed("id-0","","产品编号不能为空");
 			}
@@ -351,13 +338,7 @@ public class XmProductController {
 			xmProductService.clearCache(xmProduct.getId());
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"从回收站恢复产品",user.getUsername()+"从回收站恢复产品产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】","",JSON.toJSONString(xmProductDb));
 
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	
@@ -369,9 +350,7 @@ public class XmProductController {
 	//@HasQx(value = "xm_core_xmProduct_del",name = "删除产品/战略规划等",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProduct(@RequestBody XmProduct xmProduct){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			if(!StringUtils.hasText(xmProduct.getId())){
 				return failed("id-0","","产品编号不能为空");
 			}
@@ -418,9 +397,7 @@ public class XmProductController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmProductMap) {
-		
-		Tips tips=new Tips("成功更新");
-		try{
+
 			List<String> ids= (List<String>) xmProductMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -492,13 +469,7 @@ public class XmProductController {
 			if(StringUtils.hasText(xmProduct.getAdmUserid()) && !xmProduct.getAdmUserid().equals(xmProductDb.getAdmUserid())){
 				notifyMsgService.pushMsg(user,xmProduct.getAdmUserid(),xmProduct.getAdmUsername(),"3",xmProductDb.getId(),xmProductDb.getId(),"您成为产品【"+xmProductDb.getProductName()+"】的产品总监，请及时跟进。");
 			}
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	
@@ -510,19 +481,11 @@ public class XmProductController {
 	//@HasQx(value = "xm_core_xmProduct_createProductCode",name = "创建产品代号",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/createProductCode",method=RequestMethod.POST)
 	public Result createProductCode() {
-		
-		Tips tips=new Tips("成功创建产品代号");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			String data=this.xmProductService.createProductCode(user.getBranchId());
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -535,9 +498,7 @@ public class XmProductController {
 	//@HasQx(value = "xm_core_xmProduct_edit",name = "修改产品/战略规划等基本信息",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProduct(@RequestBody XmProduct xmProduct) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 
 			if(!StringUtils.hasText(xmProduct.getId())){
 				return failed("id-0","","产品编号不能为空");
@@ -583,9 +544,7 @@ public class XmProductController {
 	//@HasQx(value = "xm_core_xmProduct_batchDel",name = "批量删除产品/战略规划等基本信息",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProduct(@RequestBody List<XmProduct> xmProducts) {
-		
-		Tips tips=new Tips("成功删除"+xmProducts.size()+"条数据"); 
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
  			List<XmProduct> canDelList=new ArrayList<>();
 			List<Tips> errTips=new ArrayList<>();

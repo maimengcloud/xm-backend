@@ -110,8 +110,7 @@ public class XmTaskExecuserController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmTaskExecuser(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		String projectId= (String) params.get("projectId");
@@ -124,11 +123,9 @@ public class XmTaskExecuserController {
 		}
 
 
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmTaskExecuserService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskExecuser列表
-		
-		
-		
 		
 	}
 
@@ -141,8 +138,7 @@ public class XmTaskExecuserController {
 	@RequestMapping(value="/listWithTask",method=RequestMethod.GET)
 	public Result listXmTaskExecuserWithTask(@ApiIgnore @RequestParam Map<String,Object> params){
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		String projectId= (String) params.get("projectId");
@@ -167,9 +163,7 @@ public class XmTaskExecuserController {
 	////@HasQx(value = "xm_core_xmTaskExecuser_add",name = "新增任务执行者",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmTaskExecuser(@RequestBody XmTaskExecuser xmTaskExecuser) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 
 			 User user=LoginUtils.getCurrentUserInfo();
 			XmTask xmTaskDb=xmTaskService.selectOneObject(new XmTask(xmTaskExecuser.getTaskId()));
@@ -249,9 +243,7 @@ public class XmTaskExecuserController {
 	////@HasQx(value = "xm_core_xmTaskExecuser_leave",name = "执行人离开任务",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/leave",method=RequestMethod.POST)
 	public Result leave(@RequestBody List<XmTaskExecuser> xmTaskExecusers) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			if(xmTaskExecusers==null || xmTaskExecusers.size()==0){
 				tips.setFailureMsg("执行人列表不能为空");
 				m.put("tips", tips);
@@ -309,13 +301,7 @@ public class XmTaskExecuserController {
 			}else{
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -327,9 +313,7 @@ public class XmTaskExecuserController {
 	////@HasQx(value = "xm_core_xmTaskExecuser_execute",name = "修改任务执行人基础信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/execute",method=RequestMethod.POST)
 	public Result execute(@RequestBody  XmTaskExecuser xmTaskExecuser) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			/**
 			 * 如果是候选人变更为执行人，需要检查该候选人是否已加入项目中的某个组
 			 */
@@ -404,13 +388,7 @@ public class XmTaskExecuserController {
 
 			}
  			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -421,9 +399,7 @@ public class XmTaskExecuserController {
 	////@HasQx(value = "xm_core_xmTaskExecuser_execute",name = "修改任务执行人基础信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/acceptance",method=RequestMethod.POST)
 	public Result acceptance(@RequestBody XmTaskAcceptanceVo xmTaskAcceptanceVo) {
-		
-		Tips tips=new Tips("成功验收");
-		try{
+
 			String taskId=xmTaskAcceptanceVo.getTaskId();
 			if(!StringUtils.hasText(taskId)){
 				tips.setFailureMsg("taskId-0");
@@ -496,13 +472,7 @@ public class XmTaskExecuserController {
 
 
 
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -514,9 +484,7 @@ public class XmTaskExecuserController {
 	////@HasQx(value = "xm_core_xmTaskExecuser_quotePrice",name = "项目中的任务报价",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/quotePrice",method=RequestMethod.POST)
 	public Result quotePrice(@RequestBody XmTaskExecuser xmTaskExecuser) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			String taskId=xmTaskExecuser.getTaskId();
 			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
 			if(xmTask==null ){
@@ -550,13 +518,7 @@ public class XmTaskExecuserController {
 				
 
 			}
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	@ApiOperation( value = "变更为候选人",notes="quotePrice")
@@ -566,9 +528,7 @@ public class XmTaskExecuserController {
 	////@HasQx(value = "xm_core_xmTaskExecuser_candidate",name = "变更成为任务候选人",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/candidate",method=RequestMethod.POST)
 	public Result becomeCandidate(@RequestBody XmTaskExecuser xmTaskExecuser) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			String taskId=xmTaskExecuser.getTaskId();
 			XmTask xmTask= xmTaskService.selectOneObject(new XmTask(taskId));
 			if(xmTask==null ){
@@ -593,13 +553,7 @@ public class XmTaskExecuserController {
 				
 
 			}
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	
@@ -612,9 +566,7 @@ public class XmTaskExecuserController {
 	////@HasQx(value = "xm_core_xmTaskExecuser_del",name = "删除项目中任务的执行人",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmTaskExecuser(@RequestBody XmTaskExecuser xmTaskExecuser){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			String taskId=xmTaskExecuser.getTaskId();
 			XmTask xmTaskDb= xmTaskService.selectOneObject(new XmTask(taskId));
 			if(xmTaskDb==null ){

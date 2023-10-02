@@ -88,16 +88,13 @@ public class XmGroupUserController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmProjectGroupUser(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectGroupUser列表
-		
-		
-		
 		
 	}
 	
@@ -109,9 +106,7 @@ public class XmGroupUserController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProjectGroupUser(@RequestBody XmGroupUser gu) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 
 			if(!StringUtils.hasText(gu.getGroupId())||!StringUtils.hasText(gu.getUserid())){
 				return ResponseHelper.failed("pk-0","请上送小组编号，用户编号groupId,userid");
@@ -186,13 +181,7 @@ public class XmGroupUserController {
 			}
 
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
+		return Result.ok();  
 		
 	}
 
@@ -202,9 +191,7 @@ public class XmGroupUserController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProjectGroupUser(@RequestBody XmGroupUser gu){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			if(!StringUtils.hasText(gu.getGroupId())||!StringUtils.hasText(gu.getUserid())){
 				return ResponseHelper.failed("pk-0","请上送小组编号，用户编号groupId,userid");
 			}
@@ -288,9 +275,7 @@ public class XmGroupUserController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProjectGroupUser(@RequestBody XmGroupUser gu0) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			if(!StringUtils.hasText(gu0.getGroupId())||!StringUtils.hasText(gu0.getUserid())){
 				return ResponseHelper.failed("pk-0","请上送小组编号，用户编号groupId,userid");
 			}
@@ -365,8 +350,8 @@ public class XmGroupUserController {
 		if(gus==null || gus.size()==0){
 			return ResponseHelper.failed("data-0","请上送要删除的小组成员");
 		}
-		Tips tips=new Tips("成功新增"+gus.size()+"条数据");
-		try{
+		
+				
 			if(gus.stream().filter(i->!StringUtils.hasText(i.getUserid())||!StringUtils.hasText(i.getGroupId())).findAny().isPresent()){
 				return ResponseHelper.failed("userid-or-groupId-0","请上送用户编号及小组编号");
 			}else{
@@ -490,13 +475,7 @@ public class XmGroupUserController {
 			});
 
 
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -511,8 +490,8 @@ public class XmGroupUserController {
 		if(gus==null || gus.size()==0){
 			return ResponseHelper.failed("data-0","请上送要删除的小组成员");
 		}
-		Tips tips=new Tips("成功删除"+gus.size()+"条数据");
-		try{
+		
+				
 			List<XmGroupUser> gusDb=this.xmGroupUserService.selectListByIds(gus);
 			if(gusDb.size()==0){
 				return ResponseHelper.failed("data-0","要删除的数据已不存在。");

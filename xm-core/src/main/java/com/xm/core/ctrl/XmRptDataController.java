@@ -64,11 +64,11 @@ public class XmRptDataController {
 	public Result listXmRptData(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("cbranchId",user.getBranchId());
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmRptDataService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmRptData列表
 
@@ -82,9 +82,7 @@ public class XmRptDataController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmRptData(@RequestBody XmRptData xmRptData) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			xmRptData.setId(xmRptDataService.createKey("id"));
 			User user= LoginUtils.getCurrentUserInfo();
 			xmRptData.setCuserid(user.getUserid());
@@ -94,13 +92,7 @@ public class XmRptDataController {
 			xmRptData.setBizDate(DateUtils.getDate("yyyy-MM-dd"));
 			xmRptDataService.insert(xmRptData);
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
+		return Result.ok();  
 		
 	}
 
@@ -110,9 +102,7 @@ public class XmRptDataController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmRptData(@RequestBody XmRptData xmRptData){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmRptData.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -125,7 +115,7 @@ public class XmRptDataController {
 				return failed("not-yours","只能删除自己创建的报表");
 			}
 			xmRptDataService.deleteByPk(xmRptData);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	
@@ -136,9 +126,7 @@ public class XmRptDataController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmRptData(@RequestBody XmRptData xmRptData) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmRptData.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -159,9 +147,7 @@ public class XmRptDataController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmRptDataMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             List<String> ids= (List<String>) xmRptDataMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -213,13 +199,7 @@ public class XmRptDataController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	*/
@@ -232,7 +212,7 @@ public class XmRptDataController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmRptData(@RequestBody List<XmRptData> xmRptDatas) {
 		
-        Tips tips=new Tips("成功删除"); 
+        
         
             if(xmRptDatas.size()<=0){
                 return failed("data-0","请上送待删除数据列表");

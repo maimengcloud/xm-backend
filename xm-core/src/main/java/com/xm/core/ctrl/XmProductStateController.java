@@ -96,16 +96,13 @@ public class XmProductStateController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmProductState(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmProductStateService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProductState列表
-		
-		
-		
 		
 	}
 	@ApiOperation( value = "计算bug、task、测试案例、等数据",notes="loadTasksToXmProductState")
@@ -115,10 +112,10 @@ public class XmProductStateController {
 	@RequestMapping(value="/loadTasksToXmProductState",method=RequestMethod.POST)
 	public Result loadTasksToXmProductState(@RequestBody Map<String,Object> params) {
 		
-		Tips tips=new Tips("成功修改数据"); 
+		
 		
 			int i= xmProductStateService.loadTasksToXmProductState((String) params.get("productId"));
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}  
 	
@@ -129,9 +126,7 @@ public class XmProductStateController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProductState(@RequestBody XmProductState xmProductState) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmProductState.getId())) {
 				xmProductState.setId(xmProductStateService.createKey("id"));
 			}else{
@@ -154,11 +149,9 @@ public class XmProductStateController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProductState(@RequestBody XmProductState xmProductState){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmProductStateService.deleteByPk(xmProductState);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -170,9 +163,7 @@ public class XmProductStateController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProductState(@RequestBody XmProductState xmProductState) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmProductStateService.updateByPk(xmProductState);
 		
 	}
@@ -188,10 +179,10 @@ public class XmProductStateController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProductState(@RequestBody List<XmProductState> xmProductStates) {
 		
-		Tips tips=new Tips("成功删除"+xmProductStates.size()+"条数据"); 
+		
 		
 			xmProductStateService.batchDelete(xmProductStates);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

@@ -1,6 +1,7 @@
 package com.xm.core.ctrl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
@@ -13,6 +14,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.service.*;
@@ -96,26 +98,25 @@ public class XmIterationController {
 	public Result listXmIteration(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
-		String id= (String) xmIteration.get("id");
-		Object ids=  xmIteration.get("ids");
-		String productId= (String) xmIteration.get("productId");
-		String adminUserid= (String) xmIteration.get("adminUserid");
-		String menuId= (String) xmIteration.get("menuId");
-		String queryScope=(String) xmIteration.get("queryScope");
-		String branchId=(String) xmIteration.get("branchId");
-		String linkProjectId=(String) xmIteration.get("linkProjectId");
+		String id= (String) params.get("id");
+		Object ids=  params.get("ids");
+		String productId= (String) params.get("productId");
+		String adminUserid= (String) params.get("adminUserid");
+		String menuId= (String) params.get("menuId");
+		String queryScope=(String) params.get("queryScope");
+		String branchId=(String) params.get("branchId");
+		String linkProjectId=(String) params.get("linkProjectId");
 		User user = LoginUtils.getCurrentUserInfo();
-		xmIteration.put("userid",user.getUserid());
+		params.put("userid",user.getUserid());
 		if(  !( StringUtils.hasText(branchId)|| StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
 				|| StringUtils.hasText(adminUserid) ) ){
 			if(LoginUtils.isBranchAdmin()){
 		params.put("branchId",user.getBranchId());
 			}else{
 				if(!StringUtils.hasText(productId) && !StringUtils.hasText(linkProjectId)){
-					xmIteration.put("compete",user.getUserid());
+					params.put("compete",user.getUserid());
 				}else{
 		params.put("branchId",user.getBranchId());
 				}
@@ -124,6 +125,7 @@ public class XmIterationController {
 		if("branchId".equals(queryScope)){
 		params.put("branchId",user.getBranchId());
 		}
+		QueryWrapper<XmIteration> qw = QueryTools.initQueryWrapper(XmIteration.class , params);
 		List<Map<String,Object>> datas = xmIterationService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmIteration列表
 
@@ -136,27 +138,26 @@ public class XmIterationController {
 	@RequestMapping(value="/listWithState",method=RequestMethod.GET)
 	public Result listWithState(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 
-		String id= (String) xmIteration.get("id");
-		Object ids=  xmIteration.get("ids");
-		String productId= (String) xmIteration.get("productId");
-		String adminUserid= (String) xmIteration.get("adminUserid");
-		String menuId= (String) xmIteration.get("menuId");
-		String queryScope=(String) xmIteration.get("queryScope");
-		String branchId=(String) xmIteration.get("branchId");
-		String linkProjectId=(String) xmIteration.get("linkProjectId");
+		String id= (String) params.get("id");
+		Object ids=  params.get("ids");
+		String productId= (String) params.get("productId");
+		String adminUserid= (String) params.get("adminUserid");
+		String menuId= (String) params.get("menuId");
+		String queryScope=(String) params.get("queryScope");
+		String branchId=(String) params.get("branchId");
+		String linkProjectId=(String) params.get("linkProjectId");
 		User user = LoginUtils.getCurrentUserInfo();
-		xmIteration.put("userid",user.getUserid());
+		params.put("userid",user.getUserid());
 		if(  !(StringUtils.hasText(branchId)|| StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
 				|| StringUtils.hasText(adminUserid) ) ){
 			if(LoginUtils.isBranchAdmin()){
 		params.put("branchId",user.getBranchId());
 			}else{
 				if(!StringUtils.hasText(productId) && !StringUtils.hasText(linkProjectId)){
-					xmIteration.put("compete",user.getUserid());
+					params.put("compete",user.getUserid());
 				}else{
 		params.put("branchId",user.getBranchId());
 				}
@@ -165,9 +166,9 @@ public class XmIterationController {
 		if("branchId".equals(queryScope)){
 		params.put("branchId",user.getBranchId());
 		}
-		List<Map<String,Object>>	xmIterationList = xmIterationService.selectListMapByWhereWithState(xmIteration);	//列出XmIteration列表
+		List<Map<String,Object>>	datas = xmIterationService.selectListMapByWhereWithState(params);	//列出XmIteration列表
 		
-		
+		return Result.ok().setData(datas);
 		
 		
 	}
@@ -180,9 +181,7 @@ public class XmIterationController {
 	//@HasQx(value = "xm_core_xmIteration_add",name = "新增迭代计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmIteration(@RequestBody XmIterationVo xmIteration) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			XmIteration q=new XmIteration();
 			User user= LoginUtils.getCurrentUserInfo();
 
@@ -242,9 +241,7 @@ public class XmIterationController {
 	//@HasQx(value = "xm_core_xmIteration_del",name = "删除迭代计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmIteration(@RequestBody XmIteration xmIteration){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			if(!StringUtils.hasText(xmIteration.getId())){
 				return failed("id-0","请上送迭代编号");
 			}
@@ -266,7 +263,7 @@ public class XmIterationController {
 			xmIterationService.deleteByPk(xmIteration);
 			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-删除","删除迭代"+iterationDb.getIterationName(),"", JSON.toJSONString(iterationDb));
 
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 
@@ -279,9 +276,7 @@ public class XmIterationController {
 	//@HasQx(value = "xm_core_xmIteration_edit",name = "修改迭代计划",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmIteration(@RequestBody XmIteration xmIteration) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			if(!StringUtils.hasText(xmIteration.getId())){
 				return failed("id-0","请上送迭代编号");
 			}
@@ -312,9 +307,7 @@ public class XmIterationController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmIterationMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			List<String> ids= (List<String>) xmIterationMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -403,22 +396,14 @@ public class XmIterationController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
 	//@HasQx(value = "xm_core_xmIteration_loadTasksToXmIterationState",name = "计算迭代的bug、工作量、人员投入、进度等",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/loadTasksToXmIterationState",method=RequestMethod.POST)
 	public Result loadTasksToXmIterationState(@RequestBody XmIteration xmIteration) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			if(!StringUtils.hasText(xmIteration.getId())){
 				return failed("id-0","请上送迭代编号");
 			}
@@ -433,7 +418,7 @@ public class XmIterationController {
 				xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-汇总","汇总计算迭代数据"+iterationDb.getIterationName());
 
 			}
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	
@@ -445,7 +430,7 @@ public class XmIterationController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmIteration(@RequestBody List<XmIteration> xmIterations) {
 		
-		Tips tips=new Tips("成功删除"+xmIterations.size()+"条数据"); 
+		
 		
 			xmIterationService.batchDelete(xmIterations);
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());

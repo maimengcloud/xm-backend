@@ -117,16 +117,13 @@ public class XmProjectStateController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmProjectState(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmProjectStateService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectState列表
-		
-		
-		
 		
 	}
 
@@ -138,16 +135,12 @@ public class XmProjectStateController {
 	@RequestMapping(value="/list/portal",method=RequestMethod.GET)
 	public Result listXmProductStateForPortal(@ApiIgnore @RequestParam Map<String,Object> params){
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		List<Map<String,Object>>	xmProjectStateList =null;	//列出XmProductState列表
 		if(xmProjectStateList==null){
 			xmProjectStateList=xmProjectStateService.selectPortalProjectStates(xmProductState);
  		}
-		
-		
-		
 		
 	}
 	 
@@ -158,16 +151,14 @@ public class XmProjectStateController {
 	}) 
 	@RequestMapping(value="/loadTasksToXmProjectState",method=RequestMethod.POST)
 	public Result loadTasksToXmProjectState(@RequestBody XmProjectState xmProjectState){
-		
-		Tips tips=new Tips("成功更新一条项目数据");
-		try{
+
 			if(StringUtils.isEmpty(xmProjectState.getProjectId())) {
 				tips.setFailureMsg("项目编号projectId必填");
 			}else {
 	
 				xmProjectStateService.loadTasksToXmProjectState(xmProjectState.getProjectId());
 			}
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	@ApiOperation( value = "从结算单抽取实际成本等统计数据更新到状态报告中",notes="")
@@ -176,16 +167,14 @@ public class XmProjectStateController {
 	}) 
 	@RequestMapping(value="/loadTasksSettleToXmProjectState",method=RequestMethod.POST)
 	public Result loadTasksSettleToXmProjectState(@RequestBody XmProjectState xmProjectState){
-		
-		Tips tips=new Tips("成功更新一条项目数据");
-		try{
+
 			if(StringUtils.isEmpty(xmProjectState.getProjectId())) {
 				tips.setFailureMsg("项目编号projectId必填");
 			}else {
 	
 				xmProjectStateService.loadTasksSettleToXmProjectState(xmProjectState.getProjectId());
 			}
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	/**
@@ -195,9 +184,7 @@ public class XmProjectStateController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProjectState(@RequestBody XmProjectState xmProjectState) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmProjectState.getId())) {
 				xmProjectState.setId(xmProjectStateService.createKey("id"));
 			}else{
@@ -220,11 +207,9 @@ public class XmProjectStateController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProjectState(@RequestBody XmProjectState xmProjectState){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmProjectStateService.deleteByPk(xmProjectState);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -236,9 +221,7 @@ public class XmProjectStateController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProjectState(@RequestBody XmProjectState xmProjectState) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmProjectStateService.updateByPk(xmProjectState);
 		
 	}
@@ -254,10 +237,10 @@ public class XmProjectStateController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProjectState(@RequestBody List<XmProjectState> xmProjectStates) {
 		
-		Tips tips=new Tips("成功删除"+xmProjectStates.size()+"条数据"); 
+		
 		
 			xmProjectStateService.batchDelete(xmProjectStates);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

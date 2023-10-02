@@ -79,11 +79,11 @@ public class XmTaskSbillController {
 	public Result listXmTaskSbill(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmTaskSbillService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskSbill列表
 
@@ -98,9 +98,7 @@ public class XmTaskSbillController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmTaskSbill(@RequestBody XmTaskSbill xmTaskSbill) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 		    boolean createPk=false;
 			if(StringUtils.isEmpty(xmTaskSbill.getId())) {
 			    createPk=true;
@@ -141,7 +139,7 @@ public class XmTaskSbillController {
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmTaskSbill(@RequestBody XmTaskSbill xmTaskSbill){
 		
-		Tips tips=new Tips("成功删除一条数据");
+		
 		if( xmTaskSbill==null || !StringUtils.hasText(xmTaskSbill.getId())){
 			tips.setFailureMsg("请上送结算单编号");
 			m.put("tips", tips);
@@ -158,10 +156,10 @@ public class XmTaskSbillController {
 			m.put("tips", tips);
 			return m;
 		}
-		try{
+				
 			//删除结算单时候，要一起恢复工时单为未加入结算状态
 			xmTaskSbillService.deleteByPkAndReturnWorkload(sbillDb);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 
@@ -175,7 +173,7 @@ public class XmTaskSbillController {
 	public Result batchJoinToSbill(@RequestBody BatchJoinToSbillVo batchJoinToSbill) {
 
 		
-		Tips tips=new Tips("成功更新一条数据");
+		
 		if(!StringUtils.hasText(batchJoinToSbill.getSbillId())){
 			return ResponseHelper.failed("sbillId-0","请上送结算单编号");
 		}
@@ -183,7 +181,7 @@ public class XmTaskSbillController {
 			return ResponseHelper.failed("workloadIds-0","请上送workloadIds");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
-		try{
+				
 			XmTaskSbill sbillDb=this.xmTaskSbillService.selectOneById(batchJoinToSbill.getSbillId());
 			if(sbillDb==null){
 				return ResponseHelper.failed("sbill-0","结算单不存在");
@@ -292,13 +290,7 @@ public class XmTaskSbillController {
 			this.xmTaskSbillService.batchJoinToSbill(workloadsDb3.stream().map(i->i.getId()).collect(Collectors.toList()), canAdd,sameSbillDetails);
 
 
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -309,7 +301,7 @@ public class XmTaskSbillController {
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmTaskSbill(@RequestBody XmTaskSbill xmTaskSbill) {
 		
-		Tips tips=new Tips("成功更新一条数据");
+		
 		if( xmTaskSbill==null || !StringUtils.hasText(xmTaskSbill.getId())){
 			tips.setFailureMsg("请上送结算单编号");
 			m.put("tips", tips);
@@ -327,7 +319,7 @@ public class XmTaskSbillController {
 			m.put("tips", tips);
 			return m;
 		}
-		try{
+				
 			xmTaskSbill.setLtime(new Date());
 			xmTaskSbillService.updateByPk(xmTaskSbill);
 		
@@ -343,9 +335,7 @@ public class XmTaskSbillController {
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmTaskSbill(@RequestBody List<XmTaskSbill> xmTaskSbills) {
-		
-		Tips tips=new Tips("成功删除"+xmTaskSbills.size()+"条数据");
-		try{
+
 			xmTaskSbillService.batchDelete(xmTaskSbills);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -365,7 +355,7 @@ public class XmTaskSbillController {
 	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
 	public Result sbillProcessApprova(@RequestBody Map<String,Object> paramMap) {
 		Map<String,Object> map=new HashMap<>();
-		Tips tips=new Tips("成功更新结算单状态");
+		
 
 		String sbillId= (String) paramMap.get("sbillId");
 		if( !StringUtils.hasText(sbillId)){
@@ -375,7 +365,7 @@ public class XmTaskSbillController {
 		}
 		map.putAll(paramMap);
 
-		try{
+				
 			this.xmTaskSbillService.processApprova(map);
 			logger.debug("procInstId====="+paramMap.get("procInstId"));
 		}catch (BizException e) {

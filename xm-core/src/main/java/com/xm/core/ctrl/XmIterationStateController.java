@@ -1,10 +1,12 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmIterationState;
 import com.xm.core.service.XmIterationStateService;
 import io.swagger.annotations.*;
@@ -82,14 +84,11 @@ public class XmIterationStateController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmIterationState(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmIterationState> qw = QueryTools.initQueryWrapper(XmIterationState.class , params);
 		List<Map<String,Object>> datas = xmIterationStateService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmIterationState列表
-		
-		
-		
 		
 	}
 
@@ -100,10 +99,10 @@ public class XmIterationStateController {
 	@RequestMapping(value="/loadTasksToXmIterationState",method=RequestMethod.POST)
 	public Result loadTasksToXmIterationState(@RequestBody Map<String,Object> params) {
 		
-		Tips tips=new Tips("成功修改数据"); 
+		
 		
 			int i= xmIterationStateService.loadTasksToXmIterationState((String) params.get("iterationId"));
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}  
  
@@ -115,9 +114,7 @@ public class XmIterationStateController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmIterationState(@RequestBody XmIterationState xmIterationState) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmIterationState.getId())) {
 				xmIterationState.setId(xmIterationStateService.createKey("id"));
 			}else{
@@ -140,11 +137,9 @@ public class XmIterationStateController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmIterationState(@RequestBody XmIterationState xmIterationState){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmIterationStateService.deleteByPk(xmIterationState);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -156,9 +151,7 @@ public class XmIterationStateController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmIterationState(@RequestBody XmIterationState xmIterationState) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmIterationStateService.updateByPk(xmIterationState);
 		
 	}
@@ -174,10 +167,10 @@ public class XmIterationStateController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmIterationState(@RequestBody List<XmIterationState> xmIterationStates) {
 		
-		Tips tips=new Tips("成功删除"+xmIterationStates.size()+"条数据"); 
+		
 		
 			xmIterationStateService.batchDelete(xmIterationStates);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

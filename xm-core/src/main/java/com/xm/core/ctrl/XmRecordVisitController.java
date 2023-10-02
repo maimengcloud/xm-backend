@@ -66,9 +66,9 @@ public class XmRecordVisitController {
 	public Result listXmRecordVisit(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmRecordVisitService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmRecordVisit列表
 
@@ -82,9 +82,7 @@ public class XmRecordVisitController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmRecordVisit(@RequestBody XmRecordVisit xmRecordVisit) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(!StringUtils.hasText(xmRecordVisit.getBizId())){
 				return ResponseHelper.failed("bizId-0","bizId不能为空");
 			}
@@ -112,13 +110,7 @@ public class XmRecordVisitController {
 
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
+		return Result.ok();  
 		
 	}
 
@@ -140,9 +132,7 @@ public class XmRecordVisitController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmRecordVisit(@RequestBody XmRecordVisit xmRecordVisit){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmRecordVisit.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -151,7 +141,7 @@ public class XmRecordVisitController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmRecordVisitService.deleteByPk(xmRecordVisit);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -163,9 +153,7 @@ public class XmRecordVisitController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmRecordVisit(@RequestBody XmRecordVisit xmRecordVisit) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmRecordVisit.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -186,9 +174,7 @@ public class XmRecordVisitController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmRecordVisitMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             List<String> ids= (List<String>) xmRecordVisitMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -240,13 +226,7 @@ public class XmRecordVisitController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	*/
@@ -259,7 +239,7 @@ public class XmRecordVisitController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmRecordVisit(@RequestBody List<XmRecordVisit> xmRecordVisits) {
 		
-        Tips tips=new Tips("成功删除"); 
+        
         
             if(xmRecordVisits.size()<=0){
                 return failed("data-0","请上送待删除数据列表");

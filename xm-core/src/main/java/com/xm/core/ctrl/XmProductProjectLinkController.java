@@ -66,14 +66,11 @@ public class XmProductProjectLinkController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmProductProjectLink(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "projectIds");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "projectIds");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmProductProjectLinkService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProductProjectLink列表
-		
-		
-		
 		
 	}
 	
@@ -85,9 +82,7 @@ public class XmProductProjectLinkController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProductProjectLink(@RequestBody XmProductProjectLink xmProductProjectLink) {
-		
-		Tips tips=new Tips("成功加入");
-		try{
+
 			User user = LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmProductProjectLink.getProductId())){
 				return ResponseHelper.failed("productId-0","产品编号不能为空");
@@ -123,9 +118,7 @@ public class XmProductProjectLinkController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProductProjectLink(@RequestBody XmProductProjectLink xmProductProjectLink){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			User user = LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmProductProjectLink.getProductId())){
 				return ResponseHelper.failed("productId-0","产品编号不能为空");
@@ -143,7 +136,7 @@ public class XmProductProjectLinkController {
 				return ResponseHelper.failed("tasks-not-0","存在至少"+tasks.size()+"个任务与产品关联，不能移出.关联任务【"+tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			xmProductProjectLinkService.deleteByPk(xmProductProjectLink);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	
@@ -154,9 +147,7 @@ public class XmProductProjectLinkController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProductProjectLink(@RequestBody XmProductProjectLink xmProductProjectLink) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmProductProjectLinkService.updateByPk(xmProductProjectLink);
 		
 	}
@@ -168,9 +159,7 @@ public class XmProductProjectLinkController {
 	})
  	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields(@RequestBody Map<String,Object> map) {
-		
-		Tips tips=new Tips("成功更新");
-		try{
+
 			List<Map<String,Object>> ids= (List<Map<String, Object>>) map.get("pkList");
 
 			if(ids==null || ids.size()==0){
@@ -192,13 +181,7 @@ public class XmProductProjectLinkController {
 				return ResponseHelper.failed("fieldKey-0","没有需要更新的字段");
 			}
 			this.xmProductProjectLinkService.editSomeFields(map);
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	
@@ -210,10 +193,10 @@ public class XmProductProjectLinkController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProductProjectLink(@RequestBody List<XmProductProjectLink> xmProductProjectLinks) {
 		
-		Tips tips=new Tips("成功删除"+xmProductProjectLinks.size()+"条数据"); 
+		
 		
 			xmProductProjectLinkService.batchDelete(xmProductProjectLinks);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

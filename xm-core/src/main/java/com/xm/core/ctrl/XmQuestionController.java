@@ -102,8 +102,7 @@ public class XmQuestionController {
 		 
 		RequestUtils.transformArray(params, "ids");
 		RequestUtils.transformArray(params, "menuIds");
-		RequestUtils.transformArray(params, "tagIdList");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "tagIdList");		
 		IPage page=QueryTools.initPage(params);
 		User user = LoginUtils.getCurrentUserInfo();
 		if(LoginUtils.isBranchAdmin()){
@@ -132,9 +131,6 @@ public class XmQuestionController {
 		List<Map<String,Object>>	datas = xmQuestionService.getQuestion(params);	//列出XmQuestion列表
 		return Result.ok().setData(datas);
 		
-		
-		
-		
 	}
 
 
@@ -162,8 +158,7 @@ public class XmQuestionController {
 	}
 	@RequestMapping(value="/getXmQuestionSort",method=RequestMethod.GET)
 	public Result getXmQuestionSort(@ApiIgnore @RequestParam Map<String,Object> params){
-		User user=LoginUtils.getCurrentUserInfo();
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		User user=LoginUtils.getCurrentUserInfo();		
 		IPage page=QueryTools.initPage(params);
 		xmQuestion.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionSort(xmQuestion);
@@ -181,9 +176,7 @@ public class XmQuestionController {
 	//@HasQx(value = "xm_core_xmQuestion_add",name = "新增bug",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmQuestion(@RequestBody XmQuestionVo xmQuestionVo) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(!StringUtils.hasText(xmQuestionVo.getProjectId())){
 				tips.setFailureMsg("项目编号projectId必传");
 				m.put("tips", tips);
@@ -239,11 +232,9 @@ public class XmQuestionController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmQuestion(@RequestBody XmQuestion xmQuestion){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmQuestionService.deleteByPk(xmQuestion);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -255,9 +246,7 @@ public class XmQuestionController {
 	//@HasQx(value = "xm_core_xmQuestion_edit",name = "修改bug",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmQuestion(@RequestBody XmQuestionVo xmQuestionVo) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 
 
 			if(!StringUtils.hasText(xmQuestionVo.getId())){
@@ -283,9 +272,7 @@ public class XmQuestionController {
 	//@HasQx(value = "xm_core_xmQuestion_editStatus",name = "修改bug状态",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editStatus",method=RequestMethod.POST)
 	public Result editStatus(@RequestBody XmQuestion xmQuestion) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 
 			if(!StringUtils.hasText(xmQuestion.getId())){
 				return failed("id-0","编号不能为空");
@@ -302,13 +289,7 @@ public class XmQuestionController {
 				xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestion.getHandlerUserid(),xmQuestion.getHandlerUsername(), user.getUsername()+"修改bug【"+xmQuestion.getName()+"】状态");
 			}
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -321,9 +302,7 @@ public class XmQuestionController {
 	//@HasQx(value = "xm_core_xmQuestion_editSomeFields",name = "修改bug的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields(@RequestBody Map<String,Object> xmQuestionMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			List<String> ids= (List<String>) xmQuestionMap.get("ids");
 
@@ -448,13 +427,7 @@ public class XmQuestionController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -464,9 +437,7 @@ public class XmQuestionController {
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmQuestion(@RequestBody List<XmQuestion> xmQuestions) {
-		
-		Tips tips=new Tips("成功删除"+xmQuestions.size()+"条数据"); 
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			if(xmQuestions==null || xmQuestions.size()==0){
 				return ResponseHelper.failed("p-0","参数不能为空");
@@ -709,7 +680,7 @@ public class XmQuestionController {
 	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
 	public Result processApprova( @RequestBody Map<String,Object> flowVars){
 		
-		Tips tips=new Tips("成功新增一条数据");
+		
 		  
 		
 			

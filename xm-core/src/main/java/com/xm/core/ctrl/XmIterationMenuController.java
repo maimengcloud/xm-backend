@@ -90,13 +90,9 @@ public class XmIterationMenuController {
 		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Result delXmIterationMenu(@RequestBody XmIterationMenuVo xmIterationMenus){
+	public Result delXmIterationMenu(@RequestBody XmIterationMenuVo xmIterationMenus){ 
 		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
-			return batchDelXmIterationMenu(xmIterationMenus);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
-		
+		return batchDelXmIterationMenu(xmIterationMenus); 
 	}
 	
 
@@ -106,9 +102,7 @@ public class XmIterationMenuController {
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmIterationMenu(@RequestBody XmIterationMenuVo xmIterationMenus) {
-		
-		Tips tips=new Tips("成功将用户故事移出迭代");
-		try{
+
 			User user= LoginUtils.getCurrentUserInfo();
 			List<String> menuIds=xmIterationMenus.getMenuIds();
 			if(menuIds==null || menuIds.size()==0){
@@ -152,14 +146,12 @@ public class XmIterationMenuController {
 			}else {
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
 	public Result batchAddXmIterationMenu(@RequestBody XmIterationMenuVo xmIterationMenus) {
-		
-		Tips tips=new Tips("成功将用户故事发布到迭代中");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmIterationMenus.getIterationId())){
 				return ResponseHelper.failed("iterationId-0","迭代编号不能为空");
@@ -227,7 +219,7 @@ public class XmIterationMenuController {
 				tips.setOkMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}
 
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 }

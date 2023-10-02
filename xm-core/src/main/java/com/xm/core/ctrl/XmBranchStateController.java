@@ -124,8 +124,8 @@ public class XmBranchStateController {
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmBranchState(@RequestBody XmBranchState xmBranchState) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+		
+				
 			if(StringUtils.isEmpty(xmBranchState.getId())) {
 				xmBranchState.setId(xmBranchStateService.createKey("id"));
 			}else{
@@ -158,8 +158,8 @@ public class XmBranchStateController {
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmBranchState(@RequestBody XmBranchState xmBranchState){
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+		
+				
 			xmBranchStateService.deleteByPk(xmBranchState);
 		}catch (BizException e) { 
 			tips=e.getTips();
@@ -181,8 +181,8 @@ public class XmBranchStateController {
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmBranchState(@RequestBody XmBranchState xmBranchState) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+		
+				
 			xmBranchStateService.updateByPk(xmBranchState);
 			m.put("data",xmBranchState);
 		}catch (BizException e) { 
@@ -207,8 +207,8 @@ public class XmBranchStateController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmBranchState(@RequestBody List<XmBranchState> xmBranchStates) {
 		Map<String,Object> m = new HashMap<>();
-		Tips tips=new Tips("成功删除"+xmBranchStates.size()+"条数据"); 
-		try{ 
+		
+				 
 			xmBranchStateService.batchDelete(xmBranchStates);
 		}catch (BizException e) { 
 			tips=e.getTips();

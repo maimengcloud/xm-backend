@@ -90,9 +90,9 @@ public class XmTaskOrderController {
 	public Result listXmTaskOrder(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmTaskOrderService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskOrder列表
 
@@ -114,9 +114,7 @@ public class XmTaskOrderController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmTaskOrder(@RequestBody AddXmTaskOrderVo xmTaskOrder) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(!StringUtils.hasText(xmTaskOrder.getTaskId())){
 				return ResponseHelper.failed("taskId-0","任务编号不能为空");
 			}
@@ -267,9 +265,7 @@ public class XmTaskOrderController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmTaskOrder(@RequestBody XmTaskOrder xmTaskOrder){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmTaskOrder.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -278,7 +274,7 @@ public class XmTaskOrderController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmTaskOrderService.deleteByPk(xmTaskOrder);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -290,9 +286,7 @@ public class XmTaskOrderController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmTaskOrder(@RequestBody XmTaskOrder xmTaskOrder) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmTaskOrder.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -313,9 +307,7 @@ public class XmTaskOrderController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTaskOrderMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             List<String> ids= (List<String>) xmTaskOrderMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -367,13 +359,7 @@ public class XmTaskOrderController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	*/
@@ -386,7 +372,7 @@ public class XmTaskOrderController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmTaskOrder(@RequestBody List<XmTaskOrder> xmTaskOrders) {
 		
-        Tips tips=new Tips("成功删除"); 
+        
         
             if(xmTaskOrders.size()<=0){
                 return failed("data-0","请上送待删除数据列表");
@@ -454,7 +440,7 @@ public class XmTaskOrderController {
 	public Result orderPaySuccess(@RequestBody XmTaskOrder order) {
 		
 		try {
-			Tips tips=new Tips("操作成功");
+			
 			if(!StringUtils.hasText(order.getId())) {
 				return failed("data-0","订单Id不能为空");
 			}
@@ -483,7 +469,7 @@ public class XmTaskOrderController {
 	public Result payCancel(@RequestBody XmTaskOrder order) {
 		
 		try {
-			Tips tips=new Tips("操作成功");
+			
 			if(!StringUtils.hasText(order.getId())) {
 				return failed("data-0","订单Id不能为空");
 			}

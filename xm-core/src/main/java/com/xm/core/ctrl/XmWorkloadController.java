@@ -96,8 +96,7 @@ public class XmWorkloadController {
 		
 		RequestUtils.transformArray(params, "ids");
 		RequestUtils.transformArray(params, "wstatuses");
-		RequestUtils.transformArray(params, "sstatuses");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "sstatuses");		
 		IPage page=QueryTools.initPage(params);
 		String taskId= (String) params.get("taskId");
 		String sbillId= (String) params.get("sbillId");
@@ -105,6 +104,7 @@ public class XmWorkloadController {
 		String userid= (String) params.get("userid");
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("linkBranchId",user.getBranchId());
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmWorkloadService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmWorkload列表
 
@@ -116,8 +116,7 @@ public class XmWorkloadController {
 	@RequestMapping(value="/listProjectWorkloadSetDay",method=RequestMethod.GET)
 	public Result listProjectWorkloadSetDay(@ApiIgnore @RequestParam Map<String,Object> params){
 		
-		
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+				
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("linkBranchId",user.getBranchId());
@@ -133,8 +132,7 @@ public class XmWorkloadController {
 	@RequestMapping(value="/listProjectWorkloadSetMonth",method=RequestMethod.GET)
 	public Result listProjectWorkloadSetMonth(@ApiIgnore @RequestParam Map<String,Object> params){
 		
-		
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+				
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("linkBranchId",user.getBranchId());
@@ -153,8 +151,7 @@ public class XmWorkloadController {
 		
 		RequestUtils.transformArray(params, "ids");
 		RequestUtils.transformArray(params, "wstatuses");
-		RequestUtils.transformArray(params, "sstatuses");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "sstatuses");		
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("linkBranchId",user.getBranchId());
@@ -176,8 +173,7 @@ public class XmWorkloadController {
 		
 		RequestUtils.transformArray(params, "ids");
 		RequestUtils.transformArray(params, "wstatuses");
-		RequestUtils.transformArray(params, "sstatuses");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "sstatuses");		
 		IPage page=QueryTools.initPage(params);
 		String queryScope= (String) xmWorkload.get("queryScope");
 		User user=LoginUtils.getCurrentUserInfo();
@@ -196,9 +192,7 @@ public class XmWorkloadController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmWorkload(@RequestBody XmWorkload xmWorkload) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			User user= LoginUtils.getCurrentUserInfo();
 			xmWorkload.setId(xmWorkloadService.createKey("id"));
 			xmWorkload.setCuserid(user.getUserid());
@@ -366,8 +360,9 @@ public class XmWorkloadController {
  				xmWorkload.setBranchId(xmTestCaseDb.getCbranchId());
  				xmWorkloadService.insert(xmWorkload);
 			}else if("4".equals(xmWorkload.getBizType())){//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
- 				List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
-			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+ 				QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
+			return Result.ok();
 				if(xmTestPlanCaseDbs==null||xmTestPlanCaseDbs.size()==0){
 					return failed("xmTestPlanCaseDb-0","执行用例已不存在");
 				}
@@ -407,9 +402,7 @@ public class XmWorkloadController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmWorkload(@RequestBody XmWorkload xmWorkload) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmWorkload.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -449,9 +442,7 @@ public class XmWorkloadController {
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmWorkload(@RequestBody List<XmWorkload> xmWorkloads) {
-		
-		Tips tips=new Tips("成功删除"+xmWorkloads.size()+"条数据"); 
-		try{
+
 			if(xmWorkloads.stream().filter(i->!StringUtils.hasText(i.getId())).findAny().isPresent()){
 				return ResponseHelper.failed("id-0","主键不能为空");
 			}
@@ -525,7 +516,7 @@ public class XmWorkloadController {
 			}else{
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 
@@ -540,9 +531,7 @@ public class XmWorkloadController {
 	//@HasQx(value = "xm_core_xmWorkload_editSomeFields",name = "批量修改修改任务中的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields(@RequestBody Map<String,Object> xmWorkloadMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			List<String> ids= (List<String>) xmWorkloadMap.get("ids");
 
 			if(ids==null || ids.size()==0){
@@ -633,13 +622,7 @@ public class XmWorkloadController {
 			}
 
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 }

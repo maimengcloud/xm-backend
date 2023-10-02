@@ -75,9 +75,9 @@ public class XmTestCasedbController {
 		
 		RequestUtils.transformArray(params, "ids");
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTestCasedb.put("pbranchId",user.getBranchId());
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		xmTestCasedb.put("pbranchId",user.getBranchId());		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmTestCasedbService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestCasedb列表
 
@@ -91,9 +91,7 @@ public class XmTestCasedbController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmTestCasedb(@RequestBody XmTestCasedb xmTestCasedb) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 		    boolean createPk=false;
 			if(!StringUtils.hasText(xmTestCasedb.getId())) {
 			    createPk=true;
@@ -131,9 +129,7 @@ public class XmTestCasedbController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmTestCasedb(@RequestBody XmTestCasedb xmTestCasedb){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmTestCasedb.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -151,7 +147,7 @@ public class XmTestCasedbController {
 				}
 			}
 			xmTestCasedbService.deleteByPk(xmTestCasedb);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 
@@ -161,9 +157,7 @@ public class XmTestCasedbController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmTestCasedb(@RequestBody XmTestCasedb xmTestCasedb) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmTestCasedb.getId())) {
                  return failed("pk-not-exists","请上送主键参数id");
             }
@@ -198,9 +192,7 @@ public class XmTestCasedbController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmTestCasedbMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             List<String> ids= (List<String>) xmTestCasedbMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -274,13 +266,7 @@ public class XmTestCasedbController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -291,7 +277,7 @@ public class XmTestCasedbController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmTestCasedb(@RequestBody List<XmTestCasedb> xmTestCasedbs) {
 		
-        Tips tips=new Tips("成功删除"); 
+        
         
             if(xmTestCasedbs.size()<=0){
                 return failed("data-0","请上送待删除数据列表");

@@ -1,13 +1,13 @@
 package com.xm.core.ctrl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
-import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
@@ -15,6 +15,7 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
 import com.xm.core.PubTool;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmTask;
@@ -109,10 +110,10 @@ public class XmMenuController {
 		 
 		RequestUtils.transformArray(params, "menuIds");
 		RequestUtils.transformArray(params, "tagIdList");
-		RequestUtils.transformArray(params, "dclasss");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "dclasss");		
 		IPage page=QueryTools.initPage(params);
 		this.paramsInit(params);
+		QueryWrapper<XmMenu> qw = QueryTools.initQueryWrapper(XmMenu.class , params);
 		List<Map<String,Object>> datas = xmMenuService.selectListMapByWhere(page,qw,params);
 		
 		if("1".equals(params.get("withParents"))  && !"1".equals(params.get("isTop"))&& datas.size()>0){
@@ -165,8 +166,7 @@ public class XmMenuController {
 		 
 		RequestUtils.transformArray(params, "menuIds");
 		RequestUtils.transformArray(params, "tagIdList");
-		RequestUtils.transformArray(params, "dclasss");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "dclasss");		
 		IPage page=QueryTools.initPage(params);
 		
 		this.paramsInit(params);
@@ -199,35 +199,30 @@ public class XmMenuController {
 	}
 	@RequestMapping(value="/listWithPlan",method=RequestMethod.GET)
 	public Result listWithPlan(@ApiIgnore @RequestParam Map<String,Object> params){
-		return this.listWithState(xmMenu);
+		return this.listWithState(params);
 	}
 
 	@RequestMapping(value="/getXmMenuAttDist",method=RequestMethod.GET)
 	public Result getXmMenuAttDist(@ApiIgnore @RequestParam Map<String,Object> params){
- 		this.paramsInit(xmMenu);
-		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAttDist(xmMenu);
+ 		this.paramsInit(params);
+		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAttDist(params);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmMenuAgeDist",method=RequestMethod.GET)
 	public Result getXmMenuAgeDist(@ApiIgnore @RequestParam Map<String,Object> params){
-		this.paramsInit(xmMenu);
-		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAgeDist(xmMenu);
+		this.paramsInit(params);
+		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAgeDist(params);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmMenuSort",method=RequestMethod.GET)
 	public Result getXmMenuSort(@ApiIgnore @RequestParam Map<String,Object> params){
-
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		
 		IPage page=QueryTools.initPage(params);
-		this.paramsInit(xmMenu);
-		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuSort(xmMenu);
-		Map<String,Object> m=new HashMap<>();
-		PageUtils.responePage(m,datas);
-		
-		
-		
+		this.paramsInit(params);
+		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuSort(params);
+		return Result.ok().setData(datas);
 	}
 
 	/***/
@@ -238,9 +233,7 @@ public class XmMenuController {
 	//@HasQx(value = "xm_core_xmMenu_add",name = "新增用户需求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmMenu(@RequestBody XmMenu xmMenu) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmMenu.getMenuId())) {
 				xmMenu.setMenuId(xmMenuService.createKey("menuId"));
 			}else{
@@ -326,9 +319,7 @@ public class XmMenuController {
 	//@HasQx(value = "xm_core_xmMenu_del",name = "删除用户需求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmMenu(@RequestBody XmMenu xmMenu){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			XmTask xmTask = new XmTask();
 			if(StringUtils.isEmpty(xmMenu.getMenuId())){
@@ -378,9 +369,7 @@ public class XmMenuController {
 	//@HasQx(value = "xm_core_xmMenu_edit",name = "修改用户需求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmMenu(@RequestBody XmMenu xmMenu) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmMenu.getMenuId())){
 				ResponseHelper.failed("menuId-0","menuId不能为空");
@@ -419,9 +408,7 @@ public class XmMenuController {
 	//@HasQx(value = "xm_core_xmMenu_editSomeFields",name = "修改用户需求中的某些字段",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields(@RequestBody Map<String,Object> xmMenuMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			List<String> menuIds= (List<String>) xmMenuMap.get("menuIds");
 
@@ -532,13 +519,7 @@ public class XmMenuController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -551,9 +532,7 @@ public class XmMenuController {
 	//@HasQx(value = "xm_core_xmMenu_batchDel",name = "批量删除用户需求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmMenu(@RequestBody List<XmMenu> xmMenus) {
-		
-		Tips tips=new Tips("成功删除"+xmMenus.size()+"条数据"); 
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 			List<String> hasChildMenus=new ArrayList<>();
 			List<XmMenu> canDelList=new ArrayList<>();
@@ -634,7 +613,7 @@ public class XmMenuController {
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
 	public Result batchAddXmMenu(@RequestBody List<XmMenu> xmMenus) {
 		
-		Tips tips=new Tips("成功新增"+xmMenus.size()+"条数据"); 
+		
 		
 			 
 			if(xmMenus.size()>0) {
@@ -664,9 +643,7 @@ public class XmMenuController {
 	//@HasQx(value = "xm_core_xmMenu_batchChangeParentMenu",name = "批量修改需求的上级",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchChangeParentMenu",method=RequestMethod.POST)
 	public Result batchChangeParentMenu(@RequestBody BatchChangeParentMenuVo parentMenuVo) {
-		
-		Tips tips=new Tips("成功修改");
-		try{
+
 			User user=LoginUtils.getCurrentUserInfo();
 
 			if(parentMenuVo.getMenuIds()==null || parentMenuVo.getMenuIds().size()==0){
@@ -779,13 +756,7 @@ public class XmMenuController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining(" ")));
 			}
 
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 }

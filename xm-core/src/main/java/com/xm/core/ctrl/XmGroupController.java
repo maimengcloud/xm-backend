@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
@@ -11,6 +12,7 @@ import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmGroup;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
@@ -87,7 +89,7 @@ public class XmGroupController {
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result updateGroup(@RequestBody XmGroup group) {
 
-		Tips tips=new Tips("小组更新成功");
+		
 		
 		if(group==null){
 			tips.setFailureMsg("小组信息不能为空");
@@ -192,8 +194,7 @@ public class XmGroupController {
 	@RequestMapping(value="/getGroups",method=RequestMethod.GET)
 	public Result getGroup(@ApiIgnore @RequestParam Map<String,Object> params) {
 		
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		List<XmGroupVo>	xmGroupList=new ArrayList<>();
 		String iterationId= (String) params.get("iterationId");
@@ -207,9 +208,6 @@ public class XmGroupController {
 			xmGroupList = xmGroupService.getProjectGroupVoListByIterationId(iterationId );	//列出XmProjectGroup列表
 		}
 
-		
-		
-		
 		
 	}
 
@@ -232,8 +230,7 @@ public class XmGroupController {
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmProjectGroup(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
-		RequestUtils.transformArray(params, "ids");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		String projectId= (String) xmGroup.get("projectId");
@@ -243,11 +240,9 @@ public class XmGroupController {
 		params.put("branchId",user.getBranchId());
 			xmGroup.put("orCrowBranchId",user.getBranchId());
 		}
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectGroup列表
-		
-		
-		
 		
 	}
 
@@ -258,9 +253,7 @@ public class XmGroupController {
 	//@HasQx(value = "xm_core_xmGroup_add",name = "新增项目团队信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProjectGroup(@RequestBody XmGroup xmGroup) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			User u = LoginUtils.getCurrentUserInfo();
 
 				if(StringUtils.isEmpty(xmGroup.getPgClass())){
@@ -333,19 +326,13 @@ public class XmGroupController {
 
 
   			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
 
 	public Tips checkProductGroupQxForAdd(XmProduct xmProduct,User u,XmGroup xmGroup){
-		Tips tips=new Tips();
+		
 		
 		tips=productQxService.checkProductQx(xmProduct,0,u);
 		if(!tips.isOk()){
@@ -365,7 +352,7 @@ public class XmGroupController {
 
 
 	public Tips checkProjectGroupQxForAdd(XmProject project,User u,XmGroup xmGroup){
-		Tips tips=new Tips();
+		
 		
 		tips=projectQxService.checkProjectQx(project,0,u);
 		if(!tips.isOk()){
@@ -389,9 +376,7 @@ public class XmGroupController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProjectGroup(@RequestBody XmGroup xmGroup){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			User u = LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmGroup.getId())){
 				return ResponseHelper.failed("id-0","请上送小组编号");
@@ -458,9 +443,7 @@ public class XmGroupController {
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProjectGroup(@RequestBody List<XmGroup> xmGroups) {
-		
-		Tips tips=new Tips("成功删除"+xmGroups.size()+"条数据"); 
-		try{
+
 			List<XmGroup> groupsDb=this.xmGroupService.selectListByIds(xmGroups.stream().map(i->i.getId()).collect(Collectors.toList()));
 			if(groupsDb==null || groupsDb.size()==0){
 				return ResponseHelper.failed("data-0","要删除的小组已不存在");

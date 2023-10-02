@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
@@ -10,6 +11,7 @@ import com.mdp.qx.HasRole;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmMyFocus;
 import com.xm.core.service.XmMyFocusService;
 import io.swagger.annotations.*;
@@ -64,9 +66,9 @@ public class XmMyFocusController {
 	public Result listXmMyFocus(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "pkList");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "pkList");		
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmMyFocus> qw = QueryTools.initQueryWrapper(XmMyFocus.class , params);
 		List<Map<String,Object>> datas = xmMyFocusService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmMyFocus列表
 
@@ -86,11 +88,9 @@ public class XmMyFocusController {
 	})
 	@HasRole
 	@RequestMapping(value="/myFocusForIndex",method=RequestMethod.GET)
-	public Result myFocusForIndex( ){
-		
-		
+	public Result myFocusForIndex( ){ 
 		List<Map<String,Object>>	xmMyFocusList = xmMyFocusService.myFocusForIndex(LoginUtils.getCurrentUserInfo().getUserid());
- 		
+ 		return Result.ok().setData(xmMyFocusList);
 		
 	}
 
@@ -101,9 +101,7 @@ public class XmMyFocusController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmMyFocus(@RequestBody XmMyFocus xmMyFocus) {
-		
-		Tips tips=new Tips("关注成功");
-		try{
+
 			User user = LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmMyFocus.getBizId())) {
 				return failed("bizId","业务编号不能为空");
@@ -122,13 +120,7 @@ public class XmMyFocusController {
 			}
 			xmMyFocusService.focus(xmMyFocus);
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}  
+		return Result.ok();  
 		
 	}
 
@@ -138,9 +130,7 @@ public class XmMyFocusController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmMyFocus(@RequestBody XmMyFocus xmMyFocus){
-		
-		Tips tips=new Tips("成功取消关注");
-		try{
+
 			User user = LoginUtils.getCurrentUserInfo();
             if(!StringUtils.hasText(xmMyFocus.getBizId())) {
                  return failed("pk-not-exists","请上送主键参数bizId");
@@ -154,7 +144,7 @@ public class XmMyFocusController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmMyFocusService.unfocus(xmMyFocusDb);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	
@@ -165,9 +155,7 @@ public class XmMyFocusController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmMyFocus(@RequestBody XmMyFocus xmMyFocus) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmMyFocus.getUserid())) {
                  return failed("pk-not-exists","请上送主键参数userid");
             }
@@ -194,9 +182,7 @@ public class XmMyFocusController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmMyFocusMap) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			List<Map<String,Object>> pkList= (List<Map<String,Object>>) xmMyFocusMap.get("pkList");
 			if(pkList==null || pkList.size()==0){
 				return failed("pkList-0","pkList不能为空");
@@ -250,13 +236,7 @@ public class XmMyFocusController {
 				tips.setFailureMsg(msgs.stream().collect(Collectors.joining()));
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	*/
@@ -268,7 +248,7 @@ public class XmMyFocusController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmMyFocus(@RequestBody List<XmMyFocus> xmMyFocuss) {
 		
-        Tips tips=new Tips("成功删除"); 
+        
         
             if(xmMyFocuss.size()<=0){
                 return failed("data-0","请上送待删除数据列表");

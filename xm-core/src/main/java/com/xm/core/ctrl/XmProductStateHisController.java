@@ -55,11 +55,11 @@ public class XmProductStateHisController {
 	public Result listXmProductStateHis(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		RequestUtils.transformArray(params, "pkList");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "pkList");		
 		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = QueryTools.xmProductStateHisService(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProductStateHis列表
 
@@ -74,9 +74,7 @@ public class XmProductStateHisController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 		    boolean createPk=false;
 			if(!StringUtils.hasText(xmProductStateHis.getProductId())) {
 			    createPk=true;
@@ -103,9 +101,7 @@ public class XmProductStateHisController {
 	}) 
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
             if(!StringUtils.hasText(xmProductStateHis.getProductId())) {
                  return failed("pk-not-exists","请上送主键参数productId");
             }
@@ -117,7 +113,7 @@ public class XmProductStateHisController {
                 return failed("data-not-exists","数据不存在，无法删除");
             }
 			xmProductStateHisService.deleteByPk(xmProductStateHis);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	 */
@@ -129,9 +125,7 @@ public class XmProductStateHisController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
             if(!StringUtils.hasText(xmProductStateHis.getProductId())) {
                  return failed("pk-not-exists","请上送主键参数productId");
             }
@@ -157,10 +151,10 @@ public class XmProductStateHisController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProductStateHis(@RequestBody List<XmProductStateHis> xmProductStateHiss) {
 		
-		Tips tips=new Tips("成功删除"+xmProductStateHiss.size()+"条数据"); 
+		
 		
 			xmProductStateHisService.batchDelete(xmProductStateHiss);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/

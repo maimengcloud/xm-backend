@@ -94,8 +94,7 @@ public class XmProjectController {
 	public Result listXmProject(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		RequestUtils.transformArray(params, "ids"); 
-		RequestUtils.transformArray(params, "pgTypeIds");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+		RequestUtils.transformArray(params, "pgTypeIds");		
 		IPage page=QueryTools.initPage(params);
 		String id= (String) params.get("id");
 		Object ids=  params.get("ids");
@@ -120,6 +119,7 @@ public class XmProjectController {
 		}
 		params.put("linkBranchId",user.getBranchId());
 		params.put("platformBranchId",platformBranchId);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmProjectService.getProject(params);	//列出XmProject列表
 		return Result.ok().setData(datas);
 		
@@ -135,9 +135,7 @@ public class XmProjectController {
 	})
 	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
 	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmProjectMap) {
-		
-		Tips tips=new Tips("成功更新");
-		try{
+
 			List<String> ids= (List<String>) xmProjectMap.get("ids");
 			if(ids==null || ids.size()==0){
 				return failed("ids-0","ids不能为空");
@@ -212,13 +210,7 @@ public class XmProjectController {
 				notifyMsgService.pushMsg(user,xmProject.getAdmUserid(),xmProject.getAdmUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的项目总监，请及时跟进。");
 			}
 			//
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -229,9 +221,7 @@ public class XmProjectController {
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	//@HasQx(value = "xm_core_xmProject_add",name = "创建项目",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	public Result addXmProject(@RequestBody XmProjectVo xmProjectVo) {
-		
-		Tips tips=new Tips("成功创建项目");
-		try{
+
 			if(!StringUtils.hasText(xmProjectVo.getName())){
 				return failed("name-0","项目名称不能为空");
 			}
@@ -269,13 +259,7 @@ public class XmProjectController {
 			xmProjectStateService.loadTasksToXmProjectState(xmProjectVo.getId());
 				
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	@ApiOperation( value = "从回收站恢复项目",notes="unDelXmProject,仅需要上传主键字段")
@@ -285,9 +269,7 @@ public class XmProjectController {
 	@RequestMapping(value="/unDel",method=RequestMethod.POST)
 	//@HasQx(value = "xm_core_xmProject_unDel",name = "从回收站恢复项目",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	public Result unDelXmProject(@RequestBody XmProject xmProject){
-		
-		Tips tips=new Tips("成功从回收站恢复项目");
-		try{
+
 			User user= LoginUtils.getCurrentUserInfo();
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
@@ -312,13 +294,7 @@ public class XmProjectController {
 				tips.setFailureMsg("您不是该项目管理人员，无权从回收站恢复项目");
 			}
 
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	@ApiOperation( value = "删除一条xm_project信息",notes="delXmProject,仅需要上传主键字段")
@@ -328,9 +304,7 @@ public class XmProjectController {
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	//@HasQx(value = "xm_core_xmProject_del",name = "删除项目",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	public Result delXmProject(@RequestBody XmProject xmProject){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			User user= LoginUtils.getCurrentUserInfo();
 			if(xmProject==null || StringUtils.isEmpty(xmProject.getId())){
 				return failed("id-0","项目编号不能为空");
@@ -356,7 +330,7 @@ public class XmProjectController {
 				tips.setFailureMsg("您不是该项目管理人员，无权删除");
 			}
 
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	
@@ -367,9 +341,7 @@ public class XmProjectController {
 	//@HasQx(value = "xm_core_xmProject_editAssess",name = "修改项目估算",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editAssess",method=RequestMethod.POST)
 	public Result editXmProjectAssess(@RequestBody XmProject xmProject) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
@@ -387,13 +359,7 @@ public class XmProjectController {
 			xmProjectService.clearProject(xmProject.getId());
 			xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-项目估算","修改项目【"+xmProjectDb.getName()+"】的预算数据", JSON.toJSONString(xmProject), JSON.toJSONString(xmProjectDb));
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	@ApiOperation( value = "创建项目代号",notes="createProjectCode")
@@ -403,19 +369,11 @@ public class XmProjectController {
 	//@HasQx(value = "xm_core_xmProject_createProjectCode",name = "创建项目代号",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/createProjectCode",method=RequestMethod.POST)
 	public Result createProjectCode() {
-		
-		Tips tips=new Tips("创建项目代号成功");
-		try{
+
 			User user= LoginUtils.getCurrentUserInfo();
 			String code=this.xmProjectService.createProjectCode(user.getBranchId());
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	@ApiOperation( value = "根据主键修改一条xm_project信息",notes="editXmProject")
@@ -425,9 +383,7 @@ public class XmProjectController {
 	//@HasQx(value = "xm_core_xmProject_editStatus",name = "修改项目状态",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editStatus",method=RequestMethod.POST)
 	public Result editXmProjectStatus(@RequestBody XmProject xmProject) {
-		
-		Tips tips=new Tips("状态更新成功");
-		try{
+
 
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
@@ -447,13 +403,7 @@ public class XmProjectController {
 
 
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	
@@ -464,9 +414,7 @@ public class XmProjectController {
 	//@HasQx(value = "xm_core_xmProject_editBudget",name = "修改项目预算",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/editBudget",method=RequestMethod.POST)
 	public Result editBudget(@RequestBody XmProject xmProject) {
-		
-		Tips tips=new Tips("预算更新成功");
-		try{
+
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
 				return failed("id-0","项目编号不能为空");
@@ -484,13 +432,7 @@ public class XmProjectController {
 			xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-项目预算","修改项目【"+xmProjectDb.getName()+"】的预算数据", JSON.toJSONString(xmProject), JSON.toJSONString(xmProjectDb));
 
 			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -505,9 +447,7 @@ public class XmProjectController {
 	//@HasQx(value = "xm_core_xmProject_edit",name = "修改项目基础信息",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProject(@RequestBody XmProject xmProject) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
 				return failed("id-0","项目编号不能为空");
@@ -548,9 +488,7 @@ public class XmProjectController {
 	//@HasQx(value = "xm_core_xmProject_copy_to",name = "存为新项目",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/copyTo",method=RequestMethod.POST)
 	public Result copyTo(@RequestBody XmProjectCopyVo xmProject) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			User user= LoginUtils.getCurrentUserInfo();
 			if( !StringUtils.hasText(xmProject.getId())){
 				return failed("id-0","请上送原项目编号参数id");
@@ -578,13 +516,7 @@ public class XmProjectController {
 			xmProjectStateService.loadTasksToXmProjectState(xmProjectTo.getId());
 			xmRecordService.addXmProjectRecord(xmProjectTo.getId(),"项目-通过拷贝创建新项目","拷贝项目【"+xmProjectTo.getName()+"】,创建新的项目【】", JSON.toJSONString(xmProjectTo), JSON.toJSONString(xmProjectDb));
 
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 
@@ -597,10 +529,10 @@ public class XmProjectController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProject(@RequestBody List<XmProject> xmProjects) {
 		
-		Tips tips=new Tips("成功删除"+xmProjects.size()+"条数据"); 
+		
 		
 			xmProjectService.batchDelete(xmProjects);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/
@@ -628,7 +560,7 @@ public class XmProjectController {
 	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
 	public Result processApprova( @RequestBody Map<String,Object> flowVars){
 		
-		Tips tips=new Tips("成功新增一条数据");
+		
 		  
 		
 			

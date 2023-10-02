@@ -52,14 +52,11 @@ public class XmTaskSkillController {
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
 	public Result listXmTaskSkill(@ApiIgnore @RequestParam Map<String,Object> params){
-		
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params);
+				
 		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmTaskSkillService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskSkill列表
-		
-		
-		
 		
 	}
 	
@@ -70,17 +67,9 @@ public class XmTaskSkillController {
 	//@HasQx(value = "xm_core_xmTaskSkill_batchAdd",name = "批量新增任务的技能要求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
 	public Result batchAddSkill(@RequestBody List<XmTaskSkill> xmTaskSkills) {
-		
-		Tips tips=new Tips("成功添加"+xmTaskSkills.size()+"条数据");
-		try{
+
 			xmTaskSkillService.insertOrDelete(xmTaskSkills);
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("",e);
-		}catch (Exception e) {
-			tips.setFailureMsg(e.getMessage());
-			logger.error("",e);
-		}
+		return Result.ok();
 		
 	}
 	
@@ -93,9 +82,7 @@ public class XmTaskSkillController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmTaskSkill(@RequestBody XmTaskSkill xmTaskSkill) {
-		
-		Tips tips=new Tips("成功新增一条数据");
-		try{
+
 			if(StringUtils.isEmpty(xmTaskSkill.getId())) {
 				xmTaskSkill.setId(xmTaskSkillService.createKey("id"));
 			}else{
@@ -118,11 +105,9 @@ public class XmTaskSkillController {
 	//@HasQx(value = "xm_core_xmTaskSkill_del",name = "删除任务的技能要求",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmTaskSkill(@RequestBody XmTaskSkill xmTaskSkill){
-		
-		Tips tips=new Tips("成功删除一条数据");
-		try{
+
 			xmTaskSkillService.deleteByPk(xmTaskSkill);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	}
 	
@@ -133,9 +118,7 @@ public class XmTaskSkillController {
 	}) 
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmTaskSkill(@RequestBody XmTaskSkill xmTaskSkill) {
-		
-		Tips tips=new Tips("成功更新一条数据");
-		try{
+
 			xmTaskSkillService.updateByPk(xmTaskSkill);
 		
 	}
@@ -151,10 +134,10 @@ public class XmTaskSkillController {
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmTaskSkill(@RequestBody List<XmTaskSkill> xmTaskSkills) {
 		
-		Tips tips=new Tips("成功删除"+xmTaskSkills.size()+"条数据"); 
+		
 		
 			xmTaskSkillService.batchDelete(xmTaskSkills);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok();
 		
 	} 
 	*/
