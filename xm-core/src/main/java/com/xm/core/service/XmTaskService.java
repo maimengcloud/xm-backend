@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
@@ -82,7 +83,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 		Map<String,Object> p=new HashMap<>();
 		p.put("phaseId", phaseId); 
 		p.put("excludeTaskIds", excludeTaskIds);
-		return this.selectOne("selectTotalPhaseAndTaskBudgetCost", p);
+		return this.baseMapper.selectTotalPhaseAndTaskBudgetCost( p);
 	} 
 	
 
@@ -184,7 +185,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	}
 
 	private Map<String, Object> selectTotalTaskBudgetCost(String parentTaskid, List<String> excludeTaskIds) {
-		return selectOne("selectTotalTaskBudgetCost",map("parentTaskid",parentTaskid,"excludeTaskIds",excludeTaskIds));
+		return baseMapper.selectTotalTaskBudgetCost(map("parentTaskid",parentTaskid,"excludeTaskIds",excludeTaskIds));
 	}
 
 	public void updateTaskChildrenCntByTaskId(String taskId){
@@ -192,7 +193,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	}
 
 	public List<Map<String,Object>> getTask(Map<String,Object> xmTask){  
-		List<Map<String,Object>> mapList = this.selectListMapByWhere(xmTask);//所有数据 
+		List<Map<String,Object>> mapList = this.selectListMapByWhere(QueryTools.initPage(xmTask),QueryTools.initQueryWrapper(XmTask.class,xmTask),xmTask);//所有数据 
 		return mapList;
 	}
 	@Transactional
@@ -446,7 +447,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 				if(StringUtils.isEmpty(bizXmTask.getId())) {
 					throw new BizException("请上送任务编号flowVars.data.id");
 				}
-				List<Map<String,Object>> bizList=this.selectListMapByWhere(bizQuery);
+				List<Map<String,Object>> bizList=this.getTask(bizQuery);
 				if(bizList==null || bizList.size()==0) {
 					throw new BizException("没有找到对应项目任务单,项目任务单为【"+bizXmTask.getId()+"】");
 				}else {
@@ -513,7 +514,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	}
 
 	public Map<String,Object> shareTaskDetail(Map<String, Object> xmTask) {
-		return this.selectOne("shareTaskDetail",xmTask);
+		return this.baseMapper.shareTaskDetail(xmTask);
 	}
 
 	public void updateChildrenCntByIds(List<String> ids) {
@@ -767,7 +768,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 			map.put("excludeTaskIds",excludeTaskIds);
 		}
 		map.put("projectId",projectId);
-		return super.selectOne("calcProjectAndTaskBudget",map);
+		return super.baseMapper.calcProjectAndTaskBudget(map);
 	}
 	public Tips judgetProjectBudget(String projectId, BigDecimal addBudgetCost, List<String> excludeTaskIds) {
 		Tips tips=new Tips("成功");

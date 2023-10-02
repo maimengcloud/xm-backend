@@ -55,5 +55,17 @@ public interface XmTaskMapper extends BaseMapper<XmTask> {
     void batchChangeParent(Map<String, Object> map);
 
     void updateTaskChildrenCntByTaskId(String taskId);
+
+    void sumParents(List<String> pidPathsList);
+
+    void batchSumParents(List<String> ids);
+
+    Map<String, Object> calcProjectAndTaskBudget(Map<String, Object> map);
+
+    Map<String, Object> selectTotalTaskBudgetCost(Map<String, Object> map);
+
+    Map<String, Object> selectTotalPhaseAndTaskBudgetCost(Map<String, Object> p);
+
+    Map<String, Object> shareTaskDetail(Map<String, Object> xmTask);
 }
 

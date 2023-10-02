@@ -2,7 +2,9 @@ package com.xm.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmTaskSbillDetail;
+import com.xm.core.mapper.XmTaskSbillDetailMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
