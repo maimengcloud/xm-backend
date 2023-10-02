@@ -33,23 +33,23 @@ public class XmTestPlanCaseService extends BaseService<XmTestPlanCaseMapper,XmTe
     }
 
     public List<XmTestPlanCase> selectListByCaseIdsAndPlanId(String planId, List<String> caseIds) {
-        return super.selectList("selectListByCaseIdsAndPlanId",map("planId",planId,"caseIds",caseIds));
+        return baseMapper.selectListByCaseIdsAndPlanId",map("planId",planId,"caseIds(caseIds));
     }
 
     public List<Map<String, Object>> getXmTestPlanCaseExecStatusDist(Map<String, Object> xmTestPlanCase) {
-        return super.selectList("getXmTestPlanCaseExecStatusDist",xmTestPlanCase);
+        return baseMapper.getXmTestPlanCaseExecStatusDist(xmTestPlanCase);
     }
 
     public List<Map<String, Object>> getXmTestPlanCaseUserDist(Map<String, Object> xmTestPlanCase) {
-        return super.selectList("getXmTestPlanCaseUserDist",xmTestPlanCase);
+        return baseMapper.getXmTestPlanCaseUserDist(xmTestPlanCase);
     }
 
     public List<Map<String, Object>> getXmTestDayTimesList(Map<String, Object> xmTestPlanCase) {
-        return super.selectList("getXmTestDayTimesList",xmTestPlanCase);
+        return baseMapper.getXmTestDayTimesList(xmTestPlanCase);
 
     }
     public List<Map<String, Object>> getXmTestCaseToPlanCalcList(Map<String, Object> xmTestPlanCase) {
-        return super.selectList("getXmTestCaseToPlanCalcList",xmTestPlanCase);
+        return baseMapper.getXmTestCaseToPlanCalcList(xmTestPlanCase);
 
     }
 

@@ -95,7 +95,7 @@ public class XmMyFocusService extends BaseService<XmMyFocusMapper,XmMyFocus> {
 	}
 
 	public List<Map<String, Object>> myFocusForIndex(String userid) {
-		return super.selectList("myFocusForIndex",userid);
+		return baseMapper.myFocusForIndex(userid);
 	}
 
 	/** 请在此类添加自定义函数 */

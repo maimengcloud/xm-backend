@@ -31,7 +31,7 @@ public class XmTestCasedbService extends BaseService<XmTestCasedbMapper, XmTestC
         return baseMapper.selectListMapByWhere(page,ew,ext);
     }
     public List<String> getExistsPlanCasedbIds(List<String> casedbIds) {
-        return super.selectList("getExistsPlanCasedbIds",casedbIds);
+        return baseMapper.getExistsPlanCasedbIds(casedbIds);
     }
 }
 

@@ -207,15 +207,15 @@ public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> 
 
 
     public List<Map<String, Object>> getXmQuestionAttDist(Map<String, Object> xmQuestion) {
-		return super.selectList("getXmQuestionAttDist",xmQuestion);
+		return baseMapper.getXmQuestionAttDist(xmQuestion);
     }
 
 	public List<Map<String, Object>> getXmQuestionAgeDist(Map<String, Object> xmQuestion) {
-		return super.selectList("getXmQuestionAgeDist",xmQuestion);
+		return baseMapper.getXmQuestionAgeDist(xmQuestion);
 	}
 
 	public List<Map<String, Object>> getXmQuestionSort(Map<String, Object> xmQuestion) {
-		return super.selectList("getXmQuestionSort",xmQuestion);
+		return baseMapper.getXmQuestionSort(xmQuestion);
 	}
 
 	@Override
@@ -224,7 +224,7 @@ public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> 
 	}
 
     public List<Map<String, Object>> getXmQuestionRetestDist(Map<String, Object> xmQuestion) {
-		return super.selectList("getXmQuestionRetestDist",xmQuestion);
+		return baseMapper.getXmQuestionRetestDist(xmQuestion);
     }
 }
 

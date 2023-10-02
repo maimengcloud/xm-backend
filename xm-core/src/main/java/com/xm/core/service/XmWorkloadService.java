@@ -38,10 +38,10 @@ public class XmWorkloadService extends BaseService<XmWorkloadMapper, XmWorkload>
 	}
 
 	public List<Map<String, Object>> listProjectWorkloadSetDay(Map<String, Object> xmWorkload) {
-		return super.selectList("listProjectWorkloadSetDay",xmWorkload);
+		return baseMapper.listProjectWorkloadSetDay(xmWorkload);
 	}
 	public List<Map<String, Object>> listProjectWorkloadSetMonth(Map<String, Object> xmWorkload) {
-		return super.selectList("listProjectWorkloadSetMonth",xmWorkload);
+		return baseMapper.listProjectWorkloadSetMonth(xmWorkload);
 	}
 
 
@@ -64,11 +64,11 @@ public class XmWorkloadService extends BaseService<XmWorkloadMapper, XmWorkload>
 	}
 
 	public List<Map<String, Object>> ListGroupByTaskIdAndUserid(Map<String, Object> xmWorkload) {
-		return super.selectList("selectListMapGroupByTaskIdAndUserid",xmWorkload);
+		return baseMapper.selectListMapGroupByTaskIdAndUserid(xmWorkload);
 	}
 
 	public List<Map<String, Object>> ListGroupByTaskIdAndUseridToSet(Map<String, Object> xmWorkload) {
-		return super.selectList("ListGroupByTaskIdAndUseridToSet",xmWorkload);
+		return baseMapper.ListGroupByTaskIdAndUseridToSet(xmWorkload);
 	}
 
     public void updateStatusAfterJoinSbill(Map<String,Object> details) {

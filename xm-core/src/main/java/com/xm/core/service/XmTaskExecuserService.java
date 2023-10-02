@@ -272,7 +272,7 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 	}
 
 	public List<Map<String,Object>> selectListMapByWhereWithTask(Map<String,Object> params){
-		return super.selectList("selectListMapByWhereWithTask",params);
+		return baseMapper.selectListMapByWhereWithTask(params);
 	}
 
 }

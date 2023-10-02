@@ -44,7 +44,7 @@ public class XmMenuCommentService extends BaseService<XmMenuCommentMapper, XmMen
 	}
 
 	public List<Map<String, Object>> selectListByPids(List<String> pids) {
-		return super.selectList("selectListByPids",pids);
+		return baseMapper.selectListByPids(pids);
 	}
 }
 

@@ -31,7 +31,7 @@ public class XmBudgetNlaborService extends BaseService<XmBudgetNlaborMapper, XmB
     }
     public List<Map<String, Object>> listSum(Map<String, Object> xmBudgetNlabor) {
 
-        return super.selectList("listSum",xmBudgetNlabor);
+        return baseMapper.listSum(xmBudgetNlabor);
     }
 
 }

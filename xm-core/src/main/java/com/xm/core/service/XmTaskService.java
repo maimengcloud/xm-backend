@@ -399,7 +399,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 		return this.selectTaskListByIds(ids);
 	}
 	public List<XmTask> selectTaskListByIds(List<String> ids){
-		return super.selectList("selectTaskListByIds",map("ids",ids));
+		return baseMapper.selectTaskListByIds",map("ids(ids));
 	}
 
 
@@ -791,13 +791,13 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 
 	public List<XmTask> listTenTaskByProjectIdAndProductId(String projectId,String productId) {
 
-		return super.selectList("listTenTaskByProjectIdAndProductId",map("projectId", projectId, "productId", productId));
+		return baseMapper.listTenTaskByProjectIdAndProductId",map("projectId", projectId, "productId( productId));
 	}
 
 
 	public List<XmTask> listTenTaskByProjectIdAndIterationId(String projectId, String iterationId) {
 
-		return super.selectList("listTenTaskByProjectIdAndIterationId", map("projectId", projectId, "iterationId", iterationId));
+		return baseMapper.listTenTaskByProjectIdAndIterationId", map("projectId", projectId, "iterationId( iterationId));
 	}
 
 	@Transactional
@@ -835,15 +835,15 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	}
 
 	public List<Map<String, Object>> getXmTaskAttDist(Map<String, Object> xmTask) {
-		return super.selectList("getXmTaskAttDist",xmTask);
+		return baseMapper.getXmTaskAttDist(xmTask);
 	}
 
 	public List<Map<String, Object>> getXmTaskAgeDist(Map<String, Object> xmTask) {
-		return super.selectList("getXmTaskAgeDist",xmTask);
+		return baseMapper.getXmTaskAgeDist(xmTask);
 	}
 
 	public List<Map<String, Object>> getXmTaskSort(Map<String, Object> xmTask) {
-		return super.selectList("getXmTaskSort",xmTask);
+		return baseMapper.getXmTaskSort(xmTask);
 	}
 
 	@Override

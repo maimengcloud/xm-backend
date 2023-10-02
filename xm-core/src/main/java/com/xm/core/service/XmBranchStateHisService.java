@@ -30,7 +30,7 @@ public class XmBranchStateHisService extends BaseService<XmBranchStateHisMapper,
         return baseMapper.selectListMapByWhere(page,ew,ext);
     }
     public List<Map<String, Object>> listXmBranchFiveDayTaskCnt(Map<String, Object> xmBranchStateHis) {
-        return super.selectList("listXmBranchFiveDayTaskCnt",xmBranchStateHis);
+        return baseMapper.listXmBranchFiveDayTaskCnt(xmBranchStateHis);
     }
 }
 

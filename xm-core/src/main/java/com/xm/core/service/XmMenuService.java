@@ -306,7 +306,7 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 
 	public List<XmMenu> listTenMenuByProductIdAndIterationId(String productId, String iterationId) {
 
-		return super.selectList("listTenMenuByProductIdAndIterationId", map("productId", productId, "iterationId", iterationId));
+		return baseMapper.listTenMenuByProductIdAndIterationId", map("productId", productId, "iterationId( iterationId));
 	}
 
 
@@ -319,7 +319,7 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 
 
     public List<XmMenu> selectListByIdsWithsChildrenCnt(List<String> ids) {
-		return super.selectList("selectListByIdsWithsChildrenCnt",ids);
+		return baseMapper.selectListByIdsWithsChildrenCnt(ids);
     }
 
 
@@ -401,15 +401,15 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 	}
 
     public List<Map<String,Object>> getXmMenuAttDist(Map<String, Object> xmMenu) {
-		return super.selectList("getXmMenuAttDist",xmMenu);
+		return baseMapper.getXmMenuAttDist(xmMenu);
     }
 
 	public List<Map<String, Object>> getXmMenuAgeDist(Map<String, Object> xmMenu) {
-		return super.selectList("getXmMenuAgeDist",xmMenu);
+		return baseMapper.getXmMenuAgeDist(xmMenu);
 	}
 
     public List<Map<String, Object>> getXmMenuSort(Map<String, Object> xmMenu) {
-		return super.selectList("getXmMenuSort",xmMenu);
+		return baseMapper.getXmMenuSort(xmMenu);
     }
 
 	@Override

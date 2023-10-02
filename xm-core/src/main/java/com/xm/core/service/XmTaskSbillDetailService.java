@@ -43,7 +43,7 @@ public class XmTaskSbillDetailService extends BaseService<XmTaskSbillDetailMappe
     }
 
     public List<XmTaskSbillDetail> selectListByUserTasks(Map<String,Object> userTasks) {
-        return super.selectList("selectListByUserTasks",userTasks);
+        return baseMapper.selectListByUserTasks(userTasks);
     }
 
     @Transactional
@@ -109,15 +109,15 @@ public class XmTaskSbillDetailService extends BaseService<XmTaskSbillDetailMappe
 
 
     public List<Map<String, Object>> listSumSamtGroupByUseridBizMonth(Map<String, Object> xmTaskSbillDetail) {
-        return super.selectList("listSumSamtGroupByUseridBizMonth",xmTaskSbillDetail);
+        return baseMapper.listSumSamtGroupByUseridBizMonth(xmTaskSbillDetail);
     }
 
     public List<Map<String, Object>> listSumSamtGroupByProjectIdBizMonth(Map<String, Object> xmTaskSbillDetail) {
-        return super.selectList("listSumSamtGroupByProjectIdBizMonth",xmTaskSbillDetail);
+        return baseMapper.listSumSamtGroupByProjectIdBizMonth(xmTaskSbillDetail);
     }
 
     public List<Map<String, Object>> listSumSamtGroupByBranchIdBizMonth(Map<String, Object> xmTaskSbillDetail) {
-        return super.selectList("listSumSamtGroupByBranchIdBizMonth",xmTaskSbillDetail);
+        return baseMapper.listSumSamtGroupByBranchIdBizMonth(xmTaskSbillDetail);
     }
 }
 

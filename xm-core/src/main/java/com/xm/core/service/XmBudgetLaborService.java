@@ -30,7 +30,7 @@ public class XmBudgetLaborService extends BaseService<XmBudgetLaborMapper, XmBud
         return baseMapper.selectListMapByWhere(page,ew,ext);
     }
     public List<Map<String, Object>> listSum(Map<String, Object> xmBudgetLabor) {
-        return super.selectList("listSum",xmBudgetLabor);
+        return baseMapper.listSum(xmBudgetLabor);
     }
 }
 
