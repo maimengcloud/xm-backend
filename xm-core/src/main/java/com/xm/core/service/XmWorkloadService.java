@@ -68,7 +68,7 @@ public class XmWorkloadService extends BaseService<XmWorkloadMapper, XmWorkload>
 	}
 
 	public List<Map<String, Object>> ListGroupByTaskIdAndUseridToSet(Map<String, Object> xmWorkload) {
-		return baseMapper.ListGroupByTaskIdAndUseridToSet(xmWorkload);
+		return baseMapper.listGroupByTaskIdAndUseridToSet(xmWorkload);
 	}
 
     public void updateStatusAfterJoinSbill(Map<String,Object> details) {

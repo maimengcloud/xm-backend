@@ -3,12 +3,11 @@ package com.xm.core.mapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.xm.core.entity.XmWorkload;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
-
-import com.xm.core.entity.XmWorkload;
 /**
  * @author maimeng-mdp code-gen
  * @since 2023-10-3
@@ -24,5 +23,23 @@ public interface XmWorkloadMapper extends BaseMapper<XmWorkload> {
      */
     List<Map<String,Object>> selectListMapByWhere(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
+    List<Map<String, Object>> listProjectWorkloadSetDay(Map<String, Object> xmWorkload);
+
+    List<Map<String, Object>> listProjectWorkloadSetMonth(Map<String, Object> xmWorkload);
+
+    List<Map<String, Object>> listTaskWorkloadBySbillIdGroupByUseridAndTaskId(String sbillId);
+
+    void updateStatusBySbillIdBySbillDel(String sbillId);
+
+    void updateStatusBySbillIdByFlowState(Map<String, Object> map);
+
+    List<Map<String, Object>> selectListMapGroupByTaskIdAndUserid(Map<String, Object> xmWorkload);
+
+
+    void updateStatusAfterJoinSbill(Map<String, Object> details);
+
+    void updateStatusAfterDetailDel(List<String> detailIds);
+
+    List<Map<String, Object>> listGroupByTaskIdAndUseridToSet(Map<String, Object> xmWorkload);
 }
 

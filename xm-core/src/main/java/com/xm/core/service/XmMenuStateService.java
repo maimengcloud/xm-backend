@@ -47,11 +47,11 @@ public class XmMenuStateService extends BaseService<XmMenuStateMapper,XmMenuStat
 		
 		Tips tips =new Tips("批量新增成功");
 		if(menus==null || menus.size()==0) {
-			tips.setFailureMsg("功能列表不能为空");
+			tips.setErrMsg("功能列表不能为空");
 			return tips;
 		}
 		if(StringUtils.isEmpty(productId)) {
-			tips.setFailureMsg("项目编号不能为空");
+			tips.setErrMsg("项目编号不能为空");
 			return tips;
 		}
 		User user=LoginUtils.getCurrentUserInfo();
@@ -87,7 +87,7 @@ public class XmMenuStateService extends BaseService<XmMenuStateMapper,XmMenuStat
 
 
 	public long batchLoadXmMenuToState(String productId){
-		long i=super.insert("batchLoadXmMenuToState",map("bizDate",DateUtils.getDate("yyyy-MM-dd"),"productId",productId));
+		long i=super.baseMapper.batchLoadXmMenuToState(map("bizDate",DateUtils.getDate("yyyy-MM-dd"),"productId",productId));
 		return i;
 	}
 

@@ -1,6 +1,8 @@
 package com.xm.core.service;
 
 import com.mdp.core.service.BaseService;
+import com.xm.core.entity.XmIteration;
+import com.xm.core.mapper.XmIterationMapper;
 import com.xm.core.vo.XmIterationVo;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,7 +16,7 @@ import java.util.Map;
  * 实体 XmIteration 表 XM.xm_iteration 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmIterationService")
-public class XmIterationService extends BaseService<XmIterationMapper,XmIteration> {
+public class XmIterationService extends BaseService<XmIterationMapper, XmIteration> {
 
 
 

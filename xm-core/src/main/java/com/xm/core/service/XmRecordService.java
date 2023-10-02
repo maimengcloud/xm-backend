@@ -448,19 +448,19 @@ public class XmRecordService extends BaseService<XmRecordMapper,XmRecord> {
 	}
 
     public List<String> selectChangeProjectIds() {
-		return selectList("selectChangeProjectIds",map());
+		return baseMapper.selectChangeProjectIds(map());
     }
 
 	public List<String> selectChangeProductIds() {
-		return selectList("selectChangeProductIds",map());
+		return baseMapper.selectChangeProductIds(map());
 	}
 
 	public List<String> selectChangeBranchIds() {
-		return selectList("selectChangeBranchIds",map());
+		return baseMapper.selectChangeBranchIds(map());
 	}
 
 	public List<String> selectChangeIterationIds() {
-		return selectList("selectChangeIterationIds",map());
+		return baseMapper.selectChangeIterationIds(map());
 	}
 }
 

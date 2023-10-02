@@ -98,7 +98,7 @@ public class XmEnvListService extends BaseService<XmEnvListMapper,XmEnvList> {
 					}
 				}
 				flowVars.put("id", this.createKey("id"));
-					this.insert("insertProcessApprova", flowVars);   
+					this.baseMapper.insertProcessApprova( flowVars);   
 					this.updateFlowStateByProcInst("1", flowVars);
 			}else if("PROCESS_COMPLETED".equals(eventName)) {
 				if("1".equals(agree)) { 

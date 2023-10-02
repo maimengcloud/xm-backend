@@ -39,9 +39,6 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 
 	@Autowired
 	XmTaskExecuserService xmTaskExecuserService;
-	
-	@Autowired
-	XmAttachmentService xmAttachmentService;
 
 	
 	@Autowired
@@ -97,7 +94,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	public Tips judgetPhaseBudget(String phaseId, BigDecimal addTaskBudgetCost, BigDecimal addTaskBudgetIuserAt, BigDecimal addTaskBudgetOuserAt, BigDecimal addTaskBudgetNouserAt, List<String> excludeTaskIds){
 		Tips tips=new Tips("成功");
 		if(!StringUtils.hasText(phaseId)){
-			tips.setFailureMsg("phaseId参数不能为空");
+			tips.setErrMsg("phaseId参数不能为空");
 			return tips;
 		}
 		Map<String,Object> g=this.selectTotalPhaseAndTaskBudgetCost(phaseId,excludeTaskIds);
@@ -131,21 +128,21 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 		
 		/**
 		if(addTaskBudgetIuserAt.add(taskBudgetIuserAt).compareTo(phaseBudgetIuserAt)>0) {
-			tips.setFailureMsg("内部人力预算超出项目内部人力预算");
+			tips.setErrMsg("内部人力预算超出项目内部人力预算");
 			return tips;
 		}
 		if(addTaskBudgetOuserAt.add(taskBudgetOuserAt).compareTo(phaseBudgetOuserAt)>0) {
-			tips.setFailureMsg("外部人力预算超出项目外部人力预算");
+			tips.setErrMsg("外部人力预算超出项目外部人力预算");
 			return tips;
 		}		
 		if(addTaskBudgetNouserAt.add(taskBudgetNouserAt).compareTo(phaseBudgetNouserAt)>0) {
-			tips.setFailureMsg("非人力预算超出项目非人力预算");
+			tips.setErrMsg("非人力预算超出项目非人力预算");
 			return tips;
 		}
 		**/
 		BigDecimal totalTaskBudgetAt=taskBudgetTotalCost.add(addTaskBudgetCost);
 		if(phaseBudgetAt.compareTo(totalTaskBudgetAt)<0) {
-			tips.setFailureMsg("任务合计总预算超出计划总预算"+totalTaskBudgetAt.subtract(phaseBudgetAt)+"元");
+			tips.setErrMsg("任务合计总预算超出计划总预算"+totalTaskBudgetAt.subtract(phaseBudgetAt)+"元");
 			return tips;
 		}else {
 			return tips;
@@ -166,7 +163,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	public Tips judgetTaskBudget(String parentTaskid, BigDecimal addTaskBudgetCost, BigDecimal addTaskBudgetIuserAt, BigDecimal addTaskBudgetOuserAt, BigDecimal addTaskBudgetNouserAt, List<String> excludeTaskIds){
 		Tips tips=new Tips("成功");
 		if(!StringUtils.hasText(parentTaskid)){
-			tips.setFailureMsg("parentTaskid参数不能为空");
+			tips.setErrMsg("parentTaskid参数不能为空");
 			return tips;
 		}
 		Map<String,Object> g=this.selectTotalTaskBudgetCost(parentTaskid,excludeTaskIds);
@@ -178,7 +175,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 		BigDecimal childBudgetAt=NumberUtil.getBigDecimal(g.get("childBudgetAt"),BigDecimal.ZERO);
 		childBudgetAt=childBudgetAt.add(addTaskBudgetCost);
 		if(budgetAt.compareTo(childBudgetAt)<0) {
-			tips.setFailureMsg("任务合计总预算超出上级总预算"+childBudgetAt.subtract(budgetAt)+"元");
+			tips.setErrMsg("任务合计总预算超出上级总预算"+childBudgetAt.subtract(budgetAt)+"元");
 			return tips;
 		}else {
 			return tips;
@@ -299,7 +296,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 		xmRecordService.addXmTaskRecord(xmTask.getProjectId(), xmTask.getId(), "项目-任务-新增任务", "新增任务"+xmTask.getName());
 		//草稿不提醒
 		if(!"0".equals(xmTaskVo.getStatus())){
-			notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTask.getProjectId(), xmTask.getId(), "您成为任务【" + xmTask.getName() + "】的负责人，请注意跟进。");
+			notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "您成为任务【" + xmTask.getName() + "】的负责人，请注意跟进。",null);
 		}
 
 		return xmTaskVo;
@@ -399,7 +396,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 		return this.selectTaskListByIds(ids);
 	}
 	public List<XmTask> selectTaskListByIds(List<String> ids){
-		return baseMapper.selectTaskListByIds",map("ids(ids));
+		return baseMapper.selectTaskListByIds(map("ids",ids));
 	}
 
 
@@ -776,14 +773,14 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 		Tips tips=new Tips("成功");
 		Map<String,Object> data=this.calcProjectAndTaskBudget(projectId,excludeTaskIds);
 		if(data==null || data.isEmpty()){
-			tips.setFailureMsg("项目不存在");
+			tips.setErrMsg("项目不存在");
 			return tips;
 		}
 		BigDecimal planTotalCost=NumberUtil.getBigDecimal(data.get("planTotalCost"),BigDecimal.ZERO);
 		BigDecimal taskBudgetCost=NumberUtil.getBigDecimal(data.get("budgetAt"),BigDecimal.ZERO);
 		BigDecimal chaochu=taskBudgetCost.add(addBudgetCost).subtract(planTotalCost);
 		if(chaochu.compareTo(BigDecimal.ZERO)>0){
-			tips.setFailureMsg("超出项目总预算"+chaochu+"元");
+			tips.setErrMsg("超出项目总预算"+chaochu+"元");
 			return tips;
 		}
 		return tips;
@@ -791,13 +788,13 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 
 	public List<XmTask> listTenTaskByProjectIdAndProductId(String projectId,String productId) {
 
-		return baseMapper.listTenTaskByProjectIdAndProductId",map("projectId", projectId, "productId( productId));
+		return baseMapper.listTenTaskByProjectIdAndProductId(map("projectId", projectId,  productId));
 	}
 
 
 	public List<XmTask> listTenTaskByProjectIdAndIterationId(String projectId, String iterationId) {
 
-		return baseMapper.listTenTaskByProjectIdAndIterationId", map("projectId", projectId, "iterationId( iterationId));
+		return baseMapper.listTenTaskByProjectIdAndIterationId(map("projectId", projectId, "iterationId",iterationId));
 	}
 
 	@Transactional

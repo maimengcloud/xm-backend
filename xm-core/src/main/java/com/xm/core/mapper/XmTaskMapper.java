@@ -3,12 +3,12 @@ package com.xm.core.mapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.xm.core.entity.XmTask;
+import com.xm.core.vo.BatchRelTasksWithPhase;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
-
-import com.xm.core.entity.XmTask;
 /**
  * @author maimeng-mdp code-gen
  * @since 2023-10-3
@@ -24,5 +24,36 @@ public interface XmTaskMapper extends BaseMapper<XmTask> {
      */
     List<Map<String,Object>> selectListMapByWhere(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
+    List<XmTask> selectTaskListByIds(Map<String, Object> ids);
+
+    void batchRelTasksWithMenu(Map<String, Object> map);
+
+    void updateChildrenCntByIds(List<String> ids);
+
+    void batchRelTasksWithPhase(BatchRelTasksWithPhase tasksPhase);
+
+    void updateActCostAndActWorkloadAfterSettle(Map<String, Object> map);
+
+    void calcWorkloadByRecord(List<String> ids);
+
+    void batchUpdateBudgetWorkloadAndRate(Map<String, Object> map);
+
+    List<Map<String, Object>> getXmTaskAttDist(Map<String, Object> xmTask);
+
+    List<Map<String, Object>> getXmTaskAgeDist(Map<String, Object> xmTask);
+
+    void upBrowseTimes(Map<String, Object> map);
+
+    void updateSomeFieldByPkAfterPaySuccess(XmTask xmTaskUpdate);
+
+    List<Map<String, Object>> getXmTaskSort(Map<String, Object> xmTask);
+
+    List<XmTask> listTenTaskByProjectIdAndProductId(Map<String, Object> projectId);
+
+    List<XmTask> listTenTaskByProjectIdAndIterationId(Map<String, Object> map);
+
+    void batchChangeParent(Map<String, Object> map);
+
+    void updateTaskChildrenCntByTaskId(String taskId);
 }
 

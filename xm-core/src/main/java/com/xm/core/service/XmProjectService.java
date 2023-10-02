@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.service.BaseService;
 import com.mdp.core.service.SequenceService;
 import com.mdp.core.utils.BaseUtils;
@@ -46,9 +47,6 @@ public class XmProjectService extends BaseService<XmProjectMapper,XmProject> {
 
     @Autowired
     XmQuestionService xmQuestionService;
-
-    @Autowired
-    XmFileService xmFileService;
 
     
     @Autowired
@@ -244,12 +242,7 @@ public class XmProjectService extends BaseService<XmProjectMapper,XmProject> {
     	xmProjectCacheService.clear(projectId);
     }
     
-    /** 请在此类添加自定义函数 */
 
-    public List<Map<String,Object>> getProject(Map<String,Object>  params) {
-        List<Map<String,Object>>  xmProjectList = this.selectListMapByWhere(params);	//列出XmProject列表
-        return xmProjectList;
-    }
     
     public void updateProject(XmProject xmProject) {
         String projectId = xmProject.getId();
@@ -281,7 +274,7 @@ public class XmProjectService extends BaseService<XmProjectMapper,XmProject> {
 
 		xmProjectVo.setBranchId(user.getBranchId());
         if(!StringUtils.isEmpty(xmProjectVo.getId()) && xmProjectVo.getId().equals(xmProjectVo.getCode())) {
-        	  tips.setFailureMsg("id不能事先预设");
+        	  tips.setErrMsg("id不能事先预设");
               throw new BizException(tips);
         } 
         if(StringUtils.hasText(xmProjectVo.getCode())) {
@@ -289,7 +282,7 @@ public class XmProjectService extends BaseService<XmProjectMapper,XmProject> {
             xmProjectQuery.setCode(xmProjectVo.getCode());
 			xmProjectQuery.setBranchId(user.getBranchId());
             if(this.countByWhere(xmProjectQuery)>0){
-                tips.setFailureMsg("项目代号重复，请修改代号再提交");
+                tips.setErrMsg("项目代号重复，请修改代号再提交");
                 throw new BizException(tips);
             }
             xmProjectVo.setId(this.createProjectId(xmProjectVo.getCode()));
@@ -439,7 +432,7 @@ public class XmProjectService extends BaseService<XmProjectMapper,XmProject> {
 				if(StringUtils.isEmpty(bizProject.getBranchId())) {
 					throw new BizException("请上送flowVars.data.branchId");
 				} 
-				List<Map<String,Object>> bizList=this.selectListMapByWhere(bizQuery);
+				List<Map<String,Object>> bizList=this.selectListMapByWhere(QueryTools.initPage(bizQuery),QueryTools.initQueryWrapper(XmProject.class),bizQuery);
 				if(bizList==null || bizList.size()==0) {
 					throw new BizException("没有找到对应项目,项目为【"+bizProject.getId()+"】");
 				}else {

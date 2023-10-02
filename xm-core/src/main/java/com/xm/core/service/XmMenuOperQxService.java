@@ -1,16 +1,15 @@
 package com.xm.core.service;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.mdp.core.entity.Tips;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmProduct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
+
+import static com.mdp.core.utils.BaseUtils.map;
 
 /**
  * 父类已经支持增删改查操作,因此,即使本类什么也不写,也已经可以满足一般的增删改查操作了.<br> 
@@ -19,6 +18,8 @@ import java.util.Map;
  ***/
 @Service("xm.core.xmProductOperQxService")
 public class XmMenuOperQxService {
+	@Autowired
+	XmMenuService xmMenuService;
 
 	/**
 	 * 检查某个人是否为产品级管理人员
@@ -65,7 +66,7 @@ public class XmMenuOperQxService {
 		if(menuIds==null || menuIds.size()==0){
 			return null;
 		}
-		List<XmMenu> xmMenus=super.selectList("getUserCanOpMenusByIds",map("mmUserid",mmUserid,"menuIds",menuIds,"childrenCnt",childrenCnt));
+		List<XmMenu> xmMenus=xmMenuService.getUserCanOpMenusByIds(map("mmUserid",mmUserid,"menuIds",menuIds,"childrenCnt",childrenCnt));
 		return xmMenus;
 	}
 }

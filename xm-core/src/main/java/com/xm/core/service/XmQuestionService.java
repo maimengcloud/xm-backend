@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.safe.client.entity.User;
@@ -29,9 +30,7 @@ import java.util.Map;
  ***/
 @Service("xm.core.xmQuestionService")
 public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> {
-    
-    @Autowired
-    XmAttachmentService xmAttachmentService;
+
     
     @Autowired
     XmQuestionHandleService xmQuestionHandleService;
@@ -81,9 +80,6 @@ public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> 
 		handle.setId(this.xmQuestionHandleService.createKey("id"));
 		xmQuestionHandleService.insert(handle);
 
-        if(xmQuestionVo.getAttachment()!=null && xmQuestionVo.getAttachment().size()>0) {
-        	xmAttachmentService.insertOrUpdate(xmQuestionVo.getId(),"问题",xmQuestionVo.getAttachment());
-        } 
         return xmQuestionVo;
     }
     /**
@@ -166,7 +162,7 @@ public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> 
 				if(StringUtils.isEmpty(questionId)) {
 					throw new BizException("请上送问题编号flowVars.data.id");
 				} 
-				List<Map<String,Object>> bizList=this.selectListMapByWhere(bizQuery);
+				List<Map<String,Object>> bizList=this.selectListMapByWhere(QueryTools.initPage(bizQuery),QueryTools.initQueryWrapper(XmQuestion.class),bizQuery);
 				if(bizList==null || bizList.size()==0) {
 					throw new BizException("没有找到对应问题单,问题单为【"+questionId+"】");
 				}else {
@@ -176,7 +172,7 @@ public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> 
 					}
 				}
 				flowVars.put("id", this.createKey("id"));
-					this.insert("insertProcessApprova", flowVars);   
+					this.baseMapper.insertProcessApprova( flowVars);   
 					this.updateFlowStateByProcInst("1", flowVars);
 			}else if("PROCESS_COMPLETED".equals(eventName)) {
 				if("1".equals(agree)) { 

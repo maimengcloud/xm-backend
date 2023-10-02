@@ -428,5 +428,9 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 	public void upReads(String menuId,Integer reads) {
 		baseMapper.upReads(map("menuId",menuId,"reads",reads));
 	}
+
+	public List<XmMenu> getUserCanOpMenusByIds(Map<String, Object> map) {
+		return baseMapper.getUserCanOpMenusByIds(map);
+	}
 }
 

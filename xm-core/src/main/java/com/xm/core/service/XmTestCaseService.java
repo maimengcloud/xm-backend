@@ -29,7 +29,6 @@ public class XmTestCaseService extends BaseService<XmTestCaseMapper, XmTestCase>
     }
     public List<Map<String, Object>> getXmTestCaseSort(Map<String, Object> xmTestCase) {
         return baseMapper.getXmTestCaseSort(xmTestCase);
-        return baseMapper.
     }
 
     /** 请在此类添加自定义函数 */

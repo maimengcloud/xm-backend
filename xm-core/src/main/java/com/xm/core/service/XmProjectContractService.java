@@ -3,7 +3,6 @@ package com.xm.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.err.BizException;
-import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmProjectContract;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -85,7 +84,7 @@ public class XmProjectContractService extends BaseService<XmProjectContractMappe
 					}
 				}
 				flowVars.put("id", this.createKey("id"));
-					this.insert("insertProcessApprova", flowVars);   
+					this.baseMapper.insertProcessApprova( flowVars);   
 					this.updateFlowStateByProcInst("1", flowVars);
 			}else if("PROCESS_COMPLETED".equals(eventName)) {
 				if("1".equals(agree)) { 

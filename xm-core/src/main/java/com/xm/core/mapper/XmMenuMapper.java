@@ -3,12 +3,11 @@ package com.xm.core.mapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.xm.core.entity.XmMenu;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
-
-import com.xm.core.entity.XmMenu;
 /**
  * @author maimeng-mdp code-gen
  * @since 2023-10-3
@@ -24,5 +23,20 @@ public interface XmMenuMapper extends BaseMapper<XmMenu> {
      */
     List<Map<String,Object>> selectListMapByWhere(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
+    List<XmMenu> getUserCanOpMenusByIds(Map<String, Object> map);
+
+    List<Map<String, Object>> selectListMapByWhereWithPlan(Map<String, Object> xmMenu);
+
+    List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> xmMenu);
+
+    List<Map<String, Object>> selectListMapByWhereWithPhase(Map<String, Object> xmMenu);
+
+    void updateMenuChildrenCntByMenuId(String menuId);
+
+    void updateChildrenCntByIds(List<String> ids);
+
+    List<Map<String, Object>> queryTaskUsersByMenuId(String menuId);
+
+    List<XmMenu> selectExistIterationMenus(Map<String, Object> menuIds);
 }
 

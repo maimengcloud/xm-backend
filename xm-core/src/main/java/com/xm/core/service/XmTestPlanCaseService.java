@@ -33,7 +33,7 @@ public class XmTestPlanCaseService extends BaseService<XmTestPlanCaseMapper,XmTe
     }
 
     public List<XmTestPlanCase> selectListByCaseIdsAndPlanId(String planId, List<String> caseIds) {
-        return baseMapper.selectListByCaseIdsAndPlanId",map("planId",planId,"caseIds(caseIds));
+        return baseMapper.selectListByCaseIdsAndPlanId(map("planId",planId,"caseIds",caseIds));
     }
 
     public List<Map<String, Object>> getXmTestPlanCaseExecStatusDist(Map<String, Object> xmTestPlanCase) {

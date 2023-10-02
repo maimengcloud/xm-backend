@@ -35,11 +35,11 @@ public class XmTaskEvalService extends BaseService<XmTaskEvalMapper, XmTaskEval>
     }
 
     public MyTotalEval getServiceProviderEval(User user) {
-        return super.selectOne("getServiceProviderEval",user);
+        return baseMapper.getServiceProviderEval(user);
     }
 
     public MyTotalEval getPersonEval(User user) {
-        return super.selectOne("getPersonEval",user);
+        return baseMapper.getPersonEval(user);
     }
 }
 

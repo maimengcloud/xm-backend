@@ -3,12 +3,11 @@ package com.xm.core.mapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.xm.core.entity.XmRecord;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
-
-import com.xm.core.entity.XmRecord;
 /**
  * @author maimeng-mdp code-gen
  * @since 2023-10-3
@@ -24,5 +23,12 @@ public interface XmRecordMapper extends BaseMapper<XmRecord> {
      */
     List<Map<String,Object>> selectListMapByWhere(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
+    List<String> selectChangeProjectIds(Map<String, Object> map);
+
+    List<String> selectChangeProductIds(Map<String, Object> map);
+
+    List<String> selectChangeBranchIds(Map<String, Object> map);
+
+    List<String> selectChangeIterationIds(Map<String, Object> map);
 }
 

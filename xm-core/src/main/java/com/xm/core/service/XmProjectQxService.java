@@ -88,7 +88,7 @@ public class XmProjectQxService {
         boolean headIsPm=xmGroupService.checkUserIsProjectAdm(xmProject,head.getUserid()); 
         if("1".equals(scopeQx)){//同组织
             if( !headIsPm && !head.getBranchId().equals(xmProject.getBranchId())){
-                tips.setFailureMsg("pdqx-scope-branch-0",String.format("项目【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProject.getId(),headUsername,xmProject.getBranchId()));
+                tips.setErrMsg("pdqx-scope-branch-0",String.format("项目【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProject.getId(),headUsername,xmProject.getBranchId()));
                 return tips;
             }
             if(xmGroupService.checkUserIsProjectAdm(xmProject,memUserid)){
@@ -105,14 +105,14 @@ public class XmProjectQxService {
             }else if (memBranchId.equals(xmProject.getBranchId())){
                 return tips;
             }
-            tips.setFailureMsg("pdqx-scope-branch-1",String.format("项目【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProject.getId(),memUsername,xmProject.getBranchId()));
+            tips.setErrMsg("pdqx-scope-branch-1",String.format("项目【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProject.getId(),memUsername,xmProject.getBranchId()));
             return tips;
 
 
         }else if("2".equals(scopeQx)){//同项目
             List<XmGroupVo> groups=this.getProjectGroupsFromLocalCache(xmProject.getId());
             if( !headIsPm && !xmGroupService.checkUserExistsGroup(groups, head.getUserid())){
-                tips.setFailureMsg("pdqx-scope-product-0",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),headUsername));
+                tips.setErrMsg("pdqx-scope-product-0",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),headUsername));
                 return tips;
             };
                  if(xmGroupService.checkUserIsProjectAdm(xmProject,memUserid)){
@@ -121,7 +121,7 @@ public class XmProjectQxService {
                 if( xmGroupService.checkUserExistsGroup(groups,memUserid) ){
                     return tips;
                 }; 
-            tips.setFailureMsg("pdqx-scope-product-1",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),memUsername));
+            tips.setErrMsg("pdqx-scope-product-1",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),memUsername));
             return tips;
         }else if("3".equals(scopeQx)){//同小组
             List<XmGroupVo> groups=this.getProjectGroupsFromLocalCache(xmProject.getId());
@@ -130,7 +130,7 @@ public class XmProjectQxService {
             if( !headIsPm ){
                 headGroups=xmGroupService.getUserGroups(groups,head.getUserid());
                 if( headGroups==null || headGroups.size()==0 ){
-                    tips.setFailureMsg("pdqx-scope-team-1",String.format("项目【%s】只开放给同一个项目团队下同一个小组人员,【%s】不在项目团队中。",xmProject.getId(),headUsername));
+                    tips.setErrMsg("pdqx-scope-team-1",String.format("项目【%s】只开放给同一个项目团队下同一个小组人员,【%s】不在项目团队中。",xmProject.getId(),headUsername));
                     return tips;
                 }
             }
@@ -142,7 +142,7 @@ public class XmProjectQxService {
                 if( memGroups!=null && memGroups.size()>0 ){
                     return tips;
                 }
-            tips.setFailureMsg("pdqx-scope-team-2",String.format("项目【%s】只开放给同一个项目团队下同一个小组人员,【%s】不在项目团队中。",xmProject.getId(),memUsername));
+            tips.setErrMsg("pdqx-scope-team-2",String.format("项目【%s】只开放给同一个项目团队下同一个小组人员,【%s】不在项目团队中。",xmProject.getId(),memUsername));
             return tips;
         }
         return tips;
@@ -170,30 +170,30 @@ public class XmProjectQxService {
                 User sysUser=sysClient.getUserByUserid(memUserid);
                 if(sysUser==null || StringUtils.isEmpty(sysUser.getUserid())){
                     //如果账户不存在，可能已注销，再判断没有意义，会导致企业无法操作遗留数据问题
-                    //tips.setFailureMsg("no-qx-branchId","项目【"+xmProject.getId()+"】只开放给同企业人员。");
+                    //tips.setErrMsg("no-qx-branchId","项目【"+xmProject.getId()+"】只开放给同企业人员。");
                     return tips;
                 }
                 memBranchId=sysUser.getBranchId();
                 if(!sysUser.getBranchId().equals(xmProject.getBranchId())){
-                    tips.setFailureMsg("pdqx-scope-branch-0",String.format("项目【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProject.getId(),memUsername,xmProject.getBranchId()));
+                    tips.setErrMsg("pdqx-scope-branch-0",String.format("项目【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProject.getId(),memUsername,xmProject.getBranchId()));
                     return tips;
                 }
             }else{
                 if(!memBranchId.equals(xmProject.getBranchId())){
-                    tips.setFailureMsg("pdqx-scope-branch-0",String.format("项目【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProject.getId(),memUsername,xmProject.getBranchId()));
+                    tips.setErrMsg("pdqx-scope-branch-0",String.format("项目【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProject.getId(),memUsername,xmProject.getBranchId()));
                     return tips;
                 }
             }
 
         }else if("2".equals(scopeQx)){//同项目
             if(!xmGroupService.checkUserExistsGroup(getProjectGroupsFromLocalCache(xmProject.getId()), memUserid)){
-                tips.setFailureMsg("pdqx-scope-product-0",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),memUsername));
+                tips.setErrMsg("pdqx-scope-product-0",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),memUsername));
                 return tips;
             };
         }else if("3".equals(scopeQx)){//同小组
 
             if(!xmGroupService.checkUserExistsGroup(getProjectGroupsFromLocalCache(xmProject.getId()), memUserid)){
-                tips.setFailureMsg("pdqx-scope-team-0",String.format("项目【%s】只开放给同一个项目团队下同一个小组人员,【%s】不在项目团队中。",xmProject.getId(),memUsername));
+                tips.setErrMsg("pdqx-scope-team-0",String.format("项目【%s】只开放给同一个项目团队下同一个小组人员,【%s】不在项目团队中。",xmProject.getId(),memUsername));
                 return tips;
             }
         }
@@ -221,7 +221,7 @@ public class XmProjectQxService {
             if(xmGroupService.checkUserIsOtherUserTeamHeadOrAss(groups, head.getUserid(), memUserid)){
                 return tips;
             }
-            tips.setFailureMsg("pdqx-transmit-0",
+            tips.setErrMsg("pdqx-transmit-0",
                     String.format("项目【%s】开启了上下级关系检查，您当前账户【%s】不属于账户【%s】的上级，无权操作。",xmProject.getId(),head.getUsername(),memUsername));
 
 
@@ -258,7 +258,7 @@ public class XmProjectQxService {
         boolean headIsPm=xmGroupService.checkUserIsProjectAdm(xmProject,head.getUserid());
         if("1".equals(scopeQx)){//同组织
             if( !headIsPm && !head.getBranchId().equals(xmProject.getBranchId())){
-                tips.setFailureMsg("pdqx-scope-branch-0",String.format("项目【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProject.getId(),username,xmProject.getBranchId()));
+                tips.setErrMsg("pdqx-scope-branch-0",String.format("项目【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProject.getId(),username,xmProject.getBranchId()));
                 return tips;
             }
             boolean isAllNull=true;
@@ -278,7 +278,7 @@ public class XmProjectQxService {
             if(isAllNull){
                 return tips;
             }else{
-                tips.setFailureMsg("pdqx-scope-branch-1",String.format("项目【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProject.getId(),memUseridSet.stream().collect(Collectors.joining(",")),xmProject.getBranchId()));
+                tips.setErrMsg("pdqx-scope-branch-1",String.format("项目【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProject.getId(),memUseridSet.stream().collect(Collectors.joining(",")),xmProject.getBranchId()));
                 return tips;
             }
 
@@ -286,7 +286,7 @@ public class XmProjectQxService {
         }else if("2".equals(scopeQx)){//同项目
             List<XmGroupVo> groups=this.getProjectGroupsFromLocalCache(xmProject.getId());
             if( !headIsPm && !xmGroupService.checkUserExistsGroup(groups, head.getUserid())){
-                tips.setFailureMsg("pdqx-scope-product-0",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),username));
+                tips.setErrMsg("pdqx-scope-product-0",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),username));
                 return tips;
             };
             for (String memUserid : memUseridSet) {
@@ -297,7 +297,7 @@ public class XmProjectQxService {
                     return tips;
                 };
             }
-            tips.setFailureMsg("pdqx-scope-product-1",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
+            tips.setErrMsg("pdqx-scope-product-1",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
             return tips;
         }else if("3".equals(scopeQx)){//同小组
             List<XmGroupVo> groups=this.getProjectGroupsFromLocalCache(xmProject.getId());
@@ -306,7 +306,7 @@ public class XmProjectQxService {
             if( !headIsPm ){
                 headGroups=xmGroupService.getUserGroups(groups,head.getUserid());
                 if( headGroups==null || headGroups.size()==0 ){
-                    tips.setFailureMsg("pdqx-scope-team-1",String.format("项目【%s】只开放给同一个项目团队下同一个小组人员,【%s】不在项目团队中。",xmProject.getId(),username));
+                    tips.setErrMsg("pdqx-scope-team-1",String.format("项目【%s】只开放给同一个项目团队下同一个小组人员,【%s】不在项目团队中。",xmProject.getId(),username));
                     return tips;
                 }
             }
@@ -319,7 +319,7 @@ public class XmProjectQxService {
                     return tips;
                 }
             }
-            tips.setFailureMsg("pdqx-scope-team-2",String.format("项目【%s】只开放给同一个项目团队下同一个小组人员,【%s】不在项目团队中。",xmProject.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
+            tips.setErrMsg("pdqx-scope-team-2",String.format("项目【%s】只开放给同一个项目团队下同一个小组人员,【%s】不在项目团队中。",xmProject.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
             return tips;
         }
         return tips;
@@ -352,7 +352,7 @@ public class XmProjectQxService {
                     return tips;
                 }
             }
-            tips.setFailureMsg("pdqx-transmit-0",
+            tips.setErrMsg("pdqx-transmit-0",
                     String.format("项目【%s】开启了上下级关系检查，您当前账户不属于【%s】中任意账户的上级，无权操作。",xmProject.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
 
 

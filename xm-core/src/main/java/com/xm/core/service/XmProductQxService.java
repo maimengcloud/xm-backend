@@ -81,7 +81,7 @@ public class XmProductQxService {
         boolean headIsPm=xmGroupService.checkUserIsProductAdm(xmProduct,head.getUserid()); 
         if("1".equals(scopeQx)){//同组织
             if( !headIsPm && !head.getBranchId().equals(xmProduct.getBranchId())){
-                tips.setFailureMsg("pdqx-scope-branch-0",String.format("产品【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProduct.getId(),headUsername,xmProduct.getBranchId()));
+                tips.setErrMsg("pdqx-scope-branch-0",String.format("产品【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProduct.getId(),headUsername,xmProduct.getBranchId()));
                 return tips;
             }
             if(xmGroupService.checkUserIsProductAdm(xmProduct,memUserid)){
@@ -98,14 +98,14 @@ public class XmProductQxService {
             }else if (memBranchId.equals(xmProduct.getBranchId())){
                 return tips;
             }
-            tips.setFailureMsg("pdqx-scope-branch-1",String.format("产品【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProduct.getId(),memUsername,xmProduct.getBranchId()));
+            tips.setErrMsg("pdqx-scope-branch-1",String.format("产品【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProduct.getId(),memUsername,xmProduct.getBranchId()));
             return tips;
 
 
         }else if("2".equals(scopeQx)){//同产品
             List<XmGroupVo> groups=this.getProductGroupsFromLocalCache(xmProduct.getId());
             if( !headIsPm && !xmGroupService.checkUserExistsGroup(groups, head.getUserid())){
-                tips.setFailureMsg("pdqx-scope-product-0",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),headUsername));
+                tips.setErrMsg("pdqx-scope-product-0",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),headUsername));
                 return tips;
             };
                  if(xmGroupService.checkUserIsProductAdm(xmProduct,memUserid)){
@@ -114,7 +114,7 @@ public class XmProductQxService {
                 if( xmGroupService.checkUserExistsGroup(groups,memUserid) ){
                     return tips;
                 }; 
-            tips.setFailureMsg("pdqx-scope-product-1",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),memUsername));
+            tips.setErrMsg("pdqx-scope-product-1",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),memUsername));
             return tips;
         }else if("3".equals(scopeQx)){//同小组
             List<XmGroupVo> groups=this.getProductGroupsFromLocalCache(xmProduct.getId());
@@ -123,7 +123,7 @@ public class XmProductQxService {
             if( !headIsPm ){
                 headGroups=xmGroupService.getUserGroups(groups,head.getUserid());
                 if( headGroups==null || headGroups.size()==0 ){
-                    tips.setFailureMsg("pdqx-scope-team-1",String.format("产品【%s】只开放给同一个产品团队下同一个小组人员,【%s】不在产品团队中。",xmProduct.getId(),headUsername));
+                    tips.setErrMsg("pdqx-scope-team-1",String.format("产品【%s】只开放给同一个产品团队下同一个小组人员,【%s】不在产品团队中。",xmProduct.getId(),headUsername));
                     return tips;
                 }
             }
@@ -135,7 +135,7 @@ public class XmProductQxService {
                 if( memGroups!=null && memGroups.size()>0 ){
                     return tips;
                 }
-            tips.setFailureMsg("pdqx-scope-team-2",String.format("产品【%s】只开放给同一个产品团队下同一个小组人员,【%s】不在产品团队中。",xmProduct.getId(),memUsername));
+            tips.setErrMsg("pdqx-scope-team-2",String.format("产品【%s】只开放给同一个产品团队下同一个小组人员,【%s】不在产品团队中。",xmProduct.getId(),memUsername));
             return tips;
         }
         return tips;
@@ -163,30 +163,30 @@ public class XmProductQxService {
                 User sysUser=sysClient.getUserByUserid(memUserid);
                 if(sysUser==null || StringUtils.isEmpty(sysUser.getUserid())){
                     //如果账户不存在，可能已注销，再判断没有意义，会导致企业无法操作遗留数据问题
-                    //tips.setFailureMsg("no-qx-branchId","产品【"+xmProduct.getId()+"】只开放给同企业人员。");
+                    //tips.setErrMsg("no-qx-branchId","产品【"+xmProduct.getId()+"】只开放给同企业人员。");
                     return tips;
                 }
                 memBranchId=sysUser.getBranchId();
                 if(!sysUser.getBranchId().equals(xmProduct.getBranchId())){
-                    tips.setFailureMsg("pdqx-scope-branch-0",String.format("产品【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProduct.getId(),memUsername,xmProduct.getBranchId()));
+                    tips.setErrMsg("pdqx-scope-branch-0",String.format("产品【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProduct.getId(),memUsername,xmProduct.getBranchId()));
                     return tips;
                 }
             }else{
                 if(!memBranchId.equals(xmProduct.getBranchId())){
-                    tips.setFailureMsg("pdqx-scope-branch-0",String.format("产品【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProduct.getId(),memUsername,xmProduct.getBranchId()));
+                    tips.setErrMsg("pdqx-scope-branch-0",String.format("产品【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProduct.getId(),memUsername,xmProduct.getBranchId()));
                     return tips;
                 }
             }
 
         }else if("2".equals(scopeQx)){//同产品
             if(!xmGroupService.checkUserExistsGroup(getProductGroupsFromLocalCache(xmProduct.getId()), memUserid)){
-                tips.setFailureMsg("pdqx-scope-product-0",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),memUsername));
+                tips.setErrMsg("pdqx-scope-product-0",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),memUsername));
                 return tips;
             };
         }else if("3".equals(scopeQx)){//同小组
 
             if(!xmGroupService.checkUserExistsGroup(getProductGroupsFromLocalCache(xmProduct.getId()), memUserid)){
-                tips.setFailureMsg("pdqx-scope-team-0",String.format("产品【%s】只开放给同一个产品团队下同一个小组人员,【%s】不在产品团队中。",xmProduct.getId(),memUsername));
+                tips.setErrMsg("pdqx-scope-team-0",String.format("产品【%s】只开放给同一个产品团队下同一个小组人员,【%s】不在产品团队中。",xmProduct.getId(),memUsername));
                 return tips;
             }
         }
@@ -214,7 +214,7 @@ public class XmProductQxService {
             if(xmGroupService.checkUserIsOtherUserTeamHeadOrAss(groups, head.getUserid(), memUserid)){
                 return tips;
             }
-            tips.setFailureMsg("pdqx-transmit-0",
+            tips.setErrMsg("pdqx-transmit-0",
                     String.format("产品【%s】开启了上下级关系检查，您当前账户【%s】不属于账户【%s】的上级，无权操作。",xmProduct.getId(),head.getUsername(),memUsername));
 
 
@@ -246,7 +246,7 @@ public class XmProductQxService {
         boolean headIsPm=xmGroupService.checkUserIsProductAdm(xmProduct,head.getUserid());
         if("1".equals(scopeQx)){//同组织
             if( !headIsPm && !head.getBranchId().equals(xmProduct.getBranchId())){
-                tips.setFailureMsg("pdqx-scope-branch-0",String.format("产品【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProduct.getId(),username,xmProduct.getBranchId()));
+                tips.setErrMsg("pdqx-scope-branch-0",String.format("产品【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProduct.getId(),username,xmProduct.getBranchId()));
                 return tips;
             }
             boolean isAllNull=true;
@@ -266,7 +266,7 @@ public class XmProductQxService {
             if(isAllNull){
                 return tips;
             }else{
-                tips.setFailureMsg("pdqx-scope-branch-1",String.format("产品【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProduct.getId(),memUseridSet.stream().collect(Collectors.joining(",")),xmProduct.getBranchId()));
+                tips.setErrMsg("pdqx-scope-branch-1",String.format("产品【%s】只开放给同企业人员,【%s】不在企业【%s】中。",xmProduct.getId(),memUseridSet.stream().collect(Collectors.joining(",")),xmProduct.getBranchId()));
                 return tips;
             }
 
@@ -274,7 +274,7 @@ public class XmProductQxService {
         }else if("2".equals(scopeQx)){//同产品
             List<XmGroupVo> groups=this.getProductGroupsFromLocalCache(xmProduct.getId());
             if( !headIsPm && !xmGroupService.checkUserExistsGroup(groups, head.getUserid())){
-                tips.setFailureMsg("pdqx-scope-product-0",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),username));
+                tips.setErrMsg("pdqx-scope-product-0",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),username));
                 return tips;
             };
             for (String memUserid : memUseridSet) {
@@ -285,7 +285,7 @@ public class XmProductQxService {
                     return tips;
                 };
             }
-            tips.setFailureMsg("pdqx-scope-product-1",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
+            tips.setErrMsg("pdqx-scope-product-1",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
             return tips;
         }else if("3".equals(scopeQx)){//同小组
             List<XmGroupVo> groups=this.getProductGroupsFromLocalCache(xmProduct.getId());
@@ -294,7 +294,7 @@ public class XmProductQxService {
             if( !headIsPm ){
                 headGroups=xmGroupService.getUserGroups(groups,head.getUserid());
                 if( headGroups==null || headGroups.size()==0 ){
-                    tips.setFailureMsg("pdqx-scope-team-1",String.format("产品【%s】只开放给同一个产品团队下同一个小组人员,【%s】不在产品团队中。",xmProduct.getId(),username));
+                    tips.setErrMsg("pdqx-scope-team-1",String.format("产品【%s】只开放给同一个产品团队下同一个小组人员,【%s】不在产品团队中。",xmProduct.getId(),username));
                     return tips;
                 }
             }
@@ -307,7 +307,7 @@ public class XmProductQxService {
                     return tips;
                 }
             }
-            tips.setFailureMsg("pdqx-scope-team-2",String.format("产品【%s】只开放给同一个产品团队下同一个小组人员,【%s】不在产品团队中。",xmProduct.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
+            tips.setErrMsg("pdqx-scope-team-2",String.format("产品【%s】只开放给同一个产品团队下同一个小组人员,【%s】不在产品团队中。",xmProduct.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
             return tips;
         }
         return tips;
@@ -339,7 +339,7 @@ public class XmProductQxService {
                     return tips;
                 }
             }
-            tips.setFailureMsg("pdqx-transmit-0",
+            tips.setErrMsg("pdqx-transmit-0",
                     String.format("产品【%s】开启了上下级关系检查，您当前账户不属于【%s】中任意账户的上级，无权操作。",xmProduct.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
 
 

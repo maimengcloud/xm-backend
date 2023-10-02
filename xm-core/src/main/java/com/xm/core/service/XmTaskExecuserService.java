@@ -98,7 +98,7 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 			}
 			this.pushMsgService.pushPrichatMsgToIm(user.getBranchId(),user.getUserid(),user.getUsername(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),imMsg);
 			this.pushMsgService.pushCreateCssGroupMsg(user.getBranchId(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), imMsg);
-			notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), "2", xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), notifyMsg);
+			notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),  notifyMsg,null);
 
 		}
 		xmRecordService.addXmTaskRecord(xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), "项目-任务-增加候选人", "任务增加候选人"+xmTaskExecuser.getUsername(),JSONObject.toJSONString(xmTaskExecuser),null);
@@ -134,7 +134,7 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 			userMap.put("username", xmTaskExecuser.getUsername());
 			users.add(userMap);
 			String imMsg=xmTaskExecuser.getUsername()+"放弃任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】";
-			notifyMsgService.pushMsg(user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),"2",xmTaskExecuser.getProjectId(),xmTaskExecuser.getTaskId(),"您已离开任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】！");
+			notifyMsgService.pushMsg(user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),"您已离开任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】！",null);
 
 			for (XmGroupVo g : userGroups) {
 				this.pushMsgService.pushGroupMsg(user.getBranchId(), g.getId(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),  imMsg);
@@ -207,7 +207,7 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 			}
 			this.pushMsgService.pushCssMsg(user.getBranchId(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), imMsg);
 
-			notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), "2", xmTaskDb.getProjectId(), xmTaskExecuser.getTaskId(), "恭喜您被雇主选为任务【" + xmTaskExecuser.getTaskId() + "-" + xmTaskDb.getName() + "】的中标人,请尽快开展工作。");
+			notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), "恭喜您被雇主选为任务【" + xmTaskExecuser.getTaskId() + "-" + xmTaskDb.getName() + "】的中标人,请尽快开展工作。",null);
 
 			updateXmTaskExeUseridsAndUsernamesByTaskId(taskId);
 			if("2".equals(xmTaskDb.getOshare()) && xmTaskDb.getShareFee()!=null && xmTaskDb.getShareFee().compareTo(BigDecimal.ZERO)>0){
@@ -236,7 +236,7 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 		updateXmTaskExeUseridsAndUsernamesByTaskId(xmTaskExecuser.getTaskId());
 		this.pushMsgService.pushCssMsg(xmTaskExecuser.getBranchId(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),  xmTaskExecuser.getUsername()+"变更为候选人并提交关于任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】报价信息");
 		User user=LoginUtils.getCurrentUserInfo();
-		notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), "2", xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), "您成为任务【" + xmTaskExecuser.getTaskId() + "-" + xmTaskExecuser.getTaskName() + "】的候选人，请等待雇主选标，在雇主选标前，您还可以修改报价，合理的报价更容易获得雇主的喜欢哦！");
+		notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), "您成为任务【" + xmTaskExecuser.getTaskId() + "-" + xmTaskExecuser.getTaskName() + "】的候选人，请等待雇主选标，在雇主选标前，您还可以修改报价，合理的报价更容易获得雇主的喜欢哦！",null);
 
 		xmRecordService.addXmTaskRecord(xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), "项目-任务-候选人报价", xmTaskExecuser.getUsername()+"变更为候选人并提交报价信息",JSONObject.toJSONString(xmTaskExecuser),null);
 	}
@@ -253,7 +253,7 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 		this.updateSomeFieldByPk(xmTaskExecuserNew);
 		this.pushMsgService.pushCssMsg(xmTaskExecuser.getBranchId(), xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),  xmTaskExecuser.getUsername()+"提交关于任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】报价信息");
 		User user=LoginUtils.getCurrentUserInfo();
-		notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(), "2", xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), user.getUsername()+"成功修改了任务【" + xmTaskExecuser.getTaskId() + "-" + xmTaskExecuser.getTaskName() + "】的报价信息，请等待雇主选标，在雇主选标前，您还可以修改报价，合理的报价更容易获得雇主的喜欢哦！");
+		notifyMsgService.pushMsg(user, xmTaskExecuser.getUserid(), xmTaskExecuser.getUsername(),  user.getUsername()+"成功修改了任务【" + xmTaskExecuser.getTaskId() + "-" + xmTaskExecuser.getTaskName() + "】的报价信息，请等待雇主选标，在雇主选标前，您还可以修改报价，合理的报价更容易获得雇主的喜欢哦！",null);
 
 		xmRecordService.addXmTaskRecord(xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), "项目-任务-候选人报价", xmTaskExecuser.getUsername()+"提交报价信息",JSONObject.toJSONString(xmTaskExecuser),null);
 	}

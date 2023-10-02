@@ -31,7 +31,7 @@ public class XmProductProjectLinkService extends BaseService<XmProductProjectLin
 		return baseMapper.selectListMapByWhere(page,ew,ext);
 	}
 	List<XmProductProjectLink> selectListByIterationId(String iterationId){
-		List<XmProductProjectLink> data=super.selectList("selectListByIterationId",iterationId);
+		List<XmProductProjectLink> data=baseMapper.selectListByIterationId(iterationId);
 		return data;
 	}
 }
