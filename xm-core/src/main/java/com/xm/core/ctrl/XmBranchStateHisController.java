@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.query.QueryTools;
@@ -58,10 +59,10 @@ public class XmBranchStateHisController {
 		
 		
 		RequestUtils.transformArray(params, "pkList");
-		QueryWrapper<XXXXXXXX> qw = QueryTools.initQueryWrapper(XXXXXXXX.class , params); 
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
+		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmBranchStateHisService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmBranchStateHis列表
 
@@ -77,10 +78,8 @@ public class XmBranchStateHisController {
 		
 		User user= LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
-		List<Map<String,Object>>	xmBranchStateHisList = xmBranchStateHisService.listXmBranchFiveDayTaskCnt(xmBranchStateHis);	//列出XmBranchStateHis列表
-
-		
-		
+		List<Map<String,Object>>	datas = xmBranchStateHisService.listXmBranchFiveDayTaskCnt(params);	//列出XmBranchStateHis列表
+		return Result.ok("query-ok","查询成功").setData(datas);	//列出XmBranchStateHis列表
 	}
 
  
