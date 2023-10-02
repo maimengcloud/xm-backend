@@ -1,47 +1,58 @@
 package  com.xm.core.entity;
-
 import lombok.Data;
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.mdp.core.dao.annotation.TableIds;
+import com.baomidou.mybatisplus.annotation.TableName;
+import org.apache.ibatis.type.Alias;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.Date;
 
 /**
- * 组织 com  顶级模块 xm 大模块 core  小模块 <br> 
- * 实体 XmRptConfig所有属性名: <br>
- *	"bizId","业务编号","id","报告编号","name","报告名称","cuserid","创建人","cusername","创建人姓名","ctime","创建时间","cbranchId","创建机构","cfg","报告配置项","bizType","业务类型1-产品报告，2-迭代报告，3-测试计划报告，4-项目报告，5-企业报告，6-测试库报告";<br>
- * 当前主键(包括多主键):<br>
- *	id;<br>
+ * @author code-gen
+ * @since 2023-10-3
  */
- @Data
+@Data
+@TableName("xm_rpt_config")
 @ApiModel(description="测试报告配置表")
 public class XmRptConfig  implements java.io.Serializable {
 	
 	private static final long serialVersionUID = 1L;
+	@TableId(type = IdType.ASSIGN_ID)
 	
 	@ApiModelProperty(notes="报告编号,主键",allowEmptyValue=true,example="",allowableValues="")
 	String id;
-  	
+
 	
 	@ApiModelProperty(notes="业务编号",allowEmptyValue=true,example="",allowableValues="")
 	String bizId;
+
 	
 	@ApiModelProperty(notes="报告名称",allowEmptyValue=true,example="",allowableValues="")
 	String name;
+
 	
 	@ApiModelProperty(notes="创建人",allowEmptyValue=true,example="",allowableValues="")
 	String cuserid;
+
 	
 	@ApiModelProperty(notes="创建人姓名",allowEmptyValue=true,example="",allowableValues="")
 	String cusername;
+
 	
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
 	Date ctime;
+
 	
 	@ApiModelProperty(notes="创建机构",allowEmptyValue=true,example="",allowableValues="")
 	String cbranchId;
+
 	
 	@ApiModelProperty(notes="报告配置项",allowEmptyValue=true,example="",allowableValues="")
 	String cfg;
+
 	
 	@ApiModelProperty(notes="业务类型1-产品报告，2-迭代报告，3-测试计划报告，4-项目报告，5-企业报告，6-测试库报告",allowEmptyValue=true,example="",allowableValues="")
 	String bizType;
