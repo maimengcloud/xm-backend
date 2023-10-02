@@ -264,9 +264,7 @@ public class XmTestCasedbController {
 				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
 				return Result.error(msgs.stream().collect(Collectors.joining()));
-			}
-			//
-		return Result.ok();
+			} 
 		
 	}
 

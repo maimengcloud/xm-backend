@@ -111,10 +111,8 @@ public class XmFuncController {
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProduct=xmProductService.getProductFromCache(xmFunc.getProductId());
-			tips=productQxService.checkProductQx(xmProduct,2,user);
-			if(!tips.isOk()){
-				return Result.error(tips);
-			}
+			Tips tips=productQxService.checkProductQx(xmProduct,2,user);
+			Result.assertIsFalse(tips);
 			xmFunc.setPbranchId(xmProduct.getBranchId());
 			xmFuncService.parentIdPathsCalcBeforeSave(xmFunc);
 			xmFuncService.insert(xmFunc);
@@ -227,9 +225,7 @@ public class XmFuncController {
 				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else {
 				return Result.error(msgs.stream().collect(Collectors.joining()));
-			}
-			//
-		return Result.ok();
+			} 
 		
 	}
 
@@ -269,8 +265,7 @@ public class XmFuncController {
                  return Result.ok(msgs.stream().collect(Collectors.joining()));
             }else {
                 return Result.error(msgs.stream().collect(Collectors.joining()));
-            }
-        return Result.ok();
+            } 
         
 	} 
 
