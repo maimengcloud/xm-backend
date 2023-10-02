@@ -3,6 +3,7 @@ package com.xm.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.err.BizException;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
@@ -88,7 +89,7 @@ public class XmEnvListService extends BaseService<XmEnvListMapper,XmEnvList> {
 				if(StringUtils.isEmpty(branchId)) {
 					throw new BizException("请上送branchId");
 				} 
-				List<Map<String,Object>> bizList=this.selectListMapByWhere(bizQuery);
+				List<Map<String,Object>> bizList=this.selectListMapByWhere(QueryTools.initPage(bizQuery),QueryTools.initQueryWrapper(XmEnvList.class),bizQuery);
 				if(bizList==null || bizList.size()==0) {
 					throw new BizException("没有找到对应环境清单,环境清单为【"+envId+"】");
 				}else {
@@ -98,7 +99,7 @@ public class XmEnvListService extends BaseService<XmEnvListMapper,XmEnvList> {
 					}
 				}
 				flowVars.put("id", this.createKey("id"));
-					this.baseMapper.insertProcessApprova( flowVars);   
+					this.baseMapper.insertProcessApprova( flowVars);
 					this.updateFlowStateByProcInst("1", flowVars);
 			}else if("PROCESS_COMPLETED".equals(eventName)) {
 				if("1".equals(agree)) { 
