@@ -10,15 +10,12 @@
     <!-- ch.qos.logback.core.rolling.RollingFileAppender 文件日志输出 -->  
     <appender name="file"  
         class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <File>logs/xm.log</File>  
-        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">  
+        <File>logs/xm.log</File>
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <FileNamePattern>logs/xm.%d{yyyy-MM-dd}.%i.log
             </FileNamePattern>  
             <MaxHistory>20</MaxHistory>
-            <TimeBasedFileNamingAndTriggeringPolicy  
-                class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">  
-                <MaxFileSize>100MB</MaxFileSize>
-            </TimeBasedFileNamingAndTriggeringPolicy>  
+            <MaxFileSize>100MB</MaxFileSize>
         </rollingPolicy>  
         <layout class="ch.qos.logback.classic.PatternLayout">  
             <pattern>[%X{gloNo}][%d{yyyy-MM-dd HH:mm:ss}][%-5level][%logger][%X{reqNo}] -%msg%n</pattern>
@@ -32,7 +29,8 @@
     <logger name="com.ibatis.common.jdbc.ScriptRunner" level="DEBUG"/>    
     <logger name="com.ibatis.sqlmap.engine.impl.SqlMapClientDelegate" value="DEBUG" />  
     <!-- 日志级别 -->  
-    <root level="info">
+    <root level="debug">
         <appender-ref ref="file" />
+        <appender-ref ref="console" />
     </root>  
 </configuration> 
