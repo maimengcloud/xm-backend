@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
@@ -127,9 +128,9 @@ public class XmQuestionController {
 			}
 		}
 
-
-		List<Map<String,Object>>	datas = xmQuestionService.getQuestion(params);	//列出XmQuestion列表
-		return Result.ok().setData(datas);
+		QueryWrapper<XmQuestion> qw=QueryTools.initQueryWrapper(XmQuestion.class,params);
+		List<Map<String,Object>>	datas = xmQuestionService.selectListByWhere(page,qw,params);	//列出XmQuestion列表
+		return Result.ok().setData(datas).setTotal(page.getTotal());
 		
 	}
 
@@ -137,36 +138,33 @@ public class XmQuestionController {
 	@RequestMapping(value="/getXmQuestionAttDist",method=RequestMethod.GET)
 	public Result getXmQuestionAttDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
-		xmQuestion.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAttDist(xmQuestion);
+		params.put("pbranchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAttDist(params);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmQuestionAgeDist",method=RequestMethod.GET)
 	public Result getXmQuestionAgeDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
-		xmQuestion.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAgeDist(xmQuestion);
+		params.put("pbranchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAgeDist(params);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
 	@RequestMapping(value="/getXmQuestionRetestDist",method=RequestMethod.GET)
 	public Result getXmQuestionRetestDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
-		xmQuestion.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionRetestDist(xmQuestion);
+		params.put("pbranchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionRetestDist(params);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
 	@RequestMapping(value="/getXmQuestionSort",method=RequestMethod.GET)
 	public Result getXmQuestionSort(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();		
 		IPage page=QueryTools.initPage(params);
-		xmQuestion.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionSort(xmQuestion);
+		params.put("pbranchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionSort(params);
 		Map<String,Object> m=new HashMap<>();
-		PageUtils.responePage(m,datas);
-		
-		
-		
+		return Result.ok().setData(datas).setTotal(page.getTotal());
 	}
 
 	@ApiOperation( value = "新增一条xm_question信息",notes="addXmQuestion,主键如果为空，后台自动生成")
@@ -204,10 +202,8 @@ public class XmQuestionController {
 			if(words!=null && words.size()>0){
 				return Result.error("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
 			}
- 			tips=checkOneQx(xmQuestionVo.getProjectId(),xmQuestionVo.getProductId());
-			if(!tips.isOk()){
-				return Result.error(tips);
-			}
+ 			Tips tips=checkOneQx(xmQuestionVo.getProjectId(),xmQuestionVo.getProductId());
+			Result.assertIsFalse(tips);
 			if(StringUtils.hasText(xmQuestionVo.getProjectId())){
 				XmProject xmProject=projectService.getProjectFromCache(xmQuestionVo.getProjectId() );
 				xmQuestionVo.setPbranchId(xmProject.getBranchId());
@@ -278,10 +274,8 @@ public class XmQuestionController {
 			}
 
 			XmQuestion xmQuestionDb=this.xmQuestionService.selectOneById(xmQuestion.getId());
-			tips=checkOneQx(xmQuestionDb.getProjectId(),xmQuestionDb.getProductId());
-			if(!tips.isOk()){
-				return Result.error(tips);
-			}
+			Tips  tips=checkOneQx(xmQuestionDb.getProjectId(),xmQuestionDb.getProductId());
+			Result.assertIsFalse(tips);
 			User user=LoginUtils.getCurrentUserInfo();
 			xmQuestionService.updateSomeFieldByPk(xmQuestion);
  			if(!StringUtils.isEmpty(xmQuestion.getHandlerUserid())) {

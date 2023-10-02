@@ -1,11 +1,11 @@
 package com.xm.core.ctrl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Result;
-import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
@@ -31,8 +31,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对XM.xm_project xm_project的操作有增删改查,对应的url分别为:<br>
@@ -119,7 +117,7 @@ public class XmProjectController {
 		}
 		params.put("linkBranchId",user.getBranchId());
 		params.put("platformBranchId",platformBranchId);
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmProject> qw = QueryTools.initQueryWrapper(XmProject.class , params);
 		List<Map<String,Object>> datas = xmProjectService.getProject(params);	//列出XmProject列表
 		return Result.ok().setData(datas);
 		

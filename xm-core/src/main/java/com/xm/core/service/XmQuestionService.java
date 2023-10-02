@@ -36,15 +36,6 @@ public class XmQuestionService extends BaseService {
 	@Autowired
 	XmRecordService xmRecordService;
 
-
-
-	
-	/** 请在此类添加自定义函数 */
-    public List<Map<String,Object>> getQuestion (Map<String,Object> params) {
-    
-        List<Map<String,Object>> xmQuestionList = this.selectListMapByWhere(params); 
-        return xmQuestionList;
-    }
     
     public XmQuestionVo addQuestion( XmQuestionVo xmQuestionVo) {
         Tips tips = new Tips();

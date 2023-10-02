@@ -254,9 +254,7 @@ public class XmIterationController {
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
  			if( !isPm ){
  				tips = productQxService.checkProductQx(xmProductDb,3,user,iterationDb.getAdminUserid(),iterationDb.getAdminUsername(),null);
- 				if(!tips.isOk()){
-					return Result.error(tips);
-				}
+ 				Result.assertIsFalse(tips);
 			}
 
 
@@ -289,9 +287,7 @@ public class XmIterationController {
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			if( !isPm ){
 				tips = productQxService.checkProductQx(xmProductDb,3,user,iterationDb.getAdminUserid(),iterationDb.getAdminUsername(),null);
-				if(!tips.isOk()){
-					return Result.error(tips);
-				}
+				Result.assertIsFalse(tips);
 			}
 			xmIteration.setAdminUserid(null);//不允许更改负责人
 			xmIteration.setAdminUsername(null);
@@ -348,7 +344,7 @@ public class XmIterationController {
 				String adminUserid= (String) xmIterationMap.get("adminUserid");
 				String adminUsername= (String) xmIterationMap.get("adminUsername");
 				if(StringUtils.hasText(adminUserid)){
-					tips=productQxService.checkProductQx(xmProductDb,3,user,adminUserid,adminUsername,null);
+					Tips tips=productQxService.checkProductQx(xmProductDb,3,user,adminUserid,adminUsername,null);
 					if(!tips.isOk()){
 						return Result.error(tips);
 					}
@@ -358,7 +354,7 @@ public class XmIterationController {
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			for (XmIteration iterationDb2 : xmIterationsDb) {
 				if( !isPm ){
-					tips=productQxService.checkProductQx(xmProductDb,3,user,iterationDb2.getAdminUserid(),iterationDb2.getAdminUsername(),null);
+					Tips tips=productQxService.checkProductQx(xmProductDb,3,user,iterationDb2.getAdminUserid(),iterationDb2.getAdminUsername(),null);
 					if(!tips.isOk()){
 						no.add(iterationDb2);
 						noTipsMap.put(tips.getMsg(),tips);

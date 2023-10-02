@@ -1,8 +1,8 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
-import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.DateUtils;
@@ -83,7 +83,7 @@ public class XmTaskSbillController {
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmTaskSbill> qw = QueryTools.initQueryWrapper(XmTaskSbill.class , params);
 		List<Map<String,Object>> datas = xmTaskSbillService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskSbill列表
 
@@ -106,9 +106,7 @@ public class XmTaskSbillController {
 			}
 			if(createPk==false){
                  if(xmTaskSbillService.selectOneObject(xmTaskSbill) !=null ){
-                    return Result.error("编号重复，请修改编号再提交");
-                    m.put("tips", tips);
-                    return m;
+                    return Result.error("编号重复，请修改编号再提交"); 
                 }
             }
 			User user = LoginUtils.getCurrentUserInfo();
@@ -127,7 +125,7 @@ public class XmTaskSbillController {
 			xmTaskSbill.setFmsg("");
 
 			xmTaskSbillService.insert(xmTaskSbill);
-		
+			return Result.ok();
 	}
 
 	
@@ -141,20 +139,14 @@ public class XmTaskSbillController {
 		
 		
 		if( xmTaskSbill==null || !StringUtils.hasText(xmTaskSbill.getId())){
-			return Result.error("请上送结算单编号");
-			m.put("tips", tips);
-			return m;
+			return Result.error("请上送结算单编号"); 
 		}
 		XmTaskSbill sbillDb=this.xmTaskSbillService.selectOneById(xmTaskSbill.getId());
 		if(!"0".equals(sbillDb.getStatus())){
-			return Result.error("只有待提交的结算单才能删除");
-			m.put("tips", tips);
-			return m;
+			return Result.error("只有待提交的结算单才能删除"); 
 		}
 		if(!("0".equals(sbillDb.getBizFlowState()) || "4".equals(sbillDb.getBizFlowState()))){
-			return Result.error("已发审数据不允许删除");
-			m.put("tips", tips);
-			return m;
+			return Result.error("已发审数据不允许删除"); 
 		}
 				
 			//删除结算单时候，要一起恢复工时单为未加入结算状态
@@ -303,26 +295,20 @@ public class XmTaskSbillController {
 		
 		
 		if( xmTaskSbill==null || !StringUtils.hasText(xmTaskSbill.getId())){
-			return Result.error("请上送结算单编号");
-			m.put("tips", tips);
-			return m;
+			return Result.error("请上送结算单编号"); 
 		}
 		XmTaskSbill sbillDb=this.xmTaskSbillService.selectOneById(xmTaskSbill.getId());
 
 		if(!"0".equals(sbillDb.getStatus())){
-			return Result.error("只能修改待提交的结算单");
-			m.put("tips", tips);
-			return m;
+			return Result.error("只能修改待提交的结算单"); 
 		}
 		if(!("0".equals(sbillDb.getBizFlowState()) || "4".equals(sbillDb.getBizFlowState()))){
-			return Result.error("已发审数据不允许修改");
-			m.put("tips", tips);
-			return m;
+			return Result.error("已发审数据不允许修改"); 
 		}
 				
 			xmTaskSbill.setLtime(new Date());
 			xmTaskSbillService.updateByPk(xmTaskSbill);
-		
+		return Result.ok();
 	}
 
 	
@@ -360,22 +346,9 @@ public class XmTaskSbillController {
 		String sbillId= (String) paramMap.get("sbillId");
 		if( !StringUtils.hasText(sbillId)){
 			return Result.error("结算单ID必传");
-			map.put("tips", tips);
-			return map;
 		}
 		map.putAll(paramMap);
-
-				
-			this.xmTaskSbillService.processApprova(map);
-			logger.debug("procInstId====="+paramMap.get("procInstId"));
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("执行异常",e);
-		}catch (Exception e) {
-			return Result.error(e.getMessage());
-			logger.error("执行异常",e);
-		}
-		map.put("tips", tips);
-		return map;
+		this.xmTaskSbillService.processApprova(map);
+		return Result.ok();
 	}
 }

@@ -1,5 +1,6 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.query.QueryTools;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.List;
 import java.util.Map;
 /**
  * url编制采用rest风格,如对XM.xm_project_contract xm_project_contract的操作有增删改查,对应的url分别为:<br>
@@ -58,7 +60,9 @@ public class XmProjectContractController {
 		
 		RequestUtils.transformArray(params, "htIds");		
 		IPage page=QueryTools.initPage(params);
-		
+		QueryWrapper<XmProjectContract> qw=QueryTools.initQueryWrapper(XmProjectContract.class,params);
+		List<Map<String,Object>> datas= xmProjectContractService.selectListMapByWhere(page,qw,params);
+		return Result.ok().setData(datas).setTotal(page.getTotal());
 		
 	}
 	

@@ -1,9 +1,8 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
@@ -68,7 +67,7 @@ public class XmProductProjectLinkController {
 		 
 		RequestUtils.transformArray(params, "projectIds");		
 		IPage page=QueryTools.initPage(params);
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmProductProjectLink> qw = QueryTools.initQueryWrapper(XmProductProjectLink.class , params);
 		List<Map<String,Object>> datas = xmProductProjectLinkService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProductProjectLink列表
 		

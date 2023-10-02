@@ -278,10 +278,8 @@ public class XmMenuController {
 				return Result.error(tips);
 			}
 			if(StringUtils.hasText(xmMenu.getMmUserid()) && !xmMenu.getMmUserid().equals(user.getUserid())){
-				tips=productQxService.checkProductQx(xmProduct,2,user,xmMenu.getMmUserid(),xmMenu.getMmUsername(),null);
-				if(!tips.isOk()){
-					return Result.error(tips);
-				}
+				Tips tips=productQxService.checkProductQx(xmProduct,2,user,xmMenu.getMmUserid(),xmMenu.getMmUsername(),null);
+				Result.assertIsFalse(tips);
 			}
 
 
@@ -345,7 +343,7 @@ public class XmMenuController {
 					return ResponseHelper.failed("product-data-0","产品已不存在");
 				}
 				if(!groupService.checkUserIsProductAdm(xmProduct, user.getUserid())){
-					tips=productQxService.checkProductQx(xmProduct,2,user,xmMenuDb.getMmUserid(),xmMenuDb.getMmUsername(),null);
+					Tips tips=productQxService.checkProductQx(xmProduct,2,user,xmMenuDb.getMmUserid(),xmMenuDb.getMmUsername(),null);
 					if(!tips.isOk()){
 						return Result.error(tips);
 					}
@@ -456,7 +454,7 @@ public class XmMenuController {
 				String mmUserid= (String) xmMenuMap.get("mmUserid");
 				String mmUsername= (String) xmMenuMap.get("mmUsername");
 				if(!user.getUserid().equals(mmUserid)){
-					tips=productQxService.checkProductQx(xmProduct,2,user,mmUserid,mmUsername,null);
+					Tips tips=productQxService.checkProductQx(xmProduct,2,user,mmUserid,mmUsername,null);
 					if(!tips.isOk()){
 						return Result.error(tips);
 					}
@@ -469,7 +467,7 @@ public class XmMenuController {
 				canOper.addAll(xmMenusDb);
 			}else{
 				for (XmMenu xm : xmMenusDb) {
-					tips=productQxService.checkProductQx(xmProduct,2,user,xm.getMmUserid(), xm.getMmUsername(), null);
+					Tips tips=productQxService.checkProductQx(xmProduct,2,user,xm.getMmUserid(), xm.getMmUsername(), null);
 					if(tips.isOk()){
 						canOper.add(xm);
 					}else{
@@ -560,7 +558,7 @@ public class XmMenuController {
 				canOper.addAll(xmMenusDb);
 			}else{
 				for (XmMenu xm : xmMenusDb) {
-					tips=productQxService.checkProductQx(xmProduct,2,user,xm.getMmUserid(),xm.getMmUsername(),null);
+					Tips tips=productQxService.checkProductQx(xmProduct,2,user,xm.getMmUserid(),xm.getMmUsername(),null);
 					if(tips.isOk()){
 						canOper.add(xm);
 					}else{
@@ -685,7 +683,7 @@ public class XmMenuController {
 				canOper.addAll(xmMenusDb);
 			}else{
 				for (XmMenu xm : xmMenusDb) {
-					tips=productQxService.checkProductQx(xmProduct,2,user,xm.getMmUserid(),xm.getMmUsername(),null);
+					Tips tips=productQxService.checkProductQx(xmProduct,2,user,xm.getMmUserid(),xm.getMmUsername(),null);
 					if(tips.isOk()){
 						canOper.add(xm);
 					}else{

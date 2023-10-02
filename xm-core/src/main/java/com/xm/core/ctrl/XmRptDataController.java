@@ -1,9 +1,8 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.RequestUtils;
@@ -27,7 +26,6 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.toMap;
-import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_rpt_data xm_rpt_data的操作有增删改查,对应的url分别为:<br>
@@ -68,7 +66,7 @@ public class XmRptDataController {
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("cbranchId",user.getBranchId());
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmRptData> qw = QueryTools.initQueryWrapper(XmRptData.class , params);
 		List<Map<String,Object>> datas = xmRptDataService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmRptData列表
 

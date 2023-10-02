@@ -1,14 +1,15 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmTestCase;
 import com.xm.core.service.XmGroupService;
@@ -26,9 +27,7 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.mdp.core.utils.BaseUtils.fromMap;
-import static com.mdp.core.utils.BaseUtils.toMap;
-import static com.mdp.core.utils.ResponseHelper.failed;
+import static com.mdp.core.utils.BaseUtils.*;
 
 /**
  * url编制采用rest风格,如对xm_test_case 测试用例的操作有增删改查,对应的url分别为:<br>
@@ -77,8 +76,8 @@ public class XmTestCaseController {
 		RequestUtils.transformArray(params, "ids");
 		RequestUtils.transformArray(params, "menuIds");		
 		IPage page=QueryTools.initPage(params);
-		paramsInit(xmTestCase);
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		paramsInit(params);
+		QueryWrapper<XmTestCase> qw = QueryTools.initQueryWrapper(XmTestCase.class , params);
 		List<Map<String,Object>> datas = xmTestCaseService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestCase列表
 
@@ -92,14 +91,14 @@ public class XmTestCaseController {
 	public Result getXmTestCaseSort(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
- 		paramsInit(xmTestCase);
- 		String groupBy= (String) xmTestCase.get("groupBy");
+ 		paramsInit(params);
+ 		String groupBy= (String) params.get("groupBy");
  		if("func_id".equals(groupBy) || "menu_id".equals(groupBy) || "cuserid".equals(groupBy)){
 
 		}else {
  			return Result.error("groupBy-0","分组参数错误");
 		}
-		List<Map<String,Object>>	xmTestCaseList = xmTestCaseService.getXmTestCaseSort(xmTestCase);	//列出XmTestCase列表
+		List<Map<String,Object>>	xmTestCaseList = xmTestCaseService.getXmTestCaseSort(params);	//列出XmTestCase列表
 
 	}
 
@@ -139,10 +138,8 @@ public class XmTestCaseController {
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCase.getProductId());
-			tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCase.getCuserid(),xmTestCase.getCusername(),xmTestCase.getCbranchId());
-			if(!tips.isOk()){
-				return Result.error(tips);
-			}
+			Tips tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCase.getCuserid(),xmTestCase.getCusername(),xmTestCase.getCbranchId());
+			Result.assertIsFalse(tips);
 			if(!StringUtils.hasText(xmTestCase.getCuserid())){
 				xmTestCase.setCuserid(user.getUserid());
 				xmTestCase.setCbranchId(user.getBranchId());
@@ -159,7 +156,7 @@ public class XmTestCaseController {
 			xmTestCase.setCtime(new Date());
 			xmTestCase.setLtime(new Date());
 			xmTestCaseService.insert(xmTestCase);
-		
+		return Result.ok();
 	}
 
 	@ApiOperation( value = "删除一条测试用例信息",notes=" ")
@@ -180,14 +177,12 @@ public class XmTestCaseController {
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb.getProductId());
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			if(!isPm){
-				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),xmTestCaseDb.getCbranchId());
-				if(!tips.isOk()){
-					return Result.error(tips);
-				}
+				Tips tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),xmTestCaseDb.getCbranchId());
+				 Result.assertIsFalse(tips);
 			}
 			xmTestCaseService.deleteByPk(xmTestCase);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
-		
+			return Result.ok();
+ 		
 	}
 
 	@ApiOperation( value = "根据主键修改一条测试用例信息",notes=" ")
@@ -208,10 +203,8 @@ public class XmTestCaseController {
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb.getProductId());
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			if(!isPm){
-				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
-				if(!tips.isOk()){
-					return Result.error(tips);
-				}
+				Tips tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
+				Result.assertIsFalse(tips);
 			}
 
 			xmTestCase.setLuserid(user.getUserid());
@@ -265,10 +258,8 @@ public class XmTestCaseController {
 			}
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb2.getProductId());
 			if( StringUtils.hasText(xmTestCase.getCuserid()) ){
-				tips=this.productQxService.checkProductQx(xmProductDb,1,user,xmTestCase.getCuserid(),xmTestCase.getCusername(),null);
-				if(!tips.isOk()){
-					return Result.error(tips);
-				}
+				Tips tips=this.productQxService.checkProductQx(xmProductDb,1,user,xmTestCase.getCuserid(),xmTestCase.getCusername(),null);
+				Result.assertIsFalse(tips);
 			}
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			if(isPm){
@@ -332,7 +323,7 @@ public class XmTestCaseController {
 				can=datasDb;
 			}else {
 				for (XmTestCase data : datasDb) {
-					tips=productQxService.checkProductQx(xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
+					Tips tips=productQxService.checkProductQx(xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
 					if(tips.isOk()){
 						can.add(data);
 					}else {

@@ -1,9 +1,9 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.fromMap;
 import static com.mdp.core.utils.BaseUtils.toMap;
-import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_task_sbill_detail 工时登记表的操作有增删改查,对应的url分别为:<br>
@@ -70,7 +69,7 @@ public class XmTaskSbillDetailController {
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("linkBranchId",user.getBranchId());
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmTaskSbillDetail> qw = QueryTools.initQueryWrapper(XmTaskSbillDetail.class , params);
 		List<Map<String,Object>> datas = xmTaskSbillDetailService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskSbillDetail列表
 
@@ -103,13 +102,13 @@ public class XmTaskSbillDetailController {
 	public Result listSumSamtGroupByProjectIdBizMonth(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		String bizYear= (String) xmTaskSbillDetail.get("bizYear");
+		String bizYear= (String) params.get("bizYear");
 		if(!StringUtils.hasText(bizYear)){
 			return ResponseHelper.failed("bizYear-0","年份不能为空");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
-		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.listSumSamtGroupByProjectIdBizMonth(xmTaskSbillDetail);	//列出XmTaskSbillDetail列表
+		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.listSumSamtGroupByProjectIdBizMonth(params);	//列出XmTaskSbillDetail列表
 
 		
 
@@ -123,13 +122,13 @@ public class XmTaskSbillDetailController {
 	public Result listSumSamtGroupByBranchIdBizMonth(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		String bizYear= (String) xmTaskSbillDetail.get("bizYear");
+		String bizYear= (String) params.get("bizYear");
 		if(!StringUtils.hasText(bizYear)){
 			return ResponseHelper.failed("bizYear-0","年份不能为空");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
-		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.listSumSamtGroupByBranchIdBizMonth(xmTaskSbillDetail);	//列出XmTaskSbillDetail列表
+		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.listSumSamtGroupByBranchIdBizMonth(params);	//列出XmTaskSbillDetail列表
 
 		
 

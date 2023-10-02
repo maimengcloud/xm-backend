@@ -1,9 +1,9 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.fromMap;
 import static com.mdp.core.utils.BaseUtils.toMap;
-import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_rpt_config 测试报告配置表的操作有增删改查,对应的url分别为:<br>
@@ -65,7 +64,7 @@ public class XmRptConfigController {
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("cbranchId",user.getBranchId());
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmRptConfig> qw = QueryTools.initQueryWrapper(XmRptConfig.class , params);
 		List<Map<String,Object>> datas = xmRptConfigService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmRptConfig列表
 

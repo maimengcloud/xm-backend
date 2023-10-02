@@ -1,9 +1,9 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.RequestUtils;
@@ -26,7 +26,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.*;
-import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_test_plan_case 测试计划与用例关系表的操作有增删改查,对应的url分别为:<br>
@@ -84,7 +83,7 @@ public class XmTestPlanCaseController {
 
 		User user= LoginUtils.getCurrentUserInfo();
 		paramsInit(params);
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmTestPlanCase> qw = QueryTools.initQueryWrapper(XmTestPlanCase.class , params);
 		List<Map<String,Object>> datas = xmTestPlanCaseService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestPlanCase列表
 
@@ -122,6 +121,7 @@ public class XmTestPlanCaseController {
 		User user= LoginUtils.getCurrentUserInfo();
 		paramsInit(params);
 		List<Map<String,Object>>	datas = xmTestPlanCaseService.getXmTestPlanCaseExecStatusDist(params);	//列出XmTestPlanCase列表
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestPlanCase列表
 
 	}
 
@@ -136,7 +136,8 @@ public class XmTestPlanCaseController {
 				
 		IPage page=QueryTools.initPage(params);
 		paramsInit(params);
-		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestPlanCaseUserDist(params);	//列出XmTestPlanCase列表
+		List<Map<String,Object>>	datas = xmTestPlanCaseService.getXmTestPlanCaseUserDist(params);	//列出XmTestPlanCase列表
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestPlanCase列表
 
 	}
 
@@ -152,7 +153,9 @@ public class XmTestPlanCaseController {
 		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
 		paramsInit(params);
-		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestDayTimesList(params);	//列出XmTestPlanCase列表
+		List<Map<String,Object>>	datas = xmTestPlanCaseService.getXmTestDayTimesList(params);	//列出XmTestPlanCase列表
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestPlanCase列表
+
 
 	}
 	@ApiOperation( value = "查询测试用例规划到测试计划的数目",notes=" ")
@@ -166,7 +169,8 @@ public class XmTestPlanCaseController {
 		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
 		paramsInit(params);
-		List<Map<String,Object>>	xmTestPlanCaseList = xmTestPlanCaseService.getXmTestCaseToPlanCalcList(params);	//列出XmTestPlanCase列表
+		List<Map<String,Object>>	datas = xmTestPlanCaseService.getXmTestCaseToPlanCalcList(params);	//列出XmTestPlanCase列表
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestPlanCase列表
 
 	}
 
@@ -254,13 +258,10 @@ public class XmTestPlanCaseController {
 				return Result.error("product-not-exists","产品已不存在");
 			}
             User user=LoginUtils.getCurrentUserInfo();
-            tips=productQxService.checkProductQx(xmProductDb,1,user);
-            if(!tips.isOk()){
-            	return Result.error(tips);
-			}
+            Tips tips=productQxService.checkProductQx(xmProductDb,1,user);
+            Result.assertIsFalse(tips);
 			xmTestPlanCaseService.deleteByPk(xmTestPlanCase);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
-		
+ 		return Result.ok();		
 	}
 
 	@ApiOperation( value = "根据主键修改一条测试计划与用例关系表信息",notes=" ")
@@ -343,9 +344,9 @@ public class XmTestPlanCaseController {
 				return Result.error("product-not-exists","产品已不存在");
 			}
 			if(StringUtils.hasText(xmTestPlanCase.getExecUserid())){
-				tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestPlanCase.getExecUserid(),xmTestPlanCase.getExecUsername(),null);
+				Tips tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestPlanCase.getExecUserid(),xmTestPlanCase.getExecUsername(),null);
 			}else {
-				tips=productQxService.checkProductQx(xmProductDb,1,user);
+				Tips tips=productQxService.checkProductQx(xmProductDb,1,user);
 			}
 			if(!tips.isOk()){
 				return Result.error(tips);

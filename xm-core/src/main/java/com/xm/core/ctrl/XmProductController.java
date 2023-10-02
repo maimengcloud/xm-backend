@@ -135,7 +135,7 @@ public class XmProductController {
 				params.put("platformBranchId",platformBranchId);
 			}
 		}
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmProduct> qw = QueryTools.initQueryWrapper(XmProduct.class , params);
 		List<Map<String,Object>> datas = xmProductService.selectListMapByWhere(page,qw,params);
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProduct列表
 
@@ -233,7 +233,7 @@ public class XmProductController {
 				xmProductQuery.setCode(xmProduct.getCode());
 				if(xmProductService.countByWhere(xmProductQuery)>0){
 					return Result.error("产品代号已存在，请修改再提交");
-					
+
 				}
 			}
 			if(xmProduct.getLinks()!=null && xmProduct.getLinks().size()>0){

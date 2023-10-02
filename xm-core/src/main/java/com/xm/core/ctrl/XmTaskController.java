@@ -1,6 +1,7 @@
 package com.xm.core.ctrl;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
@@ -39,7 +40,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.map;
-import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对XM.xm_task xm_task的操作有增删改查,对应的url分别为:<br>
@@ -144,7 +144,7 @@ public class XmTaskController {
 
 			params.put("compete",user.getUserid());
 		}
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmTask> qw = QueryTools.initQueryWrapper(XmTask.class , params);
 		List<Map<String,Object>> datas = xmTaskService.getTask(params);	//列出XmTask列表
  		if("1".equals(params.get("withParents"))  && !"1".equals(params.get("isTop"))&& datas.size()>0){
 			Set<String> pidPathsSet=new HashSet<>();
@@ -186,33 +186,31 @@ public class XmTaskController {
 			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/getOutTask",method=RequestMethod.GET)
-	public Result getOutTask(@ApiIgnore @RequestParam Map<String,Object> xmTask){
-		
-
-		
+	public Result getOutTask(@ApiIgnore @RequestParam Map<String,Object> params){
 		RequestUtils.transformArray(params, "skillIds");		
 		IPage page=QueryTools.initPage(params);
-		xmTask.put("taskOut","1");
-		xmTask.put("ntype","0");
-		xmTask.put("toTaskCenter","1");
-		List<Map<String,Object>> tasks=xmTaskService.getTask(xmTask);
-		PageUtils.responePage(m,tasks);
+		params.put("taskOut","1");
+		params.put("ntype","0");
+		params.put("toTaskCenter","1");
+		List<Map<String,Object>> datas=xmTaskService.getTask(params);
+
+		return Result.ok().setData(datas).setTotal(page.getTotal());
 		
 		
 	}
 	@RequestMapping(value="/getXmTaskAttDist",method=RequestMethod.GET)
 	public Result getXmTaskAttDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTask.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAttDist(xmTask);
+		params.put("pbranchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAttDist(params);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmTaskAgeDist",method=RequestMethod.GET)
 	public Result getXmTaskAgeDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTask.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAgeDist(xmTask);
+		params.put("pbranchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAgeDist(params);
 		return ResponseHelper.ok("ok","成功",datas);
 	}
 
@@ -242,11 +240,9 @@ public class XmTaskController {
 	public Result getXmTaskSort(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();		
 		IPage page=QueryTools.initPage(params);
-		xmTask.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskSort(xmTask);
-		Map<String,Object> m=new HashMap<>();
-		PageUtils.responePage(m,datas);
-		
+		params.put("pbranchId",user.getBranchId());
+		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskSort(params);
+		return Result.ok().setData(datas).setTotal(page.getTotal());
 		
 		
 	}
@@ -361,7 +357,7 @@ public class XmTaskController {
 				if(groupService.checkUserIsProjectAdm(xmProject,user.getUserid())){
 					can.add(xmTaskDb);
 				}else{
-					tips=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+					Tips tips=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 					if(!tips.isOk()){
 						no.add(xmTaskDb);
 					}else{
@@ -382,9 +378,9 @@ public class XmTaskController {
 				}
 				if("1".equals(xmProject.getBudgetCtrl())){
 					if(taskDb.getLvl()<=1){
-						tips=this.xmTaskService.judgetProjectBudget(taskDb.getProjectId(),budgetAt,Arrays.asList(taskDb.getId()));
+						Tips tips=this.xmTaskService.judgetProjectBudget(taskDb.getProjectId(),budgetAt,Arrays.asList(taskDb.getId()));
 					}else {
-						tips=this.xmTaskService.judgetTaskBudget(taskDb.getParentTaskid(),budgetAt,null,null,null,Arrays.asList(taskDb.getId()));
+						Tips tips=this.xmTaskService.judgetTaskBudget(taskDb.getParentTaskid(),budgetAt,null,null,null,Arrays.asList(taskDb.getId()));
 					}
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
@@ -617,40 +613,39 @@ public class XmTaskController {
 				XmTask xmTaskQuery = new  XmTask(xmTaskVo.getId());
 				if(this.xmTaskService.countByWhere(xmTaskQuery)>0){
 					return Result.error("编号重复，请修改编号再提交");
-					throw new BizException(tips);
 				}
 			}
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTaskVo);
 			if("1".equals(xmProject.getBudgetCtrl())){
 				if(xmTaskVo.getBudgetAt()!=null  && xmTaskVo.getBudgetAt().compareTo(BigDecimal.ZERO)>0){
 					if(xmTaskVo.getLvl()<=1){
-						tips=xmTaskService.judgetProjectBudget(xmTaskVo.getProjectId(),xmTaskVo.getBudgetAt(),null);
+						Tips tips=xmTaskService.judgetProjectBudget(xmTaskVo.getProjectId(),xmTaskVo.getBudgetAt(),null);
+						Result.assertIsFalse(tips);
 					}else{
-						tips=xmTaskService.judgetTaskBudget(xmTaskVo.getParentTaskid(), xmTaskVo.getBudgetAt(),null,null,null,null);
+						Tips tips=xmTaskService.judgetTaskBudget(xmTaskVo.getParentTaskid(), xmTaskVo.getBudgetAt(),null,null,null,null);
+						Result.assertIsFalse(tips);
 					}
 				}
 			}
 
-			if(tips.isOk()) {
-				//新增任务技能
-				if(xmTaskVo.getSkills()!=null && xmTaskVo.getSkills().size()>0){
-					for (XmTaskSkill skill : xmTaskVo.getSkills()) {
-						if(!StringUtils.hasText(skill.getSkillId())){
-							return ResponseHelper.failed("skillId-0","标签编号不能为空");
-						}
-						if(!StringUtils.hasText(skill.getSkillName())){
-							return ResponseHelper.failed("skillName-0","标签名称不能为空");
-						}
-						/**
-						 *  这个不控制
-						if(!StringUtils.hasText(skill.getCategoryId())){
-							return ResponseHelper.failed("categoryId-0","标签分类不能为空");
-						}
-						 */
+			//新增任务技能
+			if(xmTaskVo.getSkills()!=null && xmTaskVo.getSkills().size()>0){
+				for (XmTaskSkill skill : xmTaskVo.getSkills()) {
+					if(!StringUtils.hasText(skill.getSkillId())){
+						return ResponseHelper.failed("skillId-0","标签编号不能为空");
 					}
+					if(!StringUtils.hasText(skill.getSkillName())){
+						return ResponseHelper.failed("skillName-0","标签名称不能为空");
+					}
+					/**
+					 *  这个不控制
+					if(!StringUtils.hasText(skill.getCategoryId())){
+						return ResponseHelper.failed("categoryId-0","标签分类不能为空");
+					}
+					 */
 				}
-				xmTaskVo = xmTaskService.addTask(xmTaskVo);
 			}
+			xmTaskVo = xmTaskService.addTask(xmTaskVo);
 			
 		return Result.ok();
 		
@@ -671,23 +666,23 @@ public class XmTaskController {
 		@ApiResponse(code = 200,response=XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
 	@RequestMapping(value="/list",method=RequestMethod.GET)
-	public Result listXmTask(@ApiIgnore @RequestParam Map<String,Object> xmTask){
+	public Result listXmTask(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
 		RequestUtils.transformArray(params, "ids");
 		RequestUtils.transformArray(params, "tagIdList");		
 		IPage page=QueryTools.initPage(params);
 
-		String taskOut= (String) xmTask.get("taskOut");
+		String taskOut= (String) params.get("taskOut");
 		if(!"1".equals(taskOut)){
-			String projectId= (String) xmTask.get("projectId");
-			String userid= (String) xmTask.get("userid");
+			String projectId= (String) params.get("projectId");
+			String userid= (String) params.get("userid");
 			if( !(StringUtils.hasText(projectId) || StringUtils.hasText(userid) ) ){
 				User user = LoginUtils.getCurrentUserInfo();
-				xmTask.put("cbranchId",user.getBranchId());
+				params.put("cbranchId",user.getBranchId());
 			}
 		}
 		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
-		List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
+		List<Map<String,Object>> datas = xmTaskService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTask列表
 		
 	}
@@ -818,9 +813,9 @@ public class XmTaskController {
 			excludeIds.add(xmTaskDb.getId());
 			if( "1".equals(xmProject.getBudgetCtrl()) && xmTaskDb.getBudgetAt().compareTo(xmTaskVo.getBudgetAt())!=0){
 				if(xmTaskVo.getLvl()<=1){
-					tips=xmTaskService.judgetProjectBudget(xmTaskDb.getProjectId(), xmTaskVo.getBudgetAt(),excludeIds);
+					Tips tips=xmTaskService.judgetProjectBudget(xmTaskDb.getProjectId(), xmTaskVo.getBudgetAt(),excludeIds);
 				}else if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
-					tips=xmTaskService.judgetTaskBudget(xmTaskDb.getParentTaskid(), xmTaskVo.getBudgetAt(),null,null,null,excludeIds);
+					Tips tips=xmTaskService.judgetTaskBudget(xmTaskDb.getParentTaskid(), xmTaskVo.getBudgetAt(),null,null,null,excludeIds);
 				}
 			}
 
@@ -862,40 +857,6 @@ public class XmTaskController {
 		return Result.ok();
 		
 	}
-	/**不允许直接改进度，通过报工形式改进度
-	@ApiOperation( value = "根据主键修改一条任务信息",notes="editXmTask")
-	@ApiResponses({
-			@ApiResponse(code = 200,response=XmTask.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	})
-	//@HasQx(value = "xm_core_xmTask_editProgress",name = "修改任务进度百分比",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
-	@RequestMapping(value="/editProgress",method=RequestMethod.POST)
-	public Result editProgress(@RequestBody XmTask xmTask) {
-
-			User user=LoginUtils.getCurrentUserInfo();
-			if(!StringUtils.hasText(xmTask.getId())){
-				return Result.error("任务编号不能为空");
-				
-			}
-
-			XmTask xmTaskDb=xmTaskService.selectOneObject(xmTask);
-			if(xmTaskDb==null){
-				return ResponseHelper.failed("data-0","任务已不存在");
-			}
-
-			tips=groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
-			if(!tips.isOk()){
-				boolean isCreateUser=user.getUserid().equals(xmTaskDb.getCreateUserid());
-				boolean isExecUser=user.getUserid().equals(xmTaskDb.getExecutorUserid());
-				if( !isCreateUser && !isExecUser ){
-					return ResponseHelper.failed("no-qx-op","您无权修改该任务的进度！只有任务执行人、任务负责人、组长、项目经理可以修改任务的进度。");
-				}
-			}
-			xmTaskService.updateProgress(xmTask,xmTaskDb);
-			
-		return Result.ok();
-		
-	}
-	**/
 
 	@ApiOperation( value = "批量导入任务-从模板导入",notes="batchDelXmTask,仅需要上传主键字段")
 	@ApiResponses({
@@ -987,7 +948,7 @@ public class XmTaskController {
 						totalTaskBudgetAt=totalTaskBudgetAt.add(task.getBudgetAt());
 					}
 					if("0".equals(batchImportVo.getPtype())&&totalTaskBudgetAt.compareTo(BigDecimal.ZERO)>0){
-						tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetAt,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
+						Tips tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetAt,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
 						if(!tips.isOk()){
 							return Result.error(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 							return ResponseHelper.failed(tips);
@@ -1005,7 +966,7 @@ public class XmTaskController {
 								childBudgetAt=childBudgetAt.add(child.getBudgetAt());
 							}
 							if(childBudgetAt.compareTo(BigDecimal.ZERO)>0){
-								tips= xmTaskService.judgetTaskBudget(pid,childBudgetAt,null,null,null,childs.stream().map(i->i.getId()).collect(Collectors.toList()));
+								Tips tips= xmTaskService.judgetTaskBudget(pid,childBudgetAt,null,null,null,childs.stream().map(i->i.getId()).collect(Collectors.toList()));
 								if(!tips.isOk()){
 									return ResponseHelper.failed("budget-not-enought",tips.getMsg()+" 相关任务【"+childs.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 								}
@@ -1037,7 +998,7 @@ public class XmTaskController {
 				}
 
 			}
-		
+		return Result.ok();
 	}
 
 	/**
@@ -1327,152 +1288,8 @@ public class XmTaskController {
 			}else{
 				return Result.ok(msgs.stream().collect(Collectors.joining(" ")));
 			}
-
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
-		
 	}
 
-
-	/**
-	@ApiOperation( value = "批量修改预算",notes="batchSaveBudget,仅需要上传主键字段")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	})
-	//@HasQx(value = "xm_core_xmTask_batchSaveBudget",name = "批量修改任务预算",moduleId = "xm-project",moduleName = "管理端-项目管理系统")
-	@RequestMapping(value="/batchSaveBudget",method=RequestMethod.POST)
-	public Result batchSaveBudget(@RequestBody  List<XmTask> xmTasks) {
-
-			User user=LoginUtils.getCurrentUserInfo();
-
-			if(xmTasks==null || xmTasks.size()==0){
-				return Result.error("任务列表不能为空");
-				
-			}
-			Map<String,XmTask> xmTaskDbMap=this.xmTaskService.selectTasksMapByTasks(xmTasks);
-			XmTask xmTaskDb=xmTaskDbMap.values().stream().findFirst().isPresent()?xmTaskDbMap.values().stream().findFirst().get():null;
-			if(xmTaskDb==null){
-				return ResponseHelper.failed("data-0","任务不存在");
-			}
-			Tips tips2=this.groupService.checkIsAdmOrTeamHeadOrAssByPtype(user,user.getUserid(),xmTaskDb.getPtype(),xmTaskDb.getProductId(),xmTaskDb.getProjectId());
-			if(!tips2.isOk()){
-				return ResponseHelper.failed(tips2);
-			}
-			Map<String,XmTask> allowTasksDbMap=new HashMap<>();
-			Map<String,XmTask>  noAllowTasksDbMap=new HashMap<>();
-
-
-			Map<String,XmTask> frontParamsTaskMap=new HashMap<>();
-			List<XmTask> insertTasks=new ArrayList<>();
-			List<XmTask> updateTasks=new ArrayList<>();
-			for (XmTask task : xmTasks) {
-				if( "0".equals(xmTaskDb.getPtype()) && !xmTaskDb.getProjectId().equals(task.getProjectId()) ){
-					return ResponseHelper.failed("not-same-projectId","所有任务必须同属于一个项目");
-				}
-				if( "1".equals(xmTaskDb.getPtype()) && !xmTaskDb.getProductId().equals(task.getProductId()) ){
-					return ResponseHelper.failed("not-same-productId","所有任务必须同属于一个产品");
-				}
-				if(task.getBudgetAt()==null){
-					task.setBudgetAt(BigDecimal.ZERO);
-				}
-				if(task.getBudgetWorkload()==null){
-					task.setBudgetWorkload(BigDecimal.ZERO);
-				}
-				frontParamsTaskMap.put(task.getId(),task);
-				if(xmTaskDbMap.containsKey(task.getId())){
-					task.setLtime(new Date());
-					updateTasks.add(task);
-				}else {
-					task.setCreateUsername(user.getUsername());
-					task.setCreateUserid(user.getUserid());
-					task.setExecutorUserid(user.getUserid());
-					task.setExecutorUsername(user.getUsername());
-					task.setCreateTime(new Date());
-					task.setLtime(new Date());
-					insertTasks.add(task);
-				}
-			}
-			List<XmGroupVo> pgroups=new ArrayList<>();
-			if("0".equals(xmTaskDb.getPtype())){
-				pgroups=groupService.getProjectGroupVoList(xmTaskDb.getProjectId());
-			}else{
-				pgroups=groupService.getProductGroupVoList(xmTaskDb.getProductId());
-			}
-			for (XmTask task : xmTaskDbMap.values()) {
-					boolean isHead=groupService.checkUserIsOtherUserTeamHeadOrAss(pgroups,user.getUserid(),task.getCreateUserid());
-					if(!isHead){
-						noAllowTasksDbMap.put(task.getId(),task);
-					}else {
-						allowTasksDbMap.put(task.getId(),task);
-					}
-
-			}
-			List<XmTask> canOpTasks=xmTasks.stream().filter(i->!noAllowTasksDbMap.containsKey(i.getId())).collect(Collectors.toList());
-			this.xmTaskService.parentIdPathsCalcBeforeSave(canOpTasks);
-			List<XmTask> tasksLvl1=canOpTasks.stream().filter(i->i.getLvl()<=1).collect(Collectors.toList());
-			if(tasksLvl1.size()>0){
-				BigDecimal totalTaskBudgetAt=BigDecimal.ZERO;
-				for (XmTask task : tasksLvl1) {
-
-					totalTaskBudgetAt=totalTaskBudgetAt.add(task.getBudgetAt());
-				}
-				if("0".equals(xmTaskDb.getPtype()) && totalTaskBudgetAt.compareTo(BigDecimal.ZERO)>0){
-					tips=xmTaskService.judgetProjectBudget(xmTaskDb.getProjectId(),totalTaskBudgetAt,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
-					if(!tips.isOk()){
-						return Result.error(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
-						return ResponseHelper.failed(tips);
-					}
-				}
-			}
-			Map<String,List<XmTask>> map=new HashMap<>();
-			for (XmTask canOpTask : canOpTasks) {
-				if(!StringUtils.hasText(canOpTask.getParentTaskid())||canOpTask.getParentTaskid().equals("0")){
-					continue;
-				}
-				List<XmTask> childs=map.get(canOpTask.getParentTaskid());
-				if(childs==null){
-					childs=new ArrayList<>();
-				}
-				childs.add(canOpTask);
-				map.put(canOpTask.getParentTaskid(),childs);
-			}
-			for (Map.Entry<String, List<XmTask>> kv : map.entrySet()) {
-				BigDecimal childBudgetAt = BigDecimal.ZERO;
-				List<XmTask> childs = kv.getValue();
-				for (XmTask child : childs) {
-					childBudgetAt = childBudgetAt.add(child.getBudgetAt());
-				}
-				if (childBudgetAt.compareTo(BigDecimal.ZERO) > 0) {
-					tips = xmTaskService.judgetTaskBudget(kv.getKey(), childBudgetAt, null, null, null, childs.stream().map(i -> i.getId()).collect(Collectors.toList()));
-					if (!tips.isOk()) {
-						return ResponseHelper.failed("budget-not-enought", tips.getMsg() + " 相关任务【" + childs.stream().map(i -> i.getName()).collect(Collectors.joining(",")) + "】");
-					}
-				}
-			}
-
-
-			//过滤掉我没有权限的
-			List<XmTask> canUpdateTasks=canOpTasks.stream().filter(i->xmTaskDbMap.containsKey(i.getId())).collect(Collectors.toList());
-			List<XmTask> canInsertTasks=canOpTasks.stream().filter(i->!xmTaskDbMap.containsKey(i.getId())).collect(Collectors.toList());
-
-			xmTaskService.batchInsertOrUpdate(canInsertTasks,canUpdateTasks);
-			for (XmTask t : canUpdateTasks) {
-				xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量修改任务预算", "修改任务预算"+t.getName(),JSON.toJSONString(t),null);
-
-			}
-			for (XmTask t : canInsertTasks) {
-				xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量修改任务预算", "修改任务预算"+t.getName(),JSON.toJSONString(t),null);
-
-			}
-			if(canOpTasks.size()<=0){
-				return Result.error("成功修改0个任务。当前任务均无权限操作，只有组长助理、组长、项目助理、项目经理有权限批量修改预算。");
-			}else if(canOpTasks.size()==xmTasks.size()){
-				return Result.ok("成功修改"+canOpTasks.size()+"个任务。");
-			}else {
-				return Result.ok("成功修改"+canOpTasks.size()+"个任务。其中以下任务无权限修改。【"+noAllowTasksDbMap.values().stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
-			}
-		
-	}
-	 */
 
 
 	/***/
@@ -1587,8 +1404,6 @@ public class XmTaskController {
 			}else{
 				return Result.error(msgs.stream().collect(Collectors.joining(" ")));
 			}
-
-		return Result.ok();
 		
 	}
 	/**
@@ -1611,20 +1426,7 @@ public class XmTaskController {
 	@AuditLog(firstMenu="办公平台",secondMenu="项目任务管理",func="processApprova",funcDesc="任务审核",operType=OperType.UPDATE)
 	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
 	public Result processApprova( @RequestBody Map<String,Object> flowVars){
-		
-		
-		  
-		
-			
 			this.xmTaskService.processApprova(flowVars);
-			logger.debug("procInstId====="+flowVars.get("procInstId"));
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("执行异常",e);
-		}catch (Exception e) {
-			return Result.error(e.getMessage());
-			logger.error("执行异常",e);
-		}  
-		
+			return Result.ok();
 	}
 }

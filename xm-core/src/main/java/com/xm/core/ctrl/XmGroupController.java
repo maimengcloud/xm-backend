@@ -118,7 +118,7 @@ public class XmGroupController {
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
-				tips=projectQxService.checkProjectScopeQx(project,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
+				Tips tips=projectQxService.checkProjectScopeQx(project,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
@@ -128,7 +128,7 @@ public class XmGroupController {
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
-				tips=projectQxService.checkProjectScopeQx(project,0,group.getAssUserid(),group.getAssUsername(),null);
+				Tips tips=projectQxService.checkProjectScopeQx(project,0,group.getAssUserid(),group.getAssUsername(),null);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
@@ -147,7 +147,7 @@ public class XmGroupController {
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
-				tips=productQxService.checkProductScopeQx(product,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
+				Tips tips=productQxService.checkProductScopeQx(product,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
@@ -157,7 +157,7 @@ public class XmGroupController {
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
-				tips=productQxService.checkProductScopeQx(product,0,group.getAssUserid(),group.getAssUsername(),null);
+				Tips tips=productQxService.checkProductScopeQx(product,0,group.getAssUserid(),group.getAssUsername(),null);
 				if(!tips.isOk()){
 					return ResponseHelper.failed(tips);
 				}
@@ -268,11 +268,11 @@ public class XmGroupController {
 					if(project==null){
 						return ResponseHelper.failed("project-0","项目已不存在");
 					}
-					tips=this.xmGroupService.checkProjectStatus(project);
+					Tips tips=this.xmGroupService.checkProjectStatus(project);
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					}
-					tips=checkProjectGroupQxForAdd(project,u,xmGroup);
+					Tips tips=checkProjectGroupQxForAdd(project,u,xmGroup);
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					}
@@ -287,11 +287,11 @@ public class XmGroupController {
 					if(xmProduct==null){
 						return ResponseHelper.failed("product-0","产品已不存在");
 					}
-					tips=this.xmGroupService.checkProductStatus(xmProduct);
+					Tips tips=this.xmGroupService.checkProductStatus(xmProduct);
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					}
-					tips=checkProductGroupQxForAdd(xmProduct,u,xmGroup);
+					Tips tips=checkProductGroupQxForAdd(xmProduct,u,xmGroup);
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					}
@@ -391,7 +391,7 @@ public class XmGroupController {
 				}
 				boolean isPm=xmGroupService.checkUserIsProjectAdm(project,u.getUserid());
 				if(!isPm) {
-					tips=projectQxService.checkProjectQx(project,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
+					Tips tips=projectQxService.checkProjectQx(project,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					}
@@ -403,7 +403,7 @@ public class XmGroupController {
 				}
 				boolean isPm=xmGroupService.checkUserIsProductAdm(product,u.getUserid());
 				if(!isPm) {
-					tips=productQxService.checkProductQx(product,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
+					Tips tips=productQxService.checkProductQx(product,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
 					if(!tips.isOk()){
 						return ResponseHelper.failed(tips);
 					}

@@ -1,9 +1,8 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.swagger.ApiEntityParams;
 import com.xm.core.entity.XmTaskSkill;
@@ -54,7 +53,7 @@ public class XmTaskSkillController {
 	public Result listXmTaskSkill(@ApiIgnore @RequestParam Map<String,Object> params){
 				
 		IPage page=QueryTools.initPage(params);
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmTaskSkill> qw = QueryTools.initQueryWrapper(XmTaskSkill.class , params);
 		List<Map<String,Object>> datas = xmTaskSkillService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTaskSkill列表
 		

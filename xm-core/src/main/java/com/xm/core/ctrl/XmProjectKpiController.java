@@ -1,10 +1,11 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
-import com.mdp.core.entity.Tips;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmProjectKpi;
 import com.xm.core.service.XmProjectKpiService;
 import io.swagger.annotations.*;
@@ -73,7 +74,7 @@ public class XmProjectKpiController {
 		 
 		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmProjectKpi> qw = QueryTools.initQueryWrapper(XmProjectKpi.class , params);
 		List<Map<String,Object>> datas = xmProjectKpiService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectKpi列表
 		

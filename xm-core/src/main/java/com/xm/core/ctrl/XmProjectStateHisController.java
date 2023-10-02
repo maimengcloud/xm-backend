@@ -1,11 +1,13 @@
 package com.xm.core.ctrl;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmProjectStateHis;
 import com.xm.core.service.XmProjectStateHisService;
 import io.swagger.annotations.*;
@@ -117,7 +119,7 @@ public class XmProjectStateHisController {
 		IPage page=QueryTools.initPage(params);
 		User user= LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmProjectStateHis> qw = QueryTools.initQueryWrapper(XmProjectStateHis.class , params);
 		List<Map<String,Object>> datas = xmProjectStateHisService.selectListMapByWhere(page,qw,params);
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectStateHis列表
 		
