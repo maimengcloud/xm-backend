@@ -4,13 +4,11 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmCostNlabor;
 import com.xm.core.service.XmCostNlaborService;
 import io.swagger.annotations.*;
@@ -26,7 +24,6 @@ import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.fromMap;
 import static com.mdp.core.utils.BaseUtils.toMap;
-import static com.mdp.core.utils.Result.error;
 
 /**
  * url编制采用rest风格,如对xm_cost_nlabor 项目实际人工成本费用的操作有增删改查,对应的url分别为:<br>

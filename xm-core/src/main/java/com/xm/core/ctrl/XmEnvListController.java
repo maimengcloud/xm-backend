@@ -8,7 +8,6 @@ import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -137,7 +136,7 @@ public class XmEnvListController {
 						return Result.error("writeQx-err-2","您不在项目【"+xmEnvListDb.getProjectId()+"】,无权更改");
 					}
 				}else if("3".equals(writeQx)){//同一机构同一项目可写
-	 				Tips tips isHeader=this.xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmEnvListDb.getCreateUserid(),xmEnvListDb.getProjectId());
+	 				Tips isHeader=this.xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmEnvListDb.getCreateUserid(),xmEnvListDb.getProjectId());
  					if(!isHeader.isOk()){
 						return Result.error("writeQx-err-3","您不是【"+xmEnvListDb.getCreateUsername()+"】的上级,无权更改");
 					}
@@ -173,7 +172,7 @@ public class XmEnvListController {
 						return Result.error("writeQx-err-2","您不在项目【"+xmEnvListDb.getProjectId()+"】,无权更改");
 					}
 				}else if("3".equals(writeQx)){//同一机构同一项目可写
-	 				Tips tips isHeader=this.xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmEnvListDb.getCreateUserid(),xmEnvListDb.getProjectId());
+	 				Tips isHeader=this.xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmEnvListDb.getCreateUserid(),xmEnvListDb.getProjectId());
 					if(!isHeader.isOk()){
 						return Result.error("writeQx-err-3","您不是【"+xmEnvListDb.getCreateUsername()+"】的上级,无权更改");
 					}

@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmIterationStateHis;
 import com.xm.core.service.XmIterationStateHisService;
 import io.swagger.annotations.Api;

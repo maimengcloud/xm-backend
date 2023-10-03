@@ -5,7 +5,10 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
-import com.xm.core.entity.*;
+import com.xm.core.entity.XmMenu;
+import com.xm.core.entity.XmProduct;
+import com.xm.core.entity.XmProductCopyVo;
+import com.xm.core.entity.XmTask;
 import com.xm.core.mapper.XmProductMapper;
 import com.xm.core.service.cache.XmProductCacheService;
 import com.xm.core.vo.XmProductAddVo;
@@ -201,52 +204,6 @@ public class XmProductService extends BaseService<XmProductMapper,XmProduct> {
 				}
 				this.xmTaskService.parentIdPathsCalcBeforeSave(xmTasks);
 				this.xmTaskService.batchImportFromTemplate(xmTasks);
-			}
-		}
-		List<XmGroup> groupsDb=new ArrayList<>();
-		Map<String, String> newGroupIdMap = new HashMap<>();
-		if( "1".equals(xmProduct.getCopyGroup())||"1".equals(xmProduct.getCopyGroupUser())) {
-			XmGroup groupQ = new XmGroup();
-			groupQ.setProductId(xmProductDb.getId());
-			groupsDb = this.groupService.selectListByWhere(groupQ);
-			if (groupsDb != null && groupsDb.size() > 0) {
-				for (XmGroup group : groupsDb) {
-					newGroupIdMap.put(group.getId(), this.groupService.createKey("id"));
-				}
-				for (XmGroup node : groupsDb) {
-					String oldId = node.getId();
-					String newId = newGroupIdMap.get(oldId);
-					node.setProductId(xmProductTo.getId());
-					node.setId(newId);
-					node.setPgroupId(newGroupIdMap.get(node.getPgroupId()));
-					node.setBranchId(user.getBranchId());
-					node.setProjectId(null);
-					node.setCtime(new Date());
-					node.setAssUserid(user.getUserid());
-					node.setAssUsername(user.getUsername());
-					node.setLeaderUserid(user.getUserid());
-					node.setLeaderUsername(user.getUsername());
-					node.setIsTpl(isTpl);
-					node.setPgClass("1");
-				}
-				this.groupService.parentIdPathsCalcBeforeSave(groupsDb);
-				this.groupService.batchInsert(groupsDb);
-			}
-		}
-		if(groupsDb.size()>0 && "1".equals(xmProduct.getCopyGroupUser())){
-			XmGroupUser userQ=new XmGroupUser();
-			userQ.setProductId(xmProductDb.getId());
-			List<XmGroupUser> usersDb=this.groupUserService.selectGroupUserListByProductId(xmProductDb.getId());
-			if(usersDb!=null && usersDb.size()>0){
-				for (XmGroupUser node : usersDb) {
-					node.setProjectId(null);
-					node.setProductId(xmProductTo.getId());
-					node.setGroupId(newGroupIdMap.get(node.getGroupId()));
-					node.setStatus("0");
-					node.setJoinTime(new Date());
-					node.setPgClass("1");
-				}
-				this.groupUserService.batchInsert(usersDb);
 			}
 		}
 		xmProduct.setProductName(xmProductDb.getProductName());

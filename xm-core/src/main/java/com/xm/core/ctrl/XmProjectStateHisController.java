@@ -7,7 +7,6 @@ import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmProjectStateHis;
 import com.xm.core.service.XmProjectStateHisService;
 import io.swagger.annotations.*;

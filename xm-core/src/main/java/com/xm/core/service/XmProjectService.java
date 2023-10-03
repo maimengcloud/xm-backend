@@ -12,7 +12,10 @@ import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.*;
+import com.xm.core.entity.XmProduct;
+import com.xm.core.entity.XmProductProjectLink;
+import com.xm.core.entity.XmProject;
+import com.xm.core.entity.XmTask;
 import com.xm.core.mapper.XmProjectMapper;
 import com.xm.core.service.cache.XmProjectCacheService;
 import com.xm.core.vo.XmProjectCopyVo;
@@ -181,54 +184,6 @@ public class XmProjectService extends BaseService<XmProjectMapper,XmProject> {
 			}
 			this.linkService.batchInsert(links);
 		}
-		List<XmGroup> groupsDb=new ArrayList<>();
-		Map<String, String> newGroupIdMap = new HashMap<>();
-		if( "1".equals(xmProject.getCopyGroup())||"1".equals(xmProject.getCopyGroupUser())) {
-			XmGroup groupQ = new XmGroup();
-			groupQ.setProjectId(xmProjectDb.getId());
-			groupsDb = this.groupService.selectListByWhere(groupQ);
-			if (groupsDb != null && groupsDb.size() > 0) {
-				for (XmGroup group : groupsDb) {
-					newGroupIdMap.put(group.getId(), this.groupService.createKey("id"));
-				}
-				for (XmGroup node : groupsDb) {
-					String oldId = node.getId();
-					String newId = newGroupIdMap.get(oldId);
-					node.setProjectId(xmProjectTo.getId());
-					node.setId(newId);
-					node.setPgroupId(newGroupIdMap.get(node.getPgroupId()));
-					node.setBranchId(user.getBranchId());
-					node.setProductId(null);
-					node.setCtime(new Date());
-					node.setAssUserid(user.getUserid());
-					node.setAssUsername(user.getUsername());
-					node.setLeaderUserid(user.getUserid());
-					node.setLeaderUsername(user.getUsername());
-					node.setIsTpl(isTpl);
-					node.setPgClass("0");
-				}
-				this.groupService.parentIdPathsCalcBeforeSave(groupsDb);
-				this.groupService.batchInsert(groupsDb);
-			}
-		}
-		if(groupsDb.size()>0 && "1".equals(xmProject.getCopyGroupUser())){
-			XmGroupUser userQ=new XmGroupUser();
-			userQ.setProjectId(xmProjectDb.getId());
-			List<XmGroupUser> usersDb=this.groupUserService.selectGroupUserListByProjectId(xmProjectDb.getId());
-			if(usersDb!=null && usersDb.size()>0){
-				for (XmGroupUser node : usersDb) {
-					node.setProjectId(xmProjectTo.getId());
-					node.setGroupId(newGroupIdMap.get(node.getGroupId()));
-					node.setStatus("0");
-					node.setJoinTime(new Date());
-					node.setPgClass("0");
-					node.setProductId(null);
-				}
-				this.groupUserService.batchInsert(usersDb);
-			}
-		}
-
-
 		return xmProjectTo;
 	}
     

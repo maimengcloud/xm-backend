@@ -1,7 +1,6 @@
 package com.xm.core.ctrl;
 
 import com.mdp.core.entity.Result;
-import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;

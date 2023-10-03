@@ -13,7 +13,6 @@ import com.xm.core.entity.XmTaskExecuser;
 import com.xm.core.mapper.XmTaskExecuserMapper;
 import com.xm.core.service.client.MkClient;
 import com.xm.core.service.push.XmPushMsgService;
-import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;

@@ -4,11 +4,13 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.micro.client.CallBizService;
 import com.mdp.mq.queue.Push;
+import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Map;
 
 import static com.mdp.core.utils.BaseUtils.map;
@@ -127,5 +129,9 @@ public class SysClient {
         push.leftPush("xm_task_acceptance_success_for_person",map("userid",userid  ,"bizId",bizId,"at",at,"exp",exp,"bids",1));
         // strRedisTemplate.convertAndSend("xm_task_settle", JSON.toJSONString(params));
         return tips;
+    }
+
+    public List<Dept> listSubDept(String pdeptid) {
+        return null;
     }
 }

@@ -1,16 +1,18 @@
 package com.xm.core.service;
 
 import com.mdp.core.entity.Tips;
+import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
 import com.xm.core.QxTool;
 import com.xm.core.entity.XmProject;
 import com.xm.core.service.client.SysClient;
-import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -110,7 +112,7 @@ public class XmProjectQxService {
 
 
         }else if("2".equals(scopeQx)){//同项目
-            List<XmGroupVo> groups=this.getProjectGroupsFromLocalCache(xmProject.getId());
+            List<Dept> groups=this.getProjectGroupsFromLocalCache(xmProject.getDeptid());
             if( !headIsPm && !xmGroupService.checkUserExistsGroup(groups, head.getUserid())){
                 tips.setErrMsg("pdqx-scope-product-0",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),headUsername));
                 return tips;
@@ -120,12 +122,12 @@ public class XmProjectQxService {
                 }
                 if( xmGroupService.checkUserExistsGroup(groups,memUserid) ){
                     return tips;
-                }; 
+                };
             tips.setErrMsg("pdqx-scope-product-1",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),memUsername));
             return tips;
         }else if("3".equals(scopeQx)){//同小组
-            List<XmGroupVo> groups=this.getProjectGroupsFromLocalCache(xmProject.getId());
-            List<XmGroupVo> headGroups=groups;
+            List<Dept> groups=this.getProjectGroupsFromLocalCache(xmProject.getId());
+            List<Dept> headGroups=groups;
 
             if( !headIsPm ){
                 headGroups=xmGroupService.getUserGroups(groups,head.getUserid());
@@ -134,11 +136,11 @@ public class XmProjectQxService {
                     return tips;
                 }
             }
-            
+
                 if(xmGroupService.checkUserIsProjectAdm(xmProject,memUserid)){
                     return tips;
                 }
-                List<XmGroupVo> memGroups=xmGroupService.getUserGroups(headGroups,memUserid);
+                List<Dept> memGroups=xmGroupService.getUserGroups(headGroups,memUserid);
                 if( memGroups!=null && memGroups.size()>0 ){
                     return tips;
                 }
@@ -217,10 +219,7 @@ public class XmProjectQxService {
                 return tips;
             }
 
-            List<XmGroupVo> groups=getProjectGroupsFromLocalCache(xmProject.getId());
-            if(xmGroupService.checkUserIsOtherUserTeamHeadOrAss(groups, head.getUserid(), memUserid)){
-                return tips;
-            }
+            List<Dept> groups=getProjectGroupsFromLocalCache(xmProject.getId());
             tips.setErrMsg("pdqx-transmit-0",
                     String.format("项目【%s】开启了上下级关系检查，您当前账户【%s】不属于账户【%s】的上级，无权操作。",xmProject.getId(),head.getUsername(),memUsername));
 
@@ -232,9 +231,7 @@ public class XmProjectQxService {
 
     public Tips checkProjectQxBatch(XmProject xmProject,int teamType,User head,String ...memUserids){
         Tips tips=new Tips("成功");
-        if(xmGroupService.checkUserIsProjectAdm(xmProject,head.getUserid())){
-            return tips;
-        }
+
         
         tips=this.checkProjectScopeQxBatch(xmProject,teamType,head,memUserids);
         if(!tips.isOk()){
@@ -284,8 +281,8 @@ public class XmProjectQxService {
 
 
         }else if("2".equals(scopeQx)){//同项目
-            List<XmGroupVo> groups=this.getProjectGroupsFromLocalCache(xmProject.getId());
-            if( !headIsPm && !xmGroupService.checkUserExistsGroup(groups, head.getUserid())){
+            List<Dept> groups= xmGroupService.getSubDeptList(xmProject.getDeptid());
+             if( !headIsPm && !xmGroupService.checkUserExistsGroup(groups, head.getUserid())){
                 tips.setErrMsg("pdqx-scope-product-0",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),username));
                 return tips;
             };
@@ -300,8 +297,8 @@ public class XmProjectQxService {
             tips.setErrMsg("pdqx-scope-product-1",String.format("项目【%s】只开放给同一个项目团队人员,【%s】不在项目团队中。",xmProject.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
             return tips;
         }else if("3".equals(scopeQx)){//同小组
-            List<XmGroupVo> groups=this.getProjectGroupsFromLocalCache(xmProject.getId());
-            List<XmGroupVo> headGroups=groups;
+            List<Dept> groups=this.getProjectGroupsFromLocalCache(xmProject.getId());
+            List<Dept> headGroups=groups;
 
             if( !headIsPm ){
                 headGroups=xmGroupService.getUserGroups(groups,head.getUserid());
@@ -314,7 +311,7 @@ public class XmProjectQxService {
                 if(xmGroupService.checkUserIsProjectAdm(xmProject,memUserid)){
                     return tips;
                 }
-                List<XmGroupVo> memGroups=xmGroupService.getUserGroups(headGroups,memUserid);
+                List<Dept> memGroups=xmGroupService.getUserGroups(headGroups,memUserid);
                 if( memGroups!=null && memGroups.size()>0 ){
                     return tips;
                 }
@@ -326,9 +323,9 @@ public class XmProjectQxService {
     }
 
 
-    List<XmGroupVo> getProjectGroupsFromLocalCache(String projectId){
-        List<XmGroupVo> groupVoList= xmGroupService.getProjectGroupVoList(projectId);
-            
+    List<Dept> getProjectGroupsFromLocalCache(String deptid){
+        List<Dept> groupVoList= xmGroupService.getSubDeptList(deptid);
+
         return groupVoList;
     }
 
@@ -346,7 +343,7 @@ public class XmProjectQxService {
             if(memUseridSet.size()==0){
                 return tips;
             }
-            List<XmGroupVo> groups=getProjectGroupsFromLocalCache(xmProject.getId());
+            List<Dept> groups=getProjectGroupsFromLocalCache(xmProject.getId());
             for (String memUserid : memUseridSet) {
                 if(xmGroupService.checkUserIsOtherUserTeamHeadOrAss(groups,headUserid,memUserid)){
                     return tips;

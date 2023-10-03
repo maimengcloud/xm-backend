@@ -1,16 +1,18 @@
 package com.xm.core.service;
 
 import com.mdp.core.entity.Tips;
+import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
 import com.xm.core.QxTool;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.service.client.SysClient;
-import com.xm.core.vo.XmGroupVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -103,7 +105,7 @@ public class XmProductQxService {
 
 
         }else if("2".equals(scopeQx)){//同产品
-            List<XmGroupVo> groups=this.getProductGroupsFromLocalCache(xmProduct.getId());
+            List<Dept> groups=this.getProductGroupsFromLocalCache(xmProduct.getId());
             if( !headIsPm && !xmGroupService.checkUserExistsGroup(groups, head.getUserid())){
                 tips.setErrMsg("pdqx-scope-product-0",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),headUsername));
                 return tips;
@@ -117,8 +119,8 @@ public class XmProductQxService {
             tips.setErrMsg("pdqx-scope-product-1",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),memUsername));
             return tips;
         }else if("3".equals(scopeQx)){//同小组
-            List<XmGroupVo> groups=this.getProductGroupsFromLocalCache(xmProduct.getId());
-            List<XmGroupVo> headGroups=groups;
+            List<Dept> groups=this.getProductGroupsFromLocalCache(xmProduct.getId());
+            List<Dept> headGroups=groups;
 
             if( !headIsPm ){
                 headGroups=xmGroupService.getUserGroups(groups,head.getUserid());
@@ -131,7 +133,7 @@ public class XmProductQxService {
                 if(xmGroupService.checkUserIsProductAdm(xmProduct,memUserid)){
                     return tips;
                 }
-                List<XmGroupVo> memGroups=xmGroupService.getUserGroups(headGroups,memUserid);
+                List<Dept> memGroups=xmGroupService.getUserGroups(headGroups,memUserid);
                 if( memGroups!=null && memGroups.size()>0 ){
                     return tips;
                 }
@@ -210,7 +212,7 @@ public class XmProductQxService {
                 return tips;
             }
 
-            List<XmGroupVo> groups=getProductGroupsFromLocalCache(xmProduct.getId());
+            List<Dept> groups=getProductGroupsFromLocalCache(xmProduct.getId());
             if(xmGroupService.checkUserIsOtherUserTeamHeadOrAss(groups, head.getUserid(), memUserid)){
                 return tips;
             }
@@ -272,7 +274,7 @@ public class XmProductQxService {
 
 
         }else if("2".equals(scopeQx)){//同产品
-            List<XmGroupVo> groups=this.getProductGroupsFromLocalCache(xmProduct.getId());
+            List<Dept> groups=this.getProductGroupsFromLocalCache(xmProduct.getId());
             if( !headIsPm && !xmGroupService.checkUserExistsGroup(groups, head.getUserid())){
                 tips.setErrMsg("pdqx-scope-product-0",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),username));
                 return tips;
@@ -288,8 +290,8 @@ public class XmProductQxService {
             tips.setErrMsg("pdqx-scope-product-1",String.format("产品【%s】只开放给同一个产品团队人员,【%s】不在产品团队中。",xmProduct.getId(),memUseridSet.stream().collect(Collectors.joining(","))));
             return tips;
         }else if("3".equals(scopeQx)){//同小组
-            List<XmGroupVo> groups=this.getProductGroupsFromLocalCache(xmProduct.getId());
-            List<XmGroupVo> headGroups=groups;
+            List<Dept> groups=this.getProductGroupsFromLocalCache(xmProduct.getId());
+            List<Dept> headGroups=groups;
 
             if( !headIsPm ){
                 headGroups=xmGroupService.getUserGroups(groups,head.getUserid());
@@ -302,7 +304,7 @@ public class XmProductQxService {
                 if(xmGroupService.checkUserIsProductAdm(xmProduct,memUserid)){
                     return tips;
                 }
-                List<XmGroupVo> memGroups=xmGroupService.getUserGroups(headGroups,memUserid);
+                List<Dept> memGroups=xmGroupService.getUserGroups(headGroups,memUserid);
                 if( memGroups!=null && memGroups.size()>0 ){
                     return tips;
                 }
@@ -314,8 +316,8 @@ public class XmProductQxService {
     }
 
 
-    List<XmGroupVo> getProductGroupsFromLocalCache(String productId){
-        List<XmGroupVo> groupVoList  =xmGroupService.getProductGroupVoList(productId); 
+    List<Dept> getProductGroupsFromLocalCache(String deptid){
+        List<Dept> groupVoList  =xmGroupService.getSubDeptList(deptid);
         return groupVoList;
     }
 
@@ -333,7 +335,7 @@ public class XmProductQxService {
             if(memUseridSet.size()==0){
                 return tips;
             }
-            List<XmGroupVo> groups=getProductGroupsFromLocalCache(xmProduct.getId());
+            List<Dept> groups=getProductGroupsFromLocalCache(xmProduct.getId());
             for (String memUserid : memUseridSet) {
                 if(xmGroupService.checkUserIsOtherUserTeamHeadOrAss(groups,headUserid,memUserid)){
                     return tips;

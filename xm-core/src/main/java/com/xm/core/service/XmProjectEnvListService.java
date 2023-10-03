@@ -2,18 +2,15 @@ package com.xm.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.util.List;
-import java.util.Map;
-import org.springframework.stereotype.Service;
 import com.mdp.core.service.BaseService;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-
 import com.xm.core.entity.XmProjectEnvList;
 import com.xm.core.mapper.XmProjectEnvListMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 /**
  * @author maimeng-mdp code-gen
  * @since 2023-10-3
