@@ -134,4 +134,12 @@ public class SysClient {
     public List<Dept> listSubDept(String pdeptid) {
         return null;
     }
+
+    public User createUserIfNotExists(User exeUser,String deptid,String branchId) {
+        String url="/sys/user/createIfNotExists";
+        exeUser.setBranchId(branchId);
+        Map<String,Object> re=callBizService.postForMap(url,map("user",exeUser  ,"userDept",map("deptid",deptid)));
+        User user=BaseUtils.fromMap((Map<String, Object>) re.get("data"),User.class);
+        return user;
+    }
 }

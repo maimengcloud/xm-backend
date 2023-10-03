@@ -168,7 +168,7 @@ public class XmTaskExecuserController {
 			 if(ObjectTools.isEmpty(xmTaskExecuser.getTaskId())){
 				 return Result.error("taskId-required","任务编号不能为空");
 			 }
-			XmTask xmTaskDb=xmTaskService.selectOneObject(new XmTask(xmTaskExecuser.getTaskId()));
+			XmTask xmTaskDb=xmTaskService.getById(xmTaskExecuser.getTaskId());
 			if(xmTaskDb==null){
 				return Result.error("任务已不存在");
 				

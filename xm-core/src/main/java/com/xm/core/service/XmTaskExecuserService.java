@@ -5,14 +5,17 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
+import com.mdp.core.utils.ObjectTools;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmProject;
 import com.xm.core.entity.XmTask;
 import com.xm.core.entity.XmTaskExecuser;
 import com.xm.core.mapper.XmTaskExecuserMapper;
 import com.xm.core.service.client.MkClient;
+import com.xm.core.service.client.SysClient;
 import com.xm.core.service.push.XmPushMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -36,6 +39,9 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 	
 	@Autowired
 	XmTaskService xmTaskService;
+
+	@Autowired
+	XmProjectService xmProjectService;
 	
 	@Autowired
     XmGroupService groupService;
@@ -47,6 +53,9 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 
 	@Autowired
 	PushNotifyMsgService notifyMsgService;
+
+	@Autowired
+	SysClient sysClient;
 
 
 	@Autowired
@@ -189,7 +198,21 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 				 throw new BizException(xmTaskExecuserDb.getBidUsername()+"没有填写报价金额，不允许变更为执行人。");
 			 }
 		 }
- 		 XmTaskExecuser xmTaskExecuser2=new XmTaskExecuser();
+		XmTaskExecuser xmTaskExecuser2=new XmTaskExecuser();
+ 		 if(ObjectTools.isEmpty(xmTaskExecuserDb.getPrjUserid())){
+
+			 XmProject projectDb=this.xmProjectService.getProjectFromCache(projectId);
+ 		 	User userParams=new User();
+ 		 	userParams.setCpaUserid(xmTaskExecuserDb.getBidUserid());
+ 		 	userParams.setCpaOrg(xmTaskExecuserDb.getBidBranchId());
+ 		 	userParams.setUsername(xmTaskExecuserDb.getBidUsername());
+
+ 		 	User userdb=sysClient.createUserIfNotExists(userParams,projectDb.getDeptid(),projectDb.getBranchId());
+			 xmTaskExecuser2.setPrjUserid(userdb.getUserid());
+			 xmTaskExecuser2.setPrjUsername(userdb.getUsername());
+			 xmTaskExecuser2.setBranchId(userdb.getBranchId());
+		 }
+
 		xmTaskExecuser2.setTaskId(xmTaskExecuser.getTaskId());
 		xmTaskExecuser2.setBidUserid(xmTaskExecuser.getBidUserid());
 		xmTaskExecuser2.setStatus("1");

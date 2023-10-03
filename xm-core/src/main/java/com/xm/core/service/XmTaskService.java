@@ -11,13 +11,9 @@ import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.msg.client.PushNotifyMsgService;
-import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
-import com.xm.core.entity.XmMenu;
-import com.xm.core.entity.XmTask;
-import com.xm.core.entity.XmTaskExecuser;
-import com.xm.core.entity.XmTaskSkill;
+import com.xm.core.entity.*;
 import com.xm.core.mapper.XmTaskMapper;
 import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.service.client.SysClient;
@@ -62,6 +58,8 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 	@Autowired
 	PushNotifyMsgService notifyMsgService;
 
+	@Autowired
+	XmProjectService xmProjectService;
 
 	@Autowired
 	SysClient sysClient;
@@ -224,41 +222,39 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 			xmTaskVo.setTaskSkillNames(xmTaskVo.getSkills().stream().map(k->k.getSkillName()).collect(Collectors.joining(",")));
 			xmTaskVo.setTaskSkillIds(xmTaskVo.getSkills().stream().map(k->k.getSkillId()).collect(Collectors.joining(",")));
 		}
-
+		XmProject projectDb=xmProjectService.getProjectFromCache(xmTaskVo.getProjectId());
 		//如果是由服务商提供服务构建的任务
 		if(StringUtils.hasText(xmTaskVo.getServiceId())){
 			Map<String,Object> userServiceData=sysClient.getUserSvrByServiceId(xmTaskVo.getServiceId());
 			if(userServiceData!=null && !userServiceData.isEmpty()){
-				User exeUser=BaseUtils.fromMap(userServiceData,User.class);
+				User bidUser=BaseUtils.fromMap(userServiceData,User.class);
 				UserSvrVo svrVo=BaseUtils.fromMap(userServiceData,UserSvrVo.class);
 				XmTaskExecuser xmTaskExecuser=new XmTaskExecuser();
 				xmTaskExecuser.setTaskId(xmTaskVo.getId());
 				xmTaskExecuser.setTaskName(xmTaskVo.getName());
 				xmTaskExecuser.setProjectId(xmTaskVo.getProjectId());
-				xmTaskExecuser.setBidUserid(exeUser.getUserid());
-				xmTaskExecuser.setBidUsername(exeUser.getUsername());
-				xmTaskExecuser.setBidBranchId(exeUser.getBranchId());
+				xmTaskExecuser.setBidUserid(bidUser.getUserid());
+				xmTaskExecuser.setBidUsername(bidUser.getUsername());
+				xmTaskExecuser.setBidBranchId(bidUser.getBranchId());
 				xmTaskExecuser.setBranchId(xmTaskVo.getCbranchId());
 				xmTaskExecuser.setStatus("1");
 				xmTaskExecuser.setQuoteAmount(svrVo.getPrice());
 				xmTaskExecuser.setQuoteWorkload(xmTaskVo.getBudgetWorkload());
 				xmTaskExecuser.setSkillRemark((String)userServiceData.get("skills"));
-
-
-				Dept Dept=new Dept();
-				Dept.setDeptid(this.xmTaskSkillService.createKey("id"));
-				Dept xmGroupUser=new Dept();
-
-				Dept.setBranchId(xmTaskVo.getCbranchId());
-				List<Dept> gs=new ArrayList<>();
-				gs.add(Dept);
-				groupService.addGroups(xmTaskVo.getProjectId(),gs);
-
+				User exeUserParams=new User();
+				exeUserParams.setCpaOrg(bidUser.getBranchId());
+				exeUserParams.setCpaUserid(bidUser.getUserid());
+				exeUserParams.setUsername(bidUser.getUsername());
+				exeUserParams.setDeptid(projectDb.getDeptid());
+				exeUserParams.setBranchId(projectDb.getBranchId());
+				User exeUserDb=sysClient.createUserIfNotExists(exeUserParams,projectDb.getDeptid(),projectDb.getBranchId());
+				xmTaskExecuser.setPrjUserid(exeUserDb.getUserid());
+				xmTaskExecuser.setPrjUsername(exeUserDb.getUsername());
 				xmTaskExecuserService.addExecuser(xmTaskExecuser,!"0".equals(xmTaskVo.getStatus()));
-				xmTaskVo.setExeUserids(exeUser.getUserid());
-				xmTaskVo.setExeUsernames(exeUser.getUsername());
-				xmTaskVo.setExecutorUserid(exeUser.getUserid());
-				xmTaskVo.setExecutorUsername(exeUser.getUsername());
+				xmTaskVo.setExeUserids(exeUserDb.getUserid());
+				xmTaskVo.setExeUsernames(exeUserDb.getUsername());
+				xmTaskVo.setExecutorUserid(exeUserDb.getUserid());
+				xmTaskVo.setExecutorUsername(exeUserDb.getUsername());
 				xmTaskVo.setExecUsers(1);
 				xmTaskVo.setStatus("1");
 				xmTaskVo.setBidStep("4");
@@ -267,7 +263,6 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 				xmTaskVo.setEstate("1");
 				xmTaskVo.setQuoteFinalAt(svrVo.getPrice());
 				xmTaskVo.setBidEtime(new Date());
-
 			}
 		}
 
