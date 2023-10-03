@@ -324,7 +324,7 @@ public class XmTaskSbillController {
 
 			xmTaskSbillService.batchDelete(xmTaskSbills);
 		}catch (BizException e) { 
-			tips=e.getTips();
+			Tips tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
 			return Result.error(e.getMessage());

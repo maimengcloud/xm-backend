@@ -137,10 +137,11 @@ public class XmProjectStateController {
 		
 		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
-		List<Map<String,Object>>	xmProjectStateList =null;	//列出XmProductState列表
-		if(xmProjectStateList==null){
-			xmProjectStateList=xmProjectStateService.selectPortalProjectStates(xmProductState);
+		List<Map<String,Object>>	datas =null;	//列出XmProductState列表
+		if(datas==null){
+			datas=xmProjectStateService.selectPortalProjectStates(params);
  		}
+		return Result.ok().setData(datas);
 		
 	}
 	 

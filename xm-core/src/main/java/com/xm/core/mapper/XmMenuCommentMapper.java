@@ -28,5 +28,7 @@ public interface XmMenuCommentMapper extends BaseMapper<XmMenuComment> {
     void unShowComment(String[] ids);
 
     void updateChildrenSum(Map<String, Object> map);
+
+    void praiseComment(XmMenuComment xmMenuComment);
 }
 

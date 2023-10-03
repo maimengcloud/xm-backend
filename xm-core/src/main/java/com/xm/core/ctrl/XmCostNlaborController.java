@@ -180,7 +180,7 @@ public class XmCostNlaborController {
 			List<XmCostNlabor> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			for (XmCostNlabor xmCostNlaborDb : xmCostNlaborsDb) {
-				Tips tips2 = new Tips("检查通过"); 
+ 				Tips tips2 = new Tips("检查通过"); 
 				if(!tips2.isOk()){
 				    no.add(xmCostNlaborDb); 
 				}else{

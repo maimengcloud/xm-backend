@@ -42,5 +42,13 @@ public class XmMenuCommentService extends BaseService<XmMenuCommentMapper, XmMen
 	public void updateChildrenSum(String pid,Integer addCount) {
 		baseMapper.updateChildrenSum(map("pid",pid,"addCount",addCount));
 	}
+
+    public List<XmMenuComment> selectListByPids(List<String> ids) {
+		return super.listByIds(ids);
+    }
+
+	public void praiseComment(XmMenuComment xmMenuComment) {
+		baseMapper.praiseComment(xmMenuComment);
+	}
 }
 

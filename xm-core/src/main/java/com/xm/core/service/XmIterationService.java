@@ -1,5 +1,7 @@
 package com.xm.core.service;
 
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.mapper.XmIterationMapper;
@@ -20,7 +22,13 @@ public class XmIterationService extends BaseService<XmIterationMapper, XmIterati
 
 
 
-
+	/**
+	 * 连同功能关联的状态数据一起带出
+	 * @return
+	 */
+	public List<Map<String, Object>> selectListMapByWhere(IPage page, QueryWrapper qw, Map<String, Object> params) {
+		return baseMapper.selectListMapByWhere( page,qw,params);
+	}
 	
 	/**
 	 * 调用存储过程计算指定迭代的任务预算数据

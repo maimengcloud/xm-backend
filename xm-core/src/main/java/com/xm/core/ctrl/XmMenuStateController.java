@@ -6,7 +6,6 @@ import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmMenuState;
 import com.xm.core.service.XmMenuStateService;
 import com.xm.core.vo.XmMenuStateVo;
@@ -119,13 +118,12 @@ public class XmMenuStateController {
 	}) 
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmMenuState(@RequestBody XmMenuState xmMenuState) {
+		if(xmMenuStateService.countByWhere(xmMenuState)>0){
+			return Result.error("编号重复，请修改编号再提交");
 
-			if(xmMenuStateService.countByWhere(xmMenuState)>0){
-				return Result.error("编号重复，请修改编号再提交");
-				
-			}
-			xmMenuStateService.insert(xmMenuState);
-		
+		}
+		xmMenuStateService.insert(xmMenuState);
+		return Result.ok();
 	}
 	
 	
@@ -152,7 +150,7 @@ public class XmMenuStateController {
 	public Result editXmMenuState(@RequestBody XmMenuState xmMenuState) {
 
 			xmMenuStateService.updateByPk(xmMenuState);
-		
+			return Result.ok();
 	}
 	
 	
@@ -191,10 +189,8 @@ public class XmMenuStateController {
 	}) 
 	@RequestMapping(value="/batchAddStateByProductIdAndMenuList",method=RequestMethod.POST)
 	public Result batchAddStateByProductIdAndMenuList(@RequestBody XmMenuStateVo vo) {
-		
-		
-		
-			tips = xmMenuStateService.batchAddStateByProductIdAndMenuList(vo.getProductId(), vo.getProductName(), vo.getXmMenus());
+		Tips tips = xmMenuStateService.batchAddStateByProductIdAndMenuList(vo.getProductId(), vo.getProductName(), vo.getXmMenus());
+		Result.assertIsFalse(tips);
 		return Result.ok();
 		
 	} 	

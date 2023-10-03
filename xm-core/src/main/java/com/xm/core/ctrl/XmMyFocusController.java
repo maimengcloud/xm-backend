@@ -3,15 +3,12 @@ package com.xm.core.ctrl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.qx.HasRole;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmMyFocus;
 import com.xm.core.service.XmMyFocusService;
 import io.swagger.annotations.*;
@@ -29,7 +26,6 @@ import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.map;
 import static com.mdp.core.utils.BaseUtils.toMap;
-import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_my_focus 我关注的项目或者任务的操作有增删改查,对应的url分别为:<br>
@@ -212,7 +208,7 @@ public class XmMyFocusController {
 			List<XmMyFocus> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			for (XmMyFocus xmMyFocusDb : xmMyFocussDb) {
-				Tips tips2 = new Tips("检查通过"); 
+ 				Tips tips2 = new Tips("检查通过"); 
 				if(!tips2.isOk()){
 				    no.add(xmMyFocusDb); 
 				}else{

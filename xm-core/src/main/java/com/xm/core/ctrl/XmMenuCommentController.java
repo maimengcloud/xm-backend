@@ -3,8 +3,6 @@ package com.xm.core.ctrl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
@@ -13,7 +11,6 @@ import com.mdp.qx.HasRole;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmMenuComment;
 import com.xm.core.service.XmMenuCalcService;
@@ -27,6 +24,7 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -87,7 +85,7 @@ public class XmMenuCommentController {
 
 
 		if(datas.size()>0) {
-			List<Map<String, Object>> children=xmMenuCommentService.selectListByPids(datas.stream().map(k->(String)k.get("id")).collect(Collectors.toList()));
+			List<XmMenuComment> children=xmMenuCommentService.selectListByPids(datas.stream().map(k->(String)k.get("id")).collect(Collectors.toList()));
 
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal()).put("children",children);	//列出XmMenuComment列表
 		}
@@ -121,16 +119,9 @@ public class XmMenuCommentController {
 			}
 			XmMenuCalcService.commentsSet.add(xmMenuComment.getMenuId());
 			if(!user.getUserid().equals(xmMenuDb.getMmUserid())){
-				notifyMsgService.pushMsg(user, xmMenuDb.getMmUserid(), xmMenuDb.getMmUsername(),"10",xmMenuDb.getMenuId(),xmMenuComment.getId(),user.getUsername()+"发表评论："+xmMenuComment.getContext());
-			}
-			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("执行异常",e);
-		}catch (Exception e) {
-			return Result.error(e.getMessage());
-			logger.error("执行异常",e);
-		}
+				notifyMsgService.pushMsg(user, xmMenuDb.getMmUserid(), xmMenuDb.getMmUsername(),user.getUsername()+"发表评论："+xmMenuComment.getContext(),null);
+			} 
+			return Result.ok();
 		
 	}
 
@@ -157,14 +148,8 @@ public class XmMenuCommentController {
 			xmMenuCommentService.deleteByPk(xmMenuComment);
 			if(StringUtils.hasText(commentDb.getPid())){
 				xmMenuCommentService.updateChildrenSum(commentDb.getPid(),Integer.valueOf(-1));
-			}
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("执行异常",e);
-		}catch (Exception e) {
-			return Result.error(e.getMessage());
-			logger.error("执行异常",e);
-		}
+			} 
+			return Result.ok();
 		
 	}
 
@@ -176,16 +161,8 @@ public class XmMenuCommentController {
 	@RequestMapping(value="/praise",method=RequestMethod.POST)
 	public Result praiseComment(@RequestBody XmMenuComment xmMenuComment) {
 
-			xmMenuCommentService.update("praiseComment", xmMenuComment);
-
-			
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("执行异常",e);
-		}catch (Exception e) {
-			return Result.error(e.getMessage());
-			logger.error("执行异常",e);
-		}
+			xmMenuCommentService.praiseComment(xmMenuComment);
+			return Result.ok();
 		
 	}
 
@@ -196,29 +173,23 @@ public class XmMenuCommentController {
 	@RequestMapping(value="/unshow",method=RequestMethod.POST)
 	public Result unShowComment(@RequestBody String[] ids) {
 
-			User user=LoginUtils.getCurrentUserInfo();
-			List<XmMenuComment> comments=this.xmMenuCommentService.selectListByIds(Arrays.asList(ids));
-			if(comments==null || comments.size()==0){
-				return ResponseHelper.failed("data-0","评论已不存在");
-			}
-			boolean isSuperAdmin=LoginUtils.isSuperAdmin();
-			for (XmMenuComment comment : comments) {
-				if(!isSuperAdmin){
-					if(!LoginUtils.isBranchAdmin(comment.getBranchId())){
-						if(!user.getUserid().equals(comment.getUserid())){
-							return ResponseHelper.failed("无权限修改","无权限屏蔽评论【"+comment.getContext()+"】");
-						}
+		User user=LoginUtils.getCurrentUserInfo();
+		List<XmMenuComment> comments=this.xmMenuCommentService.selectListByIds(Arrays.asList(ids));
+		if(comments==null || comments.size()==0){
+			return ResponseHelper.failed("data-0","评论已不存在");
+		}
+		boolean isSuperAdmin=LoginUtils.isSuperAdmin();
+		for (XmMenuComment comment : comments) {
+			if(!isSuperAdmin){
+				if(!LoginUtils.isBranchAdmin(comment.getBranchId())){
+					if(!user.getUserid().equals(comment.getUserid())){
+						return ResponseHelper.failed("无权限修改","无权限屏蔽评论【"+comment.getContext()+"】");
 					}
 				}
 			}
-			xmMenuCommentService.unShowComment(ids);
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("执行异常",e);
-		}catch (Exception e) {
-			return Result.error(e.getMessage());
-			logger.error("执行异常",e);
 		}
+		xmMenuCommentService.unShowComment(ids);
+		return Result.ok();
 		
 	}
 
@@ -229,198 +200,25 @@ public class XmMenuCommentController {
 	@RequestMapping(value="/show",method=RequestMethod.POST)
 	public Result showComment(@RequestBody String[] ids) {
 
-			User user= LoginUtils.getCurrentUserInfo();
-			List<XmMenuComment> comments=this.xmMenuCommentService.selectListByIds(Arrays.asList(ids));
-			if(comments==null || comments.size()==0){
-				return ResponseHelper.failed("data-0","评论已不存在");
-			}
-			boolean isSuperAdmin=LoginUtils.isSuperAdmin();
-			for (XmMenuComment comment : comments) {
-				if(!isSuperAdmin){
-					if(!LoginUtils.isBranchAdmin(comment.getBranchId())){
-						if(!user.getUserid().equals(comment.getUserid())){
-							return ResponseHelper.failed("无权限修改","无权限打开此评论【"+comment.getContext()+"】");
-						}
+		User user= LoginUtils.getCurrentUserInfo();
+		List<XmMenuComment> comments=this.xmMenuCommentService.selectListByIds(Arrays.asList(ids));
+		if(comments==null || comments.size()==0){
+			return ResponseHelper.failed("data-0","评论已不存在");
+		}
+		boolean isSuperAdmin=LoginUtils.isSuperAdmin();
+		for (XmMenuComment comment : comments) {
+			if(!isSuperAdmin){
+				if(!LoginUtils.isBranchAdmin(comment.getBranchId())){
+					if(!user.getUserid().equals(comment.getUserid())){
+						return ResponseHelper.failed("无权限修改","无权限打开此评论【"+comment.getContext()+"】");
 					}
 				}
 			}
-			xmMenuCommentService.showComment(ids);
-		}catch (BizException e) {
-			tips=e.getTips();
-			logger.error("执行异常",e);
-		}catch (Exception e) {
-			return Result.error(e.getMessage());
-			logger.error("执行异常",e);
 		}
-		
-	}
-	
-	/**
-	@ApiOperation( value = "新增一条档案评论表信息",notes=" ")
-	@ApiResponses({
-		@ApiResponse(code = 200,response=XmMenuComment.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
-	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Result addXmMenuComment(@RequestBody XmMenuComment xmMenuComment) {
-
-		    boolean createPk=false;
-			if(!StringUtils.hasText(xmMenuComment.getId())) {
-			    createPk=true;
-				xmMenuComment.setId(xmMenuCommentService.createKey("id"));
-			}
-			if(createPk==false){
-                 if(xmMenuCommentService.selectOneObject(xmMenuComment) !=null ){
-                    return Result.error("pk-exists","编号重复，请修改编号再提交");
-                }
-            }
-			xmMenuCommentService.insert(xmMenuComment);
-		
-	}
-	*/
-	
-	/**
-	@ApiOperation( value = "删除一条档案评论表信息",notes=" ")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
-	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Result delXmMenuComment(@RequestBody XmMenuComment xmMenuComment){
-
-            if(!StringUtils.hasText(xmMenuComment.getId())) {
-                 return Result.error("pk-not-exists","请上送主键参数id");
-            }
-            XmMenuComment xmMenuCommentDb = xmMenuCommentService.selectOneObject(xmMenuComment);
-            if( xmMenuCommentDb == null ){
-                return Result.error("data-not-exists","数据不存在，无法删除");
-            }
-			xmMenuCommentService.deleteByPk(xmMenuComment);
+		xmMenuCommentService.showComment(ids);
 		return Result.ok();
 		
 	}
-	 */
 	
-	/**
-	@ApiOperation( value = "根据主键修改一条档案评论表信息",notes=" ")
-	@ApiResponses({
-		@ApiResponse(code = 200,response=XmMenuComment.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
-	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Result editXmMenuComment(@RequestBody XmMenuComment xmMenuComment) {
 
-            if(!StringUtils.hasText(xmMenuComment.getId())) {
-                 return Result.error("pk-not-exists","请上送主键参数id");
-            }
-            XmMenuComment xmMenuCommentDb = xmMenuCommentService.selectOneObject(xmMenuComment);
-            if( xmMenuCommentDb == null ){
-                return Result.error("data-not-exists","数据不存在，无法修改");
-            }
-			xmMenuCommentService.updateSomeFieldByPk(xmMenuComment);
-		
-	}
-	*/
-
-	/**
-    @ApiOperation( value = "批量修改某些字段",notes="")
-    @ApiEntityParams( value = XmMenuComment.class, props={ }, remark = "档案评论表", paramType = "body" )
-	@ApiResponses({
-			@ApiResponse(code = 200,response=XmMenuComment.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	})
-	@RequestMapping(value="/editSomeFields",method=RequestMethod.POST)
-	public Result editSomeFields( @ApiIgnore @RequestBody Map<String,Object> xmMenuCommentMap) {
-
-            List<String> ids= (List<String>) xmMenuCommentMap.get("ids");
-			if(ids==null || ids.size()==0){
-				return Result.error("ids-0","ids不能为空");
-			}
-
-			Set<String> fields=new HashSet<>();
-            fields.add("id");
-			for (String fieldName : xmMenuCommentMap.keySet()) {
-				if(fields.contains(fieldName)){
-					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
-				}
-			}
-			Set<String> fieldKey=xmMenuCommentMap.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
-			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmMenuCommentMap.get(i) )).collect(Collectors.toSet());
-
-			if(fieldKey.size()<=0) {
-				return Result.error("fieldKey-0","没有需要更新的字段");
- 			}
-			XmMenuComment xmMenuComment = fromMap(xmMenuCommentMap,XmMenuComment.class);
-			List<XmMenuComment> xmMenuCommentsDb=xmMenuCommentService.selectListByIds(ids);
-			if(xmMenuCommentsDb==null ||xmMenuCommentsDb.size()==0){
-				return Result.error("data-0","记录已不存在");
-			}
-			List<XmMenuComment> can=new ArrayList<>();
-			List<XmMenuComment> no=new ArrayList<>();
-			User user = LoginUtils.getCurrentUserInfo();
-			for (XmMenuComment xmMenuCommentDb : xmMenuCommentsDb) {
-				Tips tips2 = new Tips("检查通过"); 
-				if(!tips2.isOk()){
-				    no.add(xmMenuCommentDb); 
-				}else{
-					can.add(xmMenuCommentDb);
-				}
-			}
-			if(can.size()>0){
-                xmMenuCommentMap.put("ids",can.stream().map(i->i.getId()).collect(Collectors.toList()));
-			    xmMenuCommentService.editSomeFields(xmMenuCommentMap); 
-			}
-			List<String> msgs=new ArrayList<>();
-			if(can.size()>0){
-				msgs.add(String.format("成功更新以下%s条数据",can.size()));
-			}
-			if(no.size()>0){
-				msgs.add(String.format("以下%s个数据无权限更新",no.size()));
-			}
-			if(can.size()>0){
-				return Result.ok(msgs.stream().collect(Collectors.joining()));
-			}else {
-				return Result.error(msgs.stream().collect(Collectors.joining()));
-			} 
-		
-	}
-	*/
-
-	/**
-	@ApiOperation( value = "根据主键列表批量删除档案评论表信息",notes=" ")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
-	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Result batchDelXmMenuComment(@RequestBody List<XmMenuComment> xmMenuComments) {
-		
-        
-        
-            if(xmMenuComments.size()<=0){
-                return Result.error("data-0","请上送待删除数据列表");
-            }
-             List<XmMenuComment> datasDb=xmMenuCommentService.selectListByIds(xmMenuComments.stream().map(i-> i.getId() ).collect(Collectors.toList()));
-
-            List<XmMenuComment> can=new ArrayList<>();
-            List<XmMenuComment> no=new ArrayList<>();
-            for (XmMenuComment data : datasDb) {
-                if(true){
-                    can.add(data);
-                }else{
-                    no.add(data);
-                } 
-            }
-            List<String> msgs=new ArrayList<>();
-            if(can.size()>0){
-                xmMenuCommentService.batchDelete(can);
-                msgs.add(String.format("成功删除%s条数据.",can.size()));
-            }
-    
-            if(no.size()>0){ 
-                msgs.add(String.format("以下%s条数据不能删除.【%s】",no.size(),no.stream().map(i-> i.getId() ).collect(Collectors.joining(","))));
-            }
-            if(can.size()>0){
-                 return Result.ok(msgs.stream().collect(Collectors.joining()));
-            }else {
-                return Result.error(msgs.stream().collect(Collectors.joining()));
-            } 
-        
-	} 
-	*/
 }

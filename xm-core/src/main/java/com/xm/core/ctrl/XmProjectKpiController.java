@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmProjectKpi;
 import com.xm.core.service.XmProjectKpiService;
 import io.swagger.annotations.*;
@@ -76,7 +75,7 @@ public class XmProjectKpiController {
 		IPage page=QueryTools.initPage(params);
 		QueryWrapper<XmProjectKpi> qw = QueryTools.initQueryWrapper(XmProjectKpi.class , params);
 		List<Map<String,Object>> datas = xmProjectKpiService.selectListMapByWhere(page,qw,params);
-			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectKpi列表
+		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectKpi列表
 		
 	}
 	
@@ -90,17 +89,17 @@ public class XmProjectKpiController {
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmProjectKpi(@RequestBody XmProjectKpi xmProjectKpi) {
 
-			if(StringUtils.isEmpty(xmProjectKpi.getId())) {
-				xmProjectKpi.setId(xmProjectKpiService.createKey("id"));
-			}else{
-				 XmProjectKpi xmProjectKpiQuery = new  XmProjectKpi(xmProjectKpi.getId());
-				if(xmProjectKpiService.countByWhere(xmProjectKpiQuery)>0){
-					return Result.error("编号重复，请修改编号再提交");
-					
-				}
+		if(StringUtils.isEmpty(xmProjectKpi.getId())) {
+			xmProjectKpi.setId(xmProjectKpiService.createKey("id"));
+		}else{
+			 XmProjectKpi xmProjectKpiQuery = new  XmProjectKpi(xmProjectKpi.getId());
+			if(xmProjectKpiService.countByWhere(xmProjectKpiQuery)>0){
+				return Result.error("编号重复，请修改编号再提交");
+
 			}
-			xmProjectKpiService.insert(xmProjectKpi);
-		
+		}
+		xmProjectKpiService.insert(xmProjectKpi);
+		return Result.ok();
 	}
 	
 	
@@ -112,8 +111,8 @@ public class XmProjectKpiController {
 	@RequestMapping(value="/del",method=RequestMethod.POST)
 	public Result delXmProjectKpi(@RequestBody XmProjectKpi xmProjectKpi){
 
-			xmProjectKpiService.deleteByPk(xmProjectKpi);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		xmProjectKpiService.deleteByPk(xmProjectKpi);
+		return Result.ok();
 		
 	}
 	 
@@ -126,7 +125,8 @@ public class XmProjectKpiController {
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmProjectKpi(@RequestBody XmProjectKpi xmProjectKpi) {
 
-			xmProjectKpiService.updateByPk(xmProjectKpi);
+		xmProjectKpiService.updateByPk(xmProjectKpi);
+		return Result.ok();
 		
 	}
 	
@@ -140,11 +140,8 @@ public class XmProjectKpiController {
 	}) 
 	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
 	public Result batchDelXmProjectKpi(@RequestBody List<XmProjectKpi> xmProjectKpis) {
-		
-		
-		
-			xmProjectKpiService.batchDelete(xmProjectKpis);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		xmProjectKpiService.batchDelete(xmProjectKpis);
+		return Result.ok();
 		
 	} 
 	

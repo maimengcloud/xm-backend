@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
@@ -28,8 +27,8 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.mdp.core.utils.BaseUtils.*;
-import static com.mdp.core.utils.ResponseHelper.failed;
+import static com.mdp.core.utils.BaseUtils.fromMap;
+import static com.mdp.core.utils.BaseUtils.toMap;
 
 /**
  * url编制采用rest风格,如对xm_func 功能模块表的操作有增删改查,对应的url分别为:<br>
@@ -78,7 +77,7 @@ public class XmFuncController {
 		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
-		List<Map<String,Object>> datas = sensitiveWordService.selectListMapByWhere(page,qw,params);
+		List<Map<String,Object>> datas = xmFuncService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmFunc列表
 
 	}
@@ -116,7 +115,7 @@ public class XmFuncController {
 			xmFunc.setPbranchId(xmProduct.getBranchId());
 			xmFuncService.parentIdPathsCalcBeforeSave(xmFunc);
 			xmFuncService.insert(xmFunc);
-		
+		return Result.ok();
 	}
 
 	@ApiOperation( value = "删除一条功能模块表信息",notes=" ")
@@ -133,7 +132,7 @@ public class XmFuncController {
             if( xmFuncDb == null ){
                 return Result.error("data-not-exists","数据不存在，无法删除");
             }
-            Long childcnt=xmFuncService.countByWhere(map("pid",xmFuncDb.getId()));
+            int childcnt=xmFuncService.count(QueryTools.initQueryWrapper(XmFunc.class).eq("pid",xmFuncDb.getId()));
             if(childcnt>0){
 				return Result.error("childcnt-not-0","至少还有"+childcnt+"个子节点,请先删除子节点，再删除父节点");
 			}
@@ -157,7 +156,7 @@ public class XmFuncController {
                 return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmFuncService.updateSomeFieldByPk(xmFunc);
-		
+		return Result.ok();
 	}
 
     @ApiOperation( value = "批量修改某些字段",notes="")
@@ -196,7 +195,7 @@ public class XmFuncController {
 			List<XmFunc> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			for (XmFunc xmFuncDb : xmFuncsDb) {
-				Tips tips2 = new Tips("检查通过"); 
+ 				Tips tips2 = new Tips("检查通过"); 
 				if(!tips2.isOk()){
 				    no.add(xmFuncDb); 
 				}else{

@@ -697,17 +697,17 @@ public class XmGroupService extends BaseService<XmGroupMapper,XmGroup> {
 
 			if(StringUtils.hasText(group.getAssUserid()) && !group.getAssUserid().equals(groupDb.getAssUserid())){
 				if(!proUsersMap.containsKey(user.getUserid()) && !user.getUserid().equals(groupDb.getLeaderUserid())){
-					tips.setFailureMsg("no-qx-change-pro-g-assUserid","您无权限修改小组助理.组长及以上人员可以修改。");
+	 				Tips tips.setFailureMsg("no-qx-change-pro-g-assUserid","您无权限修改小组助理.组长及以上人员可以修改。");
 				}
 			}
 			if(StringUtils.hasText(group.getLeaderUserid()) && !group.getLeaderUserid().equals(groupDb.getLeaderUserid())){
 				if(!proUsersMap.containsKey(user.getUserid())){
-					tips.setFailureMsg("no-qx-change-pro-g-leaderUserid","您无权限修改小组组长.产品级助理及以上人员可以修改。");
+	 				Tips tips.setFailureMsg("no-qx-change-pro-g-leaderUserid","您无权限修改小组组长.产品级助理及以上人员可以修改。");
 				}
 			}
 			if(StringUtils.hasText(group.getPgroupId()) && !group.getPgroupId().equals(groupDb.getPgroupId())){
 				if(!proUsersMap.containsKey(user.getUserid())){
-					tips.setFailureMsg("no-qx-change-g-pgroupId","您无权限修改小组归属上级单位.产品级助理及以上人员可以修改。");
+	 				Tips tips.setFailureMsg("no-qx-change-g-pgroupId","您无权限修改小组归属上级单位.产品级助理及以上人员可以修改。");
 				}
 			}
 		return tips;
@@ -731,25 +731,25 @@ public class XmGroupService extends BaseService<XmGroupMapper,XmGroup> {
 		Map<String,String> pmUserMap=this.getProjectAdmUsers(xmProject);
 			if(!pmUserMap.containsKey(user.getUserid())){
 				if(!user.getUserid().equals(groupDb.getLeaderUserid()) && !user.getUserid().equals(groupDb.getAssUserid())){
-					tips.setFailureMsg("not-prj-group-adm-user","您无权修改小组信息。 组长助理及以上人员有权限修改。");
+	 				Tips tips.setFailureMsg("not-prj-group-adm-user","您无权修改小组信息。 组长助理及以上人员有权限修改。");
 					return tips;
 				}
 			}
 			if(StringUtils.hasText(group.getAssUserid()) && !group.getAssUserid().equals(groupDb.getAssUserid())){
 				if(!pmUserMap.containsKey(user.getUserid()) && !user.getUserid().equals(groupDb.getLeaderUserid())){
-					tips.setFailureMsg("no-qx-change-prj-g-assUserid","您无权限修改小组助理.组长及以上人员可以修改。");
+	 				Tips tips.setFailureMsg("no-qx-change-prj-g-assUserid","您无权限修改小组助理.组长及以上人员可以修改。");
 					return tips;
 				}
 			}
 			if(StringUtils.hasText(group.getLeaderUserid()) && !group.getLeaderUserid().equals(groupDb.getLeaderUserid())){
 				if(!pmUserMap.containsKey(user.getUserid())){
-					tips.setFailureMsg("no-qx-change-prj-g-leaderUserid","您无权限修改小组组长.项目级助理及以上人员可以修改。");
+	 				Tips tips.setFailureMsg("no-qx-change-prj-g-leaderUserid","您无权限修改小组组长.项目级助理及以上人员可以修改。");
 					return tips;
 				}
 			}
 			if(StringUtils.hasText(group.getPgroupId()) && !group.getPgroupId().equals(groupDb.getPgroupId())){
 				if(!pmUserMap.containsKey(user.getUserid())){
-					tips.setFailureMsg("no-qx-change-prj-g-pgroupId","您无权限修改小组归属上级单位.项目级助理及以上人员可以修改。");
+	 				Tips tips.setFailureMsg("no-qx-change-prj-g-pgroupId","您无权限修改小组归属上级单位.项目级助理及以上人员可以修改。");
 					return tips;
 				}
 			}

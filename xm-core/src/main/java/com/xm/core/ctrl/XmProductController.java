@@ -11,7 +11,6 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProductCopyVo;
 import com.xm.core.entity.XmProductProjectLink;
@@ -177,8 +176,8 @@ public class XmProductController {
 		}
 		params.put("platformBranchId",platformBranchId);
 		params.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	xmProductList = xmProductService.selectListMapByWhereWithState(params);	//列出XmProduct列表
-
+		List<Map<String,Object>>	datas = xmProductService.selectListMapByWhereWithState(params);	//列出XmProduct列表
+		return Result.ok().setData(datas).setTotal(page.getTotal());
 	}
 
 	/***/
@@ -277,17 +276,17 @@ public class XmProductController {
 				}
 			}
 			xmProductService.addProduct(xmProduct);
-			notifyMsgService.pushMsg(user,xmProduct.getPmUserid(),xmProduct.getPmUsername(),"3",xmProduct.getId(),xmProduct.getId(),"您成为产品【"+xmProduct.getProductName()+"】的产品经理，请及时跟进。");
+			notifyMsgService.pushMsg(user,xmProduct.getPmUserid(),xmProduct.getPmUsername(),"您成为产品【"+xmProduct.getProductName()+"】的产品经理，请及时跟进。",null);
 			if(StringUtils.hasText(xmProduct.getAssUserid()) && !xmProduct.getAssUserid().equals(xmProduct.getPmUserid())){
-				notifyMsgService.pushMsg(user,xmProduct.getAssUserid(),xmProduct.getAssUsername(),"3",xmProduct.getId(),xmProduct.getId(),"您成为产品【"+xmProduct.getProductName()+"】的副经理、助理，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProduct.getAssUserid(),xmProduct.getAssUsername(),"您成为产品【"+xmProduct.getProductName()+"】的副经理、助理，请及时跟进。",null);
 
 			}
 			if(StringUtils.hasText(xmProduct.getAdmUserid()) && !xmProduct.getAdmUserid().equals(xmProduct.getPmUserid())){
-				notifyMsgService.pushMsg(user,xmProduct.getAdmUserid(),xmProduct.getAdmUsername(),"3",xmProduct.getId(),xmProduct.getId(),"您成为产品【"+xmProduct.getProductName()+"】的产品总监，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProduct.getAdmUserid(),xmProduct.getAdmUsername(),"您成为产品【"+xmProduct.getProductName()+"】的产品总监，请及时跟进。",null);
 			}
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"创建产品","创建产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】");
 			xmProductStateService.loadTasksToXmProductState(xmProduct.getId());
-		
+		return Result.ok();
 	}
 	/***/
 	@ApiOperation( value = "从回收站恢复产品",notes="unDelXmProduct,仅需要上传主键字段")
@@ -383,8 +382,7 @@ public class XmProductController {
 			xmProductService.clearCache(xmProduct.getId());
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"删除产品",user.getUsername()+"删除产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】","",JSON.toJSONString(xmProductDb));
 
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
-		
+ 		return Result.ok();		
 	}
 	@ApiOperation( value = "批量修改某些字段",notes="")
 	@ApiEntityParams( value = XmProduct.class, props={ }, remark = "产品", paramType = "body" )
@@ -455,15 +453,15 @@ public class XmProductController {
 			xmProductService.editSomeFields(xmProductMap);
 			xmProductService.clearCache(xmProductDb.getId());
 			if(StringUtils.hasText(xmProduct.getPmUserid()) && !xmProduct.getPmUserid().equals(xmProductDb.getPmUserid())){
-				notifyMsgService.pushMsg(user,xmProduct.getPmUserid(),xmProduct.getPmUsername(),"3",xmProductDb.getId(),xmProductDb.getId(),"您成为产品【"+xmProductDb.getProductName()+"】的产品经理，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProduct.getPmUserid(),xmProduct.getPmUsername(),"您成为产品【"+xmProductDb.getProductName()+"】的产品经理，请及时跟进。",null);
 
 			}
 			if(StringUtils.hasText(xmProduct.getAssUserid()) && !xmProduct.getAssUserid().equals(xmProductDb.getAssUserid())){
-				notifyMsgService.pushMsg(user,xmProduct.getAssUserid(),xmProduct.getAssUsername(),"3",xmProductDb.getId(),xmProductDb.getId(),"您成为产品【"+xmProductDb.getProductName()+"】的副经理，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProduct.getAssUserid(),xmProduct.getAssUsername(),"您成为产品【"+xmProductDb.getProductName()+"】的副经理，请及时跟进。",null);
 
 			}
 			if(StringUtils.hasText(xmProduct.getAdmUserid()) && !xmProduct.getAdmUserid().equals(xmProductDb.getAdmUserid())){
-				notifyMsgService.pushMsg(user,xmProduct.getAdmUserid(),xmProduct.getAdmUsername(),"3",xmProductDb.getId(),xmProductDb.getId(),"您成为产品【"+xmProductDb.getProductName()+"】的产品总监，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProduct.getAdmUserid(),xmProduct.getAdmUsername(),"您成为产品【"+xmProductDb.getProductName()+"】的产品总监，请及时跟进。",null);
 			}
 		return Result.ok();
 		
@@ -516,92 +514,20 @@ public class XmProductController {
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"修改产品","修改产品【"+xmProductDb.getId()+"】【"+xmProductDb.getProductName()+"】",JSON.toJSONString(xmProduct),JSON.toJSONString(xmProductDb));
 
 			if(StringUtils.hasText(xmProduct.getPmUserid()) && !xmProduct.getPmUserid().equals(xmProductDb.getPmUserid())){
-				notifyMsgService.pushMsg(user,xmProduct.getPmUserid(),xmProduct.getPmUsername(),"3",xmProductDb.getId(),xmProductDb.getId(),"您成为产品【"+xmProductDb.getProductName()+"】的产品经理，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProduct.getPmUserid(),xmProduct.getPmUsername(),"您成为产品【"+xmProductDb.getProductName()+"】的产品经理，请及时跟进。",null);
 
 			}
 			if(StringUtils.hasText(xmProduct.getAssUserid()) && !xmProduct.getAssUserid().equals(xmProductDb.getAssUserid())){
-				notifyMsgService.pushMsg(user,xmProduct.getAssUserid(),xmProduct.getAssUsername(),"3",xmProductDb.getId(),xmProductDb.getId(),"您成为产品【"+xmProductDb.getProductName()+"】的副经理、助理，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProduct.getAssUserid(),xmProduct.getAssUsername(),"您成为产品【"+xmProductDb.getProductName()+"】的副经理、助理，请及时跟进。",null);
 
 			}
 			if(StringUtils.hasText(xmProduct.getAdmUserid()) && !xmProduct.getAdmUserid().equals(xmProductDb.getAdmUserid()) ){
-				notifyMsgService.pushMsg(user,xmProduct.getAdmUserid(),xmProduct.getAdmUsername(),"3",xmProductDb.getId(),xmProductDb.getId(),"您成为产品【"+xmProductDb.getProductName()+"】的产品总监，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProduct.getAdmUserid(),xmProduct.getAdmUsername(),"您成为产品【"+xmProductDb.getProductName()+"】的产品总监，请及时跟进。",null);
 			}
-		
+		return Result.ok();
 	}
 	
 	
 
-	
-	/**
-	@ApiOperation( value = "根据主键列表批量删除产品表信息",notes="batchDelXmProduct,仅需要上传主键字段")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	})
-	//@HasQx(value = "xm_core_xmProduct_batchDel",name = "批量删除产品/战略规划等基本信息",moduleId = "xm-project",moduleName = "管理端-产品管理系统")
-	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Result batchDelXmProduct(@RequestBody List<XmProduct> xmProducts) {
 
-			User user=LoginUtils.getCurrentUserInfo();
- 			List<XmProduct> canDelList=new ArrayList<>();
-			List<Tips> errTips=new ArrayList<>();
-			for (XmProduct xmProduct : xmProducts) {
-				Tips otips=new Tips();
-				if(!StringUtils.hasText(xmProduct.getId())){
-					oreturn Result.error("id-0","","产品编号不能为空");
-					errTips.add(otips);
-					continue;
-				}
-				XmProduct xmProductDb=xmProductService.getProductFromCache(xmProduct.getId());
-
-				if(xmProductDb==null){
-					oreturn Result.error("data-0","","产品【"+xmProductDb.getProductName()+"】已不存在");
-				}else if(!"0".equals(xmProductDb.getPstatus())&&!"3".equals(xmProductDb.getPstatus())){
-					oreturn Result.error("pstatus-not-0-3","产品【"+xmProductDb.getProductName()+"】不是初始、已关闭状态，不允许删除");
- 				}else if(!user.getBranchId().equals(xmProductDb.getBranchId())){
-					oreturn Result.error("branchId-not-right","产品【"+xmProductDb.getProductName()+"】不属于您所在的机构，不允许删除");
- 				}else if(!groupService.checkUserIsProductAdm(xmProductDb,user.getUserid())){
-					oreturn Result.error("pmUserid-not-right","您不是产品【"+xmProductDb.getProductName()+"】负责人,也不是产品助理，不允许删除");
- 				}else{
-					if(!"1".equals(xmProductDb.getIsTpl())){
-						long menus=xmProductService.checkExistsMenu(xmProduct.getId());
-						if(menus>0) {
-							oreturn Result.error("had-menus","产品【"+xmProductDb.getProductName()+"】有"+menus+"个需求关联，不允许删除，请先解绑需求");
-						}
-					}
-				}
-
-				if(otips.isOk()){
-					canDelList.add(xmProductDb);
-				}else {
-					errTips.add(tips);
-				}
-			}
-			if(canDelList.size()>0) {
-				//xmProductService.doBatchDelete(canDelList);//不允许批量删除
-				for (XmProduct xmProduct : canDelList) {
-					xmProductService.clearCache(xmProduct.getId());
-					xmRecordService.addXmProductRecord(xmProduct.getId(),"批量删除产品","批量删除产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】","",JSON.toJSONString(xmProduct));
-
-				}
-
-
-			}
-			String msg="成功删除"+canDelList.size()+"条产品信息";
-			if(canDelList.size()==xmProducts.size()){
-				return Result.ok(msg);
-			}else{
-				if(errTips.size()>0 && canDelList.size()>0){
-					String errmsg=errTips.stream().map(i->i.getMsg()).collect(Collectors.joining(" "));
-					return Result.ok(msg+"\n"+errmsg);
-				}else{
-					return Result.error(errTips.stream().map(i->i.getMsg()).collect(Collectors.joining(" ")));
-				}
-			}
-			return tips;
-
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
-		
-	}
-	 */
-	
 }

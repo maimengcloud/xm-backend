@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
@@ -14,7 +13,6 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmIteration;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.service.*;
@@ -31,7 +29,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.fromMap;
-import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对XM.xm_iteration 迭代定义的操作有增删改查,对应的url分别为:<br>
@@ -182,54 +179,49 @@ public class XmIterationController {
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmIteration(@RequestBody XmIterationVo xmIteration) {
 
-			XmIteration q=new XmIteration();
-			User user= LoginUtils.getCurrentUserInfo();
-
-			Set<String> words=sensitiveWordService.getSensitiveWord(xmIteration.getIterationName());
-			if(words!=null && words.size()>0){
-				return Result.error("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+		XmIteration q=new XmIteration();
+		User user= LoginUtils.getCurrentUserInfo();
+	
+		Set<String> words=sensitiveWordService.getSensitiveWord(xmIteration.getIterationName());
+		if(words!=null && words.size()>0){
+			return Result.error("name-sensitive-word","名字有敏感词"+words+",请修改后再提交");
+		}
+		words=sensitiveWordService.getSensitiveWord(xmIteration.getRemark());
+		if(words!=null && words.size()>0){
+			return Result.error("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
+		}
+		q.setBranchId(user.getBranchId());
+		Long count=this.xmIterationService.countByWhere(q);
+		xmIteration.setId(this.xmIterationService.createIterationId(count));
+		xmIteration.setSeqNo(Long.toString(count+1));
+		xmIteration.setCtime(new Date());
+		xmIteration.setCuserid(user.getUserid());
+		xmIteration.setCusername(user.getUsername());
+		xmIteration.setIstatus("0");
+		xmIteration.setIphase("0");
+		XmProduct xmProductDb=xmProductService.getProductFromCache(xmIteration.getProductId());
+		Tips tips=productQxService.checkProductQx(xmProductDb,3,user);
+		Result.assertIsFalse(tips); 
+		xmIteration.setBranchId(xmProductDb.getBranchId());
+	
+		if(!StringUtils.hasText(xmIteration.getAdminUserid())){
+			xmIteration.setAdminUserid(user.getUserid());
+			xmIteration.setAdminUsername(user.getUsername());
+		}else if(!xmIteration.getAdminUserid().equals(user.getUserid())){
+			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+			if( !isPm ){
+ 				tips = productQxService.checkProductQx(xmProductDb,3,user,xmIteration.getAdminUserid(),xmIteration.getAdminUsername(),null);
+				Result.assertIsFalse(tips);
 			}
-			words=sensitiveWordService.getSensitiveWord(xmIteration.getRemark());
-			if(words!=null && words.size()>0){
-				return Result.error("remark-sensitive-word","备注中有敏感词"+words+",请修改后再提交");
-			}
-			q.setBranchId(user.getBranchId());
-			Long count=this.xmIterationService.countByWhere(q);
-			xmIteration.setId(this.xmIterationService.createIterationId(count));
-			xmIteration.setSeqNo(Long.toString(count+1));
-			xmIteration.setCtime(new Date());
-			xmIteration.setCuserid(user.getUserid());
-			xmIteration.setCusername(user.getUsername());
-			xmIteration.setIstatus("0");
-			xmIteration.setIphase("0");
-			XmProduct xmProductDb=xmProductService.getProductFromCache(xmIteration.getProductId());
-			tips=productQxService.checkProductQx(xmProductDb,3,user);
-			if(!tips.isOk()){
-				return Result.error(tips);
-			}
-
-			xmIteration.setBranchId(xmProductDb.getBranchId());
-
-			if(!StringUtils.hasText(xmIteration.getAdminUserid())){
-				xmIteration.setAdminUserid(user.getUserid());
-				xmIteration.setAdminUsername(user.getUsername());
-			}else if(!xmIteration.getAdminUserid().equals(user.getUserid())){
-				boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
-				if( !isPm ){
-					tips = productQxService.checkProductQx(xmProductDb,3,user,xmIteration.getAdminUserid(),xmIteration.getAdminUsername(),null);
-					if(!tips.isOk()){
-						return Result.error(tips);
-					}
-				}
-			}
-
-
-
-			notifyMsgService.pushMsg(user,xmIteration.getAdminUserid(),xmIteration.getAdminUsername(),"6",xmIteration.getProductId(),xmIteration.getId(),"您成为迭代【"+xmIteration.getIterationName()+"】管理员，请及时跟进。");
-			xmIterationService.addIteration(xmIteration);
-			xmIterationStateService.loadTasksToXmIterationState(xmIteration.getId());
-			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-新增","新增迭代"+xmIteration.getIterationName());
-		
+		}
+	
+	
+	
+		notifyMsgService.pushMsg(user,xmIteration.getAdminUserid(),xmIteration.getAdminUsername(),"您成为迭代【"+xmIteration.getIterationName()+"】管理员，请及时跟进。",null);
+		xmIterationService.addIteration(xmIteration);
+		xmIterationStateService.loadTasksToXmIterationState(xmIteration.getId());
+		xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-新增","新增迭代"+xmIteration.getIterationName());
+		return Result.ok();
 	}
 	
 	
@@ -253,7 +245,7 @@ public class XmIterationController {
 			XmProduct xmProductDb=xmProductService.getProductFromCache(iterationDb.getProductId());
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
  			if( !isPm ){
- 				tips = productQxService.checkProductQx(xmProductDb,3,user,iterationDb.getAdminUserid(),iterationDb.getAdminUsername(),null);
+  				Tips tips  = productQxService.checkProductQx(xmProductDb,3,user,iterationDb.getAdminUserid(),iterationDb.getAdminUsername(),null);
  				Result.assertIsFalse(tips);
 			}
 
@@ -275,25 +267,25 @@ public class XmIterationController {
 	@RequestMapping(value="/edit",method=RequestMethod.POST)
 	public Result editXmIteration(@RequestBody XmIteration xmIteration) {
 
-			if(!StringUtils.hasText(xmIteration.getId())){
-				return Result.error("id-0","请上送迭代编号");
-			}
-			XmIteration iterationDb=this.xmIterationService.selectOneById(xmIteration.getId());
-			if(iterationDb==null){
-				return Result.error("data-0","迭代不存在");
-			}
-			User user=LoginUtils.getCurrentUserInfo();
-			XmProduct xmProductDb=xmProductService.getProductFromCache(iterationDb.getProductId());
-			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
-			if( !isPm ){
-				tips = productQxService.checkProductQx(xmProductDb,3,user,iterationDb.getAdminUserid(),iterationDb.getAdminUsername(),null);
-				Result.assertIsFalse(tips);
-			}
-			xmIteration.setAdminUserid(null);//不允许更改负责人
-			xmIteration.setAdminUsername(null);
-			xmIterationService.updateByPk(xmIteration);
-			xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-修改","修改迭代"+iterationDb.getIterationName(),JSON.toJSONString(xmIteration), JSON.toJSONString(iterationDb));
-		
+		if(!StringUtils.hasText(xmIteration.getId())){
+			return Result.error("id-0","请上送迭代编号");
+		}
+		XmIteration iterationDb=this.xmIterationService.selectOneById(xmIteration.getId());
+		if(iterationDb==null){
+			return Result.error("data-0","迭代不存在");
+		}
+		User user=LoginUtils.getCurrentUserInfo();
+		XmProduct xmProductDb=xmProductService.getProductFromCache(iterationDb.getProductId());
+		boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
+		if( !isPm ){
+			Tips tips = productQxService.checkProductQx(xmProductDb,3,user,iterationDb.getAdminUserid(),iterationDb.getAdminUsername(),null);
+			Result.assertIsFalse(tips);
+		}
+		xmIteration.setAdminUserid(null);//不允许更改负责人
+		xmIteration.setAdminUsername(null);
+		xmIterationService.updateByPk(xmIteration);
+		xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-修改","修改迭代"+iterationDb.getIterationName(),JSON.toJSONString(xmIteration), JSON.toJSONString(iterationDb));
+		return Result.ok();
 	}
 
 	@ApiOperation( value = "批量修改某些字段",notes="")
@@ -344,17 +336,15 @@ public class XmIterationController {
 				String adminUserid= (String) xmIterationMap.get("adminUserid");
 				String adminUsername= (String) xmIterationMap.get("adminUsername");
 				if(StringUtils.hasText(adminUserid)){
-					Tips tips=productQxService.checkProductQx(xmProductDb,3,user,adminUserid,adminUsername,null);
-					if(!tips.isOk()){
-						return Result.error(tips);
-					}
+	 				Tips tips =productQxService.checkProductQx(xmProductDb,3,user,adminUserid,adminUsername,null);
+					Result.assertIsFalse(tips);
 				}
 			}
 
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			for (XmIteration iterationDb2 : xmIterationsDb) {
 				if( !isPm ){
-					Tips tips=productQxService.checkProductQx(xmProductDb,3,user,iterationDb2.getAdminUserid(),iterationDb2.getAdminUsername(),null);
+	 				Tips tips =productQxService.checkProductQx(xmProductDb,3,user,iterationDb2.getAdminUserid(),iterationDb2.getAdminUsername(),null);
 					if(!tips.isOk()){
 						no.add(iterationDb2);
 						noTipsMap.put(tips.getMsg(),tips);
@@ -373,7 +363,7 @@ public class XmIterationController {
 					String adminUsername= (String) xmIterationMap.get("adminUsername");
 					if(StringUtils.hasText(adminUserid)){
 						for (XmIteration iteration : can) {
-							notifyMsgService.pushMsg(user,adminUserid,adminUsername,"6",iteration.getProductId(),iteration.getId(),"您成为迭代【"+iteration.getIterationName()+"】管理员，请及时跟进。");
+							notifyMsgService.pushMsg(user,adminUserid,adminUsername,"您成为迭代【"+iteration.getIterationName()+"】管理员，请及时跟进。",null);
 						}
 					}
 
@@ -414,21 +404,5 @@ public class XmIterationController {
 			}
 		return Result.ok();
 		
-	}
-	
-	/**
-	@ApiOperation( value = "根据主键列表批量删除迭代定义信息",notes="batchDelXmIteration,仅需要上传主键字段")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
-	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Result batchDelXmIteration(@RequestBody List<XmIteration> xmIterations) {
-		
-		
-		
-			xmIterationService.batchDelete(xmIterations);
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
-		
 	} 
-	*/
 }

@@ -61,102 +61,11 @@ public class XmProductStateHisController {
 		User user= LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
 		QueryWrapper<XmProductStateHis> qw = QueryTools.initQueryWrapper(XmProductStateHis.class , params);
-		List<Map<String,Object>> datas = QueryTools.xmProductStateHisService(page,qw,params);
+		List<Map<String,Object>> datas = xmProductStateHisService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProductStateHis列表
 
 	}
 	
  
-	
-	/**
-	@ApiOperation( value = "新增一条功能状态表,无需前端维护，所有数据由汇总统计得出信息",notes=" ")
-	@ApiResponses({
-		@ApiResponse(code = 200,response=XmProductStateHis.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
-	@RequestMapping(value="/add",method=RequestMethod.POST)
-	public Result addXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis) {
 
-		    boolean createPk=false;
-			if(!StringUtils.hasText(xmProductStateHis.getProductId())) {
-			    createPk=true;
-				xmProductStateHis.setProductId(xmProductStateHisService.createKey("productId"));
-			}
-			if(!StringUtils.hasText(xmProductStateHis.getBizDate())) {
-			    createPk=true;
-				xmProductStateHis.setBizDate(xmProductStateHisService.createKey("bizDate"));
-			}
-			if(createPk==false){
-                 if(xmProductStateHisService.selectOneObject(xmProductStateHis) !=null ){
-                    return Result.error("pk-exists","编号重复，请修改编号再提交");
-                }
-            }
-			xmProductStateHisService.insert(xmProductStateHis);
-		
-	}
-	*/
-	
-	/**
-	@ApiOperation( value = "删除一条功能状态表,无需前端维护，所有数据由汇总统计得出信息",notes=" ")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
-	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Result delXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis){
-
-            if(!StringUtils.hasText(xmProductStateHis.getProductId())) {
-                 return Result.error("pk-not-exists","请上送主键参数productId");
-            }
-            if(!StringUtils.hasText(xmProductStateHis.getBizDate())) {
-                 return Result.error("pk-not-exists","请上送主键参数bizDate");
-            }
-            XmProductStateHis xmProductStateHisDb = xmProductStateHisService.selectOneObject(xmProductStateHis);
-            if( xmProductStateHisDb == null ){
-                return Result.error("data-not-exists","数据不存在，无法删除");
-            }
-			xmProductStateHisService.deleteByPk(xmProductStateHis);
-		return Result.ok();
-		
-	}
-	 */
-	
-	/**
-	@ApiOperation( value = "根据主键修改一条功能状态表,无需前端维护，所有数据由汇总统计得出信息",notes=" ")
-	@ApiResponses({
-		@ApiResponse(code = 200,response=XmProductStateHis.class, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'},data:数据对象}")
-	}) 
-	@RequestMapping(value="/edit",method=RequestMethod.POST)
-	public Result editXmProductStateHis(@RequestBody XmProductStateHis xmProductStateHis) {
-
-            if(!StringUtils.hasText(xmProductStateHis.getProductId())) {
-                 return Result.error("pk-not-exists","请上送主键参数productId");
-            }
-            if(!StringUtils.hasText(xmProductStateHis.getBizDate())) {
-                 return Result.error("pk-not-exists","请上送主键参数bizDate");
-            }
-            XmProductStateHis xmProductStateHisDb = xmProductStateHisService.selectOneObject(xmProductStateHis);
-            if( xmProductStateHisDb == null ){
-                return Result.error("data-not-exists","数据不存在，无法修改");
-            }
-			xmProductStateHisService.updateSomeFieldByPk(xmProductStateHis);
-		
-	}
-	*/
-	
-
-	
-	/**
-	@ApiOperation( value = "根据主键列表批量删除功能状态表,无需前端维护，所有数据由汇总统计得出信息",notes=" ")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}")
-	}) 
-	@RequestMapping(value="/batchDel",method=RequestMethod.POST)
-	public Result batchDelXmProductStateHis(@RequestBody List<XmProductStateHis> xmProductStateHiss) {
-		
-		
-		
-			xmProductStateHisService.batchDelete(xmProductStateHiss);
-		return Result.ok();
-		
-	} 
-	*/
 }

@@ -1,7 +1,6 @@
 package com.xm.core.ctrl;
 
 import com.mdp.core.entity.Result;
-import com.mdp.core.entity.Tips;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
@@ -146,7 +145,6 @@ public class XmIterationMenuController {
 			}else {
 				return Result.ok(msgs.stream().collect(Collectors.joining(" ")));
 			}
-		return Result.ok();
 		
 	} 
 	@RequestMapping(value="/batchAdd",method=RequestMethod.POST)
@@ -218,8 +216,6 @@ public class XmIterationMenuController {
 			}else {
 				return Result.ok(msgs.stream().collect(Collectors.joining(" ")));
 			}
-
-		return Result.ok();
 		
 	} 
 }

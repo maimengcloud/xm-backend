@@ -2,18 +2,15 @@ package com.xm.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import java.util.List;
-import java.util.Map;
-import org.springframework.stereotype.Service;
 import com.mdp.core.service.BaseService;
-import static com.mdp.core.utils.BaseUtils.*;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-
 import com.xm.core.entity.XmBranchState;
 import com.xm.core.mapper.XmBranchStateMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.Map;
 /**
  * @author maimeng-mdp code-gen
  * @since 2023-10-3
@@ -31,6 +28,18 @@ public class XmBranchStateService extends BaseService<XmBranchStateMapper,XmBran
 	 */
 	public List<Map<String,Object>> selectListMapByWhere(IPage page, QueryWrapper ew, Map<String,Object> ext){
 		return baseMapper.selectListMapByWhere(page,ew,ext);
+	}
+
+    public List<Map<String, Object>> listPortalAllXmBranchSumState(IPage page, QueryWrapper<XmBranchState> qw, Map<String, Object> params) {
+		return baseMapper.listPortalAllXmBranchSumState(page,qw,params);
+    }
+
+	public List<Map<String, Object>> tasksSumDw(String userid) {
+		return baseMapper.taskSunDw(userid);
+	}
+
+	public void loadProjectStateToXmBranchState(String branchId) {
+		baseMapper.loadProjectStateToXmBranchState(branchId);
 	}
 }
 

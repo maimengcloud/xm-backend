@@ -190,7 +190,7 @@ public class XmTaskExecuserController {
 			if("1".equals(xmTaskDb.getCrowd())){
 				Map<String,Object>  result=sysClient.checkUserInterests(xmTaskExecuser.getUserid(),xmTaskDb.getBudgetAt(),xmTaskDb.getBudgetWorkload(),1);
 
-				Tips tips2= (Tips) result.get("tips");
+ 				Tips tips2= (Tips) result.get("tips");
 				if(!tips2.isOk()){
 					return ResponseHelper.failed(tips2);
 				}
@@ -204,7 +204,7 @@ public class XmTaskExecuserController {
 				xmTaskExecuser.setStatus("0");   //如果是众包，智能添加为候选人
 			}else {
 				//如果不是众包，需要判断是否已加入项目组组织架构中，如未加入，需要提示其先加入
-				Tips tips=projectQxService.checkProjectQx(xmProjectDb,0,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
+ 				Tips tips =projectQxService.checkProjectQx(xmProjectDb,0,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
 				Result.assertIsFalse(tips);
 				//检查是否已经存在执行人
 				XmTaskExecuser query=new XmTaskExecuser();
@@ -262,7 +262,7 @@ public class XmTaskExecuserController {
 					break;
 				}
  				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {//只有组长、任务责任人可以请别人请离开任务
-					Tips tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(xmTask.getProjectId()),2, user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
+	 				Tips tips =projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(xmTask.getProjectId()),2, user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
 					Result.assertIsFalse(tips);
 					allowUsers.add(xmTaskExecuser);
 					allowUserNames.add(xmTaskExecuser.getUsername());
@@ -403,7 +403,7 @@ public class XmTaskExecuserController {
 			boolean needPay=false;
 			if("1".equals(xmTaskDb.getCrowd())){
 				boolean isTaskCreater=user.getUserid().equals(xmTaskDb.getCreateUserid());
-				Tips tips1=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),projectId);
+ 				Tips tips1=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),projectId);
 				if(  !isTaskCreater && !tips1.isOk() ) {
 					return Result.error("您无权验收该任务！");
 					return ResponseHelper.failed(tips);
@@ -418,7 +418,7 @@ public class XmTaskExecuserController {
 			if(needPay){
 				//XmTaskExecuser xmTaskExecuserDb=this.xmTaskExecuserService.selectOneById(map("taskId",xmTaskDb.getId(),"userid",xmTaskDb.getExecutorUserid()));
 				//调用ac系统付款给服务商
-				Tips payTips=acClient.platformBalancePayToClient(xmTaskDb.getExecutorUserid(),"3","1",xmTaskDb.getId(),xmTaskDb.getQuoteFinalAt(),"任务【"+xmTaskDb.getName()+"】验收完毕，发放佣金.");
+ 				Tips tips payTips=acClient.platformBalancePayToClient(xmTaskDb.getExecutorUserid(),"3","1",xmTaskDb.getId(),xmTaskDb.getQuoteFinalAt(),"任务【"+xmTaskDb.getName()+"】验收完毕，发放佣金.");
 				if(payTips.isOk()){
 					xmTaskUpdate.setEtoDevTime(new Date());
 					xmTaskUpdate.setBidStep("7");
@@ -474,7 +474,7 @@ public class XmTaskExecuserController {
 			User user=LoginUtils.getCurrentUserInfo();
  			String projectId=xmTaskExecuser.getProjectId();
  			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
- 				Tips tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId() );
+  				Tips tips  tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId() );
 				Result.assertIsFalse(tips);
  			}
 			XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getTaskId(),xmTaskExecuser.getUserid()));
@@ -510,7 +510,7 @@ public class XmTaskExecuserController {
 			User user=LoginUtils.getCurrentUserInfo();
  			String projectId=xmTaskExecuser.getProjectId();
  			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
- 				Tips tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
+  				Tips tips  tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
 				Result.assertIsFalse(tips);
  			}
 
@@ -543,7 +543,7 @@ public class XmTaskExecuserController {
 			XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskDb.getId(),xmTaskExecuser.getUserid()));
 			if(xmTaskExecuserDb !=null ) {
 				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
-					Tips tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuserDb.getUserid(),xmTaskExecuserDb.getUsername(),xmTaskExecuserDb.getExecUserBranchId());
+	 				Tips tips =projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuserDb.getUserid(),xmTaskExecuserDb.getUsername(),xmTaskExecuserDb.getExecUserBranchId());
 					Result.assertIsFalse(tips);
 				}
 				if( "0".equals( xmTaskExecuserDb.getStatus() )  || "7".equals( xmTaskExecuserDb.getStatus() ) || "8".equals( xmTaskExecuserDb.getStatus() ) ) {

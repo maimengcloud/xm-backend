@@ -4,7 +4,6 @@ import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
@@ -197,7 +196,7 @@ public class XmTaskBidOrderController {
 				xmTaskBidOrderService.insert(order);
 				redisTemplate.opsForValue().set(XmTaskBidOrder.class.getSimpleName()+"-"+order.getId(), JSON.toJSONString(bidOrderVo),1, TimeUnit.HOURS);
 				String remark="投标直通车费用";
-				msgService.pushMsg(user,user.getUserid(),user.getUsername(),"2",order.getProjectId(),order.getTaskId(),"您为任务支付"+remark+order.getFinalFee()+"元订单提交成功，请及时付款");
+				msgService.pushMsg(user,user.getUserid(),user.getUsername(),"您为任务支付"+remark+order.getFinalFee()+"元订单提交成功，请及时付款",null);
 			}
 			
 		return Result.ok();
@@ -217,9 +216,7 @@ public class XmTaskBidOrderController {
 			return Result.error("data-0","订单Id不能为空");
 		}
 		XmTaskBidOrder moOrder = xmTaskBidOrderService.selectOneById(orderId);
-		m.put("tips", tips);
-		
-		return m;
+		return Result.ok().setData(moOrder);
 	}
 
 	@ApiOperation( value = "通过Id获取订单",notes=" ")
@@ -228,8 +225,7 @@ public class XmTaskBidOrderController {
 	})
 	@RequestMapping(value="/orderPaySuccess",method=RequestMethod.POST)
 	public Result orderPaySuccess(@RequestBody XmTaskBidOrder order) {
-		
-		try {
+
 			
 			if(!StringUtils.hasText(order.getId())) {
 				return Result.error("data-0","订单Id不能为空");
@@ -239,16 +235,7 @@ public class XmTaskBidOrderController {
 				return Result.error("pay-notify-success-flag-0","验证码错误");
 			}
 			xmTaskBidOrderService.orderPaySuccess(order.getId(),order.getPayId(),order.getPrepayId(), order.getTranId(), order.getPayAt(), order.getRemark());
-
-			m.put("tips", tips);
-			return m;
-		}catch (BizException e) {
-			logger.error("",e);
-			return Result.error("data-0",e.getMessage());
-		} catch (Exception e) {
-			logger.error("",e);
-			return Result.error("data-0", "开通模块失败");
-		}
+ 			return Result.ok();
 	}
 
 	@ApiOperation( value = "订单支付取消判断",notes=" ")
@@ -257,9 +244,7 @@ public class XmTaskBidOrderController {
 	})
 	@RequestMapping(value="/payCancel",method=RequestMethod.POST)
 	public Result payCancel(@RequestBody XmTaskBidOrder order) {
-		
-		try {
-			
+
 			if(!StringUtils.hasText(order.getId())) {
 				return Result.error("data-0","订单Id不能为空");
 			}
@@ -268,15 +253,7 @@ public class XmTaskBidOrderController {
 				return Result.error("pay-notify-cancel-flag-0","验证码错误");
 			}
 			this.xmTaskBidOrderService.payCancel(order.getId(),order.getPayId(), order.getRemark());
-			m.put("tips", tips);
-			return m;
-		}catch (BizException e) {
-			logger.error("",e);
-			return Result.error("data-0",e.getMessage());
-		} catch (Exception e) {
-			logger.error("",e);
-			return Result.error("data-0", "付款取消操作失败");
-		}
+			return Result.ok();
 	}
 	@ApiOperation( value = "修改订单的第三方流水号",notes=" ")
 	@ApiResponses({
@@ -295,8 +272,6 @@ public class XmTaskBidOrderController {
 		moOrder.setPrepayId(order.getPrepayId());
 		moOrder.setPayTime(new Date());
 		xmTaskBidOrderService.updateSomeFieldByPk(moOrder);
-		m.put("tips", tips);
-		
-		return m;
+		return Result.ok();
 	}
 }

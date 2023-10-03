@@ -96,7 +96,6 @@ public class XmProductService extends BaseService<XmProductMapper,XmProduct> {
 	 * @return
 	 */
 	public List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> iterationMap) {
-		// TODO Auto-generated method stub
 		return baseMapper.selectListMapByWhereWithState( iterationMap);
 	}
 

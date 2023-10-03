@@ -86,7 +86,7 @@ public class XmRptConfigController {
 			xmRptConfig.setCbranchId(user.getBranchId());
 			xmRptConfig.setCtime(new Date());
 			xmRptConfigService.insert(xmRptConfig);
-		
+		return Result.ok().setData(xmRptConfig);
 	}
 
 	@ApiOperation( value = "删除一条测试报告配置表信息",notes=" ")
@@ -123,7 +123,7 @@ public class XmRptConfigController {
                 return Result.error("data-not-exists","数据不存在，无法修改");
             }
 			xmRptConfigService.updateSomeFieldByPk(xmRptConfig);
-		
+		return Result.ok();
 	}
 
     @ApiOperation( value = "批量修改某些字段",notes="")
@@ -161,7 +161,7 @@ public class XmRptConfigController {
 			List<XmRptConfig> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			for (XmRptConfig xmRptConfigDb : xmRptConfigsDb) {
-				Tips tips2 = new Tips("检查通过"); 
+ 				Tips tips2 = new Tips("检查通过"); 
 				if(!tips2.isOk()){
 				    no.add(xmRptConfigDb); 
 				}else{

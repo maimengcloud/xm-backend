@@ -30,5 +30,6 @@ public class XmProductStateHisService extends BaseService<XmProductStateHisMappe
 	public List<Map<String,Object>> selectListMapByWhere(IPage page, QueryWrapper ew, Map<String,Object> ext){
 		return baseMapper.selectListMapByWhere(page,ew,ext);
 	}
+
 }
 

@@ -3,11 +3,8 @@ package com.xm.core.ctrl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.mybatis.PageUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -21,7 +18,6 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -138,7 +134,7 @@ public class XmBranchStateController {
 			xmBranchStateService.insert(xmBranchState);
 			m.put("data",xmBranchState);
 		}catch (BizException e) { 
-			tips=e.getTips();
+			Tips tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
 			return Result.error(e.getMessage());
@@ -161,7 +157,7 @@ public class XmBranchStateController {
 				
 			xmBranchStateService.deleteByPk(xmBranchState);
 		}catch (BizException e) { 
-			tips=e.getTips();
+			Tips tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
 			return Result.error(e.getMessage());
@@ -185,7 +181,7 @@ public class XmBranchStateController {
 			xmBranchStateService.updateByPk(xmBranchState);
 			m.put("data",xmBranchState);
 		}catch (BizException e) { 
-			tips=e.getTips();
+			Tips tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
 			return Result.error(e.getMessage());
@@ -210,7 +206,7 @@ public class XmBranchStateController {
 				 
 			xmBranchStateService.batchDelete(xmBranchStates);
 		}catch (BizException e) { 
-			tips=e.getTips();
+			Tips tips=e.getTips();
 			logger.error("",e);
 		}catch (Exception e) {
 			return Result.error(e.getMessage());

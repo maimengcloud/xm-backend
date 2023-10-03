@@ -6,7 +6,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Result;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
@@ -118,7 +117,7 @@ public class XmProjectController {
 		params.put("linkBranchId",user.getBranchId());
 		params.put("platformBranchId",platformBranchId);
 		QueryWrapper<XmProject> qw = QueryTools.initQueryWrapper(XmProject.class , params);
-		List<Map<String,Object>> datas = xmProjectService.getProject(params);	//列出XmProject列表
+		List<Map<String,Object>> datas = xmProjectService.selectListMapByWhere(page,qw,params);	//列出XmProject列表
 		return Result.ok().setData(datas);
 		
 		
@@ -197,15 +196,15 @@ public class XmProjectController {
 			this.xmProjectService.editSomeFields(xmProjectMap);
 			this.xmProjectService.clearProject(xmProjectDb.getId());
 			if(StringUtils.hasText(xmProject.getPmUserid()) && !xmProject.getPmUserid().equals(xmProjectDb.getPmUserid())){
-				notifyMsgService.pushMsg(user,xmProject.getPmUserid(),xmProject.getPmUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的项目经理，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProject.getPmUserid(),xmProject.getPmUsername(),"您成为项目【"+xmProjectDb.getName()+"】的项目经理，请及时跟进。",null);
 
 			}
 			if(StringUtils.hasText(xmProject.getAssUserid()) && !xmProject.getAssUserid().equals(xmProjectDb.getAssUserid())){
-				notifyMsgService.pushMsg(user,xmProject.getAssUserid(),xmProject.getAssUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的副经理，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProject.getAssUserid(),xmProject.getAssUsername(),"您成为项目【"+xmProjectDb.getName()+"】的副经理，请及时跟进。",null);
 
 			}
 			if(StringUtils.hasText(xmProject.getAdmUserid()) && !xmProject.getAdmUserid().equals(xmProjectDb.getAdmUserid())){
-				notifyMsgService.pushMsg(user,xmProject.getAdmUserid(),xmProject.getAdmUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的项目总监，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProject.getAdmUserid(),xmProject.getAdmUsername(),"您成为项目【"+xmProjectDb.getName()+"】的项目总监，请及时跟进。",null);
 			}
 			//
 		return Result.ok();
@@ -245,13 +244,13 @@ public class XmProjectController {
 			}
 			User user = LoginUtils.getCurrentUserInfo();
 				xmProjectService.saveProject(xmProjectVo);
-				notifyMsgService.pushMsg(user,xmProjectVo.getPmUserid(),xmProjectVo.getPmUsername(),"1",xmProjectVo.getId(),xmProjectVo.getId(),"您成为项目【"+xmProjectVo.getName()+"】的项目经理，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProjectVo.getPmUserid(),xmProjectVo.getPmUsername(),"您成为项目【"+xmProjectVo.getName()+"】的项目经理，请及时跟进。",null);
 				if(StringUtils.hasText(xmProjectVo.getAssUserid()) && !xmProjectVo.getAssUserid().equals(xmProjectVo.getPmUserid())){
-					notifyMsgService.pushMsg(user,xmProjectVo.getAssUserid(),xmProjectVo.getAssUsername(),"1",xmProjectVo.getId(),xmProjectVo.getId(),"您成为项目【"+xmProjectVo.getName()+"】的副经理、助理，请及时跟进。");
+					notifyMsgService.pushMsg(user,xmProjectVo.getAssUserid(),xmProjectVo.getAssUsername(),"您成为项目【"+xmProjectVo.getName()+"】的副经理、助理，请及时跟进。",null);
 
 				}
 				if(StringUtils.hasText(xmProjectVo.getAdmUserid()) && !xmProjectVo.getAdmUserid().equals(xmProjectVo.getPmUserid())){
-					notifyMsgService.pushMsg(user,xmProjectVo.getAdmUserid(),xmProjectVo.getAdmUsername(),"1",xmProjectVo.getId(),xmProjectVo.getId(),"您成为项目【"+xmProjectVo.getName()+"】的项目总监，请及时跟进。");
+					notifyMsgService.pushMsg(user,xmProjectVo.getAdmUserid(),xmProjectVo.getAdmUsername(),"您成为项目【"+xmProjectVo.getName()+"】的项目总监，请及时跟进。",null);
 				}
 				xmProjectService.clearProject(xmProjectVo.getId());
 			xmProjectStateService.loadTasksToXmProjectState(xmProjectVo.getId());
@@ -310,7 +309,6 @@ public class XmProjectController {
 			XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(xmProject.getId());
 			if(xmProjectDb==null){
 				return Result.error("项目不存在");
-				return Result.error(tips);
 			}
 			if(!user.getBranchId().equals(xmProjectDb.getBranchId())){
 				return Result.error("branchId-not-right","该项目不属于您的组织，不允许您进行删除");
@@ -460,15 +458,15 @@ public class XmProjectController {
 			}
 			xmProjectService.updateProject(xmProject);
 			if(StringUtils.hasText(xmProject.getPmUserid()) && !xmProject.getPmUserid().equals(xmProjectDb.getPmUserid())){
-				notifyMsgService.pushMsg(user,xmProject.getPmUserid(),xmProject.getPmUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的项目经理，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProject.getPmUserid(),xmProject.getPmUsername(),"您成为项目【"+xmProjectDb.getName()+"】的项目经理，请及时跟进。");
 
 			}
  			if(StringUtils.hasText(xmProject.getAssUserid()) && !xmProject.getAssUserid().equals(xmProjectDb.getAssUserid())){
-				notifyMsgService.pushMsg(user,xmProject.getAssUserid(),xmProject.getAssUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的副经理、助理，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProject.getAssUserid(),xmProject.getAssUsername(),"您成为项目【"+xmProjectDb.getName()+"】的副经理、助理，请及时跟进。");
 
 			}
 			if(StringUtils.hasText(xmProject.getAdmUserid()) && !xmProject.getAdmUserid().equals(xmProjectDb.getAdmUserid())){
-				notifyMsgService.pushMsg(user,xmProject.getAdmUserid(),xmProject.getAdmUsername(),"1",xmProjectDb.getId(),xmProjectDb.getId(),"您成为项目【"+xmProjectDb.getName()+"】的项目总监，请及时跟进。");
+				notifyMsgService.pushMsg(user,xmProject.getAdmUserid(),xmProject.getAdmUsername(),"您成为项目【"+xmProjectDb.getName()+"】的项目总监，请及时跟进。");
 			}
 			xmProjectService.clearProject(xmProject.getId());
 			xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-修改","修改项目【"+xmProjectDb.getName()+"】的基础信息", JSON.toJSONString(xmProject), JSON.toJSONString(xmProjectDb));
@@ -556,20 +554,7 @@ public class XmProjectController {
 	@AuditLog(firstMenu="办公平台",secondMenu="项目管理",func="processApprova",funcDesc="项目立项等审批",operType=OperType.UPDATE)
 	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
 	public Result processApprova( @RequestBody Map<String,Object> flowVars){
-		
-		
-		  
-		
-			
-			this.xmProjectService.processApprova(flowVars);
-			logger.debug("procInstId====="+flowVars.get("procInstId"));
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("执行异常",e);
-		}catch (Exception e) {
-			return Result.error(e.getMessage());
-			logger.error("执行异常",e);
-		}  
-		
+		this.xmProjectService.processApprova(flowVars);
+		return Result.ok();
 	}
 }

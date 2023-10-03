@@ -334,7 +334,7 @@ public class XmTaskOrderController {
 			List<XmTaskOrder> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			for (XmTaskOrder xmTaskOrderDb : xmTaskOrdersDb) {
-				Tips tips2 = new Tips("检查通过"); 
+ 				Tips tips2 = new Tips("检查通过"); 
 				if(!tips2.isOk()){
 				    no.add(xmTaskOrderDb); 
 				}else{

@@ -137,7 +137,7 @@ public class XmEnvListController {
 						return ResponseHelper.failed("writeQx-err-2","您不在项目【"+xmEnvListDb.getProjectId()+"】,无权更改");
 					}
 				}else if("3".equals(writeQx)){//同一机构同一项目可写
-					Tips isHeader=this.xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmEnvListDb.getCreateUserid(),xmEnvListDb.getProjectId());
+	 				Tips tips isHeader=this.xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmEnvListDb.getCreateUserid(),xmEnvListDb.getProjectId());
  					if(!isHeader.isOk()){
 						return ResponseHelper.failed("writeQx-err-3","您不是【"+xmEnvListDb.getCreateUsername()+"】的上级,无权更改");
 					}
@@ -173,7 +173,7 @@ public class XmEnvListController {
 						return ResponseHelper.failed("writeQx-err-2","您不在项目【"+xmEnvListDb.getProjectId()+"】,无权更改");
 					}
 				}else if("3".equals(writeQx)){//同一机构同一项目可写
-					Tips isHeader=this.xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmEnvListDb.getCreateUserid(),xmEnvListDb.getProjectId());
+	 				Tips tips isHeader=this.xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmEnvListDb.getCreateUserid(),xmEnvListDb.getProjectId());
 					if(!isHeader.isOk()){
 						return ResponseHelper.failed("writeQx-err-3","您不是【"+xmEnvListDb.getCreateUsername()+"】的上级,无权更改");
 					}

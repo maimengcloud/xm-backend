@@ -107,7 +107,7 @@ public class XmProductProjectLinkController {
 			xmProductProjectLink.setCuserid(user.getUserid());
 			xmProductProjectLink.setCusername(user.getUsername());
 			xmProductProjectLinkService.insert(xmProductProjectLink);
-		
+		return Result.ok();
 	}
 
 	@ApiOperation( value = "删除一条产品与项目的关联关系表，一般由产品经理挂接项目到产品上信息",notes=" ")

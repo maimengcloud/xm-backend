@@ -286,10 +286,8 @@ public class XmTestPlanCaseController {
 				return Result.error("product-not-exists","产品已不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
-			tips=productQxService.checkProductQx(xmProductDb,1,user);
-			if(!tips.isOk()){
-				return Result.error(tips);
-			}
+			Tips tips=productQxService.checkProductQx(xmProductDb,1,user);
+			Result.assertIsFalse(tips);
 			xmTestPlanCaseService.updateSomeFieldByPk(xmTestPlanCase);
 		
 	}
@@ -344,19 +342,17 @@ public class XmTestPlanCaseController {
 				return Result.error("product-not-exists","产品已不存在");
 			}
 			if(StringUtils.hasText(xmTestPlanCase.getExecUserid())){
-				Tips tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestPlanCase.getExecUserid(),xmTestPlanCase.getExecUsername(),null);
+ 				Tips tips =productQxService.checkProductQx(xmProductDb,1,user,xmTestPlanCase.getExecUserid(),xmTestPlanCase.getExecUsername(),null);
 			}else {
-				Tips tips=productQxService.checkProductQx(xmProductDb,1,user);
+ 				Tips tips =productQxService.checkProductQx(xmProductDb,1,user);
 			}
-			if(!tips.isOk()){
-				return Result.error(tips);
-			}
+			Result.assertIsFalse(tips);
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			if(isPm){
 				can=xmTestPlanCasesDb;
 			}else {
 				for (XmTestPlanCase pcDb : xmTestPlanCasesDb) {
-					Tips tips2  = productQxService.checkProductQx(xmProductDb, 1, user, pcDb.getExecUserid(), pcDb.getExecUsername(), null);
+	 				Tips tips 2  = productQxService.checkProductQx(xmProductDb, 1, user, pcDb.getExecUserid(), pcDb.getExecUsername(), null);
 					if (!tips2.isOk()) {
 						no.add(xmTestPlanCaseDb);
 						noTipsSet.add(tips2.getMsg());
@@ -416,7 +412,7 @@ public class XmTestPlanCaseController {
 				can=datasDb;
 			}else {
 				for (XmTestPlanCase pcDb : datasDb) {
-					Tips tips1=productQxService.checkProductQx(xmProductDb,1,user,pcDb.getExecUserid(),pcDb.getExecUsername(),null);
+	 				Tips tips1=productQxService.checkProductQx(xmProductDb,1,user,pcDb.getExecUserid(),pcDb.getExecUsername(),null);
 					if(tips1.isOk()){
 						can.add(pcDb);
 					}else{

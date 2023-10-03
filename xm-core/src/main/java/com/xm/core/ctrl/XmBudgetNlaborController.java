@@ -176,7 +176,7 @@ public class XmBudgetNlaborController {
 			List<XmBudgetNlabor> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			for (XmBudgetNlabor xmBudgetNlaborDb : xmBudgetNlaborsDb) {
-				Tips tips2 = new Tips("检查通过"); 
+ 				Tips tips2 = new Tips("检查通过"); 
 				if(!tips2.isOk()){
 				    no.add(xmBudgetNlaborDb); 
 				}else{

@@ -177,7 +177,7 @@ public class XmTestCaseController {
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb.getProductId());
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			if(!isPm){
-				Tips tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),xmTestCaseDb.getCbranchId());
+ 				Tips tips =productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),xmTestCaseDb.getCbranchId());
 				 Result.assertIsFalse(tips);
 			}
 			xmTestCaseService.deleteByPk(xmTestCase);
@@ -203,7 +203,7 @@ public class XmTestCaseController {
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb.getProductId());
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			if(!isPm){
-				Tips tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
+ 				Tips tips =productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
 				Result.assertIsFalse(tips);
 			}
 
@@ -258,7 +258,7 @@ public class XmTestCaseController {
 			}
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestCaseDb2.getProductId());
 			if( StringUtils.hasText(xmTestCase.getCuserid()) ){
-				Tips tips=this.productQxService.checkProductQx(xmProductDb,1,user,xmTestCase.getCuserid(),xmTestCase.getCusername(),null);
+ 				Tips tips =this.productQxService.checkProductQx(xmProductDb,1,user,xmTestCase.getCuserid(),xmTestCase.getCusername(),null);
 				Result.assertIsFalse(tips);
 			}
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
@@ -266,7 +266,7 @@ public class XmTestCaseController {
 				 can=xmTestCasesDb;
 			}else{
 				for (XmTestCase xmTestCaseDb : xmTestCasesDb) {
-					Tips tips2 = productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
+	 				Tips tips 2 = productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
 					if(!tips2.isOk()){
 						no.add(xmTestCaseDb);
 						noTipsMap.put(tips2.getMsg(),tips2);
@@ -323,7 +323,7 @@ public class XmTestCaseController {
 				can=datasDb;
 			}else {
 				for (XmTestCase data : datasDb) {
-					Tips tips=productQxService.checkProductQx(xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
+	 				Tips tips =productQxService.checkProductQx(xmProductDb,1,user,data.getCuserid(),data.getCusername(),data.getCbranchId());
 					if(tips.isOk()){
 						can.add(data);
 					}else {

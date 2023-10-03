@@ -6,7 +6,6 @@ import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
@@ -34,8 +33,6 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对XM.xm_question xm_question的操作有增删改查,对应的url分别为:<br>
@@ -129,7 +126,7 @@ public class XmQuestionController {
 		}
 
 		QueryWrapper<XmQuestion> qw=QueryTools.initQueryWrapper(XmQuestion.class,params);
-		List<Map<String,Object>>	datas = xmQuestionService.selectListByWhere(page,qw,params);	//列出XmQuestion列表
+		List<Map<String,Object>>	datas = xmQuestionService.selectListMapByWhere(page,qw,params);	//列出XmQuestion列表
 		return Result.ok().setData(datas).setTotal(page.getTotal());
 		
 	}
@@ -214,25 +211,12 @@ public class XmQuestionController {
 
 			xmQuestionService.addQuestion(xmQuestionVo);
 			if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {
-				notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"5",xmQuestionVo.getProductId(),xmQuestionVo.getId(),"您有新的bug【"+xmQuestionVo.getName()+"】需要处理，请尽快修复！");
+				notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"您有新的bug【"+xmQuestionVo.getName()+"】需要处理，请尽快修复！",null);
 				xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(), user.getUsername()+"创建bug【"+xmQuestionVo.getName()+"】并指派给"+xmQuestionVo.getHandlerUsername());
 			}
-		
-	}
-	
-	/**
-	@ApiOperation( value = "删除一条xm_question信息",notes="delXmQuestion,仅需要上传主键字段")
-	@ApiResponses({
-		@ApiResponse(code = 200, message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'失败时错误码'}}")
-	}) 
-	@RequestMapping(value="/del",method=RequestMethod.POST)
-	public Result delXmQuestion(@RequestBody XmQuestion xmQuestion){
-
-			xmQuestionService.deleteByPk(xmQuestion);
 		return Result.ok();
-		
 	}
-	 */
+	 
 	
 	@ApiOperation( value = "根据主键修改一条xm_question信息",notes="editXmQuestion")
 	@ApiResponses({
@@ -244,20 +228,18 @@ public class XmQuestionController {
 
 
 
-			if(!StringUtils.hasText(xmQuestionVo.getId())){
-				return Result.error("id-0","编号不能为空");
-			}
-			XmQuestion xmQuestionDb=this.xmQuestionService.selectOneById(xmQuestionVo.getId());
-			tips=checkOneQx(xmQuestionDb.getProjectId(),xmQuestionDb.getProductId());
-			if(!tips.isOk()){
-				return Result.error(tips);
-			}
-			User user=LoginUtils.getCurrentUserInfo();
-			xmQuestionService.updateQuestion(xmQuestionVo);
-			if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {
-				xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(), user.getUsername()+"修改bug【"+xmQuestionVo.getName()+"】");
-			}
-		
+		if(!StringUtils.hasText(xmQuestionVo.getId())){
+			return Result.error("id-0","编号不能为空");
+		}
+		XmQuestion xmQuestionDb=this.xmQuestionService.selectOneById(xmQuestionVo.getId());
+		Tips tips=checkOneQx(xmQuestionDb.getProjectId(),xmQuestionDb.getProductId());
+		Result.assertIsFalse(tips);
+		User user=LoginUtils.getCurrentUserInfo();
+		xmQuestionService.updateQuestion(xmQuestionVo);
+		if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {
+			xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(), user.getUsername()+"修改bug【"+xmQuestionVo.getName()+"】");
+		}
+		return Result.ok();
 	}
 	
 	@ApiOperation( value = "根据主键修改一条xm_question信息",notes="editXmQuestion")
@@ -334,14 +316,12 @@ public class XmQuestionController {
 						String handlerUserid= (String) xmQuestionMap.get("handlerUserid");
 						String handlerUsername= (String) xmQuestionMap.get("handlerUsername");
 						XmQuestion xmQuedb=canOper.get(0);
-						Tips tips1=productQxService.checkProductScopeQx(productService.getProductFromCache(xmQuedb.getProductId()),1,user,handlerUserid,handlerUsername,null);
+		 				Tips tips1=productQxService.checkProductScopeQx(productService.getProductFromCache(xmQuedb.getProductId()),1,user,handlerUserid,handlerUsername,null);
 						if(!tips1.isOk()){
 							if(StringUtils.hasText(xmQuedb.getProjectId())){
-								tips1=projectQxService.checkProjectScopeQx(projectService.getProjectFromCache(xmQuedb.getProjectId()),1,user,handlerUserid,handlerUsername,null);
+				 				tips1=projectQxService.checkProjectScopeQx(projectService.getProjectFromCache(xmQuedb.getProjectId()),1,user,handlerUserid,handlerUsername,null);
 							}
-							if(!tips1.isOk()){
-								return Result.error(tips1);
-							}
+							Result.assertIsFalse(tips1);
 						}
 					}
 
@@ -369,7 +349,7 @@ public class XmQuestionController {
 							handle.setReceiptMessage(user.getUsername()+"修改缺陷处理意见为："+xmQuestionVo.getRemarks());
 						}else if(StringUtils.hasText(handlerUsername)){
 							handle.setReceiptMessage(user.getUsername()+"将缺陷指派给"+handlerUsername);
-							notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"5",xmQuestionVo.getProductId(),xmQuestionVo.getId(),user.getUsername()+"将bug【"+xmQuestionVo.getName()+"】指派给您，请及时跟进。");
+							notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),user.getUsername()+"将bug【"+xmQuestionVo.getName()+"】指派给您，请及时跟进。",null);
 
 						}else if(StringUtils.hasText(bugStatus)){
 							handle.setReceiptMessage(user.getUsername()+"将缺陷状态改为"+bugStatus);
@@ -409,7 +389,7 @@ public class XmQuestionController {
 			if(noOper.size()>0){
 				Set<String> noDelTips2=new HashSet<>();
 				for (XmQuestion xmQuestion : noOper) {
-					Tips tips1=noOperTips.get(xmQuestion.getId());
+	 				Tips tips1=noOperTips.get(xmQuestion.getId());
 					noDelTips2.add(tips1.getMsg());
 				}
 				msgs.add(String.format("其中%s个缺陷，无权限修改。原因【%s】",noOper.size(),noDelTips2.stream().collect(Collectors.joining(";"))));
@@ -418,9 +398,7 @@ public class XmQuestionController {
 				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else{
 				return Result.error(msgs.stream().collect(Collectors.joining()));
-			}
-			//
-		return Result.ok();
+			} 
 		
 	}
 
@@ -461,7 +439,7 @@ public class XmQuestionController {
 			if(noOper.size()>0){
 				Set<String> noDelTips2=new HashSet<>();
 				for (XmQuestion xmQuestion : noOper) {
-					Tips tips1=noOperTips.get(xmQuestion.getId());
+	 				Tips tips1=noOperTips.get(xmQuestion.getId());
 					noDelTips2.add(tips1.getMsg());
 				}
 				msgs.add(String.format("其中%s个缺陷，无权限删除。原因【%s】",noOper.size(),noDelTips2.stream().collect(Collectors.joining(";"))));
@@ -470,9 +448,7 @@ public class XmQuestionController {
 				return Result.ok(msgs.stream().collect(Collectors.joining()));
 			}else{
 				return Result.error(msgs.stream().collect(Collectors.joining()));
-			}
-
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+			} 
 		
 	}
 
@@ -487,7 +463,7 @@ public class XmQuestionController {
 		if((StringUtils.hasText(projectId) && !tips1.isOk()) || !StringUtils.hasText(projectId)){
 			if(StringUtils.hasText(productId)){
 				XmProduct xmProduct=productService.getProductFromCache(productId);
-				tips1=this.productQxService.checkProductQx(xmProduct,1,user);
+ 				tips1=this.productQxService.checkProductQx(xmProduct,1,user);
 			}
 		}
 		return tips1;
@@ -536,7 +512,7 @@ public class XmQuestionController {
 		if(productsMap.size()>0){
 			for (String productId : productsMap.keySet()) {
 				XmProduct xmProduct=productService.getProductFromCache(productId);
-				Tips tips1=productQxService.checkProductQx(xmProduct,1,user);
+ 				Tips tips1=productQxService.checkProductQx(xmProduct,1,user);
 				if(!tips1.isOk()){
 					productNoDel.addAll(productsMap.get(productId));
 					for (XmQuestion xmQuestion : productsMap.get(productId)) {
@@ -552,7 +528,7 @@ public class XmQuestionController {
 							canOper.addAll(questions);
 						}else if(opType==2){//重新指派，要检查被指派人是否在项目组
 							for (XmQuestion question : questions) {
-								tips1=productQxService.checkProductScopeQx(xmProduct,1,question.getHandlerUserid(),question.getHandlerUsername(),null);
+				 				tips1=productQxService.checkProductScopeQx(xmProduct,1,question.getHandlerUserid(),question.getHandlerUsername(),null);
 								if(!tips1.isOk()){
 									productNoDel.add(question);
 									noOperTips.put(question.getId(),tips1);
@@ -565,11 +541,11 @@ public class XmQuestionController {
 					}else{
 						for (XmQuestion question : questions) {
 							if(opType==0){
-								tips1=productQxService.checkProductQx(xmProduct,1,user,question.getCreateUserid(),question.getCreateUsername(),null);
+				 				tips1=productQxService.checkProductQx(xmProduct,1,user,question.getCreateUserid(),question.getCreateUsername(),null);
 							}else if(opType==1){
-								tips1=productQxService.checkProductQx(xmProduct,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
+				 				tips1=productQxService.checkProductQx(xmProduct,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
 							}else if(opType==2){
-								tips1=productQxService.checkProductQx(xmProduct,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
+				 				tips1=productQxService.checkProductQx(xmProduct,1,user,question.getHandlerUserid(),question.getHandlerUsername(),null);
 
 							}
 							if(!tips1.isOk()){
@@ -603,7 +579,7 @@ public class XmQuestionController {
 		if(projectsMap.size()>0){
 			for (String projectId : projectsMap.keySet()) {
 				XmProject xmProject=projectService.getProjectFromCache(projectId);
-				Tips tips1=projectQxService.checkProjectQx(xmProject,1,user);
+ 				Tips tips1=projectQxService.checkProjectQx(xmProject,1,user);
 				if(!tips1.isOk()){
 					noOper.addAll(projectsMap.get(projectId));
 					for (XmQuestion xmQuestion : projectsMap.get(projectId)) {
@@ -619,7 +595,7 @@ public class XmQuestionController {
 							canOper.addAll(questions);
 						}else if(opType==2){//重新指派，要检查被指派人是否在项目组
 							for (XmQuestion question : questions) {
-								tips1=projectQxService.checkProjectScopeQx(xmProject,1,question.getHandlerUserid(),question.getHandlerUsername(),null);
+				 				tips1=projectQxService.checkProjectScopeQx(xmProject,1,question.getHandlerUserid(),question.getHandlerUsername(),null);
 								if(!tips1.isOk()){
 									noOper.add(question);
  									noOperTips.put(question.getId(),tips1);
@@ -632,11 +608,11 @@ public class XmQuestionController {
 					}else {
 						for (XmQuestion question : questions) {
 							if (opType == 0) {
-								tips1 = projectQxService.checkProjectQx( xmProject, 1, user, question.getCreateUserid(), question.getCreateUsername(), null);
+				 				tips1 = projectQxService.checkProjectQx( xmProject, 1, user, question.getCreateUserid(), question.getCreateUsername(), null);
 							} else if (opType == 1) {
-								tips1 = projectQxService.checkProjectQx( xmProject, 1, user, question.getHandlerUserid(), question.getHandlerUsername(), null);
+				 				tips1 = projectQxService.checkProjectQx( xmProject, 1, user, question.getHandlerUserid(), question.getHandlerUsername(), null);
 							} else if (opType == 2) {
-								tips1 = projectQxService.checkProjectQx( xmProject, 1, user, question.getHandlerUserid(), question.getHandlerUsername(), null);
+				 				tips1 = projectQxService.checkProjectQx( xmProject, 1, user, question.getHandlerUserid(), question.getHandlerUsername(), null);
 
 							}
 							if (!tips1.isOk()) {
@@ -672,21 +648,8 @@ public class XmQuestionController {
 	@AuditLog(firstMenu="办公平台",secondMenu="项目问题管理",func="processApprova",funcDesc="项目问题审核",operType=OperType.UPDATE)
 	@RequestMapping(value="/processApprova",method=RequestMethod.POST)
 	public Result processApprova( @RequestBody Map<String,Object> flowVars){
-		
-		
-		  
-		
-			
 			this.xmQuestionService.processApprova(flowVars);
-			logger.debug("procInstId====="+flowVars.get("procInstId"));
-		}catch (BizException e) { 
-			tips=e.getTips();
-			logger.error("执行异常",e);
-		}catch (Exception e) {
-			return Result.error(e.getMessage());
-			logger.error("执行异常",e);
-		}  
-		
+			return Result.ok();
 	}
 
 

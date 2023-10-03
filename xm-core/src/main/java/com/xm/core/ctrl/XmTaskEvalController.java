@@ -88,7 +88,7 @@ public class XmTaskEvalController {
 		
 		User user = LoginUtils.getCurrentUserInfo();
 		MyTotalEval myTotalEval = xmTaskEvalService.getServiceProviderEval(user);	//列出XmTaskEval列表
-		
+		return Result.ok().setData(myTotalEval);
 		
 	}
 
@@ -102,8 +102,9 @@ public class XmTaskEvalController {
 		
 		User user = LoginUtils.getCurrentUserInfo();
 		MyTotalEval myTotalEval = xmTaskEvalService.getPersonEval(user);	//列出XmTaskEval列表
-		
-		
+		return Result.ok().setData(myTotalEval);
+
+
 	}
 	@ApiOperation( value = "新增一条xm_task_eval信息",notes=" ")
 	@ApiResponses({
@@ -146,7 +147,7 @@ public class XmTaskEvalController {
 			xmTaskEval.setToUsername(toUser.getUsername());
 			xmTaskEval.setToBranchId(toUser.getBranchId());
 			xmTaskEvalService.insert(xmTaskEval);
-		return Result.ok();
+		return Result.ok().setData(xmTaskEval);
 	}
 
 	@ApiOperation( value = "删除一条xm_task_eval信息",notes=" ")
@@ -221,7 +222,7 @@ public class XmTaskEvalController {
 			List<XmTaskEval> no=new ArrayList<>();
 			User user = LoginUtils.getCurrentUserInfo();
 			for (XmTaskEval xmTaskEvalDb : xmTaskEvalsDb) {
-				Tips tips2 = new Tips("检查通过"); 
+ 				Tips tips2 = new Tips("检查通过"); 
 				if(!tips2.isOk()){
 				    no.add(xmTaskEvalDb); 
 				}else{

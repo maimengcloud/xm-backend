@@ -7,7 +7,6 @@ import com.mdp.audit.log.client.annotation.AuditLog;
 import com.mdp.audit.log.client.annotation.OperType;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.NumberUtil;
@@ -273,24 +272,24 @@ public class XmTaskController {
 						xmTaskExecuser.setUserid((String)xmTaskMap.get("executorUserid"));
 						xmTaskExecuser.setUsername((String)xmTaskMap.get("executorUsername"));
 						Map<String,Object> result=execuserController.addXmTaskExecuser(xmTaskExecuser);
-						Tips tips3= (Tips) result.get("tips");
-						tips3.put("taskId",id);
-						if(!tips3.isOk()){
-							errs.add(tips3);
+		 				Tips tips= (Tips) result.get("tips");
+		 				tips.put("taskId",id);
+						if(!tips.isOk()){
+							errs.add(tips);
 						}else{
-							oks.add(tips3);
+							oks.add(tips);
 						}
 
 
 					}
-					Tips returnTips=new Tips();
+	 				Tips returnTips=new Tips();
 
 					if(errs.size()>0){
 						msg="以下"+errs.size()+"个任务更新不成功："+errs.stream().map(i->"["+i.get("taskId")+"]"+i.getMsg()).collect(Collectors.joining(";"));
 					}
 					if(oks.size()>0){
 						msg="成功设置"+oks.size()+"个任务的执行人。"+msg;
-						returnreturn Result.ok(msg);
+						return Result.ok(msg);
 					}
 					return ResponseHelper.result(returnTips);
 				}else if(ids.size()==1){
@@ -338,7 +337,7 @@ public class XmTaskController {
 				for (String project : projects) {
 					XmProject xmProject=xmProjectService.getProjectFromCache(project);
 					projectMap.put(xmProject.getId(),xmProject);
-					Tips  tips1=projectQxService.checkProjectQx(xmProject,2,user,createUserid,createUsername,cbranchId);
+	 				Tips  tips1=projectQxService.checkProjectQx(xmProject,2,user,createUserid,createUsername,cbranchId);
 					if(!tips1.isOk()){
 						return ResponseHelper.failed(tips1);
 					};
@@ -357,7 +356,7 @@ public class XmTaskController {
 				if(groupService.checkUserIsProjectAdm(xmProject,user.getUserid())){
 					can.add(xmTaskDb);
 				}else{
-					Tips tips=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+	 				Tips tips =projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 					if(!tips.isOk()){
 						no.add(xmTaskDb);
 					}else{
@@ -378,12 +377,12 @@ public class XmTaskController {
 				}
 				if("1".equals(xmProject.getBudgetCtrl())){
 					if(taskDb.getLvl()<=1){
-						Tips tips=this.xmTaskService.judgetProjectBudget(taskDb.getProjectId(),budgetAt,Arrays.asList(taskDb.getId()));
+		 				Tips tips =this.xmTaskService.judgetProjectBudget(taskDb.getProjectId(),budgetAt,Arrays.asList(taskDb.getId()));
+		 				Result.assertIsFalse(tips);
 					}else {
-						Tips tips=this.xmTaskService.judgetTaskBudget(taskDb.getParentTaskid(),budgetAt,null,null,null,Arrays.asList(taskDb.getId()));
-					}
-					if(!tips.isOk()){
-						return ResponseHelper.failed(tips);
+		 				Tips tips =this.xmTaskService.judgetTaskBudget(taskDb.getParentTaskid(),budgetAt,null,null,null,Arrays.asList(taskDb.getId()));
+						Result.assertIsFalse(tips);
+
 					}
 				}
 			}
@@ -425,7 +424,7 @@ public class XmTaskController {
 					String createUsername= (String) xmTaskMap.get("createUsername");
 					for (XmTask task : can) {
 						if(!user.getUserid().equals(createUserid) && !"0".equals(task.getStatus())) {
-							notifyMsgService.pushMsg(user, createUserid, createUsername, "2", task.getProjectId(), task.getId(), "您成为任务【" + task.getName() + "】的负责人，请注意跟进。");
+							notifyMsgService.pushMsg(user, createUserid, createUsername, "您成为任务【" + task.getName() + "】的负责人，请注意跟进。",null);
 						}
 					}
 				}
@@ -461,8 +460,8 @@ public class XmTaskController {
 	public Result shareTaskDetail(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		String id=(String) xmTask.get("id");
-		String shareKey= (String) xmTask.get("shareKey");
+		String id=(String) params.get("id");
+		String shareKey= (String) params.get("shareKey");
 		if(!StringUtils.hasText(id)){
 			return Result.error("任务编号id必传");
 		}
@@ -470,8 +469,7 @@ public class XmTaskController {
 			//return Result.error("分享码shareKey必传");
 		}
 
-		if(tips.isOk()){
-			Map<String,Object> taskDb= xmTaskService.shareTaskDetail(xmTask);
+			Map<String,Object> taskDb= xmTaskService.shareTaskDetail(params);
 			//  检测任务是否可被查询
 			if(taskDb==null|| taskDb.isEmpty()){
 				return ResponseHelper.failed("data-0","数据不存在");
@@ -486,9 +484,7 @@ public class XmTaskController {
 				return ResponseHelper.failed("toTaskCenter-0","未开放互联网访问权限");
 			}
 			XmTaskCalcService.putReadNum((String) taskDb.get("id"),1);
-			
-			m.put("tips", tips);
-		}
+			return Result.ok().setData(taskDb);
 		
 	}
 
@@ -502,21 +498,19 @@ public class XmTaskController {
 	public Result taskDetail(@ApiIgnore @RequestParam Map<String,Object> params){
 		
 		
-		String id=(String) xmTask.get("id");
+		String id=(String) params.get("id");
 		if(!StringUtils.hasText(id)){
 			return Result.error("任务编号id必传");
 		}
 
-		if(tips.isOk()){
-			Map<String,Object> taskDb= xmTaskService.shareTaskDetail(xmTask);
+			Map<String,Object> taskDb= xmTaskService.shareTaskDetail(params);
 			//  检测任务是否可被查询
 			if(taskDb==null|| taskDb.isEmpty()){
 				return ResponseHelper.failed("data-0","数据不存在");
 			}
 			XmTaskCalcService.putReadNum((String) taskDb.get("id"),1);
-			
-			m.put("tips", tips);
-		}
+
+			return Result.ok().setData(taskDb);
 		
 	}
 	@ApiOperation( value = "新增一条任务信息",notes="addXmTask,主键如果为空，后台自动生成")
@@ -563,10 +557,8 @@ public class XmTaskController {
 				return ResponseHelper.failed(tips1);
 			}
 			if(StringUtils.hasText(xmTaskVo.getCreateUserid()) && !xmTaskVo.getCreateUserid().equals(user.getUserid())){
-				tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskVo.getCreateUserid(),xmTaskVo.getCreateUsername(),null);
-				if(!tips1.isOk()){
-					return ResponseHelper.failed(tips1);
-				}
+ 				tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskVo.getCreateUserid(),xmTaskVo.getCreateUsername(),null);
+				Result.assertIsFalse(tips1);
 			}
 
 			if("1".equals(xmProject.getMenuLink()) && "0".equals(xmTaskVo.getNtype())){
@@ -619,10 +611,10 @@ public class XmTaskController {
 			if("1".equals(xmProject.getBudgetCtrl())){
 				if(xmTaskVo.getBudgetAt()!=null  && xmTaskVo.getBudgetAt().compareTo(BigDecimal.ZERO)>0){
 					if(xmTaskVo.getLvl()<=1){
-						Tips tips=xmTaskService.judgetProjectBudget(xmTaskVo.getProjectId(),xmTaskVo.getBudgetAt(),null);
+		 				Tips tips =xmTaskService.judgetProjectBudget(xmTaskVo.getProjectId(),xmTaskVo.getBudgetAt(),null);
 						Result.assertIsFalse(tips);
 					}else{
-						Tips tips=xmTaskService.judgetTaskBudget(xmTaskVo.getParentTaskid(), xmTaskVo.getBudgetAt(),null,null,null,null);
+		 				Tips tips =xmTaskService.judgetTaskBudget(xmTaskVo.getParentTaskid(), xmTaskVo.getBudgetAt(),null,null,null,null);
 						Result.assertIsFalse(tips);
 					}
 				}
@@ -710,7 +702,7 @@ public class XmTaskController {
 
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 			if(xmProject!=null && groupService.checkUserIsProjectAdm(xmProject,user.getUserid())){
-				Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+ 				Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 				if(!tips1.isOk()){
 					return ResponseHelper.failed(tips1);
 				}
@@ -752,7 +744,7 @@ public class XmTaskController {
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 			
 			if(!groupService.checkUserIsProjectAdm(xmProject,user.getUserid())){
-				Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
+ 				Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 				if(!tips1.isOk()){
 					return ResponseHelper.failed(tips1);
 				}
@@ -813,15 +805,16 @@ public class XmTaskController {
 			excludeIds.add(xmTaskDb.getId());
 			if( "1".equals(xmProject.getBudgetCtrl()) && xmTaskDb.getBudgetAt().compareTo(xmTaskVo.getBudgetAt())!=0){
 				if(xmTaskVo.getLvl()<=1){
-					Tips tips=xmTaskService.judgetProjectBudget(xmTaskDb.getProjectId(), xmTaskVo.getBudgetAt(),excludeIds);
+	 				Tips tips =xmTaskService.judgetProjectBudget(xmTaskDb.getProjectId(), xmTaskVo.getBudgetAt(),excludeIds);
+	 				Result.assertIsFalse(tips);
 				}else if(StringUtils.hasText(xmTaskDb.getParentTaskid())){
-					Tips tips=xmTaskService.judgetTaskBudget(xmTaskDb.getParentTaskid(), xmTaskVo.getBudgetAt(),null,null,null,excludeIds);
+	 				Tips tips =xmTaskService.judgetTaskBudget(xmTaskDb.getParentTaskid(), xmTaskVo.getBudgetAt(),null,null,null,excludeIds);
+					Result.assertIsFalse(tips);
+
 				}
 			}
 
-			if(tips.isOk()) {
-				xmTaskService.updateTask(xmTaskVo,xmTaskDb);
-			}
+			xmTaskService.updateTask(xmTaskVo,xmTaskDb);
 			
 		return Result.ok();
 		
@@ -847,10 +840,8 @@ public class XmTaskController {
 			
 			Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
 			if(!tips1.isOk()){
-				tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getExecutorUserid(),xmTaskDb.getExecutorUsername(),null);
-				if(!tips1.isOk()){
-					return ResponseHelper.failed(tips1);
-				}
+ 				tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getExecutorUserid(),xmTaskDb.getExecutorUsername(),null);
+				Result.assertIsFalse(tips1);
 			}
 			xmTaskService.updateTime(xmTask,xmTaskDb);
 			
@@ -948,11 +939,10 @@ public class XmTaskController {
 						totalTaskBudgetAt=totalTaskBudgetAt.add(task.getBudgetAt());
 					}
 					if("0".equals(batchImportVo.getPtype())&&totalTaskBudgetAt.compareTo(BigDecimal.ZERO)>0){
-						Tips tips=xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetAt,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
+		 				Tips tips =xmTaskService.judgetProjectBudget(projectId,totalTaskBudgetAt,tasksLvl1.stream().map(i->i.getId()).collect(Collectors.toList()));
 						if(!tips.isOk()){
 							return Result.error(tips.getMsg()+" 相关任务【"+tasksLvl1.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
-							return ResponseHelper.failed(tips);
-						}
+ 						}
 					}
 				}else{
 					List<XmTask> tasks=xmTasks.stream().filter(i->!xmTasks.stream().filter(k->k.getId().equals(i.getParentTaskid())).findAny().isPresent()).collect(Collectors.toList());
@@ -966,7 +956,7 @@ public class XmTaskController {
 								childBudgetAt=childBudgetAt.add(child.getBudgetAt());
 							}
 							if(childBudgetAt.compareTo(BigDecimal.ZERO)>0){
-								Tips tips= xmTaskService.judgetTaskBudget(pid,childBudgetAt,null,null,null,childs.stream().map(i->i.getId()).collect(Collectors.toList()));
+				 				Tips tips = xmTaskService.judgetTaskBudget(pid,childBudgetAt,null,null,null,childs.stream().map(i->i.getId()).collect(Collectors.toList()));
 								if(!tips.isOk()){
 									return ResponseHelper.failed("budget-not-enought",tips.getMsg()+" 相关任务【"+childs.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 								}
@@ -976,8 +966,7 @@ public class XmTaskController {
 				}
 			}
 
-			if(tips.isOk()) {
-				for (XmTask task : xmTasks) {
+ 				for (XmTask task : xmTasks) {
 					task.setChildrenCnt( Integer.valueOf(xmTasks.stream().filter(i->task.getId().equals(i.getParentTaskid())).count()+""));
 					if(task.getChildrenCnt()>0){
 						task.setNtype("1");
@@ -986,12 +975,11 @@ public class XmTaskController {
 							task.setNtype("0");
 						}
 					}
-				}
 				xmTaskService.batchImportFromTemplate(xmTasks);
 				for (XmTask t : xmTasks) {
 
 					if(!user.getUserid().equals(t.getCreateUserid()) && !"0".equals(t.getStatus())) {
-						notifyMsgService.pushMsg(user, t.getCreateUserid(), t.getCreateUsername(), "2", t.getProjectId(), t.getId(), "您成为任务【" + t.getName() + "】的负责人，请注意跟进。");
+						notifyMsgService.pushMsg(user, t.getCreateUserid(), t.getCreateUsername(),  "您成为任务【" + t.getName() + "】的负责人，请注意跟进。",null);
 					}
 					xmRecordService.addXmTaskRecord(t.getProjectId(), t.getId(), "项目-任务-批量新增任务", "新增任务"+t.getName(),"",null);
 					
@@ -1145,12 +1133,12 @@ public class XmTaskController {
 			
 			for (Map.Entry<String, List<XmTask>> pt : projectTasksMap.entrySet()) {
 				XmProject xmProjectDb=this.xmProjectService.getProjectFromCache(pt.getKey());
-				Tips tips1=projectQxService.checkProjectQx(xmProjectDb,0,user);
+ 				Tips tips1=projectQxService.checkProjectQx(xmProjectDb,0,user);
 				if(!tips1.isOk()){
 						noAllowTasks.addAll(pt.getValue());
 				}else{
 					for (XmTask xmTask : pt.getValue()) {
-						tips1=projectQxService.checkProjectQx(xmProjectDb,0,user, xmTask.getCreateUserid(),xmTask.getCreateUsername(),xmTask.getCbranchId());
+		 				tips1=projectQxService.checkProjectQx(xmProjectDb,0,user, xmTask.getCreateUserid(),xmTask.getCreateUsername(),xmTask.getCbranchId());
 						if(!tips1.isOk()){
 							noAllowTasks.add(xmTask);
 						}
@@ -1213,7 +1201,7 @@ public class XmTaskController {
 			String projectId=xmTaskDb.getProjectId();
 			XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
 			
-			tips=projectQxService.checkProjectQx(xmProject,2,user);
+			Tips tips=projectQxService.checkProjectQx(xmProject,2,user);
 			if(!tips.isOk()){
 				return ResponseHelper.failed(tips);
 			}
@@ -1230,7 +1218,7 @@ public class XmTaskController {
 				canOper.addAll(delNodesDbMap.values());
 			}else{
 				for (XmTask node : delNodesDbMap.values()) {
-					Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,node.getCreateUserid(),node.getCreateUsername(),node.getCbranchId());
+	 				Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,node.getCreateUserid(),node.getCreateUsername(),node.getCbranchId());
 					if(!tips1.isOk()){
 						noOper.add(node);
 						noTipsMap.put(tips1.getMsg(),tips1);
