@@ -29,6 +29,9 @@ import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static com.mdp.core.utils.BaseUtils.map;
+import static com.mdp.core.utils.ResponseHelper.failed;
+
 /**
  * url编制采用rest风格,如对xm_workload 工时登记表的操作有增删改查,对应的url分别为:<br>
  *  新增: core/xmWorkload/add <br>
@@ -356,29 +359,27 @@ public class XmWorkloadController {
  				xmWorkload.setBranchId(xmTestCaseDb.getCbranchId());
  				xmWorkloadService.insert(xmWorkload);
 			}else if("4".equals(xmWorkload.getBizType())){//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
- 				QueryWrapper<XmWorkload> qw = QueryTools.initQueryWrapper(XmWorkload.class);
-				List<Map<String,Object>> datas = xmWorkloadService.selectListMapByWhere(page,qw,params);
-				return Result.ok();
+				Map<String,Object> p=map("planId",xmWorkload.getPlanId(),"caseId",xmWorkload.getCaseId());
+				List<Map<String,Object>> xmTestPlanCaseDbs=this.xmTestPlanCaseService.selectListMapByWhere(QueryTools.initPage(p),QueryTools.initQueryWrapper(XmTestPlanCase.class,p),p);
 				if(xmTestPlanCaseDbs==null||xmTestPlanCaseDbs.size()==0){
-					return Result.error("xmTestPlanCaseDb-0","执行用例已不存在");
+					return failed("xmTestPlanCaseDb-0","执行用例已不存在");
 				}
 				Map<String,Object> xmTestPlanCaseDb=xmTestPlanCaseDbs.get(0);
 				if(!(xmWorkload.getUserid().equals(xmTestPlanCaseDb.get("execUserid")))){
-					return Result.error("userid-err",xmWorkload.getUserid()+"不是当前用例的执行人，无须报工。");
+					return failed("userid-err",xmWorkload.getUserid()+"不是当前用例的执行人，无须报工。");
 				}
 				String projectId= (String) xmTestPlanCaseDb.get("projectId");
 				if(StringUtils.hasText(projectId)){
 					XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
 					if(xmProject==null){
-						return Result.error("project-0","项目已不存在");
+						return failed("project-0","项目已不存在");
 					}
 
 					xmWorkload.setProjectId(xmProject.getId());
 					xmWorkload.setBranchId(xmProject.getBranchId());
 				}else{
-					return Result.error("projectId-0","项目编号不能为空");
+					return failed("projectId-0","项目编号不能为空");
 				}
-
 				xmWorkload.setBizName((String) xmTestPlanCaseDb.get("caseName"));
 				xmWorkload.setCtime(new Date());
 				xmWorkload.setCuserid(user.getUserid());

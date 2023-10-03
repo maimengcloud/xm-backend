@@ -93,8 +93,6 @@ public class XmGroupController {
 		
 		if(group==null){
 			return Result.error("小组信息不能为空");
-			m.put("tips", tips);
-			return m;
 		}
 		if(!StringUtils.hasText(group.getId())){
 			return ResponseHelper.failed("id-0","小组编号不能为空");
@@ -115,57 +113,40 @@ public class XmGroupController {
 			}
 			if(StringUtils.hasText(group.getLeaderUserid()) && !group.getLeaderUserid().equals(groupDb.getLeaderUserid())){
  				Tips tips = projectQxService.checkProjectQx(project,0,user, groupDb.getLeaderUserid(),groupDb.getLeaderUsername(),null);
-				if(!tips.isOk()){
-					return ResponseHelper.failed(tips);
-				}
- 				Tips tips =projectQxService.checkProjectScopeQx(project,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
-				if(!tips.isOk()){
-					return ResponseHelper.failed(tips);
-				}
+ 				Result.assertIsFalse(tips);
+ 				tips =projectQxService.checkProjectScopeQx(project,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
+				Result.assertIsFalse(tips);
 			}
 			if(StringUtils.hasText(group.getAssUserid()) && !group.getAssUserid().equals(groupDb.getAssUserid())){
  				Tips tips = projectQxService.checkProjectQx(project,0,user, groupDb.getAssUserid(),groupDb.getAssUsername(),null);
-				if(!tips.isOk()){
-					return ResponseHelper.failed(tips);
-				}
- 				Tips tips =projectQxService.checkProjectScopeQx(project,0,group.getAssUserid(),group.getAssUsername(),null);
-				if(!tips.isOk()){
-					return ResponseHelper.failed(tips);
-				}
+				Result.assertIsFalse(tips);
+ 				tips =projectQxService.checkProjectScopeQx(project,0,group.getAssUserid(),group.getAssUsername(),null);
+				Result.assertIsFalse(tips);
 			}
 		}else {
 			XmProduct product=xmProductService.getProductFromCache(groupDb.getProductId());
 			boolean isPm=xmGroupService.checkUserIsProductAdm(product, user.getUserid());
 			if(!isPm){
  				Tips tips = productQxService.checkProductQx(product,0,user);
-				if(!tips.isOk()){
-					return ResponseHelper.failed(tips);
-				}
+				Result.assertIsFalse(tips);
 			}
 			if(StringUtils.hasText(group.getLeaderUserid()) && !group.getLeaderUserid().equals(groupDb.getLeaderUserid())){
  				Tips tips = productQxService.checkProductQx(product,0,user, groupDb.getLeaderUserid(),groupDb.getLeaderUsername(),null);
-				if(!tips.isOk()){
-					return ResponseHelper.failed(tips);
-				}
- 				Tips tips =productQxService.checkProductScopeQx(product,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
-				if(!tips.isOk()){
-					return ResponseHelper.failed(tips);
-				}
+				Result.assertIsFalse(tips);
+ 				tips =productQxService.checkProductScopeQx(product,0,group.getLeaderUserid(),group.getLeaderUsername(),null);
+				Result.assertIsFalse(tips);
 			}
 			if(StringUtils.hasText(group.getAssUserid()) && !group.getAssUserid().equals(groupDb.getAssUserid())){
  				Tips tips = productQxService.checkProductQx(product,0,user, groupDb.getAssUserid(),groupDb.getAssUsername(),null);
-				if(!tips.isOk()){
-					return ResponseHelper.failed(tips);
-				}
- 				Tips tips =productQxService.checkProductScopeQx(product,0,group.getAssUserid(),group.getAssUsername(),null);
-				if(!tips.isOk()){
-					return ResponseHelper.failed(tips);
-				}
+				Result.assertIsFalse(tips);
+ 				tips =productQxService.checkProductScopeQx(product,0,group.getAssUserid(),group.getAssUsername(),null);
+				Result.assertIsFalse(tips);
 			}
 		}
 
 		xmGroupService.parentIdPathsCalcBeforeSave(group);
-		tips= xmGroupService.updateGroup(group,groupDb);	//列出XmProjectGroup列表
+		Tips tips= xmGroupService.updateGroup(group,groupDb);	//列出XmProjectGroup列表
+		Result.assertIsFalse(tips);
 		if("0".equals(groupDb.getPgClass())){
 			xmGroupCacheService.clearProjectGroup(groupDb.getProjectId());
 			xmRecordService.addXmGroupRecord(groupDb.getProjectId(),groupDb.getId(),"团队-小组-修改小组","修改小组信息【"+groupDb.getGroupName()+"】");
@@ -175,7 +156,7 @@ public class XmGroupController {
 			xmRecordService.addXmProductRecord(groupDb.getProductId(),"团队-小组-修改小组","修改小组信息【"+groupDb.getGroupName()+"】");
 
 		}
-		
+		return Result.ok();
 	}
 
 	@ApiOperation( value = "根据项目Id拿到团队",notes="")
@@ -196,19 +177,19 @@ public class XmGroupController {
 		
 		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
-		List<XmGroupVo>	xmGroupList=new ArrayList<>();
+		List<XmGroupVo>	datas=new ArrayList<>();
 		String iterationId= (String) params.get("iterationId");
 		String projectId= (String) params.get("projectId");
 		String productId= (String) params.get("productId");
 		if(StringUtils.hasText(productId)){
-			xmGroupList = xmGroupService.getProductGroupVoList(productId);	//产品团队
+			datas = xmGroupService.getProductGroupVoList(productId);	//产品团队
 		}else if(StringUtils.hasText(projectId)){
-			xmGroupList = xmGroupService.getProjectGroupVoList(projectId);	//列出XmProjectGroup列表
+			datas = xmGroupService.getProjectGroupVoList(projectId);	//列出XmProjectGroup列表
 		}else if(StringUtils.hasText(iterationId)){
-			xmGroupList = xmGroupService.getProjectGroupVoListByIterationId(iterationId );	//列出XmProjectGroup列表
+			datas = xmGroupService.getProjectGroupVoListByIterationId(iterationId );	//列出XmProjectGroup列表
 		}
 
-		
+		return Result.ok().setData(datas);
 	}
 
 
@@ -233,15 +214,15 @@ public class XmGroupController {
 		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		String projectId= (String) xmGroup.get("projectId");
-		String productId= (String) xmGroup.get("productId");
-		String iterationId= (String) xmGroup.get("iterationId");
+		String projectId= (String) params.get("projectId");
+		String productId= (String) params.get("productId");
+		String iterationId= (String) params.get("iterationId");
 		if(!StringUtils.hasText(projectId) && !StringUtils.hasText(productId) && !StringUtils.hasText(iterationId)){
 		params.put("branchId",user.getBranchId());
-			xmGroup.put("orCrowBranchId",user.getBranchId());
+			params.put("orCrowBranchId",user.getBranchId());
 		}
 		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
-		List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
+		List<Map<String,Object>> datas = xmGroupService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectGroup列表
 		
 	}
