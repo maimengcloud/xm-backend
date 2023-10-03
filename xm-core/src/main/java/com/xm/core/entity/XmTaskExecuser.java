@@ -1,15 +1,12 @@
 package  com.xm.core.entity;
-import lombok.Data;
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.mdp.core.dao.annotation.TableIds;
 import com.baomidou.mybatisplus.annotation.TableName;
-import org.apache.ibatis.type.Alias;
+import com.mdp.core.dao.annotation.TableIds;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import java.util.Date;
+import lombok.Data;
+
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * @author code-gen
@@ -27,12 +24,16 @@ public class XmTaskExecuser  implements java.io.Serializable {
     String taskId;
     @TableIds
 	
-    @ApiModelProperty(notes="执行人id,主键",allowEmptyValue=true,example="",allowableValues="")
-    String userid;
+    @ApiModelProperty(notes="投标人用户编号-该用户编号不一定属于项目归属公司的内部账户,主键",allowEmptyValue=true,example="",allowableValues="")
+    String bidUserid;
 
 	
 	@ApiModelProperty(notes="创建时间",allowEmptyValue=true,example="",allowableValues="")
 	Date createTime;
+
+	
+	@ApiModelProperty(notes="执行人id-投标者在项目归属公司的内部用户编号，对应sys_user.userid。投标人中标后，项目公司设立内部用户编号后回填，也就是中标后，项目公司应该给中标人设立内部用户编号，让其具有更多的权限",allowEmptyValue=true,example="",allowableValues="")
+	String prjUserid;
 
 	
 	@ApiModelProperty(notes="加入时间",allowEmptyValue=true,example="",allowableValues="")
@@ -60,7 +61,7 @@ public class XmTaskExecuser  implements java.io.Serializable {
 
 	
 	@ApiModelProperty(notes="执行人姓名",allowEmptyValue=true,example="",allowableValues="")
-	String username;
+	String prjUsername;
 
 	
 	@ApiModelProperty(notes="任务能力匹配分数100分，占比50%",allowEmptyValue=true,example="",allowableValues="")
@@ -121,10 +122,6 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="推荐人姓名",allowEmptyValue=true,example="",allowableValues="")
 	String distUsername;
-
-	
-	@ApiModelProperty(notes="执行人归属公司",allowEmptyValue=true,example="",allowableValues="")
-	String execUserBranchId;
 
 	
 	@ApiModelProperty(notes="分享码",allowEmptyValue=true,example="",allowableValues="")
@@ -234,12 +231,20 @@ public class XmTaskExecuser  implements java.io.Serializable {
 	@ApiModelProperty(notes="最近6个月收入总额",allowEmptyValue=true,example="",allowableValues="")
 	BigDecimal csixAt;
 
+	
+	@ApiModelProperty(notes="投标人名称",allowEmptyValue=true,example="",allowableValues="")
+	String bidUsername;
+
+	
+	@ApiModelProperty(notes="投标人归属公司-根据cpa_userid带出,该机构号不一定等同于项目归属公司编号。如果投标人属于项目归属公司，则等于项目归属公司编号，否则不同",allowEmptyValue=true,example="",allowableValues="")
+	String bidBranchId;
+
 	/**
-	 *任务id,执行人id
+	 *任务id,投标人用户编号-该用户编号不一定属于项目归属公司的内部账户
 	 **/
-	public XmTaskExecuser(String taskId,String userid) {
+	public XmTaskExecuser(String taskId,String bidUserid) {
 		this.taskId = taskId;
-		this.userid = userid;
+		this.bidUserid = bidUserid;
 	}
     
     /**
