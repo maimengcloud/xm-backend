@@ -3,7 +3,6 @@ package com.xm.core.ctrl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
@@ -252,7 +251,7 @@ public class XmTaskOrderController {
 				}else{
 					remark="任务推广佣金";
 				}
-				msgService.pushMsg(user,user.getUserid(),user.getUsername(),"2",order.getProjectId(),order.getTaskId(),"您为任务支付"+remark+order.getFinalFee()+"元订单提交成功，请及时付款");
+				msgService.pushMsg(user,user.getUserid(),user.getUsername(),"您为任务支付"+remark+order.getFinalFee()+"元订单提交成功，请及时付款",null);
 			}
 		return Result.ok();
 	}

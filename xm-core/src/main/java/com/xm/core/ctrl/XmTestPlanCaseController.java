@@ -289,6 +289,7 @@ public class XmTestPlanCaseController {
 			Tips tips=productQxService.checkProductQx(xmProductDb,1,user);
 			Result.assertIsFalse(tips);
 			xmTestPlanCaseService.updateSomeFieldByPk(xmTestPlanCase);
+			return Result.ok();
 		
 	}
 
@@ -343,16 +344,18 @@ public class XmTestPlanCaseController {
 			}
 			if(StringUtils.hasText(xmTestPlanCase.getExecUserid())){
  				Tips tips =productQxService.checkProductQx(xmProductDb,1,user,xmTestPlanCase.getExecUserid(),xmTestPlanCase.getExecUsername(),null);
+				Result.assertIsFalse(tips);
 			}else {
  				Tips tips =productQxService.checkProductQx(xmProductDb,1,user);
+				Result.assertIsFalse(tips);
 			}
-			Result.assertIsFalse(tips);
+
 			boolean isPm=groupService.checkUserIsProductAdm(xmProductDb,user.getUserid());
 			if(isPm){
 				can=xmTestPlanCasesDb;
 			}else {
 				for (XmTestPlanCase pcDb : xmTestPlanCasesDb) {
-	 				Tips tips 2  = productQxService.checkProductQx(xmProductDb, 1, user, pcDb.getExecUserid(), pcDb.getExecUsername(), null);
+	 				Tips tips2 = productQxService.checkProductQx(xmProductDb, 1, user, pcDb.getExecUserid(), pcDb.getExecUsername(), null);
 					if (!tips2.isOk()) {
 						no.add(xmTestPlanCaseDb);
 						noTipsSet.add(tips2.getMsg());

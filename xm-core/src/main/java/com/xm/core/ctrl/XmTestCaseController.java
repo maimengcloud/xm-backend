@@ -9,7 +9,6 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmTestCase;
 import com.xm.core.service.XmGroupService;
@@ -27,7 +26,8 @@ import springfox.documentation.annotations.ApiIgnore;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static com.mdp.core.utils.BaseUtils.*;
+import static com.mdp.core.utils.BaseUtils.fromMap;
+import static com.mdp.core.utils.BaseUtils.toMap;
 
 /**
  * url编制采用rest风格,如对xm_test_case 测试用例的操作有增删改查,对应的url分别为:<br>
@@ -98,8 +98,8 @@ public class XmTestCaseController {
 		}else {
  			return Result.error("groupBy-0","分组参数错误");
 		}
-		List<Map<String,Object>>	xmTestCaseList = xmTestCaseService.getXmTestCaseSort(params);	//列出XmTestCase列表
-
+		List<Map<String,Object>>	datas = xmTestCaseService.getXmTestCaseSort(params);	//列出XmTestCase列表
+		return Result.ok().setData(datas);
 	}
 
 
@@ -214,7 +214,7 @@ public class XmTestCaseController {
 			xmTestCase.setCbranchId(null);
 			xmTestCase.setLtime(new Date());
 			xmTestCaseService.updateSomeFieldByPk(xmTestCase);
-		
+		return Result.ok();
 	}
 
     @ApiOperation( value = "批量修改某些字段",notes="")
@@ -266,7 +266,7 @@ public class XmTestCaseController {
 				 can=xmTestCasesDb;
 			}else{
 				for (XmTestCase xmTestCaseDb : xmTestCasesDb) {
-	 				Tips tips 2 = productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
+	 				Tips tips2 = productQxService.checkProductQx(xmProductDb,1,user,xmTestCaseDb.getCuserid(),xmTestCaseDb.getCusername(),null);
 					if(!tips2.isOk()){
 						no.add(xmTestCaseDb);
 						noTipsMap.put(tips2.getMsg(),tips2);

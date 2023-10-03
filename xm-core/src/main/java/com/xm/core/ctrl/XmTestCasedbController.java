@@ -75,7 +75,7 @@ public class XmTestCasedbController {
 		
 		RequestUtils.transformArray(params, "ids");
 		User user=LoginUtils.getCurrentUserInfo();
-		xmTestCasedb.put("pbranchId",user.getBranchId());		
+		params.put("pbranchId",user.getBranchId());
 		IPage page=QueryTools.initPage(params);
 		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
 		List<Map<String,Object>> datas = xmTestCasedbService.selectListMapByWhere(page,qw,params);
@@ -118,7 +118,7 @@ public class XmTestCasedbController {
 			xmTestCasedb.setCusername(user.getUsername());
 			xmTestCasedb.setCbranchId(user.getBranchId());
 			xmTestCasedbService.insert(xmTestCasedb);
-		
+		return Result.ok().setData(xmTestCasedb);
 	}
 
 	@ApiOperation( value = "删除一条测试用例库信息",notes=" ")
@@ -170,10 +170,11 @@ public class XmTestCasedbController {
 				Result.assertIsFalse(tips);
 			}
  			if(!isPm){
-  				Tips tips  tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCasedbDb.getCuserid(),xmTestCasedbDb.getCusername(),xmTestCasedbDb.getCbranchId());
+  				Tips tips=productQxService.checkProductQx(xmProductDb,1,user,xmTestCasedbDb.getCuserid(),xmTestCasedbDb.getCusername(),xmTestCasedbDb.getCbranchId());
 				Result.assertIsFalse(tips);
  			}
 			xmTestCasedbService.updateSomeFieldByPk(xmTestCasedb);
+ 			return Result.ok();
 		
 	}
 
@@ -330,7 +331,6 @@ public class XmTestCasedbController {
             }else {
                 return Result.error(msgs.stream().collect(Collectors.joining(";")));
             }
-        return Result.ok();
         
 	} 
 

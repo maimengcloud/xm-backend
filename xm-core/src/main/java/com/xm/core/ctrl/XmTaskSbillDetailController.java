@@ -108,11 +108,8 @@ public class XmTaskSbillDetailController {
 		}
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
-		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.listSumSamtGroupByProjectIdBizMonth(params);	//列出XmTaskSbillDetail列表
-
-		
-
-		
+		List<Map<String,Object>>	datas = xmTaskSbillDetailService.listSumSamtGroupByProjectIdBizMonth(params);	//列出XmTaskSbillDetail列表
+		return Result.ok().setData(datas);
 	}
 	@ApiOperation( value = "查询机构支出费用按月分布报表",notes=" ")
 	@ApiResponses({
@@ -128,11 +125,8 @@ public class XmTaskSbillDetailController {
 		}
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
-		List<Map<String,Object>>	xmTaskSbillDetailList = xmTaskSbillDetailService.listSumSamtGroupByBranchIdBizMonth(params);	//列出XmTaskSbillDetail列表
-
-		
-
-		
+		List<Map<String,Object>>	datas = xmTaskSbillDetailService.listSumSamtGroupByBranchIdBizMonth(params);	//列出XmTaskSbillDetail列表
+ 		return Result.ok().setData(datas);
 	}
 	/**
 	@ApiOperation( value = "新增一条工时登记表信息",notes=" ")

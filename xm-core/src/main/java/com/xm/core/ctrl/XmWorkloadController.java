@@ -1,10 +1,9 @@
 package com.xm.core.ctrl;
 
-import com.alibaba.druid.sql.dialect.odps.ast.OdpsAddTableStatement;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.NumberUtil;
@@ -24,14 +23,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
-import org.w3c.dom.CDATASection;
 import springfox.documentation.annotations.ApiIgnore;
 
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static com.mdp.core.utils.ResponseHelper.failed;
 
 /**
  * url编制采用rest风格,如对xm_workload 工时登记表的操作有增删改查,对应的url分别为:<br>
@@ -104,7 +100,7 @@ public class XmWorkloadController {
 		String userid= (String) params.get("userid");
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("linkBranchId",user.getBranchId());
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmWorkload> qw = QueryTools.initQueryWrapper(XmWorkload.class , params);
 		List<Map<String,Object>> datas = xmWorkloadService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmWorkload列表
 
@@ -136,8 +132,8 @@ public class XmWorkloadController {
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.listProjectWorkloadSetMonth(params);	//列出XmWorkload列表
-
+		List<Map<String,Object>>	datas = xmWorkloadService.listProjectWorkloadSetMonth(params);	//列出XmWorkload列表
+		return Result.ok().setData(datas);
 	}
 
 
@@ -159,8 +155,8 @@ public class XmWorkloadController {
 		if("my".equals(queryScope)){
 			params.put("userid",user.getUserid());
 		}
-		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.ListGroupByTaskIdAndUserid(params);	//列出XmWorkload列表
-
+		List<Map<String,Object>>	datas = xmWorkloadService.ListGroupByTaskIdAndUserid(params);	//列出XmWorkload列表
+		return Result.ok().setData(datas);
 	}
 
 	@ApiOperation( value = "按任务及报工人查询待确认工时",notes=" ")
@@ -175,14 +171,14 @@ public class XmWorkloadController {
 		RequestUtils.transformArray(params, "wstatuses");
 		RequestUtils.transformArray(params, "sstatuses");		
 		IPage page=QueryTools.initPage(params);
-		String queryScope= (String) xmWorkload.get("queryScope");
+		String queryScope= (String) params.get("queryScope");
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("linkBranchId",user.getBranchId());
 		if("my".equals(queryScope)){
 			params.put("userid",user.getUserid());
 		}
-		List<Map<String,Object>>	xmWorkloadList = xmWorkloadService.ListGroupByTaskIdAndUseridToSet(params);	//列出XmWorkload列表
-
+		List<Map<String,Object>>	datas = xmWorkloadService.ListGroupByTaskIdAndUseridToSet(params);	//列出XmWorkload列表
+		return Result.ok().setData(datas);
 	}
 
 
@@ -287,7 +283,7 @@ public class XmWorkloadController {
 				}
 				//待他人报工，需要检查我的权限，需要项目管理人员才有权限代他人报工。
 				if(!xmWorkload.getUserid().equals(user.getUserid())){
-	 				Tips tips 3=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmWorkload.getUserid(),xmTaskDb.getProjectId());
+	 				Tips tips3=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmWorkload.getUserid(),xmTaskDb.getProjectId());
 					if(!tips3.isOk()){
 						return Result.error("no-qx-for-oth-user","无权限代他人报工。只有项目管理人员可以代他人报工。");
 					}
@@ -360,9 +356,9 @@ public class XmWorkloadController {
  				xmWorkload.setBranchId(xmTestCaseDb.getCbranchId());
  				xmWorkloadService.insert(xmWorkload);
 			}else if("4".equals(xmWorkload.getBizType())){//报工类型1-任务，2-缺陷，3-测试用例设计，4-测试执行
- 				QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
-		List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
-			return Result.ok();
+ 				QueryWrapper<XmWorkload> qw = QueryTools.initQueryWrapper(XmWorkload.class);
+				List<Map<String,Object>> datas = xmWorkloadService.selectListMapByWhere(page,qw,params);
+				return Result.ok();
 				if(xmTestPlanCaseDbs==null||xmTestPlanCaseDbs.size()==0){
 					return Result.error("xmTestPlanCaseDb-0","执行用例已不存在");
 				}
@@ -394,7 +390,7 @@ public class XmWorkloadController {
 				xmWorkload.setPlanId((String) xmTestPlanCaseDb.get("planId"));
 				xmWorkloadService.insert(xmWorkload);
 			}
-		
+		return Result.ok();
 	}
 	@ApiOperation( value = "根据主键修改一条工时登记表信息",notes=" ")
 	@ApiResponses({
@@ -419,9 +415,9 @@ public class XmWorkloadController {
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
- 				Tips tips isCreate=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
+ 				Tips isCreate=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
 				if(!isCreate.isOk()){
-	 				Tips tips isExec=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
+	 				Tips isExec=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
 					if(!isExec.isOk()){
 						return Result.error("noqx-0","你无权针对该业务进行报工");
 					}
@@ -432,7 +428,7 @@ public class XmWorkloadController {
 			pushService.pushXmTask(xmTaskDb);
 			this.xmTaskService.calcWorkloadByRecord(xmWorkload.getTaskId());
 
-		
+		return Result.ok();
 	}
 	
 
@@ -461,9 +457,9 @@ public class XmWorkloadController {
 			Set<String> xmMenuIds=new HashSet<>();
 			for (XmTask xmTaskDb : tasksDb) {
 				if(!(user.getUserid().equals(xmTaskDb.getCreateUserid())|| user.getUserid().equals(xmTaskDb.getExecutorUserid()))){
-	 				Tips tips isCreate=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
+	 				Tips isCreate=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getCreateUserid(),xmTaskDb.getProjectId());
 					if(!isCreate.isOk()){
-		 				Tips tips isExec=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
+		 				Tips isExec=xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),xmTaskDb.getProjectId());
 						if(!isExec.isOk()){
 							break;
 						}
@@ -516,7 +512,6 @@ public class XmWorkloadController {
 			}else{
 				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
-		return Result.ok();
 		
 	}
 
@@ -620,9 +615,6 @@ public class XmWorkloadController {
 			}else{
 				return Result.error(msgs.stream().collect(Collectors.joining()));
 			}
-
-			//
-		return Result.ok();
 		
 	}
 }

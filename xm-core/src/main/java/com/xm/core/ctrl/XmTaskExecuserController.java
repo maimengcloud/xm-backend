@@ -223,7 +223,7 @@ public class XmTaskExecuserController {
 			boolean sendMsg=!"0".equals(xmTaskDb.getStatus());
 			xmTaskExecuserService.addExecuser(xmTaskExecuser,sendMsg);
 			if(sendMsg){
-				notifyMsgService.pushMsg(user, xmTaskDb.getCreateUserid(), xmTaskDb.getCreateUsername(), "2", xmTaskExecuser.getProjectId(), xmTaskExecuser.getTaskId(), "用户【"+xmTaskExecuser.getUsername()+"】投标任务【"+xmTaskDb.getName()+"】，请及时跟进！");
+				notifyMsgService.pushMsg(user, xmTaskDb.getCreateUserid(), xmTaskDb.getCreateUsername(), "用户【"+xmTaskExecuser.getUsername()+"】投标任务【"+xmTaskDb.getName()+"】，请及时跟进！",null);
 			}
 			sysClient.pushBidsAfterBidSuccess(xmTaskExecuser.getUserid(),xmTaskDb.getId(),xmTaskDb.getBudgetAt(),xmTaskDb.getBudgetWorkload(),1);
 			return Result.ok();
@@ -259,7 +259,6 @@ public class XmTaskExecuserController {
 			for (XmTaskExecuser xmTaskExecuser : xmTaskExecuserListDb) {
 				if(!taskId.equals(xmTaskExecuser.getTaskId())){
 					return Result.error("批量操作只允许在同一个任务进行");
-					break;
 				}
  				if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {//只有组长、任务责任人可以请别人请离开任务
 	 				Tips tips =projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(xmTask.getProjectId()),2, user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
@@ -383,7 +382,6 @@ public class XmTaskExecuserController {
 
 			String taskId=xmTaskAcceptanceVo.getTaskId();
 			if(!StringUtils.hasText(taskId)){
-				return Result.error("taskId-0");
 				return ResponseHelper.failed("taskId-0","任务编号不能为空");
 			}
 			XmTask xmTaskDb= xmTaskService.selectOneById(taskId);
@@ -406,7 +404,6 @@ public class XmTaskExecuserController {
  				Tips tips1=groupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmTaskDb.getExecutorUserid(),projectId);
 				if(  !isTaskCreater && !tips1.isOk() ) {
 					return Result.error("您无权验收该任务！");
-					return ResponseHelper.failed(tips);
 				}
 				if("2".equals(xmTaskDb.getEstate()) && xmTaskDb.getEfunds()!=null && xmTaskDb.getEfunds().compareTo(BigDecimal.ZERO)>0){
 					needPay=true;
@@ -418,7 +415,7 @@ public class XmTaskExecuserController {
 			if(needPay){
 				//XmTaskExecuser xmTaskExecuserDb=this.xmTaskExecuserService.selectOneById(map("taskId",xmTaskDb.getId(),"userid",xmTaskDb.getExecutorUserid()));
 				//调用ac系统付款给服务商
- 				Tips tips payTips=acClient.platformBalancePayToClient(xmTaskDb.getExecutorUserid(),"3","1",xmTaskDb.getId(),xmTaskDb.getQuoteFinalAt(),"任务【"+xmTaskDb.getName()+"】验收完毕，发放佣金.");
+ 				Tips payTips=acClient.platformBalancePayToClient(xmTaskDb.getExecutorUserid(),"3","1",xmTaskDb.getId(),xmTaskDb.getQuoteFinalAt(),"任务【"+xmTaskDb.getName()+"】验收完毕，发放佣金.");
 				if(payTips.isOk()){
 					xmTaskUpdate.setEtoDevTime(new Date());
 					xmTaskUpdate.setBidStep("7");
@@ -439,10 +436,10 @@ public class XmTaskExecuserController {
 			if(needPay){
 				sysClient.pushPayAtAfterTaskAcceptanceSuccess(xmTaskDb.getExecutorUserid(),xmTaskDb.getId(),xmTaskDb.getEfunds(),xmTaskDb.getBudgetWorkload());
 
-				notifyMsgService.pushMsg(user, xmTaskDb.getExecutorUserid(), xmTaskDb.getExecutorUsername(), "2", xmTaskDb.getProjectId(), xmTaskDb.getId(), "您执行的任务【" + xmTaskDb.getName() + "】已验收通过，已发放佣金【"+xmTaskDb.getEfunds()+"】。");
+				notifyMsgService.pushMsg(user, xmTaskDb.getExecutorUserid(), xmTaskDb.getExecutorUsername(), "您执行的任务【" + xmTaskDb.getName() + "】已验收通过，已发放佣金【"+xmTaskDb.getEfunds()+"】。",null);
 				xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(), xmTaskDb.getId(), "项目-任务-验收任务", "验收任务【"+xmTaskDb.getName()+"】，验收通过。已发放佣金【"+xmTaskDb.getEfunds()+"】元");
 			}else{
-				notifyMsgService.pushMsg(user, xmTaskDb.getExecutorUserid(), xmTaskDb.getExecutorUsername(), "2", xmTaskDb.getProjectId(), xmTaskDb.getId(), "您执行的任务【" + xmTaskDb.getName() + "】已验收通过");
+				notifyMsgService.pushMsg(user, xmTaskDb.getExecutorUserid(), xmTaskDb.getExecutorUsername(), "您执行的任务【" + xmTaskDb.getName() + "】已验收通过",null);
 				xmRecordService.addXmTaskRecord(xmTaskDb.getProjectId(), xmTaskDb.getId(), "项目-任务-验收任务", "验收任务【"+xmTaskDb.getName()+"】，验收通过。");
 			}
 		return Result.ok();
@@ -474,13 +471,13 @@ public class XmTaskExecuserController {
 			User user=LoginUtils.getCurrentUserInfo();
  			String projectId=xmTaskExecuser.getProjectId();
  			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
-  				Tips tips  tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId() );
+  				Tips tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId() );
 				Result.assertIsFalse(tips);
  			}
 			XmTaskExecuser xmTaskExecuserDb = xmTaskExecuserService.selectOneObject(new XmTaskExecuser(xmTaskExecuser.getTaskId(),xmTaskExecuser.getUserid()));
 			if("0".equals(xmTaskExecuserDb.getStatus())) {
 				xmTaskExecuserService.quotePrice(xmTaskExecuser);
-				notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTask.getProjectId(), xmTask.getId(), user.getUsername()+"修改任务【" + xmTask.getId() + "-" + xmTask.getName() + "】的报价信息，请尽快选标！");
+				notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), user.getUsername()+"修改任务【" + xmTask.getId() + "-" + xmTask.getName() + "】的报价信息，请尽快选标！",null);
 
 
 			}else {
@@ -510,12 +507,12 @@ public class XmTaskExecuserController {
 			User user=LoginUtils.getCurrentUserInfo();
  			String projectId=xmTaskExecuser.getProjectId();
  			if(!user.getUserid().equals(xmTaskExecuser.getUserid())) {
-  				Tips tips  tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
+  				Tips  tips=projectQxService.checkProjectQx(xmProjectService.getProjectFromCache(projectId),2,user,xmTaskExecuser.getUserid(),xmTaskExecuser.getUsername(),xmTaskExecuser.getExecUserBranchId());
 				Result.assertIsFalse(tips);
  			}
 
 			xmTaskExecuserService.becomeCandidate(xmTaskExecuser);
-			notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(), "2", xmTask.getProjectId(), xmTask.getId(), user.getUsername()+"投标任务【" + xmTask.getId() + "-" + xmTask.getName() + "】，请尽快选标！");
+			notifyMsgService.pushMsg(user, xmTask.getCreateUserid(), xmTask.getCreateUsername(),  user.getUsername()+"投标任务【" + xmTask.getId() + "-" + xmTask.getName() + "】，请尽快选标！",null);
 
 		return Result.ok();
 		
@@ -548,8 +545,8 @@ public class XmTaskExecuserController {
 				}
 				if( "0".equals( xmTaskExecuserDb.getStatus() )  || "7".equals( xmTaskExecuserDb.getStatus() ) || "8".equals( xmTaskExecuserDb.getStatus() ) ) {
 					xmTaskExecuserService.delete(xmTaskExecuser);
-					notifyMsgService.pushMsg(user, xmTaskDb.getCreateUserid(), xmTaskDb.getCreateUsername(), "2", xmTaskDb.getProjectId(), xmTaskDb.getId(), xmTaskExecuserDb.getUsername()+"离开任务【" + xmTaskDb.getId() + "-" + xmTaskDb.getName() + "】！");
-					notifyMsgService.pushMsg(user, xmTaskExecuserDb.getUserid(), xmTaskExecuserDb.getUsername(), "2", xmTaskDb.getProjectId(), xmTaskDb.getId(), "您已离开任务【" + xmTaskDb.getId() + "-" + xmTaskDb.getName() + "】！");
+					notifyMsgService.pushMsg(user, xmTaskDb.getCreateUserid(), xmTaskDb.getCreateUsername(), xmTaskExecuserDb.getUsername()+"离开任务【" + xmTaskDb.getId() + "-" + xmTaskDb.getName() + "】！",null);
+					notifyMsgService.pushMsg(user, xmTaskExecuserDb.getUserid(), xmTaskExecuserDb.getUsername(), "您已离开任务【" + xmTaskDb.getId() + "-" + xmTaskDb.getName() + "】！",null);
 
 					
 				}else {

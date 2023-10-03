@@ -142,7 +142,7 @@ public class XmTestPlanController {
 			xmTestPlan.setCtime(new Date());
 			xmTestPlan.setCbranchId(user.getBranchId());
 			xmTestPlanService.insert(xmTestPlan);
-		
+		return Result.ok().setData(xmTestPlan);
 	}
 
 	@ApiOperation( value = "删除一条测试计划信息",notes=" ")
@@ -196,7 +196,7 @@ public class XmTestPlanController {
 				Result.assertIsFalse(tips);
 			}
 			xmTestPlanService.updateSomeFieldByPk(xmTestPlan);
-		
+		return Result.ok();
 	}
 
     @ApiOperation( value = "批量修改某些字段",notes="")
@@ -248,7 +248,7 @@ public class XmTestPlanController {
 				can=xmTestPlansDb;
 			}else {
 				for (XmTestPlan xmTestPlanDb : xmTestPlansDb) {
-	 				Tips tips 2 =productQxService.checkProductQx(xmProductDb,1,user,xmTestPlanDb.getCuserid(),xmTestPlanDb.getCusername(),xmTestPlanDb.getCbranchId());
+	 				Tips tips2 =productQxService.checkProductQx(xmProductDb,1,user,xmTestPlanDb.getCuserid(),xmTestPlanDb.getCusername(),xmTestPlanDb.getCbranchId());
 					if(!tips2.isOk()){
 						no.add(xmTestPlanDb);
 						noTips.add(tips2.getMsg());
@@ -303,7 +303,7 @@ public class XmTestPlanController {
 				can=datasDb;
 			}else {
 				for (XmTestPlan xmTestPlanDb : datasDb) {
-	 				Tips tips 2  =productQxService.checkProductQx(xmProductDb,1,user,xmTestPlanDb.getCuserid(),xmTestPlanDb.getCusername(),xmTestPlanDb.getCbranchId());
+	 				Tips tips2  =productQxService.checkProductQx(xmProductDb,1,user,xmTestPlanDb.getCuserid(),xmTestPlanDb.getCusername(),xmTestPlanDb.getCbranchId());
 					if(!tips2.isOk()){
 						no.add(xmTestPlanDb);
 						noTips.add(tips2.getMsg());
