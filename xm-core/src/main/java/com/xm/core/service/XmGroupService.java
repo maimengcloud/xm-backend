@@ -27,9 +27,7 @@ public class XmGroupService  {
 	@Autowired
 	XmRecordService xmRecordService;
 	  
-    
-    @Autowired
-	XmGroupCacheService groupCacheService;
+
 
 
 	@Autowired
@@ -48,13 +46,6 @@ public class XmGroupService  {
 
 	@Autowired
 	SysClient sysClient;
-
-    public void clearProjectGroup(String projectId){
-		groupCacheService.clearProjectGroups(projectId);
-	}
-	public void clearProductGroup(String productId){
-		groupCacheService.clearProductGroups(productId);
-	}
 
 
 

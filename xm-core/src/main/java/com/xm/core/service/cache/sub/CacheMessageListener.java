@@ -29,9 +29,6 @@ public class CacheMessageListener implements MessageListener {
 	XmProjectCacheService xmProjectCacheService;
 
 
-	@Autowired
-	XmGroupCacheService  xmGroupCacheService;
-
 
     private static final Logger logger = LoggerFactory.getLogger(CacheMessageListener.class);
 	
@@ -60,9 +57,9 @@ public class CacheMessageListener implements MessageListener {
  			}else if(channelName.startsWith("XM_PROJECT_CACHE")) {
 				xmProjectCacheService.clearLocalCache(msg);
 			}else if(channelName.startsWith("XM_GROUP_PRJ_CACHE")) {
-				xmGroupCacheService.clearLocalPrjectCache(msg);
+
 			}else if(channelName.startsWith("XM_GROUP_PRD_CACHE")) {
-				xmGroupCacheService.clearLocalProductCache(msg);
+
 			}
 			logger.debug("消息下行结束!!!!!!!!");
 		} catch (Exception e) {
