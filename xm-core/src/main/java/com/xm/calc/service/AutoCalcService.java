@@ -34,8 +34,6 @@ public class AutoCalcService{
     @Autowired
     XmBranchStateService xmBranchStateService;
 
-    @Autowired
-    XmGroupStateService xmGroupStateService;
 
     @Scheduled(cron = "0 0 0 * * ?")
     public void load_tasks_to_xm_project_state(){
@@ -45,7 +43,6 @@ public class AutoCalcService{
                 boolean notExists=redisTemplate.opsForValue().setIfAbsent("load_tasks_to_xm_project_state-"+projectId,"1",12L, TimeUnit.HOURS);
                 if(notExists){
                     xmProjectStateService.loadTasksToXmProjectState(projectId);
-                    xmGroupStateService.loadTasksToXmProjectGroupState(projectId);
                 }
 
             }
