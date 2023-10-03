@@ -161,10 +161,6 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 	public void becomeExecute(XmTask xmTaskDb,XmTaskExecuser xmTaskExecuser){
 		String projectId=xmTaskDb.getProjectId();
 		String taskId=xmTaskExecuser.getTaskId();
- 		 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
-		 User user=LoginUtils.getCurrentUserInfo();
- 
- 		List<XmGroupVo> userGroups=groupService.getUserGroups(pgroups, xmTaskExecuser.getBidUserid());
  		XmTaskExecuser query=new XmTaskExecuser(); 
  		query.setTaskId(taskId);
 		XmTaskExecuser xmTaskExecuserDb=null;
@@ -195,24 +191,22 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
  		 XmTaskExecuser xmTaskExecuser2=new XmTaskExecuser();
 		xmTaskExecuser2.setTaskId(xmTaskExecuser.getTaskId());
 		xmTaskExecuser2.setBidUserid(xmTaskExecuser.getBidUserid());
-			xmTaskExecuser2.setStatus("1");
-			this.updateSomeFieldByPk(xmTaskExecuser2);
-			/** 
-			 * 下面为推送任务执行人变更im通知消息
-			 */
- 			String imMsg=xmTaskExecuser.getBidUsername()+"变更为任务["+xmTaskDb.getId()+"-"+xmTaskDb.getName()+"]执行人";
-			for (XmGroupVo g : userGroups) {
-				this.pushMsgService.pushGroupMsg(user.getBranchId(),g.getId(),  xmTaskExecuser.getBidUserid(), xmTaskExecuser.getBidUsername(),imMsg );
-				this.pushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(),user.getUsername(),xmTaskExecuser.getBidUserid(), xmTaskExecuser.getBidUsername(),imMsg);
-			}
-			this.pushMsgService.pushCssMsg(user.getBranchId(), xmTaskExecuser.getBidUserid(), xmTaskExecuser.getBidUsername(), imMsg);
+		xmTaskExecuser2.setStatus("1");
+		this.updateById(xmTaskExecuser2,true);
+		User user=LoginUtils.getCurrentUserInfo();
+		/**
+		 * 下面为推送任务执行人变更im通知消息
+		 */
+		String imMsg=xmTaskExecuser.getBidUsername()+"变更为任务["+xmTaskDb.getId()+"-"+xmTaskDb.getName()+"]执行人";
 
-			notifyMsgService.pushMsg(user, xmTaskExecuser.getBidUserid(), xmTaskExecuser.getBidUsername(), "恭喜您被雇主选为任务【" + xmTaskExecuser.getTaskId() + "-" + xmTaskDb.getName() + "】的中标人,请尽快开展工作。",null);
+		this.pushMsgService.pushCssMsg(user.getBranchId(), xmTaskExecuser.getBidUserid(), xmTaskExecuser.getBidUsername(), imMsg);
 
-			updateXmTaskExeUseridsAndUsernamesByTaskId(taskId);
-			if("2".equals(xmTaskDb.getOshare()) && xmTaskDb.getShareFee()!=null && xmTaskDb.getShareFee().compareTo(BigDecimal.ZERO)>0){
-				mkClient.pushAfterTaskExecSuccess(xmTaskExecuserDb.getBidUserid(),xmTaskExecuserDb.getBidUsername(),xmTaskDb.getProjectId(),xmTaskDb.getId(),xmTaskDb.getShareFee());
-			}
+		notifyMsgService.pushMsg(user, xmTaskExecuser.getBidUserid(), xmTaskExecuser.getBidUsername(), "恭喜您被雇主选为任务【" + xmTaskExecuser.getTaskId() + "-" + xmTaskDb.getName() + "】的中标人,请尽快开展工作。",null);
+
+		updateXmTaskExeUseridsAndUsernamesByTaskId(taskId);
+		if("2".equals(xmTaskDb.getOshare()) && xmTaskDb.getShareFee()!=null && xmTaskDb.getShareFee().compareTo(BigDecimal.ZERO)>0){
+			mkClient.pushAfterTaskExecSuccess(xmTaskExecuserDb.getBidUserid(),xmTaskExecuserDb.getBidUsername(),xmTaskDb.getProjectId(),xmTaskDb.getId(),xmTaskDb.getShareFee());
+		}
 
  		xmRecordService.addXmTaskRecord(projectId, taskId, "项目-任务-变更为执行人", xmTaskExecuser.getBidUsername()+"变更为任务执行人",null,null);
 	}
@@ -224,6 +218,7 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 	public void becomeCandidate(XmTaskExecuser xmTaskExecuser) {
 		XmTaskExecuser xmTaskExecuserNew=new XmTaskExecuser();
 		xmTaskExecuserNew.setTaskId(xmTaskExecuser.getTaskId());
+		xmTaskExecuserNew.setBidUsername(xmTaskExecuser.getBidUsername());
 		xmTaskExecuserNew.setBidUserid(xmTaskExecuser.getBidUserid());
  		xmTaskExecuserNew.setQuoteWeekday(xmTaskExecuser.getQuoteWeekday());
 		xmTaskExecuserNew.setQuoteWorkload(xmTaskExecuser.getQuoteWorkload());
@@ -232,7 +227,7 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 		xmTaskExecuserNew.setQuoteStartTime(xmTaskExecuser.getQuoteStartTime());
 		xmTaskExecuserNew.setSkillRemark(xmTaskExecuser.getSkillRemark()); 
 		xmTaskExecuserNew.setStatus("0");
-		this.updateSomeFieldByPk(xmTaskExecuserNew);
+		this.updateById(xmTaskExecuserNew,true);
 		updateXmTaskExeUseridsAndUsernamesByTaskId(xmTaskExecuser.getTaskId());
 		this.pushMsgService.pushCssMsg(xmTaskExecuser.getBranchId(), xmTaskExecuser.getBidUserid(), xmTaskExecuser.getBidUsername(),  xmTaskExecuser.getBidUsername()+"变更为候选人并提交关于任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】报价信息");
 		User user=LoginUtils.getCurrentUserInfo();

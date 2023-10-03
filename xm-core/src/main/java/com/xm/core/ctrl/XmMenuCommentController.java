@@ -105,7 +105,7 @@ public class XmMenuCommentController {
 			User user=LoginUtils.getCurrentUserInfo();
 			XmMenu xmMenuDb=this.xmMenuService.selectOneById(xmMenuComment.getMenuId());
 			if(xmMenuDb==null){
-				return ResponseHelper.failed("xmMenu-0","需求已不存在");
+				return Result.error("xmMenu-0","需求已不存在");
 			}
 			xmMenuComment.setId(xmMenuCommentService.createKey("id"));
 			xmMenuComment.setBranchId(user.getBranchId());
@@ -135,13 +135,13 @@ public class XmMenuCommentController {
 
 			XmMenuComment commentDb=this.xmMenuCommentService.selectOneById(xmMenuComment.getId());
 			if(commentDb==null){
-				return ResponseHelper.failed("data-0","评论已不存在");
+				return Result.error("data-0","评论已不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!LoginUtils.isSuperAdmin()){
 				if(!LoginUtils.isBranchAdmin(commentDb.getBranchId())){
 					if(!user.getUserid().equals(commentDb.getUserid())){
-						return ResponseHelper.failed("no-qx-0","无权限删除评论");
+						return Result.error("no-qx-0","无权限删除评论");
 					}
 				}
 			}
@@ -176,14 +176,14 @@ public class XmMenuCommentController {
 		User user=LoginUtils.getCurrentUserInfo();
 		List<XmMenuComment> comments=this.xmMenuCommentService.selectListByIds(Arrays.asList(ids));
 		if(comments==null || comments.size()==0){
-			return ResponseHelper.failed("data-0","评论已不存在");
+			return Result.error("data-0","评论已不存在");
 		}
 		boolean isSuperAdmin=LoginUtils.isSuperAdmin();
 		for (XmMenuComment comment : comments) {
 			if(!isSuperAdmin){
 				if(!LoginUtils.isBranchAdmin(comment.getBranchId())){
 					if(!user.getUserid().equals(comment.getUserid())){
-						return ResponseHelper.failed("无权限修改","无权限屏蔽评论【"+comment.getContext()+"】");
+						return Result.error("无权限修改","无权限屏蔽评论【"+comment.getContext()+"】");
 					}
 				}
 			}
@@ -203,14 +203,14 @@ public class XmMenuCommentController {
 		User user= LoginUtils.getCurrentUserInfo();
 		List<XmMenuComment> comments=this.xmMenuCommentService.selectListByIds(Arrays.asList(ids));
 		if(comments==null || comments.size()==0){
-			return ResponseHelper.failed("data-0","评论已不存在");
+			return Result.error("data-0","评论已不存在");
 		}
 		boolean isSuperAdmin=LoginUtils.isSuperAdmin();
 		for (XmMenuComment comment : comments) {
 			if(!isSuperAdmin){
 				if(!LoginUtils.isBranchAdmin(comment.getBranchId())){
 					if(!user.getUserid().equals(comment.getUserid())){
-						return ResponseHelper.failed("无权限修改","无权限打开此评论【"+comment.getContext()+"】");
+						return Result.error("无权限修改","无权限打开此评论【"+comment.getContext()+"】");
 					}
 				}
 			}

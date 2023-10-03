@@ -185,22 +185,22 @@ public class XmTestPlanCaseController {
 	public Result importFromTestCase(@RequestBody ImportFromTestCaseVo importFromTestCaseVo) {
 
 			if(importFromTestCaseVo.getCaseIds()==null || importFromTestCaseVo.getCaseIds().size()==0){
-				return ResponseHelper.failed("caseIds-0","测试用例编号不能为空");
+				return Result.error("caseIds-0","测试用例编号不能为空");
 			}
 			if(!StringUtils.hasText(importFromTestCaseVo.getPlanId())){
-				return ResponseHelper.failed("planId-0","测试计划编号不能为空");
+				return Result.error("planId-0","测试计划编号不能为空");
 			}
 			List<XmTestCase> casesDb=xmTestCaseService.selectListByIds(importFromTestCaseVo.getCaseIds());
 			if(casesDb==null || casesDb.size()<=0){
-				return ResponseHelper.failed("cases-0","测试用例不存在");
+				return Result.error("cases-0","测试用例不存在");
 			}
 
 			XmTestPlan xmTestPlanDb=this.xmTestPlanService.selectOneById(importFromTestCaseVo.getPlanId());
 			if(xmTestPlanDb==null){
-				return ResponseHelper.failed("testPlan-0","测试计划不存在");
+				return Result.error("testPlan-0","测试计划不存在");
 			}
 			if("2".equals(xmTestPlanDb.getStatus())){
-				return ResponseHelper.failed("status-2","测试计划已结束");
+				return Result.error("status-2","测试计划已结束");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmProduct xmProductDb=productService.getProductFromCache(xmTestPlanDb.getProductId());

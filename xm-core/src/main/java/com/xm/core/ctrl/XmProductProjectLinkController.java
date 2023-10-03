@@ -84,10 +84,10 @@ public class XmProductProjectLinkController {
 
 			User user = LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmProductProjectLink.getProductId())){
-				return ResponseHelper.failed("productId-0","产品编号不能为空");
+				return Result.error("productId-0","产品编号不能为空");
 			}
 			if(!StringUtils.hasText(xmProductProjectLink.getProjectId())){
-				return ResponseHelper.failed("projectId-0","项目编号不能为空");
+				return Result.error("projectId-0","项目编号不能为空");
 			}
 			 if(xmProductProjectLinkService.selectOneObject(xmProductProjectLink) !=null ){
 				return Result.error("已加入，无需再添加");
@@ -95,7 +95,7 @@ public class XmProductProjectLinkController {
 			}
 			if(!xmGroupService.checkUserIsProductAdm(xmProductProjectLink.getProductId(),user.getUserid())){
 				if(!xmGroupService.checkUserIsProjectAdm(xmProductProjectLink.getProjectId(),user.getUserid())){
-					return ResponseHelper.failed("not-pm","您不是项目管理人员、也不是产品管理人员，无权关联");
+					return Result.error("not-pm","您不是项目管理人员、也不是产品管理人员，无权关联");
 				}
 			};
 			xmProductProjectLink.setCtime(new Date());
@@ -119,19 +119,19 @@ public class XmProductProjectLinkController {
 
 			User user = LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmProductProjectLink.getProductId())){
-				return ResponseHelper.failed("productId-0","产品编号不能为空");
+				return Result.error("productId-0","产品编号不能为空");
 			}
 			if(!StringUtils.hasText(xmProductProjectLink.getProjectId())){
-				return ResponseHelper.failed("projectId-0","项目编号不能为空");
+				return Result.error("projectId-0","项目编号不能为空");
 			}
 			if(!xmGroupService.checkUserIsProductAdm(xmProductProjectLink.getProductId(),user.getUserid())){
 				if(!xmGroupService.checkUserIsProjectAdm(xmProductProjectLink.getProjectId(),user.getUserid())){
-					return ResponseHelper.failed("not-pm","您不是项目管理人员、也不是产品管理人员，无权取消关联");
+					return Result.error("not-pm","您不是项目管理人员、也不是产品管理人员，无权取消关联");
 				}
 			};
 			List<XmTask> tasks=xmTaskService.listTenTaskByProjectIdAndProductId(xmProductProjectLink.getProjectId(),xmProductProjectLink.getProductId());
 			if(tasks!=null && tasks.size()>0){
-				return ResponseHelper.failed("tasks-not-0","存在至少"+tasks.size()+"个任务与产品关联，不能移出.关联任务【"+tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
+				return Result.error("tasks-not-0","存在至少"+tasks.size()+"个任务与产品关联，不能移出.关联任务【"+tasks.stream().map(i->i.getName()).collect(Collectors.joining(","))+"】");
 			}
 			xmProductProjectLinkService.deleteByPk(xmProductProjectLink);
 		return Result.ok();
@@ -161,7 +161,7 @@ public class XmProductProjectLinkController {
 			List<Map<String,Object>> ids= (List<Map<String, Object>>) map.get("pkList");
 
 			if(ids==null || ids.size()==0){
-				ResponseHelper.failed("ids-0","ids不能为空");
+				Result.error("ids-0","ids不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
@@ -169,14 +169,14 @@ public class XmProductProjectLinkController {
 			fields.add("projectId");
 			for (String fieldName : map.keySet()) {
 				if(fields.contains(fieldName)){
-					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			Set<String> fieldKey=map.keySet().stream().filter(i-> fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(map.get(i) )).collect(Collectors.toSet());
 
 			if(fieldKey.size()<=0) {
-				return ResponseHelper.failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
 			}
 			this.xmProductProjectLinkService.editSomeFields(map);
 		return Result.ok();

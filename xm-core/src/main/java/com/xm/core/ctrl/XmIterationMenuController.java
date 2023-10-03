@@ -105,11 +105,11 @@ public class XmIterationMenuController {
 			User user= LoginUtils.getCurrentUserInfo();
 			List<String> menuIds=xmIterationMenus.getMenuIds();
 			if(menuIds==null || menuIds.size()==0){
-				return ResponseHelper.failed("menuIds-0","用户故事编号不能为空");
+				return Result.error("menuIds-0","用户故事编号不能为空");
 			}
 			List<XmMenu> menus=operQxService.getUserCanOpMenusByIds(menuIds,user.getUserid(),false);
 			if(menus==null || menus.size()==0){
-				return ResponseHelper.failed("menus-0","无权限操作");
+				return Result.error("menus-0","无权限操作");
 			}
 			List<XmMenu> canOpList=menus;
  			List<XmMenu> notJoins=new ArrayList<>();
@@ -152,15 +152,15 @@ public class XmIterationMenuController {
 
 			User user=LoginUtils.getCurrentUserInfo();
 			if(!StringUtils.hasText(xmIterationMenus.getIterationId())){
-				return ResponseHelper.failed("iterationId-0","迭代编号不能为空");
+				return Result.error("iterationId-0","迭代编号不能为空");
 			}
 			List<String> menuIds=xmIterationMenus.getMenuIds();
 			if(menuIds==null || menuIds.size()==0){
-				return ResponseHelper.failed("menuIds-0","用户故事编号不能为空");
+				return Result.error("menuIds-0","用户故事编号不能为空");
 			}
 			List<XmMenu> menus=operQxService.getUserCanOpMenusByIds(menuIds,user.getUserid(),false);
 			if(menus==null || menus.size()==0){
-				return ResponseHelper.failed("no-qx-0","无权限操作");
+				return Result.error("no-qx-0","无权限操作");
 			}
  			List<XmMenu> canOpList=menus;
 			List<XmMenu> hadJoin=new ArrayList<>();
@@ -186,14 +186,14 @@ public class XmIterationMenuController {
 			if(canAdds.size()>0){
 				XmIteration xmIteration=xmIterationService.selectOneObject(new XmIteration(xmIterationMenus.getIterationId()));
 				if(!"0".equals(xmIteration.getIphase()) && !"1".equals(xmIteration.getIphase())){
-					return ResponseHelper.failed("iphase-not-0-1",xmIteration.getIterationName()+"已过了用户故事评审阶段，不能再添加用户故事");
+					return Result.error("iphase-not-0-1",xmIteration.getIterationName()+"已过了用户故事评审阶段，不能再添加用户故事");
 				}
 				if(xmIteration==null){
-					return ResponseHelper.failed("iteration-0","迭代不存在");
+					return Result.error("iteration-0","迭代不存在");
 				}
 				msgs.add("成功将"+canAdds.size()+"个用户故事加入迭代");
 				if("1".equals(xmIteration.getIstatus())||"7".equals(xmIteration.getIphase())){
-					return ResponseHelper.failed("istatus-1","迭代已关闭");
+					return Result.error("istatus-1","迭代已关闭");
 				}
 				xmIterationMenus.setIterationName(xmIteration.getIterationName());
 				xmIterationMenus.setMenuIds(canAdds.stream().map(i->i.getMenuId()).collect(Collectors.toList()));

@@ -114,38 +114,38 @@ public class XmTaskOrderController {
 	public Result addXmTaskOrder(@RequestBody AddXmTaskOrderVo xmTaskOrder) {
 
 			if(!StringUtils.hasText(xmTaskOrder.getTaskId())){
-				return ResponseHelper.failed("taskId-0","任务编号不能为空");
+				return Result.error("taskId-0","任务编号不能为空");
 			}
 			XmTask xmTaskDb=this.xmTaskService.selectOneById(xmTaskOrder.getTaskId());
 			if(xmTaskDb==null){
-				return ResponseHelper.failed("data-0","任务已不存在");
+				return Result.error("data-0","任务已不存在");
 			}
 			if(!"1".equals(xmTaskDb.getTaskOut())){
-				return ResponseHelper.failed("taskOut-0","不是外包任务，无须付款");
+				return Result.error("taskOut-0","不是外包任务，无须付款");
 			}
 
 			if(!"1".equals(xmTaskDb.getCrowd())){
-				return ResponseHelper.failed("taskOut-0","不是众包任务，无须付款");
+				return Result.error("taskOut-0","不是众包任务，无须付款");
 			}
 			if(!StringUtils.hasText(xmTaskOrder.getBizType())){
-				return ResponseHelper.failed("bizType-0","业务类型不能为空bizType:1-保证金，2-营销推广");
+				return Result.error("bizType-0","业务类型不能为空bizType:1-保证金，2-营销推广");
 			}
 			if("1".equals(xmTaskOrder.getBizType())){
 				if(!"4".equals(xmTaskDb.getBidStep())){
-					return ResponseHelper.failed("bidStep-not-4","当前任务未到缴纳保证金步骤");
+					return Result.error("bidStep-not-4","当前任务未到缴纳保证金步骤");
 				}
 				if(!"1".equals(xmTaskDb.getEstate()) && !"0".equals(xmTaskDb.getEstate()) && !StringUtils.hasText(xmTaskDb.getEstate())){
-					return ResponseHelper.failed("estate-not-1","当前任务不是待缴纳保证金状态");
+					return Result.error("estate-not-1","当前任务不是待缴纳保证金状态");
 				}
 				if(xmTaskDb.getQuoteFinalAt()==null || xmTaskDb.getQuoteFinalAt().compareTo(BigDecimal.ZERO)<=0){
-					return ResponseHelper.failed("quoteFinalAt-0","最终任务价格不能为空");
+					return Result.error("quoteFinalAt-0","最终任务价格不能为空");
 				}
 			}else if("2".equals(xmTaskOrder.getBizType())){
 				if(!"1".equals(xmTaskDb.getTop()) && !"1".equals(xmTaskDb.getOshare()) && !"1".equals(xmTaskDb.getUrgent()) && !"1".equals(xmTaskDb.getCrmSup()) && !"1".equals(xmTaskDb.getHot()) ) {
-					return ResponseHelper.failed("no-need-pay", "没有选中任何推广活动，无须缴款");
+					return Result.error("no-need-pay", "没有选中任何推广活动，无须缴款");
 				}
 			}else{
-				return ResponseHelper.failed("bizType-0", "业务类型错误bizType:1-保证金，2-营销推广");
+				return Result.error("bizType-0", "业务类型错误bizType:1-保证金，2-营销推广");
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			XmTaskOrder order=new XmTaskOrder();
@@ -163,21 +163,21 @@ public class XmTaskOrderController {
 					order.setEstate("1");
 					originFee=originFee.add(order.getEfunds());
 					if(xmTaskDb.getQuoteFinalAt()==null || xmTaskDb.getQuoteFinalAt().compareTo(BigDecimal.ZERO)<=0){
-						return ResponseHelper.failed("quoteFinalAt-0","保证金金额计算错误，原因为中标人报价金额为空。");
+						return Result.error("quoteFinalAt-0","保证金金额计算错误，原因为中标人报价金额为空。");
 					}
 				}else if("2".equals(xmTaskDb.getEstate()) ){
 					if(xmTaskDb.getQuoteFinalAt()==null || xmTaskDb.getQuoteFinalAt().compareTo(BigDecimal.ZERO)<=0){
-						return ResponseHelper.failed("quoteFinalAt-0","保证金金额计算错误，原因为中标人报价金额为空。");
+						return Result.error("quoteFinalAt-0","保证金金额计算错误，原因为中标人报价金额为空。");
 					}
 					if(xmTaskDb.getEfunds().compareTo(xmTaskDb.getQuoteFinalAt())>=0){
-						return ResponseHelper.failed("estate-not-2-3","保证金已支付过，不能重复缴纳");
+						return Result.error("estate-not-2-3","保证金已支付过，不能重复缴纳");
 					}else{
 						order.setEfunds(xmTaskDb.getQuoteFinalAt().subtract(xmTaskDb.getEfunds()));
 						order.setEstate("1");
 						originFee=originFee.add(order.getEfunds());
 					}
 				}else{
-					return ResponseHelper.failed("estate-not-2-3","保证金已支付过，不能重复缴纳");
+					return Result.error("estate-not-2-3","保证金已支付过，不能重复缴纳");
 				}
 
 				order.setName("托管任务赏金【"+xmTaskDb.getName()+"】");
@@ -222,7 +222,7 @@ public class XmTaskOrderController {
 					order.setOshare("1");
 					order.setShareFee(xmTaskDb.getShareFee());
 					if(order.getShareFee()==null || order.getShareFee().compareTo(BigDecimal.ZERO)<0){
-						return ResponseHelper.failed("shareFee-0","分享佣金不能为空");
+						return Result.error("shareFee-0","分享佣金不能为空");
 					}
 					originFee=originFee.add(order.getShareFee());
 				}

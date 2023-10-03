@@ -320,7 +320,7 @@ public class XmProductController {
 			 if(!"1".equals(xmProductDb.getIsTpl())){
 			 long menus=xmProductService.checkExistsMenu(xmProduct.getId());
 			 if(menus>0) {
-			 return ResponseHelper.failed("had-menus","该产品有"+menus+"个需求关联，不允许删除，请先解绑需求");
+			 return Result.error("had-menus","该产品有"+menus+"个需求关联，不允许删除，请先解绑需求");
 
 			 }
 			 }
@@ -369,7 +369,7 @@ public class XmProductController {
 			 if(!"1".equals(xmProductDb.getIsTpl())){
 				 long menus=xmProductService.checkExistsMenu(xmProduct.getId());
 				 if(menus>0) {
-					 return ResponseHelper.failed("had-menus","该产品有"+menus+"个需求关联，不允许删除，请先解绑需求");
+					 return Result.error("had-menus","该产品有"+menus+"个需求关联，不允许删除，请先解绑需求");
 
 				 }
 			 }

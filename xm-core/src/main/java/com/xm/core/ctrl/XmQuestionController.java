@@ -282,11 +282,11 @@ public class XmQuestionController {
 			List<String> ids= (List<String>) xmQuestionMap.get("ids");
 
 			if(ids==null || ids.size()==0){
-				ResponseHelper.failed("ids-0","ids不能为空");
+				Result.error("ids-0","ids不能为空");
 			}
  			List<XmQuestion> xmQuestionsDb=xmQuestionService.selectListByIds(ids);
 			if(xmQuestionsDb==null ||xmQuestionsDb.size()==0){
-				ResponseHelper.failed("bugs-0","该bug已不存在");
+				Result.error("bugs-0","该bug已不存在");
 			}
 
 			List<XmQuestion> canOper=new ArrayList<>();
@@ -309,7 +309,7 @@ public class XmQuestionController {
 					Set<String> fields=new HashSet<>();
 					for (String fieldName : xmQuestionMap.keySet()) {
 						if(fields.contains(fieldName)){
-							return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+							return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 						}
 					}
 					if(StringUtils.hasText(xmQuestionsDb.get(0).getProductId()) && xmQuestionMap.containsKey("handlerUserid")){
@@ -411,11 +411,11 @@ public class XmQuestionController {
 
 			User user=LoginUtils.getCurrentUserInfo();
 			if(xmQuestions==null || xmQuestions.size()==0){
-				return ResponseHelper.failed("p-0","参数不能为空");
+				return Result.error("p-0","参数不能为空");
 			}
 			List<XmQuestion> xmQuestionsDb=xmQuestionService.selectListByIds(xmQuestions.stream().map(i->i.getId()).collect(Collectors.toList()));
 			if(xmQuestionsDb==null || xmQuestionsDb.size()==0){
-				return ResponseHelper.failed("data-0","所有数据已不存在");
+				return Result.error("data-0","所有数据已不存在");
 			}
 			List<XmQuestion> canOper=new ArrayList<>();
 

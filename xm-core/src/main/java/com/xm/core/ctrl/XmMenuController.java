@@ -262,13 +262,13 @@ public class XmMenuController {
 		}
 		if(!StringUtils.hasText(xmMenu.getPmenuId())|| "0".equals(xmMenu.getPmenuId())){
 			if(!"1".equals(xmMenu.getDclass())){
-				return ResponseHelper.failed("dclass-not-1","一级需求目录只能是史诗");
+				return Result.error("dclass-not-1","一级需求目录只能是史诗");
 			}
 		}
 
 		XmProduct xmProduct= productService.getProductFromCache(xmMenu.getProductId());
 		if(xmProduct==null){
-			return ResponseHelper.failed("data-0","产品已不存在");
+			return Result.error("data-0","产品已不存在");
 		}
 		Tips tips=productQxService.checkProductQx(xmProduct,2,user);
 		Result.assertIsFalse(tips);
@@ -315,7 +315,7 @@ public class XmMenuController {
 		User user=LoginUtils.getCurrentUserInfo();
 		XmTask xmTask = new XmTask();
 		if(StringUtils.isEmpty(xmMenu.getMenuId())){
-			return ResponseHelper.failed("menuId-0","需求编号不能为空");
+			return Result.error("menuId-0","需求编号不能为空");
 		}
 		xmTask.setMenuId(xmMenu.getMenuId());
 		long taskCount=xmTaskService.countByWhere(xmTask);
@@ -324,17 +324,17 @@ public class XmMenuController {
 		}else {
 			XmMenu xmMenuDb=this.xmMenuService.selectOneById(xmMenu.getMenuId());
 			if(xmMenuDb==null){
-				return ResponseHelper.failed("data-0","该需求已不存在");
+				return Result.error("data-0","该需求已不存在");
 			}
 			XmMenu xmMenuCount=new XmMenu();
 			xmMenuCount.setPmenuId(xmMenu.getMenuId());
 			long childrenCnt=this.xmMenuService.countByWhere(xmMenuCount);
 			if(childrenCnt>0){
-				return ResponseHelper.failed("childrenCnt-1","存在"+childrenCnt+"个子需求，不允许删除,请先删除子需求");
+				return Result.error("childrenCnt-1","存在"+childrenCnt+"个子需求，不允许删除,请先删除子需求");
 			}
 			XmProduct xmProduct= productService.getProductFromCache(xmMenuDb.getProductId());
 			if(xmProduct==null){
-				return ResponseHelper.failed("product-data-0","产品已不存在");
+				return Result.error("product-data-0","产品已不存在");
 			}
 			if(!groupService.checkUserIsProductAdm(xmProduct, user.getUserid())){
 				Tips tips =productQxService.checkProductQx(xmProduct,2,user,xmMenuDb.getMmUserid(),xmMenuDb.getMmUsername(),null);
@@ -362,7 +362,7 @@ public class XmMenuController {
 			List<String> menuIds= (List<String>) xmMenuMap.get("menuIds");
 
 			if(menuIds==null || menuIds.size()==0){
-				return ResponseHelper.failed("menuIds-0","menuIds不能为空");
+				return Result.error("menuIds-0","menuIds不能为空");
 			}
 
 			Set<String> fields=new HashSet<>();
@@ -373,29 +373,29 @@ public class XmMenuController {
 			fields.add("pbranchId");
 			for (String fieldName : xmMenuMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 
 			Set<String> fieldKey=xmMenuMap.keySet().stream().filter(i->fieldsMap.containsKey(i)).collect(Collectors.toSet());
 			fieldKey=fieldKey.stream().filter(i->!StringUtils.isEmpty(xmMenuMap.get(i) )).collect(Collectors.toSet());
 			if(fieldKey.size()<=0) {
-				return ResponseHelper.failed("fieldKey-0","没有需要更新的字段");
+				return Result.error("fieldKey-0","没有需要更新的字段");
 			}
 
 			XmMenu xmMenu= BaseUtils.fromMap(xmMenuMap,XmMenu.class);
 			List<XmMenu> xmMenusDb=this.xmMenuService.selectListByIds(menuIds);
 			if(xmMenusDb==null ||xmMenusDb.size()==0){
-				return ResponseHelper.failed("menus-0","需求均已不存在");
+				return Result.error("menus-0","需求均已不存在");
 			}
 			XmMenu xmMenuDb=xmMenusDb.get(0);
 			if(xmMenusDb.stream().filter(k->!xmMenuDb.getProductId().equals(k.getProductId())).findAny().isPresent()){
-				return ResponseHelper.failed("no-same-productId","批量操作只能在同一个产品进行。");
+				return Result.error("no-same-productId","批量操作只能在同一个产品进行。");
 			}
 
 			XmProduct xmProduct= productService.getProductFromCache(xmMenuDb.getProductId());
 			if(xmProduct==null){
-				return ResponseHelper.failed("product-data-0","产品已不存在");
+				return Result.error("product-data-0","产品已不存在");
 			}
 			
 			Tips tips=productQxService.checkProductQx(xmProduct,2,user);
@@ -481,15 +481,15 @@ public class XmMenuController {
 			List<XmMenu> canDelList=new ArrayList<>();
 			List<String> menuIds=xmMenus.stream().map(k->k.getMenuId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
 			if(menuIds==null||menuIds.size()<=0){
-				return ResponseHelper.failed("menuIds-0","需求编号不能为空");
+				return Result.error("menuIds-0","需求编号不能为空");
 			}
 			List<XmMenu> xmMenusDb=this.xmMenuService.selectListByIdsWithsChildrenCnt(menuIds);
 			if(xmMenusDb==null ||xmMenusDb.size()==0){
-				return ResponseHelper.failed("menus-0","需求均已不存在");
+				return Result.error("menus-0","需求均已不存在");
 			}
 			XmMenu xmMenuDb=xmMenusDb.get(0);
 			if(xmMenusDb.stream().filter(k->!xmMenuDb.getProductId().equals(k.getProductId())).findAny().isPresent()){
-				return ResponseHelper.failed("no-same-productId","批量操作只能在同一个产品进行。");
+				return Result.error("no-same-productId","批量操作只能在同一个产品进行。");
 			}
 
 			List<XmMenu> canOper=new ArrayList<>();
@@ -498,7 +498,7 @@ public class XmMenuController {
 			
 			XmProduct xmProduct= productService.getProductFromCache(xmMenuDb.getProductId());
 			if(xmProduct==null){
-				return ResponseHelper.failed("product-data-0","产品已不存在");
+				return Result.error("product-data-0","产品已不存在");
 			}
 			if(groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
 				canOper.addAll(xmMenusDb);
@@ -588,7 +588,7 @@ public class XmMenuController {
 				return Result.error("menuIds-0", "需求列表编号不能为空");
 			}
 			if(!StringUtils.hasText(parentMenuVo.getPmenuId())){
-				return ResponseHelper.failed("parentMenuid-0", "上级编号不能为空");
+				return Result.error("parentMenuid-0", "上级编号不能为空");
 			}
 
 			List<String> ids=parentMenuVo.getMenuIds().stream().collect(Collectors.toList());
@@ -596,19 +596,19 @@ public class XmMenuController {
 			ids=ids.stream().collect(Collectors.toSet()).stream().collect(Collectors.toList());
 			List<XmMenu> xmMenusDb=this.xmMenuService.selectListByIds(ids);
 			if(xmMenusDb==null ||xmMenusDb.size()==0){
-				return ResponseHelper.failed("menus-0","需求均已不存在");
+				return Result.error("menus-0","需求均已不存在");
 			}
 			XmMenu xmMenuDb=xmMenusDb.get(0);
 			if(xmMenusDb.stream().filter(k->!xmMenuDb.getProductId().equals(k.getProductId())).findAny().isPresent()){
-				return ResponseHelper.failed("no-same-productId","批量操作只能在同一个产品进行。");
+				return Result.error("no-same-productId","批量操作只能在同一个产品进行。");
 			}
 			Optional<XmMenu> optional=xmMenusDb.stream().filter(k->k.getMenuId().equals(parentMenuVo.getPmenuId())).findAny();
 			if(!optional.isPresent()){
-				return ResponseHelper.failed("no-parent","上级需求不存在");
+				return Result.error("no-parent","上级需求不存在");
 			}
 			XmMenu parentDb=optional.get();
 			if( !"1".equals(parentDb.getDclass()) && !"2".equals(parentDb.getDclass()) && !"0".equals(parentDb.getDclass())){
-				return ResponseHelper.failed("parentMenu-dclass-not-1", "【"+parentDb.getMenuName()+"】为故事，不能作为上级节点。请另选上级。");
+				return Result.error("parentMenu-dclass-not-1", "【"+parentDb.getMenuName()+"】为故事，不能作为上级节点。请另选上级。");
 			}
 			List<XmMenu> canOper=new ArrayList<>();
 			List<XmMenu> noOper=new ArrayList<>();
@@ -616,7 +616,7 @@ public class XmMenuController {
 			
 			XmProduct xmProduct= productService.getProductFromCache(xmMenuDb.getProductId());
 			if(xmProduct==null){
-				return ResponseHelper.failed("product-data-0","产品已不存在");
+				return Result.error("product-data-0","产品已不存在");
 			}
 			if(groupService.checkUserIsProductAdm(xmProduct,user.getUserid())){
 				canOper.addAll(xmMenusDb);
@@ -627,7 +627,7 @@ public class XmMenuController {
 						canOper.add(xm);
 					}else{
 						if(xm.getMenuId().equals(parentDb.getMenuId())){
-							return ResponseHelper.failed("pmenu-id-0",String.format("无权限挂接需求到【%s】,原因【%s】",xm.getMenuName(),tips.getMsg()));
+							return Result.error("pmenu-id-0",String.format("无权限挂接需求到【%s】,原因【%s】",xm.getMenuName(),tips.getMsg()));
 						}
 						noOper.add(xm);
 						noOperTips.put(tips.getMsg(),tips);
@@ -640,10 +640,10 @@ public class XmMenuController {
 			List<XmMenu> canOpxmMenus=xmMenusDb.stream().filter(i->!parentDb.getMenuId().equals(i.getPmenuId())).collect(Collectors.toList());
 			List<XmMenu> sameParentMenus=xmMenusDb.stream().filter(i->parentDb.getMenuId().equals(i.getPmenuId())).collect(Collectors.toList());
 			if(canOpxmMenus.size()==0){
-				return ResponseHelper.failed("same-parent","所有需求均属于【"+parentDb.getMenuName()+"】,无需再变更");
+				return Result.error("same-parent","所有需求均属于【"+parentDb.getMenuName()+"】,无需再变更");
 			}
 			if(canOpxmMenus.stream().filter(i->!i.getProductId().equals(parentDb.getProductId())).findAny().isPresent()){
-				return ResponseHelper.failed("productId-not-same", "所有需求必须都是同一个产品之下");
+				return Result.error("productId-not-same", "所有需求必须都是同一个产品之下");
 			}
 
 			Map<String,XmMenu> allowMenusDbMap=new HashMap<>();

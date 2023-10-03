@@ -89,24 +89,24 @@ public class XmEnvListController {
 	public Result addXmEnvList(@RequestBody XmEnvList xmEnvList) {
 
 			if(!StringUtils.hasText(xmEnvList.getProjectId())){
-				return ResponseHelper.failed("projectId-0","项目编号不能为空");
+				return Result.error("projectId-0","项目编号不能为空");
 			}
 			if(!StringUtils.hasText(xmEnvList.getName())){
-				return ResponseHelper.failed("name-0","名称不能为空");
+				return Result.error("name-0","名称不能为空");
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			if(StringUtils.hasText(xmEnvList.getProjectId())){
 				boolean inProjectGroup=xmGroupService.checkUserExistsProjectGroup(xmEnvList.getProjectId(),user.getUserid());
 				if(!inProjectGroup){
-					return ResponseHelper.failed("no-in-project","您不在项目中【"+xmEnvList.getProjectId()+"】，不能添加环境清单");
+					return Result.error("no-in-project","您不在项目中【"+xmEnvList.getProjectId()+"】，不能添加环境清单");
 				}
 			}
 
 			if(!StringUtils.hasText(xmEnvList.getReadQx())){
-				return ResponseHelper.failed("readQx-0","请选中读权限");
+				return Result.error("readQx-0","请选中读权限");
 			}
 			if(!StringUtils.hasText(xmEnvList.getWriteQx())){
-				return ResponseHelper.failed("writeQx-0","请选中写权限");
+				return Result.error("writeQx-0","请选中写权限");
 			}
 			xmEnvListService.addEnv(xmEnvList);
 		return Result.ok();
@@ -122,24 +122,24 @@ public class XmEnvListController {
 
 			XmEnvList xmEnvListDb=this.xmEnvListService.selectOneById(xmEnvList.getId());
 			if(xmEnvListDb==null){
-				return ResponseHelper.failed("data-0","数据已不存在");
+				return Result.error("data-0","数据已不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			if(StringUtils.hasText(xmEnvListDb.getWriteQx()) && !"0".equals(xmEnvListDb.getWriteQx()) && user.getUserid().equals(xmEnvListDb.getCreateUserid())){
 				String writeQx=xmEnvListDb.getWriteQx();
 				if("1".equals(writeQx)){//同一机构可写
 					if(!user.getBranchId().equals(xmEnvListDb.getBranchId())){
-						return ResponseHelper.failed("writeQx-err-1","您无权更改");
+						return Result.error("writeQx-err-1","您无权更改");
 					}
 				}else if("2".equals(writeQx)){//同一机构同一项目可写
 					boolean inProject=this.xmGroupService.checkUserExistsProjectGroup(xmEnvListDb.getProjectId(), user.getUserid());
 					if(!inProject){
-						return ResponseHelper.failed("writeQx-err-2","您不在项目【"+xmEnvListDb.getProjectId()+"】,无权更改");
+						return Result.error("writeQx-err-2","您不在项目【"+xmEnvListDb.getProjectId()+"】,无权更改");
 					}
 				}else if("3".equals(writeQx)){//同一机构同一项目可写
 	 				Tips tips isHeader=this.xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmEnvListDb.getCreateUserid(),xmEnvListDb.getProjectId());
  					if(!isHeader.isOk()){
-						return ResponseHelper.failed("writeQx-err-3","您不是【"+xmEnvListDb.getCreateUsername()+"】的上级,无权更改");
+						return Result.error("writeQx-err-3","您不是【"+xmEnvListDb.getCreateUsername()+"】的上级,无权更改");
 					}
 				}
 			}
@@ -158,24 +158,24 @@ public class XmEnvListController {
 
 			XmEnvList xmEnvListDb=this.xmEnvListService.selectOneById(xmEnvList.getId());
 			if(xmEnvListDb==null){
-				return ResponseHelper.failed("data-0","数据已不存在");
+				return Result.error("data-0","数据已不存在");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			if(StringUtils.hasText(xmEnvListDb.getWriteQx()) && !"0".equals(xmEnvListDb.getWriteQx()) && user.getUserid().equals(xmEnvListDb.getCreateUserid())){
 				String writeQx=xmEnvListDb.getWriteQx();
 				if("1".equals(writeQx)){//同一机构可写
 					if(!user.getBranchId().equals(xmEnvListDb.getBranchId())){
-						return ResponseHelper.failed("writeQx-err-1","您无权更改");
+						return Result.error("writeQx-err-1","您无权更改");
 					}
 				}else if("2".equals(writeQx)){//同一机构同一项目可写
 					boolean inProject=this.xmGroupService.checkUserExistsProjectGroup(xmEnvListDb.getProjectId(), user.getUserid());
 					if(!inProject){
-						return ResponseHelper.failed("writeQx-err-2","您不在项目【"+xmEnvListDb.getProjectId()+"】,无权更改");
+						return Result.error("writeQx-err-2","您不在项目【"+xmEnvListDb.getProjectId()+"】,无权更改");
 					}
 				}else if("3".equals(writeQx)){//同一机构同一项目可写
 	 				Tips tips isHeader=this.xmGroupService.checkIsProjectAdmOrTeamHeadOrAss(user,xmEnvListDb.getCreateUserid(),xmEnvListDb.getProjectId());
 					if(!isHeader.isOk()){
-						return ResponseHelper.failed("writeQx-err-3","您不是【"+xmEnvListDb.getCreateUsername()+"】的上级,无权更改");
+						return Result.error("writeQx-err-3","您不是【"+xmEnvListDb.getCreateUsername()+"】的上级,无权更改");
 					}
 				}
 			}

@@ -115,21 +115,21 @@ public class XmTaskBidOrderController {
 	public Result addXmTaskBidOrder(@RequestBody AddXmTaskBidOrderVo bidOrderVo) {
 
 			if(!StringUtils.hasText(bidOrderVo.getTaskId())){
-				return ResponseHelper.failed("taskId-0","任务编号不能为空");
+				return Result.error("taskId-0","任务编号不能为空");
 			}
 			XmTask xmTaskDb=this.xmTaskService.selectOneById(bidOrderVo.getTaskId());
 			if(xmTaskDb==null){
-				return ResponseHelper.failed("data-0","任务已不存在");
+				return Result.error("data-0","任务已不存在");
 			}
 			if(!"1".equals(xmTaskDb.getTaskOut())){
-				return ResponseHelper.failed("taskOut-0","不是外包任务，无须付款");
+				return Result.error("taskOut-0","不是外包任务，无须付款");
 			}
 
 			if(!"1".equals(xmTaskDb.getCrowd())){
-				return ResponseHelper.failed("taskOut-0","不是众包任务，无须付款");
+				return Result.error("taskOut-0","不是众包任务，无须付款");
 			}
 			if(!"2".equals(xmTaskDb.getBidStep()) ){
-				return ResponseHelper.failed("bidStep-no-2","当前任务不是投标阶段，无须购买投标直通车");
+				return Result.error("bidStep-no-2","当前任务不是投标阶段，无须购买投标直通车");
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			User userInterests=sysClient.getUserInterestsByUserid(user.getUserid());

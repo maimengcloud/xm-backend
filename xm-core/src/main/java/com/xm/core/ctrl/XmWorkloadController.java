@@ -30,7 +30,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mdp.core.utils.BaseUtils.map;
-import static com.mdp.core.utils.ResponseHelper.failed;
+import static com.mdp.core.utils.Result.error;
 
 /**
  * url编制采用rest风格,如对xm_workload 工时登记表的操作有增删改查,对应的url分别为:<br>
@@ -441,11 +441,11 @@ public class XmWorkloadController {
 	public Result batchDelXmWorkload(@RequestBody List<XmWorkload> xmWorkloads) {
 
 			if(xmWorkloads.stream().filter(i->!StringUtils.hasText(i.getId())).findAny().isPresent()){
-				return ResponseHelper.failed("id-0","主键不能为空");
+				return Result.error("id-0","主键不能为空");
 			}
 			xmWorkloads = xmWorkloadService.selectListByIds(xmWorkloads.stream().map(i->i.getId()).collect(Collectors.toList()));
 			if(xmWorkloads==null || xmWorkloads.size()==0){
-				return ResponseHelper.failed("data-0","工时已不存在");
+				return Result.error("data-0","工时已不存在");
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			List<String> taskIds=xmWorkloads.stream().map(i->i.getTaskId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());
@@ -531,7 +531,7 @@ public class XmWorkloadController {
 			List<String> ids= (List<String>) xmWorkloadMap.get("ids");
 
 			if(ids==null || ids.size()==0){
-				return ResponseHelper.failed("ids-0","ids不能为空");
+				return Result.error("ids-0","ids不能为空");
 			}
 			Set<String> fields=new HashSet<>();
 			fields.add("workload");
@@ -542,23 +542,23 @@ public class XmWorkloadController {
 
 			for (String fieldName : xmWorkloadMap.keySet()) {
 				if(fields.contains(fieldName)){
-					return ResponseHelper.failed(fieldName+"-no-edit",fieldName+"不允许修改");
+					return Result.error(fieldName+"-no-edit",fieldName+"不允许修改");
 				}
 			}
 			List<XmWorkload> xmWorkloadsDb= xmWorkloadService.selectListByIds(ids);
 			if(xmWorkloadsDb==null ||xmWorkloadsDb.size()==0){
-				return ResponseHelper.failed("tasks-0","该工时已不存在");
+				return Result.error("tasks-0","该工时已不存在");
 			}
 			String wstatus= (String) xmWorkloadMap.get("wstatus");
 			String sstatus= (String) xmWorkloadMap.get("sstatus");
 			if(StringUtils.hasText(sstatus)){
 				if(!"0".equals(sstatus) && !"1".equals(sstatus)){
-					return ResponseHelper.failed("sstatus-not-01","只能修改为无需结算或者待结算");
+					return Result.error("sstatus-not-01","只能修改为无需结算或者待结算");
 				}
 			}
 			if(StringUtils.hasText(wstatus)){
 				if(!"0".equals(wstatus) && !"1".equals(wstatus) ){
-					return ResponseHelper.failed("wstatus-not-01","工时状态不正确");
+					return Result.error("wstatus-not-01","工时状态不正确");
 				}
 			}
 			List<String> taskIds=xmWorkloadsDb.stream().map(i->i.getTaskId()).collect(Collectors.toSet()).stream().collect(Collectors.toList());

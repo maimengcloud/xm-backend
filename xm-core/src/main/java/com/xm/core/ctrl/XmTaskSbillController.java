@@ -167,46 +167,46 @@ public class XmTaskSbillController {
 		
 		
 		if(!StringUtils.hasText(batchJoinToSbill.getSbillId())){
-			return ResponseHelper.failed("sbillId-0","请上送结算单编号");
+			return Result.error("sbillId-0","请上送结算单编号");
 		}
 		if(batchJoinToSbill.getWorkloadIds()==null){
-			return ResponseHelper.failed("workloadIds-0","请上送workloadIds");
+			return Result.error("workloadIds-0","请上送workloadIds");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
 				
 			XmTaskSbill sbillDb=this.xmTaskSbillService.selectOneById(batchJoinToSbill.getSbillId());
 			if(sbillDb==null){
-				return ResponseHelper.failed("sbill-0","结算单不存在");
+				return Result.error("sbill-0","结算单不存在");
 			}
 			if(!"0".equals(sbillDb.getStatus())){
-				return ResponseHelper.failed("status-not-0","结算单已提交，不允许再加入工时");
+				return Result.error("status-not-0","结算单已提交，不允许再加入工时");
 			}
 			if(!user.getUserid().equals(sbillDb.getCuserid())){
-				return ResponseHelper.failed("cuserid-0","结算单不是您的结算单，您不能操作");
+				return Result.error("cuserid-0","结算单不是您的结算单，您不能操作");
 			}
 			List<XmWorkload> workloadsDb= xmWorkloadService.selectListByIds(batchJoinToSbill.getWorkloadIds());
 			if(workloadsDb==null || workloadsDb.size()<=0){
-				return ResponseHelper.failed("workloadsDb-0","工时单已不存在");
+				return Result.error("workloadsDb-0","工时单已不存在");
 			}
 			List<XmWorkload> workloadsDb2=workloadsDb.stream().filter(i->!StringUtils.hasText(i.getSbillId()) && "1".equals(i.getSstatus())&&"1".equals(i.getWstatus())).collect(Collectors.toList());
  			if(workloadsDb2==null || workloadsDb2.size()<=0){
-				return ResponseHelper.failed("workloadsDb-0","不存在可以结算的工时单。");
+				return Result.error("workloadsDb-0","不存在可以结算的工时单。");
 			}
 
 			if(workloadsDb2.stream().map(i->i.getProjectId()).collect(Collectors.toSet()).size()>1){
-				return ResponseHelper.failed("projectId-not-1","不能一次性处理多个项目的工时单，请选择同一个项目的工时单再尝试。");
+				return Result.error("projectId-not-1","不能一次性处理多个项目的工时单，请选择同一个项目的工时单再尝试。");
 			}
 			String projectId= sbillDb.getProjectId();
 			if(workloadsDb2.stream().filter(k->!k.getProjectId().equals(projectId)).findAny().isPresent()){
-				return ResponseHelper.failed("projectId-0",String.format("结算单项目编号为%s,请选择同项目的工时单加入结算单。",projectId));
+				return Result.error("projectId-0",String.format("结算单项目编号为%s,请选择同项目的工时单加入结算单。",projectId));
 			}
 			List<XmTask> xmTasksDb=this.xmTaskService.selectListByIds(workloadsDb2.stream().map(i->i.getTaskId()).collect(Collectors.toList()));
 			if(xmTasksDb==null || xmTasksDb.size()==0){
-				return ResponseHelper.failed("xmTasksDb-0","相关任务已不存在。");
+				return Result.error("xmTasksDb-0","相关任务已不存在。");
 			}
 			List<XmTask> xmTasksDb2=xmTasksDb.stream().filter(i->"2".equals(i.getTaskState())).collect(Collectors.toList());
 			if(xmTasksDb2==null || xmTasksDb2.size()==0){
-				return ResponseHelper.failed("taskState-not-2","任务必须是已完工状态才能结算。");
+				return Result.error("taskState-not-2","任务必须是已完工状态才能结算。");
 			}
 			List<XmWorkload> workloadsDb3=workloadsDb2.stream().filter(i->xmTasksDb2.stream().filter(k->k.getId().equals(i.getTaskId())).findAny().isPresent()).collect(Collectors.toList());
 
@@ -219,7 +219,7 @@ public class XmTaskSbillController {
 			List<XmTaskSbillDetail> othSbillDetails=details.stream().filter(i->!sbillDb.getId().equals(i.getSbillId())).collect(Collectors.toList());
  			for (XmTaskSbillDetail i : othSbillDetails) {
 				if(!"4".equals(i.getSstatus())){
-					return ResponseHelper.failed("user-task-exists-not-4",String.format("任务【%s】，人员【%s】存在未完成的结算单【%s】，暂时不允许发起结算。",i.getTaskName(),i.getUsername(),i.getSbillId()));
+					return Result.error("user-task-exists-not-4",String.format("任务【%s】，人员【%s】存在未完成的结算单【%s】，暂时不允许发起结算。",i.getTaskName(),i.getUsername(),i.getSbillId()));
 				}
 			}
 			if(sameSbillDetails!=null && sameSbillDetails.size()>0){

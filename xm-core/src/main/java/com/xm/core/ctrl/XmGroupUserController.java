@@ -1,18 +1,21 @@
 package com.xm.core.ctrl;
 
-import com.mdp.core.entity.Tips;
-import com.mdp.core.err.BizException;
-import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.ResponseHelper;
-import com.mdp.msg.client.PushNotifyMsgService;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
+import com.mdp.core.query.QueryTools;
+import com.mdp.core.utils.RequestUtils;
+import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
+import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmGroupUser;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
-import com.xm.core.service.*;
+import com.xm.core.service.XmGroupService;
+import com.xm.core.service.XmProductService;
+import com.xm.core.service.XmProjectService;
+import com.xm.core.service.XmRecordService;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.XmGroupVo;
 import io.swagger.annotations.*;
@@ -89,7 +92,7 @@ public class XmGroupUserController {
 	public Result listXmProjectGroupUser(@ApiIgnore @RequestParam Map<String,Object> params){
 		 
 		RequestUtils.transformArray(params, "ids");		
-		IPage page=QueryTools.initPage(params);
+		IPage page= QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
 		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
@@ -109,52 +112,52 @@ public class XmGroupUserController {
 
 
 			if(!StringUtils.hasText(gu.getGroupId())||!StringUtils.hasText(gu.getUserid())){
-				return ResponseHelper.failed("pk-0","请上送小组编号，用户编号groupId,userid");
+				return Result.error("pk-0","请上送小组编号，用户编号groupId,userid");
 			}
 			if(!StringUtils.hasText(gu.getPgClass())){
-				return ResponseHelper.failed("pgClass-0","请上送小组类型pgClass");
+				return Result.error("pgClass-0","请上送小组类型pgClass");
 			}
 			String pgClass=gu.getPgClass();
 			User user=LoginUtils.getCurrentUserInfo();
 			String name="";
 			if("0".equals(pgClass)){
 				if(!StringUtils.hasText(gu.getProjectId())){
-					return ResponseHelper.failed("projectId-0","请上送小组归属项目编号");
+					return Result.error("projectId-0","请上送小组归属项目编号");
 				}
 
 				XmProject xmProject=this.xmProjectService.getProjectFromCache(gu.getProjectId());
 				if(xmProject==null){
-					return ResponseHelper.failed("product-0","产品已不存在");
+					return Result.error("product-0","产品已不存在");
 				}
 				name=xmProject.getName();
 				if(!xmGroupService.checkUserIsProjectAdm(xmProject, user.getUserid())){
 					XmGroupVo xmGroupVo=this.xmGroupService.getProjectGroupFromCache(xmProject.getId(),gu.getGroupId());
 					if(xmGroupVo==null){
-						return ResponseHelper.failed("group-0","小组已不存在");
+						return Result.error("group-0","小组已不存在");
 					}
 					boolean isHead=xmGroupService.checkUserIsTeamHeadOrAss(xmGroupVo,user.getUserid());
 					if(isHead==false){
-						return ResponseHelper.failed("not-leader-ass","组长、副组长、组长助理以上人员可以添加小组成员。");
+						return Result.error("not-leader-ass","组长、副组长、组长助理以上人员可以添加小组成员。");
 					}
 				}
 			}else if("1".equals(pgClass)){
 				if(!StringUtils.hasText(gu.getProductId())){
-					return ResponseHelper.failed("productId-0","请上送小组归属产品编号");
+					return Result.error("productId-0","请上送小组归属产品编号");
 				}
 
 				XmProduct product=this.xmProductService.getProductFromCache(gu.getProductId());
 				if(product==null){
-					return ResponseHelper.failed("product-0","产品已不存在");
+					return Result.error("product-0","产品已不存在");
 				}
 				name=product.getProductName();
 				if(!xmGroupService.checkUserIsProductAdm(product, user.getUserid())){
 					XmGroupVo xmGroupVo=this.xmGroupService.getProductGroupFromCache(product.getId(),gu.getGroupId());
 					if(xmGroupVo==null){
-						return ResponseHelper.failed("group-0","小组已不存在");
+						return Result.error("group-0","小组已不存在");
 					}
 					boolean isHead=xmGroupService.checkUserIsTeamHeadOrAss(xmGroupVo,user.getUserid());
 					if(isHead==false){
-						return ResponseHelper.failed("not-leader-ass","组长、副组长、组长助理以上人员可以添加小组成员。");
+						return Result.error("not-leader-ass","组长、副组长、组长助理以上人员可以添加小组成员。");
 					}
 				}
 			}
@@ -192,11 +195,11 @@ public class XmGroupUserController {
 	public Result delXmProjectGroupUser(@RequestBody XmGroupUser gu){
 
 			if(!StringUtils.hasText(gu.getGroupId())||!StringUtils.hasText(gu.getUserid())){
-				return ResponseHelper.failed("pk-0","请上送小组编号，用户编号groupId,userid");
+				return Result.error("pk-0","请上送小组编号，用户编号groupId,userid");
 			}
 			gu=this.xmGroupUserService.selectOneObject(gu);
 			if(gu==null){
-				return ResponseHelper.failed("data-0","小组组员已不存在");
+				return Result.error("data-0","小组组员已不存在");
 			}
 			String pgClass=gu.getPgClass();
 			User user=LoginUtils.getCurrentUserInfo();
@@ -204,40 +207,40 @@ public class XmGroupUserController {
 			String name="";
 			if("0".equals(pgClass)){
 				if(!StringUtils.hasText(gu.getProjectId())){
-					return ResponseHelper.failed("projectId-0","请上送小组归属项目编号");
+					return Result.error("projectId-0","请上送小组归属项目编号");
 				}
 				XmProject xmProject=this.xmProjectService.getProjectFromCache(gu.getProjectId());
 				if(xmProject==null){
-					return ResponseHelper.failed("project-0","项目已不存在");
+					return Result.error("project-0","项目已不存在");
 				}
 				name=xmProject.getName();
 				if(!xmGroupService.checkUserIsProjectAdm(xmProject, user.getUserid())){
 					XmGroupVo xmGroupVo=this.xmGroupService.getProjectGroupFromCache(xmProject.getId(),gu.getGroupId());
 					if(xmGroupVo==null){
-						return ResponseHelper.failed("group-0","小组已不存在");
+						return Result.error("group-0","小组已不存在");
 					}
 					boolean isHead=xmGroupService.checkUserIsTeamHeadOrAss(xmGroupVo,user.getUserid());
 					if(isHead==false){
-						return ResponseHelper.failed("not-leader-ass","组长、副组长、组长助理以上人员可以删除小组成员。");
+						return Result.error("not-leader-ass","组长、副组长、组长助理以上人员可以删除小组成员。");
 					}
 				}
 			}else{
 				if(!StringUtils.hasText(gu.getProductId())){
-					return ResponseHelper.failed("productId-0","请上送小组归属产品编号");
+					return Result.error("productId-0","请上送小组归属产品编号");
 				}
 				XmProduct xmProduct=this.xmProductService.getProductFromCache(gu.getProductId());
 				if(xmProduct==null){
-					return ResponseHelper.failed("productId-0","产品已不存在");
+					return Result.error("productId-0","产品已不存在");
 				}
 				name=xmProduct.getProductName();
 				if(!xmGroupService.checkUserIsProductAdm(xmProduct, user.getUserid())){
 					XmGroupVo xmGroupVo=this.xmGroupService.getProductGroupFromCache(xmProduct.getId(),gu.getGroupId());
 					if(xmGroupVo==null){
-						return ResponseHelper.failed("group-0","小组已不存在");
+						return Result.error("group-0","小组已不存在");
 					}
 					boolean isHead=xmGroupService.checkUserIsTeamHeadOrAss(xmGroupVo,user.getUserid());
 					if(isHead==false){
-						return ResponseHelper.failed("not-leader-ass","组长、副组长、组长助理以上人员可以删除小组成员。");
+						return Result.error("not-leader-ass","组长、副组长、组长助理以上人员可以删除小组成员。");
 					}
 				}
 			}
@@ -276,50 +279,50 @@ public class XmGroupUserController {
 	public Result editXmProjectGroupUser(@RequestBody XmGroupUser gu0) {
 
 			if(!StringUtils.hasText(gu0.getGroupId())||!StringUtils.hasText(gu0.getUserid())){
-				return ResponseHelper.failed("pk-0","请上送小组编号，用户编号groupId,userid");
+				return Result.error("pk-0","请上送小组编号，用户编号groupId,userid");
 			}
 			XmGroupUser gu=this.xmGroupUserService.selectOneObject(gu0);
 			if(gu==null){
-				return ResponseHelper.failed("data-0","小组已不存在");
+				return Result.error("data-0","小组已不存在");
 			}
 			String pgClass=gu.getPgClass();
 			User user=LoginUtils.getCurrentUserInfo();
 			if("1".equals(pgClass)){
 
 				if(!StringUtils.hasText(gu.getProductId())){
-					return ResponseHelper.failed("productId-0","请上送小组归属产品编号");
+					return Result.error("productId-0","请上送小组归属产品编号");
 				}
 				XmProduct xmProduct=this.xmProductService.getProductFromCache(gu.getProductId());
 				if(xmProduct==null){
-					return ResponseHelper.failed("product-0","产品已不存在");
+					return Result.error("product-0","产品已不存在");
 				}
 				if(!xmGroupService.checkUserIsProductAdm(xmProduct, user.getUserid())){
 					XmGroupVo xmGroupVo=this.xmGroupService.getProductGroupFromCache(xmProduct.getId(),gu.getGroupId());
 					if(xmGroupVo==null){
-						return ResponseHelper.failed("group-0","小组已不存在");
+						return Result.error("group-0","小组已不存在");
 					}
 					boolean isHead=xmGroupService.checkUserIsTeamHeadOrAss(xmGroupVo,user.getUserid());
 					if(isHead==false){
-						return ResponseHelper.failed("not-leader-ass","组长、副组长、组长助理以上人员可以修改小组成员。");
+						return Result.error("not-leader-ass","组长、副组长、组长助理以上人员可以修改小组成员。");
 					}
 				}
 			}else{
 				if(!StringUtils.hasText(gu.getProjectId())){
-					return ResponseHelper.failed("projectId-0","请上送小组归属项目编号");
+					return Result.error("projectId-0","请上送小组归属项目编号");
 				}
 
 				XmProject xmProject=this.xmProjectService.getProjectFromCache(gu.getProjectId());
 				if(xmProject==null){
-					return ResponseHelper.failed("product-0","产品已不存在");
+					return Result.error("product-0","产品已不存在");
 				}
 				if(!xmGroupService.checkUserIsProjectAdm(xmProject, user.getUserid())){
 					XmGroupVo xmGroupVo=this.xmGroupService.getProductGroupFromCache(xmProject.getId(),gu.getGroupId());
 					if(xmGroupVo==null){
-						return ResponseHelper.failed("group-0","小组已不存在");
+						return Result.error("group-0","小组已不存在");
 					}
 					boolean isHead=xmGroupService.checkUserIsTeamHeadOrAss(xmGroupVo,user.getUserid());
 					if(isHead==false){
-						return ResponseHelper.failed("not-leader-ass","组长、副组长、组长助理以上人员可以修改小组成员。");
+						return Result.error("not-leader-ass","组长、副组长、组长助理以上人员可以修改小组成员。");
 					}
 				}
 			}
@@ -347,30 +350,30 @@ public class XmGroupUserController {
 	public Result batchAddXmProjectGroupUser(@RequestBody List<XmGroupUser> gus) {
 		
 		if(gus==null || gus.size()==0){
-			return ResponseHelper.failed("data-0","请上送要删除的小组成员");
+			return Result.error("data-0","请上送要删除的小组成员");
 		}
 		
 				
 			if(gus.stream().filter(i->!StringUtils.hasText(i.getUserid())||!StringUtils.hasText(i.getGroupId())).findAny().isPresent()){
-				return ResponseHelper.failed("userid-or-groupId-0","请上送用户编号及小组编号");
+				return Result.error("userid-or-groupId-0","请上送用户编号及小组编号");
 			}else{
 				for (XmGroupUser gu : gus) {
 					if (!"1".equals(gu.getPgClass()) && !StringUtils.hasText(gu.getProjectId())) {
-						return ResponseHelper.failed("projectId-0", "项目编号不能为空");
+						return Result.error("projectId-0", "项目编号不能为空");
 					} else if ("1".equals(gu.getPgClass()) && !StringUtils.hasText(gu.getProductId())) {
-						return ResponseHelper.failed("productId-0", "产品编号不能为空");
+						return Result.error("productId-0", "产品编号不能为空");
 					}
 					if (!StringUtils.hasText(gu.getObranchId())) {
-						return ResponseHelper.failed("obranchId-0", "用户归属机构号不能为空");
+						return Result.error("obranchId-0", "用户归属机构号不能为空");
 					}
 					if (!StringUtils.hasText(gu.getUserid())) {
-						return ResponseHelper.failed("userid-0", "用户编号不能为空");
+						return Result.error("userid-0", "用户编号不能为空");
 					}
 					if (!StringUtils.hasText(gu.getUsername())) {
-						return ResponseHelper.failed("username-0", "用户名称不能为空");
+						return Result.error("username-0", "用户名称不能为空");
 					}
 					if (!StringUtils.hasText(gu.getGroupId())) {
-						return ResponseHelper.failed("groupId-0", "要加入的组编号不能为空");
+						return Result.error("groupId-0", "要加入的组编号不能为空");
 					}
 				}
 			}
@@ -378,7 +381,7 @@ public class XmGroupUserController {
 			//过滤掉已经存在的
 			List<XmGroupUser> gusNoExists=gus.stream().filter(i->!(gusDb.stream().filter(k->k.getGroupId().equals(i.getGroupId())&&k.getUserid().equals(i.getUserid()))).findAny().isPresent()).collect(Collectors.toList());
 			if(gusNoExists.size()==0){
-				return ResponseHelper.failed("user-had-exists","成功添加0个组员。以下用户已在小组中，不用再添加。【"+gusDb.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"】");
+				return Result.error("user-had-exists","成功添加0个组员。以下用户已在小组中，不用再添加。【"+gusDb.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"】");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmGroupUser gu=gusNoExists.get(0);
@@ -391,20 +394,20 @@ public class XmGroupUserController {
 			if("1".equals(pgClass)){
 				xmProduct=this.xmProductService.getProductFromCache(gu.getProductId());
 				if(xmProduct==null){
-					return ResponseHelper.failed("product-0","产品已不存在");
+					return Result.error("product-0","产品已不存在");
 				}
 				gus2=gusNoExists.stream().filter(i->productId.equals(i.getProductId())).collect(Collectors.toList());
 				if(gus2.size()<gusNoExists.size()){
-					return ResponseHelper.failed("data-0","批量新增只能新增同一个产品的成员。");
+					return Result.error("data-0","批量新增只能新增同一个产品的成员。");
 				}
 			}else {
 				xmProject=this.xmProjectService.getProjectFromCache(gu.getProjectId());
 				if(xmProject==null){
-					return ResponseHelper.failed("project-0","项目已不存在");
+					return Result.error("project-0","项目已不存在");
 				}
 				gus2=gusNoExists.stream().filter(i->projectId.equals(i.getProjectId())).collect(Collectors.toList());
 				if(gus2.size()<gusNoExists.size()){
-					return ResponseHelper.failed("data-0","批量新增只能新增同一个项目的成员。");
+					return Result.error("data-0","批量新增只能新增同一个项目的成员。");
 				}
 			}
 
@@ -487,13 +490,13 @@ public class XmGroupUserController {
 	public Result batchDelXmProjectGroupUser(@RequestBody List<XmGroupUser> gus) {
 		
 		if(gus==null || gus.size()==0){
-			return ResponseHelper.failed("data-0","请上送要删除的小组成员");
+			return Result.error("data-0","请上送要删除的小组成员");
 		}
 		
 				
 			List<XmGroupUser> gusDb=this.xmGroupUserService.selectListByIds(gus);
 			if(gusDb.size()==0){
-				return ResponseHelper.failed("data-0","要删除的数据已不存在。");
+				return Result.error("data-0","要删除的数据已不存在。");
 			}
 			User user=LoginUtils.getCurrentUserInfo();
 			XmGroupUser gu=gusDb.get(0);
@@ -506,20 +509,20 @@ public class XmGroupUserController {
 			if("1".equals(pgClass)){
 				xmProduct=this.xmProductService.getProductFromCache(gu.getProductId());
 				if(xmProduct==null){
-					return ResponseHelper.failed("product-0","产品已不存在");
+					return Result.error("product-0","产品已不存在");
 				}
 				gus2=gusDb.stream().filter(i->productId.equals(i.getProductId())).collect(Collectors.toList());
 				if(gus2.size()<gusDb.size()){
-					return ResponseHelper.failed("data-0","批量删除只能删除同一个产品的成员。");
+					return Result.error("data-0","批量删除只能删除同一个产品的成员。");
 				}
 			}else {
 				xmProject=this.xmProjectService.getProjectFromCache(gu.getProjectId());
 				if(xmProject==null){
-					return ResponseHelper.failed("project-0","项目已不存在");
+					return Result.error("project-0","项目已不存在");
 				}
 				gus2=gusDb.stream().filter(i->projectId.equals(i.getProjectId())).collect(Collectors.toList());
 				if(gus2.size()<gusDb.size()){
-					return ResponseHelper.failed("data-0","批量删除只能删除同一个项目的成员。");
+					return Result.error("data-0","批量删除只能删除同一个项目的成员。");
 				}
 			}
 

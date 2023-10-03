@@ -104,7 +104,7 @@ public class XmTaskSbillDetailController {
 		
 		String bizYear= (String) params.get("bizYear");
 		if(!StringUtils.hasText(bizYear)){
-			return ResponseHelper.failed("bizYear-0","年份不能为空");
+			return Result.error("bizYear-0","年份不能为空");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
@@ -121,7 +121,7 @@ public class XmTaskSbillDetailController {
 		
 		String bizYear= (String) params.get("bizYear");
 		if(!StringUtils.hasText(bizYear)){
-			return ResponseHelper.failed("bizYear-0","年份不能为空");
+			return Result.error("bizYear-0","年份不能为空");
 		}
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
@@ -214,7 +214,7 @@ public class XmTaskSbillDetailController {
 			String sstatus= (String) xmTaskSbillDetailMap.get("sstatus");
 			if(StringUtils.hasText(sstatus)){
 				if(!"0".equals(sstatus) && !"1".equals(sstatus)){
-					return ResponseHelper.failed("sstatus-not-01","只能修改为无需结算或者待结算");
+					return Result.error("sstatus-not-01","只能修改为无需结算或者待结算");
 				}
 			}
 			XmTaskSbillDetail xmTaskSbillDetail = fromMap(xmTaskSbillDetailMap,XmTaskSbillDetail.class);
