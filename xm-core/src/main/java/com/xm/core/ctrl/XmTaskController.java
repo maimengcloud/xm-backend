@@ -13,6 +13,7 @@ import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
+import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -56,9 +57,7 @@ import static com.mdp.core.utils.BaseUtils.map;
 public class XmTaskController {
 	
 	static Log logger=LogFactory.getLog(XmTaskController.class);
-
-	@Autowired
-	XmTaskCacheService xmTaskCacheService;
+ 
 	
 	@Autowired
 	private XmTaskService xmTaskService;
@@ -268,8 +267,8 @@ public class XmTaskController {
 					for (String id : ids) {
 						XmTaskExecuser xmTaskExecuser=new XmTaskExecuser();
 						xmTaskExecuser.setTaskId(id);
-						xmTaskExecuser.setUserid((String)xmTaskMap.get("executorUserid"));
-						xmTaskExecuser.setUsername((String)xmTaskMap.get("executorUsername"));
+						xmTaskExecuser.setBidUserid((String)xmTaskMap.get("executorUserid"));
+						xmTaskExecuser.setBidUsername((String)xmTaskMap.get("executorUsername"));
 						Map<String,Object> result=execuserController.addXmTaskExecuser(xmTaskExecuser);
 		 				Tips tips= (Tips) result.get("tips");
 		 				tips.put("taskId",id);
@@ -294,8 +293,8 @@ public class XmTaskController {
 				}else if(ids.size()==1){
 					XmTaskExecuser xmTaskExecuser=new XmTaskExecuser();
 					xmTaskExecuser.setTaskId(ids.get(0));
-					xmTaskExecuser.setUserid((String)xmTaskMap.get("executorUserid"));
-					xmTaskExecuser.setUsername((String)xmTaskMap.get("executorUsername"));
+					xmTaskExecuser.setBidUserid((String)xmTaskMap.get("executorUserid"));
+					xmTaskExecuser.setBidUsername((String)xmTaskMap.get("executorUsername"));
 					return execuserController.addXmTaskExecuser(xmTaskExecuser);
 				}
 			}
@@ -337,9 +336,7 @@ public class XmTaskController {
 					XmProject xmProject=xmProjectService.getProjectFromCache(project);
 					projectMap.put(xmProject.getId(),xmProject);
 	 				Tips  tips1=projectQxService.checkProjectQx(xmProject,2,user,createUserid,createUsername,cbranchId);
-					if(!tips1.isOk()){
-						return Result.error(tips1);
-					};
+					Result.assertIsFalse(tips1);
 				}
 
 			}
@@ -552,9 +549,7 @@ public class XmTaskController {
 
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskVo.getProjectId());
 			Tips tips1=projectQxService.checkProjectQx(xmProject,2,user);
-			if(!tips1.isOk()){
-				return Result.error(tips1);
-			}
+			Result.assertIsFalse(tips1);
 			if(StringUtils.hasText(xmTaskVo.getCreateUserid()) && !xmTaskVo.getCreateUserid().equals(user.getUserid())){
  				tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskVo.getCreateUserid(),xmTaskVo.getCreateUsername(),null);
 				Result.assertIsFalse(tips1);
@@ -702,9 +697,7 @@ public class XmTaskController {
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 			if(xmProject!=null && groupService.checkUserIsProjectAdm(xmProject,user.getUserid())){
  				Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
-				if(!tips1.isOk()){
-					return Result.error(tips1);
-				}
+				 Result.assertIsFalse(tips1);
 			}
 
 
@@ -744,15 +737,11 @@ public class XmTaskController {
 			
 			if(!groupService.checkUserIsProjectAdm(xmProject,user.getUserid())){
  				Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
-				if(!tips1.isOk()){
-					return Result.error(tips1);
-				}
+				Result.assertIsFalse(tips1);
 			}
 
 			Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskVo.getCreateUserid(),xmTaskVo.getCreateUsername(),xmTaskVo.getCbranchId());
-			if(!tips1.isOk()){
-				return Result.error(tips1);
-			}
+			Result.assertIsFalse(tips1);
 			XmTask xmTask=new XmTask(xmTaskVo.getId());
 			xmTask.setCreateUserid(xmTaskVo.getCreateUserid());
 			xmTask.setCreateUsername(xmTaskVo.getCreateUsername());
@@ -793,9 +782,7 @@ public class XmTaskController {
 
 			XmProject xmProject=xmProjectService.getProjectFromCache(xmTaskDb.getProjectId());
 			Tips tips1=projectQxService.checkProjectQx(xmProject,2,user,xmTaskDb.getCreateUserid(),xmTaskDb.getCreateUsername(),xmTaskDb.getCbranchId());
-			if(!tips1.isOk()){
-				 return Result.error(tips1);
-			}
+			Result.assertIsFalse(tips1);
 
 			this.xmTaskService.parentIdPathsCalcBeforeSave(xmTaskVo);
 			if(xmTaskVo.getBudgetAt()==null)xmTaskVo.setBudgetAt(BigDecimal.ZERO);
@@ -872,9 +859,7 @@ public class XmTaskController {
 			String productId=batchImportVo.getProductId();
 			XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
 			Tips tips1=projectQxService.checkProjectQx(xmProject,2,user);
-			if(!tips1.isOk()){
-				return Result.error(tips1);
-			}
+			Result.assertIsFalse(tips1);
 			Map<String,String> newIdMap=new HashMap<>();
 			if(!StringUtils.hasText(batchImportVo.getParentTaskid())){
 				newIdMap.put(batchImportVo.getParentTaskid(),batchImportVo.getParentTaskid());
@@ -1027,7 +1012,7 @@ public class XmTaskController {
 			if( "9".equals(xmProjectDb.getStatus())){
 				return Result.error("project-status-9","项目关闭,不能再修改");
 			}
-			List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(xmProjectDb.getId());
+			List<Dept> pgroups=groupService.getProjectGroupVoList(xmProjectDb.getId());
 			if(pgroups==null || pgroups.size()==0){
 				return Result.error("group-0","该项目还未建立项目团队，请先进行团队成员维护");
 			}
@@ -1201,9 +1186,7 @@ public class XmTaskController {
 			XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
 			
 			Tips tips=projectQxService.checkProjectQx(xmProject,2,user);
-			if(!tips.isOk()){
-				return Result.error(tips);
-			}
+			Result.assertIsFalse(tips);
 			List<XmTask> canOper=new ArrayList<>();
 			List<XmTask> noOper=new ArrayList<>();
 			Map<String,Tips> noTipsMap=new HashMap<>();
@@ -1310,9 +1293,7 @@ public class XmTaskController {
 				return Result.error("parentTask-ntype-not-1", "【"+parentTask.getName()+"】为任务，不能作为上级节点。请另选上级或者变更其为计划节点");
 			}
 			Tips tips2=this.groupService.checkIsProjectAdmOrTeamHeadOrAss(user,user.getUserid(),parentTask.getProjectId());
-			if(!tips2.isOk()){
-				return Result.error(tips2);
-			}
+			Result.assertIsFalse(tips2);
 			xmTasks=xmTasks.stream().filter(i->!i.getId().equals(parentTask.getId())).collect(Collectors.toList());
 			List<XmTask> canOpxmTasks=xmTasks.stream().filter(i->!parentTask.getId().equals(i.getParentTaskid())).collect(Collectors.toList());
 			List<XmTask> sameParentTasks=xmTasks.stream().filter(i->parentTask.getId().equals(i.getParentTaskid())).collect(Collectors.toList());
@@ -1331,7 +1312,8 @@ public class XmTaskController {
 
 			Map<String,XmTask> allowTasksDbMap=new HashMap<>();
 			Map<String,XmTask>  noAllowTasksDbMap=new HashMap<>();
-			List<XmGroupVo> pgroups= groupService.getProjectGroupVoList(parentTask.getProjectId());
+			XmProject projectDb=xmProjectService.getProjectFromCache(parentTask.getProjectId());
+			List<Dept> pgroups= groupService.getSubDeptList(projectDb.getDeptid());
 			boolean isAdm=groupService.checkUserIsProjectAdm(parentTask.getProjectId(),user.getUserid());
 			if(!isAdm){
 				for (XmTask task : canOpxmTasks) {
