@@ -5,7 +5,6 @@ import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
-import com.xm.core.service.cache.XmGroupCacheService;
 import com.xm.core.service.client.SysClient;
 import com.xm.core.service.push.XmPushMsgService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,5 @@
 package com.xm.core.service.cache.sub;
 
-import com.xm.core.service.cache.XmGroupCacheService;
 import com.xm.core.service.cache.XmProductCacheService;
 import com.xm.core.service.cache.XmProjectCacheService;
 import org.slf4j.Logger;

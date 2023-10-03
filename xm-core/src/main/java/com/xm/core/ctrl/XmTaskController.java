@@ -21,7 +21,6 @@ import com.xm.core.PubTool;
 import com.xm.core.entity.*;
 import com.xm.core.queue.XmTaskSumParentsPushService;
 import com.xm.core.service.*;
-import com.xm.core.service.cache.XmTaskCacheService;
 import com.xm.core.service.client.SysClient;
 import com.xm.core.service.push.XmPushMsgService;
 import com.xm.core.vo.*;
