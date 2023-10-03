@@ -7,11 +7,285 @@
         <where>
             ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
             <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
-
+            <include refid="whereForMap"></include>
         </where>
         <!--下面双引号内可以添加默认排序，如果前端没有上传排序，将使用引号内的排序规则-->
         ${@com.mdp.Util@trimOrderBy(ew.customSqlSegment,'')}
         <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
     </select>
+
+    <sql id="whereForMap">
+        <if test=" menuIds != null">  and (res.menu_id) in
+            <foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item})
+            </foreach>
+        </if>
+        <if test=" dclasss != null">  and (res.dclass) in
+            <foreach collection="dclasss" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item})
+            </foreach>
+        </if>
+        <if test="pidPathsLike">
+            and res.pid_paths like concat(#{pidPathsLike},'%')
+        </if>
+        <if test=" pidPathsList != null">  and
+            <foreach collection="pidPathsList" item="item" index="index" open="(" separator=" or " close=")" >
+                #{item} like concat(res.pid_paths,'%')
+            </foreach>
+        </if>
+        <if test=" tagIdList != null"> and
+            <foreach collection="tagIdList" item="item" index="index" open="(" separator=" or " close=")" >
+                find_in_set(#{item},res.tag_ids)
+            </foreach>
+        </if>
+        <if test=' iterationFilterType!=null and iterationFilterType!=""'>
+            <if test='iterationFilterType=="not-join-any-iteration"'> and (res.iteration_id is  null  ) </if>
+            <if test='iterationFilterType=="join-any-iteration"'> and ( res.iteration_id is not null   ) </if>
+            <if test='iterationFilterType=="join-curr-iteration"'>  and res.iteration_id=#{filterIterationId}   </if>
+            <if test='iterationFilterType=="not-join-curr-iteration"'>  and (res.iteration_id!=#{filterIterationId} or res.iteration_id is null)   </if>
+        </if>
+        <if test=' taskFilterType!=null and taskFilterType!="" '>
+            <if test='taskFilterType=="not-join-curr-project"'>
+                and not exists(select 1 from xm_task t where  t.menu_id=res.menu_id and t.project_id=#{projectId})
+            </if>
+            <if test='taskFilterType=="not-join-any-project"'>
+                and not exists(select 1 from xm_task t where  t.menu_id=res.menu_id)
+            </if>
+            <if test='taskFilterType=="join-any-project"'>
+                and exists(select 1 from xm_task t where  t.menu_id=res.menu_id)
+            </if>
+            <if test='taskFilterType=="join-curr-project"'>
+                and exists(select 1 from xm_task t where  t.menu_id=res.menu_id and t.project_id=#{projectId})
+            </if>
+        </if>
+        <if test=" planStartTimeStart !=null "> and res.start_time &gt; #{planStartTimeStart} </if>
+        <if test=" planStartTimeEnd !=null "> and res.start_time &lt; #{planStartTimeEnd} </if>
+        <if test=" planEndTimeStart !=null "> and res.end_time &gt; #{planEndTimeStart} </if>
+        <if test=" planEndTimeEnd !=null "> and res.end_time &lt; #{planEndTimeEnd} </if>
+        <if test="key != null and key !='' ">  and res.menu_name like #{key}     </if>
+        <if test="isTop!=null and isTop!=''">  and (res.pmenu_id is null )</if>
+    </sql>
+
+    <select id="selectExistIterationMenus" parameterType="HashMap" resultType="com.xm.core.entity.XmMenu">
+        select  * from xm_menu res
+        where res.menu_id  in
+        <foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        and res.iteration_id is not null
+    </select>
+    <select id="queryTaskUsersByMenuId" parameterType="HashMap" resultType="HashMap">
+        select distinct te.userid,te.username,t.executor_userid, t.executor_username from xm_task_execuser te inner join xm_task t on t.id=te.task_id
+        where t.menu_id=#{menuId} and te.status !='8' and te.status !='7'
+    </select>
+    <select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
+        select res.*,s.* from xm_menu res left join xm_menu_state s on res.menu_id=s.menu_id
+        <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
+            <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
+            <include refid="whereForMap"></include>
+        </where>
+        <!--下面双引号内可以添加默认排序，如果前端没有上传排序，将使用引号内的排序规则-->
+        ${@com.mdp.Util@trimOrderBy(ew.customSqlSegment,'order by res.seq_no asc')}
+        <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
+        ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
+    </select>
+    <select id="selectListMapByWhereWithPlan" parameterType="HashMap" resultType="HashMap">
+        select res.*,plan.* from xm_menu res left join xm_menu_plan plan on res.menu_id=plan.menu_id and plan.project_id=#{projectId}
+        <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
+            <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
+            <include refid="whereForMap"></include>
+        </where>
+        <!--下面双引号内可以添加默认排序，如果前端没有上传排序，将使用引号内的排序规则-->
+        ${@com.mdp.Util@trimOrderBy(ew.customSqlSegment,'order by res.seq_no asc')}
+        <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
+        ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
+    </select>
+
+    <update id="updateMenuChildrenCntByMenuId" parameterType="String">
+        UPDATE xm_menu t
+        LEFT JOIN ( SELECT count( 1 ) AS children_cnt, tt.pmenu_id AS menu_id FROM xm_menu tt WHERE tt.pmenu_id = #{menuId} ) t2 ON t2.menu_id = t.menu_id
+        SET t.children_cnt = ifnull( t2.children_cnt, 0 )
+        WHERE
+        t.menu_id = #{menuId}
+    </update>
+
+
+
+    <update id="updateChildrenCntByIds" parameterType="List">
+        UPDATE xm_menu t
+        LEFT JOIN ( SELECT count( 1 ) AS children_cnt, tt.pmenu_id AS menu_id FROM xm_menu tt  WHERE
+        (tt.pmenu_id) in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            ( #{item})
+        </foreach>
+        group by tt.pmenu_id ) t2 ON t2.menu_id = t.menu_id
+        SET t.children_cnt = ifnull( t2.children_cnt, 0 )
+        WHERE  (t.menu_id) in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            ( #{item})
+        </foreach>
+    </update>
+    <delete id="doBatchDeleteByProductIds" parameterType="List">
+        delete from xm_menu where product_id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </delete>
+
+    <update id="batchUnIteration" parameterType="com.xm.core.vo.XmIterationMenuVo">
+        update xm_menu res set res.iteration_id = null,res.iteration_name = null where res.menu_id in
+        <foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        <if test="iterationId!=null and iterationId!=''">
+            and res.iteration_id=#{iterationId}
+        </if>
+    </update>
+    <update id="batchIteration" parameterType="com.xm.core.vo.XmIterationMenuVo">
+        update xm_menu res set res.iteration_id = #{iterationId},res.iteration_name=#{iterationName} where res.menu_id in
+        <foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </update>
+
+
+    <update id="batchUnProductPhase" parameterType="com.xm.core.vo.XmPhaseMenusVo">
+        update xm_menu res set res.phase_id = null where res.menu_id in
+        <foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        <if test="phaseId!=null and phaseId!=''">
+            and res.phase_id=#{phaseId}
+        </if>
+    </update>
+    <update id="batchProductPhase" parameterType="com.xm.core.vo.XmPhaseMenusVo">
+        update xm_menu res set res.phase_id = #{phaseId} where res.menu_id in
+        <foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </update>
+    <select id="listTenMenuByProductIdAndIterationId" parameterType="String" resultType="com.xm.core.entity.XmMenu">
+        select menu_name from xm_menu res where res.product_id=#{productId} and res.iteration_id=#{iterationId}
+        limit 10
+    </select>
+
+
+
+    <update id="batchChangeParent" parameterType="HashMap">
+        update   xm_menu res inner join (
+        select t.menu_id,pid_paths,pmenu_id from xm_menu t where t.menu_id in
+        <foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        ) as t1 on res.pid_paths like concat(t1.pid_paths,'%')
+
+        set res.pid_paths = replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.menu_id,',')),
+        res.pmenu_id=if(res.menu_id=t1.menu_id,#{pmenuId},res.pmenu_id),
+        res.lvl= LENGTH(replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.menu_id,',')))-LENGTH(REPLACE(replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.menu_id,',')),',',''))-1
+
+    </update>
+
+    <select id="selectListByIdsWithsChildrenCnt"  parameterType="List" resultType="com.xm.core.entity.XmMenu">
+        select (select count(*) from xm_menu m where m.pmenu_id=res.menu_id) as children_cnt,res.* from xm_menu res
+        where  (res.menu_id) in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            ( #{item})
+        </foreach>
+    </select>
+    <select id="getXmMenuAttDist" parameterType="HashMap" resultType="HashMap">
+        select count(*) as value,${groupBy} as name from xm_menu res
+        <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
+            <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
+            <include refid="whereForMap"></include>
+        </where>
+        <!--下面双引号内可以添加默认排序，如果前端没有上传排序，将使用引号内的排序规则-->
+        ${@com.mdp.Util@trimOrderBy(ew.customSqlSegment,'')}
+        <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
+        ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
+        group by ${groupBy}
+    </select>
+    <select id="getXmMenuAgeDist" parameterType="HashMap" resultType="HashMap">
+
+        select sum(value) as value,case when age&lt;3 then 0 when age &lt;6 then 1 when age &lt;8 then 2 when age &lt;16 then 3 when age&lt;31 then 4 else 5 end as name from (
+        select count(*) as value, datediff (res.end_time,res.start_time)  as age from  xm_menu res
+        <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
+            <include refid="whereForMap"></include>
+        </where>
+        group by age
+        ) as a
+        group by name
+    </select>
+
+    <select id="getXmMenuSort" parameterType="HashMap" resultType="HashMap">
+        select count(*) as value,${groupBy} as id,
+        max(
+        <if test="groupBy=='func_id'">func_name</if>
+        <if test="groupBy=='proposer_id'">proposer_name</if>
+        <if test="groupBy=='mm_userid'">mm_username</if>
+        <if test="groupBy=='product_id'">product_id</if>
+        <if test="groupBy=='iteration_id'">iteration_name</if>
+        ) as name from xm_menu res
+        <where>
+            <include refid="whereForMap"></include>
+        </where>
+        group by ${groupBy}
+    </select>
+
+    <select id="getUserCanOpMenusByIds" parameterType="HashMap" resultType="com.xm.core.entity.XmMenu">
+        select
+        <if test="childrenCnt==true">
+            (select count(*) from xm_menu m where m.pmenu_id=res.menu_id) as children_cnt,
+        </if>
+        res.* from xm_product p inner join  xm_menu res  on res.product_id=p.id where
+        res.menu_id in
+        <foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        and ( #{mmUserid} in (p.adm_userid,p.pm_userid, p.ass_userid)
+        or exists( select 1 from xm_menu m where m.mm_userid=#{mmUserid} and res.pid_paths like concat(m.pid_paths,'%')  )
+        )
+    </select>
+
+
+
+
+    <update id="upReads" parameterType="HashMap">
+        update xm_menu res set reads=ifnull(reads,0)+#{reads}
+        where menu_id=#{menuId}
+    </update>
+
+    <update id="updateUps" parameterType="List">
+        update xm_menu res left join
+        (select count(*) ups,up.menu_id from xm_menu_up up
+        where up.menu_id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            #{item }
+        </foreach>
+        group by up.menu_id
+        ) as up_sum on res.menu_id=up_sum.menu_id set res.ups=up_sum.ups
+        where res.menu_id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            #{item }
+        </foreach>
+    </update>
+
+    <update id="updateComments" parameterType="List">
+        update xm_menu res left join
+        (select count(*) ups,up.menu_id from xm_menu_comment up
+        where up.menu_id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            #{item }
+        </foreach>
+        group by up.menu_id
+        ) as up_sum on res.menu_id=up_sum.menu_id set res.comments=up_sum.ups
+        where res.menu_id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            #{item }
+        </foreach>
+    </update>
 </mapper>

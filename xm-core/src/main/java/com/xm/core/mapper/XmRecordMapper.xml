@@ -14,4 +14,34 @@
         <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
     </select>
+
+    <select id="selectChangeBranchIds" parameterType="HashMap" resultType="String">
+        SELECT DISTINCT
+        branch_id
+        FROM
+        xm_record
+        where oper_time &gt;= DATE_SUB(now(), INTERVAL 2 DAY)
+    </select>
+    <select id="selectChangeProjectIds" parameterType="HashMap" resultType="String">
+        SELECT DISTINCT
+        project_Id
+        FROM
+        xm_record
+        where oper_time &gt;= DATE_SUB(now(), INTERVAL 2 DAY)
+    </select>
+
+    <select id="selectChangeProductIds" parameterType="HashMap" resultType="String">
+        SELECT DISTINCT
+        product_id
+        FROM
+        xm_record
+        where oper_time &gt;= DATE_SUB(now(), INTERVAL 2 DAY)
+    </select>
+    <select id="selectChangeIterationIds" parameterType="HashMap" resultType="String">
+        SELECT DISTINCT
+        m.iteration_id
+        FROM
+        xm_record r inner join xm_menu m on m.menu_id=r.biz_id and r.obj_type='menu'
+        where oper_time &gt;= DATE_SUB(now(), INTERVAL 2 DAY)
+    </select>
 </mapper>

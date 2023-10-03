@@ -2,6 +2,7 @@ package com.xm.core.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmMenuComment;
 import com.xm.core.mapper.XmMenuCommentMapper;
@@ -44,7 +45,7 @@ public class XmMenuCommentService extends BaseService<XmMenuCommentMapper, XmMen
 	}
 
     public List<XmMenuComment> selectListByPids(List<String> ids) {
-		return super.listByIds(ids);
+		return super.list(QueryTools.initQueryWrapper(XmMenuComment.class).in("pid",ids.toArray()));
     }
 
 	public void praiseComment(XmMenuComment xmMenuComment) {

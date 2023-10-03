@@ -14,4 +14,16 @@
         <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
     </select>
+    <select id="getExistsPlanCasedbIds" parameterType="List" resultType="String">
+        select id from xm_test_casedb res where exists(select 1 from xm_test_plan p where p.casedb_id=res.id
+        and p.casedb_id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        )
+        and id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </select>
 </mapper>

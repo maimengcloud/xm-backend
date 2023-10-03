@@ -14,4 +14,8 @@
         <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
     </select>
+
+    <update id="loadTasksToXmIterationState" parameterType="String" statementType="CALLABLE">
+        {call load_tasks_to_xm_iteration_state(#{productId,mode=IN})}
+    </update>
 </mapper>

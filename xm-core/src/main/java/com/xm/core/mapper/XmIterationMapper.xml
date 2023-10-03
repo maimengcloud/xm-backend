@@ -7,10 +7,53 @@
         <where>
             ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
             <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
-
+            <include refid="whereForMap"/>
         </where>
         <!--下面双引号内可以添加默认排序，如果前端没有上传排序，将使用引号内的排序规则-->
         ${@com.mdp.Util@trimOrderBy(ew.customSqlSegment,'')}
+        <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
+        ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
+    </select>
+
+    <sql id="whereForMap">
+        <if test=" createTimeStart !=null "> and res.ctime &gt; #{createTimeStart} </if>
+        <if test=" createTimeEnd !=null "> and res.ctime &lt; #{createTimeEnd} </if>
+        <if test=" onlineTimeStart !=null "> and res.online_time &gt; #{onlineTimeStart} </if>
+        <if test=" onlineTimeEnd !=null "> and res.online_time &lt; #{onlineTimeEnd} </if>
+        <include refid="where"/>
+        <if test=" ( menuId != null and menuId !='')">
+            and exists ( select 1 from xm_menu im where  im.iteration_id=res.id and  im.menu_id=#{menuId}
+            <if test="productId != null and productId !='' ">  and  im.product_id=#{productId}    </if>
+            )
+        </if>
+        <if test=" linkProjectId !=null and linkProjectId!=''">
+            and exists( select 1 from  xm_product_project_link ppl
+            where ppl.project_id=#{linkProjectId} and ppl.product_id =res.product_id
+            )
+        </if>
+        <if test="compete !=null and compete!=''">
+            and ( res.admin_userid=#{compete}
+            or exists (select 1 from  xm_menu m where m.mm_userid=#{compete} and m.iteration_id=res.id)
+            )
+        </if>
+
+        <if test="key != null and key !='' ">   and res.iteration_name like #{key}    </if>
+
+    </sql>
+
+    <update id="load_tasks_to_xm_iteration_state" parameterType="String" statementType="CALLABLE">
+        {call load_tasks_to_xm_iteration_state(#{inIterationId,mode=IN})}
+    </update>
+
+    <select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">
+        select res.*, s.* from xm_iteration res left join xm_iteration_state s on res.id=s.iteration_id
+        <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
+            <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
+            <include refid="whereForMap"/>
+        </where>
+        <!--下面双引号内可以添加默认排序，如果前端没有上传排序，将使用引号内的排序规则-->
+        ${@com.mdp.Util@trimOrderBy(ew.customSqlSegment,'order by res.online_time desc')}
         <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
     </select>

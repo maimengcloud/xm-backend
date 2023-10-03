@@ -7,11 +7,81 @@
         <where>
             ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
             <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
-
+            <include refid="whereForMap"></include>
         </where>
         <!--下面双引号内可以添加默认排序，如果前端没有上传排序，将使用引号内的排序规则-->
         ${@com.mdp.Util@trimOrderBy(ew.customSqlSegment,'')}
         <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
+    </select>
+
+    <sql id="whereForMap">
+        <if test="ext.tagIdList != null"> and
+            <foreach collection="ext.tagIdList" item="item" index="index" open="(" separator=" or " close=")" >
+                find_in_set(#{item},res.tag_ids)
+            </foreach>
+        </if>
+        <if test="ext.hisHandlerUserid !=null "> and exists (select 1 from xm_question_handle h where h.question_id = res.id and h.handler_userid=#{ext.hisHandlerUserid} and handle_status=#{ext.hisHandleStatus})</if>
+        <if test="ext.createTimeStart !=null "> and res.create_time between #{ext.createTimeStart} and #{ext.createTimeEnd} </if>
+        <if test="ext.ltimeStart !=null "> and res.ltime between #{ext.ltimeStart} and #{ext.ltimeEnd} </if>
+        <if test="ext.myUserid != null and ext.myUserid != ''"> and ( res.create_userid=#{ext.myUserid} or res.handler_userid=#{ext.myUserid}) </if>
+         
+        <if test="ext.compete != null and ext.compete!=''">
+            and (res.handler_userid=#{ext.compete} or res.create_userid=#{ext.compete} or exists ( select 1 from xm_group_user gu where gu.userid=#{ext.compete} and (gu.project_id=res.project_id or gu.product_id=res.product_id)))
+        </if>
+        <if test="ext.work != null and ext.work != ''"> and res.status !='8' </if>
+        <if test="ext.linkIterationId != null and ext.linkIterationId != ''"> and exists (select 1 from xm_menu m where m.iteration_id=#{ext.linkIterationId} and m.menu_id=res.menu_id) </if>
+    </sql>
+
+    <select id="getXmQuestionAttDist" resultType="HashMap">
+        select count(*) as value,${ext.groupBy} as name from xm_question res
+        <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
+            <include refid="whereForMap"></include>
+        </where>
+        group by ${ext.groupBy}
+    </select>
+    <select id="getXmQuestionAgeDist" resultType="HashMap">
+
+        select sum(value) as value,case when age&lt;3 then 0 when age &lt;6 then 1 when age &lt;8 then 2 when age &lt;16 then 3 when age&lt;31 then 4 else 5 end as name from (
+        select count(*) as value, datediff (res.end_time,res.create_time)  as age from  xm_question res
+        <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
+            <include refid="whereForMap"></include>
+        </where>
+        group by age
+        ) as a
+        group by name
+    </select>
+    <select id="getXmQuestionSort"  resultType="HashMap">
+        select count(*) as value,${ext.groupBy} as id,
+        max( <if test="ext.groupBy=='handler_userid'">handler_username</if>
+        <if test="ext.groupBy=='ask_userid'">ask_username</if>
+        <if test="ext.groupBy=='create_userid'">create_username</if>
+        <if test="ext.groupBy=='func_id'">func_name</if>
+        <if test="ext.groupBy=='menu_id'">menu_name</if> ) as name from xm_question res
+        <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
+            <include refid="whereForMap"></include>
+        </where>
+        group by ${ext.groupBy}
+    </select>
+
+
+    <select id="getXmQuestionRetestDist" resultType="HashMap">
+
+        select count(*) as bugs_num,retimes from
+        (
+        SELECT count(*) as retimes,h.question_id FROM xm_question_handle h inner join xm_question res
+        on res.id=h.question_id
+        <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
+            <include refid="whereForMap"></include>
+            and h.handle_status='9'
+        </where>
+
+        group by h.question_id ) as ret
+        group by ret.retimes
+        order by retimes desc
     </select>
 </mapper>

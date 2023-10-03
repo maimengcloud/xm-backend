@@ -14,4 +14,20 @@
         <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
     </select>
+
+    <select id="myFocusForIndex" parameterType="String" resultType="HashMap">
+        select t.*
+        from
+        (select t1.*,
+        (select count(*)+1
+        from xm_my_focus a
+        where a.userid=#{userid} and a.focus_type=t1.focus_type
+        and a.ftime>t1.ftime
+        ) as group_id
+        from xm_my_focus t1
+        where t1.userid=#{userid}
+        ) t
+        where group_id &lt;=5
+        order by ftime desc, group_id asc
+    </select>
 </mapper>

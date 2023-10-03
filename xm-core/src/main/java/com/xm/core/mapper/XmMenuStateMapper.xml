@@ -6,12 +6,204 @@
         select * from xm_menu_state res
         <where>
             ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
-            <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
-
         </where>
         <!--下面双引号内可以添加默认排序，如果前端没有上传排序，将使用引号内的排序规则-->
         ${@com.mdp.Util@trimOrderBy(ew.customSqlSegment,'')}
         <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
     </select>
+
+    <update id="loadTasksToXmMenuState" parameterType="String" statementType="CALLABLE">
+        {call load_tasks_to_xm_menu_state(#{productId,mode=IN})}
+    </update>
+
+
+    <!-- 适合没有交叉的，没用父子关系的一批任务的更新 -->
+    <update id="batchSumParents" parameterType="List">
+        update xm_menu_state s  left join
+        (select m.pmenu_id,
+        sum(ss.budget_workload) as budget_workload ,
+        sum(ss.budget_iuser_workload) as budget_iuser_workload ,
+        sum(ss.budget_ouser_workload) as budget_ouser_workload ,
+        sum(ss.budget_at) as budget_at ,
+        sum(ss.budget_iuser_at) as budget_iuser_at ,
+        sum(ss.budget_ouser_at) as budget_ouser_at ,
+
+        sum(ss.act_workload) as act_workload ,
+        sum(ss.act_iuser_workload) as act_iuser_workload ,
+        sum(ss.act_ouser_workload) as act_ouser_workload ,
+        sum(ss.act_at) as act_at ,
+        sum(ss.act_iuser_at) as act_iuser_at ,
+        sum(ss.act_ouser_at) as act_ouser_at ,
+
+        sum(ifnull(ss.finish_rate,0))/count(1) as raw_rate ,
+
+        sum(ss.task_cnt) as task_cnt ,
+        sum(ss.task_unstart_cnt) as task_unstart_cnt ,
+        sum(ss.task_exec_cnt) as task_exec_cnt ,
+        sum(ss.task_finish_cnt) as task_finish_cnt ,
+        sum(ss.task_set_cnt) as task_set_cnt ,
+        sum(ss.task_close_cnt) as task_close_cnt ,
+
+
+        sum(ss.test_cases) as test_cases ,
+        sum(ss.exec_cases) as exec_cases ,
+        sum(ss.design_cases) as design_cases ,
+        sum(ss.finish_cases) as finish_cases ,
+
+
+        sum(ss.bug_cnt) as bug_cnt ,
+        sum(ss.active_bugs) as active_bugs ,
+        sum(ss.confirmed_bugs) as confirmed_bugs ,
+        sum(ss.resolved_bugs) as resolved_bugs ,
+        sum(ss.closed_bugs) as closed_bugs,
+
+        min(ss.min_start_time) as min_start_time,
+        max(ss.max_end_time) as max_end_time
+        from xm_menu_state ss inner join xm_menu m on ss.menu_id=m.menu_id   where m.pmenu_id in
+        <foreach collection="list" index="index" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+
+        group by m.pmenu_id) s2 on s2.pmenu_id=s.menu_id inner join xm_menu xmm on xmm.menu_id=s.menu_id
+        set
+        s.budget_workload=ifnull(s2.budget_workload,0),
+        s.budget_iuser_workload=ifnull(s2.budget_iuser_workload,0),
+        s.budget_ouser_workload=ifnull(s2.budget_ouser_workload,0),
+        s.budget_at=ifnull(s2.budget_at,0),
+        s.budget_iuser_at=ifnull(s2.budget_iuser_at,0),
+        s.budget_ouser_at=ifnull(s2.budget_ouser_at,0),
+
+        s.act_workload=ifnull(s2.act_workload,0),
+        s.act_iuser_workload=ifnull(s2.act_iuser_workload,0),
+        s.act_ouser_workload=ifnull(s2.act_ouser_workload,0),
+        s.act_at=ifnull(s2.act_at,0),
+        s.act_iuser_at=ifnull(s2.act_iuser_at,0),
+        s.act_ouser_at=ifnull(s2.act_ouser_at,0),
+
+        s.finish_rate=case when  ifnull(s2.budget_workload,0)  >0
+        then 100*(ifnull(s2.act_workload,0)) / s2.budget_workload
+        when ifnull(s2.act_workload,0)>0 then 100
+        else  0  end,
+
+        s.task_cnt=ifnull(s2.task_cnt,0),
+        s.task_unstart_cnt=ifnull(s2.task_unstart_cnt,0),
+        s.task_finish_cnt=ifnull(s2.task_finish_cnt,0),
+        s.task_set_cnt=ifnull(s2.task_set_cnt,0),
+        s.task_close_cnt=ifnull(s2.task_close_cnt,0),
+
+
+        s.test_cases=ifnull(s2.test_cases,0),
+        s.exec_cases=ifnull(s2.exec_cases,0),
+        s.design_cases=ifnull(s2.design_cases,0),
+        s.finish_cases=ifnull(s2.finish_cases,0),
+
+        s.bug_cnt=ifnull(s2.bug_cnt,0),
+        s.active_bugs=ifnull(s2.active_bugs,0),
+        s.confirmed_bugs=ifnull(s2.confirmed_bugs,0),
+        s.resolved_bugs=ifnull(s2.resolved_bugs,0),
+        s.closed_bugs=ifnull(s2.closed_bugs,0),
+        s.min_start_time=s2.min_start_time,
+        s.max_end_time=s2.max_end_time,
+        xmm.start_time=s2.min_start_time,
+        xmm.end_time=s2.max_end_time
+        where s.menu_id in
+        <foreach collection="list" index="index" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </update>
+    <!-- 适合父子关系的一批任务的更新 -->
+    <update id="sumParents" parameterType="List">
+        <foreach collection="list" item="item" index="index" open="" separator=";" close="" >
+            update xm_menu_state s  left join
+            (select m.pmenu_id,
+            count(1) as children_cnt,
+            sum(ss.budget_workload) as budget_workload ,
+            sum(ss.budget_iuser_workload) as budget_iuser_workload ,
+            sum(ss.budget_ouser_workload) as budget_ouser_workload ,
+            sum(ss.budget_at) as budget_at ,
+            sum(ss.budget_iuser_at) as budget_iuser_at ,
+            sum(ss.budget_ouser_at) as budget_ouser_at ,
+
+            sum(ss.act_workload) as act_workload ,
+            sum(ss.act_iuser_workload) as act_iuser_workload ,
+            sum(ss.act_ouser_workload) as act_ouser_workload ,
+            sum(ss.act_at) as act_at ,
+            sum(ss.act_iuser_at) as act_iuser_at ,
+            sum(ss.act_ouser_at) as act_ouser_at ,
+
+            sum(ifnull(ss.finish_rate,0))/count(1) as raw_rate ,
+
+            sum(ss.task_cnt) as task_cnt ,
+            sum(ss.task_unstart_cnt) as task_unstart_cnt ,
+            sum(ss.task_exec_cnt) as task_exec_cnt ,
+            sum(ss.task_finish_cnt) as task_finish_cnt ,
+            sum(ss.task_set_cnt) as task_set_cnt ,
+            sum(ss.task_close_cnt) as task_close_cnt ,
+
+
+            sum(ss.test_cases) as test_cases ,
+            sum(ss.exec_cases) as exec_cases ,
+            sum(ss.design_cases) as design_cases ,
+            sum(ss.finish_cases) as finish_cases ,
+
+
+            sum(ss.bug_cnt) as bug_cnt ,
+            sum(ss.active_bugs) as active_bugs ,
+            sum(ss.confirmed_bugs) as confirmed_bugs ,
+            sum(ss.resolved_bugs) as resolved_bugs ,
+            sum(ss.closed_bugs) as closed_bugs,
+
+            min(ss.min_start_time) as min_start_time,
+            max(ss.max_end_time) as max_end_time
+            from xm_menu_state ss inner join xm_menu m on ss.menu_id=m.menu_id   where m.pmenu_id =#{item}
+
+            group by m.pmenu_id) s2 on s2.pmenu_id=s.menu_id inner join xm_menu xmm on s.menu_id=xmm.menu_id
+            set
+            s.budget_workload=ifnull(s2.budget_workload,0),
+            s.budget_iuser_workload=ifnull(s2.budget_iuser_workload,0),
+            s.budget_ouser_workload=ifnull(s2.budget_ouser_workload,0),
+            s.budget_at=ifnull(s2.budget_at,0),
+            s.budget_iuser_at=ifnull(s2.budget_iuser_at,0),
+            s.budget_ouser_at=ifnull(s2.budget_ouser_at,0),
+
+            s.act_workload=ifnull(s2.act_workload,0),
+            s.act_iuser_workload=ifnull(s2.act_iuser_workload,0),
+            s.act_ouser_workload=ifnull(s2.act_ouser_workload,0),
+            s.act_at=ifnull(s2.act_at,0),
+            s.act_iuser_at=ifnull(s2.act_iuser_at,0),
+            s.act_ouser_at=ifnull(s2.act_ouser_at,0),
+
+            s.finish_rate=case when  ifnull(s2.budget_workload,0)  >0
+            then 100*(ifnull(s2.act_workload,0)) / s2.budget_workload
+            when ifnull(s2.act_workload,0)>0 then 100
+            else  0  end,
+
+            s.task_cnt=ifnull(s2.task_cnt,0),
+            s.task_unstart_cnt=ifnull(s2.task_unstart_cnt,0),
+            s.task_finish_cnt=ifnull(s2.task_finish_cnt,0),
+            s.task_set_cnt=ifnull(s2.task_set_cnt,0),
+            s.task_close_cnt=ifnull(s2.task_close_cnt,0),
+
+
+            s.test_cases=ifnull(s2.test_cases,0),
+            s.exec_cases=ifnull(s2.exec_cases,0),
+            s.design_cases=ifnull(s2.design_cases,0),
+            s.finish_cases=ifnull(s2.finish_cases,0),
+
+            s.bug_cnt=ifnull(s2.bug_cnt,0),
+            s.active_bugs=ifnull(s2.active_bugs,0),
+            s.confirmed_bugs=ifnull(s2.confirmed_bugs,0),
+            s.resolved_bugs=ifnull(s2.resolved_bugs,0),
+            s.closed_bugs=ifnull(s2.closed_bugs,0),
+            s.min_start_time=s2.min_start_time,
+            s.max_end_time=s2.max_end_time,
+            xmm.start_time=s2.min_start_time,
+            xmm.end_time=s2.max_end_time
+            where s.menu_id = #{item}
+        </foreach>
+    </update>
+    <insert id="batchLoadXmMenuToState" parameterType="HashMap">
+        insert into xm_menu_state (product_id,menu_id,biz_date) select i.product_id,i.menu_id,#{bizDate} from xm_menu i left join xm_menu_state s on s.product_id=i.product_id and s.menu_id=i.menu_id  where i.product_id=#{productId}  and s.menu_id is null
+    </insert>
 </mapper>

@@ -14,4 +14,18 @@
         <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
     </select>
+    <update id="loadTasksToXmProjectState" parameterType="String" statementType="CALLABLE">
+        {call load_tasks_to_xm_project_state(#{projectId,mode=IN})}
+    </update>
+    <update id="loadTasksSettleToXmProjectState" parameterType="String" statementType="CALLABLE">
+        {call load_tasks_settle_to_xm_project_state(#{projectId,mode=IN})}
+    </update>
+
+
+    <select id="selectPortalProjectStates" parameterType="HashMap" resultType="HashMap">
+        select * from XM.xm_project_state res
+        <where>
+            res.calc_time > DATE_SUB(now(),INTERVAL 7 DAY)
+        </where>
+    </select>
 </mapper>

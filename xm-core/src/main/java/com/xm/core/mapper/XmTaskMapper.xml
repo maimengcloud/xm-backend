@@ -7,11 +7,402 @@
         <where>
             ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
             <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
-
+            <include refid="whereForMap"></include>
         </where>
         <!--下面双引号内可以添加默认排序，如果前端没有上传排序，将使用引号内的排序规则-->
         ${@com.mdp.Util@trimOrderBy(ew.customSqlSegment,'')}
         <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
     </select>
+
+    <sql id="whereForMap"> 
+        <if test="ext.bidEtimeStart!=null">
+            and res.bid_etime &gt; #{ext.bidEtimeStart}
+        </if>
+        <if test="ext.lvls != null">  and (res.lvl) in
+            <foreach collection="ext.lvls" item="item" index="index" open="(" separator="," close=")" >
+                ( #{item})
+            </foreach>
+        </if>
+        <if test="ext.pidPathsList != null">  and
+            <foreach collection="ext.pidPathsList" item="item" index="index" open="(" separator=" or " close=")" >
+                #{item} like concat(res.pid_paths,'%')
+            </foreach>
+        </if>
+        <if test="ext.tagIdList != null"> and
+            <foreach collection="ext.tagIdList" item="item" index="index" open="(" separator=" or " close=")" >
+                find_in_set(#{item},res.tag_ids)
+            </foreach>
+        </if>
+
+        <if test="ext.ltimeStart !=null "> and res.ltime &gt; #{ext.ltimeStart} </if>
+        <if test="ext.ltimeEnd !=null "> and res.ltime &lt; #{ext.ltimeEnd} </if>
+        <if test="ext.planStartTimeStart !=null "> and res.start_time &gt; #{ext.planStartTimeStart} </if>
+        <if test="ext.planStartTimeEnd !=null "> and res.start_time &lt; #{ext.planStartTimeEnd} </if>
+        <if test="ext.planEndTimeStart !=null "> and res.end_time &gt; #{ext.planEndTimeStart} </if>
+        <if test="ext.planEndTimeEnd !=null "> and res.end_time &lt; #{ext.planEndTimeEnd} </if>
+        <if test="ext.actStartTimeStart !=null "> and res.act_start_time &gt; #{ext.actStartTimeStart} </if>
+        <if test="ext.actStartTimeEnd !=null "> and res.act_start_time &lt; #{ext.actStartTimeEnd} </if>
+        <if test="ext.actEndTimeStart !=null "> and res.act_end_time &gt; #{ext.actEndTimeStart} </if>
+        <if test="ext.actEndTimeEnd !=null "> and res.act_end_time &lt; #{ext.actEndTimeEnd} </if>
+        <if test="ext.startBudgetAt !=null "> and res.budget_at &gt;= #{ext.startBudgetAt} </if>
+        <if test="ext.endBudgetAt !=null "> and res.budget_at &lt;= #{ext.endBudgetAt} </if>
+        <if test="ext.parent != null and ext.parent != ''"> and (res.parent_taskid = '' or res.parent_taskid IS NULL)</if>
+        <if test="ext.pidPathsLike">
+            and res.pid_paths like concat(#{ext.pidPathsLike},'%')
+        </if>
+        <!-- 我参与的-->
+        <if test="(ext.myExecuserStatus != null and ext.myExecuserStatus) != '' or ( ext.isMy !=null and ext.isMy !='' )">
+            and  exists ( select 1 from xm_task_execuser exe where exe.task_id=res.id and exe.userid=#{ext.userid}
+            <if test='ext.myExecuserStatus != "all" and  ext.myExecuserStatus!=null and ext.myExecuserStatus !="" '>
+                and exe.status=#{ext.myExecuserStatus}
+            </if>
+            )
+        </if>
+        <!-- 我关注的 -->
+        <if test="ext.myFocus != null and ext.myFocus != ''">
+            and exists ( select 1 from xm_my_focus f where f.userid=#{ext.userid} and f.pbiz_id=res.project_id and f.biz_id=res.id  )
+        </if>
+        <if test="ext.skillIds != null and ext.skillIds != ''">
+            and exists ( select 1 from xm_task_skill f where f.task_id=res.id and f.skill_id in
+            <foreach collection="ext.skillIds" item="item" index="index" open="(" separator="," close=")" >
+                #{item}
+            </foreach>
+            )
+        </if>
+        <if test="ext.compete !=null and ext.compete!=''">
+            and ( exists ( select 1 from xm_group_user gu where gu.userid=#{ext.compete} and gu.project_id=res.project_id )
+            or  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.project_id and exe.userid=#{ext.compete})
+            )
+
+        </if>
+        <if test="ext.iterationId!=null and ext.iterationId!=''">
+            and exists ( select 1 from xm_menu im where im.menu_id=res.menu_id and  im.iteration_id=#{ext.iterationId})
+        </if>
+        <if test="ext.key != null and ext.key !='' ">    and res.name like #{ext.key}   </if>
+        <if test="ext.work != null and ext.work != ''"> and res.rate != '100' </if>
+        <if test="ext.isTop!=null and ext.isTop!=''">
+            and (res.parent_taskid is null or res.parent_taskid='')
+        </if>
+        <if test="ext.linkProductId!=null and ext.linkProductId!=''">
+            and exists( select 1 from xm_product_project_link link where and link.product_id=#{ext.linkProductId} and link.project_id=res.project_id)
+        </if>
+        <if test="ext.minSupRequires!=null">
+            and res.sup_requires &gt;= #{ext.minSupRequires}
+        </if>
+        <if test="ext.minCapaLvls!=null">
+            and res.capa_lvls &gt;= #{ext.minCapaLvls}
+        </if>
+    </sql>
+
+    <select id="getAvgRate" parameterType="String" resultType="long" >
+        select avg(res.rate) from xm_task res where res.parent_taskid = #{parentTaskid}
+    </select>
+
+    <select id="shareTaskDetail" parameterType="HashMap" resultType="HashMap">
+        SELECT res.*,m.remark from xm_task res left join xm_menu m on res.menu_id = m.menu_id
+        WHERE res.id=#{id}
+    </select>
+    <select id="checkExistsExecuser" parameterType="String" resultType="Long" >
+        select count(1) from xm_task_execuser res where res.task_id = #{taskId} and ( res.settle_status not in('2','6'))
+    </select>
+    <select id="checkExistsChildren" parameterType="String" resultType="Long" >
+        select count(1) from xm_task res where res.parent_taskid = #{id}
+    </select>
+    <update id="updatePreTask" parameterType="String">
+        update  xm_task set pre_taskid = NULL,pre_taskname = NULL where pre_taskid = #{id}
+    </update>
+
+    <update id="relTaskWithMenu" parameterType="com.xm.core.entity.XmTask">
+        update  xm_task set menu_id = #{menuId}, menu_name = #{menuName},product_id=#{productId},product_name=#{productName} where id = #{id}
+    </update>
+
+    <update id="updateTaskChildrenCntByTaskId" parameterType="String">
+        UPDATE xm_task t
+        LEFT JOIN ( SELECT count( 1 ) AS children_cnt, tt.parent_taskid AS id FROM xm_task tt WHERE tt.parent_taskid = #{id} ) t2 ON t2.id = t.id
+        SET t.children_cnt = ifnull( t2.children_cnt, 0 )
+        WHERE
+        t.id = #{id}
+    </update>
+
+    <update id="updateChildrenCntByIds" parameterType="List">
+        UPDATE xm_task t
+        LEFT JOIN ( SELECT count( 1 ) AS children_cnt, tt.parent_taskid AS id FROM xm_task tt  WHERE
+        (tt.parent_taskid) in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            ( #{item})
+        </foreach>
+        group by tt.parent_taskid ) t2 ON t2.id = t.id
+        SET t.children_cnt = ifnull( t2.children_cnt, 0 )
+        WHERE  (t.id) in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            ( #{item})
+        </foreach>
+    </update>
+    <update id="batchRelTasksWithMenu" parameterType="HashMap">
+        update xm_task res set res.menu_id=#{menuId},res.menu_name =#{menuName}, res.product_id=#{productId}
+        where res.id in
+        <foreach collection="taskIds" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        and res.ntype!='1'
+    </update>
+
+    <update id="batchRelTasksWithPhase" parameterType="com.xm.core.vo.BatchRelTasksWithPhase">
+        update xm_task res set res.phase_id=#{phaseId}
+        where res.id in
+        <foreach collection="taskIds" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        and res.ntype='0'
+    </update>
+
+    <!-- 查询任务总的预算及对应的计划的预算，任务总预算不能大于计划总预算 -->
+    <select id="selectTotalTaskBudgetCost" parameterType="HashMap" resultType="HashMap">
+        SELECT
+        ifnull(p.budget_at,0) as budget_at,
+        ifnull(p.budget_workload,0) as budget_workload,
+        tc.*
+        FROM xm_task p	LEFT JOIN
+        (select
+        res.parent_taskid,
+        sum( ifnull(res.budget_at,0) ) AS child_budget_at,
+        sum( ifnull(res.budget_workload,0) ) AS child_budget_workload
+        from
+        xm_task res where res.parent_taskid=#{parentTaskid}
+        <if test=" excludeTaskIds !=null "> and res.id not in
+            <foreach collection="excludeTaskIds" item="item" index="index" open="(" separator="," close=")" >
+                #{item}
+            </foreach>
+        </if>
+        ) as tc ON p.id = tc.parent_taskid
+        WHERE
+        p.id = #{parentTaskid}
+
+    </select>
+    <!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+    <select id="selectTaskListByIds" parameterType="HashMap" resultType="com.xm.core.entity.XmTask">
+        select (select sum(1) from xm_task t where t.parent_taskid=res.id) as children_cnt, res.* from xm_task res
+        where   res.id in
+        <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </select>
+    <!-- 适合没有交叉的，没用父子关系的一批任务的更新 -->
+    <update id="batchSumParents" parameterType="List">
+        UPDATE xm_task res
+        LEFT JOIN (
+        SELECT
+        t.parent_taskid,
+        count(1) as children_cnt,
+        sum( ifnull( t.budget_at, 0 ) ) AS budget_at,
+        sum( ifnull( t.budget_workload, 0 ) ) AS budget_workload,
+        sum( ifnull( t.act_at, 0 ) ) AS act_at,
+        sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
+        sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) )   AS budget_workload_calc,
+        sum( ifnull(t.rate,0)) as total_rate,
+        min( t.start_time ) AS start_time,
+        max( t.end_time ) AS end_time,
+        min( t.act_start_time ) AS act_start_time,
+        max( t.act_end_time ) AS act_end_time
+        FROM
+        xm_task t
+        WHERE
+        t.parent_taskid in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        group by t.parent_taskid
+        ) t2 ON t2.parent_taskid = res.id
+        SET
+        res.budget_workload=ifnull(t2.budget_workload,0),
+        res.act_at = t2.act_at,
+        res.act_workload = t2.act_workload,
+        res.rate = case when ifnull(t2.budget_workload,0) >0 then ifnull(t2.budget_workload_calc,0) / t2.budget_workload
+        when  t2.act_workload >0 then 100
+        when  res.task_state &gt;='2' then 100
+        else res.rate end,
+        res.start_time = ifnull(res.start_time,t2.start_time),
+        res.end_time = ifnull(t2.end_time,t2.end_time),
+        res.act_start_time = t2.act_start_time,
+        res.act_end_time = t2.act_end_time,
+        res.children_cnt = ifnull( t2.children_cnt, 0 ),
+        res.ntype=if(t2.children_cnt>0,"1",res.ntype)
+        WHERE
+        res.id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        and res.ntype='1'
+    </update>
+    <!-- 适合父子关系的一批任务的更新 -->
+    <update id="sumParents" parameterType="List">
+        <foreach collection="list" item="item" index="index" open="" separator=";" close="" >
+            UPDATE xm_task res
+            left JOIN (
+            SELECT
+            t.parent_taskid,
+            count(1) as children_cnt,
+            sum( ifnull( t.act_at, 0 ) ) AS act_at,
+            sum( ifnull( t.act_workload, 0 ) ) AS act_workload,
+            sum( ifnull( t.budget_at, 0 ) ) AS budget_at,
+            sum( ifnull( t.budget_workload, 0 ) * ifnull( t.rate, 0 ) ) as budget_workload_calc,
+            sum( ifnull(t.rate,0)) as total_rate,
+            sum( ifnull( t.budget_workload, 0 )) as budget_workload,
+            min( t.act_start_time ) AS act_start_time,
+            max( t.act_end_time ) AS act_end_time,
+            min( t.start_time ) AS start_time,
+            max( t.end_time ) AS end_time
+            FROM
+            xm_task t
+            WHERE
+            t.parent_taskid = #{item}
+            ) t2 ON t2.parent_taskid = res.id
+            SET
+            res.budget_workload=ifnull(t2.budget_workload,0),
+            res.act_at = t2.act_at,
+            res.act_workload = t2.act_workload,
+            res.rate = case when ifnull(t2.budget_workload,0)>0 then ifnull(t2.budget_workload_calc,0) / t2.budget_workload
+            when t2.act_workload >0 then 100
+            when res.task_state &gt;='2' then 100
+            else res.rate end,
+            res.start_time = ifnull(res.start_time,t2.start_time),
+            res.end_time = ifnull(t2.end_time,t2.end_time),
+            res.act_start_time = t2.act_start_time,
+            res.act_end_time = t2.act_end_time ,
+            res.children_cnt = ifnull( t2.children_cnt, 0 ),
+            res.ntype=if(t2.children_cnt>0,"1",res.ntype)
+            WHERE
+            res.id  = #{item}
+            and res.ntype='1'
+        </foreach>
+    </update>
+
+
+    <select id="calcProjectAndTaskBudget" resultType="HashMap" parameterType="HashMap">
+        select p.id,p.name,p.plan_total_cost,sum(budget_at) as budget_at from xm_project p left join xm_task t on t.project_id=p.id
+        <where>
+            p.id=#{projectId} and t.lvl=1
+            <if test="excludeTaskIds!=null">
+                and t.id not in
+                <foreach collection="excludeTaskIds" item="item" index="index" open="(" separator="," close=")" >
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+
+        group by p.id
+    </select>
+
+    <select id="listTenTaskByProjectIdAndIterationId" parameterType="HashMap" resultType="com.xm.core.entity.XmTask">
+        select name from xm_task res where res.project_id=#{projectId} and exists(select 1 from xm_menu m where m.menu_id=res.menu_id and m.iteration_id=#{iterationId} and m.ntype='0')
+        and res.ntype='0'
+        limit 10
+    </select>
+
+    <select id="listTenTaskByProjectIdAndProductId" parameterType="HashMap" resultType="com.xm.core.entity.XmTask">
+        select name from xm_task res where res.project_id=#{projectId} and  exists(select 1 from xm_menu m where m.menu_id=res.menu_id and m.product_id=#{productId} and m.ntype='0')
+        and res.ntype='0'
+        limit 10
+    </select>
+
+    <update id="batchChangeParent" parameterType="HashMap">
+        update   xm_task res inner join (
+        select t.id,pid_paths,parent_taskid,parent_taskname from xm_task t where t.id in
+        <foreach collection="taskIds" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        ) as t1 on res.pid_paths like concat(t1.pid_paths,'%')
+
+        set res.pid_paths = replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.id,',')),
+        res.parent_taskid=if(res.id=t1.id,#{parentTaskid},res.parent_taskid),
+        res.parent_taskname=if(res.id=t1.id,#{parentTaskname},res.parent_taskname),
+        res.lvl= LENGTH(replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.id,',')))-LENGTH(REPLACE(replace(res.pid_paths,t1.pid_paths,concat(#{parentPidPaths},res.id,',')),',',''))-1
+
+    </update>
+    <update id="updateActCostAndActWorkloadAfterSettle" parameterType="HashMap">
+        update xm_task res left join (
+        select u.task_id, sum(u.act_at_amount)  as act_at_amount ,sum(u.act_workload) as act_workload from xm_project_m_cost_user u
+        where u.task_id=#{id}
+        group by u.task_id
+        ) as cu on cu.task_id=res.id
+        set res.act_workload=ifnull(cu.act_workload,0),res.act_at=ifnull(cu.act_at_amount,0),
+        res.task_state=ifnull(#{taskState},res.task_state)
+        where id=#{id}
+    </update>
+    <update id="calcWorkloadByRecord" parameterType="List">
+        update xm_task res left join
+        (select w.task_id, sum(ifnull(w.workload,0)) as workload  from xm_workload w where w.task_id  in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+        group by w.task_id
+        )
+        as w on res.id=w.task_id
+        set res.act_workload=w.workload,res.rate=case when res.task_state in('2','3','4') then 100
+        when res.budget_workload>0 then ifnull(w.workload,0)*100/ res.budget_workload
+        when w.workload>0 then 100
+        else res.rate end
+        where res.id in
+        <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </update>
+
+    <!-- 批量更新 -->
+    <update id="batchUpdateBudgetWorkloadAndRate" parameterType="HashMap">
+        update  xm_task res
+        set
+        res.init_workload=if(res.init_workload is null or res.init_workload=0,#{budgetWorkload},res.init_workload),
+        res.budget_workload=#{budgetWorkload},
+        res.rate=case when res.task_state in('2','3','4') then 100
+        when #{budgetWorkload}>0 then ifnull(res.act_workload,0)*100/ #{budgetWorkload}
+        when res.act_workload>0 then 100
+        else res.rate end
+        where id in
+        <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+    </update>
+
+    <select id="getXmTaskAttDist" parameterType="HashMap" resultType="HashMap">
+        select count(*) as value,${ext.groupBy} as name from xm_task res
+        <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
+            <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
+            <include refid="whereForMap"></include>
+        </where>
+        group by ${ext.groupBy}
+    </select>
+    <select id="getXmTaskAgeDist" parameterType="HashMap" resultType="HashMap">
+
+        select sum(value) as value,case when age&lt;3 then 0 when age &lt;6 then 1 when age &lt;8 then 2 when age &lt;16 then 3 when age&lt;31 then 4 else 5 end as name from (
+        select count(*) as value, datediff (res.end_time,res.start_time)  as age from  xm_task res
+        <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
+            <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
+            <include refid="whereForMap"></include>
+        </where>
+        group by age
+        ) as a
+        group by name
+    </select>
+
+    <select id="getXmTaskSort" parameterType="HashMap" resultType="HashMap">
+        select count(*) as value,${groupBy} as id,
+        max( <if test="ext.groupBy=='create_userid'">create_username</if>
+        <if test="ext.groupBy=='executor_userid'">executor_username</if>
+        <if test="ext.groupBy=='menu_id'">menu_name</if>  ) as name from xm_task res
+        <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
+            <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
+            <include refid="whereForMap"></include>
+        </where>
+        group by ${ext.groupBy}
+    </select>
+    <update id="upBrowseTimes" parameterType="HashMap">
+        update  xm_task
+        set browse_times=ifnull(browse_times,0)+#{nums}
+        where id = #{id}
+    </update>
 </mapper>

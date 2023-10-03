@@ -3,15 +3,153 @@
 <mapper namespace="com.xm.core.mapper.XmTestPlanCaseMapper">
 
     <select id="selectListMapByWhere" resultType="HashMap">
-        select * from xm_test_plan_case res
+        select res.*,c.case_name,c.ver_num,c.case_remark,c.func_id,c.func_name,c.menu_id,c.menu_name,c.product_id,c.case_type,c.case_status,c.casedb_id,c.casedb_name,c.pre_remark,c.test_type,c.auto_step,c.cpriority from xm_test_plan_case res left join xm_test_case c on res.case_id=c.id
         <where>
             ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
             <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->
+            <include refid="whereForMap"></include>
 
         </where>
         <!--下面双引号内可以添加默认排序，如果前端没有上传排序，将使用引号内的排序规则-->
         ${@com.mdp.Util@trimOrderBy(ew.customSqlSegment,'')}
         <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
+    </select>
+
+    <sql id="whereForMap"> 
+         <if test="ext.caseStatus != null and ext.caseStatus !='' "> and c.case_status = #{ext.caseStatus}    </if>
+        <if test="ext.funcPidPathsLike!=null and ext.funcPidPathsLike!=''">
+            and exists( select 1 from xm_func f where f.pid_paths like concat(#{ext.funcPidPathsLike},'%') and c.func_id=f.id)
+        </if>
+        <if test="ext.productId!=null and ext.productId!=''">
+            and c.product_id=#{ext.productId}
+        </if>
+        <if test="ext.casedbId!=null and ext.casedbId!=''">
+            and c.casedb_id=#{ext.casedbId}
+        </if>
+        <if test="ext.linkIterationId!=null">
+            and c.iteration_id=#{ext.linkIterationId}
+        </if>
+        <if test="ext.pbranchId!=null and ext.pbranchId!=''">
+            and c.pbranch_id=#{ext.pbranchId}
+        </if>
+        <if test="ext.testType!=null and ext.testType!=''">
+            and c.test_type=#{ext.testType}
+        </if>
+        <if test="ext.linkIterationId!=null">
+            and exists ( select 1 from  xm_menu m
+            where m.iteration_id=#{ext.linkIterationId} and c.menu_id=m.menu_id
+            <if test="ext.productId!=null and ext.productId!=''">
+                and m.product_id=#{ext.productId}
+            </if>
+            )
+        </if>
+    </sql>
+    <sql id="whereForRpt">
+        <if test="planId!=null and planId!=''">
+            and res.plan_id=#{planId}
+        </if>
+        <if test="casedbId!=null and casedbId!=''">
+            and p.casedb_id=#{casedbId}
+        </if>
+        <if test="projectId!=null and projectId!=''">
+            and p.project_id=#{projectId}
+        </if>
+        <if test="productId!=null and productId!=''">
+            and p.product_id=#{productId}
+        </if>
+        <if test="pbranchId!=null and pbranchId!=''">
+            and p.pbranch_id=#{pbranchId}
+        </if>
+        <if test="startExecDate!=null">
+            and res.exec_date between #{startExecDate} and #{endExecDate}
+        </if>
+        <if test="linkIterationId!=null">
+            and exists ( select 1 from xm_test_case c inner join xm_menu m on c.menu_id=m.menu_id
+            where m.iteration_id=#{linkIterationId} and c.id=res.case_id
+            <if test="productId!=null and productId!=''">
+                and m.product_id=#{productId}
+            </if>
+            )
+        </if>
+    </sql>
+    <select id="selectListByCaseIdsAndPlanId" parameterType="HashMap"  resultType="com.xm.core.entity.XmTestPlanCase">
+        select * from xm_test_plan_case res where  res.plan_id=#{planId} and res.case_id in
+        <foreach collection="caseIds" item="item" index="index" open="(" separator="," close=")" >
+            #{item}
+        </foreach>
+
+    </select>
+
+
+    <select id="getXmTestPlanCaseExecStatusDist" parameterType="HashMap"  resultType="HashMap">
+        select count(*) as total_cnt,res.exec_status from xm_test_plan_case res left join xm_test_plan p on res.plan_id=p.id
+        <where>
+            <include refid="whereForRpt"/>
+        </where>
+        group by res.exec_status
+    </select>
+
+    <select id="getXmTestPlanCaseUserDist" parameterType="HashMap"  resultType="HashMap">
+        select count(*) as total_cnt,sum(case when res.exec_status>='1' then 1 else 0 end) as had_exec,sum(case when res.exec_status='0' then 1 else 0 end) as not_exec
+        ,res.exec_userid,max(res.exec_username) as exec_username
+        from xm_test_plan_case res left join xm_test_plan p on res.plan_id=p.id
+        <where>
+            <include refid="whereForRpt"/>
+        </where>
+        group by res.exec_userid
+
+    </select>
+
+
+
+    <select id="getXmTestDayTimesList" parameterType="HashMap"  resultType="HashMap">
+        select res.exec_date, sum(case when res.exec_status>='1' then 1 else 0 end) as had_exec
+        from xm_test_plan_case res inner join xm_test_plan p on res.plan_id=p.id
+        <where>
+            <include refid="whereForRpt"/>
+        </where>
+        group by res.exec_date
+        order by res.exec_date asc
+
+    </select>
+
+    <select id="getXmTestCaseToPlanCalcList" parameterType="HashMap"  resultType="HashMap">
+        select count(*) as case_num,use_times from
+        (
+        SELECT sum(if(res.case_id is null ,0,1)) as use_times,c.id FROM xm_test_case c left join xm_test_plan_case res
+        on c.id=res.case_id
+        <if test="projectId!=null and projectId!=''">
+            and res.project_id=#{projectId}
+        </if>
+        <if test="planId!=null and planId!=''">
+            and res.plan_id=#{planId}
+        </if>
+        <if test="startExecDate!=null">
+            and res.exec_date between #{startExecDate} and #{endExecDate}
+        </if>
+        <where>
+            <if test="casedbId!=null and casedbId!=''">
+                and c.casedb_id=#{casedbId}
+            </if>
+
+            <if test="productId!=null and productId!=''">
+                and c.product_id=#{productId}
+            </if>
+            <if test="pbranchId!=null and pbranchId!=''">
+                and c.pbranch_id=#{pbranchId}
+            </if>
+            <if test="linkIterationId!=null">
+                and exists ( select 1 from  xm_menu m
+                where m.iteration_id=#{linkIterationId} and c.menu_id=m.menu_id
+                <if test="productId!=null and productId!=''">
+                    and m.product_id=#{productId}
+                </if>
+                )
+            </if>
+        </where>
+        group by c.id ) as ret
+        group by ret.use_times
+
     </select>
 </mapper>
