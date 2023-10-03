@@ -1,19 +1,16 @@
 package com.xm.push;
 
-import java.util.*;
-
-import org.junit.Assert;
+import com.xm.core.service.push.XmPushMsgService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import com.mdp.core.utils.BaseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.xm.core.service.push.XmPushMsgService;
-import com.mdp.mybatis.PageUtils;
-import com.github.pagehelper.Page;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 /**
  * XmProjectStateService的测试案例
  * 组织 com.qqkj<br>
