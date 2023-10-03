@@ -7,7 +7,6 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.service.BaseService;
-import com.mdp.core.service.SequenceService;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.safe.client.entity.User;
@@ -54,9 +53,7 @@ public class XmProjectService extends BaseService<XmProjectMapper,XmProject> {
     
     @Autowired
     XmRecordService xmRecordService;
-    
-    @Autowired
-    SequenceService sequenceService;
+
     
     @Autowired
     XmProjectCacheService xmProjectCacheService;
