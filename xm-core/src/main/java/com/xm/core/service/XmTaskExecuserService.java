@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.err.BizException;
 import com.mdp.core.service.BaseService;
 import com.mdp.msg.client.PushNotifyMsgService;
+import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmTask;
@@ -112,9 +113,10 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 		List<String> usernames=new ArrayList<>();
 		
 		 User user=LoginUtils.getCurrentUserInfo();
-		 List<XmGroupVo> pgroups=groupService.getProjectGroupVoList(projectId);
+
+		 List<Dept> pgroups=groupService.getSubDeptList(projectId);
  		for (XmTaskExecuser xmTaskExecuser : xmTaskExecuserList) {
-			List<XmGroupVo> userGroups=groupService.getUserGroups(pgroups, xmTaskExecuser.getBidUserid());
+			List<Dept> userGroups=groupService.getUserGroups(pgroups, xmTaskExecuser.getBidUserid());
 			XmTaskExecuser xmTaskExecuser2=new XmTaskExecuser();
 			xmTaskExecuser2.setTaskId(xmTaskExecuser.getTaskId());
 			xmTaskExecuser2.setBidUserid(xmTaskExecuser.getBidUserid());
@@ -135,9 +137,9 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 			String imMsg=xmTaskExecuser.getBidUsername()+"放弃任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】";
 			notifyMsgService.pushMsg(user,xmTaskExecuser.getBidUserid(),xmTaskExecuser.getBidUsername(),"您已离开任务【"+xmTaskExecuser.getTaskId()+"-"+xmTaskExecuser.getTaskName()+"】！",null);
 
-			for (XmGroupVo g : userGroups) {
-				this.pushMsgService.pushGroupMsg(user.getBranchId(), g.getId(), xmTaskExecuser.getBidUserid(), xmTaskExecuser.getBidUsername(),  imMsg);
- 				this.pushMsgService.pushLeaveChannelGroupMsg(user.getBranchId(), g.getId(), users);
+			for (Dept g : userGroups) {
+				this.pushMsgService.pushGroupMsg(user.getBranchId(), g.getDeptid(), xmTaskExecuser.getBidUserid(), xmTaskExecuser.getBidUsername(),  imMsg);
+ 				this.pushMsgService.pushLeaveChannelGroupMsg(user.getBranchId(), g.getDeptid(), users);
 
 			}
 			this.pushMsgService.pushCssMsg(user.getBranchId(), xmTaskExecuser.getBidUserid(), xmTaskExecuser.getBidUsername(), imMsg);

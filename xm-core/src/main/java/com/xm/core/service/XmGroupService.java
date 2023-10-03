@@ -217,5 +217,8 @@ public class XmGroupService  {
 	public boolean checkUserIsOtherUserTeamHeadOrAss(List<Dept> groups, String headUserid, String memUserid) {
     	return true;
 	}
+
+	public void addGroups(String projectId, List<Dept> gs) {
+	}
 }
 

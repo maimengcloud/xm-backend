@@ -133,8 +133,8 @@ public class XmTaskBidOrderController {
 			User user= LoginUtils.getCurrentUserInfo();
 			User userInterests=sysClient.getUserInterestsByUserid(user.getUserid());
 
-			bidOrderVo.setExecUserBranchId(user.getBranchId());
-			bidOrderVo.setUsername(user.getUsername());
+			bidOrderVo.setBidBranchId(user.getBranchId());
+			bidOrderVo.setBidUsername(user.getUsername());
 			bidOrderVo.setBranchId(xmTaskDb.getCbranchId());
 			bidOrderVo.setProjectId(xmTaskDb.getProjectId());
 			bidOrderVo.setBidDirect("1");

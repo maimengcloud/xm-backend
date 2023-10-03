@@ -11,6 +11,7 @@ import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.msg.client.PushNotifyMsgService;
+import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmMenu;
@@ -234,9 +235,9 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 				xmTaskExecuser.setTaskId(xmTaskVo.getId());
 				xmTaskExecuser.setTaskName(xmTaskVo.getName());
 				xmTaskExecuser.setProjectId(xmTaskVo.getProjectId());
-				xmTaskExecuser.setUserid(exeUser.getUserid());
-				xmTaskExecuser.setUsername(exeUser.getUsername());
-				xmTaskExecuser.setExecUserBranchId(exeUser.getBranchId());
+				xmTaskExecuser.setBidUserid(exeUser.getUserid());
+				xmTaskExecuser.setBidUsername(exeUser.getUsername());
+				xmTaskExecuser.setBidBranchId(exeUser.getBranchId());
 				xmTaskExecuser.setBranchId(xmTaskVo.getCbranchId());
 				xmTaskExecuser.setStatus("1");
 				xmTaskExecuser.setQuoteAmount(svrVo.getPrice());
@@ -244,19 +245,13 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 				xmTaskExecuser.setSkillRemark((String)userServiceData.get("skills"));
 
 
-				XmGroupVo xmGroupVo=new XmGroupVo();
-				xmGroupVo.setId(groupService.createKey("id"));
-				XmGroupUser xmGroupUser=new XmGroupUser();
-				xmGroupUser.setUserid(exeUser.getUserid());
-				xmGroupUser.setUsername(exeUser.getUsername());
-				xmGroupVo.setBranchId(xmTaskVo.getCbranchId());
-				xmGroupVo.setAssUserid(xmTaskVo.getCreateUserid());
-				xmGroupVo.setAssUsername(xmTaskVo.getCreateUsername());
-				List<XmGroupUser> gusers=new ArrayList<>();
-				gusers.add(xmGroupUser);
-				xmGroupVo.setGroupUsers(gusers);
-				List<XmGroupVo> gs=new ArrayList<>();
-				gs.add(xmGroupVo);
+				Dept Dept=new Dept();
+				Dept.setDeptid(this.xmTaskSkillService.createKey("id"));
+				Dept xmGroupUser=new Dept();
+
+				Dept.setBranchId(xmTaskVo.getCbranchId());
+				List<Dept> gs=new ArrayList<>();
+				gs.add(Dept);
 				groupService.addGroups(xmTaskVo.getProjectId(),gs);
 
 				xmTaskExecuserService.addExecuser(xmTaskExecuser,!"0".equals(xmTaskVo.getStatus()));

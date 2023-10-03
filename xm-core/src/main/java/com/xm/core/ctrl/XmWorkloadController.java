@@ -360,23 +360,23 @@ public class XmWorkloadController {
 				Map<String,Object> p=map("planId",xmWorkload.getPlanId(),"caseId",xmWorkload.getCaseId());
 				List<Map<String,Object>> xmTestPlanCaseDbs=this.xmTestPlanCaseService.selectListMapByWhere(QueryTools.initPage(p),QueryTools.initQueryWrapper(XmTestPlanCase.class,p),p);
 				if(xmTestPlanCaseDbs==null||xmTestPlanCaseDbs.size()==0){
-					return failed("xmTestPlanCaseDb-0","执行用例已不存在");
+					return Result.error("xmTestPlanCaseDb-0","执行用例已不存在");
 				}
 				Map<String,Object> xmTestPlanCaseDb=xmTestPlanCaseDbs.get(0);
 				if(!(xmWorkload.getUserid().equals(xmTestPlanCaseDb.get("execUserid")))){
-					return failed("userid-err",xmWorkload.getUserid()+"不是当前用例的执行人，无须报工。");
+					return Result.error("userid-err",xmWorkload.getUserid()+"不是当前用例的执行人，无须报工。");
 				}
 				String projectId= (String) xmTestPlanCaseDb.get("projectId");
 				if(StringUtils.hasText(projectId)){
 					XmProject xmProject=xmProjectService.getProjectFromCache(projectId);
 					if(xmProject==null){
-						return failed("project-0","项目已不存在");
+						return Result.error("project-0","项目已不存在");
 					}
 
 					xmWorkload.setProjectId(xmProject.getId());
 					xmWorkload.setBranchId(xmProject.getBranchId());
 				}else{
-					return failed("projectId-0","项目编号不能为空");
+					return Result.error("projectId-0","项目编号不能为空");
 				}
 				xmWorkload.setBizName((String) xmTestPlanCaseDb.get("caseName"));
 				xmWorkload.setCtime(new Date());
