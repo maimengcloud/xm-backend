@@ -27,11 +27,11 @@ public interface XmMenuMapper extends BaseMapper<XmMenu> {
 
     List<XmMenu> getUserCanOpMenusByIds(Map<String, Object> map);
 
-    List<Map<String, Object>> selectListMapByWhereWithPlan(Map<String, Object> xmMenu);
+    List<Map<String, Object>> selectListMapByWhereWithPlan(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> xmMenu);
+    List<Map<String, Object>> selectListMapByWhereWithState(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> selectListMapByWhereWithPhase(Map<String, Object> xmMenu);
+    List<Map<String, Object>> selectListMapByWhereWithPhase(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
     void updateMenuChildrenCntByMenuId(String menuId);
 
@@ -61,11 +61,11 @@ public interface XmMenuMapper extends BaseMapper<XmMenu> {
 
     void batchSumParents(List<String> ids);
 
-    List<Map<String, Object>> getXmMenuAttDist(Map<String, Object> xmMenu);
+    List<Map<String, Object>> getXmMenuAttDist(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> getXmMenuAgeDist(Map<String, Object> xmMenu);
+    List<Map<String, Object>> getXmMenuAgeDist(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> getXmMenuSort(Map<String, Object> xmMenu);
+    List<Map<String, Object>> getXmMenuSort(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
     void updateUps(List<String> menuIds);
 

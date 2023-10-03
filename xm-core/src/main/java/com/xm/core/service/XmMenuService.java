@@ -3,6 +3,7 @@ package com.xm.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Tips;
+import com.mdp.core.query.QueryTools;
 import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.mapper.XmMenuMapper;
@@ -44,33 +45,33 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 	/**
 	 * 连同功能关联的项目需求计划数据一起带出
 	 *
-	 * @param xmMenu
+	 * @param params
 	 * @return
 	 */
-	public List<Map<String, Object>> selectListMapByWhereWithPlan(Map<String, Object> xmMenu) {
-		return baseMapper.selectListMapByWhereWithPlan( xmMenu);
+	public List<Map<String, Object>> selectListMapByWhereWithPlan(Map<String, Object> params) {
+		return baseMapper.selectListMapByWhereWithPlan(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
 	}
 
 	/**
 	 * 连同功能关联的状态数据一起带出
 	 *
-	 * @param xmMenu
+	 * @param params
 	 * @return
 	 */
-	public List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> xmMenu) {
+	public List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> params) {
 
-		return baseMapper.selectListMapByWhereWithState( xmMenu);
+		return baseMapper.selectListMapByWhereWithState(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
 	}
 
 	/**
 	 * 连同功能关联的产品计划一并带出
 	 *
-	 * @param xmMenu
+	 * @param params
 	 * @return
 	 */
-	public List<Map<String, Object>> selectListMapByWhereWithPhase(Map<String, Object> xmMenu) {
+	public List<Map<String, Object>> selectListMapByWhereWithPhase(Map<String, Object> params) {
 
-		return baseMapper.selectListMapByWhereWithPhase( xmMenu);
+		return baseMapper.selectListMapByWhereWithPhase( QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
 	}
 
 
@@ -402,16 +403,16 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 
 	}
 
-    public List<Map<String,Object>> getXmMenuAttDist(Map<String, Object> xmMenu) {
-		return baseMapper.getXmMenuAttDist(xmMenu);
+    public List<Map<String,Object>> getXmMenuAttDist(Map<String, Object> params) {
+		return baseMapper.getXmMenuAttDist(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
     }
 
-	public List<Map<String, Object>> getXmMenuAgeDist(Map<String, Object> xmMenu) {
-		return baseMapper.getXmMenuAgeDist(xmMenu);
+	public List<Map<String, Object>> getXmMenuAgeDist(Map<String, Object> params) {
+		return baseMapper.getXmMenuAgeDist(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
 	}
 
-    public List<Map<String, Object>> getXmMenuSort(Map<String, Object> xmMenu) {
-		return baseMapper.getXmMenuSort(xmMenu);
+    public List<Map<String, Object>> getXmMenuSort(Map<String, Object> params) {
+		return baseMapper.getXmMenuSort(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
     }
 
 	@Override

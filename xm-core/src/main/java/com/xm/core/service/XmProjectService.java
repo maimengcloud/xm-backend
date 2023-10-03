@@ -59,12 +59,6 @@ public class XmProjectService extends BaseService<XmProjectMapper,XmProject> {
     XmProjectCacheService xmProjectCacheService;
 
 	@Autowired
-    XmGroupService groupService;
-
-	@Autowired
-	XmGroupUserService groupUserService;
-
-	@Autowired
 	XmProductService xmProductService;
 	/**
 	 * 自定义查询，支持多表关联

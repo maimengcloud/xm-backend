@@ -31,7 +31,7 @@ public class XmIterationStateService extends BaseService<XmIterationStateMapper,
 
 	/**
 	 * 计算bug、task、测试案例、等数据
-	 * @param productId
+	 * @param iterationId
 	 * @return
 	 */
 	public int loadTasksToXmIterationState(String iterationId) {

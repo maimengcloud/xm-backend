@@ -40,12 +40,10 @@ public class XmIterationService extends BaseService<XmIterationMapper, XmIterati
 
 	/**
 	 * 连同功能关联的状态数据一起带出
-	 * @param iterationMap
 	 * @return
 	 */
-	public List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> iterationMap) {
-		// TODO Auto-generated method stub
-		return baseMapper.selectListMapByWhereWithState( iterationMap);
+	public List<Map<String, Object>> selectListMapByWhereWithState(IPage page, QueryWrapper qw, Map<String, Object> params) {
+ 		return baseMapper.selectListMapByWhereWithState(  page,qw,params );
 	}
 
 	@Transactional

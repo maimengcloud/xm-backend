@@ -1,17 +1,12 @@
 package  com.xm.core.service;
 
 import java.util.*;
-import java.text.SimpleDateFormat;
-import org.junit.Assert;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.ContextHierarchy;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import com.mdp.core.utils.BaseUtils;
-import org.springframework.beans.factory.annotation.Autowired; 
-import  com.xm.core.service.XmTaskWorkloadService;
-import  com.xm.core.entity.XmTaskWorkload;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 /**
  * @author code-gen

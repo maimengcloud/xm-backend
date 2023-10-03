@@ -40,13 +40,6 @@ public class XmProductService extends BaseService<XmProductMapper,XmProduct> {
 	@Autowired
 	XmProductCacheService xmProductCacheService;
 
-
-	@Autowired
-    XmGroupService groupService;
-
-	@Autowired
-	XmGroupUserService groupUserService;
-
 	@Autowired
 	XmProductProjectLinkService linkService;
 

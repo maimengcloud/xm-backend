@@ -163,7 +163,8 @@ public class XmIterationController {
 		if("branchId".equals(queryScope)){
 		params.put("branchId",user.getBranchId());
 		}
-		List<Map<String,Object>>	datas = xmIterationService.selectListMapByWhereWithState(params);	//列出XmIteration列表
+		QueryWrapper<XmIteration> qw=QueryTools.initQueryWrapper(XmIteration.class,params);
+		List<Map<String,Object>>	datas = xmIterationService.selectListMapByWhereWithState(page,qw,params);	//列出XmIteration列表
 		
 		return Result.ok().setData(datas);
 		

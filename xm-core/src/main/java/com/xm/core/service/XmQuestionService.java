@@ -9,6 +9,7 @@ import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
+import com.xm.core.entity.XmMenu;
 import com.xm.core.entity.XmQuestion;
 import com.xm.core.entity.XmQuestionHandle;
 import com.xm.core.mapper.XmQuestionMapper;
@@ -202,16 +203,16 @@ public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> 
 	}
 
 
-    public List<Map<String, Object>> getXmQuestionAttDist(Map<String, Object> xmQuestion) {
-		return baseMapper.getXmQuestionAttDist(xmQuestion);
+    public List<Map<String, Object>> getXmQuestionAttDist(Map<String, Object> params) {
+		return baseMapper.getXmQuestionAttDist(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
     }
 
-	public List<Map<String, Object>> getXmQuestionAgeDist(Map<String, Object> xmQuestion) {
-		return baseMapper.getXmQuestionAgeDist(xmQuestion);
+	public List<Map<String, Object>> getXmQuestionAgeDist(Map<String, Object> params) {
+		return baseMapper.getXmQuestionAgeDist(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
 	}
 
-	public List<Map<String, Object>> getXmQuestionSort(Map<String, Object> xmQuestion) {
-		return baseMapper.getXmQuestionSort(xmQuestion);
+	public List<Map<String, Object>> getXmQuestionSort(Map<String, Object> params) {
+		return baseMapper.getXmQuestionSort(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
 	}
 
 	@Override
@@ -219,8 +220,8 @@ public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> 
 		return "Q"+getSequenceService().getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
 	}
 
-    public List<Map<String, Object>> getXmQuestionRetestDist(Map<String, Object> xmQuestion) {
-		return baseMapper.getXmQuestionRetestDist(xmQuestion);
+    public List<Map<String, Object>> getXmQuestionRetestDist(Map<String, Object> params) {
+		return baseMapper.getXmQuestionRetestDist(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
     }
 }
 

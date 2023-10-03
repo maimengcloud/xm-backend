@@ -29,12 +29,12 @@ public interface XmQuestionMapper extends BaseMapper<XmQuestion> {
 
     void updateProcessApprova(Map<String, Object> flowVars);
 
-    List<Map<String, Object>> getXmQuestionAttDist(Map<String, Object> xmQuestion);
+    List<Map<String, Object>> getXmQuestionAttDist(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> getXmQuestionAgeDist(Map<String, Object> xmQuestion);
+    List<Map<String, Object>> getXmQuestionAgeDist(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> getXmQuestionSort(Map<String, Object> xmQuestion);
+    List<Map<String, Object>> getXmQuestionSort(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> getXmQuestionRetestDist(Map<String, Object> xmQuestion);
+    List<Map<String, Object>> getXmQuestionRetestDist(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 }
 

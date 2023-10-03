@@ -25,6 +25,6 @@ public interface XmIterationMapper extends BaseMapper<XmIteration> {
 
     void load_tasks_to_xm_iteration_state(String inIterationId);
 
-    List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> iterationMap);
+    List<Map<String, Object>> selectListMapByWhereWithState(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 }
 
