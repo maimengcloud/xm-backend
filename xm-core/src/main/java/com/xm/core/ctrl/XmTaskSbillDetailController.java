@@ -6,7 +6,6 @@ import com.mdp.core.entity.Result;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.xm.core.entity.XmTaskSbill;
@@ -230,7 +229,7 @@ public class XmTaskSbillDetailController {
 					this.xmTaskSbillDetailService.preCalcSamt(detail);
 					this.xmTaskSbillDetailService.updateSomeFieldByPk(detail);
 					this.xmTaskSbillService.updateBySbillDetailList(Arrays.asList(detail.getSbillId()));
-					return ResponseHelper.ok("成功");
+					return Result.ok("成功");
 				}
 			}
 			List<XmTaskSbillDetail> can=new ArrayList<>();

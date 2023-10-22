@@ -9,7 +9,6 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
@@ -137,7 +136,7 @@ public class XmQuestionController {
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAttDist(params);
-		return ResponseHelper.ok("ok","成功",datas);
+		return Result.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmQuestionAgeDist",method=RequestMethod.GET)
@@ -145,14 +144,14 @@ public class XmQuestionController {
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAgeDist(params);
-		return ResponseHelper.ok("ok","成功",datas);
+		return Result.ok("ok","成功",datas);
 	}
 	@RequestMapping(value="/getXmQuestionRetestDist",method=RequestMethod.GET)
 	public Result getXmQuestionRetestDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionRetestDist(params);
-		return ResponseHelper.ok("ok","成功",datas);
+		return Result.ok("ok","成功",datas);
 	}
 	@RequestMapping(value="/getXmQuestionSort",method=RequestMethod.GET)
 	public Result getXmQuestionSort(@ApiIgnore @RequestParam Map<String,Object> params){

@@ -8,7 +8,6 @@ import com.mdp.core.entity.Tips;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
@@ -203,14 +202,14 @@ public class XmMenuController {
 	public Result getXmMenuAttDist(@ApiIgnore @RequestParam Map<String,Object> params){
  		this.paramsInit(params);
 		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAttDist(params);
-		return ResponseHelper.ok("ok","成功",datas);
+		return Result.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmMenuAgeDist",method=RequestMethod.GET)
 	public Result getXmMenuAgeDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		this.paramsInit(params);
 		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAgeDist(params);
-		return ResponseHelper.ok("ok","成功",datas);
+		return Result.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmMenuSort",method=RequestMethod.GET)

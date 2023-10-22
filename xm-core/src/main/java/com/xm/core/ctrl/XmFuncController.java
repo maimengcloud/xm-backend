@@ -132,7 +132,7 @@ public class XmFuncController {
             if( xmFuncDb == null ){
                 return Result.error("data-not-exists","数据不存在，无法删除");
             }
-            int childcnt=xmFuncService.count(QueryTools.initQueryWrapper(XmFunc.class).eq("pid",xmFuncDb.getId()));
+            long childcnt=xmFuncService.count(QueryTools.initQueryWrapper(XmFunc.class).eq("pid",xmFuncDb.getId()));
             if(childcnt>0){
 				return Result.error("childcnt-not-0","至少还有"+childcnt+"个子节点,请先删除子节点，再删除父节点");
 			}

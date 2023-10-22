@@ -1,6 +1,6 @@
 package com;
 
-import com.mdp.oauth2.client.resource.MdpJwtAuthenticationConverter;
+import com.mdp.safe.client.jwt.JwtAuthenticationConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -19,7 +19,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     @Autowired
-    MdpJwtAuthenticationConverter jwtConverter;
+    JwtAuthenticationConverter jwtConverter;
 
 
     @Autowired

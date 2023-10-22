@@ -113,15 +113,17 @@
     <orderEntry type="library" name="Maven: org.springframework.boot:spring-boot-starter-tomcat:2.4.1" level="project" />
     <orderEntry type="library" name="Maven: org.glassfish:jakarta.el:3.0.3" level="project" />
     <orderEntry type="library" name="Maven: org.apache.tomcat.embed:tomcat-embed-websocket:9.0.41" level="project" />
+    <orderEntry type="library" name="Maven: com.mdp:mdp-utils:2.0.0-RELEASE" level="project" />
+    <orderEntry type="library" name="Maven: cn.hutool:hutool-all:5.8.0.M4" level="project" />
     <orderEntry type="library" name="Maven: com.mdp:mdp-dao-mybatis:2.0.0-RELEASE" level="project" />
-    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-boot-starter:3.4.3.1" level="project" />
-    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus:3.4.3.1" level="project" />
-    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-extension:3.4.3.1" level="project" />
-    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-core:3.4.3.1" level="project" />
-    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-annotation:3.4.3.1" level="project" />
-    <orderEntry type="library" name="Maven: com.github.jsqlparser:jsqlparser:4.0" level="project" />
-    <orderEntry type="library" name="Maven: org.mybatis:mybatis:3.5.7" level="project" />
-    <orderEntry type="library" name="Maven: org.mybatis:mybatis-spring:2.0.6" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-boot-starter:3.5.3.1" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus:3.5.3.1" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-extension:3.5.3.1" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-core:3.5.3.1" level="project" />
+    <orderEntry type="library" name="Maven: com.baomidou:mybatis-plus-annotation:3.5.3.1" level="project" />
+    <orderEntry type="library" name="Maven: com.github.jsqlparser:jsqlparser:4.4" level="project" />
+    <orderEntry type="library" name="Maven: org.mybatis:mybatis:3.5.10" level="project" />
+    <orderEntry type="library" name="Maven: org.mybatis:mybatis-spring:2.0.7" level="project" />
     <orderEntry type="library" name="Maven: com.mdp:mdp-mybatis-enhance:2.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.mdp:mdp-spring-enhance:2.0.0-RELEASE" level="project" />
     <orderEntry type="library" name="Maven: com.mdp:mdp-swagger-enhance:2.0.0-RELEASE" level="project" />

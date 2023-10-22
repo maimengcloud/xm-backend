@@ -11,7 +11,6 @@ import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.ResponseHelper;
 import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
@@ -200,7 +199,7 @@ public class XmTaskController {
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAttDist(params);
-		return ResponseHelper.ok("ok","成功",datas);
+		return Result.ok("ok","成功",datas);
 	}
 
 	@RequestMapping(value="/getXmTaskAgeDist",method=RequestMethod.GET)
@@ -208,7 +207,7 @@ public class XmTaskController {
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
 		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAgeDist(params);
-		return ResponseHelper.ok("ok","成功",datas);
+		return Result.ok("ok","成功",datas);
 	}
 
 
@@ -222,7 +221,7 @@ public class XmTaskController {
 			}
 		}
 
-		return ResponseHelper.ok("成功");
+		return Result.ok("成功");
 	}
 
 	@ApiOperation("统计所有上级的进度情况")
@@ -231,7 +230,7 @@ public class XmTaskController {
 		User user=LoginUtils.getCurrentUserInfo();
 		XmTask xmTaskDb=this.xmTaskService.selectOneById(xmTask.getId());
 		this.xmTaskService.sumParents(xmTaskDb);
-		return ResponseHelper.ok("成功");
+		return Result.ok("成功");
 	}
 	@RequestMapping(value="/getXmTaskSort",method=RequestMethod.GET)
 	public Result getXmTaskSort(@ApiIgnore @RequestParam Map<String,Object> params){
@@ -289,7 +288,7 @@ public class XmTaskController {
 						msg="成功设置"+oks.size()+"个任务的执行人。"+msg;
 						return Result.ok(msg);
 					}
-					return ResponseHelper.result(returnTips);
+					return Result.ok();
 				}else if(ids.size()==1){
 					XmTaskExecuser xmTaskExecuser=new XmTaskExecuser();
 					xmTaskExecuser.setTaskId(ids.get(0));
