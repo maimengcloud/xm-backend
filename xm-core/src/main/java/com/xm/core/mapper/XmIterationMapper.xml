@@ -20,7 +20,6 @@
         <if test=" createTimeEnd !=null "> and res.ctime &lt; #{createTimeEnd} </if>
         <if test=" onlineTimeStart !=null "> and res.online_time &gt; #{onlineTimeStart} </if>
         <if test=" onlineTimeEnd !=null "> and res.online_time &lt; #{onlineTimeEnd} </if>
-        <include refid="where"/>
         <if test=" ( menuId != null and menuId !='')">
             and exists ( select 1 from xm_menu im where  im.iteration_id=res.id and  im.menu_id=#{menuId}
             <if test="productId != null and productId !='' ">  and  im.product_id=#{productId}    </if>

@@ -176,8 +176,10 @@ public class XmProductController {
 		}
 		params.put("platformBranchId",platformBranchId);
 		params.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	datas = xmProductService.selectListMapByWhereWithState(params);	//列出XmProduct列表
-		return Result.ok().setData(datas).setTotal(page.getTotal());
+
+		QueryWrapper<XmProduct> qw = QueryTools.initQueryWrapper(XmProduct.class , params);
+		List<Map<String,Object>> datas = xmProductService.selectListMapByWhereWithState(page,qw,params);
+ 		return Result.ok().setData(datas).setTotal(page.getTotal());
 	}
 
 	/***/

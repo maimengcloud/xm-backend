@@ -75,7 +75,6 @@
         from xm_workload res
         <where>
             <include refid="whereForMap"/>
-            <include refid="where"/>
         </where>
         group by res.biz_date
         order by res.biz_date asc
@@ -96,7 +95,6 @@
         from xm_workload res
         <where>
             <include refid="whereForMap"/>
-            <include refid="where"/>
         </where>
         group by biz_month
         order by biz_month asc
@@ -128,7 +126,6 @@
         from xm_workload res
         <where>
             <include refid="whereForMap"/>
-            <include refid="where"/>
         </where>
         group by res.project_id,res.task_id,res.userid
         ) as res on res.task_id = task.id

@@ -23,6 +23,6 @@ public interface XmProductMapper extends BaseMapper<XmProduct> {
      */
     List<Map<String,Object>> selectListMapByWhere(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> iterationMap);
+    List<Map<String, Object>> selectListMapByWhereWithState(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 }
 

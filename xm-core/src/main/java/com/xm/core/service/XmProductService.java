@@ -88,11 +88,10 @@ public class XmProductService extends BaseService<XmProductMapper,XmProduct> {
 
 	/**
 	 * 连同产品关联的状态数据一起带出
-	 * @param iterationMap
 	 * @return
 	 */
-	public List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> iterationMap) {
-		return baseMapper.selectListMapByWhereWithState( iterationMap);
+	public List<Map<String, Object>> selectListMapByWhereWithState(IPage page, QueryWrapper ew, Map<String,Object> ext) {
+		return baseMapper.selectListMapByWhereWithState( page,ew,ext);
 	}
 
 	@Transactional
