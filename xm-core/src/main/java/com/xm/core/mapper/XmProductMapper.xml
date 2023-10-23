@@ -26,11 +26,6 @@
         <if test="ext.linkIterationId !=null and ext.linkIterationId!=''">
             and exists( select 1 from  xm_iteration  ppl where   ppl.product_id=res.id and ppl.id=#{ext.linkIterationId} )
         </if>
-        <if test="ext.compete !=null and ext.compete!=''">
-            and ( exists ( select 1 from xm_group_user gu inner join xm_product_project_link t on (gu.project_id=t.project_id or gu.product_id=t.product_id ) and t.product_id=res.id where gu.userid=#{ext.compete} and t.product_id=res.id )
-            or res.pm_userid=#{ext.compete} or res.adm_userid=#{ext.compete} or res.ass_userid=#{ext.compete}
-            )
-        </if>
         <if test="ext.ctimeStart!=null and ext.ctimeEnd!=null ">and ctime between #{ext.ctimeStart} and #{ext.ctimeEnd}</if>
         <if test="ext.isTpl!=null and ext.isTpl=='1'">
             and (res.branch_id in( #{ext.platformBranchId},#{ext.linkBranchId}) and res.is_tpl='1')
