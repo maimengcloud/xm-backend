@@ -53,7 +53,7 @@
         </if>
         <!-- 我参与的-->
         <if test="(ext.myExecuserStatus != null and ext.myExecuserStatus) != '' or ( ext.isMy !=null and ext.isMy !='' )">
-            and  exists ( select 1 from xm_task_execuser exe where exe.task_id=res.id and exe.userid=#{ext.userid}
+            and  exists ( select 1 from xm_task_execuser exe where exe.task_id=res.id and (exe.prj_userid=#{ext.userid} or exe.bid_userid=#{ext.userid})
             <if test='ext.myExecuserStatus != "all" and  ext.myExecuserStatus!=null and ext.myExecuserStatus !="" '>
                 and exe.status=#{ext.myExecuserStatus}
             </if>
@@ -71,9 +71,7 @@
             )
         </if>
         <if test="ext.compete !=null and ext.compete!=''">
-            and ( exists ( select 1 from xm_group_user gu where gu.userid=#{ext.compete} and gu.project_id=res.project_id )
-            or  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.project_id and exe.userid=#{ext.compete})
-            )
+           and exists ( select 1 from xm_task_execuser exe where exe.project_id=res.project_id and (exe.prj_userid=#{ext.compete} or exe.bid_userid=#{ext.compete}))
 
         </if>
         <if test="ext.iterationId!=null and ext.iterationId!=''">

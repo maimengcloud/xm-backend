@@ -16,27 +16,27 @@
     </select>
 
     <sql id="whereForMap">
-        <if test=" createTimeStart !=null "> and res.ctime &gt; #{createTimeStart} </if>
-        <if test=" createTimeEnd !=null "> and res.ctime &lt; #{createTimeEnd} </if>
-        <if test=" onlineTimeStart !=null "> and res.online_time &gt; #{onlineTimeStart} </if>
-        <if test=" onlineTimeEnd !=null "> and res.online_time &lt; #{onlineTimeEnd} </if>
-        <if test=" ( menuId != null and menuId !='')">
-            and exists ( select 1 from xm_menu im where  im.iteration_id=res.id and  im.menu_id=#{menuId}
-            <if test="productId != null and productId !='' ">  and  im.product_id=#{productId}    </if>
+        <if test="ext.createTimeStart !=null "> and res.ctime &gt; #{ext.createTimeStart} </if>
+        <if test="ext.createTimeEnd !=null "> and res.ctime &lt; #{ext.createTimeEnd} </if>
+        <if test="ext.onlineTimeStart !=null "> and res.online_time &gt; #{ext.onlineTimeStart} </if>
+        <if test="ext.onlineTimeEnd !=null "> and res.online_time &lt; #{ext.onlineTimeEnd} </if>
+        <if test="ext.menuId != null and ext.menuId !=''">
+            and exists ( select 1 from xm_menu im where  im.iteration_id=res.id and  im.menu_id=#{ext.menuId}
+            <if test="ext.productId != null and ext.productId !='' ">  and  im.product_id=#{ext.productId}    </if>
             )
         </if>
-        <if test=" linkProjectId !=null and linkProjectId!=''">
+        <if test="ext.linkProjectId !=null and ext.linkProjectId!=''">
             and exists( select 1 from  xm_product_project_link ppl
-            where ppl.project_id=#{linkProjectId} and ppl.product_id =res.product_id
+            where ppl.project_id=#{ext.linkProjectId} and ppl.product_id =res.product_id
             )
         </if>
-        <if test="compete !=null and compete!=''">
-            and ( res.admin_userid=#{compete}
-            or exists (select 1 from  xm_menu m where m.mm_userid=#{compete} and m.iteration_id=res.id)
+        <if test="ext.compete !=null and ext.compete!=''">
+            and ( res.admin_userid=#{ext.compete}
+            or exists (select 1 from  xm_menu m where m.mm_userid=#{ext.compete} and m.iteration_id=res.id)
             )
         </if>
 
-        <if test="key != null and key !='' ">   and res.iteration_name like #{key}    </if>
+        <if test="ext.key != null and ext.key !='' ">   and res.iteration_name like #{ext.key}    </if>
 
     </sql>
 

@@ -107,23 +107,24 @@ public class XmIterationController {
 		String linkProjectId=(String) params.get("linkProjectId");
 		User user = LoginUtils.getCurrentUserInfo();
 		params.put("userid",user.getUserid());
+		params.remove("branchId");
+		QueryWrapper<XmIteration> qw=QueryTools.initQueryWrapper(XmIteration.class,params);
 		if(  !( StringUtils.hasText(branchId)|| StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
 				|| StringUtils.hasText(adminUserid) ) ){
 			if(LoginUtils.isBranchAdmin()){
-		params.put("branchId",user.getBranchId());
+				qw.eq("res.branch_id",user.getBranchId());
 			}else{
 				if(!StringUtils.hasText(productId) && !StringUtils.hasText(linkProjectId)){
 					params.put("compete",user.getUserid());
 				}else{
-		params.put("branchId",user.getBranchId());
+					qw.eq("res.branch_id",user.getBranchId());
 				}
 			}
 		}
 		if("branchId".equals(queryScope)){
-		params.put("branchId",user.getBranchId());
+			qw.eq("res.branch_id",user.getBranchId());
 		}
-		QueryWrapper<XmIteration> qw = QueryTools.initQueryWrapper(XmIteration.class , params);
-		List<Map<String,Object>> datas = xmIterationService.selectListMapByWhere(page,qw,params);
+ 		List<Map<String,Object>> datas = xmIterationService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmIteration列表
 
 	}
@@ -148,25 +149,26 @@ public class XmIterationController {
 		String linkProjectId=(String) params.get("linkProjectId");
 		User user = LoginUtils.getCurrentUserInfo();
 		params.put("userid",user.getUserid());
+		params.remove("branchId");
+		QueryWrapper<XmIteration> qw=QueryTools.initQueryWrapper(XmIteration.class,params);
 		if(  !(StringUtils.hasText(branchId)|| StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
 				|| StringUtils.hasText(adminUserid) ) ){
 			if(LoginUtils.isBranchAdmin()){
-		params.put("branchId",user.getBranchId());
+				qw.eq("res.branch_id",user.getBranchId());
 			}else{
 				if(!StringUtils.hasText(productId) && !StringUtils.hasText(linkProjectId)){
 					params.put("compete",user.getUserid());
 				}else{
-		params.put("branchId",user.getBranchId());
-				}
+					qw.eq("res.branch_id",user.getBranchId());
+ 				}
 			}
 		}
 		if("branchId".equals(queryScope)){
-		params.put("branchId",user.getBranchId());
+			qw.eq("res.branch_id",user.getBranchId());
 		}
-		QueryWrapper<XmIteration> qw=QueryTools.initQueryWrapper(XmIteration.class,params);
 		List<Map<String,Object>>	datas = xmIterationService.selectListMapByWhereWithState(page,qw,params);	//列出XmIteration列表
 		
-		return Result.ok().setData(datas);
+		return Result.ok().setData(datas).setTotal(page.getTotal());
 		
 		
 	}
