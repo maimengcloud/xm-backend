@@ -36,21 +36,6 @@
         <if test="ext.hideStatus != null and ext.hideStatus != ''">
             and res.status != #{ext.hideStatus}
         </if>
-        <!-- 我参与的  包括我创建的，我监控的，我审核的-->
-        <if test="ext.compete !=null and ext.compete !='' ">
-            and (    exists ( select 1 from xm_group g,XM.xm_group_user gu where gu.group_id=g.id and gu.userid=#{ext.userid} and g.project_id=res.id )
-            or  res.create_userid=#{ext.compete}  or res.pm_userid=#{ext.compete} or res.adm_userid=#{ext.compete} or res.ass_userid=#{ext.compete}
-            )
-        </if>
-        <!-- 按参与角色查询等-->
-        <if test="ext.pgTypeIds != null ">
-            and  exists ( select 1 from xm_group g,XM.xm_group_user gu where gu.group_id=g.id and gu.userid=#{ext.userid} and g.project_id=res.id
-            and   g.pg_type_id in
-            <foreach collection="ext.pgTypeIds" item="item" index="index" open="(" separator="," close=")" >
-                #{item}
-            </foreach>
-            )
-        </if>
 
         <if test="ext.myExecuserStatus != null and ext.myExecuserStatus != ''">
             and  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{ext.userid}

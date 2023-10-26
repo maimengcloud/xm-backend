@@ -162,11 +162,12 @@ public class XmMenuController {
 		 
 		RequestUtils.transformArray(params, "menuIds");
 		RequestUtils.transformArray(params, "tagIdList");
-		RequestUtils.transformArray(params, "dclasss");		
+		RequestUtils.transformArray(params, "dclasss");
 		IPage page=QueryTools.initPage(params);
-		
 		this.paramsInit(params);
-		List<Map<String,Object>>	datas = xmMenuService.selectListMapByWhereWithState(params);	//列出XmMenu列表
+		QueryWrapper<XmMenu> qw = QueryTools.initQueryWrapper(XmMenu.class , params);
+		this.paramsInit(params);
+		List<Map<String,Object>>	datas = xmMenuService.selectListMapByWhereWithState(page,qw,params);	//列出XmMenu列表
 		
 		if("1".equals(params.get("withParents"))  && !"1".equals(params.get("isTop"))&& datas.size()>0){
 			Set<String> pidPathsSet=new HashSet<>();
@@ -182,7 +183,7 @@ public class XmMenuController {
 			}
 			List<String> menusIds=pidPathsSet.stream().filter(i->!originIdSet.contains(i)).collect(Collectors.toList());
 			if(menusIds!=null && menusIds.size()>0){
-				List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithState(map("menuIds",menusIds));
+				List<Map<String,Object>> parentList=xmMenuService.selectListMapByWhereWithState(QueryTools.initPage(),QueryTools.initQueryWrapper(XmMenu.class),map("menuIds",menusIds));
 				if(parentList!=null && parentList.size()>0){
 					datas.addAll(parentList);
 					return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal()+parentList.size());	//列出XmMenu列表

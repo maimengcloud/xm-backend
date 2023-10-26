@@ -16,55 +16,55 @@
     </select>
 
     <sql id="whereForMap">
-        <if test=" menuIds != null">  and (res.menu_id) in
-            <foreach collection="menuIds" item="item" index="index" open="(" separator="," close=")" >
+        <if test="ext.menuIds != null">  and (res.menu_id) in
+            <foreach collection="ext.menuIds" item="item" index="index" open="(" separator="," close=")" >
                 ( #{item})
             </foreach>
         </if>
-        <if test=" dclasss != null">  and (res.dclass) in
-            <foreach collection="dclasss" item="item" index="index" open="(" separator="," close=")" >
+        <if test="ext.dclasss != null">  and (res.dclass) in
+            <foreach collection="ext.dclasss" item="item" index="index" open="(" separator="," close=")" >
                 ( #{item})
             </foreach>
         </if>
-        <if test="pidPathsLike">
-            and res.pid_paths like concat(#{pidPathsLike},'%')
+        <if test="ext.pidPathsLike">
+            and res.pid_paths like concat(#{ext.pidPathsLike},'%')
         </if>
-        <if test=" pidPathsList != null">  and
-            <foreach collection="pidPathsList" item="item" index="index" open="(" separator=" or " close=")" >
+        <if test="ext.pidPathsList != null">  and
+            <foreach collection="ext.pidPathsList" item="item" index="index" open="(" separator=" or " close=")" >
                 #{item} like concat(res.pid_paths,'%')
             </foreach>
         </if>
-        <if test=" tagIdList != null"> and
-            <foreach collection="tagIdList" item="item" index="index" open="(" separator=" or " close=")" >
+        <if test="ext.tagIdList != null"> and
+            <foreach collection="ext.tagIdList" item="item" index="index" open="(" separator=" or " close=")" >
                 find_in_set(#{item},res.tag_ids)
             </foreach>
         </if>
-        <if test=' iterationFilterType!=null and iterationFilterType!=""'>
-            <if test='iterationFilterType=="not-join-any-iteration"'> and (res.iteration_id is  null  ) </if>
-            <if test='iterationFilterType=="join-any-iteration"'> and ( res.iteration_id is not null   ) </if>
-            <if test='iterationFilterType=="join-curr-iteration"'>  and res.iteration_id=#{filterIterationId}   </if>
-            <if test='iterationFilterType=="not-join-curr-iteration"'>  and (res.iteration_id!=#{filterIterationId} or res.iteration_id is null)   </if>
+        <if test='ext.iterationFilterType!=null and ext.iterationFilterType!=""'>
+            <if test='ext.iterationFilterType=="not-join-any-iteration"'> and (res.iteration_id is  null  ) </if>
+            <if test='ext.iterationFilterType=="join-any-iteration"'> and ( res.iteration_id is not null   ) </if>
+            <if test='ext.iterationFilterType=="join-curr-iteration"'>  and res.iteration_id=#{ext.filterIterationId}   </if>
+            <if test='ext.iterationFilterType=="not-join-curr-iteration"'>  and (res.iteration_id!=#{ext.filterIterationId} or res.iteration_id is null)   </if>
         </if>
-        <if test=' taskFilterType!=null and taskFilterType!="" '>
-            <if test='taskFilterType=="not-join-curr-project"'>
-                and not exists(select 1 from xm_task t where  t.menu_id=res.menu_id and t.project_id=#{projectId})
+        <if test='ext.taskFilterType!=null and ext.taskFilterType!="" '>
+            <if test='ext.taskFilterType=="not-join-curr-project"'>
+                and not exists(select 1 from xm_task t where  t.menu_id=res.menu_id and t.project_id=#{ext.projectId})
             </if>
-            <if test='taskFilterType=="not-join-any-project"'>
+            <if test='ext.taskFilterType=="not-join-any-project"'>
                 and not exists(select 1 from xm_task t where  t.menu_id=res.menu_id)
             </if>
-            <if test='taskFilterType=="join-any-project"'>
+            <if test='ext.taskFilterType=="join-any-project"'>
                 and exists(select 1 from xm_task t where  t.menu_id=res.menu_id)
             </if>
-            <if test='taskFilterType=="join-curr-project"'>
-                and exists(select 1 from xm_task t where  t.menu_id=res.menu_id and t.project_id=#{projectId})
+            <if test='ext.taskFilterType=="join-curr-project"'>
+                and exists(select 1 from xm_task t where  t.menu_id=res.menu_id and t.project_id=#{ext.projectId})
             </if>
         </if>
-        <if test=" planStartTimeStart !=null "> and res.start_time &gt; #{planStartTimeStart} </if>
-        <if test=" planStartTimeEnd !=null "> and res.start_time &lt; #{planStartTimeEnd} </if>
-        <if test=" planEndTimeStart !=null "> and res.end_time &gt; #{planEndTimeStart} </if>
-        <if test=" planEndTimeEnd !=null "> and res.end_time &lt; #{planEndTimeEnd} </if>
-        <if test="key != null and key !='' ">  and res.menu_name like #{key}     </if>
-        <if test="isTop!=null and isTop!=''">  and (res.pmenu_id is null )</if>
+        <if test="ext.planStartTimeStart !=null "> and res.start_time &gt; #{ext.planStartTimeStart} </if>
+        <if test="ext.planStartTimeEnd !=null "> and res.start_time &lt; #{ext.planStartTimeEnd} </if>
+        <if test="ext.planEndTimeStart !=null "> and res.end_time &gt; #{ext.planEndTimeStart} </if>
+        <if test="ext.planEndTimeEnd !=null "> and res.end_time &lt; #{ext.planEndTimeEnd} </if>
+        <if test="ext.key != null and ext.key !='' ">  and res.menu_name like #{ext.key}     </if>
+        <if test="ext.isTop!=null and ext.isTop!=''">  and (res.pmenu_id is null )</if>
     </sql>
 
     <select id="selectExistIterationMenus" parameterType="HashMap" resultType="com.xm.core.entity.XmMenu">
@@ -92,7 +92,7 @@
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
     </select>
     <select id="selectListMapByWhereWithPlan" parameterType="HashMap" resultType="HashMap">
-        select res.*,plan.* from xm_menu res left join xm_menu_plan plan on res.menu_id=plan.menu_id and plan.project_id=#{projectId}
+        select res.*,plan.* from xm_menu res left join xm_menu_plan plan on res.menu_id=plan.menu_id and plan.project_id=#{ext.projectId}
         <where>
             ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
             <!--下面可以添加更多查询条件，正常的if 条件都是支持的-->

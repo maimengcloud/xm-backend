@@ -45,22 +45,19 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 	/**
 	 * 连同功能关联的项目需求计划数据一起带出
 	 *
-	 * @param params
 	 * @return
 	 */
-	public List<Map<String, Object>> selectListMapByWhereWithPlan(Map<String, Object> params) {
-		return baseMapper.selectListMapByWhereWithPlan(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
+	public List<Map<String, Object>> selectListMapByWhereWithPlan(IPage page, QueryWrapper ew, Map<String,Object> ext) {
+		return baseMapper.selectListMapByWhereWithPlan(page,ew,ext);
 	}
 
 	/**
 	 * 连同功能关联的状态数据一起带出
-	 *
-	 * @param params
 	 * @return
 	 */
-	public List<Map<String, Object>> selectListMapByWhereWithState(Map<String, Object> params) {
+	public List<Map<String, Object>> selectListMapByWhereWithState(IPage page, QueryWrapper ew, Map<String,Object> ext) {
 
-		return baseMapper.selectListMapByWhereWithState(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
+		return baseMapper.selectListMapByWhereWithState(page,ew,ext);
 	}
 
 	/**
