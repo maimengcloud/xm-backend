@@ -116,6 +116,7 @@ public class XmProjectController {
 		}
 		params.put("linkBranchId",user.getBranchId());
 		params.put("platformBranchId",platformBranchId);
+		QueryTools.alias(params,"branchId res.branchId");
 		QueryWrapper<XmProject> qw = QueryTools.initQueryWrapper(XmProject.class , params);
 		List<Map<String,Object>> datas = xmProjectService.selectListMapByWhere(page,qw,params);	//列出XmProject列表
 		return Result.ok().setData(datas);
