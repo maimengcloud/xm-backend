@@ -37,11 +37,11 @@ public class XmWorkloadService extends BaseService<XmWorkloadMapper, XmWorkload>
 		return baseMapper.selectListMapByWhere(page,ew,ext);
 	}
 
-	public List<Map<String, Object>> listProjectWorkloadSetDay(Map<String, Object> xmWorkload) {
-		return baseMapper.listProjectWorkloadSetDay(xmWorkload);
+	public List<Map<String, Object>> listProjectWorkloadSetDay(IPage page, QueryWrapper ew, Map<String,Object> ext) {
+		return baseMapper.listProjectWorkloadSetDay(page,ew,ext);
 	}
-	public List<Map<String, Object>> listProjectWorkloadSetMonth(Map<String, Object> xmWorkload) {
-		return baseMapper.listProjectWorkloadSetMonth(xmWorkload);
+	public List<Map<String, Object>> listProjectWorkloadSetMonth(IPage page, QueryWrapper ew, Map<String,Object> ext) {
+		return baseMapper.listProjectWorkloadSetMonth(page,ew,ext);
 	}
 
 

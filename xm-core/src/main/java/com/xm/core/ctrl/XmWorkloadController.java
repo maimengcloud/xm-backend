@@ -117,7 +117,8 @@ public class XmWorkloadController {
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	datas = xmWorkloadService.listProjectWorkloadSetDay(params);	//列出XmWorkload列表
+		QueryWrapper<XmWorkload> qw = QueryTools.initQueryWrapper(XmWorkload.class , params);
+		List<Map<String,Object>>	datas = xmWorkloadService.listProjectWorkloadSetDay(page,qw,params);	//列出XmWorkload列表
 		return Result.ok().setData(datas);
 	}
 
@@ -133,7 +134,8 @@ public class XmWorkloadController {
 		IPage page=QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("linkBranchId",user.getBranchId());
-		List<Map<String,Object>>	datas = xmWorkloadService.listProjectWorkloadSetMonth(params);	//列出XmWorkload列表
+		QueryWrapper<XmWorkload> qw = QueryTools.initQueryWrapper(XmWorkload.class , params);
+		List<Map<String,Object>>	datas = xmWorkloadService.listProjectWorkloadSetMonth(page,qw,params);	//列出XmWorkload列表
 		return Result.ok().setData(datas);
 	}
 

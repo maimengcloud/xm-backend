@@ -28,7 +28,7 @@
                 #{item}
             </foreach>
         </if>
-        <if test ="sstatuses != null and ext.sstatuses!=''">
+        <if test ="ext.sstatuses != null and ext.sstatuses!=''">
             AND res.sstatus IN
             <foreach collection="ext.sstatuses" item="item" index="index" open="(" separator="," close=")" >
                 #{item}
@@ -74,6 +74,7 @@
         count(distinct res.userid) as user_num
         from xm_workload res
         <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
             <include refid="whereForMap"/>
         </where>
         group by res.biz_date
@@ -94,6 +95,7 @@
         count(distinct res.userid) as user_num
         from xm_workload res
         <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
             <include refid="whereForMap"/>
         </where>
         group by biz_month
@@ -130,17 +132,17 @@
         group by res.project_id,res.task_id,res.userid
         ) as res on res.task_id = task.id
         <where>
-            <if test="projectId!=null and projectId!=''">
-                and task.project_id=#{projectId}
+            <if test="ext.projectId!=null and ext.projectId!=''">
+                and task.project_id=#{ext.projectId}
             </if>
-            <if test="taskId!=null and taskId!=''">
-                and task.id=#{taskId}
+            <if test="ext.taskId!=null and ext.taskId!=''">
+                and task.id=#{ext.taskId}
             </if>
-            <if test="userid!=null and userid!=''">
-                and res.userid=#{userid}
+            <if test="ext.userid!=null and ext.userid!=''">
+                and res.userid=#{ext.userid}
             </if>
-            <if test="branchId!=null and branchId!=''">
-                and task.cbranch_id=#{branchId}
+            <if test="ext.branchId!=null and ext.branchId!=''">
+                and task.cbranch_id=#{ext.branchId}
             </if>
         </where>
 

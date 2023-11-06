@@ -23,9 +23,9 @@ public interface XmWorkloadMapper extends BaseMapper<XmWorkload> {
      */
     List<Map<String,Object>> selectListMapByWhere(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> listProjectWorkloadSetDay(Map<String, Object> xmWorkload);
+    List<Map<String, Object>> listProjectWorkloadSetDay(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> listProjectWorkloadSetMonth(Map<String, Object> xmWorkload);
+    List<Map<String, Object>> listProjectWorkloadSetMonth(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
     List<Map<String, Object>> listTaskWorkloadBySbillIdGroupByUseridAndTaskId(String sbillId);
 
