@@ -18,7 +18,7 @@
     <sql id="whereForMap">
          <if test="ext.taskState != null and ext.taskState !='' "> and task_state=#{ext.taskState}</if>
         <if test="ext.linkBranchId!=null and ext.linkBranchId!=''">
-            and (res.branch_id = #{ext.linkBranchId} or res.exec_user_branch_id=#{ext.linkBranchId})
+            and (res.branch_id = #{ext.linkBranchId} or res.bid_branch_id=#{ext.linkBranchId})
         </if>
     </sql>
     <update id="updateXmTaskExeUseridsAndUsernamesByTaskId"
