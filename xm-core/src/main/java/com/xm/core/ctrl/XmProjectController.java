@@ -119,7 +119,7 @@ public class XmProjectController {
 		QueryTools.alias(params,"branchId res.branchId");
 		QueryWrapper<XmProject> qw = QueryTools.initQueryWrapper(XmProject.class , params);
 		List<Map<String,Object>> datas = xmProjectService.selectListMapByWhere(page,qw,params);	//列出XmProject列表
-		return Result.ok().setData(datas);
+		return Result.ok().setData(datas).setTotal(page.getTotal());
 		
 		
 		

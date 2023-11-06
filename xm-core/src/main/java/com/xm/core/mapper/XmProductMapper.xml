@@ -30,7 +30,7 @@
         <if test="ext.isTpl!=null and ext.isTpl=='1'">
             and (res.branch_id in( #{ext.platformBranchId},#{ext.linkBranchId}) and res.is_tpl='1')
         </if>
-        <if test="ext.del==null or del==''">
+        <if test="ext.del==null or ext.del==''">
             and res.del!="1"
         </if>
         <if test="ext.linkBranchId!=null and ext.linkBranchId!=''">
