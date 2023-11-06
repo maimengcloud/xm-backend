@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xm.core.entity.XmRecordVisit">
+	
+	
+	<!--开始 自定sql函数区域 请在此区域添加自定义函数,其它区域尽量不要动，因为代码随时重新生成 -->
+
+    <sql id="whereForMap">
+         <if test=" ids != null">  and (res.id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+         </if>
+        <if test="key != null and key !='' ">       </if>
+    </sql>
+
+	<update id="updateTaskBrowseTimesAndBrowseUsers" parameterType="List">
+		<foreach collection="list" item="item" index="index" separator=";" >
+			update xm_task t set t.browse_users=ifnull(t.browse_users,0)+#{item.browseUsers},t.browse_times=ifnull(t.browse_times,0)+#{item.browseTimes}
+			where t.id=#{item.id}
+		</foreach>
+	</update>
+	<!--结束 自定义sql函数区域-->
+	
+
+	
+	<!-- 通过条件查询获取数据列表 返回list<map> -->
+	<select id="selectListMapByWhere" parameterType="HashMap" resultType="HashMap">
+		select * from xm_record_visit res
+		<where>
+		    <include refid="whereForMap"/>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+	<!-- 通过条件查询获取数据列表 不分页 返回 list<Object> -->
+	<select id="selectListByWhere" parameterType="com.xm.core.entity.XmRecordVisit" resultType="com.xm.core.entity.XmRecordVisit">
+		select * from xm_record_visit res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	
+		<!-- 通过主键查询获取数据对象 返回object -->
+	<select id="selectOneObject" parameterType="com.xm.core.entity.XmRecordVisit" resultType="com.xm.core.entity.XmRecordVisit">
+		select * from xm_record_visit res
+		where 
+			res.id = #{id}
+	</select>
+    <select id="selectListByIds" parameterType="List" resultType="com.xm.core.entity.XmRecordVisit">
+        select * from xm_record_visit res
+        where  (res.id) in
+             <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+    </select>
+	<!-- 通过主键查询获取数据对象 返回map-->
+	<select id="selectOneMap" parameterType="HashMap" resultType="HashMap">
+		select * from xm_record_visit res
+		where 
+			 res.id = #{id}
+	</select>
+	<!-- 获取数据条目 返回long -->
+	<select id="countByWhere" parameterType="com.xm.core.entity.XmRecordVisit" resultType="long">
+		select count(*) from xm_record_visit res
+		<where>
+			<include refid="where"/>
+		</where>
+	</select>
+	<!-- 新增一条记录  主键id,-->
+	<insert id="insert" parameterType="com.xm.core.entity.XmRecordVisit" useGeneratedKeys="false"   keyProperty="id">
+		insert into xm_record_visit(
+			<include refid="columns"/>
+		) values (
+		#{id},#{operUserid},#{operUsername},#{operTime},#{objType},#{action},#{remarks},#{gloNo},#{branchId},#{ip},#{bizId},#{pbizId},#{bizName}
+		)
+	</insert>
+	
+	<!-- 按条件删除若干条记录-->
+	<delete id="deleteByWhere" parameterType="com.xm.core.entity.XmRecordVisit">
+		delete from xm_record_visit res
+		<where>  
+			<include refid="where"/>
+		</where>
+	</delete>
+	
+	<!-- 按主键删除一条记录-->
+	<delete id="deleteByPk" parameterType="com.xm.core.entity.XmRecordVisit">
+		delete from xm_record_visit 
+		where id = #{id} 
+	</delete>
+	
+	<!-- 根据条件修改若干条记录 -->
+	<update id="updateSomeFieldByPk" parameterType="com.xm.core.entity.XmRecordVisit">
+		update  xm_record_visit 
+		<set>
+			<include refid="someFieldSet"/>
+		</set>
+		where id = #{id} 
+	</update>
+	
+		<!-- 根据主键修改一条记录 -->
+	<update id="updateByPk" parameterType="com.xm.core.entity.XmRecordVisit">
+		update  xm_record_visit 
+		<set>
+			<include refid="set"/>
+		</set>
+		where id = #{id} 
+	</update>
+
+	<!-- 批量新增  批量插入 借用insert 循环插入实现
+	<insert id="batchInsert" parameterType="List">
+ 	</insert>
+ 	-->
+ 	
+	<!-- 批量更新 -->
+	<update id="batchUpdate" parameterType="List">   
+		<foreach collection="list" item="item" index="index" separator=";" >
+   		update  xm_record_visit 
+		set 
+			<include refid="batchSet"/>
+			where id = #{item.id}  
+		</foreach> 
+	</update>
+
+	<!-- 批量修改某几个字段 -->
+	<delete id="editSomeFields" parameterType="HashMap">
+		update  xm_record_visit
+        <set>
+            <include refid="someFieldSet"/>
+        </set>
+        where  (id) in
+             <foreach collection="ids" item="item" index="index" open="(" separator="," close=")" >
+                 ( #{item})
+             </foreach>
+	</delete>
+	<!-- 批量删除 -->
+	<delete id="batchDelete" parameterType="List">  
+		delete from xm_record_visit 
+			where
+			(id) in
+                <foreach collection="list" item="item" index="index" open="(" separator="," close=")" >
+                    (  #{item.id} )
+                </foreach>
+	</delete>
+	
+	
+	<!--sql片段 列-->
+	<sql id="columns">
+		id,oper_userid,oper_username,oper_time,obj_type,action,remarks,glo_no,branch_id,ip,biz_id,pbiz_id,biz_name
+	</sql>
+
+	<!--sql片段 动态条件 YYYY-MM-DD HH24:MI:SS-->
+	<sql id="where">
+		<if test="id != null and id != ''">      and res.id = #{id}     </if>
+		<if test="operUserid != null and operUserid != ''">      and res.oper_userid = #{operUserid}     </if>
+		<if test="operUsername != null and operUsername != ''">      and res.oper_username = #{operUsername}     </if>
+		<if test="operTime != null">      and date_format(res.oper_time,'%Y-%m-%d') = date_format(#{operTime},'%Y-%m-%d')     </if>
+		<if test="objType != null and objType != ''">      and res.obj_type = #{objType}     </if>
+		<if test="action != null and action != ''">      and res.action = #{action}     </if>
+		<if test="remarks != null and remarks != ''">      and res.remarks = #{remarks}     </if>
+		<if test="gloNo != null and gloNo != ''">      and res.glo_no = #{gloNo}     </if>
+		<if test="branchId != null and branchId != ''">      and res.branch_id = #{branchId}     </if>
+		<if test="ip != null and ip != ''">      and res.ip = #{ip}     </if>
+		<if test="bizId != null and bizId != ''">      and res.biz_id = #{bizId}     </if>
+		<if test="pbizId != null and pbizId != ''">      and res.pbiz_id = #{pbizId}     </if>
+		<if test="bizName != null and bizName != ''">      and res.biz_name = #{bizName}     </if>
+	</sql>
+	<!--sql片段 更新字段 -->
+	<sql id="set">
+		oper_userid = #{operUserid},
+		oper_username = #{operUsername},
+		oper_time = #{operTime},
+		obj_type = #{objType},
+		action = #{action},
+		remarks = #{remarks},
+		glo_no = #{gloNo},
+		branch_id = #{branchId},
+		ip = #{ip},
+		biz_id = #{bizId},
+		pbiz_id = #{pbizId},
+		biz_name = #{bizName}
+	</sql>
+	<sql id="someFieldSet">
+		<if test="operUserid != null and operUserid != ''"> oper_userid = #{operUserid},     </if>
+		<if test="operUsername != null and operUsername != ''"> oper_username = #{operUsername},     </if>
+		<if test="operTime != null"> oper_time = #{operTime},     </if>
+		<if test="objType != null and objType != ''"> obj_type = #{objType},     </if>
+		<if test="action != null and action != ''"> action = #{action},     </if>
+		<if test="remarks != null and remarks != ''"> remarks = #{remarks},     </if>
+		<if test="gloNo != null and gloNo != ''"> glo_no = #{gloNo},     </if>
+		<if test="branchId != null and branchId != ''"> branch_id = #{branchId},     </if>
+		<if test="ip != null and ip != ''"> ip = #{ip},     </if>
+		<if test="bizId != null and bizId != ''"> biz_id = #{bizId},     </if>
+		<if test="pbizId != null and pbizId != ''"> pbiz_id = #{pbizId},     </if>
+		<if test="bizName != null and bizName != ''"> biz_name = #{bizName},     </if>
+	</sql>
+	<!--sql片段 批量更新 -->
+	<sql id="batchSet">
+			oper_userid = #{item.operUserid},
+			oper_username = #{item.operUsername},
+			oper_time = #{item.operTime},
+			obj_type = #{item.objType},
+			action = #{item.action},
+			remarks = #{item.remarks},
+			glo_no = #{item.gloNo},
+			branch_id = #{item.branchId},
+			ip = #{item.ip},
+			biz_id = #{item.bizId},
+			pbiz_id = #{item.pbizId},
+			biz_name = #{item.bizName}
+	</sql>
+</mapper>
