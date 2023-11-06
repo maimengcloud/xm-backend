@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Result;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
-import com.mdp.core.utils.ResponseHelper;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
@@ -84,13 +83,13 @@ public class XmRecordVisitController {
 	public Result addXmRecordVisit(@RequestBody XmRecordVisit xmRecordVisit) {
 
 			if(!StringUtils.hasText(xmRecordVisit.getBizId())){
-				return ResponseHelper.failed("bizId-0","bizId不能为空");
+				return Result.error("bizId-0","bizId不能为空");
 			}
 			if(!StringUtils.hasText(xmRecordVisit.getPbizId())){
-				return ResponseHelper.failed("pbizId-0","pbizId不能为空");
+				return Result.error("pbizId-0","pbizId不能为空");
 			}
 			if(!StringUtils.hasText(xmRecordVisit.getObjType())){
-				return ResponseHelper.failed("objType-0","objType不能为空");
+				return Result.error("objType-0","objType不能为空");
 			}
 			User user= LoginUtils.getCurrentUserInfo();
 			xmRecordVisit.setId(this.xmRecordVisitService.createKey("id"));
