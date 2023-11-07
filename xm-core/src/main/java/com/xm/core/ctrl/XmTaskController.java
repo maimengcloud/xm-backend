@@ -188,6 +188,8 @@ public class XmTaskController {
 		params.put("taskOut","1");
 		params.put("ntype","0");
 		params.put("toTaskCenter","1");
+
+		QueryWrapper<XmTask> qw = QueryTools.initQueryWrapper(XmTask.class , params);
 		List<Map<String,Object>> datas=xmTaskService.getTask(params);
 
 		return Result.ok().setData(datas).setTotal(page.getTotal());
@@ -198,7 +200,10 @@ public class XmTaskController {
 	public Result getXmTaskAttDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAttDist(params);
+
+		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmTask> qw = QueryTools.initQueryWrapper(XmTask.class , params);
+		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAttDist(page,qw,params);
 		return Result.ok("ok","成功",datas);
 	}
 
@@ -206,7 +211,10 @@ public class XmTaskController {
 	public Result getXmTaskAgeDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAgeDist(params);
+
+		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmTask> qw = QueryTools.initQueryWrapper(XmTask.class , params);
+		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAgeDist(page,qw,params);
 		return Result.ok("ok","成功",datas);
 	}
 
@@ -237,7 +245,8 @@ public class XmTaskController {
 		User user=LoginUtils.getCurrentUserInfo();		
 		IPage page=QueryTools.initPage(params);
 		params.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskSort(params);
+		QueryWrapper<XmTask> qw = QueryTools.initQueryWrapper(XmTask.class , params);
+		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskSort(page,qw,params);
 		return Result.ok().setData(datas).setTotal(page.getTotal());
 		
 		

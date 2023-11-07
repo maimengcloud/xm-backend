@@ -828,16 +828,16 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 		baseMapper.batchUpdateBudgetWorkloadAndRate(map("ids",ids,"budgetWorkload",budgetWorkload));
 	}
 
-	public List<Map<String, Object>> getXmTaskAttDist(Map<String, Object> xmTask) {
-		return baseMapper.getXmTaskAttDist(xmTask);
+	public List<Map<String, Object>> getXmTaskAttDist(IPage page, QueryWrapper ew, Map<String,Object> ext) {
+		return baseMapper.getXmTaskAttDist(page,ew,ext);
 	}
 
-	public List<Map<String, Object>> getXmTaskAgeDist(Map<String, Object> xmTask) {
-		return baseMapper.getXmTaskAgeDist(xmTask);
+	public List<Map<String, Object>> getXmTaskAgeDist(IPage page, QueryWrapper ew, Map<String,Object> ext) {
+		return baseMapper.getXmTaskAgeDist(page,ew,ext);
 	}
 
-	public List<Map<String, Object>> getXmTaskSort(Map<String, Object> xmTask) {
-		return baseMapper.getXmTaskSort(xmTask);
+	public List<Map<String, Object>> getXmTaskSort(IPage page, QueryWrapper ew, Map<String,Object> ext) {
+		return baseMapper.getXmTaskSort(page,ew,ext);
 	}
 
 	@Override

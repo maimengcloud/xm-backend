@@ -38,15 +38,15 @@ public interface XmTaskMapper extends BaseMapper<XmTask> {
 
     void batchUpdateBudgetWorkloadAndRate(Map<String, Object> map);
 
-    List<Map<String, Object>> getXmTaskAttDist(Map<String, Object> xmTask);
+    List<Map<String, Object>> getXmTaskAttDist(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> getXmTaskAgeDist(Map<String, Object> xmTask);
+    List<Map<String, Object>> getXmTaskAgeDist(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
     void upBrowseTimes(Map<String, Object> map);
 
     void updateSomeFieldByPkAfterPaySuccess(XmTask xmTaskUpdate);
 
-    List<Map<String, Object>> getXmTaskSort(Map<String, Object> xmTask);
+    List<Map<String, Object>> getXmTaskSort(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
     List<XmTask> listTenTaskByProjectIdAndProductId(Map<String, Object> projectId);
 
