@@ -387,7 +387,7 @@
     </select>
 
     <select id="getXmTaskSort" parameterType="HashMap" resultType="HashMap">
-        select count(*) as value,${groupBy} as id,
+        select count(*) as value,${ext.groupBy} as id,
         max( <if test="ext.groupBy=='create_userid'">create_username</if>
         <if test="ext.groupBy=='executor_userid'">executor_username</if>
         <if test="ext.groupBy=='menu_id'">menu_name</if>  ) as name from xm_task res
