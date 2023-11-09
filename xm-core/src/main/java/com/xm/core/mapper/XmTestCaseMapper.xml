@@ -28,7 +28,7 @@
             </foreach>
         </if>
         <if test="ext.projectId !=null and ext.projectId !=''"> and exists ( select 1 from xm_test_plan_case c where c.case_id=res.id and c.project_id=#{ext.projectId} )</if>
-        <if test="ext.(iterationId!=null and ext.iterationId!='')">    and exists( select 1 from xm_menu m where m.menu_id =res.menu_id
+        <if test="ext.iterationId!=null and ext.iterationId!=''">    and exists( select 1 from xm_menu m where m.menu_id =res.menu_id
             <if test="ext.productId != null and ext.productId !=''" >and m.product_id=#{ext.productId}  </if>
             <if test="ext.iterationId != null and ext.iterationId !=''" >and m.iteration_id=#{ext.iterationId}  </if>
             )
