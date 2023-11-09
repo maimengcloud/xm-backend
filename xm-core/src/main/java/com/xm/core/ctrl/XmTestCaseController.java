@@ -98,8 +98,10 @@ public class XmTestCaseController {
 		}else {
  			return Result.error("groupBy-0","分组参数错误");
 		}
-		List<Map<String,Object>>	datas = xmTestCaseService.getXmTestCaseSort(params);	//列出XmTestCase列表
-		return Result.ok().setData(datas);
+ 		IPage page=QueryTools.initPage(params);
+ 		QueryWrapper<XmTestCase> qw=QueryTools.initQueryWrapper(XmTestCase.class,params);
+		List<Map<String,Object>>	datas = xmTestCaseService.getXmTestCaseSort(page,qw,params);	//列出XmTestCase列表
+		return Result.ok().setData(datas).setTotal(page.getTotal());
 	}
 
 

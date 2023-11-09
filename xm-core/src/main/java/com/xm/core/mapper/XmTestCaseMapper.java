@@ -23,6 +23,6 @@ public interface XmTestCaseMapper extends BaseMapper<XmTestCase> {
      */
     List<Map<String,Object>> selectListMapByWhere(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> getXmTestCaseSort(Map<String, Object> xmTestCase);
+    List<Map<String, Object>> getXmTestCaseSort(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 }
 

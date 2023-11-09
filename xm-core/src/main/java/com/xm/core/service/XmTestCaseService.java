@@ -27,8 +27,8 @@ public class XmTestCaseService extends BaseService<XmTestCaseMapper, XmTestCase>
     public List<Map<String,Object>> selectListMapByWhere(IPage page, QueryWrapper ew, Map<String,Object> ext){
         return baseMapper.selectListMapByWhere(page,ew,ext);
     }
-    public List<Map<String, Object>> getXmTestCaseSort(Map<String, Object> xmTestCase) {
-        return baseMapper.getXmTestCaseSort(xmTestCase);
+    public List<Map<String, Object>> getXmTestCaseSort(IPage page, QueryWrapper ew, Map<String,Object> ext) {
+        return baseMapper.getXmTestCaseSort(page,ew,ext);
     }
 
     /** 请在此类添加自定义函数 */
