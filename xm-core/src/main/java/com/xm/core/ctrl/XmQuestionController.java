@@ -165,7 +165,6 @@ public class XmQuestionController {
 		IPage page=QueryTools.initPage(params);
 		QueryWrapper<XmQuestion> qw=QueryTools.initQueryWrapper(XmQuestion.class,params);
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionSort(page,qw,params);
-		Map<String,Object> m=new HashMap<>();
 		return Result.ok().setData(datas).setTotal(page.getTotal());
 	}
 
