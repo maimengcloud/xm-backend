@@ -40,7 +40,7 @@ public interface XmTaskMapper extends BaseMapper<XmTask> {
 
     List<Map<String, Object>> getXmTaskAttDist(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
-    List<Map<String, Object>> getXmTaskAgeDist(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
+    List<Map<String, Object>> getXmTaskAgeDist(@Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 
     void upBrowseTimes(Map<String, Object> map);
 

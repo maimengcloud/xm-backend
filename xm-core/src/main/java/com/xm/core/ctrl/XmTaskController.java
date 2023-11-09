@@ -204,7 +204,7 @@ public class XmTaskController {
 		IPage page=QueryTools.initPage(params);
 		QueryWrapper<XmTask> qw = QueryTools.initQueryWrapper(XmTask.class , params);
 		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAttDist(page,qw,params);
-		return Result.ok("ok","成功",datas);
+		return Result.ok("ok","成功").setData(datas).setTotal(page.getTotal());
 	}
 
 	@RequestMapping(value="/getXmTaskAgeDist",method=RequestMethod.GET)
@@ -212,10 +212,9 @@ public class XmTaskController {
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
 
-		IPage page=QueryTools.initPage(params);
 		QueryWrapper<XmTask> qw = QueryTools.initQueryWrapper(XmTask.class , params);
-		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAgeDist(page,qw,params);
-		return Result.ok("ok","成功",datas);
+		List<Map<String,Object>> datas= this.xmTaskService.getXmTaskAgeDist(qw,params);
+		return Result.ok("ok","成功").setData(datas).setTotal(datas.size());
 	}
 
 

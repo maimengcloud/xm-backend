@@ -204,15 +204,19 @@ public class XmMenuController {
 	@RequestMapping(value="/getXmMenuAttDist",method=RequestMethod.GET)
 	public Result getXmMenuAttDist(@ApiIgnore @RequestParam Map<String,Object> params){
  		this.paramsInit(params);
-		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAttDist(params);
-		return Result.ok("ok","成功",datas);
+ 		IPage page=QueryTools.initPage(params);
+ 		QueryWrapper<XmMenu> qw=QueryTools.initQueryWrapper(XmMenu.class,params);
+		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAttDist(page,qw,params);
+		return Result.ok("ok","成功").setData(datas).setTotal(page.getTotal());
 	}
 
 	@RequestMapping(value="/getXmMenuAgeDist",method=RequestMethod.GET)
 	public Result getXmMenuAgeDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		this.paramsInit(params);
-		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAgeDist(params);
-		return Result.ok("ok","成功",datas);
+		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmMenu> qw=QueryTools.initQueryWrapper(XmMenu.class,params);
+		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuAgeDist(page,qw,params);
+		return Result.ok("ok","成功").setData(datas).setTotal(datas.size());
 	}
 
 	@RequestMapping(value="/getXmMenuSort",method=RequestMethod.GET)
@@ -220,8 +224,9 @@ public class XmMenuController {
 		
 		IPage page=QueryTools.initPage(params);
 		this.paramsInit(params);
-		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuSort(params);
-		return Result.ok().setData(datas);
+		QueryWrapper<XmMenu> qw=QueryTools.initQueryWrapper(XmMenu.class,params);
+		List<Map<String,Object>> datas= this.xmMenuService.getXmMenuSort(page,qw,params);
+		return Result.ok().setData(datas).setTotal(page.getTotal());
 	}
 
 	/***/

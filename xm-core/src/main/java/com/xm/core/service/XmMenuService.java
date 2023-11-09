@@ -3,7 +3,6 @@ package com.xm.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Tips;
-import com.mdp.core.query.QueryTools;
 import com.mdp.core.service.BaseService;
 import com.xm.core.entity.XmMenu;
 import com.xm.core.mapper.XmMenuMapper;
@@ -58,17 +57,6 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 	public List<Map<String, Object>> selectListMapByWhereWithState(IPage page, QueryWrapper ew, Map<String,Object> ext) {
 
 		return baseMapper.selectListMapByWhereWithState(page,ew,ext);
-	}
-
-	/**
-	 * 连同功能关联的产品计划一并带出
-	 *
-	 * @param params
-	 * @return
-	 */
-	public List<Map<String, Object>> selectListMapByWhereWithPhase(Map<String, Object> params) {
-
-		return baseMapper.selectListMapByWhereWithPhase( QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
 	}
 
 
@@ -400,16 +388,16 @@ public class XmMenuService extends BaseService<XmMenuMapper,XmMenu> {
 
 	}
 
-    public List<Map<String,Object>> getXmMenuAttDist(Map<String, Object> params) {
-		return baseMapper.getXmMenuAttDist(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
+    public List<Map<String,Object>> getXmMenuAttDist(IPage page, QueryWrapper qw, Map<String,Object> ext) {
+		return baseMapper.getXmMenuAttDist(page,qw,ext);
     }
 
-	public List<Map<String, Object>> getXmMenuAgeDist(Map<String, Object> params) {
-		return baseMapper.getXmMenuAgeDist(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
+	public List<Map<String, Object>> getXmMenuAgeDist(IPage page, QueryWrapper qw, Map<String,Object> ext) {
+		return baseMapper.getXmMenuAgeDist(page,qw,ext);
 	}
 
-    public List<Map<String, Object>> getXmMenuSort(Map<String, Object> params) {
-		return baseMapper.getXmMenuSort(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
+    public List<Map<String, Object>> getXmMenuSort(IPage page, QueryWrapper qw, Map<String,Object> ext) {
+		return baseMapper.getXmMenuSort(page,qw,ext);
     }
 
 	@Override

@@ -832,8 +832,8 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 		return baseMapper.getXmTaskAttDist(page,ew,ext);
 	}
 
-	public List<Map<String, Object>> getXmTaskAgeDist(IPage page, QueryWrapper ew, Map<String,Object> ext) {
-		return baseMapper.getXmTaskAgeDist(page,ew,ext);
+	public List<Map<String, Object>> getXmTaskAgeDist(QueryWrapper ew, Map<String,Object> ext) {
+		return baseMapper.getXmTaskAgeDist(ew,ext);
 	}
 
 	public List<Map<String, Object>> getXmTaskSort(IPage page, QueryWrapper ew, Map<String,Object> ext) {

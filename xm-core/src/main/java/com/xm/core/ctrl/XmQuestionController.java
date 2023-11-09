@@ -135,8 +135,9 @@ public class XmQuestionController {
 	public Result getXmQuestionAttDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
+		IPage page=QueryTools.initPage(params);
 		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAttDist(params);
-		return Result.ok("ok","成功",datas);
+		return Result.ok("ok","成功").setData(datas).setTotal(page.getTotal());
 	}
 
 	@RequestMapping(value="/getXmQuestionAgeDist",method=RequestMethod.GET)
