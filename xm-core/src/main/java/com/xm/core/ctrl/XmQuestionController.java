@@ -144,22 +144,27 @@ public class XmQuestionController {
 	public Result getXmQuestionAgeDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAgeDist(params);
-		return Result.ok("ok","成功",datas);
+		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmQuestion> qw=QueryTools.initQueryWrapper(XmQuestion.class,params);
+		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionAgeDist(page,qw,params);
+		return Result.ok("ok","成功").setData(datas).setTotal(datas.size());
 	}
 	@RequestMapping(value="/getXmQuestionRetestDist",method=RequestMethod.GET)
 	public Result getXmQuestionRetestDist(@ApiIgnore @RequestParam Map<String,Object> params){
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionRetestDist(params);
-		return Result.ok("ok","成功",datas);
+		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmQuestion> qw=QueryTools.initQueryWrapper(XmQuestion.class,params);
+		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionRetestDist(page,qw,params);
+		return Result.ok("ok","成功").setData(datas).setTotal(page.getTotal());
 	}
 	@RequestMapping(value="/getXmQuestionSort",method=RequestMethod.GET)
 	public Result getXmQuestionSort(@ApiIgnore @RequestParam Map<String,Object> params){
-		User user=LoginUtils.getCurrentUserInfo();		
-		IPage page=QueryTools.initPage(params);
+		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
-		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionSort(params);
+		IPage page=QueryTools.initPage(params);
+		QueryWrapper<XmQuestion> qw=QueryTools.initQueryWrapper(XmQuestion.class,params);
+		List<Map<String,Object>> datas= this.xmQuestionService.getXmQuestionSort(page,qw,params);
 		Map<String,Object> m=new HashMap<>();
 		return Result.ok().setData(datas).setTotal(page.getTotal());
 	}

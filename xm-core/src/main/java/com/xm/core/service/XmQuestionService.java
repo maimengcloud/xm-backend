@@ -207,12 +207,12 @@ public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> 
 		return baseMapper.getXmQuestionAttDist(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
     }
 
-	public List<Map<String, Object>> getXmQuestionAgeDist(Map<String, Object> params) {
-		return baseMapper.getXmQuestionAgeDist(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
+	public List<Map<String, Object>> getXmQuestionAgeDist(IPage page, QueryWrapper qw, Map<String,Object> ext) {
+		return baseMapper.getXmQuestionAgeDist(page,qw,ext);
 	}
 
-	public List<Map<String, Object>> getXmQuestionSort(Map<String, Object> params) {
-		return baseMapper.getXmQuestionSort(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
+	public List<Map<String, Object>> getXmQuestionSort(IPage page, QueryWrapper qw, Map<String,Object> ext) {
+		return baseMapper.getXmQuestionSort(page,qw,ext);
 	}
 
 	@Override
@@ -220,8 +220,8 @@ public class XmQuestionService extends BaseService<XmQuestionMapper,XmQuestion> 
 		return "Q"+getSequenceService().getCommonNo("{date62:yyyyMMddHHmmss}{rands:4}");
 	}
 
-    public List<Map<String, Object>> getXmQuestionRetestDist(Map<String, Object> params) {
-		return baseMapper.getXmQuestionRetestDist(QueryTools.initPage(params),QueryTools.initQueryWrapper(XmMenu.class,params),params);
+    public List<Map<String, Object>> getXmQuestionRetestDist(IPage page, QueryWrapper qw, Map<String,Object> ext) {
+		return baseMapper.getXmQuestionRetestDist(page,qw,ext);
     }
 }
 
