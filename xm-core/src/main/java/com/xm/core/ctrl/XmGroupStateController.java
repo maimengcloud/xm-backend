@@ -60,7 +60,7 @@ public class XmGroupStateController {
 		 
 		RequestUtils.transformArray(params, "ids");		
 		IPage page= QueryTools.initPage(params);
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmGroupState> qw = QueryTools.initQueryWrapper(XmGroupState.class , params);
 		List<Map<String,Object>> datas = xmGroupStateService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectGroupState列表
 		

@@ -9,7 +9,6 @@ import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmGroupUser;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
@@ -93,8 +92,8 @@ public class XmGroupUserController {
 		IPage page= QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("branchId",user.getBranchId());
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
-		List<Map<String,Object>> datas = sssssssssssssssService.selectListMapByWhere(page,qw,params);
+		QueryWrapper<XmGroupUser> qw = QueryTools.initQueryWrapper(XmGroupUser.class , params);
+		List<Map<String,Object>> datas = xmGroupUserService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectGroupUser列表
 		
 	}
@@ -171,7 +170,7 @@ public class XmGroupUserController {
 			List<Map<String,Object>> users=new ArrayList<>();
 			users.add(usermap);
 			pushMsgService.pushJoinChannelGroupMsg(user.getBranchId(), gu.getGroupId(), users);
-			notifyMsgService.pushMsg(user,gu.getUserid(),gu.getUsername(),"7",gu.getProjectId(),gu.getGroupId(),"恭喜您加入"+("0".equals(pgClass)?"项目":"产品")+"【"+name+"】");
+			notifyMsgService.pushMsg(user.getBranchId(),user.getUserid(),user.getUsername(),gu.getUserid(),gu.getUsername(),"恭喜您加入"+("0".equals(pgClass)?"项目":"产品")+"【"+name+"】",null);
 			if("1".equals(pgClass)){
 				xmGroupService.clearProductGroup(gu.getProductId());
 				xmRecordService.addXmGroupRecord(gu.getProductId(),gu.getGroupId(), "产品-团队-新增小组成员", "增加组员["+gu.getUsername()+"]",gu.getUserid(),null);
@@ -250,7 +249,7 @@ public class XmGroupUserController {
 			List<Map<String,Object>> users=new ArrayList<>();
 			users.add(usermap);
 
-			notifyMsgService.pushMsg(user,gu.getUserid(),gu.getUsername(),"7",gu.getProjectId(),gu.getGroupId(),"您离开"+("0".equals(pgClass)?"项目":"产品")+"【"+name+"】中的小组【"+gu.getGroupId()+"】");
+			notifyMsgService.pushMsg(user.getBranchId(),user.getUserid(),user.getUsername(),gu.getUserid(),gu.getUsername(),"您离开"+("0".equals(pgClass)?"项目":"产品")+"【"+name+"】中的小组【"+gu.getGroupId()+"】",null);
 
 			pushMsgService.pushLeaveChannelGroupMsg(user.getBranchId(), gu.getGroupId(), users);
 
@@ -265,7 +264,7 @@ public class XmGroupUserController {
 			}
 
 
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok("delete-ok","删除成功");
 		
 	}
 
@@ -335,7 +334,7 @@ public class XmGroupUserController {
 				xmGroupService.clearProductGroup(gu.getProductId());
 				xmRecordService.addXmGroupRecord(gu.getProductId(), gu.getGroupId(),"项目-团队-修改小组成员信息", "变更["+gu.getUsername()+"]");
 			}
-
+		return Result.ok();
 		
 	}
 
@@ -455,11 +454,6 @@ public class XmGroupUserController {
  			if(gusDb.size()>0){
 				msg.add("以下"+gusDb.size()+"个小组用户已在组里，无需再添加。【"+gusDb.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"】");
 			}
-			if(canAddUsers.size()!=0){
-				return Result.ok(msg.stream().collect(Collectors.joining(" ")));
-			}else{
-				return Result.error(msg.stream().collect(Collectors.joining(" ")));
-			}
 			groupUsersMap.forEach((groupId,groupUsers)->{
 
 				List<Map<String,Object>> users=groupUsers.stream().map(i->map("userid",i.getUserid(),"username",i.getUsername())).collect(Collectors.toList());
@@ -473,9 +467,11 @@ public class XmGroupUserController {
 					xmRecordService.addXmGroupRecord(productId,groupId, "产品-团队-新增小组成员", "新增组员["+groupUsers.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"]",user.getUserid(),null);
 				}
 			});
-
-
-		return Result.ok();
+			if(canAddUsers.size()!=0){
+				return Result.ok(msg.stream().collect(Collectors.joining(" ")));
+			}else{
+				return Result.error(msg.stream().collect(Collectors.joining(" ")));
+			}
 		
 	}
 
@@ -572,11 +568,7 @@ public class XmGroupUserController {
 				}
 				msg.add("以下"+noDelUsers.size()+"个小组用户无权限删除。【"+noDelUsers.stream().collect(Collectors.toSet()).stream().collect(Collectors.joining(","))+"】");
  			}
-			if(canDelUsers.size()!=0){
-				return Result.ok(msg.stream().collect(Collectors.joining(" ")));
-			}else{
-				return Result.error(msg.stream().collect(Collectors.joining(" ")));
-			}
+
 			groupUsersMap.forEach((groupId,groupUsers)->{
 
 				List<Map<String,Object>> users=groupUsers.stream().map(i->map("userid",i.getUserid(),"username",i.getUsername())).collect(Collectors.toList());
@@ -590,9 +582,11 @@ public class XmGroupUserController {
 					xmRecordService.addXmGroupRecord(productId,groupId, "产品-团队-删除小组成员", "删除组员["+groupUsers.stream().map(i->i.getUsername()).collect(Collectors.joining(","))+"]",user.getUserid(),null);
 				}
 			});
-
-
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+			if(canDelUsers.size()!=0){
+				return Result.ok(msg.stream().collect(Collectors.joining(" ")));
+			}else{
+				return Result.error(msg.stream().collect(Collectors.joining(" ")));
+			}
 		
 	}
 }

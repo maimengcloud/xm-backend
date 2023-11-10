@@ -3,7 +3,6 @@ package com.xm.core.service;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.service.BaseService;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmGroupState;
 import com.xm.core.mapper.XmGroupStateMapper;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,7 @@ public class XmGroupStateService extends BaseService<XmGroupStateMapper, XmGroup
 		return baseMapper.loadTasksToXmProjectGroupState( projectId);
 	}
 
-	public List<Map<String, Object>> selectListMapByWhere(IPage page, QueryWrapper<XmBranchStateHis> qw, Map<String, Object> ext) {
+	public List<Map<String, Object>> selectListMapByWhere(IPage page, QueryWrapper<XmGroupState> qw, Map<String, Object> ext) {
 		return baseMapper.selectListMapByWhere(page,qw,ext);
 	}
 }

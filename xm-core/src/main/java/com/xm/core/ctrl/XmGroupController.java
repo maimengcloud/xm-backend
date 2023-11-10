@@ -10,7 +10,6 @@ import com.mdp.msg.client.PushNotifyMsgService;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmGroup;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
@@ -172,7 +171,6 @@ public class XmGroupController {
 	public Result getGroup(@ApiIgnore @RequestParam Map<String,Object> params) {
 		
 		RequestUtils.transformArray(params, "ids");		
-		IPage page=QueryTools.initPage(params);
 		List<XmGroupVo>	datas=new ArrayList<>();
 		String iterationId= (String) params.get("iterationId");
 		String projectId= (String) params.get("projectId");
@@ -217,7 +215,7 @@ public class XmGroupController {
 		params.put("branchId",user.getBranchId());
 			params.put("orCrowBranchId",user.getBranchId());
 		}
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmGroup> qw = QueryTools.initQueryWrapper(XmGroup.class , params);
 		List<Map<String,Object>> datas = xmGroupService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectGroup列表
 		
@@ -246,13 +244,10 @@ public class XmGroupController {
 						return Result.error("project-0","项目已不存在");
 					}
 	 				Tips tips =this.xmGroupService.checkProjectStatus(project);
-					if(!tips.isOk()){
-						return Result.error(tips);
-					}
-	 				Tips tips =checkProjectGroupQxForAdd(project,u,xmGroup);
-					if(!tips.isOk()){
-						return Result.error(tips);
-					}
+					Result.assertIsFalse(tips);
+	 				Tips tips2 =checkProjectGroupQxForAdd(project,u,xmGroup);
+					Result.assertIsFalse(tips2);
+
 					xmGroup.setProductId(null);
 
 					xmGroup.setBranchId(project.getBranchId());
@@ -265,13 +260,9 @@ public class XmGroupController {
 						return Result.error("product-0","产品已不存在");
 					}
 	 				Tips tips =this.xmGroupService.checkProductStatus(xmProduct);
-					if(!tips.isOk()){
-						return Result.error(tips);
-					}
-	 				Tips tips =checkProductGroupQxForAdd(xmProduct,u,xmGroup);
-					if(!tips.isOk()){
-						return Result.error(tips);
-					}
+					Result.assertIsFalse(tips);
+	 				tips =checkProductGroupQxForAdd(xmProduct,u,xmGroup);
+					Result.assertIsFalse(tips);
 					xmGroup.setBranchId(xmProduct.getBranchId());
 				}else{
 					return Result.error("pgClass-err","小组类型数值不正确");
@@ -310,18 +301,18 @@ public class XmGroupController {
 	public Tips checkProductGroupQxForAdd(XmProduct xmProduct,User u,XmGroup xmGroup){
 		
 		
-		tips=productQxService.checkProductQx(xmProduct,0,u);
+		Tips tips=productQxService.checkProductQx(xmProduct,0,u);
 		if(!tips.isOk()){
 			return tips;
 		}
 		if(StringUtils.hasText(xmGroup.getLeaderUserid()) && !xmGroup.getLeaderUserid().equals(u.getUserid())){
-			Tips tips=productQxService.checkProductScopeQx(xmProduct,0,xmGroup.getLeaderUserid(),xmGroup.getLeaderUsername(),null);
+			tips=productQxService.checkProductScopeQx(xmProduct,0,xmGroup.getLeaderUserid(),xmGroup.getLeaderUsername(),null);
 		}
 		if(!tips.isOk()){
 			return tips;
 		}
 		if(StringUtils.hasText(xmGroup.getAssUserid()) && !xmGroup.getAssUserid().equals(u.getUserid())){
-			Tips tips=productQxService.checkProductScopeQx(xmProduct,0,xmGroup.getAssUserid(),xmGroup.getAssUsername(),null);
+			tips=productQxService.checkProductScopeQx(xmProduct,0,xmGroup.getAssUserid(),xmGroup.getAssUsername(),null);
 		}
 		return tips;
 	}
@@ -330,18 +321,18 @@ public class XmGroupController {
 	public Tips checkProjectGroupQxForAdd(XmProject project,User u,XmGroup xmGroup){
 		
 		
-		tips=projectQxService.checkProjectQx(project,0,u);
+		Tips tips=projectQxService.checkProjectQx(project,0,u);
 		if(!tips.isOk()){
 			return tips;
 		}
 		if(StringUtils.hasText(xmGroup.getLeaderUserid()) && !xmGroup.getLeaderUserid().equals(u.getUserid())){
-			Tips tips=projectQxService.checkProjectScopeQx(project,0,xmGroup.getLeaderUserid(),xmGroup.getLeaderUsername(),null);
+			tips=projectQxService.checkProjectScopeQx(project,0,xmGroup.getLeaderUserid(),xmGroup.getLeaderUsername(),null);
 		}
 		if(!tips.isOk()){
 			return tips;
 		}
 		if(StringUtils.hasText(xmGroup.getAssUserid()) && !xmGroup.getAssUserid().equals(u.getUserid())){
-			Tips tips=projectQxService.checkProjectScopeQx(project,0,xmGroup.getAssUserid(),xmGroup.getAssUsername(),null);
+			tips=projectQxService.checkProjectScopeQx(project,0,xmGroup.getAssUserid(),xmGroup.getAssUsername(),null);
 		}
 		return tips;
 	}
@@ -369,9 +360,7 @@ public class XmGroupController {
 				boolean isPm=xmGroupService.checkUserIsProjectAdm(project,u.getUserid());
 				if(!isPm) {
 	 				Tips tips =projectQxService.checkProjectQx(project,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
-					if(!tips.isOk()){
-						return Result.error(tips);
-					}
+					Result.assertIsFalse(tips);
  				}
 			} else if("1".equals(groupDb.getPgClass()) && StringUtils.hasText(groupDb.getProductId())){
 				XmProduct product = xmProductService.getProductFromCache(groupDb.getProductId());
@@ -381,9 +370,7 @@ public class XmGroupController {
 				boolean isPm=xmGroupService.checkUserIsProductAdm(product,u.getUserid());
 				if(!isPm) {
 	 				Tips tips =productQxService.checkProductQx(product,0,u,groupDb.getLeaderUserid(),groupDb.getLeaderUsername(), null);
-					if(!tips.isOk()){
-						return Result.error(tips);
-					}
+					Result.assertIsFalse(tips);
  				}
 			}
 			XmGroup childrenGroupQuery=new XmGroup();
@@ -404,7 +391,7 @@ public class XmGroupController {
 			}
 
 
-		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());
+		return Result.ok("delete-ok","删除成功");
 		
 	}
 

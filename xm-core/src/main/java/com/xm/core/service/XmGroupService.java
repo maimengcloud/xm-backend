@@ -1,6 +1,8 @@
 package com.xm.core.service;
 
 import com.alibaba.fastjson.JSON;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.User;
@@ -974,6 +976,10 @@ public class XmGroupService extends BaseService<XmGroupMapper,XmGroup> {
 		}else {
 			return groupVo;
 		}
+	}
+
+	public List<Map<String, Object>> selectListMapByWhere(IPage page, QueryWrapper<XmGroup> qw, Map<String, Object> ext) {
+		return baseMapper.selectListMapByWhere(page,qw,ext);
 	}
 }
 
