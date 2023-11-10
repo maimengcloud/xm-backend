@@ -12,7 +12,6 @@ import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.NumberUtil;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.msg.client.PushNotifyMsgService;
-import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -1320,7 +1319,7 @@ public class XmTaskController {
 			Map<String,XmTask> allowTasksDbMap=new HashMap<>();
 			Map<String,XmTask>  noAllowTasksDbMap=new HashMap<>();
 			XmProject projectDb=xmProjectService.getProjectFromCache(parentTask.getProjectId());
-			List<Dept> pgroups= groupService.getSubDeptList(projectDb.getDeptid());
+			List<XmGroupVo> pgroups= groupService.getProjectGroupVoList(projectDb.getId());
 			boolean isAdm=groupService.checkUserIsProjectAdm(parentTask.getProjectId(),user.getUserid());
 			if(!isAdm){
 				for (XmTask task : canOpxmTasks) {

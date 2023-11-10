@@ -266,5 +266,8 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 		return baseMapper.selectListMapByWhereWithTask(page,qw,ext);
 	}
 
+	public List<Map<String, Object>> selectListMapByWhere(IPage page, QueryWrapper<XmTaskExecuser> qw, Map<String, Object> params) {
+		return baseMapper.selectListMapByWhere(page,qw,params);
+	}
 }
 
