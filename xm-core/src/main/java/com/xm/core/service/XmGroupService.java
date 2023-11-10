@@ -1,10 +1,13 @@
 package com.xm.core.service;
 
 import com.mdp.core.entity.Tips;
+import com.mdp.core.service.BaseService;
 import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
+import com.xm.core.entity.XmGroup;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmProject;
+import com.xm.core.mapper.XmGroupMapper;
 import com.xm.core.service.client.SysClient;
 import com.xm.core.service.push.XmPushMsgService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +24,7 @@ import java.util.Map;
  * 实体 XmProjectGroup 表 XM.xm_group 当前主键(包括多主键): id; 
  ***/
 @Service("xm.core.xmGroupService")
-public class XmGroupService  {
+public class XmGroupService extends BaseService<XmGroupMapper, XmGroup> {
 
 
 	@Autowired
