@@ -44,7 +44,7 @@
         WHEN e.STATUS != '7'
         AND e.STATUS != '0'
         AND e.STATUS != '8' THEN
-        e.userid ELSE NULL
+        e.bid_userid ELSE NULL
         END
         ) AS executor_userid,
         max(
@@ -53,13 +53,13 @@
         WHEN e.STATUS != '7'
         AND e.STATUS != '0'
         AND e.STATUS != '8' THEN
-        e.username ELSE NULL
+        e.bid_username ELSE NULL
         END
         ) AS executor_username,
-        group_concat( concat( e.userid, '(', e.STATUS, ')' ) SEPARATOR ',' ) AS exe_userids,
+        group_concat( concat( e.bid_userid, '(', e.STATUS, ')' ) SEPARATOR ',' ) AS exe_userids,
         group_concat(
         concat(
-        e.username,
+        e.bid_username,
         CASE
 
         WHEN e.STATUS = '0' THEN
