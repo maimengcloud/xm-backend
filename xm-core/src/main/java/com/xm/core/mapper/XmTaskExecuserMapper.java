@@ -25,6 +25,6 @@ public interface XmTaskExecuserMapper extends BaseMapper<XmTaskExecuser> {
 
     void updateXmTaskExeUseridsAndUsernamesByTaskId(String taskId);
 
-    List<Map<String, Object>> selectListMapByWhereWithTask(Map<String, Object> params);
+    List<Map<String, Object>> selectListMapByWhereWithTask(IPage page, @Param("ew") QueryWrapper ew,@Param("ext") Map<String,Object> ext);
 }
 

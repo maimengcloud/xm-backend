@@ -290,8 +290,8 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 		baseMapper.updateXmTaskExeUseridsAndUsernamesByTaskId( taskId);
 	}
 
-	public List<Map<String,Object>> selectListMapByWhereWithTask(Map<String,Object> params){
-		return baseMapper.selectListMapByWhereWithTask(params);
+	public List<Map<String,Object>> selectListMapByWhereWithTask(IPage page, QueryWrapper ew, Map<String,Object> ext){
+		return baseMapper.selectListMapByWhereWithTask(page,ew,ext);
 	}
 
 }

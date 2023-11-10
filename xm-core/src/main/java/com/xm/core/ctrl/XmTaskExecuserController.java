@@ -148,7 +148,9 @@ public class XmTaskExecuserController {
 		}else{
 			params.put("linkBranchId",user.getBranchId());
 		}
-		List<Map<String,Object>>	datas = xmTaskExecuserService.selectListMapByWhereWithTask(params);	//列出XmTaskExecuser列表
+		QueryWrapper<XmTaskExecuser> qw = QueryTools.initQueryWrapper(XmTaskExecuser.class , params);
+
+		List<Map<String,Object>>	datas = xmTaskExecuserService.selectListMapByWhereWithTask(page,qw,params);	//列出XmTaskExecuser列表
 		
 		return Result.ok().setData(datas).setTotal(page.getTotal());
 		
