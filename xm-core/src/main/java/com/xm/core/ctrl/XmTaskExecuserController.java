@@ -148,6 +148,7 @@ public class XmTaskExecuserController {
 		}else{
 			params.put("linkBranchId",user.getBranchId());
 		}
+		QueryTools.alias(params,"projectId res.projectId");
 		QueryWrapper<XmTaskExecuser> qw = QueryTools.initQueryWrapper(XmTaskExecuser.class , params);
 
 		List<Map<String,Object>>	datas = xmTaskExecuserService.selectListMapByWhereWithTask(page,qw,params);	//列出XmTaskExecuser列表
