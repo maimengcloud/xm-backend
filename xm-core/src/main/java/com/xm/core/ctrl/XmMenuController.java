@@ -166,7 +166,7 @@ public class XmMenuController {
 		RequestUtils.transformArray(params, "dclasss");
 		IPage page=QueryTools.initPage(params);
 		this.paramsInit(params);
-		QueryTools.alias(params,"productId res.productId");
+		QueryTools.alias(params,"productId res.productId","menuId res.menuId");
 		QueryWrapper<XmMenu> qw = QueryTools.initQueryWrapper(XmMenu.class , params);
 		this.paramsInit(params);
 		List<Map<String,Object>>	datas = xmMenuService.selectListMapByWhereWithState(page,qw,params);	//列出XmMenu列表
