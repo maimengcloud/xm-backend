@@ -370,7 +370,7 @@ public class XmProjectController {
 			User user= LoginUtils.getCurrentUserInfo();
 			String code=this.xmProjectService.createProjectCode(user.getBranchId());
 			
-		return Result.ok();
+		return Result.ok().setData(code);
 		
 	}
 	@ApiOperation( value = "根据主键修改一条xm_project信息",notes="editXmProject")

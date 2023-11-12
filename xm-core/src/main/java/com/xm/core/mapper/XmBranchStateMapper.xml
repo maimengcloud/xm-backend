@@ -84,7 +84,7 @@
     </select>
     <!-- 根据条件修改若干条记录 -->
     <update id="loadProjectStateToXmBranchState" parameterType="String" statementType="CALLABLE">
-        {call load_project_state_to_xm_branch_state(#{branchId,mode=IN})}
+        call load_project_state_to_xm_branch_state(#{branchId,mode=IN})
     </update>
 
     <select id="tasksSumDw" parameterType="String" resultType="HashMap">

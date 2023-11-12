@@ -41,7 +41,7 @@
     </sql>
 
     <update id="load_tasks_to_xm_iteration_state" parameterType="String" statementType="CALLABLE">
-        {call load_tasks_to_xm_iteration_state(#{inIterationId,mode=IN})}
+        call load_tasks_to_xm_iteration_state(#{inIterationId,mode=IN})
     </update>
 
     <select id="selectListMapByWhereWithState" parameterType="HashMap" resultType="HashMap">

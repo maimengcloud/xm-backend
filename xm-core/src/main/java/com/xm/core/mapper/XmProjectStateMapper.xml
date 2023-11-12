@@ -15,10 +15,10 @@
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
     </select>
     <update id="loadTasksToXmProjectState" parameterType="String" statementType="CALLABLE">
-        {call load_tasks_to_xm_project_state(#{projectId,mode=IN})}
+        call load_tasks_to_xm_project_state(#{projectId,mode=IN})
     </update>
     <update id="loadTasksSettleToXmProjectState" parameterType="String" statementType="CALLABLE">
-        {call load_tasks_settle_to_xm_project_state(#{projectId,mode=IN})}
+        call load_tasks_settle_to_xm_project_state(#{projectId,mode=IN})
     </update>
 
 

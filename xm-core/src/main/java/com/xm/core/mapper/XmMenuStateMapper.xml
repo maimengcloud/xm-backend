@@ -14,7 +14,7 @@
     </select>
 
     <update id="loadTasksToXmMenuState" parameterType="String" statementType="CALLABLE">
-        {call load_tasks_to_xm_menu_state(#{productId,mode=IN})}
+        call load_tasks_to_xm_menu_state(#{productId,mode=IN})
     </update>
 
 

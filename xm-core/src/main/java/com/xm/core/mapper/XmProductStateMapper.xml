@@ -15,6 +15,6 @@
         ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
     </select>
     <update id="loadTasksToXmProductState" parameterType="String" statementType="CALLABLE">
-        {call load_tasks_to_xm_product_state(#{productId,mode=IN})}
+        call load_tasks_to_xm_product_state(#{productId,mode=IN})
     </update>
 </mapper>
