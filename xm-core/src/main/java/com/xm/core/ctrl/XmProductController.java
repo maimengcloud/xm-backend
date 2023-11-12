@@ -483,7 +483,7 @@ public class XmProductController {
 			User user=LoginUtils.getCurrentUserInfo();
 			String data=this.xmProductService.createProductCode(user.getBranchId());
 			
-		return Result.ok();
+		return Result.ok().setData(data);
 		
 	}
 
