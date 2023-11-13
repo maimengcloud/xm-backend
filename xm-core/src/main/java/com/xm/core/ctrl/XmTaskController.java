@@ -673,7 +673,7 @@ public class XmTaskController {
 				params.put("cbranchId",user.getBranchId());
 			}
 		}
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmTask> qw = QueryTools.initQueryWrapper(XmTask.class , params);
 		List<Map<String,Object>> datas = xmTaskService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTask列表
 		
