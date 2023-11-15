@@ -257,7 +257,7 @@ public class XmProjectController {
 			xmProjectStateService.loadTasksToXmProjectState(xmProjectVo.getId());
 				
 			
-		return Result.ok();
+		return Result.ok().setData(xmProjectVo);
 		
 	}
 	@ApiOperation( value = "从回收站恢复项目",notes="unDelXmProject,仅需要上传主键字段")

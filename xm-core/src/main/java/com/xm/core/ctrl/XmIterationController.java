@@ -224,7 +224,7 @@ public class XmIterationController {
 		xmIterationService.addIteration(xmIteration);
 		xmIterationStateService.loadTasksToXmIterationState(xmIteration.getId());
 		xmRecordService.addXmIterationRecord(xmIteration.getId(),"迭代-新增","新增迭代"+xmIteration.getIterationName());
-		return Result.ok();
+		return Result.ok().setData(xmIteration);
 	}
 	
 	

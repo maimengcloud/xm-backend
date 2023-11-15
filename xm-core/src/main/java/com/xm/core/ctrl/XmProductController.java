@@ -290,7 +290,7 @@ public class XmProductController {
 			}
 			xmRecordService.addXmProductRecord(xmProduct.getId(),"创建产品","创建产品【"+xmProduct.getId()+"】【"+xmProduct.getProductName()+"】");
 			xmProductStateService.loadTasksToXmProductState(xmProduct.getId());
-		return Result.ok();
+		return Result.ok().setData(xmProduct);
 	}
 	/***/
 	@ApiOperation( value = "从回收站恢复产品",notes="unDelXmProduct,仅需要上传主键字段")
