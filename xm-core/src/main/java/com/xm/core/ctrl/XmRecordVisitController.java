@@ -8,7 +8,6 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmRecordVisit;
 import com.xm.core.service.XmRecordVisitService;
 import io.swagger.annotations.*;
@@ -67,7 +66,7 @@ public class XmRecordVisitController {
 		
 		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmRecordVisit> qw = QueryTools.initQueryWrapper(XmRecordVisit.class , params);
 		List<Map<String,Object>> datas = xmRecordVisitService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmRecordVisit列表
 

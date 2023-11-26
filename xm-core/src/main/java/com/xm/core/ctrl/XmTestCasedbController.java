@@ -9,7 +9,6 @@ import com.mdp.core.utils.RequestUtils;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.entity.XmTestCasedb;
 import com.xm.core.service.XmGroupService;
@@ -77,7 +76,7 @@ public class XmTestCasedbController {
 		User user=LoginUtils.getCurrentUserInfo();
 		params.put("pbranchId",user.getBranchId());
 		IPage page=QueryTools.initPage(params);
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmTestCasedb> qw = QueryTools.initQueryWrapper(XmTestCasedb.class , params);
 		List<Map<String,Object>> datas = xmTestCasedbService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmTestCasedb列表
 

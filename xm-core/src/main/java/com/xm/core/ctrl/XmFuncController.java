@@ -10,7 +10,6 @@ import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
 import com.mdp.swagger.ApiEntityParams;
-import com.xm.core.entity.XmBranchStateHis;
 import com.xm.core.entity.XmFunc;
 import com.xm.core.entity.XmProduct;
 import com.xm.core.service.XmFuncService;
@@ -76,7 +75,7 @@ public class XmFuncController {
 		
 		RequestUtils.transformArray(params, "ids");		
 		IPage page=QueryTools.initPage(params);
-		QueryWrapper<XmBranchStateHis> qw = QueryTools.initQueryWrapper(XmBranchStateHis.class , params);
+		QueryWrapper<XmFunc> qw = QueryTools.initQueryWrapper(XmFunc.class , params);
 		List<Map<String,Object>> datas = xmFuncService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmFunc列表
 

@@ -785,7 +785,7 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 
 	public List<XmTask> listTenTaskByProjectIdAndProductId(String projectId,String productId) {
 
-		return baseMapper.listTenTaskByProjectIdAndProductId(map("projectId", projectId,  productId));
+		return baseMapper.listTenTaskByProjectIdAndProductId(map("projectId", projectId,  "productId",productId));
 	}
 
 
