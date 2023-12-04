@@ -100,6 +100,7 @@ public class XmTestPlanCaseController {
 		String planId= (String) xmTestPlanCase.get("planId");
 		String caseId= (String) xmTestPlanCase.get("caseId");
 		String execUserid= (String) xmTestPlanCase.get("execUserid");
+		QueryTools.alias(xmTestPlanCase,"productId res.productId");
 		if(!(StringUtils.hasText(menuId)||StringUtils.hasText(funcId)||StringUtils.hasText(linkIteration)||StringUtils.hasText(casedbId)||StringUtils.hasText(productId)||StringUtils.hasText(projectId)
 				||StringUtils.hasText(planId)||StringUtils.hasText(caseId)||StringUtils.hasText(execUserid)||pkList!=null||caseIds!=null)){
 			User user=LoginUtils.getCurrentUserInfo();
