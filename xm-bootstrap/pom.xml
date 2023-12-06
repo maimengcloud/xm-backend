@@ -13,12 +13,12 @@
   <dependencies>
       <dependency>
           <groupId>com.mdp</groupId>
-          <artifactId>mdp-cloud-starter</artifactId>
+          <artifactId>mdp-oauth2-client-cloud</artifactId>
           <version>${mdp.version}</version>
       </dependency>
       <dependency>
           <groupId>com.mdp</groupId>
-          <artifactId>mdp-oauth2-client-cloud</artifactId>
+          <artifactId>mdp-cloud-starter</artifactId>
           <version>${mdp.version}</version>
       </dependency>
       <dependency>

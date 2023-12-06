@@ -38,7 +38,7 @@
         </if>
 
         <if test="ext.myExecuserStatus != null and ext.myExecuserStatus != ''">
-            and  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.id and exe.userid=#{ext.userid}
+            and  exists ( select 1 from xm_task_execuser exe where exe.project_id=res.id and exe.bid_userid=#{ext.userid}
             <if test='ext.myExecuserStatus != "all" '>
                 and exe.status=#{ext.myExecuserStatus}
             </if>
