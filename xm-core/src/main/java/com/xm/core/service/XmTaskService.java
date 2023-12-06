@@ -197,8 +197,8 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 		baseMapper.updateTaskChildrenCntByTaskId(taskId);
 	}
 
-	public List<Map<String,Object>> getTask(Map<String,Object> xmTask){  
-		List<Map<String,Object>> mapList = this.selectListMapByWhere(QueryTools.initPage(xmTask),QueryTools.initQueryWrapper(XmTask.class,xmTask),xmTask);//所有数据 
+	public List<Map<String,Object>> getTask(IPage page,QueryWrapper<XmTask> qw,Map<String,Object> xmTask){
+		List<Map<String,Object>> mapList = this.selectListMapByWhere(page,qw,xmTask);//所有数据
 		return mapList;
 	}
 	@Transactional

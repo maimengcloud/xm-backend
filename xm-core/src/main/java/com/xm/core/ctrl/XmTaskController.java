@@ -140,7 +140,7 @@ public class XmTaskController {
 			params.put("compete",user.getUserid());
 		}
 		QueryWrapper<XmTask> qw = QueryTools.initQueryWrapper(XmTask.class , params);
-		List<Map<String,Object>> datas = xmTaskService.getTask(params);	//列出XmTask列表
+		List<Map<String,Object>> datas = xmTaskService.getTask(page,qw,params);	//列出XmTask列表
  		if("1".equals(params.get("withParents"))  && !"1".equals(params.get("isTop"))&& datas.size()>0){
 			Set<String> pidPathsSet=new HashSet<>();
 			Set<String> idSet=new HashSet<>();
@@ -155,7 +155,9 @@ public class XmTaskController {
 			}
 			List<String> ids=pidPathsSet.stream().filter(i->!idSet.contains(i)).collect(Collectors.toList());
 			if(ids!=null && ids.size()>0){
-				List<Map<String,Object>> parentList=xmTaskService.getTask(map("ids",ids));
+				QueryWrapper qw2=new QueryWrapper();
+				qw2.in("id",ids.toArray());
+				List<Map<String,Object>> parentList=xmTaskService.listMaps(qw2);
  				if(parentList!=null && parentList.size()>0){
 					datas.addAll(parentList);
 					return Result.ok().setData(datas).setTotal(page.getSize()+parentList.size());
@@ -189,7 +191,7 @@ public class XmTaskController {
 		params.put("toTaskCenter","1");
 
 		QueryWrapper<XmTask> qw = QueryTools.initQueryWrapper(XmTask.class , params);
-		List<Map<String,Object>> datas=xmTaskService.getTask(params);
+		List<Map<String,Object>> datas=xmTaskService.getTask(page,qw,params);
 
 		return Result.ok().setData(datas).setTotal(page.getTotal());
 		
