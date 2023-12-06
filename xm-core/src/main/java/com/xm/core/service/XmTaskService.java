@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
-import com.mdp.core.query.QueryTools;
 import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
@@ -443,7 +442,9 @@ public class XmTaskService extends BaseService<XmTaskMapper,XmTask> {
 				if(StringUtils.isEmpty(bizXmTask.getId())) {
 					throw new BizException("请上送任务编号flowVars.data.id");
 				}
-				List<Map<String,Object>> bizList=this.getTask(bizQuery);
+				QueryWrapper<XmTask> qw=new QueryWrapper();
+				qw.eq("id",bizXmTask.getId());
+				List<Map<String,Object>> bizList=this.listMaps(qw);
 				if(bizList==null || bizList.size()==0) {
 					throw new BizException("没有找到对应项目任务单,项目任务单为【"+bizXmTask.getId()+"】");
 				}else {
