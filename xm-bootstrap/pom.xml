@@ -12,6 +12,10 @@
     </parent>
   <dependencies>
       <dependency>
+          <groupId>com.xm</groupId>
+          <artifactId>xm-core</artifactId>
+      </dependency>
+      <dependency>
           <groupId>com.mdp</groupId>
           <artifactId>mdp-oauth2-client-cloud</artifactId>
           <version>${mdp.version}</version>
@@ -20,10 +24,6 @@
           <groupId>com.mdp</groupId>
           <artifactId>mdp-cloud-starter</artifactId>
           <version>${mdp.version}</version>
-      </dependency>
-      <dependency>
-          <groupId>com.xm</groupId>
-          <artifactId>xm-core</artifactId>
       </dependency>
   </dependencies>
   <build>
