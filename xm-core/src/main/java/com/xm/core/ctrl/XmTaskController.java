@@ -494,7 +494,7 @@ public class XmTaskController {
 
 
 	@ApiOperation( value = "查询任务的信息详情，必须登录",notes="taskDetail,条件之间是 and关系,模糊查询写法如 {studentName:'%才哥%'}")
-	@ApiEntityParams(value = XmTask.class,props = {"id","shareKey"}) 
+	@ApiEntityParams(value = XmTask.class,props = {"id"})
 	@ApiResponses({
 			@ApiResponse(code = 200,response= XmTask.class,message = "{tips:{isOk:true/false,msg:'成功/失败原因',tipscode:'错误码'},total:总记录数,data:[数据对象1,数据对象2,...]}")
 	})
