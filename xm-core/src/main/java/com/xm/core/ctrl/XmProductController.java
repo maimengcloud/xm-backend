@@ -7,6 +7,8 @@ import com.mdp.core.entity.Result;
 import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.msg.client.PushNotifyMsgService;
+import com.mdp.safe.client.cache.DeptRedisCacheService;
+import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -67,6 +69,9 @@ public class XmProductController {
 
 	@Autowired
 	SensitiveWordService sensitiveWordService;
+
+	@Autowired
+	DeptRedisCacheService deptRedisCacheService;
 
 	Map<String,Object> fieldsMap = toMap(new XmProduct());
 
@@ -180,6 +185,11 @@ public class XmProductController {
 		params.put("linkBranchId",user.getBranchId());
 		QueryTools.alias(params,"branchId res.branchId");
 		QueryWrapper<XmProduct> qw = QueryTools.initQueryWrapper(XmProduct.class , params);
+		Dept dept=deptRedisCacheService.getDept(user.getDeptid());
+		params.put("myIdPath",dept.getIdPath());
+		params.put("myDeptid",user.getDeptid());
+		params.put("myBranchId",user.getBranchId());
+		params.put("myUserid",user.getUserid());
 		List<Map<String,Object>> datas = xmProductService.selectListMapByWhereWithState(page,qw,params);
  		return Result.ok().setData(datas).setTotal(page.getTotal());
 	}

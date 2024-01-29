@@ -64,5 +64,22 @@
         <if test="ext.del==null or ext.del==''">
             and res.del!="1"
         </if>
+        <if test='ext.isTpl==null or ext.isTpl=="0"'>
+            and (
+            (res.create_userid = #{ext.myUserid} or res.adm_userid= #{ext.myUserid} or res.pm_userid=#{ext.myUserid} or res.ass_userid=#{ext.myUserid})
+            or (CASE
+            WHEN res.show_out = '1' THEN
+            res.branch_id = #{ext.myBranchId}
+            when res.show_out='3' then
+            res.deptid_path like  CONCAT(#{ext.myIdPath},'%') or #{ext.myIdPath} like CONCAT(res.deptid_path,'%')
+            when res.show_out='4' then
+            res.deptid_path like CONCAT(#{ext.myIdPath},'%')
+            when res.show_out='5' then
+            #{ext.myIdPath} like CONCAT(res.deptid_path,'%')
+            when res.show_out='6' then
+            res.deptid=#{ext.myDeptid}
+            end))
+        </if>
+
     </sql> 
 </mapper>

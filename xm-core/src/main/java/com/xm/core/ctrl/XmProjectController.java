@@ -10,6 +10,8 @@ import com.mdp.core.query.QueryTools;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.RequestUtils;
 import com.mdp.msg.client.PushNotifyMsgService;
+import com.mdp.safe.client.cache.DeptRedisCacheService;
+import com.mdp.safe.client.entity.Dept;
 import com.mdp.safe.client.entity.User;
 import com.mdp.safe.client.utils.LoginUtils;
 import com.mdp.sensitive.SensitiveWordService;
@@ -73,6 +75,9 @@ public class XmProjectController {
 	@Autowired
 	SensitiveWordService sensitiveWordService;
 
+	@Autowired
+	DeptRedisCacheService deptRedisCacheService;
+
 
 	Map<String,Object> fieldsMap = BaseUtils.toMap(new XmProject());
 
@@ -118,6 +123,12 @@ public class XmProjectController {
 		params.put("platformBranchId",platformBranchId);
 		QueryTools.alias(params,"branchId res.branchId");
 		QueryWrapper<XmProject> qw = QueryTools.initQueryWrapper(XmProject.class , params);
+
+		Dept dept=deptRedisCacheService.getDept(user.getDeptid());
+		params.put("myIdPath",dept.getIdPath());
+		params.put("myDeptid",user.getDeptid());
+		params.put("myBranchId",user.getBranchId());
+		params.put("myUserid",user.getUserid());
 		List<Map<String,Object>> datas = xmProjectService.selectListMapByWhere(page,qw,params);	//列出XmProject列表
 		return Result.ok().setData(datas).setTotal(page.getTotal());
 		

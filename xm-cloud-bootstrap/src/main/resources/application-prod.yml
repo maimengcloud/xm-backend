@@ -268,25 +268,10 @@ logging:
 # mdp平台授权验证服务器访问地址 cloud环境下换成 http://gate，本地调试如果不起验证服务器，可改为 https://www.qingqinkj.com/api/m1/oauth2/oauth2
 # 客户端必须在数据库表adm.oauth_client_details中配置，否则无法访问
 mdp:
-  #cloud环境下换成 http://gate，如果是本地运行，填写服务器的gate的微服务的ip地址及端口即可；如果不需要调第三方接口，无须填写
-  api-gate: http://127.0.0.1:7014
-  #平台管理机构号
+  api-gate: http://gate
   platform-branch-id: platform-branch-001
-  #配置图片文件上传下载的相关参数
-  arc:
-    #图片上传存放的根目录
-    image-upload-root-path: D:/arcfile/images
-    #图片下载、预览的url前缀
-    image-download-base-uri: https://127.0.1:7014/
-    #文件上传存放的根目录
-    file-upload-root-path: D:/arcfile/files
-    #文件下载、预览的url前缀
-    file-download-base-uri: https://127.0.1:7014/
-  # 站点语言类型中文站点cn、英文站点en等
+  # 站点语言类型cn\en等
   site-type: cn
-  jwt:
-    # 如果不对接oauth2授权中心，jwt将由本地系统自行分发自行验证 设为false
-    connect-oauth2-server: false
   oauth2:
     server:
       uri: http://oauth2server

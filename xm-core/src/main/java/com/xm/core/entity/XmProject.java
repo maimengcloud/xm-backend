@@ -186,7 +186,7 @@ public class XmProject  implements java.io.Serializable {
 	String deptid;
 
 	
-	@ApiModelProperty(notes="是否对外公开0-完全不可见，1-仅本司人员可见，2-关联人员可见（众包-外包-招投标）",allowEmptyValue=true,example="",allowableValues="")
+	@ApiModelProperty(notes="是否对外公开0-完全不可见，1-仅本司人员可见，2-关联人员可见（众包-外包-招投标）,3-本部门上级及下属部门可见,4-仅本部及上级可见，5-仅本部及下级可见    9-不区分",allowEmptyValue=true,example="",allowableValues="")
 	String showOut;
 
 	
@@ -268,6 +268,9 @@ public class XmProject  implements java.io.Serializable {
 	
 	@ApiModelProperty(notes="",allowEmptyValue=true,example="",allowableValues="")
 	String qxCode;
+
+	@ApiModelProperty(notes="部门编号全路径编号",allowEmptyValue=true,example="",allowableValues="")
+	String deptidPath;
 
 	/**
 	 *项目编号
