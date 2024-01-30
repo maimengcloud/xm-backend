@@ -64,8 +64,9 @@
         <if test="ext.del==null or ext.del==''">
             and res.del!="1"
         </if>
-        <if test='ext.isTpl==null or ext.isTpl=="0"'>
+        <if test='(ext.isTpl==null or ext.isTpl=="0") and (ext.linkProductId ==null or ext.linkProductId=="") and (ext.linkIterationId ==null or ext.linkIterationId=="")'>
             and (
+            exists(select 1 from xm_group_user gu where gu.userid=#{ext.myUserid} and gu.project_id=res.id)
             (res.create_userid = #{ext.myUserid} or res.adm_userid= #{ext.myUserid} or res.pm_userid=#{ext.myUserid} or res.ass_userid=#{ext.myUserid})
             or (CASE
             WHEN res.show_out = '1' THEN

@@ -41,9 +41,10 @@
             )
 
         </if>
-        <if test='ext.isTpl==null or ext.isTpl=="0"'>
+        <if test='(ext.isTpl==null or ext.isTpl=="0") and (ext.linkProjectId ==null or ext.linkProjectId=="") and (ext.linkIterationId ==null or ext.linkIterationId=="")'>
             and (
-            (res.adm_userid= #{ext.myUserid} or res.pm_userid=#{ext.myUserid} or res.ass_userid=#{ext.myUserid})
+            exists(select 1 from xm_group_user gu where gu.userid=#{ext.myUserid} and gu.product_id=res.id)
+            or (res.adm_userid= #{ext.myUserid} or res.pm_userid=#{ext.myUserid} or res.ass_userid=#{ext.myUserid})
             or (CASE
             WHEN res.show_out = '1' THEN
             res.branch_id = #{ext.myBranchId}
