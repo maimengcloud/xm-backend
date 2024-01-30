@@ -109,7 +109,7 @@ public class XmTaskExecuserService extends BaseService<XmTaskExecuserMapper,XmTa
 			List<XmGroupVo> userGroups=groupService.getUserGroups(pgroups, xmTaskExecuser.getBidUserid());
 			XmTaskExecuser xmTaskExecuser2=new XmTaskExecuser();
 			xmTaskExecuser2.setTaskId(xmTaskExecuser.getTaskId());
-			xmTaskExecuser2.setPrjUserid(xmTaskExecuser.getBidUserid());
+			xmTaskExecuser2.setBidUserid(xmTaskExecuser.getBidUserid());
 			xmTaskExecuser2.setStatus("7");
 			this.updateSomeFieldByPk(xmTaskExecuser2);
 			projectId=xmTaskExecuser.getProjectId();
