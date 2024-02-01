@@ -185,8 +185,15 @@ public class XmProductController {
 		params.put("linkBranchId",user.getBranchId());
 		QueryTools.alias(params,"branchId res.branchId");
 		QueryWrapper<XmProduct> qw = QueryTools.initQueryWrapper(XmProduct.class , params);
-		Dept dept=deptRedisCacheService.getDept(user.getDeptid());
-		params.put("myIdPath",dept.getIdPath());
+
+		if(!StringUtils.isEmpty(user.getDeptid())){
+			Dept dept=deptRedisCacheService.getDept(user.getDeptid());
+			if(dept==null){
+				params.put("myIdPath","");
+			}else{
+				params.put("myIdPath",dept.getIdPath());
+			}
+		}
 		params.put("myDeptid",user.getDeptid());
 		params.put("myBranchId",user.getBranchId());
 		params.put("myUserid",user.getUserid());

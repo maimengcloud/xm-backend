@@ -123,9 +123,15 @@ public class XmProjectController {
 		params.put("platformBranchId",platformBranchId);
 		QueryTools.alias(params,"branchId res.branchId");
 		QueryWrapper<XmProject> qw = QueryTools.initQueryWrapper(XmProject.class , params);
+		if(!StringUtils.isEmpty(user.getDeptid())){
+			Dept dept=deptRedisCacheService.getDept(user.getDeptid());
+			if(dept==null){
+				params.put("myIdPath","");
+			}else{
+				params.put("myIdPath",dept.getIdPath());
+			}
 
-		Dept dept=deptRedisCacheService.getDept(user.getDeptid());
-		params.put("myIdPath",dept.getIdPath());
+		}
 		params.put("myDeptid",user.getDeptid());
 		params.put("myBranchId",user.getBranchId());
 		params.put("myUserid",user.getUserid());
