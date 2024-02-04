@@ -97,7 +97,7 @@ git clone https://gitee.com/maimengcloud/xm-backend.git
 mvn install
 
 # 导入数据库脚本 
-找到[application-dev.yml](./xm-core/src/main/resources/application-dev.yml) 中关于数据库xm的地址导出数据库脚本到自己的数据库服务器
+创建xm数据库,找到[xm.sql](./sql/xm.sql),导入相关表到xm数据库中
 
 # 配置数据库链接 + redis 链接(需要提前准备数据库及redis环境)
 [application-dev.yml](./xm-core/src/main/resources/application-dev.yml)
