@@ -66,8 +66,13 @@
             inner join xm_product_project_link ppl on res.id=ppl.product_id and ppl.project_id=#{ext.linkProjectId}
         </if>
         <where>
+            ${@com.mdp.Util@trimWhere(ew.customSqlSegment)}
             <include refid="whereForMap"/> 
         </where>
+        <!--下面双引号内可以添加默认排序，如果前端没有上传排序，将使用引号内的排序规则-->
+        ${@com.mdp.Util@trimOrderBy(ew.customSqlSegment,'')}
+        <!--下面双引号内可以添加默认分组，如果前端没有上传分组，将使用引号内的分组规则-->
+        ${@com.mdp.Util@trimGroupBy(ew.customSqlSegment,'')}
         <if test="ext.linkProjectId !=null and ext.linkProjectId!=''">
             order by ppl.seq asc
         </if>
