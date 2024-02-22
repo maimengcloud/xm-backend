@@ -121,6 +121,9 @@ mvn deploy
 # 手工发布到测试环境或者生产环境
 如果是单体应用则拷贝并推送到服务器上[xm-bootstrap-2.0.0-RELEASE.jar](./xm-bootstrap/target/xm-bootstrap-2.0.0-RELEASE.jar)
 如果是微服务则拷贝并推送到服务器上[xm-cloud-bootstrap-2.0.0-RELEASE.jar](./xm-cloud-bootstrap/target/xm-cloud-bootstrap-2.0.0-RELEASE.jar)
+
+# 启动应用（单体、cloud对jar包的引用不同，需要根据情况修改下脚本bootstrap-xm.sh，默认是单体）初次部署把./start-service/bootstrap-xm.sh拷贝到服务器上
+sh bootstrap-xm.sh
 ```
 
 ### 🔔️ 特别提醒
