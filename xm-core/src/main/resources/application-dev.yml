@@ -262,17 +262,30 @@ logging:
   level:
     org.jeecg.modules.system.mapper : info
 
-# mdp平台授权验证服务器访问地址 cloud环境下换成 http://gate，本地调试如果不起验证服务器，可改为 https://www.qingqinkj.com/api/m1/oauth2/oauth2
-# 客户端必须在数据库表adm.oauth_client_details中配置，否则无法访问
 mdp:
+  # 网关地址 如果接入cloud,指cpringcloud的gate服务的访问地址 http://gate，如果不接入cloud,这里填写nginx的地址，或者注释掉
   api-gate: http://134.175.57.249:6101
   platform-branch-id: platform-branch-001
+  # 平台信息查询，由lcode提供服务，单体应用直接填写完整路径 http://127.0.0.1:7014/lcode/plat/platform/detail，cloud环境下注释掉，则使用默认的http://gate/lcode/plat/platform/detail
+  platform-query-uri: http://127.0.0.1:7014/lcode/plat/platform/detail
+  meta:
+    # 数据字典元数据查询，由lcode提供服务 ，单体应用直接填写完整路径http://127.0.0.1:7014/lcode/meta/item/dicts，cloud环境下注释掉，则使用默认的http://gate/lcode/meta/item/dicts
+    dicts-query-uri: http://127.0.0.1:7014/lcode/meta/item/dicts
+  #配置图片文件上传下载的相关参数
+  arc:
+    image-upload-root-path: D:/arcfile/images
+    image-download-base-uri: https://www.maimengcloud.com/api/m1/arc/
+    file-upload-root-path: D:/arcfile/files
+    file-download-base-uri: https://www.maimengcloud.com/api/m1/arc/
   # 站点语言类型cn\en等
   site-type: cn
   jwt:
     # 是否进行密钥检查，在开发环境中，涉及多个认证中心签发的jwt的时候，为了调试方便，可以暂时设为false
     valid-secure: false
+    # 如果不需要对接统一认证中心，connect-oauth2-server设为false,则对jwt token的解析将采用HS256算法解密，默认为true
+    # 接入统一认证中心时，客户端必须在数据库表oauth_client_details中配置，否则无法访问
+    connect-oauth2-server: false
+  # 接入统一认证中心时 mdp平台授权验证服务器访问地址 cloud环境下换成 http://gate，本地调试如果不起验证服务器，可改为 https://www.qingqinkj.com/api/m1/oauth2/oauth2
   oauth2:
     server:
       uri: http://134.175.57.249:7000
-
