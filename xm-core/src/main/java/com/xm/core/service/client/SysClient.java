@@ -35,7 +35,7 @@ public class SysClient {
      * @return
      */
     public User getUserInterestsByUserid(String userid){
-        String url="/sys/sys/user/noauth/detail?userid={userid}";
+        String url="/lcode/sys/user/noauth/detail?userid={userid}";
         Map<String,Object> re=callBizService.getForMap(url,map("userid",userid));
         Map<String,Object> data= (Map<String, Object>) re.get("data");
         if(data==null || data.isEmpty()){
@@ -52,7 +52,7 @@ public class SysClient {
      * @return
      */
     public User getUserByUserid(String userid){
-        String url="/sys/sys/user/detail?userid={userid}";
+        String url="/lcode/sys/user/detail?userid={userid}";
         Map<String,Object> re=callBizService.getForMap(url,map("userid",userid));
         Map<String,Object> data= (Map<String, Object>) re.get("data");
         if(data==null || data.isEmpty()){
@@ -69,7 +69,7 @@ public class SysClient {
      * @return
      */
     public Map<String,Object> getUserSvrByServiceId(String serviceId){
-        String url="/sys/sys/userSvr/detail?id={serviceId}";
+        String url="/lcode/sys/userSvr/detail?id={serviceId}";
         Map<String,Object> re=callBizService.getForMap(url,map("serviceId",serviceId));
         Map<String,Object> data= (Map<String, Object>) re.get("data");
         if(data==null || data.isEmpty()){
@@ -89,7 +89,7 @@ public class SysClient {
      * @return {tipscode:bids-not-enough,msg:投标次数超限},{tipscode:smaxExp-not-enough,msg:投标工作量超限},{tipscode:smaxAt-not-enough,msg:投标金额超限},
      */
     public Map<String,Object> checkBranchInterests(String branchId,BigDecimal at,BigDecimal exp,Integer bids){
-        String url="/sys/sys/branchInterests/checkBranchInterests?branchId={branchId}&at={at}&exp={exp}&bids={bids}";
+        String url="/lcode/sys/branchInterests/checkBranchInterests?branchId={branchId}&at={at}&exp={exp}&bids={bids}";
         Map<String,Object> re=callBizService.getForMap(url,map("branchId",branchId  ,"at",at,"exp",exp,"bids",bids));
         return re;
     }
@@ -104,7 +104,7 @@ public class SysClient {
      * @return {tipscode:bids-not-enough,msg:投标次数超限},{tipscode:smaxExp-not-enough,msg:投标工作量超限},{tipscode:smaxAt-not-enough,msg:投标金额超限},
      */
     public Map<String,Object> checkUserInterests(String userid,BigDecimal at,BigDecimal exp,Integer bids){
-        String url="/sys/sys/userInterests/checkUserInterests?userid={userid}&at={at}&exp={exp}&bids={bids}";
+        String url="/lcode/sys/userInterests/checkUserInterests?userid={userid}&at={at}&exp={exp}&bids={bids}";
         Map<String,Object> re=callBizService.getForMap(url,map("userid",userid  ,"at",at,"exp",exp,"bids",bids));
         return re;
     }
@@ -136,7 +136,7 @@ public class SysClient {
     }
 
     public User createUserIfNotExists(User exeUser,String deptid,String branchId) {
-        String url="/sys/user/createIfNotExists";
+        String url="/lcode/user/createIfNotExists";
         exeUser.setBranchId(branchId);
         Map<String,Object> re=callBizService.postForMap(url,map("user",exeUser  ,"userDept",map("deptid",deptid)));
         User user=BaseUtils.fromMap((Map<String, Object>) re.get("data"),User.class);
