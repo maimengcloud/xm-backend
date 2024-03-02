@@ -99,7 +99,8 @@ mvn install
 
 # 导入数据库脚本 
 
-# 创建lcode数据库,找到[lcode.sql](https://gitee.com/maimengcloud/mdp-lcode-backend/blob/master/mdp-lcode/sql/lcode.sql),导入相关表到lcode数据库中,如果已创建，该部忽略
+# 必须 创建lcode数据库,找到[lcode.sql](https://gitee.com/maimengcloud/mdp-lcode-backend/blob/master/mdp-lcode/sql/lcode.sql),导入相关表到lcode数据库中,如果已创建，该步忽略
+# 非必须 如果不想用工作流，可忽略创建wf库，找到[wf.sql](https://gitee.com/maimengcloud/mdp-workflow-backend/blob/master/sql/wf.sql),导入相关表到wf数据库中,如果已创建，该步忽略
 创建xm数据库,找到[xm.sql](./sql/xm.sql),导入相关表到xm数据库中
 
 # 配置数据库链接 + redis 链接(需要提前准备数据库及redis环境)
