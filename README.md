@@ -98,12 +98,14 @@ git clone https://gitee.com/maimengcloud/xm-backend.git
 mvn install
 
 # 导入数据库脚本 
+
+# 创建lcode数据库,找到[lcode.sql](https://gitee.com/maimengcloud/mdp-lcode-backend/blob/master/mdp-lcode/sql/lcode.sql),导入相关表到lcode数据库中,如果已创建，该部忽略
 创建xm数据库,找到[xm.sql](./sql/xm.sql),导入相关表到xm数据库中
 
 # 配置数据库链接 + redis 链接(需要提前准备数据库及redis环境)
 [application-dev.yml](./xm-core/src/main/resources/application-dev.yml)
 
-# 启动服务 
+# 启动服务 注意，启动类在test目录下
 找到并运行[XmApplication.java](./xm-core/src/test/java/com/mdp/XmApplication.java) 
 ```
 
