@@ -215,12 +215,12 @@ spring:
           #password: root
           #driver-class-name: com.mysql.cj.jdbc.Driver
         mem-ds:
-          url: jdbc:mysql://123.207.117.5:3306/adm?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=CTT
+          url: jdbc:mysql://123.207.117.5:3306/lcode?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=CTT
           username: root
           password: 1qaz@WSX
           driver-class-name: com.mysql.cj.jdbc.Driver
         mall-ds:
-          url: jdbc:mysql://123.207.117.5:3306/adm?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=CTT
+          url: jdbc:mysql://123.207.117.5:3306/lcode?useUnicode=true&characterEncoding=utf-8&useSSL=false&allowMultiQueries=true&serverTimezone=CTT
           username: root
           password: 1qaz@WSX
           driver-class-name: com.mysql.cj.jdbc.Driver
