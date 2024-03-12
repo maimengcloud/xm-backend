@@ -11,7 +11,7 @@
  Target Server Version : 80021
  File Encoding         : 65001
 
- Date: 04/02/2024 15:58:42
+ Date: 13/03/2024 06:07:51
 */
 
 SET NAMES utf8mb4;
@@ -2271,7 +2271,7 @@ DROP TABLE IF EXISTS `xm_task_execuser`;
 CREATE TABLE `xm_task_execuser`  (
   `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
   `task_id` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_croatian_ci NOT NULL COMMENT '任务id',
-  `prj_userid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_croatian_ci NOT NULL COMMENT '执行人id-投标者在项目归属公司的内部用户编号，对应sys_user.userid。投标人中标后，项目公司设立内部用户编号后回填，也就是中标后，项目公司应该给中标人设立内部用户编号，让其具有更多的权限',
+  `prj_userid` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_croatian_ci NULL DEFAULT NULL COMMENT '执行人id-投标者在项目归属公司的内部用户编号，对应sys_user.userid。投标人中标后，项目公司设立内部用户编号后回填，也就是中标后，项目公司应该给中标人设立内部用户编号，让其具有更多的权限',
   `start_time` datetime NOT NULL COMMENT '加入时间',
   `end_time` datetime NULL DEFAULT NULL COMMENT '离开时间',
   `status` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_croatian_ci NULL DEFAULT NULL COMMENT '执行人状态0候选排队中1执行任务中7放弃任务8黑名单',
