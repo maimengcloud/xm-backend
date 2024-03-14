@@ -108,6 +108,8 @@ public class XmIterationController {
 		User user = LoginUtils.getCurrentUserInfo();
 		params.put("userid",user.getUserid());
 		params.remove("branchId");
+
+		QueryTools.alias(params,"iterationName res.iterationName");
 		QueryWrapper<XmIteration> qw=QueryTools.initQueryWrapper(XmIteration.class,params);
 		if(  !( StringUtils.hasText(branchId)|| StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
 				|| StringUtils.hasText(adminUserid) ) ){
@@ -150,6 +152,7 @@ public class XmIterationController {
 		User user = LoginUtils.getCurrentUserInfo();
 		params.put("userid",user.getUserid());
 		params.remove("branchId");
+		QueryTools.alias(params,"iterationName res.iterationName");
 		QueryWrapper<XmIteration> qw=QueryTools.initQueryWrapper(XmIteration.class,params);
 		if(  !(StringUtils.hasText(branchId)|| StringUtils.hasText(id) || StringUtils.hasText(productId)|| StringUtils.hasText(menuId)||ids!=null
 				|| StringUtils.hasText(adminUserid) ) ){

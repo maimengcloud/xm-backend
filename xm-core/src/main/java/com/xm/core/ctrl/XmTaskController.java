@@ -641,7 +641,7 @@ public class XmTaskController {
 			}
 			xmTaskVo = xmTaskService.addTask(xmTaskVo);
 			
-		return Result.ok();
+		return Result.ok().setData(xmTaskVo);
 		
 	}
 
@@ -810,7 +810,7 @@ public class XmTaskController {
 
 			xmTaskService.updateTask(xmTaskVo,xmTaskDb);
 			
-		return Result.ok();
+		return Result.ok().setData(xmTaskVo);
 		
 	}
 	@ApiOperation( value = "根据主键修改一条任务信息",notes="editXmTask")

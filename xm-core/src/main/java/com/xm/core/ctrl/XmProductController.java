@@ -140,7 +140,7 @@ public class XmProductController {
 			}
 		}
 
-		QueryTools.alias(params,"branchId res.branchId");
+		QueryTools.alias(params,"branchId res.branchId","productName res.productName");
 		QueryWrapper<XmProduct> qw = QueryTools.initQueryWrapper(XmProduct.class , params);
 		List<Map<String,Object>> datas = xmProductService.selectListMapByWhere(page,qw,params);
 		return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProduct列表
@@ -183,7 +183,8 @@ public class XmProductController {
 		}
 		params.put("platformBranchId",platformBranchId);
 		params.put("linkBranchId",user.getBranchId());
-		QueryTools.alias(params,"branchId res.branchId");
+		QueryTools.alias(params,"branchId res.branchId","productName res.productName");
+
 		QueryWrapper<XmProduct> qw = QueryTools.initQueryWrapper(XmProduct.class , params);
 
 		if(!StringUtils.isEmpty(user.getDeptid())){

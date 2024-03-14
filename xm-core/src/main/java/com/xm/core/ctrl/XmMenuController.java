@@ -109,7 +109,7 @@ public class XmMenuController {
 		RequestUtils.transformArray(params, "dclasss");		
 		IPage page=QueryTools.initPage(params);
 		this.paramsInit(params);
-		QueryTools.alias(params,"productId res.productId");
+		QueryTools.alias(params,"productId res.productId","menuId res.menuId","menuName res.menuName");
 		QueryWrapper<XmMenu> qw = QueryTools.initQueryWrapper(XmMenu.class , params);
 		List<Map<String,Object>> datas = xmMenuService.selectListMapByWhere(page,qw,params);
 		
@@ -166,7 +166,7 @@ public class XmMenuController {
 		RequestUtils.transformArray(params, "dclasss");
 		IPage page=QueryTools.initPage(params);
 		this.paramsInit(params);
-		QueryTools.alias(params,"productId res.productId","menuId res.menuId");
+		QueryTools.alias(params,"productId res.productId","menuId res.menuId","menuName res.menuName");
 		QueryWrapper<XmMenu> qw = QueryTools.initQueryWrapper(XmMenu.class , params);
 		this.paramsInit(params);
 		List<Map<String,Object>>	datas = xmMenuService.selectListMapByWhereWithState(page,qw,params);	//列出XmMenu列表
@@ -306,7 +306,7 @@ public class XmMenuController {
 		notifyMsgService.pushMsg(user,xmMenu.getMmUserid(),xmMenu.getMmUsername(),"您成为需求【"+xmMenu.getMenuName()+"】的负责人，请跟进需求！",null);
 
 		xmRecordService.addXmMenuRecord(xmMenu.getProductId(),xmMenu.getMenuId(),"新增产品需求","新增需求"+xmMenu.getMenuName());
-		return Result.ok();
+		return Result.ok().setData(xmMenu);
 	}
 	
 	
