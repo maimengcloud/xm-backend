@@ -61,6 +61,10 @@
         <if test='ext.isTpl!=null and ext.isTpl=="1" and ext.tplType=="1"'>
             and (  res.is_tpl='1' and res.tpl_type='1')
         </if>
+
+        <if test='ext.isTpl!=null and ext.isTpl=="1" and ext.tplType==null '>
+            and (  res.is_tpl='1' )
+        </if>
         <if test="ext.del==null or ext.del==''">
             and res.del!="1"
         </if>

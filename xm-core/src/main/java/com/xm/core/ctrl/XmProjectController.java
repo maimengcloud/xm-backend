@@ -142,7 +142,6 @@ public class XmProjectController {
 		
 	}
 
-
 	@ApiOperation( value = "批量修改某些字段",notes="")
 	@ApiEntityParams( value = XmProject.class, props={ }, remark = "项目表", paramType = "body" )
 	@ApiResponses({
