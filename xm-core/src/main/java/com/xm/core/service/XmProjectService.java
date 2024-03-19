@@ -378,7 +378,7 @@ public class XmProjectService extends BaseService<XmProjectMapper,XmProject> {
 				if(StringUtils.isEmpty(bizProject.getBranchId())) {
 					throw new BizException("请上送flowVars.data.branchId");
 				} 
-				List<Map<String,Object>> bizList=this.selectListMapByWhere(QueryTools.initPage(bizQuery),QueryTools.initQueryWrapper(XmProject.class),bizQuery);
+				List<Map<String,Object>> bizList=this.selectListMapByWhere(QueryTools.initPage(bizQuery),QueryTools.initQueryWrapper(XmProject.class,bizQuery),bizQuery);
 				if(bizList==null || bizList.size()==0) {
 					throw new BizException("没有找到对应项目,项目为【"+bizProject.getId()+"】");
 				}else {
