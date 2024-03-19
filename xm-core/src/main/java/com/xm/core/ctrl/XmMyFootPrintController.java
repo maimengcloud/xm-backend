@@ -62,7 +62,7 @@ public class XmMyFootPrintController {
 	@RequestMapping(value="/add",method=RequestMethod.POST)
 	public Result addXmMyFootPrint(@RequestBody XmMyFootPrint xmMyFootPrint) {
 		 xmMyFootPrintService.save(xmMyFootPrint);
-         return Result.ok("add-ok","添加成功！");
+         return Result.ok("add-ok","添加成功！").setData(xmMyFootPrint);
 	}
 
 	@ApiOperation( value = "我关注的项目或者任务-删除",notes=" ")

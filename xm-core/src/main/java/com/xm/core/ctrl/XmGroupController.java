@@ -293,7 +293,7 @@ public class XmGroupController {
 
 
   			
-		return Result.ok();
+		return Result.ok().setData(xmGroup);
 		
 	}
 

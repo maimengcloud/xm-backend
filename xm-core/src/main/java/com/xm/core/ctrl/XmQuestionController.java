@@ -218,7 +218,7 @@ public class XmQuestionController {
 				notifyMsgService.pushMsg(user,xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(),"您有新的bug【"+xmQuestionVo.getName()+"】需要处理，请尽快修复！",null);
 				xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(), user.getUsername()+"创建bug【"+xmQuestionVo.getName()+"】并指派给"+xmQuestionVo.getHandlerUsername());
 			}
-		return Result.ok();
+		return Result.ok().setData(xmQuestionVo);
 	}
 	 
 	
@@ -243,7 +243,7 @@ public class XmQuestionController {
 		if(!StringUtils.isEmpty(xmQuestionVo.getHandlerUserid())) {
 			xmPushMsgService.pushPrichatMsgToIm(user.getBranchId(), user.getUserid(), user.getUsername(), xmQuestionVo.getHandlerUserid(),xmQuestionVo.getHandlerUsername(), user.getUsername()+"修改bug【"+xmQuestionVo.getName()+"】");
 		}
-		return Result.ok();
+		return Result.ok().setData(xmQuestionVo);
 	}
 	
 	@ApiOperation( value = "根据主键修改一条xm_question信息",notes="editXmQuestion")

@@ -116,7 +116,7 @@ public class XmMyFocusController {
 			}
 			xmMyFocusService.focus(xmMyFocus);
 			
-		return Result.ok();  
+		return Result.ok().setData(xmMyFocus);
 		
 	}
 

@@ -373,7 +373,7 @@ public class XmProjectController {
 			xmProjectService.clearProject(xmProject.getId());
 			xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-项目估算","修改项目【"+xmProjectDb.getName()+"】的预算数据", JSON.toJSONString(xmProject), JSON.toJSONString(xmProjectDb));
 			
-		return Result.ok();
+		return Result.ok().setData(xmProject);
 		
 	}
 	@ApiOperation( value = "创建项目代号",notes="createProjectCode")
@@ -417,7 +417,7 @@ public class XmProjectController {
 
 
 			
-		return Result.ok();
+		return Result.ok().setData(xmProject);
 		
 	}
 	
@@ -446,7 +446,7 @@ public class XmProjectController {
 			xmRecordService.addXmProjectRecord(xmProject.getId(),"项目-项目预算","修改项目【"+xmProjectDb.getName()+"】的预算数据", JSON.toJSONString(xmProject), JSON.toJSONString(xmProjectDb));
 
 			
-		return Result.ok();
+		return Result.ok().setData(xmProject);
 		
 	}
 
@@ -529,7 +529,7 @@ public class XmProjectController {
 			xmProjectStateService.loadTasksToXmProjectState(xmProjectTo.getId());
 			xmRecordService.addXmProjectRecord(xmProjectTo.getId(),"项目-通过拷贝创建新项目","拷贝项目【"+xmProjectTo.getName()+"】,创建新的项目【】", JSON.toJSONString(xmProjectTo), JSON.toJSONString(xmProjectDb));
 
-		return Result.ok();
+		return Result.ok().setData(xmProjectTo);
 		
 	}
 

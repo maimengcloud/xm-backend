@@ -391,7 +391,7 @@ public class XmWorkloadController {
 				xmWorkload.setPlanId((String) xmTestPlanCaseDb.get("planId"));
 				xmWorkloadService.insert(xmWorkload);
 			}
-		return Result.ok();
+		return Result.ok().setData(xmWorkload);
 	}
 	@ApiOperation( value = "根据主键修改一条工时登记表信息",notes=" ")
 	@ApiResponses({

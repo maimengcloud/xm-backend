@@ -158,7 +158,7 @@ public class XmTestCaseController {
 			xmTestCase.setCtime(new Date());
 			xmTestCase.setLtime(new Date());
 			xmTestCaseService.insert(xmTestCase);
-		return Result.ok();
+		return Result.ok().setData(xmTestCase);
 	}
 
 	@ApiOperation( value = "删除一条测试用例信息",notes=" ")
