@@ -5,7 +5,6 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mdp.core.entity.Tips;
 import com.mdp.core.err.BizException;
-import com.mdp.core.query.QueryTools;
 import com.mdp.core.service.BaseService;
 import com.mdp.core.utils.BaseUtils;
 import com.mdp.core.utils.DateUtils;
@@ -377,13 +376,12 @@ public class XmProjectService extends BaseService<XmProjectMapper,XmProject> {
 				}
 				if(StringUtils.isEmpty(bizProject.getBranchId())) {
 					throw new BizException("请上送flowVars.data.branchId");
-				} 
-				List<Map<String,Object>> bizList=this.selectListMapByWhere(QueryTools.initPage(bizQuery),QueryTools.initQueryWrapper(XmProject.class,bizQuery),bizQuery);
-				if(bizList==null || bizList.size()==0) {
+				}
+				XmProject xmProject=this.getById(bizProject.getId());
+ 				if(xmProject==null ) {
 					throw new BizException("没有找到对应项目,项目为【"+bizProject.getId()+"】");
 				}else {
-					Map<String,Object> bizObject=bizList.get(0);
-					if("1".equals(bizObject.get("bizFlowState"))) {
+					if("1".equals(xmProject.getBizFlowState())) {
 						throw new BizException("该项目正在审批中，不能再发起审批");
 					}
 				}
