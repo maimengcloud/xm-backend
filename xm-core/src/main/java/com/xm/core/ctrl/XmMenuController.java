@@ -150,12 +150,8 @@ public class XmMenuController {
 		String excludeIterationId= (String) xmMenu.get("excludeIterationId");
 		String iterationId = (String) xmMenu.get("iterationId");
 		String funcId = (String) xmMenu.get("funcId");
-
-		if( !StringUtils.hasText(menuId) && !(StringUtils.hasText(linkProjectId) || StringUtils.hasText(mmUserid)|| StringUtils.hasText(pmenuId)||menuIds!=null
-				|| StringUtils.hasText(productId) || StringUtils.hasText(excludeIterationId)|| StringUtils.hasText(proposerId) || StringUtils.hasText(iterationId) || StringUtils.hasText(funcId)   ) ){
 			User user = LoginUtils.getCurrentUserInfo();
 			xmMenu.put("pbranchId",user.getBranchId());
-		}
 	}
 
 	@RequestMapping(value="/listWithState",method=RequestMethod.GET)
