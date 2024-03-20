@@ -91,8 +91,8 @@ public class XmGroupUserController {
 		RequestUtils.transformArray(params, "ids");		
 		IPage page= QueryTools.initPage(params);
 		User user=LoginUtils.getCurrentUserInfo();
-		params.put("branchId",user.getBranchId());
 		QueryWrapper<XmGroupUser> qw = QueryTools.initQueryWrapper(XmGroupUser.class , params);
+		qw.eq("branch_id",user.getBranchId());
 		List<Map<String,Object>> datas = xmGroupUserService.selectListMapByWhere(page,qw,params);
 			return Result.ok("query-ok","查询成功").setData(datas).setTotal(page.getTotal());	//列出XmProjectGroupUser列表
 		
